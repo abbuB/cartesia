@@ -14,7 +14,7 @@ var proc = function(processingInstance){ with (processingInstance){
 
   var CLRS={
 
-    WHITE_:   color(255,255,255),     BLACK_:   color(0,0,0),
+    WHITE:   	color(255,255,255),     BLACK:   	color(0,0,0),
     RED:      color(170,29,29),       GREEN:    color(158,182,58),
     BLUE:     color(29,86,170),       YELLOW:   color(238,214,15),
     ORANGE:   color(238,136,15),      Gray:     color(128,128,128),
@@ -23,10 +23,62 @@ var proc = function(processingInstance){ with (processingInstance){
 
     control:  color(128,128,128),     controlF: color(242,242,242),
 
-    TEXT:     color(255,255,255)
+    TEXT:     color(255,255,255),
+
+    Red:					color(255,0,0),
+    RedOrange:		color(255,81,0),
+    Orange:				color(255,127,0),
+    YellowOrange:	color(255,190,0),
+    Yellow:				color(255,255,0),
+    YellowGreen:	color(192,255,0),
+    Green:				color(0,255,0),
+    BlueGreen:		color(0,127,127),
+    Blue:					color(0,0,255),
+    BlueViolet:		color(92,0,255),
+    Violet:				color(127,0,255),
+    RedViolet:		color(191,0,127),
+
+    White:				color(255,255,255),
+		Gray1:				color(255*10/11),
+		Gray2:				color(255*9/11),
+		Gray3:				color(255*8/11),
+		Gray4:				color(255*7/11),
+		Gray5:				color(255*6/11),
+		Gray6:				color(255*5/11),
+		Gray7:				color(255*4/11),
+		Gray8:				color(255*3/11),
+		Gray9:				color(255*2/11),
+		Gray10:				color(255*1/11),
+    Black:				color(0,0,0)
 
   };
 
+	var PCOLORS={
+		RED:					0,
+		REDORANGE:		1,
+		ORANGE:				2,
+		YELLOWORANGE:	3,
+		YELLOW:				4,
+		YELLOWGREEN:	5,
+		GREEN:				6,
+		BLUEGREEN:		7,
+		BLUE:					8,
+		BLUEVIOLET:		9,
+		VIOLET:				10,
+		REDVIOLET:		11,
+		WHITE:				12,
+		GRAY0:				13,
+		GRAY1:				14,
+		GRAY2:				15,
+		GRAY3:				16,
+		GRAY4:				17,
+		GRAY5:				18,
+		GRAY6:				19,
+		GRAY7:				20,
+		GRAY8:				21,
+		GRAY9:				22,
+		BLACK:				23,
+	};
   var MODES={
     SAMPLE:     0,
     MANUAL:     1
@@ -64,6 +116,7 @@ var proc = function(processingInstance){ with (processingInstance){
     SNAPTOGRID:   [1,   'SnapToGrid',     'SNAPTOGRID'      ],
     ORTHO:        [1,   'Ortho',          'ORTHO'           ],
     COORDINATES:  [1,   'Coordinates',    'COORDINATES'     ],
+		COLORS:   		[1,   'Colors',     		'COLORS'      		],
 
     //~ File ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     NEW:          [1,   'New',            'NEW'             ],
@@ -111,7 +164,7 @@ var proc = function(processingInstance){ with (processingInstance){
     NAME:         [2,   'Name',           'NAME'            ],
     CAPTION:      [2,   'Caption',        'CAPTION'         ],
 
-    COLOR:        [2,   'Color',          'COLOR'           ],
+    COLOR:        [222, 'Color',          'COLOR'           ],
     LAYER:        [2,   'Layer',          'LAYER'           ],
     LINETYPE:     [2,   'Line Type',      'LINE TYPE'       ],
     LINEWEIGHT:   [2,   'Line Weight',    'LINE WEIGHT'     ],
@@ -129,7 +182,9 @@ var proc = function(processingInstance){ with (processingInstance){
     PRESSED:      [9,   'Pressed',        'PRESSED'         ],
 
     RECTANGLE:    [111, 'Rectangle',      'RECTANGLE'       ],
-    CIRCLE:       [11,  'Circle',         'CIRCLE'          ]
+    CIRCLE:       [11,  'Circle',         'CIRCLE'          ],
+
+
 
   }
 
@@ -152,8 +207,14 @@ var proc = function(processingInstance){ with (processingInstance){
     dwg:          undefined,
 
     //~ properties
+    red:					0,
+    green:				0,
+    blue:					0,
+
     color:        CLRS.RED,
+
     layer:        8,
+
     linetype:     LINETYPES.HAIRLINE,
     lineweight:   7
 
@@ -171,19 +232,45 @@ var proc = function(processingInstance){ with (processingInstance){
              millis() + ''  +
              round(random(10e15));
   };
-  var getWidth=function()       { return app.width;           }
-  var getHeight=function()      { return app.height;          }
-  var getFrameRate=function()   { return app.frameRate;       }
-  var getFrameRateA=function()  { return __frameRate          }   //~ apparent frameRate
-  var getMouseX=function()      { return app.mouseX;          }
-  var getMouseY=function()      { return app.mouseY;          }
-  var getPressed=function()     { return app.pressed;         }
-  var getDebug=function()       { return app.debug;           }
-  var getColor=function()       { return app.color;           }
-  var getLayer=function()       { return app.layer;           }
-  var getLineType=function()    { return app.linetype;        }
-  var getLineWeight=function()  { return app.lineweight;      }
+  //~ var getWidth=function()       { return app.width;           }
+  //~ var getHeight=function()      { return app.height;          }
+  //~ var getFrameRate=function()   { return app.frameRate;       }
+  //~ var getFrameRateA=function()  { return nf(__frameRate,1,1); }   //~ apparent frameRate
+  //~ var getMouseX=function()      { return app.mouseX;          }
+  //~ var getMouseY=function()      { return app.mouseY;          }
+  //~ var getPressed=function()     { return app.pressed;         }
+  //~ var getDebug=function()       { return app.debug;           }
+  //~ var getColor=function()       { return app.color;           }
+  //~ var getLayer=function()       { return app.layer;           }
+  //~ var getLineType=function()    { return app.linetype;        }
+  //~ var getLineWeight=function()  { return app.lineweight;      }
+	
+	var getProp=function(p){
+		
+		switch(p){
+			
+			case CMDS.WIDTH:					return app.width;
+			case CMDS.HEIGHT:					return app.height;
+			case CMDS.FRAMERATE:			return app.frameRate;
+			case CMDS.FRAMERATEA:			return nf(__frameRate,1,1);
+			case CMDS.MOUSEX:					return app.mouseX;
+			case CMDS.MOUSEY:					return app.mouseY;
+			case CMDS.PRESSED:				return app.pressed;
+			
+			case CMDS.COLOR:					return app.color;
+			
+			case CMDS.LAYER:					return app.layer;
+			case CMDS.LINETYPE:				return app.linetype;
+			case CMDS.LINEWEIGHT:			return app.lineweight;
+			case CMDS.DEBUG:					return app.debug;
+			case CMDS.RED:						return app.red;
+			case CMDS.GREEN:					return app.green;
+			case CMDS.BLUE:						return app.blue;
+			
+		};
 
+	};
+	
   var getColor=function(clr,alpha){
 
     return color(red(clr), green(clr), blue(clr), alpha/100*255);
@@ -203,13 +290,14 @@ var proc = function(processingInstance){ with (processingInstance){
 
 
   //~ Commands ===========================================================
-  var commands=function(c){
+  var commands=function(c,p){
 
-    println(c);
-
+    println(c,p);
+		println(app.color);
     switch(c){
 
-      case CMDS.RECTANGLE:  println("COMMAND: rectangle");  break;
+			case CMDS.COLOR[0]:  		app.color=p;  					break;
+      case CMDS.RECTANGLE[0]:	println("Rectangle");  	break;
 
       default:  break;
 
@@ -319,7 +407,7 @@ var proc = function(processingInstance){ with (processingInstance){
   };
   control.prototype.clicked=function(){
     if(this.hit){
-      commands(this.c);
+      commands(this.c,this.v);
       for(var c in this.ctrls){ this.ctrls[c].clicked() }
     }
   };
@@ -364,6 +452,9 @@ var proc = function(processingInstance){ with (processingInstance){
   control.prototype.released=function(){
     for(var c in this.ctrls){ this.ctrls[c].released() }
   };
+  control.prototype.typed=function(){
+    for(var c in this.ctrls){ this.ctrls[c].typed() }
+  };  
   control.prototype.over=function(){
     for(var c in this.ctrls){ this.ctrls[c].over() }
   };
@@ -429,6 +520,63 @@ var proc = function(processingInstance){ with (processingInstance){
     popMatrix();
 
   };
+
+  //~ Buttons ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  var button=function(cp,lp,ap,ctrls){
+    control.call(this,cp,lp,ap,ctrls);
+  };
+  button.prototype=Object.create(control.prototype);
+  button.prototype.draw=function(){
+
+    var p=this;
+    var d=0;
+
+    pushMatrix();
+
+      translate(p.x, p.y);
+
+        pushStyle();
+
+          fill(p.fill);
+          stroke(p.stroke);
+          strokeWeight(p.weight);
+
+          if(p.hit){
+
+            if(app.pressed){ d=1; }
+
+            fill(p.fillH);
+            stroke(p.strokeH);
+            strokeWeight(p.weightH);
+
+						cursor(HAND);
+
+          }
+
+					if(p.g){	fill(getProp(p.v));	}
+
+          rect(d, d, p.w, p.h, p.r);
+
+          //~ fill(p.tfill);
+
+          //~ textAlign(p.alignX,p.alignY);
+          //~ textSize(p.size);
+
+          //~ if(p.hit){
+            //~ fill(p.v);
+            //~ textSize(p.sizeH);
+          //~ }
+
+          //~ text(p.g, d+5, d+p.h/2);
+
+        popStyle();
+
+        for(var c in p.ctrls){ p.ctrls[c].draw() }
+
+    popMatrix();
+
+  };
+
 
   //~ Labels ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var label=function(cp,lp,ap,ctrls){
@@ -527,7 +675,7 @@ var proc = function(processingInstance){ with (processingInstance){
           }
 
           text(p.g, d+5, d+p.h/2);
-          text(p.v(), d+100, d+p.h/2);
+          text(getProp(p.v), d+100, d+p.h/2);
 
         popStyle();
 
@@ -674,8 +822,6 @@ var proc = function(processingInstance){ with (processingInstance){
 
       translate(p.x, p.y);
 
-				
-
         pushStyle();
 
           fill(p.fill);
@@ -686,6 +832,7 @@ var proc = function(processingInstance){ with (processingInstance){
             fill(p.fillH);
             stroke(p.strokeH);
             strokeWeight(p.weightH);
+            cursor(ARROW);
           }
 
           rect(d, d, p.w, p.h, p.r);
@@ -721,40 +868,41 @@ var proc = function(processingInstance){ with (processingInstance){
 
     for(var c in app.dwg.ctrls){ app.dwg.ctrls[c].draw() }
 
-		fill(CLRS.BLACK_);
-		stroke(CLRS.WHITE_);
+		fill(CLRS.BLACK);
+		stroke(CLRS.YELLOW);
 		strokeWeight(0.25);
 
+    var sz=ceil(128/6)-4;
+    var incr=sz+4;
+		var w=138;
+		var h=11*(sz+4);
+		var left=300;
+		var top=100;
+
 		beginShape();
-			vertex(295, 95);
-			vertex(420, 95);
-			vertex(420, 260);
-			vertex(295, 260);
+			vertex(left, 	top);
+			vertex(left+w, top);
+			vertex(left+w, top+h);
+			vertex(left, 	top+h);
 		endShape(CLOSE);
 
-		//~ rect(295,95,245,45);
-		
-    //~ Colors
+		rect(left,top,w,h);
 
-    var sz=15;
-		var w=125;
-		var h=145;
+		var row0=top+0*incr;
+		var row1=top+1*incr;
+		var row2=top+2*incr;
+		var row3=top+3*incr;
+		var row4=top+4*incr;
+		var row5=top+5*incr;
+		var row6=top+6*incr;
+		var row7=top+7*incr;
 
-		var row0=100;
-		var row1=120;
-		var row2=140;
-		var row3=160;
-		var row4=180;
-		var row5=200;
-		var row6=220;
-		var row7=240;
-
-		var col0=300;
-		var col1=320;
-		var col2=340;
-		var col3=360;
-		var col4=380;
-		var col5=400;
+		var col0=left+0*incr;
+		var col1=left+1*incr;
+		var col2=left+2*incr;
+		var col3=left+3*incr;
+		var col4=left+4*incr;
+		var col5=left+5*incr;
 
     var Red=color(255,0,0);
     var RedOrange=color(255,81,0);
@@ -888,27 +1036,43 @@ var proc = function(processingInstance){ with (processingInstance){
     //~ White
     fill(Black);
     rect(col5,row3,sz,sz);
-		
+
 		//~ sliders (red,green,blue,alpha)
 		fill(CLRS.RED);
-		rect(col0,row4,w-10,sz);
+		rect(col0,row4,128,sz);
 
 		fill(CLRS.GREEN);
-		rect(col0,row5,w-10,sz);
-		
+		rect(col0,row5,128,sz);
+
 		fill(CLRS.BLUE);
-		rect(col0,row6,w-10,sz);
+		rect(col0,row6,128,sz);
 
 		fill(CLRS.GRAY);
-		rect(col0,row7,w-10,sz);
-		
+		rect(col0,row7,128,sz);
+
+		fill(CLRS.RED);
+		textSize(16);
+		textAlign(LEFT,TOP);
+
+		fill(CLRS.RED);
+		text("Red", col0,row7+26);
+		fill(CLRS.GREEN);
+		text("Green", col0,row7+42);
+		fill(CLRS.BLUE);
+		text("Blue", col0,row7+58);
+
+		fill(128,96,24);
+		rect(col0+70,row7+30,40,40);
+
   };
 
   //~ translate(0.5,0.5);
 
   var draw=function(){ process(); };
 
+
   //~ Events ===========================================================
+
   var mouseClicked=function(){
     for(var c in app.dwg.ctrls){ app.dwg.ctrls[c].clicked() }
   };
@@ -935,12 +1099,12 @@ var proc = function(processingInstance){ with (processingInstance){
   var keyPressed=function(){
     app.keys[keyCode]=true;
     println(app.keys);
-    for(var c in app.dwg.ctrls){ app.dwg.ctrls[c].keyPressed() }
+    for(var c in app.dwg.ctrls){ app.dwg.ctrls[c].pressed() }
   };
   var keyReleased=function(){
     app.keys[keyCode]=false;
     println(app.keys);
-    for(var c in app.dwg.ctrls){ app.dwg.ctrls[c].keyReleased() }
+    for(var c in app.dwg.ctrls){ app.dwg.ctrls[c].released() }
   };
   var keyTyped=function(){
     for(var c in app.dwg.ctrls){ app.dwg.ctrls[c].typed() }
@@ -955,12 +1119,12 @@ var proc = function(processingInstance){ with (processingInstance){
 
         case STYLES.BACKGROUND:
 
-          style=new propL(CLRS.BLACK_, CLRS.BLACK_, CLRS.BLUE, CLRS.Gray, 0.125, 0.25);
+          style=new propL(CLRS.BLACK, CLRS.BLACK, CLRS.BLUE, CLRS.GRAY, 0.125, 0.25);
           break;
 
         case STYLES.CONTAINER:
 
-          style=new propL(getColor(CLRS.BLUE,25), getColor(CLRS.BLUE,90), CLRS.BLUE, CLRS.Gray, 0.125, 0.25);
+          style=new propL(color(8,22,44), getColor(CLRS.BLUE,50), CLRS.BLUE, CLRS.GRAY, 0.5, 0.25);
           break;
 
         case STYLES.BUTTON:
@@ -970,22 +1134,22 @@ var proc = function(processingInstance){ with (processingInstance){
 
         case STYLES.SPACER:
 
-          style=new propL(getColor(CLRS.BLUE,50), CLRS.BLUE, CLRS.WHITE_, CLRS.YELLOW, 0.125, 0.25);
+          style=new propL(getColor(CLRS.BLUE,50), CLRS.BLUE, CLRS.WHITE, CLRS.YELLOW, 0.125, 0.25);
           break;
 
         case STYLES.TEXT:
 
-          style=new propA(CLRS.WHITE_, CLRS.YELLOW, LEFT, CENTER, 10, 11);
+          style=new propA(CLRS.WHITE, CLRS.YELLOW, LEFT, CENTER, 10, 11);
           break;
 
         case STYLES.TEXTCENTER:
 
-          style=new propA(CLRS.WHITE_, CLRS.YELLOW, CENTER, CENTER, 11, 12);
+          style=new propA(CLRS.WHITE, CLRS.YELLOW, CENTER, CENTER, 11, 12);
           break;
 
         case STYLES.TITLE:
 
-          style=new propA(CLRS.WHITE_, CLRS.YELLOW, LEFT, CENTER, 12, 14);
+          style=new propA(CLRS.WHITE, CLRS.YELLOW, LEFT, CENTER, 12, 14);
           break;
 
         default:  break;
@@ -1011,49 +1175,49 @@ var proc = function(processingInstance){ with (processingInstance){
             getStyle(STYLES.TEXT));
 
     ctrls.push(new label(
-                new propC(getGUID(),cn,cn.w/2,10,10,10,0,getDebug,CMDS.NAME[0],CMDS.TELEMETRY[1]),
+                new propC(getGUID(),cn,cn.w/2,10,10,10,0,CMDS.DEBUG,CMDS.NAME[0],CMDS.TELEMETRY[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXTCENTER)));
 
     ctrls.push(new labelC(
-                new propC(getGUID(),cn,5,top+0*h,10,10,0,getDebug,CMDS.UNDEFINED[0],CMDS.DEBUG[1]),
+                new propC(getGUID(),cn,5,top+0*h,10,10,0,CMDS.DEBUG,CMDS.UNDEFINED[0],CMDS.DEBUG[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new labelC(
-                new propC(getGUID(),cn,5,top+1*h,10,10,0,getWidth,CMDS.UNDEFINED[0],CMDS.WIDTH[1]),
+                new propC(getGUID(),cn,5,top+1*h,10,10,0,CMDS.WIDTH,CMDS.UNDEFINED[0],CMDS.WIDTH[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new labelC(
-                new propC(getGUID(),cn,5,top+3*h,10,10,0,getHeight,CMDS.UNDEFINED[0],CMDS.HEIGHT[1]),
+                new propC(getGUID(),cn,5,top+3*h,10,10,0,CMDS.HEIGHT,CMDS.UNDEFINED[0],CMDS.HEIGHT[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new labelC(
-                new propC(getGUID(),cn,5,top+4*h,10,10,0,getFrameRate,CMDS.UNDEFINED[0],CMDS.FRAMERATE[1]),
+                new propC(getGUID(),cn,5,top+4*h,10,10,0,CMDS.FRAMERATE,CMDS.UNDEFINED[0],CMDS.FRAMERATE[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new labelC(
-                new propC(getGUID(),cn,5,top+5*h,10,10,0,getFrameRateA,CMDS.UNDEFINED[0],CMDS.FRAMERATEA[1]),
+                new propC(getGUID(),cn,5,top+5*h,10,10,0,CMDS.FRAMERATEA,CMDS.UNDEFINED[0],CMDS.FRAMERATEA[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new labelC(
-                new propC(getGUID(),cn,5,top+6*h,10,10,0,getMouseX,CMDS.UNDEFINED[0],CMDS.MOUSEX[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
-
-
-    ctrls.push(new labelC(
-                new propC(getGUID(),cn,5,top+7*h,10,10,0,getMouseY,CMDS.UNDEFINED[0],CMDS.MOUSEY[1]),
+                new propC(getGUID(),cn,5,top+6*h,10,10,0,CMDS.MOUSEX,CMDS.UNDEFINED[0],CMDS.MOUSEX[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
 
     ctrls.push(new labelC(
-                new propC(getGUID(),cn,5,top+8*h,10,10,0,getPressed,CMDS.UNDEFINED[0],CMDS.PRESSED[1]),
+                new propC(getGUID(),cn,5,top+7*h,10,10,0,CMDS.MOUSEY,CMDS.UNDEFINED[0],CMDS.MOUSEY[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+
+    ctrls.push(new labelC(
+                new propC(getGUID(),cn,5,top+8*h,10,10,0,CMDS.PRESSED,CMDS.UNDEFINED[0],CMDS.PRESSED[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
@@ -1134,6 +1298,152 @@ var proc = function(processingInstance){ with (processingInstance){
     return cn;
 
   };
+  var getColors=function(parent){
+
+    var ctrls=[];
+    var top=30;
+    var h=(128-25)/6;
+    var l=10;
+    var ch=200;
+
+    var cn=new container(
+            new propC(getGUID(),parent, 500, 100, 200, ch, 3, false, CMDS.UNDEFINED[0],0),
+            getStyle(STYLES.CONTAINER),
+            getStyle(STYLES.TEXT));	
+		
+		//~ Colors
+    ctrls.push(new button(
+                new propC(getGUID(),cn, l+0*h, top, h, h, 0, CLRS.Red, CMDS.COLOR[0]	,0),
+                new propL(CLRS.Red, CLRS.Red, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new button(
+                new propC(getGUID(),cn, l+1*h+5, top, h, h, 0, CLRS.RedOrange, CMDS.COLOR[0], 0),
+                new propL(CLRS.RedOrange, CLRS.RedOrange, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new button(
+                new propC(getGUID(),cn, l+2*h+10, top, h, h, 0, CLRS.Orange, CMDS.COLOR[0], 0),
+                new propL(CLRS.Orange, CLRS.Orange, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new button(
+                new propC(getGUID(),cn, l+3*h+15, top, h, h, 0, CLRS.YellowOrange, CMDS.COLOR[0], 0),
+                new propL(CLRS.YellowOrange, CLRS.YellowOrange, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new button(
+                new propC(getGUID(),cn, l+4*h+20, top, h, h, 0, CLRS.Yellow, CMDS.COLOR[0],0),
+                new propL(CLRS.Yellow, CLRS.Yellow, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new button(
+                new propC(getGUID(),cn, l+5*h+25, top, h, h, 0, CLRS.YellowGreen, CMDS.COLOR[0],0),
+                new propL(CLRS.YellowGreen, CLRS.YellowGreen, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new button(
+                new propC(getGUID(),cn, l+0*h, top+1*h+5, h, h, 0, CLRS.Green, CMDS.COLOR[0], 0),
+                new propL(CLRS.Green, CLRS.Green, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new button(
+                new propC(getGUID(),cn, l+1*h+5, top+1*h+5, h, h, 0, CLRS.BlueGreen, CMDS.COLOR[0], 0),
+                new propL(CLRS.BlueGreen, CLRS.BlueGreen, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new button(
+                new propC(getGUID(),cn, l+2*h+10, top+1*h+5, h, h, 0, CLRS.Blue, CMDS.COLOR[0],0),
+                new propL(CLRS.Blue, CLRS.Blue, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new button(
+                new propC(getGUID(),cn, l+3*h+15, top+1*h+5, h, h, 0, CLRS.BlueViolet, CMDS.COLOR[0], 0),
+                new propL(CLRS.BlueViolet, CLRS.BlueViolet, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
+                getStyle(STYLES.TEXT)));
+                
+    ctrls.push(new button(
+                new propC(getGUID(),cn, l+4*h+20, top+1*h+5, h, h, 0, CLRS.Violet, CMDS.COLOR[0], 0),
+                new propL(CLRS.Violet, CLRS.Violet, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
+                getStyle(STYLES.TEXT)));
+                
+    ctrls.push(new button(
+                new propC(getGUID(),cn, l+5*h+25, top+1*h+5, h, h, 0, CLRS.RedViolet, CMDS.COLOR[0], 0),
+                new propL(getColor(CLRS.RedViolet,90), CLRS.RedViolet, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
+                getStyle(STYLES.TEXT)));
+		
+		//~ Gray Scale
+    ctrls.push(new button(
+                new propC(getGUID(),cn, l+0*h, top+2*h+10, h, h, 0, CLRS.White, CMDS.COLOR[0]	,0),
+                new propL(CLRS.White, CLRS.White, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new button(
+                new propC(getGUID(),cn, l+1*h+5, top+2*h+10, h, h, 0, CLRS.Gray1, CMDS.COLOR[0], 0),
+                new propL(CLRS.Gray1, CLRS.Gray1, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new button(
+                new propC(getGUID(),cn, l+2*h+10, top+2*h+10, h, h, 0, CLRS.Gray2, CMDS.COLOR[0], 0),
+                new propL(CLRS.Gray2, CLRS.Gray2, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new button(
+                new propC(getGUID(),cn, l+3*h+15, top+2*h+10, h, h, 0, CLRS.Gray3, CMDS.COLOR[0], 0),
+                new propL(CLRS.Gray3, CLRS.Gray3, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new button(
+                new propC(getGUID(),cn, l+4*h+20, top+2*h+10, h, h, 0, CLRS.Gray4, CMDS.COLOR[0],0),
+                new propL(CLRS.Gray4, CLRS.Gray4, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new button(
+                new propC(getGUID(),cn, l+5*h+25, top+2*h+10, h, h, 0, CLRS.Gray5, CMDS.COLOR[0],0),
+                new propL(CLRS.Gray5, CLRS.Gray5, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new button(
+                new propC(getGUID(),cn, l+0*h, top+3*h+15, h, h, 0, CLRS.Gray6, CMDS.COLOR[0], 0),
+                new propL(CLRS.Gray6, CLRS.Gray6, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new button(
+                new propC(getGUID(),cn, l+1*h+5, top+3*h+15, h, h, 0, CLRS.Gray7, CMDS.COLOR[0], 0),
+                new propL(CLRS.Gray7, CLRS.Gray7, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new button(
+                new propC(getGUID(),cn, l+2*h+10, top+3*h+15, h, h, 0, CLRS.Gray8, CMDS.COLOR[0],0),
+                new propL(CLRS.Gray8, CLRS.Gray8, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new button(
+                new propC(getGUID(),cn, l+3*h+15, top+3*h+15, h, h, 0, CLRS.Gray9, CMDS.COLOR[0], 0),
+                new propL(CLRS.Gray9, CLRS.Gray9, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
+                getStyle(STYLES.TEXT)));
+                
+    ctrls.push(new button(
+                new propC(getGUID(),cn, l+4*h+20, top+3*h+15, h, h, 0, CLRS.Gray10, CMDS.COLOR[0], 0),
+                new propL(CLRS.Gray10, CLRS.Gray10, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
+                getStyle(STYLES.TEXT)));
+                
+    ctrls.push(new button(
+                new propC(getGUID(),cn, l+5*h+25, top+3*h+15, h, h, 0, CLRS.Black, CMDS.COLOR[0], 0),
+                new propL(getColor(CLRS.Black,90), CLRS.Black, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
+                getStyle(STYLES.TEXT)));
+		
+		//~ Current Color
+    ctrls.push(new button(
+                new propC(getGUID(),cn, l+5*h+25, top+5*h+15, 40, 40, 0, CMDS.COLOR, CMDS.COLOR[0], true),
+                new propL(getColor(CLRS.Black,90), CLRS.Black, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
+                getStyle(STYLES.TEXT)));
+                                
+    cn.ctrls=ctrls;
+
+    return cn;
+
+  };
   var getHeader=function(parent){
 
     var ctrls=[];
@@ -1172,19 +1482,20 @@ var proc = function(processingInstance){ with (processingInstance){
     var ctrls=[];
 
     var cn=new container(
-            new propC(getGUID(),0,5,5,app.width-10, app.height-10,2,false,CMDS.CONTAINER[0],CMDS.CONTAINER[1]),
+            new propC(getGUID(),0,5,5,app.width-10, app.height-10,2,false,CMDS.UNDEFINED[0],0),
             getStyle(STYLES.BACKGROUND),
             getStyle(STYLES.TEXT));
 
     ctrls.push(new labelR(
-            new propC(getGUID(),cn,cn.w/2,cn.h/2,10,10,0,getDebug,CMDS.NAME[0],CMDS.CARTESIA[1]),
+            new propC(getGUID(),cn,cn.w/2,cn.h/2,10,10,0,false,CMDS.UNDEFINED[0],CMDS.CARTESIA[1]),
             getStyle(STYLES.BUTTON),
             getStyle(STYLES.TEXTCENTER)));
 
     ctrls.push(getHeader(cn));
     ctrls.push(getFooter(cn));
-    ctrls.push(getProperties(cn));
+    //~ ctrls.push(getProperties(cn));
     ctrls.push(getTelemetry(cn));
+		ctrls.push(getColors(cn));
 
     cn.ctrls=ctrls;
 
@@ -1196,7 +1507,7 @@ var proc = function(processingInstance){ with (processingInstance){
 
     saveStrings('Rectangle', CMDS.RECTANGLE);
 
-    println(loadStrings("Rectangle"));
+    //~ println(loadStrings("Rectangle"));
 
   };
 
