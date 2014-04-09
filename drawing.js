@@ -73,239 +73,230 @@ var proc = function(processingInstance){ with (processingInstance){
     FOUR:   4,
     FIVE:   5
   };
-    
+
   var CMDS={
 
-    COMMAND:            [-1000,	'Command',		    'COMMAND'           ],
+    COMMAND:      [-1000, 'Command',        'COMMAND'                 ],
+    UNDEF:        [  -1,   'undefined',      'UNDEFINED'              ],
+
+    //~ General ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    CARTESIA:     [   0,   'Cartesia',       'CARTESIA'               ],
+
+    CONTAINER:    [   1,   'Container',      'CONTAINER'              ],
+    HEADER:       [   2,   'Header',         'HEADER'                 ],
+    FOOTER:       [   3,   'Footer',         'FOOTER'                 ],
+    TELEMETRY:    [   4,   'Telemetry',      'TELEMETRY'              ],
+    TOOLTIP:      [   3,  'ToolTip',        'TOOLTIP'                 ],
+    FORMULA:      [   4,  'Formula',        'FORMULA'                 ],
+
+    DEBUG:        [   5,  'Debug',          'DEBUG'                   ],
+    WIDTH:        [   6,  'Width',          'Width'                   ],
+    HEIGHT:       [   7,  'Height',         'HEIGHT'                  ],
+    FRAMERATEA:   [   8,  'FrameRate(A)',   'FRAMERATE(A)'            ],
+    FRAMERATE:    [   9,  'FrameRate',      'FRAMERATE'               ],
+    MOUSEX:       [  10,  'MouseX',         'MOUSEX'                  ],
+    MOUSEY:       [  11,  'MouseY',         'MOUSEY'                  ],
+    PRESSED:      [  12,  'Pressed',        'PRESSED'                 ],
+    VISIBLE:      [  13,  'VISIBLE',        'VISIBLE'                 ],
+
+    FOCUS:        [  14,  'Focus',         'FOCUS'                    ],
+
+    LEFT:         [  15,  'Left button',   'LEFT'                     ],
+    CENTER:       [  16,  'Center button', 'CENTER'                   ],
+    RIGHT:        [  17,  'Right button',  'RIGHT'                    ],
+
+    SPACER:       [  18,  'Spacer',         'SPACER'                  ],
+
+
+    //~ Misc ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    SNAPTOGRID:   [  19,   'SnapToGrid',     'SNAPTOGRID'             ],
+    ORTHO:        [  20,   'Ortho',          'ORTHO'                  ],
+    COORDINATES:  [  21,   'Coordinates',    'COORDINATES'            ],
+    COLORS:       [  22,   'Colors',         'COLORS'                 ],
+
+    RED:          [  23,   'Red',            'RED'                    ],
+    BLUE:         [  24,  'Blue',         'BLUE'                      ],
+    GREEN:        [  25,  'Green',          'GREEN'                   ],
+
+
+    //~ File ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    FILE:         [ 100,  'File',           'FILE'                    ],
+    NEW:          [ 101,  'New',            'NEW'                     ],
+    OPEN:         [ 102,  'Open',           'OPEN'                    ],
+    SAVE:         [ 103,  'Save',           'SAVE'                    ],
+    SAVEAS:       [ 104,  'Save As',        'SAVEAS'                  ],
+    CLOSE:        [ 105,  'Close',          'CLOSE'                   ],
+
+
+    //~ Edit ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    EDIT:         [ 200,  'Edit',           'EDIT'                    ],
+    UNDO:         [ 201,  'Undo',           'UNDO'                    ],
+    REDO:         [ 202,  'Redo',           'REDO'                    ],
+    COPY:         [ 203,  'Copy',           'COPY'                    ],
+    CUT:          [ 204,  'Cut',            'CUT'                     ],
+    PASTE:        [ 205,  'Paste',          'PASTE'                   ],
+    EDIT:         [ 206,  'Edit',           'EDIT'                    ],
+    DELETE:       [ 207,  'Delete',         'DELETE'                  ],
+
+
+    //~ View ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    VIEW:         [ 300,  'View',           'VIEW'                    ],
+    ZOOMIN:       [ 301,  'Zoomin',         'ZOOMIN'                  ],
+    ZOOMOUT:      [ 302,  'Zoomout',        'ZOOMOUT'                 ],
+    PAN:          [ 303,  'Pan',            'PAN'                     ],
+
+
+    //~ Modify ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    MODIFY:       [ 400,  'Modify',         'MODIFY'                  ],
+    TRANSLATE:    [ 401,  'Translate',      'TRANSLATE'               ],
+    TRANSVECTOR:  [ 402,  'Transvector',    'TRANSVECTOR'             ],    //~ TranslateByVector
+
+    REFLECT:      [ 403,  'Reflect',        'REFLECT'                 ],
+    REFLECTTLINE: [ 404,  'ReflectLine',    'REFLECTLINE'             ],    //~ ReflectAboutLIne
+    REFLECTPOINT: [ 405,  'ReflectPoint',   'REFLECTPOINT'            ],    //~ ReflectAboutPoint
+    REFLECTCIRCLE:[ 406,  'ReflectCircle',  'REFLECTCIRCLE'           ],    //~ ReflectAboutCircle
+    
+    
+    ROTATE:       [ 407,  'Rotate',         'ROTATE'                  ],
+    ROTATEPOINT:  [ 408,  'RotatePoint',    'ROTATEPOINT'             ],    //~ RotateAroundPoint
+
+    SCALE:        [ 409,  'Scale',          'SCALE'                   ],
+    SHEAR:        [ 410,  'Shear',          'SHEAR'                   ],
+
+    //~ DILATEFROMPOINT:            [ 1,  'Dilatefrompoint',    'DILATEFROMPOINT' ]
+
+
+    //~ Measure ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    MEASURE:      [ 500,  'Measure',        'MEASURE'                 ],
+    DISTANCE:     [ 501,  'Distance',       'DISTANCE'                ],
+    PERIMETER:    [ 502,  'Perimeter',      'PERIMETER'               ],
+    AREA:         [ 503,  'Area',           'AREA'                    ],
+    VOLUMEN:      [ 504,  'Volume',         'VOLUME'                  ],
+    RADIUS:       [ 505,  'Radius',         'RADIUS'                  ],
+    DIAMETER:     [ 506,  'Diamter',        'DIAMETER'                ],
+    SLOPE:        [ 507,  'Slope',          'SLOPE'                   ],
+
+
+    //~ Layers ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    LAYER:        [ 600,  'Layer',          'LAYER'                   ],
+    FORWARD:      [ 601,  'Forward',        'FORWARD'                 ],
+    BACK:         [ 602,  'Back',           'BACK'                    ],
+
+
+    //~ Properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    PROPERTIES:   [ 700,  'Properties',     'PROPERTIES'              ],
+
+    MATCH:        [ 701,  'Match',          'MATCH'                   ],
+
+    NAME:         [ 702,  'Name',           'NAME'                    ],
+    CAPTION:      [ 703,  'Caption',        'CAPTION'                 ],
+
+    COLOR:        [ 704,  'Color',          'COLOR'                   ],
+    COLORG:       [ 705,  'ColorG',         'COLORG'                  ],
+    LAYER:        [ 706,  'Layer',          'LAYER'                   ],
+    LINETYPE:     [ 707,  'Line Type',      'LINE TYPE'               ],
+    LINEWEIGHT:   [ 708,  'Line Weight',    'LINE WEIGHT'             ],
+
+
+    //~ Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    BORDER:       [ 800, 'Border',         'BORDER'                   ],
+    ORIGIN:       [ 801, 'Origin',         'ORIGIN'                   ],
+
 
     //~  Shapes ========================================================
 
-    
+
     //~ Point (P) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    P:								  [	-100,	'Point',		      'POINT'             ],
-    P_OBJECT:           [	-101,	'Object',		      'Object'	          ],
-    P_INTERSECT:			  [	-102,	'Intersect',		  'Interset'	        ],
-    P_MIDPOINT:				  [	-103,	'Midpoint',       'Midpoint'	        ],    //~ Midpoint/Center
-    
-    //~ ATTACHDETACHPOINT:				[	1,	'Attachdetachpoint',		'ATTACHDETACHPOINT'	]
-
-    //~ COMPLEXNUMBER:						[	1,	'Complexnumber',		'COMPLEXNUMBER'	]
+    P:            [-100, 'Point',          'POINT'                    ],
+    P_OBJECT:     [-101, 'Object',         'OBJECT'                   ],
+    P_INTERSECT:  [-102, 'Intersect',      'INTERSECT'                ],
+    P_MIDPOINT:   [-103, 'Midpoint',       'MIDPOINT'                 ],    //~ Midpoint/Center
+    P_ATDETACH:   [-104, 'AttachDetach',   'ATTACHDETACH'             ],    //~ AttachDetachPoint
 
 
     //~ Line (L) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    L_2P:               [	1,	'Line2P',		        'LINE2P'	          ],    //~ through 2 points
-    L_SEGMENT2P:        [	1,	'Line',		          'LINE'	            ],    //~ between 2 points
-    L_SEGMENTLENGTH:    [	1,	'Line',		          'LINE'	            ],    //~ from point given length
-    L_PERP:             [	1,	'LinePerp',		      'LINEPERP'          ],    //~ perpendicular
-    L_PERPB:            [	1,	'LinePerpB',        'LINEPERPB'         ],    //~  perpendicular bisector
-    L_ANGB:             [	1,	'LineAngB',         'LINEANGB'          ],    //~ angle bisector
-    L_PARR:             [	1,	'LineParr',		      'LINEPARR'          ],    //~ parallel
-    L_TANGENT:          [	1,	'LineTangent',      'LINETANGENT'       ],    //~ Tangent
-    L_DIAMETER:         [	1,	'LineDiameter',     'LINEDIAMETER'      ],    //~ Diameter
-    L_RADIUS:           [	1,	'LineRadius',       'LINERADIUS'        ],    //~ Radius
-        
-    RAY_2P:             [	1,	'Ray2P',		        'RAY2P'	            ],    //~ Ray between 2 points
-    V_2P:               [	1,	'Vector2P',		      'VECTOR2P'	        ],    //~ Vector between 2 points
-    V_FP:               [	1,	'VectorFP',		      'VECTORFP'          ],    //~ Vector from point
+    L_2P:         [-200, 'Line2P',           'LINE2P'                 ],    //~ through 2 points
+    L_SEGMENT2P:  [-201,  'Line',             'LINE'                  ],    //~ between 2 points
+    L_SEGMENTLEN: [-202,  'Line',             'LINE'                  ],    //~ from point given length
+    L_PERP:       [-203,  'LinePerp',         'LINEPERP'              ],    //~ perpendicular
+    L_PERPB:      [-204,  'LinePerpB',        'LINEPERPB'             ],    //~  perpendicular bisector
+    L_ANGB:       [-205,  'LineAngB',         'LINEANGB'              ],    //~ angle bisector
+    L_PARR:       [-206,  'LineParr',         'LINEPARR'              ],    //~ parallel
+    L_TANGENT:    [-207,  'LineTangent',      'LINETANGENT'           ],    //~ Tangent
+    L_DIAMETER:   [-208,  'LineDiameter',     'LINEDIAMETER'          ],    //~ Diameter
+    L_RADIUS:     [-209,  'LineRadius',       'LINERADIUS'            ],    //~ Radius
 
-    //~ BESTFITLINE:							[	1,	'Bestfitline',		'BESTFITLINE'	]
-    //~ LOCUS:										    [	1,	'Locus',		'LOCUS'	]
-    //~ POLYLINE:									[	1,	'Polyline',		'POLYLINE'	]
+    RAY_2P:       [-210,  'Ray2P',            'RAY2P'                 ],    //~ Ray between 2 points
+    V_2P:         [-211,  'Vector2P',         'VECTOR2P'              ],    //~ Vector between 2 points
+    V_FP:         [-212,  'VectorFP',         'VECTORFP'              ],    //~ Vector from point
 
 
     //~ Polygon ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    POLYGON:            [	1,	'Polygon',		      'POLYGON'	          ],
-    POLYGONR:			      [	1,	'Regularpolygon',		'REGULARPOLYGIN'	  ],    //~ regular
-    RIGIDPOLYGON:				[	1,	'Rigidpolygon',		  'RIGIDPOLYGON'	    ],    //~ Rigig
-    POLYGONV:			      [	1,	'PolygonV',		      'POLYGONV'	        ],    //~ Vector
+    POLYGON:      [-300,  'Polygon',          'POLYGON'               ],
+    POLYGONR:     [-301,  'PolygonR',         'POLYGONR'              ],    //~ regular
+    RIGIDPOLYGON: [-302,  'PolygonRigid',     'POLYGONRIGID'          ],    //~ Rigig
+    POLYGONV:     [-303,  'PolygonV',         'POLYGONV'              ],    //~ Vector
 
 
     //~ Circle (C)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    C_CENTERP:          [	1,	'CircleCenterP',		'CIRCLECENTERP'     ],    //~ center point
-    C_CENTERR:	        [	1,	'CircleCenterR',		'CIRCLECENTERR'	    ],    //~ center radius
-    
-    C_3P:				        [	1,	'Circle3P',		      'CIRCL3P'	          ],    //  3 points
+    C_CENTERP:    [-400,  'CircleCenterP',    'CIRCLECENTERP'         ],    //~ center point
+    C_CENTERR:    [-401,  'CircleCenterR',    'CIRCLECENTERR'         ],    //~ center radius
+
+    C_3P:         [-402,  'Circle3P',         'CIRCL3P'               ],    //  3 points
 
 
     //~ Arc (A)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    A_2P:	              [	1,	'Arc2P',		        'ARC2P'	            ],    //~SEMICIRCLETHROUGH2POINTS
-    A_1:					      [	1,	'Arc1',		          'ARC1'	            ],    //~Circulararc
-    A_2:		            [	1,	'Arc2',		          'ARC2'	            ],    //~CIRCUMCIRCULARARC
-    A_3:		            [	1,	'Arc3',		          'ARC4'	            ],    //~ CIRCULARSECTOR
-    A_4:				        [	1,	'Arc4',		          'ARC4'	            ],    //~ CIRCUMCIRCULARSECTOR
+    A_2P:         [-500,  'Arc2P',            'ARC2P'                 ],    //~SEMICIRCLETHROUGH2POINTS
+    A_1:          [-501,  'Arc1',             'ARC1'                  ],    //~Circulararc
+    A_2:          [-502,  'Arc2',             'ARC2'                  ],    //~CIRCUMCIRCULARARC
+    A_3:          [-503,  'Arc3',             'ARC4'                  ],    //~ CIRCULARSECTOR
+    A_4:          [-504,  'Arc4',             'ARC4'                  ],    //~ CIRCUMCIRCULARSECTOR
 
-    
-    COMPASS:            [	1,	'Compass',		      'COMPASS'	          ],    //~ ??
+
+    COMPASS:      [-504,  'Compass',          'COMPASS'               ],    //~ ??
 
 
     //~ Conics (S) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    S_ELLIPSE:					[	1,	'Ellipse',          'ELLIPSE'	          ],
-    S_HYPERBOLA:				[	1,	'Hyperbola',		    'HYPERBOLA'	        ],
-    S_PARABOLA:         [	1,	'Parabola',		      'PARABOLA'	        ],
-    S_5POINTS:				  [	1,	'Conic5points',		  'CONIC5POINTS'	    ],
+    S_ELLIPSE:    [-600,  'Ellipse',          'ELLIPSE'               ],
+    S_HYPERBOLA:  [-601,  'Hyperbola',        'HYPERBOLA'             ],
+    S_PARABOLA:   [-602,  'Parabola',         'PARABOLA'              ],
+    S_5POINTS:    [-603,  'Conic5points',     'CONIC5POINTS'          ],
 
 
     //~ Angle ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    ANGLE:							[	1,	'Angle',		        'ANGLE'	            ],
-    ANGLE_SIZE:         [	1,	'AngelSize',		    'ANGELSIZE'         ],
+    ANGLE:        [-700,  'Angle',            'ANGLE'                 ],
+    ANGLE_SIZE:   [-701,  'AngelSize',        'ANGELSIZE'             ],
 
 
     //~ Annotation ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    TEXT:               [	1,	'Text',		          'TEXT'	            ],
+    TEXT:         [-800,  'Text',             'TEXT'                  ],
 
 
     //~ Images ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    
-    IMAGE:						  [	1,	'Image',		        'IMAGE'	            ],
-    SKECTH:							[	1,	'SKETCH',		        'SKETCH'	          ],
 
-    //~ PEN:												[	1,	'Pen',		'PEN'	]
-    
-    //~ RELATION:									  [	1,	'Relation',		'RELATION'	]
-    //~ PROBABILITYCALCULATOR:			[	1,	'Probabilitycalculator',		'PROBABILITYCALCULATOR'	]
-    //~ SLIDER:										  [	1,	'Slider',		'SLIDER'	]
-    //~ BUTTON:										  [	1,	'Button',		'BUTTON'	]
-    //~ INPUTBOX:									  [	1,	'Inputbox',		'INPUTBOX'	]
-    //~ MOVEGRAPHICSVIEW:				    [	1,	'Movegraphicsview',		'MOVEGRAPHICSVIEW'	]
+    IMAGE:        [-900,  'Image',            'IMAGE'                 ],
+    SKECTH:       [-901,  'SKETCH',           'SKETCH'                ],
+        
+    //~ PEN:                        [ 1,  'Pen',    'PEN' ]
 
-    //~ SHOWHIDEOBJECT:							[	1,	'Showhideobject',		'SHOWHIDEOBJECT'	]
-    //~ SHOWHIDELABEL:							[	1,	'Showhidelabel',		'SHOWHIDELABEL'	]
-    
-    //~ CREATELIST:									[	1,	'Createlist',		'CREATELIST'	]
+    //~ RELATION:                   [ 1,  'Relation',   'RELATION'  ]
+    //~ PROBABILITYCALCULATOR:      [ 1,  'Probabilitycalculator',    'PROBABILITYCALCULATOR' ]
+    //~ SLIDER:                     [ 1,  'Slider',   'SLIDER'  ]
+    //~ BUTTON:                     [ 1,  'Button',   'BUTTON'  ]
+    //~ INPUTBOX:                   [ 1,  'Inputbox',   'INPUTBOX'  ]
 
-
-
-    FOCUS:        [-13,  'Focus',         'FOCUS'           ],
-  
-    LEFT:         [-12,  'Left button',   'LEFT'            ],
-    CENTER:       [-11,  'Center button', 'CENTER'          ],
-    RIGHT:        [-10,  'Right button',  'RIGHT'           ],
-
-    SPACER:       [-1,  'Spacer',         'SPACER'          ],
-
-    //~ General ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    CARTESIA:     [1,   'Cartesia',       'CARTESIA'        ],
-
-    UNDEF:        [0,   'undefined',      'UNDEFINED'       ],
-
-    CONTAINER:    [1,   'Container',      'CONTAINER'       ],
-    HEADER:       [2,   'Header',         'HEADER'          ],
-    FOOTER:       [3,   'Footer',         'FOOTER'          ],
-    TELEMETRY:    [4,   'Telemetry',      'TELEMETRY'       ],
-
-    //~ Misc ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    SNAPTOGRID:   [5,   'SnapToGrid',     'SNAPTOGRID'      ],
-    ORTHO:        [6,   'Ortho',          'ORTHO'           ],
-    COORDINATES:  [7,   'Coordinates',    'COORDINATES'     ],
-    COLORS:       [8,   'Colors',         'COLORS'          ],
-
-    RED:          [9,   'Red',            'RED'             ],
-    BLUE:         [10,  'Blue',         'BLUE'              ],
-    GREEN:        [11,  'Green',          'GREEN'           ],
-
-
-    //~ File ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    NEW:          [12,  'New',            'NEW'             ],
-    OPEN:         [13,  'Open',           'OPEN'            ],
-    SAVE:         [14,  'Save',           'SAVE'            ],
-    SAVEAS:       [15,  'Save As',        'SAVEAS'          ],
-
-    CLOSE:        [16,  'Close',          'CLOSE'           ],
-
-
-    //~ Edit ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    UNDO:         [17,  'Undo',           'UNDO'            ],
-    REDO:         [18,  'Redo',           'REDO'            ],
-    COPY:         [19,  'Copy',           'COPY'            ],
-    CUT:          [20,  'Cut',            'CUT'             ],
-
-    PASTE:        [21,  'Paste',          'PASTE'           ],
-    EDIT:         [22,  'Edit',           'EDIT'            ],
-    DELETE:       [23,  'Delete',         'DELETE'          ],
-
-
-    //~ View ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    //~ ZOOMIN:									    [	1,	'Zoomin',		'ZOOMIN'	]
-    //~ ZOOMOUT:									  [	1,	'Zoomout',		'ZOOMOUT'	]
-    //~ PAN:									      [	1,	'Pan',		'PAN'	]
-
-    
-    //~ Transform ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    TRANSLATE:    [24,  'Translate',      'TRANSLATE'       ],
-    REFLECT:      [25,  'Reflect',        'REFLECT'         ],
-    ROTATE:       [26,  'Rotate',         'ROTATE'          ],
-    SCALE:        [27,  'Scale',          'SCALE'           ],
-    SHEAR:        [28,  'Shear',          'SHEAR'           ],
-
-    //~ REFLECTABOUTLINE:						[	1,	'Reflectaboutline',		'REFLECTABOUTLINE'	]
-    //~ REFLECTABOUTPOINT:				  [	1,	'Reflectabouttpoint',		'REFLECTABOUTPOINT'	]
-    //~ REFLECTABOUTCIRCLE:				  [	1,	'Reflectaboutcircle',		'REFLECTABOUTCIRCLE'	]
-    //~ ROTATEAROUNDPOINT:				  [	1,	'Rotatearoundpoint',		'ROTATEAROUNDPOINT'	]
-    //~ TRANSLATEBYVECTOR:				  [	1,	'Translatebyvector',		'TRANSLATEBYVECTOR'	]
-
-    //~ DILATEFROMPOINT:						[	1,	'Dilatefrompoint',		'DILATEFROMPOINT'	]
-
-    
-    //~ Measure ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    DISTANCE:     [29,  'Distance',       'DISTANCE'        ],
-    PERIMETER:    [30,  'Perimeter',      'PERIMETER'       ],
-    AREA:         [31,  'Area',           'AREA'            ],
-    VOLUMEN:      [32,  'Volume',         'VOLUME'          ],
-    RADIUS:       [33,  'Radius',         'RADIUS'          ],
-    DIAMETER:     [34,  'Diamter',        'DIAMETER'        ],
-    //~ DISTANCEORLENGTH:						[	1,	'Distanceorlength',		'DISTANCEORLENGTH'	]
-    //~ AREA:												[	1,	'Area',		'AREA'	]
-    //~ SLOPE:											[	1,	'Slope',		'SLOPE'	]
-
-    
-    //~ Layers ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    LAYER:        [35,  'Layer',          'LAYER'           ],
-    FORWARD:      [36,  'Forward',        'FORWARD'         ],
-    BACK:         [37,  'Back',           'BACK'            ],
-
-
-    //~ Properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    PROPERTIES:   [38,  'Properties',     'PROPERTIES'      ],
-
-    MATCH:        [39,  'Match',          'MATCH'           ],
-
-    NAME:         [40,  'Name',           'NAME'            ],
-    CAPTION:      [41,  'Caption',        'CAPTION'         ],
-
-    COLOR:        [42,  'Color',          'COLOR'           ],
-    COLORG:       [60,  'ColorG',         'COLORG'          ],
-    LAYER:        [43,  'Layer',          'LAYER'           ],
-    LINETYPE:     [44,  'Line Type',      'LINE TYPE'       ],
-    LINEWEIGHT:   [45,  'Line Weight',    'LINE WEIGHT'     ],
-
-    //~ COPYVISUALSTYLE:						[	1,	'Copyvisualstyle',		'COPYVISUALSTYLE'	]
-
-
-    //~ Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    BORDER:       [100, 'Border',         'BORDER'          ],
-    ORIGIN:       [101, 'Origin',         'ORIGIN'          ],
-
-
-    //~ Misc ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    
-    TOOLTIP:      [46,  'ToolTip',        'TOOLTIP'         ],
-    FORMULA:      [47,  'Formula',        'FORMULA'         ],
-
-    DEBUG:        [48,  'Debug',          'DEBUG'           ],
-    WIDTH:        [49,  'Width',          'Width'           ],
-    HEIGHT:       [50,  'Height',         'HEIGHT'          ],
-    FRAMERATEA:   [51,  'FrameRate(A)',   'FRAMERATE(A)'    ],
-    FRAMERATE:    [52,  'FrameRate',      'FRAMERATE'       ],
-    MOUSEX:       [53,  'MouseX',         'MOUSEX'          ],
-    MOUSEY:       [54,  'MouseY',         'MOUSEY'          ],
-    PRESSED:      [55,  'Pressed',        'PRESSED'         ]
+    //~ CREATELIST:                 [ 1,  'Createlist',   'CREATELIST'  ]
+    //~ COMPLEXNUMBER:            [ 1,  'Complexnumber',    'COMPLEXNUMBER' ]
+    //~ BESTFITLINE:              [ 1,  'Bestfitline',    'BESTFITLINE' ]
+    //~ LOCUS:                        [ 1,  'Locus',    'LOCUS' ]
+    //~ POLYLINE:                 [ 1,  'Polyline',   'POLYLINE'  ]
     
   }
 
@@ -359,7 +350,7 @@ var proc = function(processingInstance){ with (processingInstance){
 
   //~ Methods ==========================================================
   var getGUID=function(){
-             
+
     //~ return year()   + ''  +
            //~ month()  + ''  +
            //~ day()    + ''  +
@@ -440,36 +431,36 @@ var proc = function(processingInstance){ with (processingInstance){
     switch(c){
 
     //~ Points ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      case CMDS.P[0]:							println('Point:');            break;
+      case CMDS.P[0]:             println('Point:');            break;
       case CMDS.P_OBJECT[0]:      println('Point: bound');      break;
-      case CMDS.P_INTERSECT[0]:		println('Point: interset');   break;
+      case CMDS.P_INTERSECT[0]:   println('Point: interset');   break;
       case CMDS.P_MIDPOINT[0]:    println('Point: midpoint');   break;
 
-      case CMDS.ORIGIN[0]:          app.origin=p;                 break;
-      case CMDS.BORDER[0]:         app.border=p;                 break;
+      case CMDS.ORIGIN[0]:        app.origin=p;                 break;
+      case CMDS.BORDER[0]:        app.border=p;                 break;
 
-      case CMDS.FRAMERATE[0]: frameRate(p);
-                              app.frameRate=p;
-                              break;
+      case CMDS.FRAMERATE[0]:     frameRate(p);
+                                  app.frameRate=p;
+                                  break;
 
-      case CMDS.DEBUG[0]:     app.debug=!app.debug;
-                              if(app.debug){ frameRate(0);  }
-                              else         { frameRate(31); }
-                              break;
+      case CMDS.DEBUG[0]:         app.debug=!app.debug;
+                                  if(app.debug){ frameRate(0);  }
+                                  else         { frameRate(31); }
+                                  break;
 
-      case CMDS.COLORG[0]:    return app.color;
+      case CMDS.COLORG[0]:        return app.color;
 
-      case CMDS.COLOR[0]:     app.color=p;
-                              app.red=red(app.color);
-                              app.green=green(app.color);
-                              app.blue=blue(app.color);
-                              break;
+      case CMDS.COLOR[0]:         app.color=p;
+                                  app.red=red(app.color);
+                                  app.green=green(app.color);
+                                  app.blue=blue(app.color);
+                                  break;
 
       //~ case CMDS.RECTANGLE[0]: println('Rectangle');         break;
 
-      case CMDS.RED[0]:       app.red=red(app.color);       break;
-      case CMDS.GREEN[0]:     app.green=green(app.color);   break;
-      case CMDS.BLUE[0]:      app.blue=blue(app.color);     break;
+      case CMDS.RED[0]:           app.red=red(app.color);       break;
+      case CMDS.GREEN[0]:         app.green=green(app.color);   break;
+      case CMDS.BLUE[0]:          app.blue=blue(app.color);     break;
 
       default:  break;
 
@@ -593,7 +584,7 @@ var proc = function(processingInstance){ with (processingInstance){
          mouseY>y+this.y && mouseY<y+this.y+this.h){
         this.hit=true;
         app.focus=this.i;
-        
+
       }
       else{
         this.hit=false;
@@ -882,7 +873,7 @@ var proc = function(processingInstance){ with (processingInstance){
       pushStyle();
 
         rectMode(CENTER);
-        
+
         switch(p.c){
 
           case CMDS.P[0]:
@@ -893,17 +884,17 @@ var proc = function(processingInstance){ with (processingInstance){
             noStroke();
             fill(cPNT);
 
-            ellipse(d+cX, d+cY, sz, sz);  
+            ellipse(d+cX, d+cY, sz, sz);
 
             break;
-            
+
           case CMDS.P_OBJECT[0]:
 
-            fill(cFILL);          
+            fill(cFILL);
             strokeWeight(0.5);
             stroke(cLINE);
 
-            beginShape();          
+            beginShape();
               vertex(d+cX-10, d+cY-10);
               vertex(d+cX-10, d+cY+5)
               vertex(d+cX+10, d+cY+10);
@@ -918,12 +909,12 @@ var proc = function(processingInstance){ with (processingInstance){
 
             noStroke();
             fill(cPNT);
-            
+
             ellipse(d+cX-10, d+cY-10, sz, sz);
             ellipse(d+cX-10, d+cY+5,  sz, sz)
             ellipse(d+cX+10, d+cY+10, sz, sz);
             ellipse(d+cX+4,  d+cY-6,  sz, sz);
-            
+
             break;
 
           case CMDS.P_INTERSECT[0]:
@@ -936,10 +927,10 @@ var proc = function(processingInstance){ with (processingInstance){
             line(d+cX+4,  d+cY+10, d+cX-4, d+cY-10);
 
             noStroke();
-            strokeWeight(0.5);            
+            strokeWeight(0.5);
             fill(cPNT);
 
-            ellipse(d+cX, d+cY, sz, sz);  
+            ellipse(d+cX, d+cY, sz, sz);
 
             break;
 
@@ -951,12 +942,12 @@ var proc = function(processingInstance){ with (processingInstance){
             stroke(cLINE);
 
             line(d+cX-10, d+cY+10, d+cX+10, d+cY-10);
-            
+
             noStroke();
             strokeWeight(0);
             fill(cPNT);
 
-            ellipse(d+cX, d+cY, sz, sz);  
+            ellipse(d+cX, d+cY, sz, sz);
 
             break;
 
@@ -971,11 +962,11 @@ var proc = function(processingInstance){ with (processingInstance){
     pushMatrix();
 
       translate(p.x, p.y);
-  
+
         pushStyle();
 
-          //~ rectMode(CENTER);          
-          
+          //~ rectMode(CENTER);
+
           fill(p.fill);
           stroke(p.stroke);
           strokeWeight(p.weight);
@@ -1006,7 +997,7 @@ var proc = function(processingInstance){ with (processingInstance){
             default:      break;
 
           }
-          
+
           fill(p.tfill);
 
           //~ textAlign(p.alignX,p.alignY);
@@ -1032,7 +1023,7 @@ var proc = function(processingInstance){ with (processingInstance){
       //~ println(this.c, this.g);
       commands(this.c, this.g);
                   //~ println(p.parent.ctrls.length);
-            
+
       this.parent.ctrls[0].c=this.c;
       this.parent.ctrls[0].g=this.g;
 
@@ -1272,7 +1263,7 @@ var proc = function(processingInstance){ with (processingInstance){
             rect(d,d,p.w*0.6,p.h*0.6);
 
           }
-          
+
           fill(p.tfill);
 
           textAlign(p.alignX,p.alignY);
@@ -1440,13 +1431,13 @@ var proc = function(processingInstance){ with (processingInstance){
 
     var p=this;
     var d=0;
-    
+
     pushMatrix();
 
       translate(p.x, p.y);
 
         pushStyle();
-        
+
           //~ set width
           if(p.v){ p.w=p.ctrls[0].w*p.ctrls.length+10; }
           else   { p.w=p.ctrls[0].w+10;                }
@@ -1463,7 +1454,7 @@ var proc = function(processingInstance){ with (processingInstance){
           }
 
           noStroke();
-          
+
           rect(d, d, p.w, p.h, p.r);
 
           fill(color(32,32,32));
@@ -1471,7 +1462,7 @@ var proc = function(processingInstance){ with (processingInstance){
           if(p.hit && p.hitExpand){
             fill(color(48,48,48));
           }
-          
+
           rect(d+p.w-9, d+1, 8, p.h-2, 0);
 
           fill(CLRS.Gray_9);
@@ -1479,7 +1470,7 @@ var proc = function(processingInstance){ with (processingInstance){
           if(p.hit && p.hitExpand){
             fill(CLRS.Gray_6);
           }
-          
+
           if(p.v){
             triangle(d+p.w-2, d+p.h/2-3,
                      d+p.w-7, d+p.h/2,
@@ -1510,19 +1501,19 @@ var proc = function(processingInstance){ with (processingInstance){
   strip.prototype.clicked=function(){
     if(this.hit){
       if(app.focus===this.i){
-        this.v=!this.v;        
+        this.v=!this.v;
       }
       //~ commands(this.c, this.v);
       for(var c in this.ctrls){ this.ctrls[c].clicked() }
     }
   };
   strip.prototype.moved=function(x,y){
-    
+
     if(this.alignX===LEFT){
 
       if(mouseX>x+this.x && mouseX<x+this.x+this.w &&
          mouseY>y+this.y && mouseY<y+this.y+this.h){
-           
+
         this.hit=true;
 
         if(mouseX>x+this.x+this.w-10){
@@ -1616,7 +1607,7 @@ var proc = function(processingInstance){ with (processingInstance){
 
   };
 
-  
+
   //~ Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var grid=function(cp,lp,ap,ctrls){
     control.call(this,cp,lp,ap,ctrls);
@@ -1778,25 +1769,25 @@ var proc = function(processingInstance){ with (processingInstance){
     var crosshair=function(){
 
       pushStyle();
-      
+
         noCursor();
-        
+
         pushMatrix();
-          
+
           resetMatrix();
           translate(0.5,0.5);
 
             rectMode(CENTER);
-            
+
             stroke(app.color);
-          
+
             //~ horizontal
             line(mouseX-20, mouseY, mouseX-5,  mouseY);
             line(mouseX+5,  mouseY, mouseX+20, mouseY);
 
             //~ vertical
             line(mouseX, mouseY-5, mouseX, mouseY-20);
-            line(mouseX, mouseY+5, mouseX, mouseY+20);            
+            line(mouseX, mouseY+5, mouseX, mouseY+20);
 
             rect(mouseX,mouseY,8,8);
 
@@ -1821,12 +1812,12 @@ var proc = function(processingInstance){ with (processingInstance){
           if(app.origin){ origin();    }
           //~ if(true)      { crosshair(); }
           cursor(CROSS);
-          
+
           stroke(app.color);
           strokeWeight(3);
           noFill();
           ellipse(0,0,300,200);
-          
+
         popStyle();
 
         for(var c in p.ctrls){ p.ctrls[c].draw() }
@@ -1872,7 +1863,7 @@ var proc = function(processingInstance){ with (processingInstance){
       case RIGHT:
 
         //~ println(mouseButton);
-        
+
         //~ for(var c in app.dwg.ctrls){ app.dwg.ctrls[c].clickedR() }
         break;
 
@@ -2001,17 +1992,17 @@ var proc = function(processingInstance){ with (processingInstance){
     var l=parent.w-202;
     var ch=app.height-14;
     var w=36;
-    
+
     var cn=new strip(
             new propC(getGUID(), parent, 500,50, w+10, w+10, 1, true, CMDS.ORIGIN[0], CMDS.CONTAINER[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
 
     //~ Points ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    //~ PNT:								[	-100,	'Point',		      'POINT'             ],
-    //~ PNT_OBJECT:         [	-101,	'Object',		      'Object'	          ],
-    //~ PNT_INTERSECT:			[	-102,	'Intersect',		  'Interset'	        ],
-    //~ PNT_MIDPOINT:				[	-103,	'Midpoint',       'Midpoint'	        ],
+    //~ PNT:                [ -100, 'Point',          'POINT'             ],
+    //~ PNT_OBJECT:         [ -101, 'Object',         'Object'            ],
+    //~ PNT_INTERSECT:      [ -102, 'Intersect',      'Interset'          ],
+    //~ PNT_MIDPOINT:       [ -103, 'Midpoint',       'Midpoint'          ],
     ctrls.push(new buttonI(
                 new propC(getGUID(), cn, 0*w, 0, w, w, 0, false, CMDS.P[0], CMDS.P[1]),
                 getStyle(STYLES.BUTTON),
@@ -2042,7 +2033,7 @@ var proc = function(processingInstance){ with (processingInstance){
     return cn;
 
   };
-  
+
   var getGrid=function(parent){
 
     var ctrls=[];
@@ -2145,7 +2136,7 @@ var proc = function(processingInstance){ with (processingInstance){
     ctrls.push(new label(
                 new propC(getGUID(), cn, 5, top+13*h, 10, 10, 0, false, CMDS.UNDEF[0], CMDS.RIGHT[1]),
                 getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));                
+                getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
                 new propC(getGUID(), cn, 5, top+15*h, 10, 10, 0, false, CMDS.UNDEF[0], CMDS.FOCUS[1]),
@@ -2156,7 +2147,7 @@ var proc = function(processingInstance){ with (processingInstance){
                 new propC(getGUID(), cn, 5, top+17*h, 10, 10, 0, false, CMDS.UNDEF[0], CMDS.COMMAND[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
-                
+
     //~ Values ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ctrls.push(new checkbox(
                 new propC(getGUID(), cn, 105, top+0*h+5, 10, 10, 0, false, CMDS.DEBUG[0], CMDS.DEBUG[1]),
@@ -2219,7 +2210,7 @@ var proc = function(processingInstance){ with (processingInstance){
                 new propC(getGUID(), cn, 100, top+17*h, 10, 10, 0, false, CMDS.COMMAND[0], CMDS.COMMAND[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
-                
+
     cn.ctrls=ctrls;
 
     return cn;
@@ -2577,7 +2568,7 @@ var proc = function(processingInstance){ with (processingInstance){
             getStyle(STYLES.TEXTCENTER)));
 
     ctrls.push(getPoints(cn));
-    
+
     ctrls.push(getHeader(cn));
     ctrls.push(getFooter(cn));
     ctrls.push(getProperties(cn));
