@@ -25,21 +25,22 @@ var proc = function(processingInstance){ with (processingInstance){
 
     TEXT:     color(255,255,255),
 
-    Red:      color(255,0,0),     RedOrange:    color(255,81,0),
-    Orange:   color(255,127,0),   YellowOrange: color(255,190,0),
-    Yellow:   color(255,255,0),   YellowGreen:  color(192,255,0),
-    Green:    color(0,255,0),     BlueGreen:    color(0,127,127),
-    Blue:     color(0,0,255),     BlueViolet:   color(92,0,255),
-    Violet:   color(127,0,255),   RedViolet:    color(191,0,127),
+    Red:      color(255,0,0),         RedOrange:    color(255,81,0),
+    Orange:   color(255,127,0),       YellowOrange: color(255,190,0),
+    Yellow:   color(255,255,0),       YellowGreen:  color(192,255,0),
+    Green:    color(0,255,0),         BlueGreen:    color(0,127,127),
+    Blue:     color(0,0,255),         BlueViolet:   color(92,0,255),
+    Violet:   color(127,0,255),       RedViolet:    color(191,0,127),
 
-    Gray1:    color(255*10/11),   Gray2:        color(255*9/11),
-    Gray3:    color(255*8/11),    Gray4:        color(255*7/11),
-    Gray5:    color(255*6/11),    Gray6:        color(255*5/11),
-    Gray7:    color(255*4/11),    Gray8:        color(255*3/11),
-    Gray9:    color(255*2/11),    Gray10:       color(255*1/11),
-    White:    color(255,255,255), Black:        color(0,0,0),
+    Gray1:    color(255*10/11),       Gray2:        color(255*9/11),
+    Gray3:    color(255*8/11),        Gray4:        color(255*7/11),
+    Gray5:    color(255*6/11),        Gray6:        color(255*5/11),
+    Gray7:    color(255*4/11),        Gray8:        color(255*3/11),
+    Gray9:    color(255*2/11),        Gray10:       color(255*1/11),
+    White:    color(255,255,255),     Black:        color(0,0,0),
 
-    BUTTONH:   color(16,16,16),    BUTTON:      color(24,24,24),
+    BUTTONH:   color(16,16,16),       BUTTON:      color(24,24,24),
+
     GRID:     color(33,40,48)
 
   };
@@ -1731,8 +1732,9 @@ var proc = function(processingInstance){ with (processingInstance){
           if(app.origin){ origin();    }
           //~ if(true)      { crosshair(); }
 
-          stroke(CLRS.WHITE);
+          stroke(app.color);
           strokeWeight(3);
+          noFill();
           ellipse(0,0,300,200);
           
         popStyle();
@@ -1865,7 +1867,7 @@ var proc = function(processingInstance){ with (processingInstance){
 
         case STYLES.CONTAINER:
 
-          style=new propL(getColor(color(25,30,36),90), color(25,30,36), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25);
+          style=new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25);
           break;
 
         case STYLES.BUTTON:
