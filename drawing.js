@@ -65,85 +65,122 @@ var proc = function(processingInstance){ with (processingInstance){
     DOTTED:   3,
     DASHDOT:  4
   };
-
+  var LINEWEIGHTS={
+    HALF:   0,
+    ONE:    1,
+    TWO:    2,
+    THREE:  3,
+    FOUR:   4,
+    FIVE:   5
+  };
+    
   var CMDS={
+
+    COMMAND:            [-1000,	'Command',		    'COMMAND'           ],
 
     //~  Shapes ========================================================
 
-    COMMAND:            [-1000,	'Command',		    'COMMAND'           ],
     
-    //~ Point (PNT) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~    
-    PNT:								[	-100,	'Point',		      'POINT'             ],
-    PNT_OBJECT:         [	-101,	'Object',		      'Object'	          ],
-    PNT_INTERSECT:			[	-102,	'Intersect',		  'Interset'	        ],
-    PNT_MIDPOINT:				[	-103,	'Midpoint',       'Midpoint'	        ],
+    //~ Point (P) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    P:								  [	-100,	'Point',		      'POINT'             ],
+    P_OBJECT:           [	-101,	'Object',		      'Object'	          ],
+    P_INTERSECT:			  [	-102,	'Intersect',		  'Interset'	        ],
+    P_MIDPOINT:				  [	-103,	'Midpoint',       'Midpoint'	        ],    //~ Midpoint/Center
     
-    //~ POINTONOBJECT:						[	1,	'Pointonobject',		'POINTONOBJECT'	]
     //~ ATTACHDETACHPOINT:				[	1,	'Attachdetachpoint',		'ATTACHDETACHPOINT'	]
-    //~ INTERSECT:								[	1,	'Intersect',		'INTERSECT'		]
-    //~ MIDPOINTORCENTER:					[	1,	'Midpointorcenter',		'MIDPOINTORCENTER'	]
 
     //~ COMPLEXNUMBER:						[	1,	'Complexnumber',		'COMPLEXNUMBER'	]
-    //~ LINE:											[	1,	'Line',		'LINE'	]
-    //~ SEGMENT:									[	1,	'Segment',		'SEGMENT'	]
-    //~ SEGMENTWITHGIVENLENGTH:		[	1,	'Segmentwithgivenline',		'SEGMENTWITHGIVENLINE'	]
-    //~ RAY:											[	1,	'Ray',		'RAY'	]
-    //~ POLYLINE:									[	1,	'Polyline',		'POLYLINE'	]
-    //~ VECTOR:										[	1,	'Vector',		'VECTOR'	]
-    //~ VECTORFROMPOINT:					[	1,	'Vectorfrompoint',		'VECTORFROMPOINT'	]
-    //~ PERPENDICULARLINE:				[	1,	'Purpendicularline',		'PERPENDICULARLINE'	]
-    //~ PARALLELLINE:							[	1,	'Parallelline',		'PARALLELLINE'	]
-    //~ PERPENDICULARBISECTOR:		[	1,	'Perpendicularbisector',		'PERPENDICULARBISECTOR'	]
-    //~ ANGLEBISECTOR:						[	1,	'Anglebisector',		'ANGLEBISECTOR'	]
-    //~ TANGENTS:									[	1,	'Tangents',		'TANGENTS'	]
-    //~ POLARORDIAMETERLINE:			[	1,	'Polarordiameterline',		'POLARORDIAMETERLINE'	]
+
+
+    //~ Line (L) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    L_2P:               [	1,	'Line2P',		        'LINE2P'	          ],    //~ through 2 points
+    L_SEGMENT2P:        [	1,	'Line',		          'LINE'	            ],    //~ between 2 points
+    L_SEGMENTLENGTH:    [	1,	'Line',		          'LINE'	            ],    //~ from point given length
+    L_PERP:             [	1,	'LinePerp',		      'LINEPERP'          ],    //~ perpendicular
+    L_PERPB:            [	1,	'LinePerpB',        'LINEPERPB'         ],    //~  perpendicular bisector
+    L_ANGB:             [	1,	'LineAngB',         'LINEANGB'          ],    //~ angle bisector
+    L_PARR:             [	1,	'LineParr',		      'LINEPARR'          ],    //~ parallel
+    L_TANGENT:          [	1,	'LineTangent',      'LINETANGENT'       ],    //~ Tangent
+    L_DIAMETER:         [	1,	'LineDiameter',     'LINEDIAMETER'      ],    //~ Diameter
+    L_RADIUS:           [	1,	'LineRadius',       'LINERADIUS'        ],    //~ Radius
+        
+    RAY_2P:             [	1,	'Ray2P',		        'RAY2P'	            ],    //~ Ray between 2 points
+    V_2P:               [	1,	'Vector2P',		      'VECTOR2P'	        ],    //~ Vector between 2 points
+    V_FP:               [	1,	'VectorFP',		      'VECTORFP'          ],    //~ Vector from point
+
     //~ BESTFITLINE:							[	1,	'Bestfitline',		'BESTFITLINE'	]
     //~ LOCUS:										    [	1,	'Locus',		'LOCUS'	]
-    //~ POLYGON:									    [	1,	'Polygon',		'POLYGON'	]
-    //~ REGULARPOLYGON:						    [	1,	'Regularpolygon',		'REGULARPOLYGIN'	]
-    //~ RIGIDPOLYGON:							    [	1,	'Rigidpolygon',		'RIGIDPOLYGON'	]
-    //~ VECTORPOLYGON:						    [	1,	'Vectorpolygon',		'VECTORPOLYGON'	]
-    //~ CIRCLEWITHCENTERTHROUGHPOINT: [	1,	'Circlewithcenterthroughpoint',		'CIRCLEWITHCENTERTHROUGHPOINT']
-    //~ CIRCLEWITHCENTERANDRADIUS:	[	1,	'Circlewithcenterandradius',		'CIRCLEWITHCENTERANDRADIUS'	]	
-    //~ COMPASS:									  [	1,	'Compass',		'COMPASS'	]
-    //~ CIRCLETHROUGH3POINTS:				[	1,	'Circlethrough3points',		'CIRCLETHROUGH3POINTS'	]
-    //~ SEMICIRCLETHROUGH2POINTS:	  [	1,	'Semicirclethrough2points',		'SEMICIRCLETHROUGH2POINTS'	]
-    //~ CIRCULARARC:							  [	1,	'Circulararc',		'CIRCULARARC'	]
-    //~ CIRCUMCIRCULARARC:				  [	1,	'Circumcirculararc',		'CIRCUMCIRCULARARC'	]
-    //~ CIRCULARSECTOR:							[	1,	'Circularsector',		'CIRCULARSECTOR'	]
-    //~ CIRCUMCIRCULARSECTOR:				[	1,	'Circumcircularsector',		'CIRCUMCIRCULARSECTOR'	]
-    //~ ELIPSE:										  [	1,	'Elipse',		'ELIPSE'	]
-    //~ HYPERBOLA:									[	1,	'Hyperbola',		'HYPERBOLA'	]
-    //~ PARABOLA:									  [	1,	'Parabola',		'PARABOLA'	]
-    //~ CONICTHROUGH5POINTS:				[	1,	'Conicthrough5points',		'CONICTHROUGH5POINTS'	]
-    //~ ANGLE:											[	1,	'Angle',		'ANGLE'	]
-    //~ ANGLEWITHGIVENSIZE:				  [	1,	'Anglewithgivensize',		'ANGLEWITHGIVENSIZE'	]
-    //~ DISTANCEORLENGTH:						[	1,	'Distanceorlength',		'DISTANCEORLENGTH'	]
-    //~ AREA:												[	1,	'Area',		'AREA'	]
-    //~ SLOPE:											[	1,	'Slope',		'SLOPE'	]
-    //~ CREATELIST:									[	1,	'Createlist',		'CREATELIST'	]
-    //~ REFLECTABOUTLINE:						[	1,	'Reflectaboutline',		'REFLECTABOUTLINE'	]
-    //~ REFLECTABOUTPOINT:				  [	1,	'Reflectabouttpoint',		'REFLECTABOUTPOINT'	]
-    //~ REFLECTABOUTCIRCLE:				  [	1,	'Reflectaboutcircle',		'REFLECTABOUTCIRCLE'	]
-    //~ ROTATEAROUNDPOINT:				  [	1,	'Rotatearoundpoint',		'ROTATEAROUNDPOINT'	]
-    //~ TRANSLATEBYVECTOR:				  [	1,	'Translatebyvector',		'TRANSLATEBYVECTOR'	]
-    //~ DILATEFROMPOINT:						[	1,	'Dilatefrompoint',		'DILATEFROMPOINT'	]
-    //~ TEXT:												[	1,	'Text',		'TEXT'	]
-    //~ IMAGE:										  [	1,	'Image',		'IMAGE'	]
+    //~ POLYLINE:									[	1,	'Polyline',		'POLYLINE'	]
+
+
+    //~ Polygon ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    POLYGON:            [	1,	'Polygon',		      'POLYGON'	          ],
+    POLYGONR:			      [	1,	'Regularpolygon',		'REGULARPOLYGIN'	  ],    //~ regular
+    RIGIDPOLYGON:				[	1,	'Rigidpolygon',		  'RIGIDPOLYGON'	    ],    //~ Rigig
+    POLYGONV:			      [	1,	'PolygonV',		      'POLYGONV'	        ],    //~ Vector
+
+
+    //~ Circle (C)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    C_CENTERP:          [	1,	'CircleCenterP',		'CIRCLECENTERP'     ],    //~ center point
+    C_CENTERR:	        [	1,	'CircleCenterR',		'CIRCLECENTERR'	    ],    //~ center radius
+    
+    C_3P:				        [	1,	'Circle3P',		      'CIRCL3P'	          ],    //  3 points
+
+
+    //~ Arc (A)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    A_2P:	              [	1,	'Arc2P',		        'ARC2P'	            ],    //~SEMICIRCLETHROUGH2POINTS
+    A_1:					      [	1,	'Arc1',		          'ARC1'	            ],    //~Circulararc
+    A_2:		            [	1,	'Arc2',		          'ARC2'	            ],    //~CIRCUMCIRCULARARC
+    A_3:		            [	1,	'Arc3',		          'ARC4'	            ],    //~ CIRCULARSECTOR
+    A_4:				        [	1,	'Arc4',		          'ARC4'	            ],    //~ CIRCUMCIRCULARSECTOR
+
+    
+    COMPASS:            [	1,	'Compass',		      'COMPASS'	          ],    //~ ??
+
+
+    //~ Conics (S) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    S_ELLIPSE:					[	1,	'Ellipse',          'ELLIPSE'	          ],
+    S_HYPERBOLA:				[	1,	'Hyperbola',		    'HYPERBOLA'	        ],
+    S_PARABOLA:         [	1,	'Parabola',		      'PARABOLA'	        ],
+    S_5POINTS:				  [	1,	'Conic5points',		  'CONIC5POINTS'	    ],
+
+
+    //~ Angle ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    ANGLE:							[	1,	'Angle',		        'ANGLE'	            ],
+    ANGLE_SIZE:         [	1,	'AngelSize',		    'ANGELSIZE'         ],
+
+
+    //~ Annotation ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    TEXT:               [	1,	'Text',		          'TEXT'	            ],
+
+
+    //~ Images ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    IMAGE:						  [	1,	'Image',		        'IMAGE'	            ],
+    SKECTH:							[	1,	'SKETCH',		        'SKETCH'	          ],
+
     //~ PEN:												[	1,	'Pen',		'PEN'	]
-    //~ FREEHANDSHAPE:							[	1,	'Freehandshape',		'FREEHANDSHAPE'	]
+    
     //~ RELATION:									  [	1,	'Relation',		'RELATION'	]
     //~ PROBABILITYCALCULATOR:			[	1,	'Probabilitycalculator',		'PROBABILITYCALCULATOR'	]
     //~ SLIDER:										  [	1,	'Slider',		'SLIDER'	]
     //~ BUTTON:										  [	1,	'Button',		'BUTTON'	]
     //~ INPUTBOX:									  [	1,	'Inputbox',		'INPUTBOX'	]
     //~ MOVEGRAPHICSVIEW:				    [	1,	'Movegraphicsview',		'MOVEGRAPHICSVIEW'	]
-    //~ ZOOMIN:									    [	1,	'Zoomin',		'ZOOMIN'	]
-    //~ ZOOMOUT:									  [	1,	'Zoomout',		'ZOOMOUT'	]
+
     //~ SHOWHIDEOBJECT:							[	1,	'Showhideobject',		'SHOWHIDEOBJECT'	]
     //~ SHOWHIDELABEL:							[	1,	'Showhidelabel',		'SHOWHIDELABEL'	]
-    //~ COPYVISUALSTYLE:						[	1,	'Copyvisualstyle',		'COPYVISUALSTYLE'	]
-    //~ DELETE:										  [	1,	'Delete',		'DELETE'	]
+    
+    //~ CREATELIST:									[	1,	'Createlist',		'CREATELIST'	]
+
+
 
     FOCUS:        [-13,  'Focus',         'FOCUS'           ],
   
@@ -173,6 +210,7 @@ var proc = function(processingInstance){ with (processingInstance){
     BLUE:         [10,  'Blue',         'BLUE'              ],
     GREEN:        [11,  'Green',          'GREEN'           ],
 
+
     //~ File ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     NEW:          [12,  'New',            'NEW'             ],
     OPEN:         [13,  'Open',           'OPEN'            ],
@@ -180,6 +218,7 @@ var proc = function(processingInstance){ with (processingInstance){
     SAVEAS:       [15,  'Save As',        'SAVEAS'          ],
 
     CLOSE:        [16,  'Close',          'CLOSE'           ],
+
 
     //~ Edit ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     UNDO:         [17,  'Undo',           'UNDO'            ],
@@ -191,6 +230,13 @@ var proc = function(processingInstance){ with (processingInstance){
     EDIT:         [22,  'Edit',           'EDIT'            ],
     DELETE:       [23,  'Delete',         'DELETE'          ],
 
+
+    //~ View ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //~ ZOOMIN:									    [	1,	'Zoomin',		'ZOOMIN'	]
+    //~ ZOOMOUT:									  [	1,	'Zoomout',		'ZOOMOUT'	]
+    //~ PAN:									      [	1,	'Pan',		'PAN'	]
+
+    
     //~ Transform ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     TRANSLATE:    [24,  'Translate',      'TRANSLATE'       ],
     REFLECT:      [25,  'Reflect',        'REFLECT'         ],
@@ -198,6 +244,15 @@ var proc = function(processingInstance){ with (processingInstance){
     SCALE:        [27,  'Scale',          'SCALE'           ],
     SHEAR:        [28,  'Shear',          'SHEAR'           ],
 
+    //~ REFLECTABOUTLINE:						[	1,	'Reflectaboutline',		'REFLECTABOUTLINE'	]
+    //~ REFLECTABOUTPOINT:				  [	1,	'Reflectabouttpoint',		'REFLECTABOUTPOINT'	]
+    //~ REFLECTABOUTCIRCLE:				  [	1,	'Reflectaboutcircle',		'REFLECTABOUTCIRCLE'	]
+    //~ ROTATEAROUNDPOINT:				  [	1,	'Rotatearoundpoint',		'ROTATEAROUNDPOINT'	]
+    //~ TRANSLATEBYVECTOR:				  [	1,	'Translatebyvector',		'TRANSLATEBYVECTOR'	]
+
+    //~ DILATEFROMPOINT:						[	1,	'Dilatefrompoint',		'DILATEFROMPOINT'	]
+
+    
     //~ Measure ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     DISTANCE:     [29,  'Distance',       'DISTANCE'        ],
     PERIMETER:    [30,  'Perimeter',      'PERIMETER'       ],
@@ -205,11 +260,16 @@ var proc = function(processingInstance){ with (processingInstance){
     VOLUMEN:      [32,  'Volume',         'VOLUME'          ],
     RADIUS:       [33,  'Radius',         'RADIUS'          ],
     DIAMETER:     [34,  'Diamter',        'DIAMETER'        ],
+    //~ DISTANCEORLENGTH:						[	1,	'Distanceorlength',		'DISTANCEORLENGTH'	]
+    //~ AREA:												[	1,	'Area',		'AREA'	]
+    //~ SLOPE:											[	1,	'Slope',		'SLOPE'	]
 
+    
     //~ Layers ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     LAYER:        [35,  'Layer',          'LAYER'           ],
     FORWARD:      [36,  'Forward',        'FORWARD'         ],
     BACK:         [37,  'Back',           'BACK'            ],
+
 
     //~ Properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     PROPERTIES:   [38,  'Properties',     'PROPERTIES'      ],
@@ -225,6 +285,16 @@ var proc = function(processingInstance){ with (processingInstance){
     LINETYPE:     [44,  'Line Type',      'LINE TYPE'       ],
     LINEWEIGHT:   [45,  'Line Weight',    'LINE WEIGHT'     ],
 
+    //~ COPYVISUALSTYLE:						[	1,	'Copyvisualstyle',		'COPYVISUALSTYLE'	]
+
+
+    //~ Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    BORDER:       [100, 'Border',         'BORDER'          ],
+    ORIGIN:       [101, 'Origin',         'ORIGIN'          ],
+
+
+    //~ Misc ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
     TOOLTIP:      [46,  'ToolTip',        'TOOLTIP'         ],
     FORMULA:      [47,  'Formula',        'FORMULA'         ],
 
@@ -235,15 +305,8 @@ var proc = function(processingInstance){ with (processingInstance){
     FRAMERATE:    [52,  'FrameRate',      'FRAMERATE'       ],
     MOUSEX:       [53,  'MouseX',         'MOUSEX'          ],
     MOUSEY:       [54,  'MouseY',         'MOUSEY'          ],
-    PRESSED:      [55,  'Pressed',        'PRESSED'         ],
-
-    RECTANGLE:    [56,  'Rectangle',      'RECTANGLE'       ],
-    CIRCLE:       [57,  'Circle',         'CIRCLE'          ],
-
-    //~ Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    BORDER:       [100, 'Border',         'BORDER'          ],
-    ORIGIN:       [101, 'Origin',         'ORIGIN'          ],
-
+    PRESSED:      [55,  'Pressed',        'PRESSED'         ]
+    
   }
 
   var app={
@@ -297,14 +360,17 @@ var proc = function(processingInstance){ with (processingInstance){
   //~ Methods ==========================================================
   var getGUID=function(){
              
-    return year()   + ''  +
-           month()  + ''  +
-           day()    + ''  +
-           hour()   + ''  +
-           minute() + ''  +
-           second() + ''  +
-           millis() + ''  +
-           round(random(10e15));
+    //~ return year()   + ''  +
+           //~ month()  + ''  +
+           //~ day()    + ''  +
+           //~ hour()   + ''  +
+           //~ minute() + ''  +
+           //~ second() + ''  +
+           //~ millis() + ''  +
+           //~ round(random(10e15));
+
+    return random(10e15);
+
   };
 
   var getProp=function(p){
@@ -374,10 +440,10 @@ var proc = function(processingInstance){ with (processingInstance){
     switch(c){
 
     //~ Points ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      case CMDS.PNT[0]:							println('Point:');            break;
-      case CMDS.PNT_OBJECT[0]:      println('Point: bound');      break;
-      case CMDS.PNT_INTERSECT[0]:		println('Point: interset');   break;
-      case CMDS.PNT_MIDPOINT[0]:    println('Point: midpoint');   break;
+      case CMDS.P[0]:							println('Point:');            break;
+      case CMDS.P_OBJECT[0]:      println('Point: bound');      break;
+      case CMDS.P_INTERSECT[0]:		println('Point: interset');   break;
+      case CMDS.P_MIDPOINT[0]:    println('Point: midpoint');   break;
 
       case CMDS.ORIGIN[0]:          app.origin=p;                 break;
       case CMDS.BORDER[0]:         app.border=p;                 break;
@@ -387,8 +453,8 @@ var proc = function(processingInstance){ with (processingInstance){
                               break;
 
       case CMDS.DEBUG[0]:     app.debug=!app.debug;
-                              if(app.debug){ frameRate(100); }
-                              else         { frameRate(30);  }
+                              if(app.debug){ frameRate(0);  }
+                              else         { frameRate(31); }
                               break;
 
       case CMDS.COLORG[0]:    return app.color;
@@ -399,7 +465,7 @@ var proc = function(processingInstance){ with (processingInstance){
                               app.blue=blue(app.color);
                               break;
 
-      case CMDS.RECTANGLE[0]: println('Rectangle');         break;
+      //~ case CMDS.RECTANGLE[0]: println('Rectangle');         break;
 
       case CMDS.RED[0]:       app.red=red(app.color);       break;
       case CMDS.GREEN[0]:     app.green=green(app.color);   break;
@@ -504,6 +570,7 @@ var proc = function(processingInstance){ with (processingInstance){
 
     //~ misc properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     this.hit=false;             //~ mouse is over the control
+    this.hitExpand=false;       //~ mouse is over the expand/collapse area
 
     this.ctrls=ctrls;           //~ array of child controls
 
@@ -526,11 +593,13 @@ var proc = function(processingInstance){ with (processingInstance){
          mouseY>y+this.y && mouseY<y+this.y+this.h){
         this.hit=true;
         app.focus=this.i;
-        for(var c in this.ctrls){ this.ctrls[c].moved(x+this.x, y+this.y) }
+        
       }
       else{
         this.hit=false;
       }
+
+      for(var c in this.ctrls){ this.ctrls[c].moved(x+this.x, y+this.y) }
 
     }
     else if(this.alignX===CENTER){
@@ -816,7 +885,7 @@ var proc = function(processingInstance){ with (processingInstance){
         
         switch(p.c){
 
-          case CMDS.PNT[0]:
+          case CMDS.P[0]:
 
             noFill();
 
@@ -828,7 +897,7 @@ var proc = function(processingInstance){ with (processingInstance){
 
             break;
             
-          case CMDS.PNT_OBJECT[0]:
+          case CMDS.P_OBJECT[0]:
 
             fill(cFILL);          
             strokeWeight(0.5);
@@ -857,7 +926,7 @@ var proc = function(processingInstance){ with (processingInstance){
             
             break;
 
-          case CMDS.PNT_INTERSECT[0]:
+          case CMDS.P_INTERSECT[0]:
 
             noFill();
             strokeWeight(0.5);
@@ -874,7 +943,7 @@ var proc = function(processingInstance){ with (processingInstance){
 
             break;
 
-          case CMDS.PNT_MIDPOINT[0]:
+          case CMDS.P_MIDPOINT[0]:
 
             noFill();
 
@@ -911,7 +980,7 @@ var proc = function(processingInstance){ with (processingInstance){
           stroke(p.stroke);
           strokeWeight(p.weight);
 
-          if(p.hit){
+          if(p.hit && p.parent.hit){
 
             if(app.left){ d=1; }
 
@@ -923,16 +992,16 @@ var proc = function(processingInstance){ with (processingInstance){
 
           }
 
-          if(p.v){  fill(getProp(p.g)); }
+          if(p.v){ fill(getProp(p.g)); }
 
           rect(d, d, p.w, p.h, p.r);
 
           switch(p.c){
 
-            case CMDS.PNT[0]:              case CMDS.PNT_OBJECT[0]:
-            case CMDS.PNT_INTERSECT[0]:    case CMDS.PNT_MIDPOINT[0]:
+            case CMDS.P[0]:              case CMDS.P_OBJECT[0]:
+            case CMDS.P_INTERSECT[0]:    case CMDS.P_MIDPOINT[0]:
 
-            drawPoint();  break;
+              drawPoint();  break;
 
             default:      break;
 
@@ -966,6 +1035,8 @@ var proc = function(processingInstance){ with (processingInstance){
             
       this.parent.ctrls[0].c=this.c;
       this.parent.ctrls[0].g=this.g;
+
+      //~ this.parent.v=!this.parent.v;
 
       app.command=this.c;
 
@@ -1124,7 +1195,7 @@ var proc = function(processingInstance){ with (processingInstance){
           textSize(300);
 
           if(p.hit){
-            fill(p.tfillH);
+            fill(app.color);
             //~ textSize(200);
           }
 
@@ -1360,7 +1431,7 @@ var proc = function(processingInstance){ with (processingInstance){
     }
   };
 
-  //~ Strip ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  //~ Strip ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var strip=function(cp,lp,ap,ctrls){
     control.call(this,cp,lp,ap,ctrls);
   };
@@ -1388,19 +1459,27 @@ var proc = function(processingInstance){ with (processingInstance){
             fill(p.fillH);
             stroke(p.strokeH);
             strokeWeight(p.weightH);
-            cursor(CROSS);
+            cursor(ARROW);
           }
 
           noStroke();
           
           rect(d, d, p.w, p.h, p.r);
-          
-          fill(p.tfill);
 
+          fill(color(32,32,32));
+
+          if(p.hit && p.hitExpand){
+            fill(color(48,48,48));
+          }
+          
           rect(d+p.w-9, d+1, 8, p.h-2, 0);
 
-          fill(CLRS.BLACK);
+          fill(CLRS.Gray_9);
 
+          if(p.hit && p.hitExpand){
+            fill(CLRS.Gray_6);
+          }
+          
           if(p.v){
             triangle(d+p.w-2, d+p.h/2-3,
                      d+p.w-7, d+p.h/2,
@@ -1438,13 +1517,23 @@ var proc = function(processingInstance){ with (processingInstance){
     }
   };
   strip.prototype.moved=function(x,y){
-
+    
     if(this.alignX===LEFT){
 
       if(mouseX>x+this.x && mouseX<x+this.x+this.w &&
          mouseY>y+this.y && mouseY<y+this.y+this.h){
+           
         this.hit=true;
+
+        if(mouseX>x+this.x+this.w-10){
+          this.hitExpand=true;
+        }
+        else{
+          this.hitExpand=false;
+        }
+
         app.focus=this.i;
+
         if(this.v){
           for(var c in this.ctrls){ this.ctrls[c].moved(x+this.x, y+this.y) }
         }
@@ -1731,7 +1820,8 @@ var proc = function(processingInstance){ with (processingInstance){
           if(true)      { labels();    }
           if(app.origin){ origin();    }
           //~ if(true)      { crosshair(); }
-
+          cursor(CROSS);
+          
           stroke(app.color);
           strokeWeight(3);
           noFill();
@@ -1913,7 +2003,7 @@ var proc = function(processingInstance){ with (processingInstance){
     var w=36;
     
     var cn=new strip(
-            new propC(getGUID(), parent, 500,50, w+10, w, 1, true, CMDS.ORIGIN[0], CMDS.CONTAINER[1]),
+            new propC(getGUID(), parent, 500,50, w+10, w+10, 1, true, CMDS.ORIGIN[0], CMDS.CONTAINER[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
 
@@ -1923,27 +2013,27 @@ var proc = function(processingInstance){ with (processingInstance){
     //~ PNT_INTERSECT:			[	-102,	'Intersect',		  'Interset'	        ],
     //~ PNT_MIDPOINT:				[	-103,	'Midpoint',       'Midpoint'	        ],
     ctrls.push(new buttonI(
-                new propC(getGUID(), cn, 0*w, 0, w, w, 0, false, CMDS.PNT[0], CMDS.PNT[1]),
+                new propC(getGUID(), cn, 0*w, 0, w, w, 0, false, CMDS.P[0], CMDS.P[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonI(
-                new propC(getGUID(), cn, 1*w, 0, w, w, 0, false, CMDS.PNT[0], CMDS.PNT[1]),
+                new propC(getGUID(), cn, 1*w, 0, w, w, 0, false, CMDS.P[0], CMDS.P[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonI(
-                new propC(getGUID(), cn, 2*w, 0, w, w, 0, false, CMDS.PNT_OBJECT[0], CMDS.PNT_OBJECT[1]),
+                new propC(getGUID(), cn, 2*w, 0, w, w, 0, false, CMDS.P_OBJECT[0], CMDS.P_OBJECT[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonI(
-                new propC(getGUID(), cn, 3*w, 0, w, w, 0, false, CMDS.PNT_INTERSECT[0], CMDS.PNT_INTERSECT[1]),
+                new propC(getGUID(), cn, 3*w, 0, w, w, 0, false, CMDS.P_INTERSECT[0], CMDS.P_INTERSECT[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonI(
-                new propC(getGUID(), cn, 4*w, 0, w, w, 0, false, CMDS.PNT_MIDPOINT[0], CMDS.PNT_MIDPOINT[1]),
+                new propC(getGUID(), cn, 4*w, 0, w, w, 0, false, CMDS.P_MIDPOINT[0], CMDS.P_MIDPOINT[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
@@ -1960,7 +2050,7 @@ var proc = function(processingInstance){ with (processingInstance){
     var cn=new grid(
             new propC(getGUID(), parent, 5, 5, parent.w-10, parent.h-10, 5, false, CMDS.UNDEF[0], 0),
             new propL(CLRS.GRID, getColor(CLRS.GRID,65), CLRS.WHITE, CLRS.YELLOW, 0.125, 0.25),
-            getStyle(STYLES.TEXT));
+            new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
     cn.ctrls=ctrls;
 
@@ -2479,7 +2569,7 @@ var proc = function(processingInstance){ with (processingInstance){
             //~ getStyle(STYLES.BUTTON),
             //~ getStyle(STYLES.TEXT)));
 
-    ctrls.push(getGrid(cn));
+    //~ ctrls.push(getGrid(cn));
 
     ctrls.push(new labelR(
             new propC(getGUID(), cn, cn.w/2, cn.h/2, 10, 10, 0, false, CMDS.UNDEF[0], CMDS.CARTESIA[1]),
@@ -2502,7 +2592,7 @@ var proc = function(processingInstance){ with (processingInstance){
 
   var loadCommands=function(){
 
-    saveStrings('Rectangle', CMDS.RECTANGLE);
+    saveStrings('Rectangle', CMDS.DEBUG);
 
     //~ println(loadStrings('Rectangle'));
 
