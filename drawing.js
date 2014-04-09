@@ -39,7 +39,7 @@ var proc = function(processingInstance){ with (processingInstance){
     Gray9:    color(255*2/11),    Gray10:       color(255*1/11),
     White:    color(255,255,255), Black:        color(0,0,0),
 
-    BUTTON:   color(16,16,16),    BUTTONH:      color(24,24,24),
+    BUTTONH:   color(16,16,16),    BUTTON:      color(24,24,24),
     GRID:     color(33,40,48)
 
   };
@@ -67,12 +67,21 @@ var proc = function(processingInstance){ with (processingInstance){
 
   var CMDS={
 
-    POINT:										[	-14,	'Point',		'POINT'	],
+    //~  Shapes ========================================================
+
+    COMMAND:            [-1000,	'Command',		    'COMMAND'           ],
+    
+    //~ Point (PNT) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~    
+    PNT:								[	-100,	'Point',		      'POINT'             ],
+    PNT_OBJECT:         [	-101,	'Object',		      'Object'	          ],
+    PNT_INTERSECT:			[	-102,	'Intersect',		  'Interset'	        ],
+    PNT_MIDPOINT:				[	-103,	'Midpoint',       'Midpoint'	        ],
     
     //~ POINTONOBJECT:						[	1,	'Pointonobject',		'POINTONOBJECT'	]
     //~ ATTACHDETACHPOINT:				[	1,	'Attachdetachpoint',		'ATTACHDETACHPOINT'	]
     //~ INTERSECT:								[	1,	'Intersect',		'INTERSECT'		]
     //~ MIDPOINTORCENTER:					[	1,	'Midpointorcenter',		'MIDPOINTORCENTER'	]
+
     //~ COMPLEXNUMBER:						[	1,	'Complexnumber',		'COMPLEXNUMBER'	]
     //~ LINE:											[	1,	'Line',		'LINE'	]
     //~ SEGMENT:									[	1,	'Segment',		'SEGMENT'	]
@@ -276,8 +285,10 @@ var proc = function(processingInstance){ with (processingInstance){
     linetype:       LINETYPES.HAIRLINE,
     lineweight:     7,
 
+    command:        0,
+
     border:         true,
-    origin:         true
+    origin:         true,
 
 
   };
@@ -300,6 +311,8 @@ var proc = function(processingInstance){ with (processingInstance){
   //~ println(p);
 
     switch(p){
+
+      case CMDS.COMMAND[0]:     return app.command;
 
       case CMDS.FOCUS[0]:       return app.focus;
       case CMDS.LEFT[0]:        return app.left;
@@ -359,8 +372,14 @@ var proc = function(processingInstance){ with (processingInstance){
 
     switch(c){
 
-      case CMDS.ORIGIN:       app.origin=p;                 break;
-      case CMDS.BORDERR:      app.border=p;                 break;
+    //~ Points ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      case CMDS.PNT[0]:							println('Point:');            break;
+      case CMDS.PNT_OBJECT[0]:      println('Point: bound');      break;
+      case CMDS.PNT_INTERSECT[0]:		println('Point: interset');   break;
+      case CMDS.PNT_MIDPOINT[0]:    println('Point: midpoint');   break;
+
+      case CMDS.ORIGIN[0]:          app.origin=p;                 break;
+      case CMDS.BORDER[0]:         app.border=p;                 break;
 
       case CMDS.FRAMERATE[0]: frameRate(p);
                               app.frameRate=p;
@@ -379,7 +398,7 @@ var proc = function(processingInstance){ with (processingInstance){
                               app.blue=blue(app.color);
                               break;
 
-      case CMDS.RECTANGLE[0]: println("Rectangle");         break;
+      case CMDS.RECTANGLE[0]: println('Rectangle');         break;
 
       case CMDS.RED[0]:       app.red=red(app.color);       break;
       case CMDS.GREEN[0]:     app.green=green(app.color);   break;
@@ -593,7 +612,7 @@ var proc = function(processingInstance){ with (processingInstance){
             fill(p.tfillH);
           }
 
-          textFont(createFont("monospace"));
+          textFont(createFont('monospace'));
           textAlign(p.alignX, p.alignY);
           textSize(p.size);
           var w=textWidth(p.g);
@@ -780,13 +799,113 @@ var proc = function(processingInstance){ with (processingInstance){
 
     var p=this;
     var d=0;
+    var cX=p.w/2;
+    var cY=p.h/2;
+    var cPNT=CLRS.YELLOW;
+    var cVERTEX=CLRS.Gray5;
+    var cLINE=CLRS.Blue;
+    var cFILL=CLRS.Gray9;
+    var sz=3;
+
+    var drawPoint=function(){
+
+      pushStyle();
+
+        rectMode(CENTER);
+        
+        switch(p.c){
+
+          case CMDS.PNT[0]:
+
+            noFill();
+
+            strokeWeight(0);
+            noStroke();
+            fill(cPNT);
+
+            ellipse(d+cX, d+cY, sz, sz);  
+
+            break;
+            
+          case CMDS.PNT_OBJECT[0]:
+
+            fill(cFILL);          
+            strokeWeight(0.5);
+            stroke(cLINE);
+
+            beginShape();          
+              vertex(d+cX-10, d+cY-10);
+              vertex(d+cX-10, d+cY+5)
+              vertex(d+cX+10, d+cY+10);
+              vertex(d+cX+4,  d+cY-6);
+            endShape(CLOSE);
+
+            noStroke();
+            strokeWeight(0);
+            fill(cPNT);
+
+            ellipse(d+cX, d+cY, sz, sz);
+
+            noStroke();
+            fill(cPNT);
+            
+            ellipse(d+cX-10, d+cY-10, sz, sz);
+            ellipse(d+cX-10, d+cY+5,  sz, sz)
+            ellipse(d+cX+10, d+cY+10, sz, sz);
+            ellipse(d+cX+4,  d+cY-6,  sz, sz);
+            
+            break;
+
+          case CMDS.PNT_INTERSECT[0]:
+
+            noFill();
+            strokeWeight(0.5);
+            stroke(cLINE);
+
+            line(d+cX-10, d+cY+10, d+cX+10, d+cY-10);
+            line(d+cX+4,  d+cY+10, d+cX-4, d+cY-10);
+
+            noStroke();
+            strokeWeight(0.5);            
+            fill(cPNT);
+
+            ellipse(d+cX, d+cY, sz, sz);  
+
+            break;
+
+          case CMDS.PNT_MIDPOINT[0]:
+
+            noFill();
+
+            strokeWeight(0.5);
+            stroke(cLINE);
+
+            line(d+cX-10, d+cY+10, d+cX+10, d+cY-10);
+            
+            noStroke();
+            strokeWeight(0);
+            fill(cPNT);
+
+            ellipse(d+cX, d+cY, sz, sz);  
+
+            break;
+
+          default:    break;
+
+        }
+
+      popStyle();
+
+    };
 
     pushMatrix();
 
       translate(p.x, p.y);
-
+  
         pushStyle();
 
+          //~ rectMode(CENTER);          
+          
           fill(p.fill);
           stroke(p.stroke);
           strokeWeight(p.weight);
@@ -807,17 +926,29 @@ var proc = function(processingInstance){ with (processingInstance){
 
           rect(d, d, p.w, p.h, p.r);
 
+          switch(p.c){
+
+            case CMDS.PNT[0]:              case CMDS.PNT_OBJECT[0]:
+            case CMDS.PNT_INTERSECT[0]:    case CMDS.PNT_MIDPOINT[0]:
+
+            drawPoint();  break;
+
+            default:      break;
+
+          }
+          
           fill(p.tfill);
 
-          textAlign(p.alignX,p.alignY);
-          textSize(p.size);
-
+          //~ textAlign(p.alignX,p.alignY);
+          textAlign(CENTER,BOTTOM);
+          //~ textSize(p.size);
+          textSize(8);
           if(p.hit){
             fill(p.v);
-            textSize(p.sizeH);
+            //~ textSize(p.sizeH);
           }
 
-          //~ text(p.g, d+5, d+p.h/2);
+          //~ text(p.g, d+p.w/2, d+p.h);
 
         popStyle();
 
@@ -828,7 +959,15 @@ var proc = function(processingInstance){ with (processingInstance){
   };
   buttonI.prototype.clicked=function(){
     if(this.hit){
+      //~ println(this.c, this.g);
       commands(this.c, this.g);
+                  //~ println(p.parent.ctrls.length);
+            
+      this.parent.ctrls[0].c=this.c;
+      this.parent.ctrls[0].g=this.g;
+
+      app.command=this.c;
+
       for(var c in this.ctrls){ this.ctrls[c].clicked() }
     }
   };
@@ -1290,13 +1429,11 @@ var proc = function(processingInstance){ with (processingInstance){
   };
   strip.prototype.clicked=function(){
     if(this.hit){
-      println(this.v);
       if(app.focus===this.i){
-        this.v=!this.v;
-        
+        this.v=!this.v;        
       }
       //~ commands(this.c, this.v);
-      //~ for(var c in this.ctrls){ this.ctrls[c].clicked() }
+      for(var c in this.ctrls){ this.ctrls[c].clicked() }
     }
   };
   strip.prototype.moved=function(x,y){
@@ -1340,6 +1477,7 @@ var proc = function(processingInstance){ with (processingInstance){
     }
 
   };
+
   //~ Container ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var container=function(cp,lp,ap,ctrls){
     control.call(this,cp,lp,ap,ctrls);
@@ -1388,6 +1526,7 @@ var proc = function(processingInstance){ with (processingInstance){
 
   };
 
+  
   //~ Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var grid=function(cp,lp,ap,ctrls){
     control.call(this,cp,lp,ap,ctrls);
@@ -1450,7 +1589,7 @@ var proc = function(processingInstance){ with (processingInstance){
       if(true){
         for(var n=1; n<p.w/2/incr; n++){
 
-          if(n%5===0){ strokeWeight(0.5);  }
+          if(n%5===0){ strokeWeight(0.75);  }
           else       { strokeWeight(0.25); }
 
           line( n*incr, -p.h/2,  n*incr, p.h/2);
@@ -1462,7 +1601,7 @@ var proc = function(processingInstance){ with (processingInstance){
 
       for(var n=1; n<p.h/2/incr; n++){
 
-          if(n%5===0){ strokeWeight(0.5);  }
+          if(n%5===0){ strokeWeight(0.75);  }
           else       { strokeWeight(0.25); }
 
           line(-p.w/2,  n*incr, p.w/2,  n*incr);
@@ -1591,6 +1730,10 @@ var proc = function(processingInstance){ with (processingInstance){
           if(true)      { labels();    }
           if(app.origin){ origin();    }
           //~ if(true)      { crosshair(); }
+
+          stroke(CLRS.WHITE);
+          strokeWeight(3);
+          ellipse(0,0,300,200);
           
         popStyle();
 
@@ -1765,26 +1908,40 @@ var proc = function(processingInstance){ with (processingInstance){
     var h=15;
     var l=parent.w-202;
     var ch=app.height-14;
-    var w=30;
+    var w=36;
     
     var cn=new strip(
-            new propC(getGUID(), parent, 5,5, w+10, w, 1, false, CMDS.CONTAINER[0], CMDS.CONTAINER[1]),
+            new propC(getGUID(), parent, 500,50, w+10, w, 1, true, CMDS.ORIGIN[0], CMDS.CONTAINER[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
 
-    //~ Labels ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //~ Points ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //~ PNT:								[	-100,	'Point',		      'POINT'             ],
+    //~ PNT_OBJECT:         [	-101,	'Object',		      'Object'	          ],
+    //~ PNT_INTERSECT:			[	-102,	'Intersect',		  'Interset'	        ],
+    //~ PNT_MIDPOINT:				[	-103,	'Midpoint',       'Midpoint'	        ],
     ctrls.push(new buttonI(
-                new propC(getGUID(), cn, 0*w, 0, w, w, 0, false, CMDS.POINT[0], CMDS.POINT[1]),
+                new propC(getGUID(), cn, 0*w, 0, w, w, 0, false, CMDS.PNT[0], CMDS.PNT[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonI(
-                new propC(getGUID(), cn, 1*w, 0, w, w, 0, false, CMDS.POINT[0], CMDS.POINT[1]),
+                new propC(getGUID(), cn, 1*w, 0, w, w, 0, false, CMDS.PNT[0], CMDS.PNT[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonI(
-                new propC(getGUID(), cn, 2*w, 0, w, w, 0, false, CMDS.POINT[0], CMDS.POINT[1]),
+                new propC(getGUID(), cn, 2*w, 0, w, w, 0, false, CMDS.PNT_OBJECT[0], CMDS.PNT_OBJECT[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 3*w, 0, w, w, 0, false, CMDS.PNT_INTERSECT[0], CMDS.PNT_INTERSECT[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 4*w, 0, w, w, 0, false, CMDS.PNT_MIDPOINT[0], CMDS.PNT_MIDPOINT[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
@@ -1902,6 +2059,11 @@ var proc = function(processingInstance){ with (processingInstance){
                 new propC(getGUID(), cn, 5, top+15*h, 10, 10, 0, false, CMDS.UNDEF[0], CMDS.FOCUS[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
+
+    ctrls.push(new label(
+                new propC(getGUID(), cn, 5, top+17*h, 10, 10, 0, false, CMDS.UNDEF[0], CMDS.COMMAND[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
                 
     //~ Values ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ctrls.push(new checkbox(
@@ -1961,6 +2123,10 @@ var proc = function(processingInstance){ with (processingInstance){
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
+    ctrls.push(new labelP(
+                new propC(getGUID(), cn, 100, top+17*h, 10, 10, 0, false, CMDS.COMMAND[0], CMDS.COMMAND[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
                 
     cn.ctrls=ctrls;
 
@@ -2287,11 +2453,9 @@ var proc = function(processingInstance){ with (processingInstance){
     var h=15;
 
     var cn=new container(
-            new propC(getGUID(), parent, parent.w/2-300, app.height-400, 600, 50, 2, false, CMDS.UNDEF[0],CMDS.FOOTER[1]),
+            new propC(getGUID(), parent, parent.w/2-300, app.height-45, 600, 50, 2, false, CMDS.UNDEF[0],CMDS.FOOTER[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TITLE));
-
-    ctrls.push(getPoints(cn));
 
     cn.ctrls=ctrls;
 
@@ -2320,11 +2484,13 @@ var proc = function(processingInstance){ with (processingInstance){
             getStyle(STYLES.BUTTON),
             getStyle(STYLES.TEXTCENTER)));
 
-    //~ ctrls.push(getHeader(cn));
+    ctrls.push(getPoints(cn));
+    
+    ctrls.push(getHeader(cn));
     ctrls.push(getFooter(cn));
-    //~ ctrls.push(getProperties(cn));
+    ctrls.push(getProperties(cn));
     ctrls.push(getTelemetry(cn));
-    //~ ctrls.push(getColors(cn));
+    ctrls.push(getColors(cn));
 
     cn.ctrls=ctrls;
 
@@ -2336,7 +2502,7 @@ var proc = function(processingInstance){ with (processingInstance){
 
     saveStrings('Rectangle', CMDS.RECTANGLE);
 
-    //~ println(loadStrings("Rectangle"));
+    //~ println(loadStrings('Rectangle'));
 
   };
 
