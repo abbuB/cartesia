@@ -1984,6 +1984,8 @@ var proc = function(processingInstance){ with (processingInstance){
 
   };
 
+
+    
   var getPoints=function(parent){
 
     var ctrls=[];
@@ -1994,7 +1996,7 @@ var proc = function(processingInstance){ with (processingInstance){
     var w=36;
 
     var cn=new strip(
-            new propC(getGUID(), parent, 500,50, w+10, w+10, 1, true, CMDS.ORIGIN[0], CMDS.CONTAINER[1]),
+            new propC(getGUID(), parent, 500,50, w+10, w+10, 1, true, CMDS.UNDEF[0], CMDS.UNDEF[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
 
@@ -2033,7 +2035,111 @@ var proc = function(processingInstance){ with (processingInstance){
     return cn;
 
   };
+  var getLines=function(parent){
 
+    var ctrls=[];
+    var top=30;
+    var h=15;
+    var l=parent.w-202;
+    var ch=app.height-14;
+    var w=36;
+
+    var cn=new strip(
+            new propC(getGUID(), parent, 500, 95, w+10, w+10, 1, true, CMDS.UNDEF[0], CMDS.UNDEF[1]),
+            getStyle(STYLES.CONTAINER),
+            getStyle(STYLES.TEXT));
+
+    //~ L_2P:         [-200, 'Line2P',           'LINE2P'                 ],    //~ through 2 points
+    //~ L_SEGMENT2P:  [-201,  'Line',             'LINE'                  ],    //~ between 2 points
+    //~ L_SEGMENTLEN: [-202,  'Line',             'LINE'                  ],    //~ from point given length
+    //~ L_PERP:       [-203,  'LinePerp',         'LINEPERP'              ],    //~ perpendicular
+    //~ L_PERPB:      [-204,  'LinePerpB',        'LINEPERPB'             ],    //~  perpendicular bisector
+    //~ L_ANGB:       [-205,  'LineAngB',         'LINEANGB'              ],    //~ angle bisector
+    //~ L_PARR:       [-206,  'LineParr',         'LINEPARR'              ],    //~ parallel
+    //~ L_TANGENT:    [-207,  'LineTangent',      'LINETANGENT'           ],    //~ Tangent
+    //~ L_DIAMETER:   [-208,  'LineDiameter',     'LINEDIAMETER'          ],    //~ Diameter
+    //~ L_RADIUS:     [-209,  'LineRadius',       'LINERADIUS'            ],    //~ Radius
+
+    //~ RAY_2P:       [-210,  'Ray2P',            'RAY2P'                 ],    //~ Ray between 2 points
+    //~ V_2P:         [-211,  'Vector2P',         'VECTOR2P'              ],    //~ Vector between 2 points
+    //~ V_FP:         [-212,  'VectorFP',         'VECTORFP'              ],    //~ Vector from point
+    
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 0*w, 0, w, w, 0, false, CMDS.L_2P[0], CMDS.L_2P[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 1*w, 0, w, w, 0, false, CMDS.L_2P[0], CMDS.L_2P[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+                
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 2*w, 0, w, w, 0, false, CMDS.L_SEGMENT2P[0], CMDS.L_SEGMENT2P[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 3*w, 0, w, w, 0, false, CMDS.L_SEGMENTLEN[0], CMDS.L_SEGMENTLEN[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 4*w, 0, w, w, 0, false, CMDS.L_PERP[0], CMDS.L_PERP[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 5*w, 0, w, w, 0, false, CMDS.L_PERPB[0], CMDS.L_PERPB[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 6*w, 0, w, w, 0, false, CMDS.L_ANGB[0], CMDS.L_ANGB[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 7*w, 0, w, w, 0, false, CMDS.L_PARR[0], CMDS.L_PARR[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 8*w, 0, w, w, 0, false, CMDS.L_TANGENT[0], CMDS.L_TANGENT[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 9*w, 0, w, w, 0, false, CMDS.L_DIAMETER[0], CMDS.L_DIAMETER[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 10*w, 0, w, w, 0, false, CMDS.L_RADIUS[0], CMDS.L_RADIUS[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 11*w, 0, w, w, 0, false, CMDS.RAY_2P[0], CMDS.RAY_2P[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 12*w, 0, w, w, 0, false, CMDS.V_2P[0], CMDS.V_2P[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 13*w, 0, w, w, 0, false, CMDS.V_FP[0], CMDS.V_2P[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    cn.ctrls=ctrls;
+
+    return cn;
+
+  };
+  
   var getGrid=function(parent){
 
     var ctrls=[];
@@ -2568,6 +2674,7 @@ var proc = function(processingInstance){ with (processingInstance){
             getStyle(STYLES.TEXTCENTER)));
 
     ctrls.push(getPoints(cn));
+    ctrls.push(getLines(cn));
 
     ctrls.push(getHeader(cn));
     ctrls.push(getFooter(cn));
