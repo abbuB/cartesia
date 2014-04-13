@@ -10,8 +10,6 @@ var proc = function(processingInstance){ with (processingInstance){
 
   **/
 
-
-
   var CLRS={
 
     WHITE:    color(255,255,255),     BLACK:    color(0,0,0),
@@ -74,216 +72,251 @@ var proc = function(processingInstance){ with (processingInstance){
     FIVE:   5
   };
 
-  var CMDS={
+  var COMMANDS={
 
-    COMMAND:      [-1000, 'Command',        'COMMAND'                 ],
-    UNDEF:        [  -1,   'undefined',      'UNDEFINED'              ],
 
     //~ General ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    CARTESIA:     [   0,   'Cartesia',       'CARTESIA'               ],
-
-    CONTAINER:    [   1,   'Container',      'CONTAINER'              ],
-    HEADER:       [   2,   'Header',         'HEADER'                 ],
-    FOOTER:       [   3,   'Footer',         'FOOTER'                 ],
-    TELEMETRY:    [   4,   'Telemetry',      'TELEMETRY'              ],
-    TOOLTIP:      [   3,  'ToolTip',        'TOOLTIP'                 ],
-    FORMULA:      [   4,  'Formula',        'FORMULA'                 ],
-
-    DEBUG:        [   5,  'Debug',          'DEBUG'                   ],
-    WIDTH:        [   6,  'Width',          'Width'                   ],
-    HEIGHT:       [   7,  'Height',         'HEIGHT'                  ],
-    FRAMERATEA:   [   8,  'FrameRate(A)',   'FRAMERATE(A)'            ],
-    FRAMERATE:    [   9,  'FrameRate',      'FRAMERATE'               ],
-    MOUSEX:       [  10,  'MouseX',         'MOUSEX'                  ],
-    MOUSEY:       [  11,  'MouseY',         'MOUSEY'                  ],
-    PRESSED:      [  12,  'Pressed',        'PRESSED'                 ],
-    VISIBLE:      [  13,  'VISIBLE',        'VISIBLE'                 ],
-
-    FOCUS:        [  14,  'Focus',         'FOCUS'                    ],
-
-    LEFT:         [  15,  'Left button',   'LEFT'                     ],
-    CENTER:       [  16,  'Center button', 'CENTER'                   ],
-    RIGHT:        [  17,  'Right button',  'RIGHT'                    ],
-
-    SPACER:       [  18,  'Spacer',         'SPACER'                  ],
+    COMMAND:      [   0,  'Command',          'COMMAND'               ],
+    UNDEF:        [   1,  'Undefined',        'UNDEFINED'             ],
 
 
-    //~ Misc ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    SNAPTOGRID:   [  19,   'SnapToGrid',     'SNAPTOGRID'             ],
-    ORTHO:        [  20,   'Ortho',          'ORTHO'                  ],
-    COORDINATES:  [  21,   'Coordinates',    'COORDINATES'            ],
-    COLORS:       [  22,   'Colors',         'COLORS'                 ],
+    CARTESIA:     [   2,  'Cartesia',         'CARTESIA'              ],
 
-    RED:          [  23,   'Red',            'RED'                    ],
-    BLUE:         [  24,  'Blue',         'BLUE'                      ],
-    GREEN:        [  25,  'Green',          'GREEN'                   ],
+    CONTAINER:    [   3,  'Container',        'CONTAINER'             ],
+    HEADER:       [   4,  'Header',           'HEADER'                ],
+    FOOTER:       [   5,  'Footer',           'FOOTER'                ],
+    TELEMETRY:    [   6,  'Telemetry',        'TELEMETRY'             ],
+    TOOLTIP:      [   7,  'ToolTip',          'TOOLTIP'               ],
+    FORMULA:      [   8,  'Formula',          'FORMULA'               ],
+
+    DEBUG:        [   9,  'Debug',            'DEBUG'                 ],
+    WIDTH:        [  10,  'Width',            'WIDTH'                 ],
+    HEIGHT:       [  11,  'Height',           'HEIGHT'                ],
+    FRAMERATEA:   [  12,  'FrameRateA',       'FRAMERATE(A)'          ],
+    FRAMERATE:    [  13,  'FrameRate',        'FRAMERATE'             ],
+    MOUSEX:       [  14,  'MouseX',           'MOUSEX'                ],
+    MOUSEY:       [  15,  'MouseY',           'MOUSEY'                ],
+    PRESSED:      [  16,  'Pressed',          'PRESSED'               ],
+    VISIBLE:      [  17,  'Visible',          'VISIBLE'               ],
+
+    FOCUS:        [  18,  'Focus',            'FOCUS'                 ],
+
+    LEFT:         [  19,  'Left button',      'LEFT'                  ],
+    CENTER:       [  20,  'Center button',    'CENTER'                ],
+    RIGHT:        [  21,  'Right button',     'RIGHT'                 ],
+
+    SPACER:       [  22,  'Spacer',           'SPACER'                ],
+
+
+    //~ Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    GRID:         [ 100,  'Grid',             'COMMAND'               ],
+
+    ORIGIN:       [ 101,  'Origin',           'ORIGIN'                ],
+    BORDER:       [ 102,  'Border',           'BORDER'                ],
+    AXES:         [ 103,  'Axes',             'AXES'                  ],
+    AXISX:        [ 104,  'x',                'AXISX'                 ],
+    AXISY:        [ 105,  'y',                'AXISY'                 ],
+    LINES:        [ 106,  'Lines',            'LINES'                 ],
+    LINESX:       [ 107,  'LinesX',           'LINESX'                ],
+    LINESY:       [ 108,  'LinesY',           'LINESY'                ],
+    ARROWS:       [ 109,  'Arrows',           'ARROWS'                ],
+    ARROWSX:      [ 110,  'ArrowsX',          'ARROWSX'               ],
+    ARROWSY:      [ 111,  'ArrowsY',          'ARROWSY'               ],
+    TICKS:        [ 112,  'Ticks',            'TICKS'                 ],
+    TICKSX:       [ 113,  'TicksX',           'TICKSX'                ],
+    TICKSY:       [ 114,  'TicksY',           'TICKSY'                ],
+    LABELS:       [ 115,  'Labels',           'LABELS'                ],
+    LABELSX:      [ 116,  'LabelsX',          'LABELSX'               ],
+    LABELSY:      [ 117,  'LabelsY',          'LABLESY'               ],
+
+    COORDINATES:  [ 118,  'Coordinates',      'COORDINATES'           ],
+    ORTHO:        [ 119,  'LabelsX',          'LABELSX'               ],
+    SNAPTOGRID:   [ 120,  'LabelsY',          'LABLESY'               ],
+    FULLSCREEN:   [ 121,  'Grid',             'COMMAND'               ],
+
+
+    //~ Properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    PROPERTIES:   [ 200,  'Properties',       'PROPERTIES'            ],
+
+    MATCH:        [ 201,  'Match',            'MATCH'                 ],
+
+    NAME:         [ 202,  'Name',             'NAME'                  ],
+    CAPTION:      [ 203,  'Caption',          'CAPTION'               ],
+
+    COLOR:        [ 204,  'Color',            'COLOR'                 ],
+    COLORG:       [ 205,  'ColorG',           'COLORG'                ],
+    LAYER:        [ 206,  'Layer',            'LAYER'                 ],
+    LINETYPE:     [ 207,  'Line Type',        'LINE TYPE'             ],
+    LINEWEIGHT:   [ 208,  'Line Weight',      'LINE WEIGHT'           ],
+
+    RED:          [ 209,   'Red',             'RED'                   ],
+    BLUE:         [ 210,  'Blue',             'BLUE'                  ],
+    GREEN:        [ 211,  'Green',            'GREEN'                 ],
 
 
     //~ File ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    FILE:         [ 100,  'File',           'FILE'                    ],
-    NEW:          [ 101,  'New',            'NEW'                     ],
-    OPEN:         [ 102,  'Open',           'OPEN'                    ],
-    SAVE:         [ 103,  'Save',           'SAVE'                    ],
-    SAVEAS:       [ 104,  'Save As',        'SAVEAS'                  ],
-    CLOSE:        [ 105,  'Close',          'CLOSE'                   ],
+    FILE:         [ 301,  'File',             'FILE'                  ],
+    NEW:          [ 302,  'New',              'NEW'                   ],
+    OPEN:         [ 303,  'Open',             'OPEN'                  ],
+    SAVE:         [ 304,  'Save',             'SAVE'                  ],
+    SAVEAS:       [ 305,  'Save As',          'SAVEAS'                ],
+    CLOSE:        [ 306,  'Close',            'CLOSE'                 ],
 
 
     //~ Edit ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    EDIT:         [ 200,  'Edit',           'EDIT'                    ],
-    UNDO:         [ 201,  'Undo',           'UNDO'                    ],
-    REDO:         [ 202,  'Redo',           'REDO'                    ],
-    COPY:         [ 203,  'Copy',           'COPY'                    ],
-    CUT:          [ 204,  'Cut',            'CUT'                     ],
-    PASTE:        [ 205,  'Paste',          'PASTE'                   ],
-    EDIT:         [ 206,  'Edit',           'EDIT'                    ],
-    DELETE:       [ 207,  'Delete',         'DELETE'                  ],
+    EDIT:         [ 400,  'Edit',             'EDIT'                  ],
+    UNDO:         [ 401,  'Undo',             'UNDO'                  ],
+    REDO:         [ 402,  'Redo',             'REDO'                  ],
+    COPY:         [ 403,  'Copy',             'COPY'                  ],
+    CUT:          [ 404,  'Cut',              'CUT'                   ],
+    PASTE:        [ 405,  'Paste',            'PASTE'                 ],
+    EDIT:         [ 406,  'Edit',             'EDIT'                  ],
+    DELETE:       [ 407,  'Delete',           'DELETE'                ],
 
 
     //~ View ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    VIEW:         [ 300,  'View',           'VIEW'                    ],
-    ZOOMIN:       [ 301,  'Zoomin',         'ZOOMIN'                  ],
-    ZOOMOUT:      [ 302,  'Zoomout',        'ZOOMOUT'                 ],
-    PAN:          [ 303,  'Pan',            'PAN'                     ],
+    VIEW:         [ 500,  'View',             'VIEW'                  ],
+    ZOOMIN:       [ 501,  'Zoomin',           'ZOOMIN'                ],
+    ZOOMOUT:      [ 502,  'Zoomout',          'ZOOMOUT'               ],
+    PAN:          [ 503,  'Pan',              'PAN'                   ],
 
 
     //~ Modify ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    MODIFY:       [ 400,  'Modify',         'MODIFY'                  ],
-    TRANSLATE:    [ 401,  'Translate',      'TRANSLATE'               ],
-    TRANSVECTOR:  [ 402,  'Transvector',    'TRANSVECTOR'             ],    //~ TranslateByVector
+    MODIFY:       [ 600,  'Modify',           'MODIFY'                ],
+    TRANSLATE:    [ 601,  'Translate',        'TRANSLATE'             ],
+    TRANSVECTOR:  [ 602,  'Transvector',      'TRANSVECTOR'           ],    //~ TranslateByVector
 
-    REFLECT:      [ 403,  'Reflect',        'REFLECT'                 ],
-    REFLECTTLINE: [ 404,  'ReflectLine',    'REFLECTLINE'             ],    //~ ReflectAboutLIne
-    REFLECTPOINT: [ 405,  'ReflectPoint',   'REFLECTPOINT'            ],    //~ ReflectAboutPoint
-    REFLECTCIRCLE:[ 406,  'ReflectCircle',  'REFLECTCIRCLE'           ],    //~ ReflectAboutCircle
-    
-    
-    ROTATE:       [ 407,  'Rotate',         'ROTATE'                  ],
-    ROTATEPOINT:  [ 408,  'RotatePoint',    'ROTATEPOINT'             ],    //~ RotateAroundPoint
+    REFLECT:      [ 603,  'Reflect',          'REFLECT'               ],
+    REFLECTTLINE: [ 604,  'ReflectLine',      'REFLECTLINE'           ],    //~ ReflectAboutLIne
+    REFLECTPOINT: [ 605,  'ReflectPoint',     'REFLECTPOINT'          ],    //~ ReflectAboutPoint
+    REFLECTCIRCLE:[ 606,  'ReflectCircle',    'REFLECTCIRCLE'         ],    //~ ReflectAboutCircle
 
-    SCALE:        [ 409,  'Scale',          'SCALE'                   ],
-    SHEAR:        [ 410,  'Shear',          'SHEAR'                   ],
+
+    ROTATE:       [ 607,  'Rotate',           'ROTATE'                ],
+    ROTATEPOINT:  [ 608,  'RotatePoint',      'ROTATEPOINT'           ],    //~ RotateAroundPoint
+
+    SCALE:        [ 609,  'Scale',            'SCALE'                 ],
+    SHEAR:        [ 610,  'Shear',            'SHEAR'                 ],
 
     //~ DILATEFROMPOINT:            [ 1,  'Dilatefrompoint',    'DILATEFROMPOINT' ]
 
 
     //~ Measure ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    MEASURE:      [ 500,  'Measure',        'MEASURE'                 ],
-    DISTANCE:     [ 501,  'Distance',       'DISTANCE'                ],
-    PERIMETER:    [ 502,  'Perimeter',      'PERIMETER'               ],
-    AREA:         [ 503,  'Area',           'AREA'                    ],
-    VOLUMEN:      [ 504,  'Volume',         'VOLUME'                  ],
-    RADIUS:       [ 505,  'Radius',         'RADIUS'                  ],
-    DIAMETER:     [ 506,  'Diamter',        'DIAMETER'                ],
-    SLOPE:        [ 507,  'Slope',          'SLOPE'                   ],
+    MEASURE:      [ 700,  'Measure',          'MEASURE'               ],
+    DISTANCE:     [ 701,  'Distance',         'DISTANCE'              ],
+    PERIMETER:    [ 702,  'Perimeter',        'PERIMETER'             ],
+    AREA:         [ 703,  'Area',             'AREA'                  ],
+    VOLUMEN:      [ 704,  'Volume',           'VOLUME'                ],
+    RADIUS:       [ 705,  'Radius',           'RADIUS'                ],
+    DIAMETER:     [ 706,  'Diamter',          'DIAMETER'              ],
+    SLOPE:        [ 707,  'Slope',            'SLOPE'                 ],
 
 
     //~ Layers ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    LAYER:        [ 600,  'Layer',          'LAYER'                   ],
-    FORWARD:      [ 601,  'Forward',        'FORWARD'                 ],
-    BACK:         [ 602,  'Back',           'BACK'                    ],
+    LAYER:        [ 800,  'Layer',            'LAYER'                 ],
+    FORWARD:      [ 801,  'Forward',          'FORWARD'               ],
+    BACK:         [ 802,  'Back',             'BACK'                  ],
 
 
-    //~ Properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    PROPERTIES:   [ 700,  'Properties',     'PROPERTIES'              ],
 
-    MATCH:        [ 701,  'Match',          'MATCH'                   ],
-
-    NAME:         [ 702,  'Name',           'NAME'                    ],
-    CAPTION:      [ 703,  'Caption',        'CAPTION'                 ],
-
-    COLOR:        [ 704,  'Color',          'COLOR'                   ],
-    COLORG:       [ 705,  'ColorG',         'COLORG'                  ],
-    LAYER:        [ 706,  'Layer',          'LAYER'                   ],
-    LINETYPE:     [ 707,  'Line Type',      'LINE TYPE'               ],
-    LINEWEIGHT:   [ 708,  'Line Weight',    'LINE WEIGHT'             ],
-
-
-    //~ Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    BORDER:       [ 800, 'Border',         'BORDER'                   ],
-    ORIGIN:       [ 801, 'Origin',         'ORIGIN'                   ],
-
-
-    //~  Shapes ========================================================
+    //~  SHAPES ========================================================
 
 
     //~ Point (P) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    P:            [-100, 'Point',          'POINT'                    ],
-    P_OBJECT:     [-101, 'Object',         'OBJECT'                   ],
-    P_INTERSECT:  [-102, 'Intersect',      'INTERSECT'                ],
-    P_MIDPOINT:   [-103, 'Midpoint',       'MIDPOINT'                 ],    //~ Midpoint/Center
-    P_ATDETACH:   [-104, 'AttachDetach',   'ATTACHDETACH'             ],    //~ AttachDetachPoint
+    POINT:        [1000,  'Point',            'POINT'                 ],
+    P_OBJECT:     [1001,  'P_Object',         'P_OBJECT'              ],
+    P_INTERSECT:  [1002,  'P_Intersect',      'P_INTERSECT'           ],
+    P_MIDPOINT:   [1003,  'P_Midpoint',       'P_MIDPOINT'            ],    //~ Midpoint/Center
+    P_ATDETACH:   [1004,  'P_AttachDetach',   'P_ATTACHDETACH'        ],    //~ AttachDetachPoint
 
 
     //~ Line (L) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    LINE:         [1100,  'Line',             'LINE'                  ],
+    L_2P:         [1101,  'Line2P',           'LINE2P'                ],    //~ through 2 points
+    L_SEGMENT2P:  [1102,  'LineSegment2P',    'LINESEGMENT2P'         ],    //~ between 2 points
+    L_SEGMENTLEN: [1103,  'LineSegmentLen',   'LINESEGMENTLEN'        ],    //~ from point given length
+    L_PERP:       [1104,  'LinePerp',         'LINEPERP'              ],    //~ perpendicular
+    L_PERPB:      [1105,  'LinePerpB',        'LINEPERPB'             ],    //~  perpendicular bisector
+    L_ANGB:       [1106,  'LineAngB',         'LINEANGB'              ],    //~ angle bisector
+    L_PARR:       [1107,  'LineParr',         'LINEPARR'              ],    //~ parallel
+    L_TANGENT:    [1108,  'LineTangent',      'LINETANGENT'           ],    //~ Tangent
+    L_DIAMETER:   [1109,  'LineDiameter',     'LINEDIAMETER'          ],    //~ Diameter
+    L_RADIUS:     [1110,  'LineRadius',       'LINERADIUS'            ],    //~ Radius
 
-    L_2P:         [-200, 'Line2P',           'LINE2P'                 ],    //~ through 2 points
-    L_SEGMENT2P:  [-201,  'Line',             'LINE'                  ],    //~ between 2 points
-    L_SEGMENTLEN: [-202,  'Line',             'LINE'                  ],    //~ from point given length
-    L_PERP:       [-203,  'LinePerp',         'LINEPERP'              ],    //~ perpendicular
-    L_PERPB:      [-204,  'LinePerpB',        'LINEPERPB'             ],    //~  perpendicular bisector
-    L_ANGB:       [-205,  'LineAngB',         'LINEANGB'              ],    //~ angle bisector
-    L_PARR:       [-206,  'LineParr',         'LINEPARR'              ],    //~ parallel
-    L_TANGENT:    [-207,  'LineTangent',      'LINETANGENT'           ],    //~ Tangent
-    L_DIAMETER:   [-208,  'LineDiameter',     'LINEDIAMETER'          ],    //~ Diameter
-    L_RADIUS:     [-209,  'LineRadius',       'LINERADIUS'            ],    //~ Radius
-
-    RAY_2P:       [-210,  'Ray2P',            'RAY2P'                 ],    //~ Ray between 2 points
-    V_2P:         [-211,  'Vector2P',         'VECTOR2P'              ],    //~ Vector between 2 points
-    V_FP:         [-212,  'VectorFP',         'VECTORFP'              ],    //~ Vector from point
+    RAY_2P:       [1211,  'Ray2P',            'RAY2P'                 ],    //~ Ray between 2 points
+    V_2P:         [1212,  'Vector2P',         'VECTOR2P'              ],    //~ Vector between 2 points
+    V_FP:         [1213,  'VectorFP',         'VECTORFP'              ],    //~ Vector from point
 
 
-    //~ Polygon ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    POLYGON:      [-300,  'Polygon',          'POLYGON'               ],
-    POLYGONR:     [-301,  'PolygonR',         'POLYGONR'              ],    //~ regular
-    RIGIDPOLYGON: [-302,  'PolygonRigid',     'POLYGONRIGID'          ],    //~ Rigig
-    POLYGONV:     [-303,  'PolygonV',         'POLYGONV'              ],    //~ Vector
+    //~ Triangle (T)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    TRIANGLE:     [1300,  'Triangle',         'TRIANGLE'              ],
+    T_EQUILATERAL:[1301,  'T_Equilateral',    'T_EQUILATERAL'         ],
+    T_ISOSCELES:  [1302,  'T_Isosceles',      'T_ISOSCELES'           ],
+    T_SCALENE:    [1303,  'T_Scalene',        'T_SCALENE'             ],
 
 
     //~ Circle (C)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    CIRCLE:       [1400,  'Circle',           'CIRCLE'                ],
+    C_CENTERP:    [1401,  'CircleCenterP',    'CIRCLECENTERP'         ],    //~ center point
+    C_CENTERR:    [1402,  'CircleCenterR',    'CIRCLECENTERR'         ],    //~ center radius
 
-    C_CENTERP:    [-400,  'CircleCenterP',    'CIRCLECENTERP'         ],    //~ center point
-    C_CENTERR:    [-401,  'CircleCenterR',    'CIRCLECENTERR'         ],    //~ center radius
-
-    C_3P:         [-402,  'Circle3P',         'CIRCL3P'               ],    //  3 points
-
-
-    //~ Arc (A)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    A_2P:         [-500,  'Arc2P',            'ARC2P'                 ],    //~SEMICIRCLETHROUGH2POINTS
-    A_1:          [-501,  'Arc1',             'ARC1'                  ],    //~Circulararc
-    A_2:          [-502,  'Arc2',             'ARC2'                  ],    //~CIRCUMCIRCULARARC
-    A_3:          [-503,  'Arc3',             'ARC4'                  ],    //~ CIRCULARSECTOR
-    A_4:          [-504,  'Arc4',             'ARC4'                  ],    //~ CIRCUMCIRCULARSECTOR
+    C_3P:         [1403,  'Circle3P',         'CIRCL3P'               ],    //  3 points
 
 
-    COMPASS:      [-504,  'Compass',          'COMPASS'               ],    //~ ??
+    //~ Arc (A)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ARC:          [1500,  'Arc',              'ARC'                   ],
+    A_2P:         [1501,  'Arc2P',            'ARC2P'                 ],    //~SEMICIRCLETHROUGH2POINTS
+    A_1:          [1502,  'Arc1',             'ARC1'                  ],    //~Circulararc
+    A_2:          [1503,  'Arc2',             'ARC2'                  ],    //~CIRCUMCIRCULARARC
+    A_3:          [1504,  'Arc3',             'ARC4'                  ],    //~ CIRCULARSECTOR
+    A_4:          [1505,  'Arc4',             'ARC4'                  ],    //~ CIRCUMCIRCULARSECTOR
+
+    COMPASS:      [1506,  'Compass',          'COMPASS'               ],    //~ ??
+
+
+    //~ Polygon ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    POLYGON:      [1600,  'Polygon',          'POLYGON'               ],
+    POLYGONR:     [1601,  'PolygonR',         'POLYGONR'              ],    //~ regular
+    POLYGONRIGID: [1602,  'PolygonRigid',     'POLYGONRIGID'          ],    //~ Rigid
+    POLYGONV:     [1603,  'PolygonV',         'POLYGONV'              ],    //~ Vector
 
 
     //~ Conics (S) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    S_ELLIPSE:    [-600,  'Ellipse',          'ELLIPSE'               ],
-    S_HYPERBOLA:  [-601,  'Hyperbola',        'HYPERBOLA'             ],
-    S_PARABOLA:   [-602,  'Parabola',         'PARABOLA'              ],
-    S_5POINTS:    [-603,  'Conic5points',     'CONIC5POINTS'          ],
+    CONIC:        [1700,  'Conic',            'CONIC'                 ],
+    S_ELLIPSE:    [1700,  'Ellipse',          'ELLIPSE'               ],
+    S_HYPERBOLA:  [1701,  'Hyperbola',        'HYPERBOLA'             ],
+    S_PARABOLA:   [1702,  'Parabola',         'PARABOLA'              ],
+    S_5POINTS:    [1703,  'Conic5points',     'CONIC5POINTS'          ],
 
 
     //~ Angle ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    ANGLE:        [-700,  'Angle',            'ANGLE'                 ],
-    ANGLE_SIZE:   [-701,  'AngelSize',        'ANGELSIZE'             ],
+    ANGLE:        [1800,  'Angle',            'ANGLE'                 ],
+    ANGLE_SIZE:   [1801,  'AngelSize',        'ANGELSIZE'             ],
 
 
     //~ Annotation ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    TEXT:         [-800,  'Text',             'TEXT'                  ],
+    TEXT:         [1900,  'Text',             'TEXT'                  ],
 
 
-    //~ Images ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //~ Images ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    IMAGE:        [-900,  'Image',            'IMAGE'                 ],
-    SKECTH:       [-901,  'SKETCH',           'SKETCH'                ],
-        
+    IMAGE:        [2001,  'Image',            'IMAGE'                 ],
+    SKECTH:       [2002,  'SKETCH',           'SKETCH'                ],
+
+    //~ Footer ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //~ ORTHO:
+    //~ SNAPTOGRID:
+    //~ GRIDLINES:
+    //~ COORDINATES:
+    //~ DISPLAY:
+//~
+    //~ CommandLine ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //~ COMMANDLINE:
+    //~ HISTORY:
+    //~ DISPLAY:
+
     //~ PEN:                        [ 1,  'Pen',    'PEN' ]
 
     //~ RELATION:                   [ 1,  'Relation',   'RELATION'  ]
@@ -293,12 +326,12 @@ var proc = function(processingInstance){ with (processingInstance){
     //~ INPUTBOX:                   [ 1,  'Inputbox',   'INPUTBOX'  ]
 
     //~ CREATELIST:                 [ 1,  'Createlist',   'CREATELIST'  ]
-    //~ COMPLEXNUMBER:            [ 1,  'Complexnumber',    'COMPLEXNUMBER' ]
-    //~ BESTFITLINE:              [ 1,  'Bestfitline',    'BESTFITLINE' ]
-    //~ LOCUS:                        [ 1,  'Locus',    'LOCUS' ]
-    //~ POLYLINE:                 [ 1,  'Polyline',   'POLYLINE'  ]
-    
-  }
+    //~ COMPLEXNUMBER:              [ 1,  'Complexnumber',    'COMPLEXNUMBER' ]
+    //~ BESTFITLINE:                [ 1,  'Bestfitline',    'BESTFITLINE' ]
+    //~ LOCUS:                      [ 1,  'Locus',    'LOCUS' ]
+    //~ POLYLINE:                   [ 1,  'Polyline',   'POLYLINE'  ]
+
+  };
 
   var app={
 
@@ -343,8 +376,23 @@ var proc = function(processingInstance){ with (processingInstance){
     command:        0,
 
     border:         true,
-    origin:         true,
+    origin:         false,
 
+    axisx:          true,
+    axisy:          true,
+    linesx:         true,
+    linesy:         true,
+    arrowsx:        true,
+    arrowsy:        true,
+    ticksx:         true,
+    ticksy:         true,
+    labelsx:        true,
+    labelsy:        true,
+
+    coordinates:    true,
+    ortho:          true,
+    snaptogrid:     true,
+    fullscreen:     true
 
   };
 
@@ -370,36 +418,60 @@ var proc = function(processingInstance){ with (processingInstance){
 
     switch(p){
 
-      case CMDS.COMMAND[0]:     return app.command;
+      case COMMANDS.COMMAND[0]:     return app.command;
 
-      case CMDS.FOCUS[0]:       return app.focus;
-      case CMDS.LEFT[0]:        return app.left;
-      case CMDS.CENTER[0]:      return app.center;
-      case CMDS.RIGHT[0]:       return app.right;
-      case CMDS.CAPTION[0]:     return app.caption;
-      case CMDS.NAME[0]:        return app.name;
-      case CMDS.FORMULA[0]:     return app.formula;
+      case COMMANDS.FOCUS[0]:       return app.focus;
+      case COMMANDS.LEFT[0]:        return app.left;
+      case COMMANDS.CENTER[0]:      return app.center;
+      case COMMANDS.RIGHT[0]:       return app.right;
+      case COMMANDS.CAPTION[0]:     return app.caption;
+      case COMMANDS.NAME[0]:        return app.name;
+      case COMMANDS.FORMULA[0]:     return app.formula;
 
-      case CMDS.WIDTH[0]:       return app.width;
-      case CMDS.HEIGHT[0]:      return app.height;
-      case CMDS.FRAMERATE[0]:   return app.frameRate;
-      case CMDS.FRAMERATEA[0]:  return __frameRate;
-      case CMDS.MOUSEX[0]:      return app.mouseX;
-      case CMDS.MOUSEY[0]:      return app.mouseY;
-      case CMDS.PRESSED[0]:     return app.left;
+      case COMMANDS.WIDTH[0]:       return app.width;
+      case COMMANDS.HEIGHT[0]:      return app.height;
+      case COMMANDS.FRAMERATE[0]:   return app.frameRate;
+      case COMMANDS.FRAMERATEA[0]:  return __frameRate;
+      case COMMANDS.MOUSEX[0]:      return app.mouseX;
+      case COMMANDS.MOUSEY[0]:      return app.mouseY;
+      case COMMANDS.PRESSED[0]:     return app.left;
 
-      case CMDS.COLOR[0]:       return app.color;
-      case CMDS.COLORG[0]:      return app.color;
+      case COMMANDS.COLOR[0]:       return app.color;
+      case COMMANDS.COLORG[0]:      return app.color;
 
-      case CMDS.LAYER[0]:       return app.layer;
-      case CMDS.LINETYPE[0]:    return app.linetype;
-      case CMDS.LINEWEIGHT[0]:  return app.lineweight;
+      case COMMANDS.LAYER[0]:       return app.layer;
+      case COMMANDS.LINETYPE[0]:    return app.linetype;
+      case COMMANDS.LINEWEIGHT[0]:  return app.lineweight;
 
-      case CMDS.DEBUG[0]:       return app.debug;
+      case COMMANDS.DEBUG[0]:       return app.debug;
 
-      case CMDS.RED[0]:         return app.red;
-      case CMDS.GREEN[0]:       return app.green;
-      case CMDS.BLUE[0]:        return app.blue;
+      case COMMANDS.RED[0]:         return app.red;
+      case COMMANDS.GREEN[0]:       return app.green;
+      case COMMANDS.BLUE[0]:        return app.blue;
+
+    
+      //~ Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      case COMMANDS.ORIGIN[0]:      return app.origin;
+
+      case COMMANDS.AXISX[0]:       return app.axisx;
+      case COMMANDS.AXISY[0]:       return app.axisy;
+      
+      case COMMANDS.LINESX[0]:      return app.linesx;
+      case COMMANDS.LINESY[0]:      return app.linesy;
+      
+      case COMMANDS.ARROWSX[0]:     return app.arrowsx;
+      case COMMANDS.ARROWSY[0]:     return app.arrowsy;
+      
+      case COMMANDS.TICKSX[0]:      return app.ticksx;
+      case COMMANDS.TICKSY[0]:      return app.ticksy;
+      
+      case COMMANDS.LABELSX[0]:     return app.labelsx;
+      case COMMANDS.LABELSY[0]:     return app.labelsy;
+
+      case COMMANDS.COORDINATES[0]: return app.coordinates;
+      case COMMANDS.ORTHO[0]:       return app.ortho;
+      case COMMANDS.SNAPTOGRID[0]:  return app.snaptogird;
+      case COMMANDS.FULLSCREEN[0]:  return app.fullscreen;
 
     };
 
@@ -410,6 +482,21 @@ var proc = function(processingInstance){ with (processingInstance){
     return color(red(clr), green(clr), blue(clr), alpha/100*255);
 
   };
+
+  var getDottedLine=function(x0, y0, x1, y1, n){
+
+    var x,y;
+
+    for(var i=0; i<=n; i++) {
+
+      x = lerp(x0, x1, i/n);
+      y = lerp(y0, y1, i/n);
+
+      ellipse(x, y, 1, 1);
+
+    }
+
+  }
 
   var rec=function(x,y,w,h,r){
 
@@ -422,6 +509,87 @@ var proc = function(processingInstance){ with (processingInstance){
 
   };
 
+  //~ Shapes ===========================================================
+  var Shape=function(p){
+
+    this.pnts=p.pnts;
+
+    this.w=p.w;
+    this.h=p.h;
+
+    this.fill=lp.fill;          //~ fill color
+    this.fillH=lp.fillH;        //~ fill color highlight
+    this.stroke=lp.stroke;      //~ stroke color
+    this.strokeH=lp.strokeH;    //~ stroke color highlight
+
+    this.layer=p.layer;
+    this.linetype=p.linetype;
+
+    this.lineweight=lp.lineweight;      //~ strokeWeight
+    this.lineweightH=lp.lineweightH;    //~ strokeWeight highlight
+
+  };
+  Shape.prototype.draw=function(){};
+
+  var Point=function(p){
+    Shape.call(this,p);
+  };
+  Point.prototype=Object.create(Shape.prototype);
+  Point.prototype.draw=function(){};
+
+  var Line=function(p){
+    Shape.call(this,p);
+  };
+  Line.prototype=Object.create(Shape.prototype);
+  Line.prototype.draw=function(){};
+
+  var Triangle=function(p){
+    Shape.call(this,p);
+  };
+  Triangle.prototype=Object.create(Shape.prototype);
+  Triangle.prototype.draw=function(){};
+
+  var Circle=function(p){
+    Shape.call(this,p);
+  };
+  Circle.prototype=Object.create(Shape.prototype);
+  Circle.prototype.draw=function(){};
+
+  var Ellipse=function(p){
+    Shape.call(this,p);
+  };
+  Ellipse.prototype=Object.create(Shape.prototype);
+  Ellipse.prototype.draw=function(){};
+
+  var Arc=function(p){
+    Shape.call(this,p);
+  };
+  Arc.prototype=Object.create(Shape.prototype);
+  Arc.prototype.draw=function(){};
+
+  var Polygon=function(p){
+    Shape.call(this,p);
+  };
+  Polygon.prototype=Object.create(Shape.prototype);
+  Polygon.prototype.draw=function(){};
+
+  var Conic=function(p){
+    Shape.call(this,p);
+  };
+  Conic.prototype=Object.create(Shape.prototype);
+  Conic.prototype.draw=function(){};
+
+  var Angle=function(p){
+    Shape.call(this,p);
+  };
+  Angle.prototype=Object.create(Shape.prototype);
+  Angle.prototype.draw=function(){};
+
+  var Annotation=function(p){
+    Shape.call(this,p);
+  };
+  Annotation.prototype=Object.create(Shape.prototype);
+  Annotation.prototype.draw=function(){};
 
   //~ Commands =========================================================
   var commands=function(c,p){
@@ -430,37 +598,64 @@ var proc = function(processingInstance){ with (processingInstance){
 
     switch(c){
 
-    //~ Points ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      case CMDS.P[0]:             println('Point:');            break;
-      case CMDS.P_OBJECT[0]:      println('Point: bound');      break;
-      case CMDS.P_INTERSECT[0]:   println('Point: interset');   break;
-      case CMDS.P_MIDPOINT[0]:    println('Point: midpoint');   break;
+      //~ Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      case COMMANDS.GRID[0]:        break;
 
-      case CMDS.ORIGIN[0]:        app.origin=p;                 break;
-      case CMDS.BORDER[0]:        app.border=p;                 break;
+      case COMMANDS.ORIGIN[0]:      app.origin=!app.origin;           break;
+      case COMMANDS.BORDER[0]:      app.border=!app.border;           break;
+      case COMMANDS.AXES[0]:                                          break;
+      case COMMANDS.AXISX[0]:       app.axisx=!app.axisx;             break;
+      case COMMANDS.AXISY[0]:       app.axisy=!app.axisy;             break;
+      case COMMANDS.LINES[0]:                                         break;
+      case COMMANDS.LINESX[0]:      app.linesx=!app.linesx;           break;
+      case COMMANDS.LINESY[0]:      app.linesy=!app.linesy;           break;
+      case COMMANDS.ARROWS[0]:                                        break;
+      case COMMANDS.ARROWSX[0]:     app.arrowsx=!app.arrowsx;         break;
+      case COMMANDS.ARROWSY[0]:     app.arrowsy=!app.arrowsy;         break;
+      case COMMANDS.TICKS[0]:                                         break;
+      case COMMANDS.TICKSX[0]:      app.ticksx=!app.ticksx;           break;
+      case COMMANDS.TICKSY[0]:      app.ticksy=!app.ticksy;           break;
+      case COMMANDS.LABELS[0]:                                        break;
+      case COMMANDS.LABELSX[0]:     app.labelsx=!app.labelsx;         break;
+      case COMMANDS.LABELSY[0]:     app.labelsy=!app.labelsy;         break;
 
-      case CMDS.FRAMERATE[0]:     frameRate(p);
-                                  app.frameRate=p;
-                                  break;
+      case COMMANDS.COORDINATES[0]: app.coordinates=!app.coordinates; break;
+      case COMMANDS.ORTHO[0]:       app.ortho=!app.ortho;             break;
+      case COMMANDS.SNAPTOGRID[0]:  app.snaptogrid=!app.snaptogrid;   break;
+      case COMMANDS.FULLSCREEN[0]:  app.fullscreen=!app.fullscreen;   break;
 
-      case CMDS.DEBUG[0]:         app.debug=!app.debug;
-                                  if(app.debug){ frameRate(0);  }
-                                  else         { frameRate(31); }
-                                  break;
 
-      case CMDS.COLORG[0]:        return app.color;
+      //~ Shapes ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      case COMMANDS.POINT[0]:       println('Point:');          break;
+      case COMMANDS.P_OBJECT[0]:    println('Point: bound');    break;
+      case COMMANDS.P_INTERSECT[0]: println('Point: interset'); break;
+      case COMMANDS.P_MIDPOINT[0]:  println('Point: midpoint'); break;
 
-      case CMDS.COLOR[0]:         app.color=p;
-                                  app.red=red(app.color);
-                                  app.green=green(app.color);
-                                  app.blue=blue(app.color);
-                                  break;
+      case COMMANDS.ORIGIN[0]:      app.origin=p;               break;
+      case COMMANDS.BORDER[0]:      app.border=p;               break;
 
-      //~ case CMDS.RECTANGLE[0]: println('Rectangle');         break;
+      case COMMANDS.FRAMERATE[0]:   frameRate(p);
+                                    app.frameRate=p;
+                                    break;
 
-      case CMDS.RED[0]:           app.red=red(app.color);       break;
-      case CMDS.GREEN[0]:         app.green=green(app.color);   break;
-      case CMDS.BLUE[0]:          app.blue=blue(app.color);     break;
+      case COMMANDS.DEBUG[0]:       app.debug=!app.debug;
+                                    if(app.debug){ frameRate(60);  }
+                                    else         { frameRate(31); }
+                                    break;
+
+      case COMMANDS.COLORG[0]:      return app.color;
+
+      case COMMANDS.COLOR[0]:       app.color=p;
+                                    app.red=red(app.color);
+                                    app.green=green(app.color);
+                                    app.blue=blue(app.color);
+                                    break;
+
+      //~ case COMMANDS.RECTANGLE[0]: println('Rectangle');         break;
+
+      case COMMANDS.RED[0]:         app.red=red(app.color);     break;
+      case COMMANDS.GREEN[0]:       app.green=green(app.color); break;
+      case COMMANDS.BLUE[0]:        app.blue=blue(app.color);   break;
 
       default:  break;
 
@@ -863,6 +1058,7 @@ var proc = function(processingInstance){ with (processingInstance){
     var cX=p.w/2;
     var cY=p.h/2;
     var cPNT=CLRS.YELLOW;
+    var cMEASURE=CLRS.RED;
     var cVERTEX=CLRS.Gray5;
     var cLINE=CLRS.Blue;
     var cFILL=CLRS.Gray9;
@@ -876,7 +1072,7 @@ var proc = function(processingInstance){ with (processingInstance){
 
         switch(p.c){
 
-          case CMDS.P[0]:
+          case COMMANDS.POINT[0]:
 
             noFill();
 
@@ -888,11 +1084,11 @@ var proc = function(processingInstance){ with (processingInstance){
 
             break;
 
-          case CMDS.P_OBJECT[0]:
+          case COMMANDS.P_OBJECT[0]:
 
             fill(cFILL);
             strokeWeight(0.5);
-            stroke(cLINE);
+            stroke(cVERTEX);
 
             beginShape();
               vertex(d+cX-10, d+cY-10);
@@ -917,11 +1113,11 @@ var proc = function(processingInstance){ with (processingInstance){
 
             break;
 
-          case CMDS.P_INTERSECT[0]:
+          case COMMANDS.P_INTERSECT[0]:
 
             noFill();
             strokeWeight(0.5);
-            stroke(cLINE);
+            stroke(cVERTEX);
 
             line(d+cX-10, d+cY+10, d+cX+10, d+cY-10);
             line(d+cX+4,  d+cY+10, d+cX-4, d+cY-10);
@@ -934,12 +1130,12 @@ var proc = function(processingInstance){ with (processingInstance){
 
             break;
 
-          case CMDS.P_MIDPOINT[0]:
+          case COMMANDS.P_MIDPOINT[0]:
 
             noFill();
 
             strokeWeight(0.5);
-            stroke(cLINE);
+            stroke(cVERTEX);
 
             line(d+cX-10, d+cY+10, d+cX+10, d+cY-10);
 
@@ -952,6 +1148,299 @@ var proc = function(processingInstance){ with (processingInstance){
             break;
 
           default:    break;
+
+        }
+
+      popStyle();
+
+    };
+    var drawLine=function(){
+
+      pushStyle();
+
+      rectMode(CENTER);
+
+        switch(p.c){
+
+          case COMMANDS.L_2P[0]:
+
+            noFill();
+
+            strokeWeight(0.5);
+            stroke(cVERTEX);
+
+            line(d+cX-10, d+cY+10, d+cX+10, d+cY-10);
+
+            noStroke();
+            strokeWeight(0);
+            fill(cPNT);
+
+            ellipse(d+cX+5, d+cY-5, sz, sz);
+            ellipse(d+cX-5, d+cY+5, sz, sz);
+
+            break;
+
+          case COMMANDS.L_SEGMENT2P[0]:
+
+            noFill();
+
+            strokeWeight(0.5);
+            stroke(cVERTEX);
+
+            line(d+cX-7, d+cY+7, d+cX+7, d+cY-7);
+
+            noStroke();
+            strokeWeight(0);
+            fill(cPNT);
+
+            ellipse(d+cX+7, d+cY-7, sz, sz);
+            ellipse(d+cX-7, d+cY+7, sz, sz);
+
+            break;
+
+          case COMMANDS.L_SEGMENTLEN[0]:
+
+            noFill();
+
+            strokeWeight(0.5);
+            stroke(cVERTEX);
+
+            line(d+cX-7, d+cY+7, d+cX+7, d+cY-7);
+
+            noStroke();
+            strokeWeight(0);
+            fill(cMEASURE);
+
+            ellipse(d+cX+7, d+cY-7, sz, sz);
+
+            fill(cPNT);
+            ellipse(d+cX-7, d+cY+7, sz, sz);
+
+            break;
+
+          case COMMANDS.L_PERP[0]:
+
+            noFill();
+
+            strokeWeight(0.5);
+            stroke(cVERTEX);
+
+            line(d+cX-7, d+cY+7, d+cX+7, d+cY-7);
+
+            stroke(cLINE);
+            getDottedLine(d+cX-7, d+cY-7, d+cX+10, d+cY+10, 10);
+
+            noStroke();
+            strokeWeight(0);
+            fill(cPNT);
+
+            ellipse(d+cX-7, d+cY-7, sz, sz);
+
+            break;
+
+          case COMMANDS.L_PERPB[0]:
+
+            noFill();
+
+            strokeWeight(0.5);
+            stroke(cMEASURE);
+
+            line(d+cX-7, d+cY+7, d+cX+7, d+cY-7);
+
+            stroke(cVERTEX);
+            line(d+cX-7, d+cY-7, d+cX+10, d+cY+10);
+
+            noStroke();
+            strokeWeight(0);
+            fill(cPNT);
+
+            ellipse(d+cX-7, d+cY-7, sz, sz);
+            ellipse(d+cX+7, d+cY+7, sz, sz);
+
+            break;
+
+          case COMMANDS.L_ANGB[0]:
+
+            noFill();
+
+            strokeWeight(0.5);
+            stroke(cMEASURE);
+
+            line(d+cX-10, d+cY+10, d+cX+10, d+cY-10);
+
+            stroke(cVERTEX);
+
+            line(d+cX-5, d+cY+5, d+cX-2, d+cY-10);
+            line(d+cX-5, d+cY+5, d+cX+10, d+cY+2);
+
+            noStroke();
+            strokeWeight(0);
+            fill(cPNT);
+
+            ellipse(d+cX-5,  d+cY+5,  sz, sz);
+            ellipse(d+cX-2,  d+cY-10, sz, sz);
+            ellipse(d+cX+10, d+cY+2,  sz, sz);
+
+            break;
+
+          case COMMANDS.L_PARR[0]:
+
+            noFill();
+
+            strokeWeight(0.5);
+            stroke(cVERTEX);
+
+            line(d+cX+10, d+cY+5, d+cX-10, d+cY+10);
+
+            stroke(cMEASURE);
+
+            line(d+cX-10, d+cY-5, d+cX+10, d+cY-10);
+
+            noStroke();
+            strokeWeight(0);
+            fill(cPNT);
+
+            ellipse(d+cX,  d+cY-7.5,  sz, sz);
+
+            break;
+
+          case COMMANDS.L_TANGENT[0]:
+
+            noFill();
+
+            strokeWeight(0.5);
+            stroke(cVERTEX);
+
+            ellipse(d+cX+5, d+cY+5,12,12);
+
+            stroke(cMEASURE);
+
+            line(d+cX-10, d+cY+10, d+cX+10, d+cY-10);
+
+            noStroke();
+            strokeWeight(0);
+            fill(cPNT);
+
+            ellipse(d+cX, d+cY, sz, sz);
+
+            break;
+
+          case COMMANDS.L_DIAMETER[0]:
+
+            noFill();
+
+            strokeWeight(0.5);
+            stroke(cVERTEX);
+
+            ellipse(d+cX, d+cY, 20, 20);
+
+            stroke(cMEASURE);
+
+            line(d+cX+10*cos(PI/4),    d+cY-10*sin(PI/4),
+                 d+cX+10*cos(PI*3/4), d+cY+10*sin(PI*3/4));
+
+            noStroke();
+            strokeWeight(0);
+            fill(cPNT);
+
+            ellipse(d+cX, d+cY, sz, sz);
+
+            break;
+
+          case COMMANDS.L_RADIUS[0]:
+
+            noFill();
+
+            strokeWeight(0.5);
+            stroke(cVERTEX);
+
+            ellipse(d+cX, d+cY, 20, 20);
+
+            stroke(cMEASURE);
+
+            line(d+cX, d+cY, d+cX+10*cos(PI/4), d+cY-10*sin(PI/4));
+
+            noStroke();
+            strokeWeight(0);
+            fill(cPNT);
+
+            ellipse(d+cX, d+cY, sz, sz);
+
+            break;
+
+          case COMMANDS.RAY_2P[0]:
+
+            noFill();
+
+            strokeWeight(0.5);
+            stroke(cVERTEX);
+
+            line(d+cX-10, d+cY+10, d+cX+10, d+cY-10);
+
+            noStroke();
+            strokeWeight(0);
+            fill(cPNT);
+
+            ellipse(d+cX+3, d+cY-3, sz, sz);
+            ellipse(d+cX-10, d+cY+10, sz, sz);
+
+            break;
+
+          case COMMANDS.V_2P[0]:
+
+            noFill();
+
+            strokeWeight(0.5);
+            stroke(cVERTEX);
+
+            line(d+cX-10, d+cY+10, d+cX+10, d+cY-10);
+
+            noStroke();
+            strokeWeight(0);
+            fill(cPNT);
+
+            ellipse(d+cX+10, d+cY-10, sz, sz);
+            ellipse(d+cX-10, d+cY+10, sz, sz);
+
+            noStroke();
+            fill(cVERTEX);
+
+            beginShape();
+              vertex(d+cX+9, d+cY-9);
+              vertex(d+cX+4, d+cY-9);
+              vertex(d+cX+9, d+cY-4);
+            endShape(CLOSE);
+
+            break;
+
+          case COMMANDS.V_FP[0]:
+
+            noFill();
+
+            strokeWeight(0.5);
+            stroke(cVERTEX);
+
+            line(d+cX-10, d+cY+10, d+cX+10, d+cY-10);
+
+            noStroke();
+            strokeWeight(0);
+
+            fill(cMEASURE);
+            ellipse(d+cX+10, d+cY-10, sz, sz);
+
+            fill(cPNT);
+            ellipse(d+cX-10, d+cY+10, sz, sz);
+
+            noStroke();
+            fill(cVERTEX);
+
+            beginShape();
+              vertex(d+cX+9, d+cY-9);
+              vertex(d+cX+4, d+cY-9);
+              vertex(d+cX+9, d+cY-4);
+            endShape(CLOSE);
+
+            break;
 
         }
 
@@ -989,10 +1478,21 @@ var proc = function(processingInstance){ with (processingInstance){
 
           switch(p.c){
 
-            case CMDS.P[0]:              case CMDS.P_OBJECT[0]:
-            case CMDS.P_INTERSECT[0]:    case CMDS.P_MIDPOINT[0]:
+            case COMMANDS.POINT[0]:              case COMMANDS.P_OBJECT[0]:
+            case COMMANDS.P_INTERSECT[0]:    case COMMANDS.P_MIDPOINT[0]:
 
               drawPoint();  break;
+
+            case COMMANDS.L_2P[0]:          case COMMANDS.L_SEGMENT2P[0]:
+            case COMMANDS.L_SEGMENTLEN[0]:  case COMMANDS.L_PERP[0]:
+            case COMMANDS.L_PERPB[0]:       case COMMANDS.L_ANGB[0]:
+            case COMMANDS.L_PARR[0]:        case COMMANDS.L_TANGENT[0]:
+            case COMMANDS.L_DIAMETER[0]:    case COMMANDS.L_RADIUS[0]:
+            case COMMANDS.RAY_2P[0]:        case COMMANDS.V_2P[0]:
+            case COMMANDS.V_FP[0]:
+
+              drawLine();
+              break;
 
             default:      break;
 
@@ -1254,7 +1754,7 @@ var proc = function(processingInstance){ with (processingInstance){
 
           noStroke();
           fill(CLRS.WHITE);
-          if(p.alignX===LEFT)       { rect(d, d, p.w, p.h, p.r); }
+          if     (p.alignX===LEFT)  { rect(d, d, p.w, p.h, p.r); }
           else if(p.alignX===CENTER){ rect(d, d, p.w, p.h, p.r); }
 
           if(getProp(p.c)){
@@ -1643,13 +2143,17 @@ var proc = function(processingInstance){ with (processingInstance){
     };
     var origin=function(){
 
-      noStroke();
+      if(app.origin){
 
-      if(this.hit){ fill(CLRS.BLACK); }
-      else        { fill(CLRS.BLACK, 25); }
+        noStroke();
 
-      ellipse(0,0,6,6);
+        if(this.hit){ fill(CLRS.RED); }
+        else        { fill(CLRS.RED, 25); }
 
+        ellipse(0,0,6,6);
+
+      };
+    
     };
     var axis=function(){
 
@@ -1657,8 +2161,8 @@ var proc = function(processingInstance){ with (processingInstance){
       stroke(getColor(CLRS.WHITE,20));
       strokeWeight(0.5);
 
-      if(true){ line(-p.w/2, 0, p.w/2, 0); }
-      if(true){ line(0,-p.h/2, 0, p.h/2);  }
+      if(app.axisx){ line(-p.w/2, 0, p.w/2, 0); }
+      if(app.axisy){ line(0,-p.h/2, 0, p.h/2);  }
 
     };
     var lines=function(){
@@ -1667,7 +2171,7 @@ var proc = function(processingInstance){ with (processingInstance){
       stroke(getColor(CLRS.WHITE,10));
       strokeWeight(0.25);
 
-      if(true){
+      if(app.linesx){
         for(var n=1; n<p.w/2/incr; n++){
 
           if(n%5===0){ strokeWeight(0.75);  }
@@ -1678,7 +2182,7 @@ var proc = function(processingInstance){ with (processingInstance){
 
         }
       }
-      if(true){
+      if(app.linesy){
 
       for(var n=1; n<p.h/2/incr; n++){
 
@@ -1697,13 +2201,13 @@ var proc = function(processingInstance){ with (processingInstance){
       noStroke();
       fill(getColor(CLRS.WHITE,50));
 
-      if(true){
+      if(app.arrowsx){
 
         triangle(-p.w/2, 0, -p.w/2+7, 3, -p.w/2+7, -3);   //~ left
         triangle( p.w/2, 0,  p.w/2-7, 3,  p.w/2-7, -3);   //~ right
 
       }
-      if(true){
+      if(app.arrowsy){
 
         triangle( 0,  p.h/2, 3,  p.h/2-7, -3,  p.h/2-7);  //~ top
         triangle( 0, -p.h/2, 3, -p.h/2+7, -3, -p.h/2+7);  //~ bottom
@@ -1717,13 +2221,13 @@ var proc = function(processingInstance){ with (processingInstance){
       stroke(getColor(CLRS.Gray8,100));
       strokeWeight(0.25);
 
-      if(true){
+      if(app.ticksx){
         for(var n=0; n<p.w/2/incr; n++){
           line( n*incr, 3,  n*incr, -3);
           line(-n*incr, 3, -n*incr, -3);
         }
       }
-      if(true){
+      if(app.ticksy){
         for(var n=0; n<p.h/2/incr; n++){
           line( 3,  n*incr, -3,  n*incr);
           line( 3, -n*incr, -3, -n*incr);
@@ -1738,7 +2242,7 @@ var proc = function(processingInstance){ with (processingInstance){
         scale(1,-1);
 
           noFill();
-          fill(getColor(CLRS.WHITE,2));
+          fill(getColor(CLRS.WHITE,20));
           strokeWeight(0.25);
 
           textSize(9);
@@ -1746,7 +2250,7 @@ var proc = function(processingInstance){ with (processingInstance){
           //~ x-axis
           textAlign(CENTER,TOP);
 
-          if(true){
+          if(app.labelsx){
             for(var n=1; n<p.w/2/incr; n++){
               text( n, n*incr, 3);
               text( n,-n*incr, 3);
@@ -1756,7 +2260,7 @@ var proc = function(processingInstance){ with (processingInstance){
           //~ y-axis
           textAlign(RIGHT,CENTER);
 
-          if(true){
+          if(app.labelsy){
             for(var n=1; n<p.h/2/incr; n++){
               text( n, -5,  n*incr);
               text( n, -5, -n*incr);
@@ -1803,20 +2307,20 @@ var proc = function(processingInstance){ with (processingInstance){
 
         pushStyle();
 
-          if(app.border){ border();    }
-          if(true)      { axis();      }
-          if(true)      { lines();     }
-          if(true)      { arrows();    }
-          if(true)      { ticks();     }
-          if(true)      { labels();    }
-          if(app.origin){ origin();    }
+          border();
+          axis();
+          lines();
+          arrows();
+          ticks();
+          labels();
+          origin();
           //~ if(true)      { crosshair(); }
           cursor(CROSS);
 
           stroke(app.color);
           strokeWeight(3);
           noFill();
-          ellipse(0,0,300,200);
+          //~ ellipse(0,0,300,200);
 
         popStyle();
 
@@ -1984,8 +2488,6 @@ var proc = function(processingInstance){ with (processingInstance){
 
   };
 
-
-    
   var getPoints=function(parent){
 
     var ctrls=[];
@@ -1996,37 +2498,49 @@ var proc = function(processingInstance){ with (processingInstance){
     var w=36;
 
     var cn=new strip(
-            new propC(getGUID(), parent, 500,50, w+10, w+10, 1, true, CMDS.UNDEF[0], CMDS.UNDEF[1]),
+            new propC(getGUID(), parent, 500,50, w+10, w, 1, true, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
 
     //~ Points ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    //~ PNT:                [ -100, 'Point',          'POINT'             ],
-    //~ PNT_OBJECT:         [ -101, 'Object',         'Object'            ],
-    //~ PNT_INTERSECT:      [ -102, 'Intersect',      'Interset'          ],
-    //~ PNT_MIDPOINT:       [ -103, 'Midpoint',       'Midpoint'          ],
+    //~ POINT:            [ -100, 'Point',            'POINT'         ],
+    //~ P_OBJECT:         [ -101, 'P_Object',         'P_OBJECT'      ],
+    //~ P_INTERSECT:      [ -102, 'P_Intersect',      'P_INTERSECT'   ],
+    //~ P_MIDPOINT:       [ -103, 'P_Midpoint',       'P_MIDPOINT'    ],
+
+    for(var n in COMMANDS){
+
+      //~ ctrls.push(new buttonI(
+                  //~ new propC(getGUID(), cn, n*w, 0, w, w, 0, false, COMMANDS[n], COMMANDS[n]),
+                  //~ getStyle(STYLES.BUTTON),
+                  //~ getStyle(STYLES.TEXT)));
+                  //~ println(n);
+                  println(COMMANDS[n]);
+
+    }
+
     ctrls.push(new buttonI(
-                new propC(getGUID(), cn, 0*w, 0, w, w, 0, false, CMDS.P[0], CMDS.P[1]),
+                new propC(getGUID(), cn, 0*w, 0, w, w, 0, false, COMMANDS.POINT[0], COMMANDS.POINT[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonI(
-                new propC(getGUID(), cn, 1*w, 0, w, w, 0, false, CMDS.P[0], CMDS.P[1]),
+                new propC(getGUID(), cn, 1*w, 0, w, w, 0, false, COMMANDS.POINT[0], COMMANDS.POINT[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonI(
-                new propC(getGUID(), cn, 2*w, 0, w, w, 0, false, CMDS.P_OBJECT[0], CMDS.P_OBJECT[1]),
+                new propC(getGUID(), cn, 2*w, 0, w, w, 0, false, COMMANDS.P_OBJECT[0], COMMANDS.P_OBJECT[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonI(
-                new propC(getGUID(), cn, 3*w, 0, w, w, 0, false, CMDS.P_INTERSECT[0], CMDS.P_INTERSECT[1]),
+                new propC(getGUID(), cn, 3*w, 0, w, w, 0, false, COMMANDS.P_INTERSECT[0], COMMANDS.P_INTERSECT[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonI(
-                new propC(getGUID(), cn, 4*w, 0, w, w, 0, false, CMDS.P_MIDPOINT[0], CMDS.P_MIDPOINT[1]),
+                new propC(getGUID(), cn, 4*w, 0, w, w, 0, false, COMMANDS.P_MIDPOINT[0], COMMANDS.P_MIDPOINT[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
@@ -2045,7 +2559,7 @@ var proc = function(processingInstance){ with (processingInstance){
     var w=36;
 
     var cn=new strip(
-            new propC(getGUID(), parent, 500, 95, w+10, w+10, 1, true, CMDS.UNDEF[0], CMDS.UNDEF[1]),
+            new propC(getGUID(), parent, 500, 95, w+10, w, 1, true, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
 
@@ -2063,74 +2577,74 @@ var proc = function(processingInstance){ with (processingInstance){
     //~ RAY_2P:       [-210,  'Ray2P',            'RAY2P'                 ],    //~ Ray between 2 points
     //~ V_2P:         [-211,  'Vector2P',         'VECTOR2P'              ],    //~ Vector between 2 points
     //~ V_FP:         [-212,  'VectorFP',         'VECTORFP'              ],    //~ Vector from point
-    
+
     ctrls.push(new buttonI(
-                new propC(getGUID(), cn, 0*w, 0, w, w, 0, false, CMDS.L_2P[0], CMDS.L_2P[1]),
+                new propC(getGUID(), cn, 0*w, 0, w, w, 0, false, COMMANDS.L_2P[0], COMMANDS.L_2P[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonI(
-                new propC(getGUID(), cn, 1*w, 0, w, w, 0, false, CMDS.L_2P[0], CMDS.L_2P[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
-                
-    ctrls.push(new buttonI(
-                new propC(getGUID(), cn, 2*w, 0, w, w, 0, false, CMDS.L_SEGMENT2P[0], CMDS.L_SEGMENT2P[1]),
+                new propC(getGUID(), cn, 1*w, 0, w, w, 0, false, COMMANDS.L_2P[0], COMMANDS.L_2P[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonI(
-                new propC(getGUID(), cn, 3*w, 0, w, w, 0, false, CMDS.L_SEGMENTLEN[0], CMDS.L_SEGMENTLEN[1]),
+                new propC(getGUID(), cn, 2*w, 0, w, w, 0, false, COMMANDS.L_SEGMENT2P[0], COMMANDS.L_SEGMENT2P[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonI(
-                new propC(getGUID(), cn, 4*w, 0, w, w, 0, false, CMDS.L_PERP[0], CMDS.L_PERP[1]),
+                new propC(getGUID(), cn, 3*w, 0, w, w, 0, false, COMMANDS.L_SEGMENTLEN[0], COMMANDS.L_SEGMENTLEN[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonI(
-                new propC(getGUID(), cn, 5*w, 0, w, w, 0, false, CMDS.L_PERPB[0], CMDS.L_PERPB[1]),
+                new propC(getGUID(), cn, 4*w, 0, w, w, 0, false, COMMANDS.L_PERP[0], COMMANDS.L_PERP[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonI(
-                new propC(getGUID(), cn, 6*w, 0, w, w, 0, false, CMDS.L_ANGB[0], CMDS.L_ANGB[1]),
+                new propC(getGUID(), cn, 5*w, 0, w, w, 0, false, COMMANDS.L_PERPB[0], COMMANDS.L_PERPB[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonI(
-                new propC(getGUID(), cn, 7*w, 0, w, w, 0, false, CMDS.L_PARR[0], CMDS.L_PARR[1]),
+                new propC(getGUID(), cn, 6*w, 0, w, w, 0, false, COMMANDS.L_ANGB[0], COMMANDS.L_ANGB[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonI(
-                new propC(getGUID(), cn, 8*w, 0, w, w, 0, false, CMDS.L_TANGENT[0], CMDS.L_TANGENT[1]),
+                new propC(getGUID(), cn, 7*w, 0, w, w, 0, false, COMMANDS.L_PARR[0], COMMANDS.L_PARR[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonI(
-                new propC(getGUID(), cn, 9*w, 0, w, w, 0, false, CMDS.L_DIAMETER[0], CMDS.L_DIAMETER[1]),
+                new propC(getGUID(), cn, 8*w, 0, w, w, 0, false, COMMANDS.L_TANGENT[0], COMMANDS.L_TANGENT[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonI(
-                new propC(getGUID(), cn, 10*w, 0, w, w, 0, false, CMDS.L_RADIUS[0], CMDS.L_RADIUS[1]),
+                new propC(getGUID(), cn, 9*w, 0, w, w, 0, false, COMMANDS.L_DIAMETER[0], COMMANDS.L_DIAMETER[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonI(
-                new propC(getGUID(), cn, 11*w, 0, w, w, 0, false, CMDS.RAY_2P[0], CMDS.RAY_2P[1]),
+                new propC(getGUID(), cn, 10*w, 0, w, w, 0, false, COMMANDS.L_RADIUS[0], COMMANDS.L_RADIUS[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonI(
-                new propC(getGUID(), cn, 12*w, 0, w, w, 0, false, CMDS.V_2P[0], CMDS.V_2P[1]),
+                new propC(getGUID(), cn, 11*w, 0, w, w, 0, false, COMMANDS.RAY_2P[0], COMMANDS.RAY_2P[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonI(
-                new propC(getGUID(), cn, 13*w, 0, w, w, 0, false, CMDS.V_FP[0], CMDS.V_2P[1]),
+                new propC(getGUID(), cn, 12*w, 0, w, w, 0, false, COMMANDS.V_2P[0], COMMANDS.V_2P[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 13*w, 0, w, w, 0, false, COMMANDS.V_FP[0], COMMANDS.V_2P[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
@@ -2139,13 +2653,322 @@ var proc = function(processingInstance){ with (processingInstance){
     return cn;
 
   };
-  
+
+  var getTriangles=function(parent){
+
+    var ctrls=[];
+    var top=30;
+    var h=15;
+    var l=parent.w-202;
+    var ch=app.height-14;
+    var w=36;
+
+    var cn=new strip(
+            new propC(getGUID(), parent, 500,140, w+10, w, 1, true, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            getStyle(STYLES.CONTAINER),
+            getStyle(STYLES.TEXT));
+
+    //~ Triangle (T)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //~ TRIANGLE:     [-300,  'Triangle',         'TRIANGLE'              ],
+    //~ T_EQUILATERAL:[-301,  'T_Equilateral',    'T_EQUILATERAL'         ],
+    //~ T_ISOSCELES:  [-302,  'T_Isosceles',      'T_ISOSCELES'           ],
+    //~ T_SCALENE:    [-303,  'T_Scalene',        'T_SCALENE'             ],
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 0*w, 0, w, w, 0, false, COMMANDS.TRIANGLE[0], COMMANDS.TRIANGLE[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 1*w, 0, w, w, 0, false, COMMANDS.T_EQUILATERAL[0], COMMANDS.T_EQUILATERAL[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 2*w, 0, w, w, 0, false, COMMANDS.T_ISOSCELES[0], COMMANDS.T_ISOSCELES[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 3*w, 0, w, w, 0, false, COMMANDS.T_SCALENE[0], COMMANDS.T_SCALENE[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    cn.ctrls=ctrls;
+
+    return cn;
+
+  };
+  var getCircles=function(parent){
+
+    var ctrls=[];
+    var top=30;
+    var h=15;
+    var l=parent.w-202;
+    var ch=app.height-14;
+    var w=36;
+
+    var cn=new strip(
+            new propC(getGUID(), parent, 500, 185, w+10, w, 1, true, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            getStyle(STYLES.CONTAINER),
+            getStyle(STYLES.TEXT));
+
+    //~ Circle (C)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //~ CIRCLE:       [-400,  'Circle',           'CIRCLE'                ],
+    //~ C_CENTERP:    [-401,  'CircleCenterP',    'CIRCLECENTERP'         ],    //~ center point
+    //~ C_CENTERR:    [-402,  'CircleCenterR',    'CIRCLECENTERR'         ],    //~ center radius
+    //~ C_3P:         [-403,  'Circle3P',         'CIRCL3P'               ],    //  3 points
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 0*w, 0, w, w, 0, false, COMMANDS.CIRCLE[0], COMMANDS.CIRCLE[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 1*w, 0, w, w, 0, false, COMMANDS.C_CENTERP[0], COMMANDS.C_CENTERP[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 2*w, 0, w, w, 0, false, COMMANDS.C_CENTERR[0], COMMANDS.C_CENTERR[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 3*w, 0, w, w, 0, false, COMMANDS.C_3P[0], COMMANDS.C_3P[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    cn.ctrls=ctrls;
+
+    return cn;
+
+  };
+  var getArcs=function(parent){
+
+    var ctrls=[];
+    var top=30;
+    var h=15;
+    var l=parent.w-202;
+    var ch=app.height-14;
+    var w=36;
+
+    var cn=new strip(
+            new propC(getGUID(), parent, 500, 230, w+10, w, 1, true, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            getStyle(STYLES.CONTAINER),
+            getStyle(STYLES.TEXT));
+
+    //~ Arc (A)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //~ ARC:          [-500,  'Arc',              'ARC'                   ],
+    //~ A_2P:         [-501,  'Arc2P',            'ARC2P'                 ],    //~SEMICIRCLETHROUGH2POINTS
+    //~ A_1:          [-502,  'Arc1',             'ARC1'                  ],    //~Circulararc
+    //~ A_2:          [-503,  'Arc2',             'ARC2'                  ],    //~CIRCUMCIRCULARARC
+    //~ A_3:          [-504,  'Arc3',             'ARC4'                  ],    //~ CIRCULARSECTOR
+    //~ A_4:          [-505,  'Arc4',             'ARC4'                  ],    //~ CIRCUMCIRCULARSECTOR
+    //~ COMPASS:      [-506,  'Compass',          'COMPASS'               ],    //~ ??
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 0*w, 0, w, w, 0, false, COMMANDS.ARC[0], COMMANDS.ARC[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 1*w, 0, w, w, 0, false, COMMANDS.A_2P[0], COMMANDS.A_2P[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 2*w, 0, w, w, 0, false, COMMANDS.A_1[0], COMMANDS.A_1[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 3*w, 0, w, w, 0, false, COMMANDS.A_2[0], COMMANDS.A_2[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 4*w, 0, w, w, 0, false, COMMANDS.A_3[0], COMMANDS.A_3[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 5*w, 0, w, w, 0, false, COMMANDS.A_4[0], COMMANDS.A_4[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 6*w, 0, w, w, 0, false, COMMANDS.COMPASS[0], COMMANDS.COMPASS[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    cn.ctrls=ctrls;
+
+    return cn;
+
+  };
+  var getPolygons=function(parent){
+
+    var ctrls=[];
+    var top=30;
+    var h=15;
+    var l=parent.w-202;
+    var ch=app.height-14;
+    var w=36;
+
+    var cn=new strip(
+            new propC(getGUID(), parent, 500, 275, w+10, w, 1, true, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            getStyle(STYLES.CONTAINER),
+            getStyle(STYLES.TEXT));
+
+      //~ Polygon ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //~ POLYGON:      [-600,  'Polygon',          'POLYGON'               ],
+    //~ POLYGONR:     [-601,  'PolygonR',         'POLYGONR'              ],    //~ regular
+    //~ POLYGONRIGID: [-602,  'PolygonRigid',     'POLYGONRIGID'          ],    //~ Rigid
+    //~ POLYGONV:     [-603,  'PolygonV',         'POLYGONV'              ],    //~ Vector
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 0*w, 0, w, w, 0, false, COMMANDS.POLYGON[0], COMMANDS.POLYGON[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 1*w, 0, w, w, 0, false, COMMANDS.POLYGONR[0], COMMANDS.POLYGONR[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 2*w, 0, w, w, 0, false, COMMANDS.POLYGONRIGID[0], COMMANDS.POLYGONRIGID[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 3*w, 0, w, w, 0, false, COMMANDS.POLYGONV[0], COMMANDS.POLYGONV[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    cn.ctrls=ctrls;
+
+    return cn;
+
+  };
+  var getConics=function(parent){
+
+    var ctrls=[];
+    var top=30;
+    var h=15;
+    var l=parent.w-202;
+    var ch=app.height-14;
+    var w=36;
+
+    var cn=new strip(
+            new propC(getGUID(), parent, 500, 320, w+10, w, 1, true, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            getStyle(STYLES.CONTAINER),
+            getStyle(STYLES.TEXT));
+
+    //~ Conics (S) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //~ CONIC:        [-700,  'Conic',            'CONIC'                 ],
+    //~ S_ELLIPSE:    [-700,  'Ellipse',          'ELLIPSE'               ],
+    //~ S_HYPERBOLA:  [-701,  'Hyperbola',        'HYPERBOLA'             ],
+    //~ S_PARABOLA:   [-702,  'Parabola',         'PARABOLA'              ],
+    //~ S_5POINTS:    [-703,  'Conic5points',     'CONIC5POINTS'          ],
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 0*w, 0, w, w, 0, false, COMMANDS.CONIC[0], COMMANDS.CONIC[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 1*w, 0, w, w, 0, false, COMMANDS.S_ELLIPSE[0], COMMANDS.S_ELLIPSE[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 2*w, 0, w, w, 0, false, COMMANDS.S_HYPERBOLA[0], COMMANDS.S_HYPERBOLA[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 3*w, 0, w, w, 0, false, COMMANDS.S_PARABOLA[0], COMMANDS.S_PARABOLA[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 4*w, 0, w, w, 0, false, COMMANDS.S_5POINTS[0], COMMANDS.S_5POINTS[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    cn.ctrls=ctrls;
+
+    return cn;
+
+  };
+  var getAngles=function(parent){
+
+    var ctrls=[];
+    var top=30;
+    var h=15;
+    var l=parent.w-202;
+    var ch=app.height-14;
+    var w=36;
+
+    var cn=new strip(
+            new propC(getGUID(), parent, 500, 365, w+10, w, 1, true, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            getStyle(STYLES.CONTAINER),
+            getStyle(STYLES.TEXT));
+
+    //~ Angle ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //~ ANGLE:        [-800,  'Angle',            'ANGLE'                 ],
+    //~ ANGLE_SIZE:   [-801,  'AngelSize',        'ANGELSIZE'             ],
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 0*w, 0, w, w, 0, false, COMMANDS.ANGLE[0], COMMANDS.ANGLE[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 1*w, 0, w, w, 0, false, COMMANDS.ANGLE_SIZE[0], COMMANDS.ANGLE_SIZE[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    cn.ctrls=ctrls;
+
+    return cn;
+
+  };
+  var getAnnotations=function(parent){
+
+    var ctrls=[];
+    var top=30;
+    var h=15;
+    var l=parent.w-202;
+    var ch=app.height-14;
+    var w=36;
+
+    var cn=new strip(
+            new propC(getGUID(), parent, 500, 410, w+10, w, 1, true, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            getStyle(STYLES.CONTAINER),
+            getStyle(STYLES.TEXT));
+
+    //~ Annotation ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //~ TEXT:         [-900,  'Text',             'TEXT'                  ],
+    //~ TEXT:         [-901,  'Text',             'TEXT'                  ],
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 0*w, 0, w, w, 0, false, COMMANDS.TEXT[0], COMMANDS.TEXT[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 1*w, 0, w, w, 0, false, COMMANDS.TEXT[0], COMMANDS.TEXT[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    cn.ctrls=ctrls;
+
+    return cn;
+
+  };
   var getGrid=function(parent){
 
     var ctrls=[];
 
     var cn=new grid(
-            new propC(getGUID(), parent, 5, 5, parent.w-10, parent.h-10, 5, false, CMDS.UNDEF[0], 0),
+            new propC(getGUID(), parent, 5, 5, parent.w-10, parent.h-10, 5, false, COMMANDS.UNDEF[0], 0),
             new propL(CLRS.GRID, getColor(CLRS.GRID,65), CLRS.WHITE, CLRS.YELLOW, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
@@ -2163,157 +2986,157 @@ var proc = function(processingInstance){ with (processingInstance){
     var ch=app.height-14;
 
     var cn=new container(
-            new propC(getGUID(),parent, l, 2, 200, ch, 3, false, CMDS.CONTAINER[0],CMDS.CONTAINER[1]),
+            new propC(getGUID(),parent, l, 2, 200, ch, 3, false, COMMANDS.CONTAINER[0],COMMANDS.CONTAINER[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
 
     //~ Labels ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ctrls.push(new label(
-                new propC(getGUID(), cn, cn.w/2, 10, 10, 10, 0, false, CMDS.UNDEF[0], CMDS.TELEMETRY[1]),
+                new propC(getGUID(), cn, cn.w/2, 10, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.TELEMETRY[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXTCENTER)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+0*h, 10, 10, 0, false, CMDS.UNDEF[0], CMDS.DEBUG[1]),
+                new propC(getGUID(), cn, 5, top+0*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.DEBUG[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new spacer(
-                new propC(getGUID(), cn, 5, top+1*h+5, 150, 10, 0, false, CMDS.UNDEF[0], CMDS.SPACER[0]),
+                new propC(getGUID(), cn, 5, top+1*h+5, 150, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.SPACER[0]),
                 getStyle(STYLES.SPACER),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+2*h, 10, 10, 0, false, CMDS.UNDEF[0], CMDS.WIDTH[1]),
+                new propC(getGUID(), cn, 5, top+2*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.WIDTH[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+3*h, 10, 10, 0, false, CMDS.UNDEF[0], CMDS.HEIGHT[1]),
+                new propC(getGUID(), cn, 5, top+3*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.HEIGHT[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new spacer(
-                new propC(getGUID(), cn, 5, top+4*h+5, 150, 10, 0, false, CMDS.UNDEF[0], CMDS.SPACER[0]),
+                new propC(getGUID(), cn, 5, top+4*h+5, 150, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.SPACER[0]),
                 getStyle(STYLES.SPACER),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+5*h, 10, 10, 0, false, CMDS.FRAMERATE[0], CMDS.FRAMERATE[1]),
+                new propC(getGUID(), cn, 5, top+5*h, 10, 10, 0, false, COMMANDS.FRAMERATE[0], COMMANDS.FRAMERATE[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+6*h, 10, 10, 0, false, CMDS.FRAMERATEA[0], CMDS.FRAMERATEA[1]),
+                new propC(getGUID(), cn, 5, top+6*h, 10, 10, 0, false, COMMANDS.FRAMERATEA[0], COMMANDS.FRAMERATEA[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new spacer(
-                new propC(getGUID(), cn, 5, top+7*h+5, 150, 10, 0, false, CMDS.UNDEF[0], CMDS.SPACER[0]),
+                new propC(getGUID(), cn, 5, top+7*h+5, 150, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.SPACER[0]),
                 getStyle(STYLES.SPACER),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+8*h, 10, 10, 0, false, CMDS.UNDEF[0], CMDS.MOUSEX[1]),
+                new propC(getGUID(), cn, 5, top+8*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.MOUSEX[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+9*h, 10, 10, 0, false, CMDS.UNDEF[0], CMDS.MOUSEY[1]),
+                new propC(getGUID(), cn, 5, top+9*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.MOUSEY[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new spacer(
-                new propC(getGUID(), cn, 5, top+10*h+5, 150, 10, 0, false, CMDS.UNDEF[0], CMDS.SPACER[0]),
+                new propC(getGUID(), cn, 5, top+10*h+5, 150, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.SPACER[0]),
                 getStyle(STYLES.SPACER),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+11*h, 10, 10, 0, false, CMDS.UNDEF[0], CMDS.LEFT[1]),
+                new propC(getGUID(), cn, 5, top+11*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.LEFT[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+12*h, 10, 10, 0, false, CMDS.UNDEF[0], CMDS.CENTER[1]),
+                new propC(getGUID(), cn, 5, top+12*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.CENTER[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+13*h, 10, 10, 0, false, CMDS.UNDEF[0], CMDS.RIGHT[1]),
+                new propC(getGUID(), cn, 5, top+13*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.RIGHT[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+15*h, 10, 10, 0, false, CMDS.UNDEF[0], CMDS.FOCUS[1]),
+                new propC(getGUID(), cn, 5, top+15*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.FOCUS[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+17*h, 10, 10, 0, false, CMDS.UNDEF[0], CMDS.COMMAND[1]),
+                new propC(getGUID(), cn, 5, top+17*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.COMMAND[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     //~ Values ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ctrls.push(new checkbox(
-                new propC(getGUID(), cn, 105, top+0*h+5, 10, 10, 0, false, CMDS.DEBUG[0], CMDS.DEBUG[1]),
+                new propC(getGUID(), cn, 105, top+0*h+5, 10, 10, 0, false, COMMANDS.DEBUG[0], COMMANDS.DEBUG[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXTCENTER)));
 
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, 100, top+2*h, 10, 10, 0, false, CMDS.WIDTH[0], CMDS.WIDTH[1]),
+                new propC(getGUID(), cn, 100, top+2*h, 10, 10, 0, false, COMMANDS.WIDTH[0], COMMANDS.WIDTH[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, 100, top+3*h, 10, 10, 0, false, CMDS.HEIGHT[0], CMDS.HEIGHT[1]),
+                new propC(getGUID(), cn, 100, top+3*h, 10, 10, 0, false, COMMANDS.HEIGHT[0], COMMANDS.HEIGHT[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, 100, top+5*h, 10, 10, 0, 30, CMDS.FRAMERATE[0], CMDS.FRAMERATE[1]),
+                new propC(getGUID(), cn, 100, top+5*h, 10, 10, 0, 30, COMMANDS.FRAMERATE[0], COMMANDS.FRAMERATE[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, 100, top+6*h, 10, 10, 0, false, CMDS.FRAMERATEA[0], CMDS.FRAMERATEA[1]),
+                new propC(getGUID(), cn, 100, top+6*h, 10, 10, 0, false, COMMANDS.FRAMERATEA[0], COMMANDS.FRAMERATEA[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, 100, top+8*h, 10, 10, 0, false, CMDS.MOUSEX[0], CMDS.MOUSEX[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
-
-
-    ctrls.push(new labelP(
-                new propC(getGUID(), cn, 100, top+9*h, 10, 10, 0, false, CMDS.MOUSEY[0], CMDS.MOUSEY[1]),
+                new propC(getGUID(), cn, 100, top+8*h, 10, 10, 0, false, COMMANDS.MOUSEX[0], COMMANDS.MOUSEX[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
 
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, 100, top+11*h, 10, 10, 0, false, CMDS.LEFT[0], CMDS.LEFT[1]),
+                new propC(getGUID(), cn, 100, top+9*h, 10, 10, 0, false, COMMANDS.MOUSEY[0], COMMANDS.MOUSEY[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+
+    ctrls.push(new labelP(
+                new propC(getGUID(), cn, 100, top+11*h, 10, 10, 0, false, COMMANDS.LEFT[0], COMMANDS.LEFT[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, 100, top+12*h, 10, 10, 0, false, CMDS.CENTER[0], CMDS.CENTER[1]),
+                new propC(getGUID(), cn, 100, top+12*h, 10, 10, 0, false, COMMANDS.CENTER[0], COMMANDS.CENTER[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, 100, top+13*h, 10, 10, 0, false, CMDS.RIGHT[0], CMDS.RIGHT[1]),
+                new propC(getGUID(), cn, 100, top+13*h, 10, 10, 0, false, COMMANDS.RIGHT[0], COMMANDS.RIGHT[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, 50, top+15*h, 10, 10, 0, false, CMDS.FOCUS[0], CMDS.FOCUS[1]),
+                new propC(getGUID(), cn, 50, top+15*h, 10, 10, 0, false, COMMANDS.FOCUS[0], COMMANDS.FOCUS[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, 100, top+17*h, 10, 10, 0, false, CMDS.COMMAND[0], CMDS.COMMAND[1]),
+                new propC(getGUID(), cn, 100, top+17*h, 10, 10, 0, false, COMMANDS.COMMAND[0], COMMANDS.COMMAND[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
@@ -2331,7 +3154,7 @@ var proc = function(processingInstance){ with (processingInstance){
     var ch=app.height-14;
 
     var cn=new container(
-            new propC(getGUID(),parent, l, 2, 200, ch, 3, false, CMDS.CONTAINER[0],CMDS.CONTAINER[1]),
+            new propC(getGUID(),parent, l, 2, 200, ch, 3, false, COMMANDS.CONTAINER[0],COMMANDS.CONTAINER[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
 
@@ -2344,82 +3167,82 @@ var proc = function(processingInstance){ with (processingInstance){
     //~ LINEWEIGHT
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, cn.w/2, 10, 10, 10, 0, false, CMDS.UNDEF[0], CMDS.PROPERTIES[1]),
+                new propC(getGUID(), cn, cn.w/2, 10, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.PROPERTIES[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXTCENTER)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, l+5, top+0*h, 10, 10, 0, false, CMDS.UNDEF[0], CMDS.NAME[1]),
+                new propC(getGUID(), cn, l+5, top+0*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.NAME[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, l+5, top+1*h, 10, 10, 0, false, CMDS.UNDEF[0], CMDS.CAPTION[1]),
+                new propC(getGUID(), cn, l+5, top+1*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.CAPTION[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, l+5, top+2*h, 10, 10, 0, false, CMDS.UNDEF[0], CMDS.FORMULA[1]),
+                new propC(getGUID(), cn, l+5, top+2*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.FORMULA[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new spacer(
-                new propC(getGUID(), cn, l+5, top+3*h+5, 150, 10, 0, false, CMDS.UNDEF[0], CMDS.SPACER[0]),
+                new propC(getGUID(), cn, l+5, top+3*h+5, 150, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.SPACER[0]),
                 getStyle(STYLES.SPACER),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, l+5, top+4*h, 10, 10, 0, false, CMDS.UNDEF[0], CMDS.COLOR[1]),
+                new propC(getGUID(), cn, l+5, top+4*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.COLOR[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, l+5, top+5*h, 10, 10, 0, false, CMDS.UNDEF[0], CMDS.LAYER[1]),
+                new propC(getGUID(), cn, l+5, top+5*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.LAYER[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, l+5, top+6*h, 10, 10, 0, false, CMDS.UNDEF[0], CMDS.LINETYPE[1]),
+                new propC(getGUID(), cn, l+5, top+6*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.LINETYPE[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, l+5, top+7*h, 10, 10, 0, false, CMDS.UNDEF[0], CMDS.LINEWEIGHT[1]),
+                new propC(getGUID(), cn, l+5, top+7*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.LINEWEIGHT[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, l+100, top+0*h, 10, 10, 0, false, CMDS.NAME[0], CMDS.NAME[1]),
+                new propC(getGUID(), cn, l+100, top+0*h, 10, 10, 0, false, COMMANDS.NAME[0], COMMANDS.NAME[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, l+100, top+1*h, 10, 10, 0, false, CMDS.CAPTION[0], CMDS.CAPTION[1]),
+                new propC(getGUID(), cn, l+100, top+1*h, 10, 10, 0, false, COMMANDS.CAPTION[0], COMMANDS.CAPTION[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, l+100, top+2*h, 10, 10, 0, false, CMDS.FORMULA[0], CMDS.FORMULA[1]),
+                new propC(getGUID(), cn, l+100, top+2*h, 10, 10, 0, false, COMMANDS.FORMULA[0], COMMANDS.FORMULA[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, l+100, top+4*h, 10, 10, 0, false, CMDS.COLOR[0], CMDS.COLOR[1]),
+                new propC(getGUID(), cn, l+100, top+4*h, 10, 10, 0, false, COMMANDS.COLOR[0], COMMANDS.COLOR[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, l+100, top+5*h, 10, 10, 0, false, CMDS.LAYER[0], CMDS.LAYER[1]),
+                new propC(getGUID(), cn, l+100, top+5*h, 10, 10, 0, false, COMMANDS.LAYER[0], COMMANDS.LAYER[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, l+100, top+6*h, 10, 10, 0, false, CMDS.LINETYPE[0], CMDS.LINETYPE[1]),
+                new propC(getGUID(), cn, l+100, top+6*h, 10, 10, 0, false, COMMANDS.LINETYPE[0], COMMANDS.LINETYPE[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, l+100, top+7*h, 10, 10, 0, false, CMDS.LINEWEIGHT[0], CMDS.LINEWEIGHT[1]),
+                new propC(getGUID(), cn, l+100, top+7*h, 10, 10, 0, false, COMMANDS.LINEWEIGHT[0], COMMANDS.LINEWEIGHT[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
@@ -2437,180 +3260,180 @@ var proc = function(processingInstance){ with (processingInstance){
     var ch=200;
 
     var cn=new container(
-            new propC(getGUID(),parent, 300, 100, 200, 270, 3, false, CMDS.UNDEF[0],0),
+            new propC(getGUID(),parent, 275, 100, 200, 270, 3, false, COMMANDS.UNDEF[0],0),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
 
     //~ Colors
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+0*h, top, h, h, 0, false, CMDS.COLOR[0] ,CLRS.Red),
+                new propC(getGUID(),cn, l+0*h, top, h, h, 0, false, COMMANDS.COLOR[0] ,CLRS.Red),
                 new propL(CLRS.Red, CLRS.Red, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+1*h+5, top, h, h, 0, false, CMDS.COLOR[0], CLRS.RedOrange),
+                new propC(getGUID(),cn, l+1*h+5, top, h, h, 0, false, COMMANDS.COLOR[0], CLRS.RedOrange),
                 new propL(CLRS.RedOrange, CLRS.RedOrange, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+2*h+10, top, h, h, 0, false, CMDS.COLOR[0], CLRS.Orange),
+                new propC(getGUID(),cn, l+2*h+10, top, h, h, 0, false, COMMANDS.COLOR[0], CLRS.Orange),
                 new propL(CLRS.Orange, CLRS.Orange, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+3*h+15, top, h, h, 0, false, CMDS.COLOR[0], CLRS.YellowOrange),
+                new propC(getGUID(),cn, l+3*h+15, top, h, h, 0, false, COMMANDS.COLOR[0], CLRS.YellowOrange),
                 new propL(CLRS.YellowOrange, CLRS.YellowOrange, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+4*h+20, top, h, h, 0, false, CMDS.COLOR[0], CLRS.Yellow),
+                new propC(getGUID(),cn, l+4*h+20, top, h, h, 0, false, COMMANDS.COLOR[0], CLRS.Yellow),
                 new propL(CLRS.Yellow, CLRS.Yellow, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+5*h+25, top, h, h, 0, false, CMDS.COLOR[0], CLRS.YellowGreen),
+                new propC(getGUID(),cn, l+5*h+25, top, h, h, 0, false, COMMANDS.COLOR[0], CLRS.YellowGreen),
                 new propL(CLRS.YellowGreen, CLRS.YellowGreen, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+0*h, top+1*h+5, h, h, 0, false, CMDS.COLOR[0], CLRS.Green),
+                new propC(getGUID(),cn, l+0*h, top+1*h+5, h, h, 0, false, COMMANDS.COLOR[0], CLRS.Green),
                 new propL(CLRS.Green, CLRS.Green, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+1*h+5, top+1*h+5, h, h, 0, false, CMDS.COLOR[0], CLRS.BlueGreen),
+                new propC(getGUID(),cn, l+1*h+5, top+1*h+5, h, h, 0, false, COMMANDS.COLOR[0], CLRS.BlueGreen),
                 new propL(CLRS.BlueGreen, CLRS.BlueGreen, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+2*h+10, top+1*h+5, h, h, 0, false, CMDS.COLOR[0], CLRS.Blue),
+                new propC(getGUID(),cn, l+2*h+10, top+1*h+5, h, h, 0, false, COMMANDS.COLOR[0], CLRS.Blue),
                 new propL(CLRS.Blue, CLRS.Blue, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+3*h+15, top+1*h+5, h, h, 0, false, CMDS.COLOR[0], CLRS.BlueViolet),
+                new propC(getGUID(),cn, l+3*h+15, top+1*h+5, h, h, 0, false, COMMANDS.COLOR[0], CLRS.BlueViolet),
                 new propL(CLRS.BlueViolet, CLRS.BlueViolet, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+4*h+20, top+1*h+5, h, h, 0, false, CMDS.COLOR[0], CLRS.Violet),
+                new propC(getGUID(),cn, l+4*h+20, top+1*h+5, h, h, 0, false, COMMANDS.COLOR[0], CLRS.Violet),
                 new propL(CLRS.Violet, CLRS.Violet, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+5*h+25, top+1*h+5, h, h, 0, false, CMDS.COLOR[0], CLRS.RedViolet),
+                new propC(getGUID(),cn, l+5*h+25, top+1*h+5, h, h, 0, false, COMMANDS.COLOR[0], CLRS.RedViolet),
                 new propL(getColor(CLRS.RedViolet,90), CLRS.RedViolet, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
                 getStyle(STYLES.TEXT)));
 
     //~ Gray Scale
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+0*h, top+2*h+10, h, h, 0, false, CMDS.COLOR[0] ,CLRS.White),
+                new propC(getGUID(),cn, l+0*h, top+2*h+10, h, h, 0, false, COMMANDS.COLOR[0] ,CLRS.White),
                 new propL(CLRS.White, CLRS.White, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+1*h+5, top+2*h+10, h, h, 0, false, CMDS.COLOR[0], CLRS.Gray1),
+                new propC(getGUID(),cn, l+1*h+5, top+2*h+10, h, h, 0, false, COMMANDS.COLOR[0], CLRS.Gray1),
                 new propL(CLRS.Gray1, CLRS.Gray1, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+2*h+10, top+2*h+10, h, h, 0, false, CMDS.COLOR[0], CLRS.Gray2),
+                new propC(getGUID(),cn, l+2*h+10, top+2*h+10, h, h, 0, false, COMMANDS.COLOR[0], CLRS.Gray2),
                 new propL(CLRS.Gray2, CLRS.Gray2, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+3*h+15, top+2*h+10, h, h, 0, false, CMDS.COLOR[0], CLRS.Gray3),
+                new propC(getGUID(),cn, l+3*h+15, top+2*h+10, h, h, 0, false, COMMANDS.COLOR[0], CLRS.Gray3),
                 new propL(CLRS.Gray3, CLRS.Gray3, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+4*h+20, top+2*h+10, h, h, 0, false, CMDS.COLOR[0], CLRS.Gray4),
+                new propC(getGUID(),cn, l+4*h+20, top+2*h+10, h, h, 0, false, COMMANDS.COLOR[0], CLRS.Gray4),
                 new propL(CLRS.Gray4, CLRS.Gray4, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+5*h+25, top+2*h+10, h, h, 0, false, CMDS.COLOR[0], CLRS.Gray5),
+                new propC(getGUID(),cn, l+5*h+25, top+2*h+10, h, h, 0, false, COMMANDS.COLOR[0], CLRS.Gray5),
                 new propL(CLRS.Gray5, CLRS.Gray5, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+0*h, top+3*h+15, h, h, 0, false, CMDS.COLOR[0], CLRS.Gray6),
+                new propC(getGUID(),cn, l+0*h, top+3*h+15, h, h, 0, false, COMMANDS.COLOR[0], CLRS.Gray6),
                 new propL(CLRS.Gray6, CLRS.Gray6, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+1*h+5, top+3*h+15, h, h, 0, false, CMDS.COLOR[0], CLRS.Gray7),
+                new propC(getGUID(),cn, l+1*h+5, top+3*h+15, h, h, 0, false, COMMANDS.COLOR[0], CLRS.Gray7),
                 new propL(CLRS.Gray7, CLRS.Gray7, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+2*h+10, top+3*h+15, h, h, 0, false, CMDS.COLOR[0], CLRS.Gray8),
+                new propC(getGUID(),cn, l+2*h+10, top+3*h+15, h, h, 0, false, COMMANDS.COLOR[0], CLRS.Gray8),
                 new propL(CLRS.Gray8, CLRS.Gray8, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+3*h+15, top+3*h+15, h, h, 0, false, CMDS.COLOR[0], CLRS.Gray9),
+                new propC(getGUID(),cn, l+3*h+15, top+3*h+15, h, h, 0, false, COMMANDS.COLOR[0], CLRS.Gray9),
                 new propL(CLRS.Gray9, CLRS.Gray9, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+4*h+20, top+3*h+15, h, h, 0, false, CMDS.COLOR[0], CLRS.Gray10),
+                new propC(getGUID(),cn, l+4*h+20, top+3*h+15, h, h, 0, false, COMMANDS.COLOR[0], CLRS.Gray10),
                 new propL(CLRS.Gray10, CLRS.Gray10, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+5*h+25, top+3*h+15, h, h, 0, false, CMDS.COLOR[0], CLRS.Black),
+                new propC(getGUID(),cn, l+5*h+25, top+3*h+15, h, h, 0, false, COMMANDS.COLOR[0], CLRS.Black),
                 new propL(getColor(CLRS.Black,90), CLRS.Black, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
                 getStyle(STYLES.TEXT)));
 
     //~ Current Color
     ctrls.push(new buttonP(
-                new propC(getGUID(),cn, l+5*h+25, top+5*h+15, 40, 40, 0, false, CMDS.COLORG[0], CMDS.COLORG[0]),
+                new propC(getGUID(),cn, l+5*h+25, top+5*h+15, 40, 40, 0, false, COMMANDS.COLORG[0], COMMANDS.COLORG[0]),
                 new propL(getColor(CLRS.Black,90), CLRS.Black, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, l, top+5*h+20, 10, 10, 0, false, CMDS.UNDEF[0], CMDS.RED[1]),
+                new propC(getGUID(), cn, l, top+5*h+20, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.RED[1]),
                 getStyle(STYLES.BUTTON),
                 new propA(CLRS.RED, CLRS.YELLOW, LEFT, CENTER, 14, 14)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, l, top+5*h+40, 10, 10, 0, false, CMDS.UNDEF[0], CMDS.GREEN[1]),
+                new propC(getGUID(), cn, l, top+5*h+40, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.GREEN[1]),
                 getStyle(STYLES.BUTTON),
                 new propA(CLRS.GREEN, CLRS.YELLOW, LEFT, CENTER, 14, 14)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, l, top+5*h+60, 10, 10, 0, false, CMDS.UNDEF[0], CMDS.BLUE[1]),
+                new propC(getGUID(), cn, l, top+5*h+60, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.BLUE[1]),
                 getStyle(STYLES.BUTTON),
                 new propA(CLRS.BLUE, CLRS.YELLOW, LEFT, CENTER, 14, 14)));
 
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, l+60, top+5*h+20, 10, 10, 0, false, CMDS.RED[0], CMDS.RED[1]),
+                new propC(getGUID(), cn, l+60, top+5*h+20, 10, 10, 0, false, COMMANDS.RED[0], COMMANDS.RED[1]),
                 getStyle(STYLES.BUTTON),
                 new propA(CLRS.RED, CLRS.YELLOW, LEFT, CENTER, 14, 14)));
 
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, l+60, top+5*h+40, 10, 10, 0, false, CMDS.GREEN[0], CMDS.GREEN[1]),
+                new propC(getGUID(), cn, l+60, top+5*h+40, 10, 10, 0, false, COMMANDS.GREEN[0], COMMANDS.GREEN[1]),
                 getStyle(STYLES.BUTTON),
                 new propA(CLRS.GREEN, CLRS.YELLOW, LEFT, CENTER, 14, 14)));
 
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, l+60, top+5*h+60, 10, 10, 0, false, CMDS.BLUE[0], CMDS.BLUE[1]),
+                new propC(getGUID(), cn, l+60, top+5*h+60, 10, 10, 0, false, COMMANDS.BLUE[0], COMMANDS.BLUE[1]),
                 getStyle(STYLES.BUTTON),
                 new propA(CLRS.BLUE, CLRS.YELLOW, LEFT, CENTER, 16, 16)));
 
     ctrls.push(new sliderH(
-                new propC(getGUID(), cn, l, top+5*h+90, 128, 10, 5, 10, CMDS.RED[0], false),
+                new propC(getGUID(), cn, l, top+5*h+90, 128, 10, 5, 10, COMMANDS.RED[0], false),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new sliderH(
-                new propC(getGUID(), cn, l, top+5*h+110, 128, 10, 5, 10, CMDS.GREEN[0], false),
+                new propC(getGUID(), cn, l, top+5*h+110, 128, 10, 5, 10, COMMANDS.GREEN[0], false),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new sliderH(
-                new propC(getGUID(), cn, l, top+5*h+130, 128, 10, 5, 10, CMDS.BLUE[0], false),
+                new propC(getGUID(), cn, l, top+5*h+130, 128, 10, 5, 10, COMMANDS.BLUE[0], false),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
@@ -2626,7 +3449,7 @@ var proc = function(processingInstance){ with (processingInstance){
     var h=15;
 
     var cn=new container(
-            new propC(getGUID(), parent, parent.w/2-400, -5, 800, 45, 5, false, CMDS.UNDEF[0], CMDS.HEADER[1]),
+            new propC(getGUID(), parent, parent.w/2-400, -5, 800, 45, 5, false, COMMANDS.UNDEF[0], COMMANDS.HEADER[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
 
@@ -2642,9 +3465,165 @@ var proc = function(processingInstance){ with (processingInstance){
     var h=15;
 
     var cn=new container(
-            new propC(getGUID(), parent, parent.w/2-300, app.height-45, 600, 50, 2, false, CMDS.UNDEF[0],CMDS.FOOTER[1]),
+            new propC(getGUID(), parent, parent.w/2-300, app.height-45, 600, 50, 2, false, COMMANDS.UNDEF[0],COMMANDS.FOOTER[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TITLE));
+
+    cn.ctrls=ctrls;
+
+    return cn;
+
+  };
+
+  var getGridProps=function(parent){
+
+    var ctrls=[];
+    var top=10;
+    var h=15;
+    var l=800;
+    var ch=255;
+
+    var cn=new container(
+            new propC(getGUID(),parent, l, 2, 120, ch, 3, false, COMMANDS.CONTAINER[0],COMMANDS.CONTAINER[1]),
+            getStyle(STYLES.CONTAINER),
+            getStyle(STYLES.TEXT));
+
+    //~ Labels ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ctrls.push(new label(
+                new propC(getGUID(), cn, 5, top+0*h, 10, 10, 0, false, COMMANDS.ORIGIN[0], COMMANDS.ORIGIN[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new spacer(
+                new propC(getGUID(), cn, 5, top+1*h+5, 110, 10, 0, false, COMMANDS.SPACER[0], COMMANDS.SPACER[0]),
+                getStyle(STYLES.SPACER),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new label(
+                new propC(getGUID(), cn, 15, top+2*h, 10, 10, 0, false, COMMANDS.AXISX[0], COMMANDS.AXISX[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new label(
+                new propC(getGUID(), cn, 15, top+3*h, 10, 10, 0, false, COMMANDS.AXISY[0], COMMANDS.AXISY[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new spacer(
+                new propC(getGUID(), cn, 5, top+4*h+5, 110, 10, 0, false, COMMANDS.SPACER[0], COMMANDS.SPACER[0]),
+                getStyle(STYLES.SPACER),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new label(
+                new propC(getGUID(), cn, 5, top+5*h, 10, 10, 0, false, COMMANDS.LINESX[0], COMMANDS.LINESX[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new label(
+                new propC(getGUID(), cn, 5, top+6*h, 10, 10, 0, false, COMMANDS.LINESY[0], COMMANDS.LINESY[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new spacer(
+                new propC(getGUID(), cn, 5, top+7*h+5, 110, 10, 0, false, COMMANDS.SPACER[0], COMMANDS.SPACER[0]),
+                getStyle(STYLES.SPACER),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new label(
+                new propC(getGUID(), cn, 5, top+8*h, 10, 10, 0, false, COMMANDS.ARROWSX[0], COMMANDS.ARROWSX[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new label(
+                new propC(getGUID(), cn, 5, top+9*h, 10, 10, 0, false, COMMANDS.ARROWSY[0], COMMANDS.ARROWSY[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new spacer(
+                new propC(getGUID(), cn, 5, top+10*h+5, 110, 10, 0, false, COMMANDS.SPACER[0], COMMANDS.SPACER[0]),
+                getStyle(STYLES.SPACER),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new label(
+                new propC(getGUID(), cn, 5, top+11*h, 10, 10, 0, false, COMMANDS.TICKSX[0], COMMANDS.TICKSX[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new label(
+                new propC(getGUID(), cn, 5, top+12*h, 10, 10, 0, false, COMMANDS.TICKSY[0], COMMANDS.TICKSY[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new spacer(
+                new propC(getGUID(), cn, 5, top+13*h+5, 110, 10, 0, false, COMMANDS.SPACER[0], COMMANDS.SPACER[0]),
+                getStyle(STYLES.SPACER),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new label(
+                new propC(getGUID(), cn, 5, top+14*h, 10, 10, 0, false, COMMANDS.LABELSX[0], COMMANDS.LABELSX[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new label(
+                new propC(getGUID(), cn, 5, top+15*h, 10, 10, 0, false, COMMANDS.LABELSY[0], COMMANDS.LABELSY[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    //~ Values ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ctrls.push(new checkbox(
+                new propC(getGUID(), cn, 105, top+0*h+5, 10, 10, 0, false, COMMANDS.ORIGIN[0], COMMANDS.ORIGIN[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXTCENTER)));
+
+    ctrls.push(new checkbox(
+                new propC(getGUID(), cn, 105, top+2*h+5, 10, 10, 0, false, COMMANDS.AXISX[0], COMMANDS.AXISX[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXTCENTER)));
+
+    ctrls.push(new checkbox(
+                new propC(getGUID(), cn, 105, top+3*h+5, 10, 10, 0, false, COMMANDS.AXISY[0], COMMANDS.AXISY[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXTCENTER)));
+
+    ctrls.push(new checkbox(
+                new propC(getGUID(), cn, 105, top+5*h+5, 10, 10, 0, false, COMMANDS.LINESX[0], COMMANDS.LINESX[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXTCENTER)));
+
+    ctrls.push(new checkbox(
+                new propC(getGUID(), cn, 105, top+6*h+5, 10, 10, 0, false, COMMANDS.LINESY[0], COMMANDS.LINESY[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXTCENTER)));
+
+    ctrls.push(new checkbox(
+                new propC(getGUID(), cn, 105, top+8*h+5, 10, 10, 0, false, COMMANDS.ARROWSX[0], COMMANDS.ARROWSX[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXTCENTER)));
+
+    ctrls.push(new checkbox(
+                new propC(getGUID(), cn, 105, top+9*h+5, 10, 10, 0, false, COMMANDS.ARROWSY[0], COMMANDS.ARROWSY[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXTCENTER)));
+
+    ctrls.push(new checkbox(
+                new propC(getGUID(), cn, 105, top+11*h+5, 10, 10, 0, false, COMMANDS.TICKSX[0], COMMANDS.TICKSX[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXTCENTER)));
+
+    ctrls.push(new checkbox(
+                new propC(getGUID(), cn, 105, top+12*h+5, 10, 10, 0, false, COMMANDS.TICKSY[0], COMMANDS.TICKSY[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXTCENTER)));
+
+    ctrls.push(new checkbox(
+                new propC(getGUID(), cn, 105, top+14*h+5, 10, 10, 0, false, COMMANDS.LABELSX[0], COMMANDS.LABELSX[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXTCENTER)));
+
+    ctrls.push(new checkbox(
+                new propC(getGUID(), cn, 105, top+15*h+5, 10, 10, 0, false, COMMANDS.LABELSY[0], COMMANDS.LABELSY[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXTCENTER)));
 
     cn.ctrls=ctrls;
 
@@ -2657,30 +3636,39 @@ var proc = function(processingInstance){ with (processingInstance){
     var ctrls=[];
 
     var cn=new container(
-            new propC(getGUID(), 0, 0, 0, app.width, app.height,2, false, CMDS.UNDEF[0], 0),
+            new propC(getGUID(), 0, 0, 0, app.width, app.height,2, false, COMMANDS.UNDEF[0], 0),
             getStyle(STYLES.BACKGROUND),
             getStyle(STYLES.TEXT));
 
     //~ ctrls.push(new sliderH(
-            //~ new propC(getGUID(), cn, 226, 300, 200, 10, 0, 10, CMDS.FRAMERATE[0], false),
+            //~ new propC(getGUID(), cn, 226, 300, 200, 10, 0, 10, COMMANDS.FRAMERATE[0], false),
             //~ getStyle(STYLES.BUTTON),
             //~ getStyle(STYLES.TEXT)));
 
-    //~ ctrls.push(getGrid(cn));
+    ctrls.push(getGrid(cn));
 
-    ctrls.push(new labelR(
-            new propC(getGUID(), cn, cn.w/2, cn.h/2, 10, 10, 0, false, CMDS.UNDEF[0], CMDS.CARTESIA[1]),
-            getStyle(STYLES.BUTTON),
-            getStyle(STYLES.TEXTCENTER)));
+    //~ ctrls.push(new labelR(
+            //~ new propC(getGUID(), cn, cn.w/2, cn.h/2, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.CARTESIA[1]),
+            //~ getStyle(STYLES.BUTTON),
+            //~ getStyle(STYLES.TEXTCENTER)));
 
     ctrls.push(getPoints(cn));
-    ctrls.push(getLines(cn));
+    //~ ctrls.push(getLines(cn));
+    //~ ctrls.push(getTriangles(cn));
+    //~ ctrls.push(getCircles(cn));
+    //~ ctrls.push(getArcs(cn));
+    //~ ctrls.push(getPolygons(cn));
+    //~ ctrls.push(getConics(cn));
+    //~ ctrls.push(getAngles(cn));
+    //~ ctrls.push(getAnnotations(cn));
 
-    ctrls.push(getHeader(cn));
-    ctrls.push(getFooter(cn));
+    //~ ctrls.push(getHeader(cn));
+    //~ ctrls.push(getFooter(cn));
     ctrls.push(getProperties(cn));
     ctrls.push(getTelemetry(cn));
-    ctrls.push(getColors(cn));
+    //~ ctrls.push(getColors(cn));
+
+    ctrls.push(getGridProps(cn));
 
     cn.ctrls=ctrls;
 
@@ -2690,7 +3678,7 @@ var proc = function(processingInstance){ with (processingInstance){
 
   var loadCommands=function(){
 
-    saveStrings('Rectangle', CMDS.DEBUG);
+    saveStrings('Rectangle', COMMANDS.DEBUG);
 
     //~ println(loadStrings('Rectangle'));
 
