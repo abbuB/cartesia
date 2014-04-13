@@ -10,6 +10,12 @@ var proc = function(processingInstance){ with (processingInstance){
 
   **/
 
+  var getColor=function(clr,alpha){
+
+    return color(red(clr), green(clr), blue(clr), alpha/100*255);
+
+  };
+  
   var CLRS={
 
     WHITE:    color(255,255,255),     BLACK:    color(0,0,0),
@@ -39,7 +45,15 @@ var proc = function(processingInstance){ with (processingInstance){
 
     BUTTONH:   color(16,16,16),       BUTTON:      color(24,24,24),
 
-    GRID:     color(33,40,48)
+    GRID:     color(33,40,48),
+
+    VERTEX:   color(255,255,0),
+    VERTEXA:  color(255*6/11),
+    LINE:     color(255*6/11),
+    LINEA:    color(170,29,29),
+    FILL:     color(255*7/11),
+    FILLA:    getColor(color(255*7/11),25),
+    
 
   };
 
@@ -114,8 +128,8 @@ var proc = function(processingInstance){ with (processingInstance){
     ORIGIN:       [ 101,  'Origin',           'ORIGIN'                ],
     BORDER:       [ 102,  'Border',           'BORDER'                ],
     AXES:         [ 103,  'Axes',             'AXES'                  ],
-    AXISX:        [ 104,  'x',                'AXISX'                 ],
-    AXISY:        [ 105,  'y',                'AXISY'                 ],
+    AXISX:        [ 104,  'x',                'X'                     ],
+    AXISY:        [ 105,  'y',                'Y'                     ],
     LINES:        [ 106,  'Lines',            'LINES'                 ],
     LINESX:       [ 107,  'LinesX',           'LINESX'                ],
     LINESY:       [ 108,  'LinesY',           'LINESY'                ],
@@ -257,10 +271,10 @@ var proc = function(processingInstance){ with (processingInstance){
 
     //~ Circle (C)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     CIRCLE:       [1400,  'Circle',           'CIRCLE'                ],
-    C_CENTERP:    [1401,  'CircleCenterP',    'CIRCLECENTERP'         ],    //~ center point
-    C_CENTERR:    [1402,  'CircleCenterR',    'CIRCLECENTERR'         ],    //~ center radius
+    C_CENTERP:    [1401,  'C_CenterP',        'C_CENTERP'             ],    //~ center point
+    C_CENTERR:    [1402,  'C_CenterR',        'C_CENTERR'             ],    //~ center radius
 
-    C_3P:         [1403,  'Circle3P',         'CIRCL3P'               ],    //  3 points
+    C_3P:         [1403,  'C_3P',             'C_3P'                  ],    //  3 points
 
 
     //~ Arc (A)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -303,7 +317,7 @@ var proc = function(processingInstance){ with (processingInstance){
     //~ Images ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     IMAGE:        [2001,  'Image',            'IMAGE'                 ],
-    SKECTH:       [2002,  'SKETCH',           'SKETCH'                ],
+    SKETCH:       [2002,  'SKETCH',           'SKETCH'                ],
 
     //~ Footer ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //~ ORTHO:
@@ -396,6 +410,18 @@ var proc = function(processingInstance){ with (processingInstance){
 
   };
 
+  var drawing=function(){
+
+    this.guid=getGUID();
+    this.ctrls=[];
+
+    this.color=CLRS.RED;
+    this.layer=11;
+    this.linetype=LINETYPES.HAIRLINE;
+    this.lineweight=7;
+
+  };
+
   //~ Methods ==========================================================
   var getGUID=function(){
 
@@ -415,7 +441,6 @@ var proc = function(processingInstance){ with (processingInstance){
   var getProp=function(p){
 
   //~ println(p);
-
     switch(p){
 
       case COMMANDS.COMMAND[0]:     return app.command;
@@ -474,13 +499,7 @@ var proc = function(processingInstance){ with (processingInstance){
       case COMMANDS.FULLSCREEN[0]:  return app.fullscreen;
 
     };
-
-  };
-
-  var getColor=function(clr,alpha){
-
-    return color(red(clr), green(clr), blue(clr), alpha/100*255);
-
+  
   };
 
   var getDottedLine=function(x0, y0, x1, y1, n){
@@ -591,14 +610,10 @@ var proc = function(processingInstance){ with (processingInstance){
   Annotation.prototype=Object.create(Shape.prototype);
   Annotation.prototype.draw=function(){};
 
-  //~ Commands =========================================================
-  var commands=function(c,p){
-
-    //~ println(c+':'+p);
+  var GridCommands=function(c,p){
 
     switch(c){
 
-      //~ Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       case COMMANDS.GRID[0]:        break;
 
       case COMMANDS.ORIGIN[0]:      app.origin=!app.origin;           break;
@@ -624,54 +639,77 @@ var proc = function(processingInstance){ with (processingInstance){
       case COMMANDS.SNAPTOGRID[0]:  app.snaptogrid=!app.snaptogrid;   break;
       case COMMANDS.FULLSCREEN[0]:  app.fullscreen=!app.fullscreen;   break;
 
+      default:      break;
 
-      //~ Shapes ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      case COMMANDS.POINT[0]:       println('Point:');          break;
-      case COMMANDS.P_OBJECT[0]:    println('Point: bound');    break;
-      case COMMANDS.P_INTERSECT[0]: println('Point: interset'); break;
-      case COMMANDS.P_MIDPOINT[0]:  println('Point: midpoint'); break;
+    }
 
-      case COMMANDS.ORIGIN[0]:      app.origin=p;               break;
-      case COMMANDS.BORDER[0]:      app.border=p;               break;
+  };
+  var ShapeCommands=function(c,p){
 
-      case COMMANDS.FRAMERATE[0]:   frameRate(p);
-                                    app.frameRate=p;
-                                    break;
+    println(c+","+p);
 
-      case COMMANDS.DEBUG[0]:       app.debug=!app.debug;
-                                    if(app.debug){ frameRate(60);  }
-                                    else         { frameRate(31); }
-                                    break;
+    switch(c){
 
-      case COMMANDS.COLORG[0]:      return app.color;
+      case COMMANDS.POINT[0]:        break;
 
-      case COMMANDS.COLOR[0]:       app.color=p;
-                                    app.red=red(app.color);
-                                    app.green=green(app.color);
-                                    app.blue=blue(app.color);
-                                    break;
+      case COMMANDS.ORIGIN[0]:      app.origin=!app.origin;       break;
+      case COMMANDS.BORDER[0]:      app.border=!app.border;       break;
 
-      //~ case COMMANDS.RECTANGLE[0]: println('Rectangle');         break;
-
-      case COMMANDS.RED[0]:         app.red=red(app.color);     break;
-      case COMMANDS.GREEN[0]:       app.green=green(app.color); break;
-      case COMMANDS.BLUE[0]:        app.blue=blue(app.color);   break;
-
-      default:  break;
+      default:      break;
 
     }
 
   };
 
-  var drawing=function(){
+  //~ Commands =========================================================
+  var commands=function(c,p){
 
-    this.guid=getGUID();
-    this.ctrls=[];
+    //~ println(c+':'+p);
 
-    this.color=CLRS.RED;
-    this.layer=11;
-    this.linetype=LINETYPES.HAIRLINE;
-    this.lineweight=7;
+    //~ println(COMMANDS.FULLSCREEN[0]);
+
+    switch(true){
+
+      //~ Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      case (c>COMMANDS.GRID[0] && c<=COMMANDS.FULLSCREEN[0]):
+
+        GridCommands(c,p);  break;
+
+      case (c>COMMANDS.POINT[0] && c<=COMMANDS.SKETCH[0]):
+
+        ShapeCommands(c,p);  break;
+
+      //~ Shapes ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      //~ case COMMANDS.POINT[0]:       println('Point:');          break;
+      //~ case COMMANDS.P_OBJECT[0]:    println('Point: bound');    break;
+      //~ case COMMANDS.P_INTERSECT[0]: println('Point: interset'); break;
+      //~ case COMMANDS.P_MIDPOINT[0]:  println('Point: midpoint'); break;
+      //~ case COMMANDS.FRAMERATE[0]:   frameRate(p);
+                                    //~ app.frameRate=p;
+                                    //~ break;
+
+      //~ case COMMANDS.DEBUG[0]:       app.debug=!app.debug;
+                                    //~ if(app.debug){ frameRate(60);  }
+                                    //~ else         { frameRate(31); }
+                                    //~ break;
+
+      //~ case COMMANDS.COLORG[0]:      return app.color;
+
+      //~ case COMMANDS.COLOR[0]:       app.color=p;
+                                    //~ app.red=red(app.color);
+                                    //~ app.green=green(app.color);
+                                    //~ app.blue=blue(app.color);
+                                    //~ break;
+
+      //~ case COMMANDS.RECTANGLE[0]: println('Rectangle');         break;
+
+      //~ case COMMANDS.RED[0]:         app.red=red(app.color);     break;
+      //~ case COMMANDS.GREEN[0]:       app.green=green(app.color); break;
+      //~ case COMMANDS.BLUE[0]:        app.blue=blue(app.color);   break;
+
+      default:  break;
+
+    }
 
   };
 
@@ -1057,11 +1095,11 @@ var proc = function(processingInstance){ with (processingInstance){
     var d=0;
     var cX=p.w/2;
     var cY=p.h/2;
-    var cPNT=CLRS.YELLOW;
+    var cPNT=CLRS.VERTEX;
     var cMEASURE=CLRS.RED;
-    var cVERTEX=CLRS.Gray5;
-    var cLINE=CLRS.Blue;
-    var cFILL=CLRS.Gray9;
+    var cVERTEX=CLRS.VERTEXA;
+    var cLINE=CLRS.LINE;
+    var cFILL=CLRS.FILL;
     var sz=3;
 
     var drawPoint=function(){
@@ -1336,7 +1374,7 @@ var proc = function(processingInstance){ with (processingInstance){
 
             stroke(cMEASURE);
 
-            line(d+cX+10*cos(PI/4),    d+cY-10*sin(PI/4),
+            line(d+cX+10*cos(PI/4),   d+cY-10*sin(PI/4),
                  d+cX+10*cos(PI*3/4), d+cY+10*sin(PI*3/4));
 
             noStroke();
@@ -1358,7 +1396,8 @@ var proc = function(processingInstance){ with (processingInstance){
 
             stroke(cMEASURE);
 
-            line(d+cX, d+cY, d+cX+10*cos(PI/4), d+cY-10*sin(PI/4));
+            line(d+cX, d+cY,
+                 d+cX+10*cos(PI/4), d+cY-10*sin(PI/4));
 
             noStroke();
             strokeWeight(0);
@@ -1447,7 +1486,176 @@ var proc = function(processingInstance){ with (processingInstance){
       popStyle();
 
     };
+    var drawTriangle=function(){
 
+      pushStyle();
+
+        rectMode(CENTER);
+
+        switch(p.c){
+
+          case COMMANDS.T_EQUILATERAL[0]:
+
+            noFill();
+
+            strokeWeight(0.5);
+            stroke(CLRS.LINE);
+
+            beginShape();
+              vertex(d+cX,              d+cY-15*sin(PI/4));
+              vertex(d+cX+15*cos(PI/4), d+cY+15*sin(PI/4));
+              vertex(d+cX-15*cos(PI/4), d+cY+15*sin(PI/4));
+            endShape(CLOSE);
+            
+            //~ Vertices
+            noStroke();
+            strokeWeight(0);
+            fill(CLRS.VERTEX);
+
+            ellipse(d+cX,              d+cY-15*sin(PI/4), sz, sz);
+            ellipse(d+cX+15*cos(PI/4), d+cY+15*sin(PI/4), sz, sz);
+            ellipse(d+cX-15*cos(PI/4), d+cY+15*sin(PI/4), sz, sz);
+
+            break;
+
+          case COMMANDS.T_ISOSCELES[0]:
+
+            noFill();
+
+            strokeWeight(0.5);
+            stroke(CLRS.LINE);
+
+            beginShape();
+              vertex(d+cX,   d+cY-10);
+              vertex(d+cX+7, d+cY+10);
+              vertex(d+cX-7, d+cY+10);
+            endShape(CLOSE);
+            
+            //~ Vertices
+            noStroke();
+            strokeWeight(0);
+            fill(CLRS.VERTEX);
+
+            ellipse(d+cX,   d+cY-10, sz, sz);
+            ellipse(d+cX+7, d+cY+10, sz, sz);
+            ellipse(d+cX-7, d+cY+10, sz, sz);
+
+            break;
+
+          case COMMANDS.T_SCALENE[0]:
+
+            noFill();
+
+            strokeWeight(0.5);
+            stroke(CLRS.LINE);
+
+            beginShape();
+              vertex(d+cX-10, d+cY-10);
+              vertex(d+cX-5,  d+cY+10);
+              vertex(d+cX+10, d+cY+10);
+            endShape(CLOSE);
+            
+            //~ Vertices
+            noStroke();
+            strokeWeight(0);
+            fill(CLRS.VERTEX);
+
+            ellipse(d+cX-10, d+cY-10, sz, sz);
+            ellipse(d+cX-5,  d+cY+10, sz, sz);
+            ellipse(d+cX+10, d+cY+10, sz, sz);
+
+            break;
+
+          default:  break;
+
+        }
+
+      popStyle();
+
+    }
+    var drawCircle=function(){
+
+      pushStyle();
+
+        rectMode(CENTER);
+
+        switch(p.c){
+
+          case COMMANDS.C_CENTERP[0]:
+
+            noStroke();
+            strokeWeight(0);
+            fill(CLRS.VERTEX);
+  
+            ellipse(d+cX, d+cY, sz, sz);
+            ellipse(d+cX+10*cos(PI/4),
+                    d+cY-10*sin(PI/4),
+                    sz, sz);
+
+            noFill();
+            strokeWeight(0.5);
+            stroke(CLRS.LINE);
+
+            ellipse(d+cX, d+cY, 20, 20);
+
+            break;
+
+          case COMMANDS.C_CENTERR[0]:
+
+            noStroke();
+            strokeWeight(0);
+            fill(CLRS.VERTEX);
+  
+            ellipse(d+cX, d+cY, sz, sz);
+
+            noFill();
+            strokeWeight(1);
+            stroke(CLRS.LINEA);
+
+            line(d+cX, d+cY,
+                 d+cX+10*cos(PI/4),
+                 d+cY-10*sin(PI/4));
+
+            noFill();
+            strokeWeight(0.5);
+            stroke(CLRS.LINE);
+
+            ellipse(d+cX, d+cY, 20, 20);
+
+            break;
+
+          case COMMANDS.C_3P[0]:
+
+            noStroke();
+            strokeWeight(0);
+            fill(CLRS.VERTEX);
+  
+            //~ ellipse(d+cX, d+cY, sz, sz);
+            ellipse(d+cX+10*cos(PI/4),
+                    d+cY-10*sin(PI/4),
+                    sz, sz);
+            ellipse(d+cX+10*cos(PI),
+                    d+cY+10*sin(PI),
+                    sz, sz);
+            ellipse(d+cX+10*cos(PI/4),
+                    d+cY+10*sin(PI/4),
+                    sz, sz);
+                                        
+            noFill();
+            strokeWeight(0.5);
+            stroke(CLRS.LINE);
+
+            ellipse(d+cX, d+cY, 20, 20);
+
+            break;
+
+          default:  break;
+
+        }
+
+      popStyle();
+
+    }    
     pushMatrix();
 
       translate(p.x, p.y);
@@ -1476,23 +1684,16 @@ var proc = function(processingInstance){ with (processingInstance){
 
           rect(d, d, p.w, p.h, p.r);
 
-          switch(p.c){
+          switch(true){
 
-            case COMMANDS.POINT[0]:              case COMMANDS.P_OBJECT[0]:
-            case COMMANDS.P_INTERSECT[0]:    case COMMANDS.P_MIDPOINT[0]:
-
-              drawPoint();  break;
-
-            case COMMANDS.L_2P[0]:          case COMMANDS.L_SEGMENT2P[0]:
-            case COMMANDS.L_SEGMENTLEN[0]:  case COMMANDS.L_PERP[0]:
-            case COMMANDS.L_PERPB[0]:       case COMMANDS.L_ANGB[0]:
-            case COMMANDS.L_PARR[0]:        case COMMANDS.L_TANGENT[0]:
-            case COMMANDS.L_DIAMETER[0]:    case COMMANDS.L_RADIUS[0]:
-            case COMMANDS.RAY_2P[0]:        case COMMANDS.V_2P[0]:
-            case COMMANDS.V_FP[0]:
-
-              drawLine();
-              break;
+            case (p.c>=COMMANDS.POINT[0] &&
+                  p.c<=COMMANDS.P_MIDPOINT[0]):   drawPoint();    break;
+            case (p.c>=COMMANDS.LINE[0] &&
+                  p.c<=COMMANDS.V_FP[0]):         drawLine();     break;
+            case (p.c>=COMMANDS.TRIANGLE[0] &&
+                  p.c<=COMMANDS.T_SCALENE[0]):     drawTriangle(); break;
+            case (p.c>=COMMANDS.CIRCLE[0] &&
+                  p.c<=COMMANDS.C_3P[0]):         drawCircle();   break;
 
             default:      break;
 
@@ -2508,16 +2709,16 @@ var proc = function(processingInstance){ with (processingInstance){
     //~ P_INTERSECT:      [ -102, 'P_Intersect',      'P_INTERSECT'   ],
     //~ P_MIDPOINT:       [ -103, 'P_Midpoint',       'P_MIDPOINT'    ],
 
-    for(var n in COMMANDS){
+    //~ for(var n in COMMANDS){
 
       //~ ctrls.push(new buttonI(
                   //~ new propC(getGUID(), cn, n*w, 0, w, w, 0, false, COMMANDS[n], COMMANDS[n]),
                   //~ getStyle(STYLES.BUTTON),
                   //~ getStyle(STYLES.TEXT)));
                   //~ println(n);
-                  println(COMMANDS[n]);
+                  //~ println(COMMANDS[n]);
 
-    }
+    //~ }
 
     ctrls.push(new buttonI(
                 new propC(getGUID(), cn, 0*w, 0, w, w, 0, false, COMMANDS.POINT[0], COMMANDS.POINT[1]),
@@ -2675,7 +2876,7 @@ var proc = function(processingInstance){ with (processingInstance){
     //~ T_SCALENE:    [-303,  'T_Scalene',        'T_SCALENE'             ],
 
     ctrls.push(new buttonI(
-                new propC(getGUID(), cn, 0*w, 0, w, w, 0, false, COMMANDS.TRIANGLE[0], COMMANDS.TRIANGLE[1]),
+                new propC(getGUID(), cn, 0*w, 0, w, w, 0, false, COMMANDS.T_EQUILATERAL[0], COMMANDS.T_EQUILATERAL[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
@@ -2719,7 +2920,7 @@ var proc = function(processingInstance){ with (processingInstance){
     //~ C_CENTERR:    [-402,  'CircleCenterR',    'CIRCLECENTERR'         ],    //~ center radius
     //~ C_3P:         [-403,  'Circle3P',         'CIRCL3P'               ],    //  3 points
     ctrls.push(new buttonI(
-                new propC(getGUID(), cn, 0*w, 0, w, w, 0, false, COMMANDS.CIRCLE[0], COMMANDS.CIRCLE[1]),
+                new propC(getGUID(), cn, 0*w, 0, w, w, 0, false, COMMANDS.C_CENTERP[0], COMMANDS.C_CENTERP[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
@@ -3645,7 +3846,7 @@ var proc = function(processingInstance){ with (processingInstance){
             //~ getStyle(STYLES.BUTTON),
             //~ getStyle(STYLES.TEXT)));
 
-    ctrls.push(getGrid(cn));
+    //~ ctrls.push(getGrid(cn));
 
     //~ ctrls.push(new labelR(
             //~ new propC(getGUID(), cn, cn.w/2, cn.h/2, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.CARTESIA[1]),
@@ -3653,9 +3854,9 @@ var proc = function(processingInstance){ with (processingInstance){
             //~ getStyle(STYLES.TEXTCENTER)));
 
     ctrls.push(getPoints(cn));
-    //~ ctrls.push(getLines(cn));
-    //~ ctrls.push(getTriangles(cn));
-    //~ ctrls.push(getCircles(cn));
+    ctrls.push(getLines(cn));
+    ctrls.push(getTriangles(cn));
+    ctrls.push(getCircles(cn));
     //~ ctrls.push(getArcs(cn));
     //~ ctrls.push(getPolygons(cn));
     //~ ctrls.push(getConics(cn));
@@ -3664,11 +3865,11 @@ var proc = function(processingInstance){ with (processingInstance){
 
     //~ ctrls.push(getHeader(cn));
     //~ ctrls.push(getFooter(cn));
-    ctrls.push(getProperties(cn));
-    ctrls.push(getTelemetry(cn));
+    //~ ctrls.push(getProperties(cn));
+    //~ ctrls.push(getTelemetry(cn));
     //~ ctrls.push(getColors(cn));
 
-    ctrls.push(getGridProps(cn));
+    //~ ctrls.push(getGridProps(cn));
 
     cn.ctrls=ctrls;
 
