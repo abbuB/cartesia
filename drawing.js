@@ -15,7 +15,7 @@ var proc = function(processingInstance){ with (processingInstance){
     return color(red(clr), green(clr), blue(clr), alpha/100*255);
 
   };
-  
+
   var CLRS={
 
     WHITE:    color(255,255,255),     BLACK:    color(0,0,0),
@@ -51,9 +51,9 @@ var proc = function(processingInstance){ with (processingInstance){
     VERTEXA:  color(255*6/11),
     LINE:     color(255*6/11),
     LINEA:    color(170,29,29),
-    FILL:     color(255*7/11),
+    FILL:     getColor(color(255*7/11),10),
     FILLA:    getColor(color(255*7/11),25),
-    
+
 
   };
 
@@ -276,48 +276,55 @@ var proc = function(processingInstance){ with (processingInstance){
 
     C_3P:         [1403,  'C_3P',             'C_3P'                  ],    //  3 points
 
+    //~ Quadrilateral (Q)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    QUAD:         [1500,  'Quadrilateral',    'QUADRILATERAL'         ],
+    Q_RECTANGLE:  [1501,  'Rectangle',        'RECTANGLE'             ],
+    Q_SQUARE:     [1502,  'Square',           'SQUARE'                ],
+    Q_RHOMBUS:    [1503,  'Rhombus',          'RHOMBUS'               ],
+    Q_PGRAM:      [1504,  'Parallelogram',    'PARALLELOGRAM'         ],    //~ Q_PARALLELOGRAM
+    Q_TRAPEZOID:  [1505,  'Trapezoid',        'TRAPEZOID'             ],
+    Q_KITE:       [1506,  'Kite',             'KITE'                  ],
 
     //~ Arc (A)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    ARC:          [1500,  'Arc',              'ARC'                   ],
-    A_2P:         [1501,  'Arc2P',            'ARC2P'                 ],    //~SEMICIRCLETHROUGH2POINTS
-    A_1:          [1502,  'Arc1',             'ARC1'                  ],    //~Circulararc
-    A_2:          [1503,  'Arc2',             'ARC2'                  ],    //~CIRCUMCIRCULARARC
-    A_3:          [1504,  'Arc3',             'ARC4'                  ],    //~ CIRCULARSECTOR
-    A_4:          [1505,  'Arc4',             'ARC4'                  ],    //~ CIRCUMCIRCULARSECTOR
+    ARC:          [1600,  'Arc',              'ARC'                   ],
+    A_2P:         [1601,  'Arc2Points',       'ARC2POINTS'            ],    //~ SemiCircleThrough2Points
+    A_CA:         [1602,  'CircularArc',      'CIRCULARARC'           ],    //~ CircularArc
+    A_CCA:        [1603,  'CircumCircularArc','CIRCUMCIRCULARARC'     ],    //~ CircumcircularArc
+    A_CS:         [1604,  'CircularSector',   'CIRCULARSECTOR'        ],    //~ CircularSector
+    A_CCS:        [1605,  'CircumCircularSector','CIRCUMCIRCULARSECTOR'],   //~ CircumCircularSector
 
-    COMPASS:      [1506,  'Compass',          'COMPASS'               ],    //~ ??
-
+    COMPASS:      [1606,  'Compass',          'COMPASS'               ],    //~ ??
 
     //~ Polygon ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    POLYGON:      [1600,  'Polygon',          'POLYGON'               ],
-    POLYGONR:     [1601,  'PolygonR',         'POLYGONR'              ],    //~ regular
-    POLYGONRIGID: [1602,  'PolygonRigid',     'POLYGONRIGID'          ],    //~ Rigid
-    POLYGONV:     [1603,  'PolygonV',         'POLYGONV'              ],    //~ Vector
+    POLYGON:      [1700,  'Polygon',          'POLYGON'               ],
+    POLYGONR:     [1701,  'PolygonR',         'POLYGONR'              ],    //~ regular
+    POLYGONRIGID: [1702,  'PolygonRigid',     'POLYGONRIGID'          ],    //~ Rigid
+    POLYGONV:     [1703,  'PolygonV',         'POLYGONV'              ],    //~ Vector
 
 
     //~ Conics (S) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    CONIC:        [1700,  'Conic',            'CONIC'                 ],
-    S_ELLIPSE:    [1700,  'Ellipse',          'ELLIPSE'               ],
-    S_HYPERBOLA:  [1701,  'Hyperbola',        'HYPERBOLA'             ],
-    S_PARABOLA:   [1702,  'Parabola',         'PARABOLA'              ],
-    S_5POINTS:    [1703,  'Conic5points',     'CONIC5POINTS'          ],
+    CONIC:        [1800,  'Conic',            'CONIC'                 ],
+    S_ELLIPSE:    [1800,  'Ellipse',          'ELLIPSE'               ],
+    S_HYPERBOLA:  [1801,  'Hyperbola',        'HYPERBOLA'             ],
+    S_PARABOLA:   [1802,  'Parabola',         'PARABOLA'              ],
+    S_5POINTS:    [1803,  'Conic5points',     'CONIC5POINTS'          ],
 
 
     //~ Angle ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    ANGLE:        [1800,  'Angle',            'ANGLE'                 ],
-    ANGLE_SIZE:   [1801,  'AngelSize',        'ANGELSIZE'             ],
+    ANGLE:        [1900,  'Angle',            'ANGLE'                 ],
+    ANGLE_SIZE:   [1901,  'AngelSize',        'ANGELSIZE'             ],
 
 
     //~ Annotation ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    TEXT:         [1900,  'Text',             'TEXT'                  ],
+    TEXT:         [2000,  'Text',             'TEXT'                  ],
 
 
     //~ Images ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    IMAGE:        [2001,  'Image',            'IMAGE'                 ],
-    SKETCH:       [2002,  'SKETCH',           'SKETCH'                ],
+    IMAGE:        [2101,  'Image',            'IMAGE'                 ],
+    SKETCH:       [2102,  'SKETCH',           'SKETCH'                ],
 
     //~ Footer ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //~ ORTHO:
@@ -474,22 +481,22 @@ var proc = function(processingInstance){ with (processingInstance){
       case COMMANDS.GREEN[0]:       return app.green;
       case COMMANDS.BLUE[0]:        return app.blue;
 
-    
+
       //~ Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       case COMMANDS.ORIGIN[0]:      return app.origin;
 
       case COMMANDS.AXISX[0]:       return app.axisx;
       case COMMANDS.AXISY[0]:       return app.axisy;
-      
+
       case COMMANDS.LINESX[0]:      return app.linesx;
       case COMMANDS.LINESY[0]:      return app.linesy;
-      
+
       case COMMANDS.ARROWSX[0]:     return app.arrowsx;
       case COMMANDS.ARROWSY[0]:     return app.arrowsy;
-      
+
       case COMMANDS.TICKSX[0]:      return app.ticksx;
       case COMMANDS.TICKSY[0]:      return app.ticksy;
-      
+
       case COMMANDS.LABELSX[0]:     return app.labelsx;
       case COMMANDS.LABELSY[0]:     return app.labelsy;
 
@@ -499,7 +506,7 @@ var proc = function(processingInstance){ with (processingInstance){
       case COMMANDS.FULLSCREEN[0]:  return app.fullscreen;
 
     };
-  
+
   };
 
   var getDottedLine=function(x0, y0, x1, y1, n){
@@ -1124,9 +1131,9 @@ var proc = function(processingInstance){ with (processingInstance){
 
           case COMMANDS.P_OBJECT[0]:
 
-            fill(cFILL);
+            fill(CLRS.FILL);
             strokeWeight(0.5);
-            stroke(cVERTEX);
+            stroke(CLRS.LINE);
 
             beginShape();
               vertex(d+cX-10, d+cY-10);
@@ -1137,12 +1144,12 @@ var proc = function(processingInstance){ with (processingInstance){
 
             noStroke();
             strokeWeight(0);
-            fill(cPNT);
+            fill(CLRS.VERTEX);
 
             ellipse(d+cX, d+cY, sz, sz);
 
             noStroke();
-            fill(cPNT);
+            fill(CLRS.VERTEX);
 
             ellipse(d+cX-10, d+cY-10, sz, sz);
             ellipse(d+cX-10, d+cY+5,  sz, sz)
@@ -1506,7 +1513,7 @@ var proc = function(processingInstance){ with (processingInstance){
               vertex(d+cX+15*cos(PI/4), d+cY+15*sin(PI/4));
               vertex(d+cX-15*cos(PI/4), d+cY+15*sin(PI/4));
             endShape(CLOSE);
-            
+
             //~ Vertices
             noStroke();
             strokeWeight(0);
@@ -1530,7 +1537,7 @@ var proc = function(processingInstance){ with (processingInstance){
               vertex(d+cX+7, d+cY+10);
               vertex(d+cX-7, d+cY+10);
             endShape(CLOSE);
-            
+
             //~ Vertices
             noStroke();
             strokeWeight(0);
@@ -1554,7 +1561,7 @@ var proc = function(processingInstance){ with (processingInstance){
               vertex(d+cX-5,  d+cY+10);
               vertex(d+cX+10, d+cY+10);
             endShape(CLOSE);
-            
+
             //~ Vertices
             noStroke();
             strokeWeight(0);
@@ -1586,7 +1593,7 @@ var proc = function(processingInstance){ with (processingInstance){
             noStroke();
             strokeWeight(0);
             fill(CLRS.VERTEX);
-  
+
             ellipse(d+cX, d+cY, sz, sz);
             ellipse(d+cX+10*cos(PI/4),
                     d+cY-10*sin(PI/4),
@@ -1605,7 +1612,7 @@ var proc = function(processingInstance){ with (processingInstance){
             noStroke();
             strokeWeight(0);
             fill(CLRS.VERTEX);
-  
+
             ellipse(d+cX, d+cY, sz, sz);
 
             noFill();
@@ -1629,7 +1636,7 @@ var proc = function(processingInstance){ with (processingInstance){
             noStroke();
             strokeWeight(0);
             fill(CLRS.VERTEX);
-  
+
             //~ ellipse(d+cX, d+cY, sz, sz);
             ellipse(d+cX+10*cos(PI/4),
                     d+cY-10*sin(PI/4),
@@ -1640,7 +1647,7 @@ var proc = function(processingInstance){ with (processingInstance){
             ellipse(d+cX+10*cos(PI/4),
                     d+cY+10*sin(PI/4),
                     sz, sz);
-                                        
+
             noFill();
             strokeWeight(0.5);
             stroke(CLRS.LINE);
@@ -1655,7 +1662,459 @@ var proc = function(processingInstance){ with (processingInstance){
 
       popStyle();
 
-    }    
+    }
+    var drawQuad=function(){
+
+      pushStyle();
+
+        rectMode(CENTER);
+
+        switch(p.c){
+
+          case COMMANDS.Q_RECTANGLE[0]:
+
+            pushMatrix();
+
+              translate(0.5,0.5);
+
+                noStroke();
+                strokeWeight(0);
+                fill(CLRS.VERTEX);
+
+                ellipse(d+cX-10, d+cY-8, sz, sz);
+                ellipse(d+cX+10, d+cY+8, sz, sz);
+
+                noFill();
+                strokeWeight(0.5);
+                stroke(CLRS.LINE);
+
+                beginShape();
+                  vertex(d+cX-10, d+cY-8);
+                  vertex(d+cX+10, d+cY-8);
+                  vertex(d+cX+10, d+cY+8);
+                  vertex(d+cX-10, d+cY+8);
+                endShape(CLOSE);
+
+            popMatrix();
+
+            break;
+
+          case COMMANDS.Q_SQUARE[0]:
+
+            pushMatrix();
+
+              translate(0.5,0.5);
+
+                noStroke();
+                strokeWeight(0);
+                fill(CLRS.VERTEX);
+
+                ellipse(d+cX-8, d+cY-8, sz, sz);
+                ellipse(d+cX+8, d+cY+8, sz, sz);
+
+                noFill();
+                strokeWeight(0.5);
+                stroke(CLRS.LINE);
+
+                beginShape();
+                  vertex(d+cX-8, d+cY-8);
+                  vertex(d+cX+8, d+cY-8);
+                  vertex(d+cX+8, d+cY+8);
+                  vertex(d+cX-8, d+cY+8);
+                endShape(CLOSE);
+
+            popMatrix();
+
+            break;
+
+          case COMMANDS.Q_RHOMBUS[0]:
+
+            pushMatrix();
+
+              translate(0.5,0.5);
+
+                noStroke();
+                strokeWeight(0);
+                fill(CLRS.VERTEX);
+
+                ellipse(d+cX-6, d+cY-8, sz, sz);
+                ellipse(d+cX+6, d+cY+8, sz, sz);
+
+                noFill();
+                strokeWeight(0.5);
+                stroke(CLRS.LINE);
+
+                beginShape();
+                  vertex(d+cX-6,  d+cY-8);
+                  vertex(d+cX+10, d+cY-8);
+                  vertex(d+cX+6,  d+cY+8);
+                  vertex(d+cX-10, d+cY+8);
+                endShape(CLOSE);
+
+              popMatrix();
+
+              break;
+
+            case COMMANDS.Q_PGRAM[0]:
+
+              pushMatrix();
+
+                translate(0.5,0.5);
+
+                  noStroke();
+                  strokeWeight(0);
+                  fill(CLRS.VERTEX);
+
+                  ellipse(d+cX-8, d+cY-8, sz, sz);
+                  ellipse(d+cX+8, d+cY+8, sz, sz);
+
+                  noFill();
+                  strokeWeight(0.5);
+                  stroke(CLRS.LINE);
+
+                  beginShape();
+                    vertex(d+cX-8,  d+cY-8);
+                    vertex(d+cX+12, d+cY-8);
+                    vertex(d+cX+8,  d+cY+8);
+                    vertex(d+cX-12, d+cY+8);
+                  endShape(CLOSE);
+
+                popMatrix();
+
+                break;
+
+            case COMMANDS.Q_TRAPEZOID[0]:
+
+              pushMatrix();
+
+                translate(0.5,0.5);
+
+                  noStroke();
+                  strokeWeight(0);
+                  fill(CLRS.VERTEX);
+
+                  ellipse(d+cX-8, d+cY-8, sz, sz);
+                  ellipse(d+cX+8, d+cY+8, sz, sz);
+
+                  noFill();
+                  strokeWeight(0.5);
+                  stroke(CLRS.LINE);
+
+                  beginShape();
+                    vertex(d+cX-8,  d+cY-8);
+                    vertex(d+cX+4, d+cY-8);
+                    vertex(d+cX+8,  d+cY+8);
+                    vertex(d+cX-12, d+cY+8);
+                  endShape(CLOSE);
+
+                popMatrix();
+
+                break;
+
+            case COMMANDS.Q_KITE[0]:
+
+              pushMatrix();
+
+                translate(0.5,0.5);
+
+                  noStroke();
+                  strokeWeight(0);
+                  fill(CLRS.VERTEX);
+
+                  ellipse(d+cX,   d+cY, sz, sz);
+                  ellipse(d+cX+12, d+cY, sz, sz);
+
+                  noFill();
+                  strokeWeight(0.5);
+                  stroke(CLRS.LINE);
+
+                  beginShape();
+                    vertex(d+cX,    d+cY-12);
+                    vertex(d+cX+12, d+cY);
+                    vertex(d+cX,    d+cY+12);
+                    vertex(d+cX-12, d+cY);
+                  endShape(CLOSE);
+
+                popMatrix();
+
+                break;
+
+          default:  break;
+
+        }
+
+      popStyle();
+
+    }
+    var drawArc=function(){
+
+      pushStyle();
+
+        rectMode(CENTER);
+
+        switch(p.c){
+
+          case COMMANDS.A_2P[0]:
+
+            noStroke();
+            strokeWeight(0);
+            fill(CLRS.VERTEX);
+
+            ellipse(d+cX+10*cos(PI/4),
+                    d+cY-10*sin(PI/4),
+                    sz, sz);
+            ellipse(d+cX-10*cos(PI/4),
+                    d+cY+10*sin(PI/4),
+                    sz, sz);
+
+            noFill();
+            strokeWeight(0.5);
+            stroke(CLRS.LINE);
+
+            arc(d+cX, d+cY, 20, 20, PI*3/4, 2*PI*7/8);
+
+            break;
+
+          case COMMANDS.A_CA[0]:
+
+            noStroke();
+            strokeWeight(0);
+            fill(CLRS.VERTEX);
+
+            ellipse(d+cX, d+cY, sz, sz);
+            ellipse(d+cX+10*cos(PI/4),
+                    d+cY-10*sin(PI/4),
+                    sz, sz);
+            ellipse(d+cX+10*cos(PI/4),
+                    d+cY+10*sin(PI/4),
+                    sz, sz);
+
+            noFill();
+            strokeWeight(0.5);
+            stroke(CLRS.LINE);
+
+            arc(d+cX, d+cY, 20, 20, -PI/4, PI/4);
+
+            break;
+
+          case COMMANDS.A_CCA[0]:
+
+            noStroke();
+            strokeWeight(0);
+            fill(CLRS.VERTEX);
+
+            //~ ellipse(d+cX, d+cY, sz, sz);
+            ellipse(d+cX+10*cos(PI/4),
+                    d+cY-10*sin(PI/4),
+                    sz, sz);
+            ellipse(d+cX+10*cos(PI),
+                    d+cY+10*sin(PI),
+                    sz, sz);
+            ellipse(d+cX+10*cos(PI/4),
+                    d+cY+10*sin(PI/4),
+                    sz, sz);
+
+            noFill();
+            strokeWeight(0.5);
+            stroke(CLRS.LINE);
+
+            arc(d+cX, d+cY, 20, 20, -PI, PI/4);
+
+            break;
+
+          case COMMANDS.A_CS[0]:
+
+            noStroke();
+            strokeWeight(0);
+            fill(CLRS.VERTEX);
+
+            ellipse(d+cX, d+cY, sz, sz);
+            ellipse(d+cX+10*cos(PI/3),
+                    d+cY-10*sin(PI/3),
+                    sz, sz);
+            ellipse(d+cX+10*cos(PI/3),
+                    d+cY+10*sin(PI/3),
+                    sz, sz);
+                    
+            noFill();
+            strokeWeight(0.5);
+            stroke(CLRS.LINE);
+
+            line(d+cX, d+cY,
+                 d+cX+10*cos(PI/3),
+                 d+cY+10*sin(PI/3));
+
+            line(d+cX, d+cY,
+                 d+cX+10*cos(PI/3),
+                 d+cY-10*sin(PI/3));
+
+            arc(d+cX, d+cY, 20, 20, -PI/3, PI/3);
+
+            break;
+
+          case COMMANDS.A_CCS[0]:
+
+            noStroke();
+            strokeWeight(0);
+            fill(CLRS.VERTEX);
+
+            //~ ellipse(d+cX, d+cY, sz, sz);
+            ellipse(d+cX+10*cos(PI/4),
+                    d+cY-10*sin(PI/4),
+                    sz, sz);
+            ellipse(d+cX+10*cos(PI),
+                    d+cY+10*sin(PI),
+                    sz, sz);
+            ellipse(d+cX+10*cos(PI/4),
+                    d+cY+10*sin(PI/4),
+                    sz, sz);
+
+            noFill();
+            strokeWeight(0.5);
+            stroke(CLRS.LINE);
+
+            line(d+cX, d+cY,
+                 d+cX+10*cos(PI/3),
+                 d+cY+10*sin(PI/3));
+
+            line(d+cX, d+cY,
+                 d+cX+10*cos(PI),
+                 d+cY-10*sin(PI));
+
+            arc(d+cX, d+cY, 20, 20, -PI, PI/4);
+
+            break;
+
+          case COMMANDS.COMPASS[0]:
+
+            noStroke();
+            strokeWeight(0);
+            fill(CLRS.VERTEX);
+
+            //~ ellipse(d+cX, d+cY, sz, sz);
+            ellipse(d+cX, d+cY, sz, sz);
+
+            noFill();
+            strokeWeight(0.5);
+            stroke(CLRS.Red);
+
+            ellipse(d+cX, d+cY, 20, 20);
+
+            noFill();
+            strokeWeight(0.5);
+            stroke(CLRS.LINE);
+
+            line(d+cX, d+cY, d+cX+10, d+cY);
+
+            break;
+            
+          default:  break;
+                    
+        }
+
+      popStyle();
+
+    }
+    var drawPolygon=function(){
+
+      pushStyle();
+
+        rectMode(CENTER);
+
+        switch(p.c){
+
+          case COMMANDS.POLYGONR[0]:
+
+            noFill();
+            strokeWeight(0.5);
+            stroke(CLRS.LINE);
+
+            beginShape();
+              vertex(d+cX+10*cos(2*PI/5),  d+cY+10*sin(2*PI/5));
+              vertex(d+cX+10*cos(4*PI/5),  d+cY+10*sin(4*PI/5));
+              vertex(d+cX+10*cos(6*PI/5),  d+cY+10*sin(6*PI/5));
+              vertex(d+cX+10*cos(8*PI/5),  d+cY+10*sin(8*PI/5));
+              vertex(d+cX+10*cos(10*PI/5), d+cY+10*sin(10*PI/5));
+            endShape(CLOSE);
+
+            noFill();
+            strokeWeight(1);
+            stroke(CLRS.LINEA);
+
+            line(d+cX, d+cY, d+cX+10*cos(8*PI/5), d+cY+10*sin(8*PI/5));
+                 
+            noStroke();
+            strokeWeight(0);
+            fill(CLRS.VERTEX);
+
+            ellipse(d+cX+10*cos(2*PI/5),  d+cY+10*sin(2*PI/5),  sz, sz);
+            ellipse(d+cX+10*cos(4*PI/5),  d+cY+10*sin(4*PI/5),  sz, sz);
+            ellipse(d+cX+10*cos(6*PI/5),  d+cY+10*sin(6*PI/5),  sz, sz);
+            ellipse(d+cX+10*cos(8*PI/5),  d+cY+10*sin(8*PI/5),  sz, sz);
+            ellipse(d+cX+10*cos(10*PI/5), d+cY+10*sin(10*PI/5), sz, sz);
+            
+            break;
+
+          case COMMANDS.POLYGONRIGID[0]:
+
+            noStroke();
+            strokeWeight(0);
+            fill(CLRS.VERTEX);
+
+            ellipse(d+cX+10*cos(2*PI/5),  d+cY+10*sin(2*PI/5), sz, sz);
+            ellipse(d+cX+10*cos(4*PI/5),  d+cY+10*sin(4*PI/5), sz, sz);
+            ellipse(d+cX+10*cos(6*PI/5),  d+cY+10*sin(6*PI/5), sz, sz);
+            ellipse(d+cX+10*cos(8*PI/5),  d+cY+10*sin(8*PI/5), sz, sz);
+            ellipse(d+cX+10*cos(10*PI/5), d+cY+10*sin(10*PI/5), sz, sz);
+
+            noFill();
+            strokeWeight(1);
+            stroke(CLRS.LINEA);
+
+            line(d+cX, d+cY,
+                 d+cX+10*cos(PI/4),
+                 d+cY-10*sin(PI/4));
+
+            noFill();
+            strokeWeight(0.5);
+            stroke(CLRS.LINE);
+
+            ellipse(d+cX, d+cY, 20, 20);
+
+            break;
+
+          case COMMANDS.POLYGONV[0]:
+
+            noStroke();
+            strokeWeight(0);
+            fill(CLRS.VERTEX);
+
+            //~ ellipse(d+cX, d+cY, sz, sz);
+            ellipse(d+cX+10*cos(PI/4),
+                    d+cY-10*sin(PI/4),
+                    sz, sz);
+            ellipse(d+cX+10*cos(PI),
+                    d+cY+10*sin(PI),
+                    sz, sz);
+            ellipse(d+cX+10*cos(PI/4),
+                    d+cY+10*sin(PI/4),
+                    sz, sz);
+
+            noFill();
+            strokeWeight(0.5);
+            stroke(CLRS.LINE);
+
+            ellipse(d+cX, d+cY, 20, 20);
+
+            break;
+
+          default:  break;
+
+        }
+
+      popStyle();
+
+    };
     pushMatrix();
 
       translate(p.x, p.y);
@@ -1691,9 +2150,15 @@ var proc = function(processingInstance){ with (processingInstance){
             case (p.c>=COMMANDS.LINE[0] &&
                   p.c<=COMMANDS.V_FP[0]):         drawLine();     break;
             case (p.c>=COMMANDS.TRIANGLE[0] &&
-                  p.c<=COMMANDS.T_SCALENE[0]):     drawTriangle(); break;
+                  p.c<=COMMANDS.T_SCALENE[0]):    drawTriangle(); break;
             case (p.c>=COMMANDS.CIRCLE[0] &&
                   p.c<=COMMANDS.C_3P[0]):         drawCircle();   break;
+            case (p.c>=COMMANDS.QUAD[0] &&
+                  p.c<=COMMANDS.Q_KITE[0]):       drawQuad();     break;
+            case (p.c>=COMMANDS.ARC[0] &&
+                  p.c<=COMMANDS.COMPASS[0]):      drawArc();      break;
+            case (p.c>=COMMANDS.POLYGON[0] &&
+                  p.c<=COMMANDS.POLYGONV[0]):     drawPolygon();  break;
 
             default:      break;
 
@@ -2354,7 +2819,7 @@ var proc = function(processingInstance){ with (processingInstance){
         ellipse(0,0,6,6);
 
       };
-    
+
     };
     var axis=function(){
 
@@ -2944,6 +3409,69 @@ var proc = function(processingInstance){ with (processingInstance){
     return cn;
 
   };
+  var getQuads=function(parent){
+
+    var ctrls=[];
+    var top=30;
+    var h=15;
+    var l=parent.w-202;
+    var ch=app.height-14;
+    var w=36;
+
+    var cn=new strip(
+            new propC(getGUID(), parent, 500, 230, w+10, w+10, 1, true, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            getStyle(STYLES.CONTAINER),
+            getStyle(STYLES.TEXT));
+
+    //~ Quadrilateral (C)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //~ QUADRILATERAL:[1500,  'Quadrilateral',    'QUADRILATERAL'         ],
+    //~ Q_RECTANGLE:  [1501,  'Rectangle',        'RECTANGLE'             ],
+    //~ Q_SQUARE:     [1502,  'Square',           'SQUARE'                ],
+    //~ Q_RHOMBUS:    [1503,  'Rhombus',          'RHOMBUS'               ],
+    //~ Q_PGRAM:      [1504,  'Parallelogram',    'PARALLELOGRAM'         ],    //~ Q_PARALLELOGRAM
+    //~ Q_TRAPEZOID:  [1505,  'Trapezoid',        'TRAPEZOID'             ],
+    //~ Q_KITE:       [1506,  'Kite',             'KITE'                  ],
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 0*w, 0, w, w, 0, false, COMMANDS.Q_RECTANGLE[0], COMMANDS.Q_RECTANGLE[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 1*w, 0, w, w, 0, false, COMMANDS.Q_RECTANGLE[0], COMMANDS.Q_RECTANGLE[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 2*w, 0, w, w, 0, false, COMMANDS.Q_SQUARE[0], COMMANDS.Q_SQUARE[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 3*w, 0, w, w, 0, false, COMMANDS.Q_RHOMBUS[0], COMMANDS.Q_RHOMBUS[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 4*w, 0, w, w, 0, false, COMMANDS.Q_PGRAM[0], COMMANDS.Q_PGRAM[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 5*w, 0, w, w, 0, false, COMMANDS.Q_TRAPEZOID[0], COMMANDS.Q_TRAPEZOID[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 6*w, 0, w, w, 0, false, COMMANDS.Q_KITE[0], COMMANDS.Q_KITE[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    cn.ctrls=ctrls;
+
+    return cn;
+
+  };
   var getArcs=function(parent){
 
     var ctrls=[];
@@ -2954,7 +3482,7 @@ var proc = function(processingInstance){ with (processingInstance){
     var w=36;
 
     var cn=new strip(
-            new propC(getGUID(), parent, 500, 230, w+10, w, 1, true, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            new propC(getGUID(), parent, 500, 275, w+10, w, 1, true, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
 
@@ -2967,7 +3495,7 @@ var proc = function(processingInstance){ with (processingInstance){
     //~ A_4:          [-505,  'Arc4',             'ARC4'                  ],    //~ CIRCUMCIRCULARSECTOR
     //~ COMPASS:      [-506,  'Compass',          'COMPASS'               ],    //~ ??
     ctrls.push(new buttonI(
-                new propC(getGUID(), cn, 0*w, 0, w, w, 0, false, COMMANDS.ARC[0], COMMANDS.ARC[1]),
+                new propC(getGUID(), cn, 0*w, 0, w, w, 0, false, COMMANDS.A_2P[0], COMMANDS.A_2P[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
@@ -2977,22 +3505,22 @@ var proc = function(processingInstance){ with (processingInstance){
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonI(
-                new propC(getGUID(), cn, 2*w, 0, w, w, 0, false, COMMANDS.A_1[0], COMMANDS.A_1[1]),
+                new propC(getGUID(), cn, 2*w, 0, w, w, 0, false, COMMANDS.A_CA[0], COMMANDS.A_CA[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonI(
-                new propC(getGUID(), cn, 3*w, 0, w, w, 0, false, COMMANDS.A_2[0], COMMANDS.A_2[1]),
+                new propC(getGUID(), cn, 3*w, 0, w, w, 0, false, COMMANDS.A_CCA[0], COMMANDS.A_CCA[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonI(
-                new propC(getGUID(), cn, 4*w, 0, w, w, 0, false, COMMANDS.A_3[0], COMMANDS.A_3[1]),
+                new propC(getGUID(), cn, 4*w, 0, w, w, 0, false, COMMANDS.A_CS[0], COMMANDS.A_CS[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonI(
-                new propC(getGUID(), cn, 5*w, 0, w, w, 0, false, COMMANDS.A_4[0], COMMANDS.A_4[1]),
+                new propC(getGUID(), cn, 5*w, 0, w, w, 0, false, COMMANDS.A_CCS[0], COMMANDS.A_CCS[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
@@ -3016,7 +3544,7 @@ var proc = function(processingInstance){ with (processingInstance){
     var w=36;
 
     var cn=new strip(
-            new propC(getGUID(), parent, 500, 275, w+10, w, 1, true, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            new propC(getGUID(), parent, 500, 320, w+10, w, 1, true, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
 
@@ -3026,7 +3554,7 @@ var proc = function(processingInstance){ with (processingInstance){
     //~ POLYGONRIGID: [-602,  'PolygonRigid',     'POLYGONRIGID'          ],    //~ Rigid
     //~ POLYGONV:     [-603,  'PolygonV',         'POLYGONV'              ],    //~ Vector
     ctrls.push(new buttonI(
-                new propC(getGUID(), cn, 0*w, 0, w, w, 0, false, COMMANDS.POLYGON[0], COMMANDS.POLYGON[1]),
+                new propC(getGUID(), cn, 0*w, 0, w, w, 0, false, COMMANDS.POLYGONR[0], COMMANDS.POLYGONR[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
@@ -3857,8 +4385,9 @@ var proc = function(processingInstance){ with (processingInstance){
     ctrls.push(getLines(cn));
     ctrls.push(getTriangles(cn));
     ctrls.push(getCircles(cn));
-    //~ ctrls.push(getArcs(cn));
-    //~ ctrls.push(getPolygons(cn));
+    ctrls.push(getQuads(cn));
+    ctrls.push(getArcs(cn));
+    ctrls.push(getPolygons(cn));
     //~ ctrls.push(getConics(cn));
     //~ ctrls.push(getAngles(cn));
     //~ ctrls.push(getAnnotations(cn));
@@ -3866,7 +4395,7 @@ var proc = function(processingInstance){ with (processingInstance){
     //~ ctrls.push(getHeader(cn));
     //~ ctrls.push(getFooter(cn));
     //~ ctrls.push(getProperties(cn));
-    //~ ctrls.push(getTelemetry(cn));
+    ctrls.push(getTelemetry(cn));
     //~ ctrls.push(getColors(cn));
 
     //~ ctrls.push(getGridProps(cn));
