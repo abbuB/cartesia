@@ -54,6 +54,8 @@ var proc = function(processingInstance){ with (processingInstance){
     FILL:     getColor(color(255*7/11),10),
     FILLA:    getColor(color(255*7/11),25),
 
+    RULER:    color(231,189,33)
+
 
   };
 
@@ -220,7 +222,7 @@ var proc = function(processingInstance){ with (processingInstance){
     DISTANCE:     [ 701,  'Distance',         'DISTANCE'              ],
     PERIMETER:    [ 702,  'Perimeter',        'PERIMETER'             ],
     AREA:         [ 703,  'Area',             'AREA'                  ],
-    VOLUMEN:      [ 704,  'Volume',           'VOLUME'                ],
+    VOLUME:      [ 704,  'Volume',           'VOLUME'                ],
     RADIUS:       [ 705,  'Radius',           'RADIUS'                ],
     DIAMETER:     [ 706,  'Diamter',          'DIAMETER'              ],
     SLOPE:        [ 707,  'Slope',            'SLOPE'                 ],
@@ -238,10 +240,11 @@ var proc = function(processingInstance){ with (processingInstance){
 
     //~ Point (P) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     POINT:        [1000,  'Point',            'POINT'                 ],
-    P_OBJECT:     [1001,  'P_Object',         'P_OBJECT'              ],
-    P_INTERSECT:  [1002,  'P_Intersect',      'P_INTERSECT'           ],
-    P_MIDPOINT:   [1003,  'P_Midpoint',       'P_MIDPOINT'            ],    //~ Midpoint/Center
-    P_ATDETACH:   [1004,  'P_AttachDetach',   'P_ATTACHDETACH'        ],    //~ AttachDetachPoint
+    P_DEFAULT:    [1001,  'P_DEFAULT',        'P_DEFAULT'             ],
+    P_OBJECT:     [1002,  'P_Object',         'P_OBJECT'              ],
+    P_INTERSECT:  [1003,  'P_Intersect',      'P_INTERSECT'           ],
+    P_MIDPOINT:   [1004,  'P_Midpoint',       'P_MIDPOINT'            ],    //~ Midpoint/Center
+    P_ATDETACH:   [1005,  'P_AttachDetach',   'P_ATTACHDETACH'        ],    //~ AttachDetachPoint
 
 
     //~ Line (L) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -394,7 +397,7 @@ var proc = function(processingInstance){ with (processingInstance){
     linetype:       LINETYPES.HAIRLINE,
     lineweight:     7,
 
-    command:        0,
+    command:        1001,
 
     border:         true,
     origin:         false,
@@ -413,14 +416,19 @@ var proc = function(processingInstance){ with (processingInstance){
     coordinates:    true,
     ortho:          true,
     snaptogrid:     true,
-    fullscreen:     true
+    fullscreen:     true,
+
+    cursorSize:     0,
+
+    ctrls:          [],
+    shapes:          [],
 
   };
 
   var drawing=function(){
 
     this.guid=getGUID();
-    this.ctrls=[];
+    this.shapes=[];
 
     this.color=CLRS.RED;
     this.layer=11;
@@ -535,6 +543,12 @@ var proc = function(processingInstance){ with (processingInstance){
 
   };
 
+  var pt=function(x,y){
+    this.x=x;
+    this.y=y;
+    println(this.x+","+this.y);
+  };
+
   //~ Shapes ===========================================================
   var Shape=function(p){
 
@@ -561,7 +575,31 @@ var proc = function(processingInstance){ with (processingInstance){
     Shape.call(this,p);
   };
   Point.prototype=Object.create(Shape.prototype);
-  Point.prototype.draw=function(){};
+  Point.prototype.draw=function(){
+
+    fill(this.fill);
+    stroke(this.stroke);
+    strokeWeight(this.strokeWeight);
+
+    ellipse(this.pnts[0].x,this.pnts[0].y,this.w,tihs.h);
+
+    //~ this.pnts=p.pnts;
+//~ 
+    //~ this.w=p.w;
+    //~ this.h=p.h;
+//~ 
+    //~ this.fill=lp.fill;          //~ fill color
+    //~ this.fillH=lp.fillH;        //~ fill color highlight
+    //~ this.stroke=lp.stroke;      //~ stroke color
+    //~ this.strokeH=lp.strokeH;    //~ stroke color highlight
+//~ 
+    //~ this.layer=p.layer;
+    //~ this.linetype=p.linetype;
+//~ 
+    //~ this.lineweight=lp.lineweight;      //~ strokeWeight
+    //~ this.lineweightH=lp.lineweightH;    //~ strokeWeight highlight
+
+  };
 
   var Line=function(p){
     Shape.call(this,p);
@@ -655,12 +693,18 @@ var proc = function(processingInstance){ with (processingInstance){
 
     println(c+","+p);
 
+    app.command=p;
+
     switch(c){
 
-      case COMMANDS.POINT[0]:        break;
+      case COMMANDS.P_DEFAULT[0]:   app.command=p;                break;
+      //~ case COMMANDS.POINT[0]:       println('Point:');          break;
+      //~ case COMMANDS.P_OBJECT[0]:    println('Point: bound');    break;
+      //~ case COMMANDS.P_INTERSECT[0]: println('Point: interset'); break;
+      //~ case COMMANDS.P_MIDPOINT[0]:  println('Point: midpoint'); break;
 
-      case COMMANDS.ORIGIN[0]:      app.origin=!app.origin;       break;
-      case COMMANDS.BORDER[0]:      app.border=!app.border;       break;
+      //~ case COMMANDS.ORIGIN[0]:      app.origin=!app.origin;       break;
+      //~ case COMMANDS.BORDER[0]:      app.border=!app.border;       break;
 
       default:      break;
 
@@ -678,19 +722,14 @@ var proc = function(processingInstance){ with (processingInstance){
     switch(true){
 
       //~ Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      case (c>COMMANDS.GRID[0] && c<=COMMANDS.FULLSCREEN[0]):
+      case (c>COMMANDS.GRID[0] &&
+            c<=COMMANDS.FULLSCREEN[0]):   GridCommands(c,p);      break;
 
-        GridCommands(c,p);  break;
-
-      case (c>COMMANDS.POINT[0] && c<=COMMANDS.SKETCH[0]):
-
-        ShapeCommands(c,p);  break;
+      case (c>=COMMANDS.POINT[0] &&
+            c<=COMMANDS.SKETCH[0]):       ShapeCommands(c,p);     break;
 
       //~ Shapes ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      //~ case COMMANDS.POINT[0]:       println('Point:');          break;
-      //~ case COMMANDS.P_OBJECT[0]:    println('Point: bound');    break;
-      //~ case COMMANDS.P_INTERSECT[0]: println('Point: interset'); break;
-      //~ case COMMANDS.P_MIDPOINT[0]:  println('Point: midpoint'); break;
+
       //~ case COMMANDS.FRAMERATE[0]:   frameRate(p);
                                     //~ app.frameRate=p;
                                     //~ break;
@@ -702,11 +741,11 @@ var proc = function(processingInstance){ with (processingInstance){
 
       //~ case COMMANDS.COLORG[0]:      return app.color;
 
-      //~ case COMMANDS.COLOR[0]:       app.color=p;
-                                    //~ app.red=red(app.color);
-                                    //~ app.green=green(app.color);
-                                    //~ app.blue=blue(app.color);
-                                    //~ break;
+      case c===COMMANDS.COLOR[0]:       app.color=p;
+                                        app.red=red(app.color);
+                                        app.green=green(app.color);
+                                        app.blue=blue(app.color);
+                                        break;
 
       //~ case COMMANDS.RECTANGLE[0]: println('Rectangle');         break;
 
@@ -757,6 +796,26 @@ var proc = function(processingInstance){ with (processingInstance){
     this.alignY=alignY;     //~ vertical alignment
     this.size=size;         //~ text size
     this.sizeH=sizeH;       //~ text size highlight
+
+  };
+
+  var propS=function(i,pnts){
+
+    this.pnts=pnts;
+
+    this.w=5;
+    this.h=5;
+
+    this.fill=app.color;
+    this.fillH=app.color;
+    this.stroke=app.color;
+    this.strokeH=app.color;
+
+    this.layer=app.layer;
+    this.linetype=app.linetype;
+
+    this.lineweight=app.lineweight;
+    this.lineweightH=app.lineweightH;
 
   };
 
@@ -824,7 +883,6 @@ var proc = function(processingInstance){ with (processingInstance){
          mouseY>y+this.y && mouseY<y+this.y+this.h){
         this.hit=true;
         app.focus=this.i;
-
       }
       else{
         this.hit=false;
@@ -1117,7 +1175,7 @@ var proc = function(processingInstance){ with (processingInstance){
 
         switch(p.c){
 
-          case COMMANDS.POINT[0]:
+          case COMMANDS.P_DEFAULT[0]:
 
             noFill();
 
@@ -2138,7 +2196,7 @@ var proc = function(processingInstance){ with (processingInstance){
               translate(0.5,0.5);
 
                 noFill();
-                strokeWeight(0.5);                
+                strokeWeight(0.5);
                 stroke(CLRS.LINE);
 
                 line(d+cX-9, d+cY,   d+cX+9, d+cY);
@@ -2225,13 +2283,13 @@ var proc = function(processingInstance){ with (processingInstance){
                   noFill();
                   strokeWeight(0.5);
                   stroke(CLRS.VERTEX);
-                  
+
                   line(d+cX+1, d+cY-1, d+cX+7, d+cY-7);
 
                   noStroke();
                   strokeWeight(0);
                   fill(CLRS.VERTEX);
-                  
+
                   triangle(d+cX+7, d+cY-7, d+cX+3, d+cY-7, d+cX+7, d+cY-3);
 
                 popMatrix();
@@ -2272,7 +2330,7 @@ var proc = function(processingInstance){ with (processingInstance){
                   fill(CLRS.VERTEX);
 
                   triangle(d+cX+5, d+cY+2, d+cX+2, d+cY-1, d+cX+2, d+cY+5);
-                  
+
                 popMatrix();
 
                 break;
@@ -2286,6 +2344,10 @@ var proc = function(processingInstance){ with (processingInstance){
     }
     var drawGeneral=function(){
 
+      pushMatrix();
+
+        translate(0.5,0.5);
+
       pushStyle();
 
         rectMode(CENTER);
@@ -2294,157 +2356,389 @@ var proc = function(processingInstance){ with (processingInstance){
 
           case COMMANDS.TRANSLATE[0]:
 
-            pushMatrix();
+            noFill();
+            strokeWeight(0.5);
+            stroke(CLRS.LINE);
 
-              translate(0.5,0.5);
+            line(d+cX-9, d+cY,   d+cX+9, d+cY);
+            line(d+cX,   d+cY-9, d+cX,   d+cY+9);
 
-                noFill();
-                strokeWeight(0.5);                
-                stroke(CLRS.LINE);
+            rect(d+cX, d+cY, 4, 4);
 
-                line(d+cX-9, d+cY,   d+cX+9, d+cY);
-                line(d+cX,   d+cY-9, d+cX,   d+cY+9);
+            noStroke();
+            strokeWeight(0.0);
+            fill(CLRS.LINE);
 
-                rect(d+cX, d+cY, 4, 4);
-
-                noStroke();
-                strokeWeight(0.0);
-                fill(CLRS.LINE);
-
-                triangle(d+cX+10, d+cY,    d+cX+6, d+cY-3, d+cX+6, d+cY+3);
-                triangle(d+cX-10, d+cY,    d+cX-6, d+cY-3, d+cX-6, d+cY+3);
-                triangle(d+cX,    d+cY-10, d+cX-3, d+cY-6, d+cX+3, d+cY-6);
-                triangle(d+cX,    d+cY+10, d+cX-3, d+cY+6, d+cX+3, d+cY+6);
-
-            popMatrix();
+            triangle(d+cX+10, d+cY,    d+cX+6, d+cY-3, d+cX+6, d+cY+3);
+            triangle(d+cX-10, d+cY,    d+cX-6, d+cY-3, d+cX-6, d+cY+3);
+            triangle(d+cX,    d+cY-10, d+cX-3, d+cY-6, d+cX+3, d+cY-6);
+            triangle(d+cX,    d+cY+10, d+cX-3, d+cY+6, d+cX+3, d+cY+6);
 
             break;
 
           case COMMANDS.REFLECT[0]:
 
-            pushMatrix();
+            noFill();
+            strokeWeight(0.25);
+            stroke(CLRS.VERTEX);
 
-              translate(0.5,0.5);
+            line(d+cX, d+cY-12, d+cX, d+cY+12);
 
-                noFill();
-                strokeWeight(0.25);
-                stroke(CLRS.VERTEX);
+            noFill();
+            strokeWeight(0.5);
+            stroke(CLRS.LINEA);
 
-                line(d+cX, d+cY-12, d+cX, d+cY+12);
+            triangle(d+cX+3, d+cY-8, d+cX+3, d+cY+8, d+cX+10, d+cY+8);
 
-                noFill();
-                strokeWeight(0.5);
-                stroke(CLRS.LINEA);
-
-                triangle(d+cX+3, d+cY-8, d+cX+3, d+cY+8, d+cX+10, d+cY+8);
-
-                stroke(CLRS.LINE);
-                triangle(d+cX-3, d+cY-8, d+cX-3, d+cY+8, d+cX-10, d+cY+8);
-
-            popMatrix();
+            stroke(CLRS.LINE);
+            triangle(d+cX-3, d+cY-8, d+cX-3, d+cY+8, d+cX-10, d+cY+8);
 
             break;
 
           case COMMANDS.ROTATE[0]:
 
-            pushMatrix();
+            noFill();
+            strokeWeight(0.5);
+            stroke(CLRS.LINE);
 
-              translate(0.5,0.5);
+            arc(d+cX, d+cY, 20, 20, -PI/4, 3/2*PI);
 
-                noFill();
-                strokeWeight(0.5);
-                stroke(CLRS.LINE);
+            noStroke();
+            strokeWeight(0);
+            fill(CLRS.VERTEX);
 
-                arc(d+cX, d+cY, 20, 20, -PI/4, 3/2*PI);
+            triangle(d+cX+2, d+cY-10, d+cX-2, d+cY-6, d+cX-2, d+cY-14);
 
-                noStroke();
-                strokeWeight(0);
-                fill(CLRS.VERTEX);
+            break;
 
-                triangle(d+cX+2, d+cY-10, d+cX-2, d+cY-6, d+cX-2, d+cY-14);
+          case COMMANDS.SCALE[0]:
 
-              popMatrix();
+            noFill();
+            strokeWeight(0.5);
+            stroke(CLRS.LINEA);
 
-              break;
+            rect(d+cX, d+cY, 20, 20);
 
-            case COMMANDS.SCALE[0]:
+            stroke(CLRS.LINE);
 
-              pushMatrix();
+            rect(d+cX-5, d+cY+5, 10, 10);
 
-                translate(0.5,0.5);
+            noFill();
+            strokeWeight(0.5);
+            stroke(CLRS.VERTEX);
 
-                  noFill();
-                  strokeWeight(0.5);
-                  stroke(CLRS.LINEA);
+            line(d+cX+1, d+cY-1, d+cX+7, d+cY-7);
 
-                  rect(d+cX, d+cY, 20, 20);
+            noStroke();
+            strokeWeight(0);
+            fill(CLRS.VERTEX);
 
-                  stroke(CLRS.LINE);
+            triangle(d+cX+7, d+cY-7, d+cX+3, d+cY-7, d+cX+7, d+cY-3);
 
-                  rect(d+cX-5, d+cY+5, 10, 10);
+            break;
 
-                  noFill();
-                  strokeWeight(0.5);
-                  stroke(CLRS.VERTEX);
-                  
-                  line(d+cX+1, d+cY-1, d+cX+7, d+cY-7);
+          case COMMANDS.SHEAR[0]:
 
-                  noStroke();
-                  strokeWeight(0);
-                  fill(CLRS.VERTEX);
-                  
-                  triangle(d+cX+7, d+cY-7, d+cX+3, d+cY-7, d+cX+7, d+cY-3);
+            noFill();
+            strokeWeight(0.5);
+            stroke(CLRS.LINE);
 
-                popMatrix();
+            beginShape();
+              vertex(d+cX-8, d+cY-8);
+              vertex(d+cX+4, d+cY-8);
+              vertex(d+cX+8, d+cY+8);
+              vertex(d+cX-8, d+cY+8);
+            endShape(CLOSE);
 
-                break;
+            noFill();
+            strokeWeight(0.75);
+            stroke(CLRS.LINEA);
 
-            case COMMANDS.SHEAR[0]:
+            line(d+cX+1, d+cY-12, d+cX+1, d+cY+12);
 
-              pushMatrix();
+            noFill();
+            strokeWeight(0.75);
+            stroke(CLRS.VERTEX);
 
-                translate(0.5,0.5);
+            line(d+cX-5, d+cY+2, d+cX+4, d+cY+2);
 
-                  noFill();
-                  strokeWeight(0.5);
-                  stroke(CLRS.LINE);
+            noStroke();
+            strokeWeight(0);
+            fill(CLRS.VERTEX);
 
-                  beginShape();
-                    vertex(d+cX-8, d+cY-8);
-                    vertex(d+cX+4, d+cY-8);
-                    vertex(d+cX+8, d+cY+8);
-                    vertex(d+cX-8, d+cY+8);
-                  endShape(CLOSE);
+            triangle(d+cX+5, d+cY+2, d+cX+2, d+cY-1, d+cX+2, d+cY+5);
 
-                  noFill();
-                  strokeWeight(0.75);
-                  stroke(CLRS.LINEA);
-
-                  line(d+cX+1, d+cY-12, d+cX+1, d+cY+12);
-
-                  noFill();
-                  strokeWeight(0.75);
-                  stroke(CLRS.VERTEX);
-
-                  line(d+cX-5, d+cY+2, d+cX+4, d+cY+2);
-
-                  noStroke();
-                  strokeWeight(0);
-                  fill(CLRS.VERTEX);
-
-                  triangle(d+cX+5, d+cY+2, d+cX+2, d+cY-1, d+cX+2, d+cY+5);
-                  
-                popMatrix();
-
-                break;
+            break;
 
           default:  break;
 
         }
 
       popStyle();
+      popMatrix();
 
-    }    
+    }
+    var drawMeasure=function(){
+
+      pushMatrix();
+
+        translate(0.5,0.5);
+
+      pushStyle();
+
+        rectMode(CENTER);
+
+        switch(p.c){
+
+          case COMMANDS.DISTANCE[0]:
+
+            //~ Ruler
+            fill(CLRS.RULER);
+            strokeWeight(0.25);
+            stroke(CLRS.BLACK);
+
+            rect(d+cX, d+cY+8, 20, 6);
+
+            strokeWeight(0.5);
+            stroke(CLRS.BLACK);
+
+            for(var n=-10; n<10; n+=2){
+              if(n%4===0){ line(d+cX+n, d+cY+4, d+cX+n, d+cY+8); }
+              else       { line(d+cX+n, d+cY+4, d+cX+n, d+cY+6); }
+            }
+
+            stroke(CLRS.LINE);
+
+            line(d+cX-10, d+cY, d+cX-10, d+cY-10);
+            line(d+cX+10, d+cY, d+cX+10, d+cY-10);
+            line(d+cX-10, d+cY-5, d+cX+10, d+cY-5);
+
+            fill(CLRS.LINE);
+            noStroke();
+            strokeWeight(0);
+
+            triangle(d+cX-10, d+cY-5, d+cX-7, d+cY-8, d+cX-7, d+cY-2);
+            triangle(d+cX+10, d+cY-5, d+cX+7, d+cY-8, d+cX+7, d+cY-2);
+
+            break;
+
+          case COMMANDS.PERIMETER[0]:
+
+            //~ Ruler
+            fill(CLRS.RULER);
+            strokeWeight(0.25);
+            stroke(CLRS.BLACK);
+
+            rect(d+cX, d+cY+8, 20, 6);
+
+            strokeWeight(0.5);
+            stroke(CLRS.BLACK);
+
+            for(var n=-10; n<10; n+=2){
+              if(n%4===0){ line(d+cX+n, d+cY+4, d+cX+n, d+cY+8); }
+              else       { line(d+cX+n, d+cY+4, d+cX+n, d+cY+6); }
+            }
+
+            noFill();
+            strokeWeight(0.5);
+            stroke(CLRS.LINE);
+
+            beginShape();
+              vertex(d+cX-10, d+cY-12);
+              vertex(d+cX+10, d+cY-6);
+              vertex(d+cX+10, d+cY+2);
+              vertex(d+cX-10, d+cY+2);
+            endShape(CLOSE);
+
+            break;
+
+          case COMMANDS.AREA[0]:
+
+            //~ Ruler
+            fill(CLRS.RULER);
+            strokeWeight(0.25);
+            stroke(CLRS.BLACK);
+
+            rect(d+cX, d+cY+8, 20, 6);
+
+            strokeWeight(0.5);
+            stroke(CLRS.BLACK);
+
+            for(var n=-10; n<10; n+=2){
+              if(n%4===0){ line(d+cX+n, d+cY+4, d+cX+n, d+cY+8); }
+              else       { line(d+cX+n, d+cY+4, d+cX+n, d+cY+6); }
+            }
+
+            noFill();
+            strokeWeight(0.5);
+            stroke(CLRS.LINE);
+
+            beginShape();
+              vertex(d+cX-10, d+cY-12);
+              vertex(d+cX+10, d+cY-6);
+              vertex(d+cX+10, d+cY+2);
+              vertex(d+cX-10, d+cY+2);
+            endShape(CLOSE);
+
+            break;
+
+
+          case COMMANDS.VOLUME[0]:
+
+            //~ Ruler
+            fill(CLRS.RULER);
+            strokeWeight(0.25);
+            stroke(CLRS.BLACK);
+
+            rect(d+cX, d+cY+8, 20, 6);
+
+            strokeWeight(0.5);
+            stroke(CLRS.BLACK);
+
+            for(var n=-10; n<10; n+=2){
+              if(n%4===0){ line(d+cX+n, d+cY+4, d+cX+n, d+cY+8); }
+              else       { line(d+cX+n, d+cY+4, d+cX+n, d+cY+6); }
+            }
+
+            fill(CLRS.BLACK);
+            strokeWeight(0.5);
+            stroke(CLRS.LINE);
+
+            ellipse(d+cX, d+cY+2, 12, 4);
+
+            line(d+cX-6, d+cY-12, d+cX-6, d+cY+2);
+            line(d+cX+6, d+cY-12, d+cX+6, d+cY+2);
+
+            ellipse(d+cX, d+cY-12, 12, 4);
+            ellipse(d+cX, d+cY-12, 12, 4);
+
+            break;
+
+          case COMMANDS.RADIUS[0]:
+
+            //~ Ruler
+            fill(CLRS.RULER);
+            strokeWeight(0.25);
+            stroke(CLRS.BLACK);
+
+            rect(d+cX, d+cY+8, 20, 6);
+
+            strokeWeight(0.5);
+            stroke(CLRS.BLACK);
+
+            for(var n=-10; n<10; n+=2){
+              if(n%4===0){ line(d+cX+n, d+cY+4, d+cX+n, d+cY+8); }
+              else       { line(d+cX+n, d+cY+4, d+cX+n, d+cY+6); }
+            }
+
+            fill(CLRS.BLACK);
+            strokeWeight(0.5);
+            stroke(CLRS.LINE);
+
+            ellipse(d+cX, d+cY-5, 15, 15);
+
+            pushMatrix();
+
+              translate(d+cX, d+cY-5);
+
+              rotate(-PI/4);
+
+              line(0, 0, 0, -7.5);
+
+              fill(CLRS.LINE);
+              noStroke();
+              strokeWeight(0);
+
+              triangle(0, -7.5, 3, -5, -3, -4);
+
+            popMatrix();
+
+            break;
+
+          case COMMANDS.DIAMETER[0]:
+
+            //~ Ruler
+            fill(CLRS.RULER);
+            strokeWeight(0.25);
+            stroke(CLRS.BLACK);
+
+            rect(d+cX, d+cY+8, 20, 6);
+
+            strokeWeight(0.5);
+            stroke(CLRS.BLACK);
+
+            for(var n=-10; n<10; n+=2){
+              if(n%4===0){ line(d+cX+n, d+cY+4, d+cX+n, d+cY+8); }
+              else       { line(d+cX+n, d+cY+4, d+cX+n, d+cY+6); }
+            }
+
+            fill(CLRS.BLACK);
+            strokeWeight(0.5);
+            stroke(CLRS.LINE);
+
+            ellipse(d+cX, d+cY-5, 15, 15);
+
+            pushMatrix();
+
+              translate(d+cX, d+cY-5);
+
+              rotate(-PI/4);
+
+              line(0, 7.5, 0, -7.5);
+
+              fill(CLRS.LINE);
+              noStroke();
+              strokeWeight(0);
+
+              triangle(0, -7.5, 3, -5, -3, -4);
+              triangle(0,  7.5, 3,  5, -3,  4);
+
+            popMatrix();
+
+            break;
+
+          case COMMANDS.SLOPE[0]:
+
+            noFill();
+            strokeWeight(0.5);
+            stroke(CLRS.LINE);
+
+            beginShape();
+              vertex(d+cX-8, d+cY-8);
+              vertex(d+cX+4, d+cY-8);
+              vertex(d+cX+8, d+cY+8);
+              vertex(d+cX-8, d+cY+8);
+            endShape(CLOSE);
+
+            noFill();
+            strokeWeight(0.75);
+            stroke(CLRS.LINEA);
+
+            line(d+cX+1, d+cY-12, d+cX+1, d+cY+12);
+
+            noFill();
+            strokeWeight(0.75);
+            stroke(CLRS.VERTEX);
+
+            line(d+cX-5, d+cY+2, d+cX+4, d+cY+2);
+
+            noStroke();
+            strokeWeight(0);
+            fill(CLRS.VERTEX);
+
+            triangle(d+cX+5, d+cY+2, d+cX+2, d+cY-1, d+cX+2, d+cY+5);
+
+            break;
+
+          default:  break;
+
+        }
+
+      popStyle();
+      popMatrix();
+
+    };
+
     pushMatrix();
 
       translate(p.x, p.y);
@@ -2476,21 +2770,25 @@ var proc = function(processingInstance){ with (processingInstance){
           switch(true){
 
             case (p.c>=COMMANDS.POINT[0] &&
-                  p.c<=COMMANDS.P_MIDPOINT[0]):   drawPoint();    break;
+                  p.c<=COMMANDS.P_MIDPOINT[0]): drawPoint();      break;
             case (p.c>=COMMANDS.LINE[0] &&
-                  p.c<=COMMANDS.V_FP[0]):         drawLine();     break;
+                  p.c<=COMMANDS.V_FP[0]):       drawLine();       break;
             case (p.c>=COMMANDS.TRIANGLE[0] &&
-                  p.c<=COMMANDS.T_SCALENE[0]):    drawTriangle(); break;
+                  p.c<=COMMANDS.T_SCALENE[0]):  drawTriangle();   break;
             case (p.c>=COMMANDS.CIRCLE[0] &&
-                  p.c<=COMMANDS.C_3P[0]):         drawCircle();   break;
+                  p.c<=COMMANDS.C_3P[0]):       drawCircle();     break;
             case (p.c>=COMMANDS.QUAD[0] &&
-                  p.c<=COMMANDS.Q_KITE[0]):       drawQuad();     break;
+                  p.c<=COMMANDS.Q_KITE[0]):     drawQuad();       break;
             case (p.c>=COMMANDS.ARC[0] &&
-                  p.c<=COMMANDS.COMPASS[0]):      drawArc();      break;
+                  p.c<=COMMANDS.COMPASS[0]):    drawArc();        break;
             case (p.c>=COMMANDS.POLYGON[0] &&
-                  p.c<=COMMANDS.POLYGONV[0]):     drawPolygon();  break;
+                  p.c<=COMMANDS.POLYGONV[0]):   drawPolygon();    break;
             case (p.c>=COMMANDS.TRANSLATE[0] &&
-                  p.c<=COMMANDS.SHEAR[0]):        drawTransform();  break;
+                  p.c<=COMMANDS.SHEAR[0]):      drawTransform();  break;
+            case (p.c>=COMMANDS.TRANSLATE[0] &&
+                  p.c<=COMMANDS.SHEAR[0]):      drawTransform();  break;
+            case (p.c>=COMMANDS.MEASURE[0] &&
+                  p.c<=COMMANDS.SLOPE[0]):      drawMeasure();    break;
 
             default:      break;
 
@@ -3270,6 +3568,8 @@ var proc = function(processingInstance){ with (processingInstance){
     };
     var crosshair=function(){
 
+      var sz=app.cursorSize;
+
       pushStyle();
 
         noCursor();
@@ -3283,13 +3583,30 @@ var proc = function(processingInstance){ with (processingInstance){
 
             stroke(app.color);
 
-            //~ horizontal
-            line(mouseX-20, mouseY, mouseX-5,  mouseY);
-            line(mouseX+5,  mouseY, mouseX+20, mouseY);
+            if(sz===0){
 
-            //~ vertical
-            line(mouseX, mouseY-5, mouseX, mouseY-20);
-            line(mouseX, mouseY+5, mouseX, mouseY+20);
+              //~ horizontal
+              line(0, mouseY, mouseX-5,  mouseY);
+              line(mouseX+5,  mouseY, p.x+p.w, mouseY);
+
+              //~ vertical
+              line(mouseX, 0, mouseX, mouseY-5);
+              line(mouseX, mouseY+5, mouseX, p.y+p.h);
+
+            }
+            else{
+
+              //~ horizontal
+              line(mouseX-sz, mouseY, mouseX-5,  mouseY);
+              line(mouseX+5,  mouseY, mouseX+sz, mouseY);
+
+              //~ vertical
+              line(mouseX, mouseY-5, mouseX, mouseY-sz);
+              line(mouseX, mouseY+5, mouseX, mouseY+sz);
+
+            }
+
+            noFill();
 
             rect(mouseX,mouseY,8,8);
 
@@ -3312,8 +3629,8 @@ var proc = function(processingInstance){ with (processingInstance){
           ticks();
           labels();
           origin();
-          //~ if(true)      { crosshair(); }
-          cursor(CROSS);
+          if(app.focus===p.i)      { crosshair(); }
+          //~ cursor(CROSS);
 
           stroke(app.color);
           strokeWeight(3);
@@ -3325,6 +3642,31 @@ var proc = function(processingInstance){ with (processingInstance){
         for(var c in p.ctrls){ p.ctrls[c].draw() }
 
     popMatrix();
+
+  };
+  grid.prototype.clicked=function(){
+
+    println(app.shapes.length);
+
+    var p=new pt(mouseX,mouseY);
+
+    println(p.x +","+p.y);
+
+    switch(app.command){
+
+      case COMMANDS.P_DEFAULT:
+
+        var pnts=[p];
+
+        app.shapes.push(new POINT(new propS(getGUID(), pnts)));
+
+        println(app.shapes.length);
+
+        break;
+
+      default:                  break;
+
+    };
 
   };
 
@@ -3342,13 +3684,13 @@ var proc = function(processingInstance){ with (processingInstance){
     //~
     //~ frameRate(app.frameRate);
 
-    for(var c in app.dwg.ctrls){ app.dwg.ctrls[c].draw() }
+    for(var c in app.ctrls){ app.ctrls[c].draw() }
 
   };
 
   //~ translate(0.5,0.5);
 
-  var draw=function(){ process(); };
+  //~ var draw=function(){ process(); };
 
 
   //~ Events ===========================================================
@@ -3359,34 +3701,36 @@ var proc = function(processingInstance){ with (processingInstance){
 
       case LEFT:
 
-        for(var c in app.dwg.ctrls){ app.dwg.ctrls[c].clicked() }
+        for(var c in app.ctrls){ app.ctrls[c].clicked() }
         break;
 
       case RIGHT:
 
         //~ println(mouseButton);
 
-        //~ for(var c in app.dwg.ctrls){ app.dwg.ctrls[c].clickedR() }
+        //~ for(var c in app.ctrls){ app.ctrls[c].clickedR() }
         break;
 
       case CENTER:
 
-        //~ for(var c in app.dwg.ctrls){ app.dwg.ctrls[c].clicked() }
+        //~ for(var c in app.ctrls){ app.ctrls[c].clicked() }
         break;
 
       default:    break;
 
     }
-
+    process();
   };
   var mouseMoved=function(){
     app.mouseX=mouseX;
     app.mouseY=mouseY;
-    for(var c in app.dwg.ctrls){ app.dwg.ctrls[c].moved(0,0) }
+    for(var c in app.ctrls){ app.ctrls[c].moved(0,0) }
+    process();
   };
   var mouseDragged=function(){
     //~ app.left=true;
-    for(var c in app.dwg.ctrls){ app.dwg.ctrls[c].dragged() }
+    for(var c in app.ctrls){ app.ctrls[c].dragged() }
+    process();
   };
   var mousePressed=function(){
 
@@ -3400,8 +3744,8 @@ var proc = function(processingInstance){ with (processingInstance){
 
     }
 
-    for(var c in app.dwg.ctrls){ app.dwg.ctrls[c].pressed() }
-
+    for(var c in app.ctrls){ app.ctrls[c].pressed() }
+    process();
   };
   var mouseReleased=function(){
 
@@ -3411,29 +3755,31 @@ var proc = function(processingInstance){ with (processingInstance){
     app.center=false;
     app.right=false;
 
-    for(var c in app.dwg.ctrls){ app.dwg.ctrls[c].released() }
-
+    for(var c in app.ctrls){ app.ctrls[c].released() }
+    process();
   };
   var mouseOut=function(){
-    for(var c in app.dwg.ctrls){ app.dwg.ctrls[c].out() }
+    for(var c in app.ctrls){ app.ctrls[c].out() }
+    process();
   };
   var mouseOver=function(){
-    for(var c in app.dwg.ctrls){ app.dwg.ctrls[c].over() }
+    for(var c in app.ctrls){ app.ctrls[c].over() }
+    process();
   };
 
   var keyPressed=function(){
     app.keys[keyCode]=true;
     //~ println(app.keys);
-    for(var c in app.dwg.ctrls){ app.dwg.ctrls[c].pressed() }
+    for(var c in app.ctrls){ app.ctrls[c].pressed() }
   };
   var keyReleased=function(){
     app.keys[keyCode]=false;
     println(app.keys);
-    for(var c in app.dwg.ctrls){ app.dwg.ctrls[c].released() }
+    for(var c in app.ctrls){ app.ctrls[c].released() }
   };
   var keyTyped=function(){
     println(keyCode);
-    for(var c in app.dwg.ctrls){ app.dwg.ctrls[c].typed() }
+    for(var c in app.ctrls){ app.ctrls[c].typed() }
   };
 
   //~ Load Controls ====================================================
@@ -3518,12 +3864,12 @@ var proc = function(processingInstance){ with (processingInstance){
     //~ }
 
     ctrls.push(new buttonI(
-                new propC(getGUID(), cn, 0*w, 0, w, w, 0, false, COMMANDS.POINT[0], COMMANDS.POINT[1]),
+                new propC(getGUID(), cn, 0*w, 0, w, w, 0, false, COMMANDS.P_DEFAULT[0], COMMANDS.P_DEFAULT[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonI(
-                new propC(getGUID(), cn, 1*w, 0, w, w, 0, false, COMMANDS.POINT[0], COMMANDS.POINT[1]),
+                new propC(getGUID(), cn, 1*w, 0, w, w, 0, false, COMMANDS.P_DEFAULT[0], COMMANDS.P_DEFAULT[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
@@ -3651,7 +3997,6 @@ var proc = function(processingInstance){ with (processingInstance){
     return cn;
 
   };
-
   var getTriangles=function(parent){
 
     var ctrls=[];
@@ -3876,7 +4221,7 @@ var proc = function(processingInstance){ with (processingInstance){
     var w=36;
 
     var cn=new strip(
-            new propC(getGUID(), parent, 500, 320, w+10, w, 1, true, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            new propC(getGUID(), parent, 900, 320, w+10, w, 1, true, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
 
@@ -4034,7 +4379,7 @@ var proc = function(processingInstance){ with (processingInstance){
     var w=36;
 
     var cn=new strip(
-            new propC(getGUID(), parent, 500,500, w+10, w, 1, true, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            new propC(getGUID(), parent, 600, 460, w+10, w, 1, true, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
 
@@ -4057,7 +4402,7 @@ var proc = function(processingInstance){ with (processingInstance){
                 new propC(getGUID(), cn, 0*w, 0, w, w, 0, false, COMMANDS.TRANSLATE[0], COMMANDS.TRANSLATE[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
-                
+
     ctrls.push(new buttonI(
                 new propC(getGUID(), cn, 1*w, 0, w, w, 0, false, COMMANDS.TRANSLATE[0], COMMANDS.TRANSLATE[1]),
                 getStyle(STYLES.BUTTON),
@@ -4088,7 +4433,75 @@ var proc = function(processingInstance){ with (processingInstance){
     return cn;
 
   };
-  
+  var getMeasure=function(parent){
+
+    var ctrls=[];
+    var top=30;
+    var h=15;
+    var l=parent.w-202;
+    var ch=app.height-14;
+    var w=36;
+
+    var cn=new strip(
+            new propC(getGUID(), parent, 200,460, w+10, w, 1, true, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            getStyle(STYLES.CONTAINER),
+            getStyle(STYLES.TEXT));
+
+    //~ MEASURE:      [ 700,  'Measure',          'MEASURE'               ],
+    //~ DISTANCE:     [ 701,  'Distance',         'DISTANCE'              ],
+    //~ PERIMETER:    [ 702,  'Perimeter',        'PERIMETER'             ],
+    //~ AREA:         [ 703,  'Area',             'AREA'                  ],
+    //~ VOLUME:       [ 704,  'Volume',           'VOLUME'                ],
+    //~ RADIUS:       [ 705,  'Radius',           'RADIUS'                ],
+    //~ DIAMETER:     [ 706,  'Diamter',          'DIAMETER'              ],
+    //~ SLOPE:        [ 707,  'Slope',            'SLOPE'                 ],
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 0*w, 0, w, w, 0, false, COMMANDS.DISTANCE[0], COMMANDS.DISTANCE[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 1*w, 0, w, w, 0, false, COMMANDS.DISTANCE[0], COMMANDS.DISTANCE[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 2*w, 0, w, w, 0, false, COMMANDS.PERIMETER[0], COMMANDS.PERIMETER[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 3*w, 0, w, w, 0, false, COMMANDS.AREA[0], COMMANDS.AREA[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 4*w, 0, w, w, 0, false, COMMANDS.VOLUME[0], COMMANDS.VOLUME[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 5*w, 0, w, w, 0, false, COMMANDS.RADIUS[0], COMMANDS.RADIUS[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 6*w, 0, w, w, 0, false, COMMANDS.DIAMETER[0], COMMANDS.DIAMETER[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 7*w, 0, w, w, 0, false, COMMANDS.SLOPE[0], COMMANDS.SLOPE[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    cn.ctrls=ctrls;
+
+    return cn;
+
+  };
+
   var getGrid=function(parent){
 
     var ctrls=[];
@@ -4771,7 +5184,7 @@ var proc = function(processingInstance){ with (processingInstance){
             //~ getStyle(STYLES.BUTTON),
             //~ getStyle(STYLES.TEXT)));
 
-    //~ ctrls.push(getGrid(cn));
+    ctrls.push(getGrid(cn));
 
     //~ ctrls.push(new labelR(
             //~ new propC(getGUID(), cn, cn.w/2, cn.h/2, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.CARTESIA[1]),
@@ -4780,27 +5193,28 @@ var proc = function(processingInstance){ with (processingInstance){
 
     ctrls.push(getPoints(cn));
     ctrls.push(getLines(cn));
-    ctrls.push(getTriangles(cn));
-    ctrls.push(getCircles(cn));
-    ctrls.push(getQuads(cn));
-    ctrls.push(getArcs(cn));
-    ctrls.push(getPolygons(cn));
+    //~ ctrls.push(getTriangles(cn));
+    //~ ctrls.push(getCircles(cn));
+    //~ ctrls.push(getQuads(cn));
+    //~ ctrls.push(getArcs(cn));
+    //~ ctrls.push(getPolygons(cn));
     //~ ctrls.push(getConics(cn));
     //~ ctrls.push(getAngles(cn));
     //~ ctrls.push(getAnnotations(cn));
-    ctrls.push(getTransform(cn));
+    //~ ctrls.push(getTransform(cn));
+    //~ ctrls.push(getMeasure(cn));
 
-    //~ ctrls.push(getHeader(cn));
-    //~ ctrls.push(getFooter(cn));
-    //~ ctrls.push(getProperties(cn));
+    ctrls.push(getHeader(cn));
+    ctrls.push(getFooter(cn));
+    ctrls.push(getProperties(cn));
     ctrls.push(getTelemetry(cn));
-    //~ ctrls.push(getColors(cn));
+    ctrls.push(getColors(cn));
 
     //~ ctrls.push(getGridProps(cn));
 
     cn.ctrls=ctrls;
 
-    app.dwg.ctrls.push(cn);
+    app.ctrls.push(cn);
 
   };
 
@@ -4822,6 +5236,8 @@ var proc = function(processingInstance){ with (processingInstance){
     if(app.debug) { app.frameRate=62; }
     else          { app.frameRate=32;  }
 
+    frameRate(0);
+
     frameRate(app.frameRate);
 
     app.dwg=new drawing();
@@ -4833,5 +5249,7 @@ var proc = function(processingInstance){ with (processingInstance){
   };
 
   initialize();
+
+  process();
 
 }};
