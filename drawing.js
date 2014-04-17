@@ -392,10 +392,15 @@ var proc = function(processingInstance){ with (processingInstance){
 
     color:          CLRS.YELLOW,
 
+    fill:           getColor(CLRS.WHITE,75),
+    fillH:          getColor(CLRS.ORANGE,25),
+    stroke:         getColor(CLRS.GREEN,25),
+    strokeH:        getColor(CLRS.RED,25),
+    
     layer:          8,
 
     linetype:       LINETYPES.HAIRLINE,
-    lineweight:     7,
+    lineweight:     3,
 
     command:        1001,
 
@@ -421,7 +426,7 @@ var proc = function(processingInstance){ with (processingInstance){
     cursorSize:     0,
 
     ctrls:          [],
-    shapes:          [],
+    shapes:         []
 
   };
 
@@ -546,58 +551,47 @@ var proc = function(processingInstance){ with (processingInstance){
   var pt=function(x,y){
     this.x=x;
     this.y=y;
-    println(this.x+","+this.y);
+    //~ println(this.x+","+this.y);
   };
 
   //~ Shapes ===========================================================
-  var Shape=function(p){
+  var Shape=function(s){
 
-    this.pnts=p.pnts;
+    this.i=           s.i;
 
-    this.w=p.w;
-    this.h=p.h;
+    this.pnts=        s.pnts;
 
-    this.fill=lp.fill;          //~ fill color
-    this.fillH=lp.fillH;        //~ fill color highlight
-    this.stroke=lp.stroke;      //~ stroke color
-    this.strokeH=lp.strokeH;    //~ stroke color highlight
+    this.x=           s.x;
+    this.y=           s.y;
 
-    this.layer=p.layer;
-    this.linetype=p.linetype;
+    this.w=           s.w;
+    this.h=           s.h;
 
-    this.lineweight=lp.lineweight;      //~ strokeWeight
-    this.lineweightH=lp.lineweightH;    //~ strokeWeight highlight
+    this.fill=        s.fill;
+    this.fillH=       s.fillH;
+    this.stroke=      s.stroke;
+    this.strokeH=     s.strokeH;
+
+    this.layer=       s.layer;
+    this.linetype=    s.linetype;
+
+    this.lineweight=  s.lineweight;
+    this.lineweightH= s.lineweightH;
 
   };
   Shape.prototype.draw=function(){};
 
-  var Point=function(p){
-    Shape.call(this,p);
+  var Point=function(s){
+    Shape.call(this, s);
   };
   Point.prototype=Object.create(Shape.prototype);
   Point.prototype.draw=function(){
 
     fill(this.fill);
     stroke(this.stroke);
-    strokeWeight(this.strokeWeight);
+    strokeWeight(this.lineweight);
 
-    ellipse(this.pnts[0].x,this.pnts[0].y,this.w,tihs.h);
-
-    //~ this.pnts=p.pnts;
-//~ 
-    //~ this.w=p.w;
-    //~ this.h=p.h;
-//~ 
-    //~ this.fill=lp.fill;          //~ fill color
-    //~ this.fillH=lp.fillH;        //~ fill color highlight
-    //~ this.stroke=lp.stroke;      //~ stroke color
-    //~ this.strokeH=lp.strokeH;    //~ stroke color highlight
-//~ 
-    //~ this.layer=p.layer;
-    //~ this.linetype=p.linetype;
-//~ 
-    //~ this.lineweight=lp.lineweight;      //~ strokeWeight
-    //~ this.lineweightH=lp.lineweightH;    //~ strokeWeight highlight
+    ellipse(this.pnts[0].x, this.pnts[0].y, this.w, this.h);
 
   };
 
@@ -801,21 +795,26 @@ var proc = function(processingInstance){ with (processingInstance){
 
   var propS=function(i,pnts){
 
-    this.pnts=pnts;
+    this.i=           i;
 
-    this.w=5;
-    this.h=5;
+    this.pnts=        pnts;
 
-    this.fill=app.color;
-    this.fillH=app.color;
-    this.stroke=app.color;
-    this.strokeH=app.color;
+    //~ this.x=                 pnts[0].x;
+    //~ this.y=                 pnts[0].y;
 
-    this.layer=app.layer;
-    this.linetype=app.linetype;
+    this.w=           2;
+    this.h=           2;
 
-    this.lineweight=app.lineweight;
-    this.lineweightH=app.lineweightH;
+    this.fill=        app.fill;
+    this.fillH=       app.fillH;
+    this.stroke=      app.stroke;
+    this.strokeH=     app.strokeH;
+
+    this.layer=       app.layer;
+    this.linetype=    app.linetype;
+
+    this.lineweight=  app.lineweight;
+    this.lineweightH= app.lineweightH;
 
   };
 
@@ -3632,35 +3631,51 @@ var proc = function(processingInstance){ with (processingInstance){
           if(app.focus===p.i)      { crosshair(); }
           //~ cursor(CROSS);
 
-          stroke(app.color);
-          strokeWeight(3);
-          noFill();
+          //~ stroke(app.color);
+          //~ strokeWeight(3);
+          //~ noFill();
           //~ ellipse(0,0,300,200);
 
         popStyle();
 
-        for(var c in p.ctrls){ p.ctrls[c].draw() }
+        for(var c in p.ctrls){ p.ctrls[c].draw() };
 
     popMatrix();
+
+    for(var s in app.shapes){ app.shapes[s].draw() };
+
+    //~ if(app.shapes.length>0){
+
+      //~ println(app.shapes.length);
+      //~ println("GUID " + app.shapes[0].i);
+      //~ println("Pnts: " + app.shapes[0].pnts);
+      //~ println("x: "+ app.shapes[0].x);
+      //~ println("y: "+ app.shapes[0].y);
+      //~ println("w: "+ app.shapes[0].w);
+      //~ println("h: "+ app.shapes[0].h);
+
+      //~ println("fill: "+ app.shapes[0].f);
+      //~ println("fillH: "+ app.shapes[0].fH);
+      //~ println("stroke: "+ app.shapes[0].s);
+      //~ println("strokeH: "+ app.shapes[0].sH);
+      //~ println("layer: "+ app.shapes[0].layer);
+      //~ println("LineType: "+ app.shapes[0].linetype);
+      //~ println("LineWeight: "+ app.shapes[0].lineweight);
+      //~ println("LineType: "+ app.shapes[0].linetype);
+
+    //~ }
 
   };
   grid.prototype.clicked=function(){
 
-    println(app.shapes.length);
-
-    var p=new pt(mouseX,mouseY);
-
-    println(p.x +","+p.y);
+    var p=[];
+    p.push(new pt(mouseX,mouseY));
 
     switch(app.command){
 
-      case COMMANDS.P_DEFAULT:
+      case COMMANDS.P_DEFAULT[0]:
 
-        var pnts=[p];
-
-        app.shapes.push(new POINT(new propS(getGUID(), pnts)));
-
-        println(app.shapes.length);
+        app.shapes.push(new Point(new propS(getGUID(),p)));
 
         break;
 
