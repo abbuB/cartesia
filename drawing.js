@@ -392,17 +392,19 @@ var proc = function(processingInstance){ with (processingInstance){
 
     color:          CLRS.YELLOW,
 
-    fill:           getColor(CLRS.WHITE,75),
+    fill:           getColor(CLRS.WHITE,100),
     fillH:          getColor(CLRS.ORANGE,25),
-    stroke:         getColor(CLRS.GREEN,25),
-    strokeH:        getColor(CLRS.RED,25),
-    
+    stroke:         getColor(CLRS.Red,100),
+    strokeH:        getColor(CLRS.GREEN,25),
+
+    sz:             5,
+
     layer:          8,
 
     linetype:       LINETYPES.HAIRLINE,
-    lineweight:     3,
+    lineweight:     1,
 
-    command:        1001,
+    command:        1101,
 
     border:         true,
     origin:         false,
@@ -426,7 +428,8 @@ var proc = function(processingInstance){ with (processingInstance){
     cursorSize:     0,
 
     ctrls:          [],
-    shapes:         []
+    shapes:         [],
+    points:         []
 
   };
 
@@ -564,85 +567,239 @@ var proc = function(processingInstance){ with (processingInstance){
     this.x=           s.x;
     this.y=           s.y;
 
-    this.w=           s.w;
-    this.h=           s.h;
+    this.w=           app.sz;
+    this.h=           app.sz;
 
-    this.fill=        s.fill;
-    this.fillH=       s.fillH;
-    this.stroke=      s.stroke;
-    this.strokeH=     s.strokeH;
+    this.fill=        app.fill;
+    this.fillH=       app.fillH;
+    this.stroke=      app.stroke;
+    //~ this.strokeH=     app.strokeH;
 
     this.layer=       s.layer;
     this.linetype=    s.linetype;
 
-    this.lineweight=  s.lineweight;
-    this.lineweightH= s.lineweightH;
+    this.lineweight=  app.lineweight;
+    this.lineweightH= app.lineweightH;
 
+    this.hit=         false;
+
+    
+    
   };
   Shape.prototype.draw=function(){};
+  Shape.prototype.moved=function(x,y){};
 
+var factor=1.25;
+
+ 
+  //~ Point ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var Point=function(s){
     Shape.call(this, s);
   };
   Point.prototype=Object.create(Shape.prototype);
   Point.prototype.draw=function(){
 
-    fill(this.fill);
+    var sz=this.w;
+
+    fill(this.stroke);
+    noStroke();
+    strokeWeight(0);
+
+    if(this.hit){ sz*=factor; }
+
+    ellipse(this.pnts[0].x, this.pnts[0].y, sz, sz);
+
+  };
+  Point.prototype.moved=function(x,y){
+
+    if(dist(mouseX,mouseY,this.pnts[0].x,this.pnts[0].y)<this.w){
+      this.hit=true;
+      mouseX=this.pnts[0].x;
+      mouseY=this.pnts[0].y;
+    }
+    else{
+      this.hit=false;
+    }
+
+  };  
+  Point.prototype.dragged=function(){
+    if(this.hit && app.left){
+      this.pnts[0].x=mouseX;
+      this.pnts[0].y=mouseY;
+    }
+  };
+
+
+  //~ Line ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  var Line=function(p){
+
+    Shape.call(this,p);
+
+    this.hitP=[];
+    this.hit=false;
+
+    for(var p=0; p<=this.length; p++){ this.hit[p]=0; }
+    
+    this.dX=this.pnts[1].x-this.pnts[0].x;
+    this.dY=this.pnts[1].y-this.pnts[0].y;
+    this.m=1;
+    
+    println(this.dX);
+
+    if(this.dX===0){ this.m=-0;                 }
+    else           { this.m=-1*this.dY/this.dX; }
+
+    this.recalc=function(){
+
+      this.dX=this.pnts[1].x-this.pnts[0].x;
+      this.dY=this.pnts[1].y-this.pnts[0].y;
+      this.m=1;
+      
+      println(this.dX);
+
+      if(this.dX===0){ this.m=-0;                 }
+      else           { this.m=-1*this.dY/this.dX; }
+
+    };
+
+  };
+  Line.prototype=Object.create(Shape.prototype);
+  Line.prototype.draw=function(){
+    
+    noFill();
     stroke(this.stroke);
     strokeWeight(this.lineweight);
 
-    ellipse(this.pnts[0].x, this.pnts[0].y, this.w, this.h);
+    if(this.hit){
+
+      stroke(this.stroke);
+      strokeWeight(this.lineweight*factor);
+    }
+
+    line(this.pnts[0].x, this.pnts[0].y, this.pnts[1].x, this.pnts[1].y);
+
+    fill(this.fill);
+    noStroke()
+    strokeWeight(0);
+
+    var sz=this.w;
+
+    if(this.hit){
+
+       sz*=factor;
+
+      ellipse(this.pnts[0].x, this.pnts[0].y, sz, sz);
+      ellipse(this.pnts[1].x, this.pnts[1].y, sz, sz);
+      
+      textSize(16);
+      text(nf(this.m,1,0), this.pnts[0].x+5, this.pnts[0].y-5);
+
+    }
+    
+  };
+  Line.prototype.moved=function(x,y){
+
+    var tmp=false;
+
+    for(var n in this.pnts){
+
+      if(dist(mouseX,mouseY,this.pnts[n].x,this.pnts[n].y)<this.w){
+        this.hitP[n]=true;
+        tmp=true;
+        mouseX=this.pnts[n].x;
+        mouseY=this.pnts[n].y;
+      }
+      else{
+        this.hitP[n]=false;        
+      }
+
+    }
+
+    if((dist(mouseX, mouseY, this.pnts[0].x, this.pnts[0].y) + dist(mouseX, mouseY, this.pnts[1].x, this.pnts[1].y))<
+        (dist(this.pnts[0].x, this.pnts[0].y, this.pnts[1].x, this.pnts[1].y)+1)){
+
+      tmp=true;
+
+    }
+
+    println(this.hitP);
+
+    this.hit=tmp;
 
   };
+  Line.prototype.dragged=function(){
 
-  var Line=function(p){
-    Shape.call(this,p);
+    for(var n in this.pnts){
+
+      if(this.hitP[n] && app.left){
+        this.pnts[n].x=mouseX;
+        this.pnts[n].y=mouseY;
+            //~ println("dragged");
+        this.recalc();
+      }
+      
+    }
+    
   };
-  Line.prototype=Object.create(Shape.prototype);
-  Line.prototype.draw=function(){};
 
+
+  //~ Triangle ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var Triangle=function(p){
     Shape.call(this,p);
   };
   Triangle.prototype=Object.create(Shape.prototype);
   Triangle.prototype.draw=function(){};
 
+
+  //~ Circle ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var Circle=function(p){
     Shape.call(this,p);
   };
   Circle.prototype=Object.create(Shape.prototype);
   Circle.prototype.draw=function(){};
 
+
+  //~ Ellipse ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var Ellipse=function(p){
     Shape.call(this,p);
   };
   Ellipse.prototype=Object.create(Shape.prototype);
   Ellipse.prototype.draw=function(){};
 
+
+  //~ Arc ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var Arc=function(p){
     Shape.call(this,p);
   };
   Arc.prototype=Object.create(Shape.prototype);
   Arc.prototype.draw=function(){};
 
+
+  //~ Polygon ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var Polygon=function(p){
     Shape.call(this,p);
   };
   Polygon.prototype=Object.create(Shape.prototype);
   Polygon.prototype.draw=function(){};
 
+
+  //~ Conic ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var Conic=function(p){
     Shape.call(this,p);
   };
   Conic.prototype=Object.create(Shape.prototype);
   Conic.prototype.draw=function(){};
 
+
+  //~ Angle ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var Angle=function(p){
     Shape.call(this,p);
   };
   Angle.prototype=Object.create(Shape.prototype);
   Angle.prototype.draw=function(){};
 
+
+  //~ Annotation ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var Annotation=function(p){
     Shape.call(this,p);
   };
@@ -691,7 +848,9 @@ var proc = function(processingInstance){ with (processingInstance){
 
     switch(c){
 
-      case COMMANDS.P_DEFAULT[0]:   app.command=p;                break;
+      case COMMANDS.P_DEFAULT[0]:                                 break;
+      case COMMANDS.LINE[0]:                                      break;
+
       //~ case COMMANDS.POINT[0]:       println('Point:');          break;
       //~ case COMMANDS.P_OBJECT[0]:    println('Point: bound');    break;
       //~ case COMMANDS.P_INTERSECT[0]: println('Point: interset'); break;
@@ -705,6 +864,7 @@ var proc = function(processingInstance){ with (processingInstance){
     }
 
   };
+
 
   //~ Commands =========================================================
   var commands=function(c,p){
@@ -752,6 +912,7 @@ var proc = function(processingInstance){ with (processingInstance){
     }
 
   };
+
 
   //~ Properties =======================================================
   var propC=function(i,p,x,y,w,h,r,v,c,g){
@@ -912,7 +1073,7 @@ var proc = function(processingInstance){ with (processingInstance){
 
   };
   control.prototype.dragged=function(){
-    for(var c in this.ctrls){ this.ctrls[c].dragged() }
+    //~ for(var c in this.ctrls){ this.ctrls[c].dragged() }
   };
   control.prototype.pressed=function(){
     for(var c in this.ctrls){ this.ctrls[c].pressed() }
@@ -989,6 +1150,7 @@ var proc = function(processingInstance){ with (processingInstance){
     popMatrix();
 
   };
+
 
   //~ Buttons ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var button=function(cp,lp,ap,ctrls){
@@ -3134,6 +3296,7 @@ var proc = function(processingInstance){ with (processingInstance){
 
   };
 
+
   //~ Slider ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var sliderH=function(cp,lp,ap,ctrls){
     control.call(this,cp,lp,ap,ctrls);
@@ -3216,6 +3379,7 @@ var proc = function(processingInstance){ with (processingInstance){
       for(var c in this.ctrls){ this.ctrls[c].dragged() }
     }
   };
+
 
   //~ Strip ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var strip=function(cp,lp,ap,ctrls){
@@ -3353,6 +3517,7 @@ var proc = function(processingInstance){ with (processingInstance){
     }
 
   };
+
 
   //~ Container ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var container=function(cp,lp,ap,ctrls){
@@ -3567,51 +3732,94 @@ var proc = function(processingInstance){ with (processingInstance){
     };
     var crosshair=function(){
 
-      var sz=app.cursorSize;
+      if(app.focus===p.i){
+          
+        var sz=app.cursorSize;
 
-      pushStyle();
+        pushStyle();
 
-        noCursor();
+          noCursor();
 
-        pushMatrix();
+          pushMatrix();
 
-          resetMatrix();
-          translate(0.5,0.5);
+            resetMatrix();
+            translate(0.5,0.5);
 
-            rectMode(CENTER);
+              rectMode(CENTER);
 
-            stroke(app.color);
+              stroke(app.color);
 
-            if(sz===0){
+              if(sz===0){
 
-              //~ horizontal
-              line(0, mouseY, mouseX-5,  mouseY);
-              line(mouseX+5,  mouseY, p.x+p.w, mouseY);
+                //~ horizontal
+                line(p.x, mouseY, mouseX-4,  mouseY);
+                line(mouseX+4,  mouseY, p.x+p.w, mouseY);
 
-              //~ vertical
-              line(mouseX, 0, mouseX, mouseY-5);
-              line(mouseX, mouseY+5, mouseX, p.y+p.h);
+                //~ vertical
+                line(mouseX, p.y, mouseX, mouseY-4);
+                line(mouseX, mouseY+4, mouseX, p.y+p.h);
+
+              }
+              else{
+
+                //~ horizontal
+                line(mouseX-sz, mouseY, mouseX-4,  mouseY);
+                line(mouseX+4,  mouseY, mouseX+sz, mouseY);
+
+                //~ vertical
+                line(mouseX, mouseY-4, mouseX, mouseY-sz);
+                line(mouseX, mouseY+4, mouseX, mouseY+sz);
+
+              }
+
+              noFill();
+
+              rect(mouseX, mouseY, app.sz, app.sz);
+
+          popMatrix();
+
+        popStyle();
+
+      }
+
+    };
+    var drawTemp=function(){
+
+      if(p.hit){
+
+        switch(app.command){
+
+          case COMMANDS.P_DEFAULT[0]: break;
+
+
+          case COMMANDS.L_2P[0]:
+
+            if(app.points.length===1){
+
+              noFill();
+              stroke(app.stroke);
+              strokeWeight(app.lineweight);
+
+              line(mouseX,  mouseY, app.points[0].x, app.points[0].y);
+
+              fill(app.fill);
+              noStroke();
+              strokeWeight(0);
+
+              ellipse(app.points[0].x, app.points[0].y, app.sz, app.sz);
+              ellipse(mouseX,          mouseY,          app.sz, app.sz);
 
             }
-            else{
 
-              //~ horizontal
-              line(mouseX-sz, mouseY, mouseX-5,  mouseY);
-              line(mouseX+5,  mouseY, mouseX+sz, mouseY);
+            break;
 
-              //~ vertical
-              line(mouseX, mouseY-5, mouseX, mouseY-sz);
-              line(mouseX, mouseY+5, mouseX, mouseY+sz);
+          default:                  break;
 
-            }
+        };
 
-            noFill();
+        
 
-            rect(mouseX,mouseY,8,8);
-
-        popMatrix();
-
-      popStyle();
+      }
 
     };
     pushMatrix();
@@ -3628,23 +3836,70 @@ var proc = function(processingInstance){ with (processingInstance){
           ticks();
           labels();
           origin();
-          if(app.focus===p.i)      { crosshair(); }
-          //~ cursor(CROSS);
-
-          //~ stroke(app.color);
-          //~ strokeWeight(3);
-          //~ noFill();
-          //~ ellipse(0,0,300,200);
+          crosshair();
 
         popStyle();
-
-        for(var c in p.ctrls){ p.ctrls[c].draw() };
 
     popMatrix();
 
     for(var s in app.shapes){ app.shapes[s].draw() };
 
-    //~ if(app.shapes.length>0){
+    //~ for(var c in p.ctrls){ p.ctrls[c].draw() };
+
+    drawTemp();
+
+  };
+  grid.prototype.clicked=function(){
+
+    if(this.hit){
+
+      switch(app.command){
+
+        case COMMANDS.P_DEFAULT[0]: //~ Point
+
+          app.points.push(new pt(mouseX,mouseY));
+          app.shapes.push(new Point(new propS(getGUID(),app.points)));
+
+          app.points=[];
+
+          break;
+
+        case COMMANDS.L_2P[0]:  //~ Line 2 point
+
+          if(app.points.length===0){
+            app.points.push(new pt(mouseX, mouseY));
+          }
+          else if(app.points.length===1){
+            app.points.push(new pt(mouseX, mouseY));
+            app.shapes.push(new Line(new propS(getGUID(),app.points)));
+            app.points=[];
+          }
+
+          break;
+
+        default:  break;
+
+      };
+
+    }
+
+  };
+  grid.prototype.moved=function(x,y){
+    if(mouseX>this.x && mouseX<this.x+this.w &&
+       mouseY>this.y && mouseY<this.y+this.h){
+      this.hit=true;
+      app.focus=this.i;
+      for(var s in app.shapes){ app.shapes[s].moved(x,y); }
+    }
+    else{
+      this.hit=false;
+    }
+  };
+  grid.prototype.dragged=function(x,y){
+    for(var s in app.shapes){ app.shapes[s].dragged(); }
+  };
+
+  //~ if(app.shapes.length>0){
 
       //~ println(app.shapes.length);
       //~ println("GUID " + app.shapes[0].i);
@@ -3664,27 +3919,7 @@ var proc = function(processingInstance){ with (processingInstance){
       //~ println("LineType: "+ app.shapes[0].linetype);
 
     //~ }
-
-  };
-  grid.prototype.clicked=function(){
-
-    var p=[];
-    p.push(new pt(mouseX,mouseY));
-
-    switch(app.command){
-
-      case COMMANDS.P_DEFAULT[0]:
-
-        app.shapes.push(new Point(new propS(getGUID(),p)));
-
-        break;
-
-      default:                  break;
-
-    };
-
-  };
-
+    
   var n=100;
 
   var process;
@@ -3716,7 +3951,7 @@ var proc = function(processingInstance){ with (processingInstance){
 
       case LEFT:
 
-        for(var c in app.ctrls){ app.ctrls[c].clicked() }
+        for(var c in app.ctrls){ app.ctrls[c].clicked(); }
         break;
 
       case RIGHT:
@@ -3739,12 +3974,14 @@ var proc = function(processingInstance){ with (processingInstance){
   var mouseMoved=function(){
     app.mouseX=mouseX;
     app.mouseY=mouseY;
-    for(var c in app.ctrls){ app.ctrls[c].moved(0,0) }
+    for(var c in app.ctrls){ app.ctrls[c].moved(0,0); }
+    for(var s in app.shapes){ app.shapes[s].moved(0,0); }
     process();
   };
   var mouseDragged=function(){
     //~ app.left=true;
-    for(var c in app.ctrls){ app.ctrls[c].dragged() }
+    for(var c in app.ctrls) { app.ctrls[c].dragged(); }
+    for(var s in app.shapes){ app.shapes[s].dragged(); }
     process();
   };
   var mousePressed=function(){
@@ -3759,7 +3996,7 @@ var proc = function(processingInstance){ with (processingInstance){
 
     }
 
-    for(var c in app.ctrls){ app.ctrls[c].pressed() }
+    for(var c in app.ctrls){ app.ctrls[c].pressed(); }
     process();
   };
   var mouseReleased=function(){
@@ -3770,31 +4007,31 @@ var proc = function(processingInstance){ with (processingInstance){
     app.center=false;
     app.right=false;
 
-    for(var c in app.ctrls){ app.ctrls[c].released() }
+    for(var c in app.ctrls){ app.ctrls[c].released(); }
     process();
   };
   var mouseOut=function(){
-    for(var c in app.ctrls){ app.ctrls[c].out() }
+    for(var c in app.ctrls){ app.ctrls[c].out(); }
     process();
   };
   var mouseOver=function(){
-    for(var c in app.ctrls){ app.ctrls[c].over() }
+    for(var c in app.ctrls){ app.ctrls[c].over(); }
     process();
   };
 
   var keyPressed=function(){
     app.keys[keyCode]=true;
     //~ println(app.keys);
-    for(var c in app.ctrls){ app.ctrls[c].pressed() }
+    for(var c in app.ctrls){ app.ctrls[c].pressed(); }
   };
   var keyReleased=function(){
     app.keys[keyCode]=false;
     println(app.keys);
-    for(var c in app.ctrls){ app.ctrls[c].released() }
+    for(var c in app.ctrls){ app.ctrls[c].released(); }
   };
   var keyTyped=function(){
     println(keyCode);
-    for(var c in app.ctrls){ app.ctrls[c].typed() }
+    for(var c in app.ctrls){ app.ctrls[c].typed(); }
   };
 
   //~ Load Controls ====================================================
@@ -3857,7 +4094,7 @@ var proc = function(processingInstance){ with (processingInstance){
     var w=36;
 
     var cn=new strip(
-            new propC(getGUID(), parent, 500,50, w+10, w, 1, true, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            new propC(getGUID(), parent, 210, height-40, w+10, w, 1, true, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
 
@@ -3918,7 +4155,7 @@ var proc = function(processingInstance){ with (processingInstance){
     var w=36;
 
     var cn=new strip(
-            new propC(getGUID(), parent, 500, 95, w+10, w, 1, true, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            new propC(getGUID(), parent, 450, height-40, w+10, w, 1, true, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
 
@@ -4522,8 +4759,8 @@ var proc = function(processingInstance){ with (processingInstance){
     var ctrls=[];
 
     var cn=new grid(
-            new propC(getGUID(), parent, 5, 5, parent.w-10, parent.h-10, 5, false, COMMANDS.UNDEF[0], 0),
-            new propL(CLRS.GRID, getColor(CLRS.GRID,65), CLRS.WHITE, CLRS.YELLOW, 0.125, 0.25),
+            new propC(getGUID(), parent, 210, 5, parent.w-420, parent.h-50, 5, false, COMMANDS.UNDEF[0], 0),
+            new propL(getColor(CLRS.GRID,65), CLRS.GRID, CLRS.WHITE, CLRS.YELLOW, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
     cn.ctrls=ctrls;
@@ -5219,11 +5456,11 @@ var proc = function(processingInstance){ with (processingInstance){
     //~ ctrls.push(getTransform(cn));
     //~ ctrls.push(getMeasure(cn));
 
-    ctrls.push(getHeader(cn));
-    ctrls.push(getFooter(cn));
+    //~ ctrls.push(getHeader(cn));
+    //~ ctrls.push(getFooter(cn));
     ctrls.push(getProperties(cn));
     ctrls.push(getTelemetry(cn));
-    ctrls.push(getColors(cn));
+    //~ ctrls.push(getColors(cn));
 
     //~ ctrls.push(getGridProps(cn));
 
