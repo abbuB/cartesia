@@ -87,14 +87,38 @@ var proc = function(processingInstance){ with (processingInstance){
     FOUR:   4,
     FIVE:   5
   };
+  var SNAPS={
+    ENDPOINT:         0,
+    MIDPOINT:         1,
+    INTERSECTION:     2,
+    INTERSECTIONA:    3,
+    EXTENSION:        4,
+    CENTER:           5,
+    QUADRANT:         6,
+    TANGENT:          7,
+    PERPENDICULAR:    8,
+    PARALLEL:         9,
+    NODE:             10,
+    INSERT:           11,
+    NEAREST:          12
+  };
+  var SELECT={
+    PICK:       0,
+    WINDOW:     1,
+    WINDOWC:    2,
+    FENCE:      3,
+    POLYGON:    4,
+    TOUCHING:   5,
+    LASSO:      6,
+    CYCLE:      7
+  };
 
   var COMMANDS={
 
 
     //~ General ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    COMMAND:      [   0,  'Command',          'COMMAND'               ],
+    SELECT:       [   0,  'Select',           'SELECT'                ],
     UNDEF:        [   1,  'Undefined',        'UNDEFINED'             ],
-
 
     CARTESIA:     [   2,  'Cartesia',         'CARTESIA'              ],
 
@@ -122,7 +146,6 @@ var proc = function(processingInstance){ with (processingInstance){
     RIGHT:        [  21,  'Right button',     'RIGHT'                 ],
 
     SPACER:       [  22,  'Spacer',           'SPACER'                ],
-
 
     //~ Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     GRID:         [ 100,  'Grid',             'COMMAND'               ],
@@ -165,7 +188,7 @@ var proc = function(processingInstance){ with (processingInstance){
     LINETYPE:     [ 207,  'Line Type',        'LINE TYPE'             ],
     LINEWEIGHT:   [ 208,  'Line Weight',      'LINE WEIGHT'           ],
 
-    RED:          [ 209,   'Red',             'RED'                   ],
+    RED:          [ 209,  'Red',              'RED'                   ],
     BLUE:         [ 210,  'Blue',             'BLUE'                  ],
     GREEN:        [ 211,  'Green',            'GREEN'                 ],
 
@@ -370,6 +393,9 @@ var proc = function(processingInstance){ with (processingInstance){
     mouseX:         1000,
     mouseY:         20,
 
+    gridX:          0,
+    gridY:          0,
+
     //~ mousePressed:   0,
 
     left:           false,
@@ -394,17 +420,17 @@ var proc = function(processingInstance){ with (processingInstance){
 
     fill:           getColor(CLRS.WHITE,100),
     fillH:          getColor(CLRS.ORANGE,25),
-    stroke:         getColor(CLRS.Red,100),
+    stroke:         getColor(CLRS.Yellow,100),
     strokeH:        getColor(CLRS.GREEN,25),
 
-    sz:             5,
+    pSize:             5,
 
     layer:          8,
 
     linetype:       LINETYPES.HAIRLINE,
-    lineweight:     1,
+    lineweight:     0.75,
 
-    command:        1101,
+    command:        COMMANDS.P_DEFAULT[0],
 
     border:         true,
     origin:         false,
@@ -429,7 +455,10 @@ var proc = function(processingInstance){ with (processingInstance){
 
     ctrls:          [],
     shapes:         [],
-    points:         []
+
+    factor:     0
+
+    //~ points:         []
 
   };
 
@@ -466,7 +495,7 @@ var proc = function(processingInstance){ with (processingInstance){
   //~ println(p);
     switch(p){
 
-      case COMMANDS.COMMAND[0]:     return app.command;
+      case COMMANDS.UNDEF[0]:     return app.command;
 
       case COMMANDS.FOCUS[0]:       return app.focus;
       case COMMANDS.LEFT[0]:        return app.left;
@@ -480,12 +509,12 @@ var proc = function(processingInstance){ with (processingInstance){
       case COMMANDS.HEIGHT[0]:      return app.height;
       case COMMANDS.FRAMERATE[0]:   return app.frameRate;
       case COMMANDS.FRAMERATEA[0]:  return __frameRate;
-      case COMMANDS.MOUSEX[0]:      return app.mouseX;
-      case COMMANDS.MOUSEY[0]:      return app.mouseY;
+      case COMMANDS.MOUSEX[0]:      return app.gridX;     //~app.mouseX;
+      case COMMANDS.MOUSEY[0]:      return app.gridY;     //~app.mouseY;
       case COMMANDS.PRESSED[0]:     return app.left;
 
-      case COMMANDS.COLOR[0]:       return app.color;
-      case COMMANDS.COLORG[0]:      return app.color;
+      case COMMANDS.COLOR[0]:       return app.stroke;
+      case COMMANDS.COLORG[0]:      return app.stroke;
 
       case COMMANDS.LAYER[0]:       return app.layer;
       case COMMANDS.LINETYPE[0]:    return app.linetype;
@@ -525,6 +554,10 @@ var proc = function(processingInstance){ with (processingInstance){
 
   };
 
+  var reset=function(){
+    app.command=0;
+    app.points=[];
+  };
   var getDottedLine=function(x0, y0, x1, y1, n){
 
     var x,y;
@@ -558,190 +591,296 @@ var proc = function(processingInstance){ with (processingInstance){
   };
 
   //~ Shapes ===========================================================
-  var Shape=function(s){
+  var Shape=function(p){
 
-    this.i=           s.i;
+    this.hitP=[];
+    this.hit=false;
 
-    this.pnts=        s.pnts;
+    this.i=           p.i;
 
-    this.x=           s.x;
-    this.y=           s.y;
+    this.points=      p.points;
 
-    this.w=           app.sz;
-    this.h=           app.sz;
+    this.x=           p.x;
+    this.y=           p.y;
+
+    this.w=           app.pSize;
+    this.h=           app.pSize;
 
     this.fill=        app.fill;
     this.fillH=       app.fillH;
     this.stroke=      app.stroke;
-    //~ this.strokeH=     app.strokeH;
+    this.strokeH=     app.strokeH;
 
-    this.layer=       s.layer;
-    this.linetype=    s.linetype;
+    this.layer=       p.layer;
+    this.linetype=    p.linetype;
 
     this.lineweight=  app.lineweight;
     this.lineweightH= app.lineweightH;
 
     this.hit=         false;
 
-    
-    
+    this.SELECTED=    false;
+    this.DELETED=     false;
+
+    for(var p=0; p<=this.length; p++){ this.hit[p]=0; }
+
   };
   Shape.prototype.draw=function(){};
+  Shape.prototype.clicked=function(){
+
+  println(app.command);
+
+    if(app.command===COMMANDS.SELECT[0]){
+      println(app.command);
+      if(this.hit){ this.SELECTED=!this.SELECTED; }
+    }
+
+  };
   Shape.prototype.moved=function(x,y){};
+  Shape.prototype.dragged=function(){
+
+    for(var n in this.points){
+
+      if(this.hitP[n] && app.left){
+        this.points[n].x=mouseX;
+        this.points[n].y=mouseY;
+            //~ println("dragged");
+        this.recalc();
+      }
+
+    }
+
+  };
 
 var factor=1.25;
 
- 
+
   //~ Point ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  var Point=function(s){
-    Shape.call(this, s);
+  var Point=function(p){
+    Shape.call(this, p);
   };
   Point.prototype=Object.create(Shape.prototype);
   Point.prototype.draw=function(){
 
-    var sz=this.w;
+    var p=this;
+    var d=0;
 
-    fill(this.stroke);
-    noStroke();
-    strokeWeight(0);
+    var sz=p.hit ? p.w*factor : p.w;
 
-    if(this.hit){ sz*=factor; }
+    var meta=function(){
 
-    ellipse(this.pnts[0].x, this.pnts[0].y, sz, sz);
+      fill(CLRS.GRAY);
+      textAlign(LEFT,CENTER);
+      textFont(createFont('monospace'));
+
+      textSize(9);
+      text("rise:     " + p.deltaX,         p.points[0].x+10, p.points[0].y+5);
+      text("run:      " + p.deltaY,         p.points[0].x+10, p.points[0].y+15);
+      text("slope:    " + nf(p.slope,1,2),  p.points[0].x+10, p.points[0].y+25);
+      text("length:   " + nf(p.length,1,2), p.points[0].x+10, p.points[0].y+35);
+
+      fill(p.fill);
+      noStroke();
+      strokeWeight(0);
+
+      //~ ellipse(p.midX, p.midY, sz, sz);
+
+    };
+
+    pushStyle();
+
+      //~ rectMode(CENTER);
+
+      fill(getColor(p.fill,5));
+      stroke(p.stroke);
+      strokeWeight(p.hit ? p.lineweight*factor : p.lineweight);
+
+      if(p.SELECTED){ strokeWeight(p.lineweight*2); }
+
+      //~ line(p.points[0].x/app.factor, p.points[0].y/app.factor, mouseX, mouseY);
+
+      fill(p.fill);
+      noStroke();
+      strokeWeight(0);
+
+      for(var n in p.points){
+        ellipse(p.points[n].x/app.factor, p.points[n].y/app.factor, sz, sz);
+      }
+
+      if(p.hit){ meta(); }
+
+    popStyle();
 
   };
   Point.prototype.moved=function(x,y){
 
-    if(dist(mouseX,mouseY,this.pnts[0].x,this.pnts[0].y)<this.w){
+    if(dist(app.gridX,
+            app.gridY,
+            this.points[0].x,
+            this.points[0].y)<app.pSize*app.factor){
       this.hit=true;
-      mouseX=this.pnts[0].x;
-      mouseY=this.pnts[0].y;
+      mouseX=this.points[0].x;
+      mouseY=this.points[0].y;
     }
     else{
       this.hit=false;
     }
 
-  };  
+  };
   Point.prototype.dragged=function(){
     if(this.hit && app.left){
-      this.pnts[0].x=mouseX;
-      this.pnts[0].y=mouseY;
+      this.points[0].x=mouseX;
+      this.points[0].y=mouseY;
     }
   };
 
+  var LM={
+    DELTAX:     0,
+    DELTAY:     1,
+    LENGTH:     2,
+    MIDPOINTX:  3,
+    MIDPOINTY:  4,
+    SLOPE:      5
+  };
 
   //~ Line ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var Line=function(p){
 
+    p.points.push(new pt((p.points[0].x+p.points[1].x)/2,
+                       (p.points[0].y+p.points[1].y)/2));
+
     Shape.call(this,p);
 
-    this.hitP=[];
-    this.hit=false;
+    //~ println(this.points.length);
 
-    for(var p=0; p<=this.length; p++){ this.hit[p]=0; }
-    
-    this.dX=this.pnts[1].x-this.pnts[0].x;
-    this.dY=this.pnts[1].y-this.pnts[0].y;
-    this.m=1;
-    
-    println(this.dX);
-
-    if(this.dX===0){ this.m=-0;                 }
-    else           { this.m=-1*this.dY/this.dX; }
+    this.deltaX=0;
+    this.deltaY=0;
+    this.length=0;
+    this.slope=0;
 
     this.recalc=function(){
 
-      this.dX=this.pnts[1].x-this.pnts[0].x;
-      this.dY=this.pnts[1].y-this.pnts[0].y;
-      this.m=1;
-      
-      println(this.dX);
-
-      if(this.dX===0){ this.m=-0;                 }
-      else           { this.m=-1*this.dY/this.dX; }
+      this.deltaX=abs(this.points[1].x-this.points[0].x);
+      this.deltaY=abs(this.points[1].y-this.points[0].y);
+      this.length=dist(this.points[0].x, this.points[0].y, this.points[1].x, this.points[1].y);
+      this.points[2].x=(this.points[0].x+this.points[1].x)/2;
+      this.points[2].y=(this.points[0].y+this.points[1].y)/2;
+      if(this.deltaX===0){ this.slope=-0;                 }
+      else               { this.slope=-1*(this.points[1].y-this.points[0].y)/(this.points[1].x-this.points[0].x); }
 
     };
+
+    this.recalc();
 
   };
   Line.prototype=Object.create(Shape.prototype);
   Line.prototype.draw=function(){
-    
-    noFill();
-    stroke(this.stroke);
-    strokeWeight(this.lineweight);
 
-    if(this.hit){
+    var p=this;
+    var d=0;
 
-      stroke(this.stroke);
-      strokeWeight(this.lineweight*factor);
-    }
+    var sz=p.hit ? p.w*factor : p.w;
 
-    line(this.pnts[0].x, this.pnts[0].y, this.pnts[1].x, this.pnts[1].y);
+    var meta=function(){
 
-    fill(this.fill);
-    noStroke()
-    strokeWeight(0);
+      fill(CLRS.GRAY);
+      textAlign(LEFT,CENTER);
+      textFont(createFont('monospace'));
 
-    var sz=this.w;
+      textSize(9);
+      text("rise:     " + p.deltaX,         p.points[0].x+10, p.points[0].y+5);
+      text("run:      " + p.deltaY,         p.points[0].x+10, p.points[0].y+15);
+      text("slope:    " + nf(p.slope,1,2),  p.points[0].x+10, p.points[0].y+25);
+      text("length:   " + nf(p.length,1,2), p.points[0].x+10, p.points[0].y+35);
 
-    if(this.hit){
+      fill(p.fill);
+      noStroke();
+      strokeWeight(0);
 
-       sz*=factor;
+      //~ ellipse(p.midX, p.midY, sz, sz);
 
-      ellipse(this.pnts[0].x, this.pnts[0].y, sz, sz);
-      ellipse(this.pnts[1].x, this.pnts[1].y, sz, sz);
-      
-      textSize(16);
-      text(nf(this.m,1,0), this.pnts[0].x+5, this.pnts[0].y-5);
+    };
 
-    }
-    
+    pushStyle();
+
+      //~ rectMode(CENTER);
+
+      fill(getColor(p.fill,5));
+      stroke(p.stroke);
+      strokeWeight(p.hit ? p.lineweight*factor : p.lineweight);
+
+      if(p.SELECTED){ strokeWeight(p.lineweight*2); }
+
+      line(p.points[0].x, p.points[0].y, p.points[1].x, p.points[1].y);
+
+      fill(p.fill);
+      noStroke();
+      strokeWeight(0);
+
+      for(var n in p.points){
+        ellipse(p.points[n].x, p.points[n].y, sz, sz);
+      }
+
+      if(p.hit){ meta(); }
+
+    popStyle();
+
   };
   Line.prototype.moved=function(x,y){
 
     var tmp=false;
 
-    for(var n in this.pnts){
+    for(var n in this.points){
 
-      if(dist(mouseX,mouseY,this.pnts[n].x,this.pnts[n].y)<this.w){
+      if(dist(mouseX, mouseY,
+              this.points[n].x, this.points[n].y)<this.w){
+
         this.hitP[n]=true;
-        tmp=true;
-        mouseX=this.pnts[n].x;
-        mouseY=this.pnts[n].y;
+        mouseX=this.points[n].x;
+        mouseY=this.points[n].y;
+
       }
       else{
-        this.hitP[n]=false;        
+        this.hitP[n]=false;
       }
 
     }
 
-    if((dist(mouseX, mouseY, this.pnts[0].x, this.pnts[0].y) + dist(mouseX, mouseY, this.pnts[1].x, this.pnts[1].y))<
-        (dist(this.pnts[0].x, this.pnts[0].y, this.pnts[1].x, this.pnts[1].y)+1)){
+    if(dist(mouseX, mouseY, this.points[0].x, this.points[0].y)+
+       dist(mouseX, mouseY, this.points[1].x, this.points[1].y)<
+       dist(this.points[0].x, this.points[0].y, this.points[1].x, this.points[1].y)+1){
 
       tmp=true;
 
     }
 
-    println(this.hitP);
+    //~ println(this.hitP);
 
     this.hit=tmp;
 
   };
   Line.prototype.dragged=function(){
 
-    for(var n in this.pnts){
+    for(var n in this.points){
+
+      if(dist(mouseX, mouseY,
+              this.points[n].x, this.points[n].y)<this.w){
+
+        mouseX=this.points[n].x;
+        mouseY=this.points[n].y;
+
+      }
 
       if(this.hitP[n] && app.left){
-        this.pnts[n].x=mouseX;
-        this.pnts[n].y=mouseY;
+        this.points[n].x=mouseX;
+        this.points[n].y=mouseY;
             //~ println("dragged");
         this.recalc();
       }
-      
-    }
-    
-  };
 
+    }
+
+  };
 
   //~ Triangle ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var Triangle=function(p){
@@ -753,11 +892,97 @@ var factor=1.25;
 
   //~ Circle ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var Circle=function(p){
+
     Shape.call(this,p);
+
+    this.radius=dist(this.points[0].x, this.points[0].y, this.points[1].x, this.points[1].y);
+    this.diameter=2*this.radius;
+    this.area=PI*pow(this.radius,2);
+    this.circumference=PI*this.diameter;
+
+    this.recalc=function(){
+
+      this.radius=dist(this.points[0].x, this.points[0].y, this.points[1].x, this.points[1].y);
+      this.diameter=2*this.radius;
+      this.area=PI*pow(this.radius,2);
+      this.circumference=PI*this.diameter;
+
+    };
+
   };
   Circle.prototype=Object.create(Shape.prototype);
-  Circle.prototype.draw=function(){};
+  Circle.prototype.draw=function(){
 
+    var p=this;
+    var d=0;
+
+    var meta=function(){
+
+      fill(CLRS.WHITE);
+      textAlign(LEFT,CENTER);
+      textFont(createFont('monospace'));
+
+      textSize(9);
+      text("Center:        " + p.points[0].x+","+p.points[0].y, p.points[0].x+10, p.points[0].y+5);
+      text("Radius:        " + round(p.radius),             p.points[0].x+10, p.points[0].y+15);
+      text("Diameter:      " + round(p.diameter),           p.points[0].x+10, p.points[0].y+25);
+      text("Circumference: " + round(p.circumference),      p.points[0].x+10, p.points[0].y+35);
+      text("Area:          " + round(p.area),               p.points[0].x+10, p.points[0].y+45);
+
+    };
+
+    pushStyle();
+
+      fill(getColor(p.fill,5));
+      stroke(p.stroke);
+      strokeWeight(p.hit ? p.lineweight*factor : p.lineweight);
+
+      ellipse(p.points[0].x, p.points[0].y, p.diameter, p.diameter);
+
+      fill(CLRS.WHITE);
+      noStroke();
+      strokeWeight(0);
+
+      var sz=p.hit ? p.w*factor : p.w;
+
+      ellipse(p.points[0].x, p.points[0].y, sz, sz);
+      ellipse(p.points[1].x, p.points[1].y, sz, sz);
+
+      if(p.hit){ meta(); }
+
+    popStyle();
+
+  };
+  Circle.prototype.moved=function(x,y){
+
+    var tmp=false;
+
+    for(var n in this.points){
+
+      if(dist(mouseX, mouseY, this.points[n].x, this.points[n].y)<10){
+        this.hitP[n]=true;
+        tmp=true;
+        mouseX=this.points[n].x;
+        mouseY=this.points[n].y;
+      }
+      else{
+        this.hitP[n]=false;
+      }
+
+    }
+
+    if(dist(mouseX, mouseY, this.points[0].x, this.points[0].y)>this.radius-3 &&
+       dist(mouseX, mouseY, this.points[0].x, this.points[0].y)<this.radius+3){
+
+      tmp=true;
+
+    }
+
+    //~ println(this.hitP);
+
+    this.hit=tmp;
+
+  };
 
   //~ Ellipse ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var Ellipse=function(p){
@@ -842,9 +1067,9 @@ var factor=1.25;
   };
   var ShapeCommands=function(c,p){
 
-    println(c+","+p);
+    //~ println(c+","+p);
 
-    app.command=p;
+    //~ app.command=p;
 
     switch(c){
 
@@ -882,24 +1107,18 @@ var factor=1.25;
       case (c>=COMMANDS.POINT[0] &&
             c<=COMMANDS.SKETCH[0]):       ShapeCommands(c,p);     break;
 
-      //~ Shapes ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-      //~ case COMMANDS.FRAMERATE[0]:   frameRate(p);
-                                    //~ app.frameRate=p;
-                                    //~ break;
-
-      //~ case COMMANDS.DEBUG[0]:       app.debug=!app.debug;
-                                    //~ if(app.debug){ frameRate(60);  }
-                                    //~ else         { frameRate(31); }
-                                    //~ break;
-
-      //~ case COMMANDS.COLORG[0]:      return app.color;
-
-      case c===COMMANDS.COLOR[0]:       app.color=p;
+      case c===COMMANDS.COLOR[0]:       app.stroke=p;
                                         app.red=red(app.color);
                                         app.green=green(app.color);
                                         app.blue=blue(app.color);
+                                        println("this is it");
                                         break;
+
+      case c===COMMANDS.UNDO[0]:
+
+          app.shapes.splice(app.shapes.length-1,1);
+          process();
+          break;
 
       //~ case COMMANDS.RECTANGLE[0]: println('Rectangle');         break;
 
@@ -954,14 +1173,14 @@ var factor=1.25;
 
   };
 
-  var propS=function(i,pnts){
+  var propS=function(i,points){
 
     this.i=           i;
 
-    this.pnts=        pnts;
+    this.points=        points;
 
-    //~ this.x=                 pnts[0].x;
-    //~ this.y=                 pnts[0].y;
+    //~ this.x=                 points[0].x;
+    //~ this.y=                 points[0].y;
 
     this.w=           2;
     this.h=           2;
@@ -2925,6 +3144,7 @@ var factor=1.25;
           }
 
           if(p.v){ fill(getProp(p.g)); }
+          if(app.command===p.c){ fill(getColor(CLRS.GRAY,25)); }
 
           rect(d, d, p.w, p.h, p.r);
 
@@ -2977,9 +3197,10 @@ var factor=1.25;
   };
   buttonI.prototype.clicked=function(){
     if(this.hit){
-      //~ println(this.c, this.g);
+
+      reset();
+
       commands(this.c, this.g);
-                  //~ println(p.parent.ctrls.length);
 
       this.parent.ctrls[0].c=this.c;
       this.parent.ctrls[0].g=this.g;
@@ -2989,6 +3210,7 @@ var factor=1.25;
       app.command=this.c;
 
       for(var c in this.ctrls){ this.ctrls[c].clicked() }
+
     }
   };
 
@@ -3537,7 +3759,7 @@ var factor=1.25;
 
           fill(p.fill);
           stroke(p.stroke);
-          strokeWeight(p.weight);
+          strokeWeight(p.strokeweight);
 
           if(p.hit){
             fill(p.fillH);
@@ -3571,19 +3793,25 @@ var factor=1.25;
   //~ Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var grid=function(cp,lp,ap,ctrls){
     control.call(this,cp,lp,ap,ctrls);
+    app.factor=22/this.h;
+    println(app.factor+","+this.h);
+    this.points=[];
+    this.ortho=false;
   };
   grid.prototype=Object.create(control.prototype);
   grid.prototype.draw=function(){
 
+    this.ortho=app.ortho;
+
     var p=this;
     var d=0;
-    var incr=this.h/22;
+    var incr=1/app.factor
 
     var border=function(){
 
       pushStyle();
 
-        rectMode(CENTER);
+        
 
           fill(p.fill);
           stroke(p.stroke);
@@ -3713,7 +3941,7 @@ var factor=1.25;
           if(app.labelsx){
             for(var n=1; n<p.w/2/incr; n++){
               text( n, n*incr, 3);
-              text( n,-n*incr, 3);
+              text(-n,-n*incr, 3);
             }
           }
 
@@ -3722,8 +3950,8 @@ var factor=1.25;
 
           if(app.labelsy){
             for(var n=1; n<p.h/2/incr; n++){
-              text( n, -5,  n*incr);
               text( n, -5, -n*incr);
+              text(-n, -5,  n*incr);
             }
           }
 
@@ -3733,7 +3961,7 @@ var factor=1.25;
     var crosshair=function(){
 
       if(app.focus===p.i){
-          
+
         var sz=app.cursorSize;
 
         pushStyle();
@@ -3774,7 +4002,12 @@ var factor=1.25;
 
               noFill();
 
-              rect(mouseX, mouseY, app.sz, app.sz);
+              //~ if(p.ortho){
+                //~ mouseX-=mouseX%incr;
+                //~ mouseY-=mouseY%incr;
+              //~ }
+
+              ellipse(mouseX, mouseY, app.pSize, app.pSize);
 
           popMatrix();
 
@@ -3789,25 +4022,58 @@ var factor=1.25;
 
         switch(app.command){
 
-          case COMMANDS.P_DEFAULT[0]: break;
+          case COMMANDS.P_DEFAULT[0]:
 
+            //~ Point is saved on initial click
+            break;
 
           case COMMANDS.L_2P[0]:
 
-            if(app.points.length===1){
+            if(p.points.length===1){
 
               noFill();
               stroke(app.stroke);
               strokeWeight(app.lineweight);
 
-              line(mouseX,  mouseY, app.points[0].x, app.points[0].y);
+              line(mouseX, mouseY, p.points[0].x, p.points[0].y);
 
               fill(app.fill);
               noStroke();
               strokeWeight(0);
 
-              ellipse(app.points[0].x, app.points[0].y, app.sz, app.sz);
-              ellipse(mouseX,          mouseY,          app.sz, app.sz);
+              ellipse(p.points[0].x, p.points[0].y, app.pSize, app.pSize);
+              ellipse(mouseX,          mouseY,      app.pSize, app.pSize);
+
+            }
+
+            break;
+
+          case COMMANDS.C_CENTERP[0]:
+
+            //~ println("C_CENTERP");
+
+            if(p.points.length===1){
+
+              noFill();
+              stroke(app.stroke);
+              strokeWeight(app.lineweight);
+
+              //~ line(mouseX,  mouseY, app.points[0].x, app.points[0].y);
+
+              fill(app.fill);
+              noStroke();
+              strokeWeight(0);
+
+              ellipse(p.points[0].x, p.points[0].y, app.pSize, app.pSize);
+              ellipse(mouseX,        mouseY,        app.pSize, app.pSize);
+
+              noFill();
+              stroke(app.stroke);
+              strokeWeight(app.lineweight);
+
+              var r=2*dist(p.points[0].x, p.points[0].y, mouseX, mouseY);
+
+              ellipse(p.points[0].x, p.points[0].y, r, r);
 
             }
 
@@ -3816,8 +4082,6 @@ var factor=1.25;
           default:                  break;
 
         };
-
-        
 
       }
 
@@ -3828,6 +4092,8 @@ var factor=1.25;
       scale(1,-1);
 
         pushStyle();
+
+          rectMode(CENTER);
 
           border();
           axis();
@@ -3840,70 +4106,112 @@ var factor=1.25;
 
         popStyle();
 
+      for(var s in app.shapes){ app.shapes[s].draw() };
+
     popMatrix();
 
-    for(var s in app.shapes){ app.shapes[s].draw() };
+    drawTemp();
 
     //~ for(var c in p.ctrls){ p.ctrls[c].draw() };
-
-    drawTemp();
 
   };
   grid.prototype.clicked=function(){
 
     if(this.hit){
 
-      switch(app.command){
+      pushMatrix();
 
-        case COMMANDS.P_DEFAULT[0]: //~ Point
+        translate(this.x+this.w/2+0.5, this.y+this.h/2+0.5);
+        scale(1,-1);
 
-          app.points.push(new pt(mouseX,mouseY));
-          app.shapes.push(new Point(new propS(getGUID(),app.points)));
+        var _x=app.gridX;
+        var _y=app.gridY;
 
-          app.points=[];
+        switch(app.command){
 
-          break;
+          case COMMANDS.P_DEFAULT[0]: //~ Point
 
-        case COMMANDS.L_2P[0]:  //~ Line 2 point
+            this.points.push(new pt(_x, _y));
+            app.shapes.push(new Point(new propS(getGUID(),this.points)));
 
-          if(app.points.length===0){
-            app.points.push(new pt(mouseX, mouseY));
-          }
-          else if(app.points.length===1){
-            app.points.push(new pt(mouseX, mouseY));
-            app.shapes.push(new Line(new propS(getGUID(),app.points)));
-            app.points=[];
-          }
+            this.points=[];
 
-          break;
+            break;
 
-        default:  break;
+          case COMMANDS.L_2P[0]:  //~ Line 2 point
 
-      };
+            if(this.points.length===0){
+              this.points.push(new pt(mouseX,mouseY));
+            }
+            else if(this.points.length===1){
+              this.points.push(new pt(mouseX,mouseY));
+              app.shapes.push(new Line(new propS(getGUID(),this.points)));
+              this.points=[];
+            }
+
+            break;
+
+          case COMMANDS.C_CENTERP[0]:  //~ Circle: Center-Point
+
+            if(this.points.length===0){
+              this.points.push(new pt(_x,_y));
+            }
+            else if(this.points.length===1){
+
+              println(this.points[0].y);
+              this.points.push(new pt(_x,_y));
+
+              app.shapes.push(new Circle(new propS(getGUID(),this.points)));
+
+              this.points=[];
+
+            }
+
+            break;
+
+          default:  break;
+
+        };
+
+      popMatrix();
 
     }
 
   };
   grid.prototype.moved=function(x,y){
+
+    app.gridX=   (mouseX-this.x-this.w/2)*app.factor;
+    app.gridY=-1*(mouseY-this.y-this.h/2)*app.factor;
+
     if(mouseX>this.x && mouseX<this.x+this.w &&
        mouseY>this.y && mouseY<this.y+this.h){
+
       this.hit=true;
       app.focus=this.i;
+
       for(var s in app.shapes){ app.shapes[s].moved(x,y); }
+
     }
     else{
       this.hit=false;
     }
+
   };
   grid.prototype.dragged=function(x,y){
     for(var s in app.shapes){ app.shapes[s].dragged(); }
   };
+  grid.prototype.typed=function(){
 
+    if(app.keys[KEYCODES.SPACE]){
+      this.points=[];
+    };
+
+  };
   //~ if(app.shapes.length>0){
 
       //~ println(app.shapes.length);
       //~ println("GUID " + app.shapes[0].i);
-      //~ println("Pnts: " + app.shapes[0].pnts);
+      //~ println("points: " + app.shapes[0].points);
       //~ println("x: "+ app.shapes[0].x);
       //~ println("y: "+ app.shapes[0].y);
       //~ println("w: "+ app.shapes[0].w);
@@ -3919,7 +4227,7 @@ var factor=1.25;
       //~ println("LineType: "+ app.shapes[0].linetype);
 
     //~ }
-    
+
   var n=100;
 
   var process;
@@ -3952,6 +4260,7 @@ var factor=1.25;
       case LEFT:
 
         for(var c in app.ctrls){ app.ctrls[c].clicked(); }
+        for(var c in app.shapes){ app.shapes[c].clicked(); }
         break;
 
       case RIGHT:
@@ -4019,19 +4328,73 @@ var factor=1.25;
     process();
   };
 
+  var KEYCODES={
+    BACKSPACE:  8,
+    TAB:        9,
+    ENTER:      10,
+    RETURN:     13,
+    ESC:        27,
+    DELETE:     127,
+    CODED:      0xffff,
+    SHIFT:      16,
+    CONTROL:    17,
+    ALT:        18,
+    CAPSLK:     20,
+    SPACE:      32,
+    PGUP:       33,
+    PGDN:       34,
+    END:        35,
+    HOME:       36,
+    LEFT:       37,
+    UP:         38,
+    RIGHT:      39,
+    DOWN:       40,
+    F1:         112,
+    F2:         113,
+    F3:         114,
+    F4:         115,
+    F5:         116,
+    F6:         117,
+    F7:         118,
+    F8:         119,
+    F9:         120,
+    F10:        121,
+    F11:        122,
+    F12:        123,
+    NUMLK:      144,
+    META:       157,
+    INSERT:     155,
+    Z:          90
+  };
+
   var keyPressed=function(){
-    app.keys[keyCode]=true;
+
+    //~ println(str(key));
     //~ println(app.keys);
-    for(var c in app.ctrls){ app.ctrls[c].pressed(); }
+
+    if(keyCode===32){
+      app.command=COMMANDS.SELECT[0];
+      reset();
+      process();
+    }
+
+    app.keys[keyCode]=true;
+
+    //~ for(var c in app.ctrls){ app.ctrls[c].pressed(); }
+
   };
   var keyReleased=function(){
     app.keys[keyCode]=false;
-    println(app.keys);
+
     for(var c in app.ctrls){ app.ctrls[c].released(); }
   };
   var keyTyped=function(){
-    println(keyCode);
+
+    if(app.keys[KEYCODES.CONTROL] &&
+       app.keys[KEYCODES.Z]){ commands(COMMANDS.UNDO[0]); }
+
     for(var c in app.ctrls){ app.ctrls[c].typed(); }
+
   };
 
   //~ Load Controls ====================================================
@@ -4155,7 +4518,7 @@ var factor=1.25;
     var w=36;
 
     var cn=new strip(
-            new propC(getGUID(), parent, 450, height-40, w+10, w, 1, true, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            new propC(getGUID(), parent, 625, height-40, w+10, w, 1, true, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
 
@@ -4240,7 +4603,7 @@ var factor=1.25;
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonI(
-                new propC(getGUID(), cn, 13*w, 0, w, w, 0, false, COMMANDS.V_FP[0], COMMANDS.V_2P[1]),
+                new propC(getGUID(), cn, 13*w, 0, w, w, 0, false, COMMANDS.V_FP[0], COMMANDS.V_FP[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
@@ -4304,7 +4667,7 @@ var factor=1.25;
     var w=36;
 
     var cn=new strip(
-            new propC(getGUID(), parent, 500, 185, w+10, w, 1, true, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            new propC(getGUID(), parent, 450, height-40, w+10, w, 1, true, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
 
@@ -4864,7 +5227,7 @@ var factor=1.25;
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+17*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.COMMAND[1]),
+                new propC(getGUID(), cn, 5, top+17*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
@@ -4927,7 +5290,7 @@ var factor=1.25;
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, 100, top+17*h, 10, 10, 0, false, COMMANDS.COMMAND[0], COMMANDS.COMMAND[1]),
+                new propC(getGUID(), cn, 100, top+17*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
@@ -5051,7 +5414,7 @@ var factor=1.25;
     var ch=200;
 
     var cn=new container(
-            new propC(getGUID(),parent, 275, 100, 200, 270, 3, false, COMMANDS.UNDEF[0],0),
+            new propC(getGUID(),parent, 10, 200, 180, 270, 3, false, COMMANDS.UNDEF[0],0),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
 
@@ -5180,7 +5543,7 @@ var factor=1.25;
     //~ Current Color
     ctrls.push(new buttonP(
                 new propC(getGUID(),cn, l+5*h+25, top+5*h+15, 40, 40, 0, false, COMMANDS.COLORG[0], COMMANDS.COLORG[0]),
-                new propL(getColor(CLRS.Black,90), CLRS.Black, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
+                new propL(getColor(CLRS.YELLOW,90), CLRS.YELLOW, CLRS.YELLOW, CLRS.YELLOW, 0.125, 0.25),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
@@ -5446,7 +5809,7 @@ var factor=1.25;
     ctrls.push(getPoints(cn));
     ctrls.push(getLines(cn));
     //~ ctrls.push(getTriangles(cn));
-    //~ ctrls.push(getCircles(cn));
+    ctrls.push(getCircles(cn));
     //~ ctrls.push(getQuads(cn));
     //~ ctrls.push(getArcs(cn));
     //~ ctrls.push(getPolygons(cn));
@@ -5458,7 +5821,7 @@ var factor=1.25;
 
     //~ ctrls.push(getHeader(cn));
     //~ ctrls.push(getFooter(cn));
-    ctrls.push(getProperties(cn));
+    //~ ctrls.push(getProperties(cn));
     ctrls.push(getTelemetry(cn));
     //~ ctrls.push(getColors(cn));
 
