@@ -433,7 +433,7 @@ var proc = function(processingInstance){ with (processingInstance){
     command:        COMMANDS.P_DEFAULT[0],
 
     border:         true,
-    origin:         false,
+    origin:         true,
 
     axisx:          true,
     axisy:          true,
@@ -446,10 +446,10 @@ var proc = function(processingInstance){ with (processingInstance){
     labelsx:        true,
     labelsy:        true,
 
-    coordinates:    true,
-    ortho:          true,
-    snaptogrid:     true,
-    fullscreen:     true,
+    coordinates:    false,
+    ortho:          false,
+    snaptogrid:     false,
+    fullscreen:     false,
 
     cursorSize:     0,
 
@@ -654,7 +654,6 @@ var proc = function(processingInstance){ with (processingInstance){
 
 var factor=1.25;
 
-
   //~ Point ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var Point=function(p){
     Shape.call(this, p);
@@ -669,21 +668,21 @@ var factor=1.25;
 
     var meta=function(){
 
-      fill(CLRS.GRAY);
-      textAlign(LEFT,CENTER);
-      textFont(createFont('monospace'));
+      pushMatrix();
 
-      textSize(9);
-      text("rise:     " + p.deltaX,         p.points[0].x+10, p.points[0].y+5);
-      text("run:      " + p.deltaY,         p.points[0].x+10, p.points[0].y+15);
-      text("slope:    " + nf(p.slope,1,2),  p.points[0].x+10, p.points[0].y+25);
-      text("length:   " + nf(p.length,1,2), p.points[0].x+10, p.points[0].y+35);
+        //~ resetMatrix();
 
-      fill(p.fill);
-      noStroke();
-      strokeWeight(0);
+          fill(CLRS.GRAY);
+          textAlign(LEFT,CENTER);
+          textFont(createFont('monospace'));
 
-      //~ ellipse(p.midX, p.midY, sz, sz);
+          textSize(9);
+          text("rise:     " + p.deltaX,         p.points[0].x+10, p.points[0].y+5);
+          text("run:      " + p.deltaY,         p.points[0].x+10, p.points[0].y+15);
+          text("slope:    " + nf(p.slope,1,2),  p.points[0].x+10, p.points[0].y+25);
+          text("length:   " + nf(p.length,1,2), p.points[0].x+10, p.points[0].y+35);
+
+      popMatrix();
 
     };
 
@@ -703,9 +702,9 @@ var factor=1.25;
       noStroke();
       strokeWeight(0);
 
-      for(var n in p.points){
-        ellipse(p.points[n].x/app.factor, p.points[n].y/app.factor, sz, sz);
-      }
+      //~ for(var n in p.points){
+        ellipse(p.points[0].x/app.factor, p.points[0].y/app.factor, sz, sz);
+      //~ }
 
       if(p.hit){ meta(); }
 
@@ -719,8 +718,8 @@ var factor=1.25;
             this.points[0].x,
             this.points[0].y)<app.pSize*app.factor){
       this.hit=true;
-      mouseX=this.points[0].x;
-      mouseY=this.points[0].y;
+      //~ mouseX=this.points[0].x;
+      //~ mouseY=this.points[0].y;
     }
     else{
       this.hit=false;
@@ -1100,6 +1099,7 @@ var factor=1.25;
 
     switch(true){
 
+
       //~ Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       case (c>COMMANDS.GRID[0] &&
             c<=COMMANDS.FULLSCREEN[0]):   GridCommands(c,p);      break;
@@ -1284,7 +1284,18 @@ var factor=1.25;
 
     }
     else if(this.alignX===RIGHT){
-      app.focus=this.i;
+
+      if(mouseX>x+this.x && mouseX<x+this.x+this.w &&
+         mouseY>y+this.y && mouseY<y+this.y+this.h){
+        this.hit=true;
+        app.focus=this.i;
+      }
+      else{
+        this.hit=false;
+      }
+
+      for(var c in this.ctrls){ this.ctrls[c].moved(x+this.x, y+this.y) }
+
     }
     else{
       app.focus=this.i;
@@ -3119,6 +3130,64 @@ var factor=1.25;
 
     };
 
+    var drawGrid=function(){
+
+      pushMatrix();
+
+        translate(0.5,0.5);
+
+      pushStyle();
+
+        rectMode(CENTER);
+
+        switch(p.c){
+
+          case COMMANDS.SNAPTOGRID[0]:
+
+            noStroke();
+            strokeWeight(0);
+            fill(CLRS.LINE);
+
+            for(var row=-10; row<15; row+=5){
+              for(var col=-10; col<15; col+=5){
+                ellipse(d+cX+col, d+cY+row, 1, 1);
+              }
+            }
+
+            noFill();
+            stroke(CLRS.LINE);
+            strokeWeight(1);
+
+            line(d+cX-8, d+cY,   d+cX+9, d+cY);
+            line(d+cX,   d+cY-9, d+cX,   d+cY+9);
+
+            break;
+
+          case COMMANDS.ORTHO[0]:
+
+            noFill();
+            stroke(CLRS.LINE);
+            strokeWeight(1);
+
+            line(d+cX-10, d+cY+10, d+cX+10, d+cY+10);
+            line(d+cX-10, d+cY-10, d+cX-10, d+cY+10);
+
+            strokeWeight(0.5);
+
+            line(d+cX-10, d+cY+4, d+cX-4, d+cY+4);
+            line(d+cX-4,  d+cY+4, d+cX-4, d+cY+10);
+
+            break;
+
+          default:  break;
+
+        }
+
+      popStyle();
+      popMatrix();
+
+    };
+
     pushMatrix();
 
       translate(p.x, p.y);
@@ -3150,6 +3219,8 @@ var factor=1.25;
 
           switch(true){
 
+            case (p.c>=COMMANDS.GRID[0] &&
+                  p.c<=COMMANDS.FULLSCREEN[0]): drawGrid();       break;
             case (p.c>=COMMANDS.POINT[0] &&
                   p.c<=COMMANDS.P_MIDPOINT[0]): drawPoint();      break;
             case (p.c>=COMMANDS.LINE[0] &&
@@ -3214,6 +3285,159 @@ var factor=1.25;
     }
   };
 
+  //~ Toggle
+  var buttonT=function(cp,lp,ap,ctrls){
+    control.call(this,cp,lp,ap,ctrls);
+  };
+  buttonT.prototype=Object.create(control.prototype);
+  buttonT.prototype.draw=function(){
+
+    var p=this;
+    var d=0;
+    var cX=p.w/2;
+    var cY=p.h/2;
+    var cPNT=CLRS.VERTEX;
+    var cMEASURE=CLRS.RED;
+    var cVERTEX=CLRS.VERTEXA;
+    var cLINE=CLRS.LINE;
+    var cFILL=CLRS.FILL;
+    var sz=3;
+
+    var drawGrid=function(){
+
+      pushMatrix();
+
+        translate(0.5,0.5);
+
+      pushStyle();
+
+        rectMode(CENTER);
+
+        switch(p.c){
+
+          case COMMANDS.SNAPTOGRID[0]:
+
+            noStroke();
+            strokeWeight(0);
+            fill(CLRS.LINE);
+
+            for(var row=-10; row<15; row+=5){
+              for(var col=-10; col<15; col+=5){
+                ellipse(d+cX+col, d+cY+row, 1, 1);
+              }
+            }
+
+            noFill();
+            stroke(CLRS.LINE);
+            strokeWeight(1);
+
+            line(d+cX-8, d+cY,   d+cX+9, d+cY);
+            line(d+cX,   d+cY-9, d+cX,   d+cY+9);
+
+            break;
+
+          case COMMANDS.ORTHO[0]:
+
+            noFill();
+            stroke(CLRS.LINE);
+            strokeWeight(1);
+
+            line(d+cX-10, d+cY+10, d+cX+10, d+cY+10);
+            line(d+cX-10, d+cY-10, d+cX-10, d+cY+10);
+
+            strokeWeight(0.5);
+
+            line(d+cX-10, d+cY+4, d+cX-4, d+cY+4);
+            line(d+cX-4,  d+cY+4, d+cX-4, d+cY+10);
+
+            break;
+
+          default:  break;
+
+        }
+
+      popStyle();
+      popMatrix();
+
+    };
+
+    pushMatrix();
+
+      translate(p.x, p.y);
+
+        pushStyle();
+
+          //~ rectMode(CENTER);
+
+          fill(p.fill);
+          noFill();
+          stroke(p.stroke);
+          strokeWeight(p.weight);
+
+          if(p.hit && p.parent.hit){
+
+            if(app.left){ d=1; }
+
+            fill(p.fillH);
+            stroke(p.strokeH);
+            strokeWeight(p.weightH);
+
+            cursor(HAND);
+
+          }
+
+          if(p.v){ fill(CLRS.Gray10); }
+          //~ if(app.command===p.c){ fill(getColor(CLRS.GRAY,25)); }
+
+          rect(d, d, p.w, p.h, p.r);
+
+          switch(true){
+
+            case (p.c>=COMMANDS.GRID[0] &&
+                  p.c<=COMMANDS.FULLSCREEN[0]): drawGrid();       break;
+
+            default:      break;
+
+          }
+
+          fill(p.tfill);
+
+          //~ textAlign(p.alignX,p.alignY);
+          textAlign(CENTER,BOTTOM);
+          //~ textSize(p.size);
+          textSize(8);
+          if(p.hit){
+            fill(p.v);
+            //~ textSize(p.sizeH);
+          }
+
+          //~ text(p.g, d+p.w/2, d+p.h);
+
+        popStyle();
+
+        //~ for(var c in p.ctrls){ p.ctrls[c].draw() }
+
+    popMatrix();
+
+  };
+  buttonT.prototype.clicked=function(){
+    if(this.hit){
+
+      //~ reset();
+
+      commands(this.c, this.g);
+      this.v=!this.v;
+      //~ this.parent.ctrls[0].c=this.c;
+      //~ this.parent.ctrls[0].g=this.g;
+
+      //~ this.parent.v=!this.parent.v;
+
+      //~ app.command=this.c;
+
+      for(var c in this.ctrls){ this.ctrls[c].clicked() }
+
+    }
+  };
 
   //~ Labels ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var label=function(cp,lp,ap,ctrls){
@@ -3326,7 +3550,10 @@ var factor=1.25;
     popMatrix();
 
   };
+  labelP.prototype.clicked=function(){
 
+
+  };
   //~ Rotate
   var labelR=function(cp,lp,ap,ctrls){
     control.call(this,cp,lp,ap,ctrls);
@@ -3801,7 +4028,7 @@ var factor=1.25;
   grid.prototype=Object.create(control.prototype);
   grid.prototype.draw=function(){
 
-    this.ortho=app.ortho;
+    this.snaptogrid=app.snaptogrid;
 
     var p=this;
     var d=0;
@@ -3811,7 +4038,7 @@ var factor=1.25;
 
       pushStyle();
 
-        
+
 
           fill(p.fill);
           stroke(p.stroke);
@@ -3971,7 +4198,17 @@ var factor=1.25;
           pushMatrix();
 
             resetMatrix();
-            translate(0.5,0.5);
+            translate(0.5, 0.5);
+
+              if(app.snaptogrid){
+                mouseX-=mouseX%incr-(p.x+p.w/2)%incr;
+                mouseY-=mouseY%incr-(p.y+p.h/2)%incr;
+              }
+
+              app.gridX=   (mouseX-p.x-p.w/2)*app.factor;
+              app.gridY=-1*(mouseY-p.y-p.h/2)*app.factor;
+
+              app.coordinates=nf(app.gridX,1,1)+", "+nf(app.gridY,1,1);
 
               rectMode(CENTER);
 
@@ -3980,11 +4217,11 @@ var factor=1.25;
               if(sz===0){
 
                 //~ horizontal
-                line(p.x, mouseY, mouseX-4,  mouseY);
-                line(mouseX+4,  mouseY, p.x+p.w, mouseY);
+                line(p.x,      mouseY, mouseX-4, mouseY);
+                line(mouseX+4, mouseY, p.x+p.w,  mouseY);
 
                 //~ vertical
-                line(mouseX, p.y, mouseX, mouseY-4);
+                line(mouseX, p.y,      mouseX, mouseY-4);
                 line(mouseX, mouseY+4, mouseX, p.y+p.h);
 
               }
@@ -4018,7 +4255,7 @@ var factor=1.25;
     };
     var drawTemp=function(){
 
-      if(p.hit){
+      //~ if(p.hit){
 
         switch(app.command){
 
@@ -4083,7 +4320,7 @@ var factor=1.25;
 
         };
 
-      }
+      //~ }
 
     };
     pushMatrix();
@@ -4102,7 +4339,6 @@ var factor=1.25;
           ticks();
           labels();
           origin();
-          crosshair();
 
         popStyle();
 
@@ -4110,6 +4346,7 @@ var factor=1.25;
 
     popMatrix();
 
+    crosshair();
     drawTemp();
 
     //~ for(var c in p.ctrls){ p.ctrls[c].draw() };
@@ -4179,9 +4416,6 @@ var factor=1.25;
 
   };
   grid.prototype.moved=function(x,y){
-
-    app.gridX=   (mouseX-this.x-this.w/2)*app.factor;
-    app.gridY=-1*(mouseY-this.y-this.h/2)*app.factor;
 
     if(mouseX>this.x && mouseX<this.x+this.w &&
        mouseY>this.y && mouseY<this.y+this.h){
@@ -4378,6 +4612,28 @@ var factor=1.25;
       process();
     }
 
+    switch(keyCode){
+
+      case KEYCODES.CONTROL &&
+           KEYCODES.Z:
+
+           commands(COMMANDS.UNDO[0]);
+           break;
+
+      case KEYCODES.F7:
+
+        commands(COMMANDS.SNAPTOGRID[0]);
+        break;
+
+      case KEYCODES.F8:
+
+        commands(COMMANDS.ORTHO[0]);
+        break;
+
+      default:  break;
+
+    }
+
     app.keys[keyCode]=true;
 
     //~ for(var c in app.ctrls){ app.ctrls[c].pressed(); }
@@ -4390,8 +4646,27 @@ var factor=1.25;
   };
   var keyTyped=function(){
 
-    if(app.keys[KEYCODES.CONTROL] &&
-       app.keys[KEYCODES.Z]){ commands(COMMANDS.UNDO[0]); }
+    switch(key){
+
+      case app.keys[KEYCODES.CONTROL] &&
+                     app.keys[KEYCODES.Z]:
+
+           commands(COMMANDS.UNDO[0]);
+           break;
+
+      case app.keys[KEYCODES.F7]:
+
+        commands(COMMANDS.SNAPTOGRID[0]);
+        break;
+
+      case app.keys[KEYCODES.F8]:
+
+        commands(COMMANDS.ORTHO[0]);
+        break;
+
+      default:  break;
+
+    }
 
     for(var c in app.ctrls){ app.ctrls[c].typed(); }
 
@@ -4457,7 +4732,7 @@ var factor=1.25;
     var w=36;
 
     var cn=new strip(
-            new propC(getGUID(), parent, 210, height-40, w+10, w, 1, true, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            new propC(getGUID(), parent, 210, 5, w+10, w, 1, true, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
 
@@ -4518,7 +4793,7 @@ var factor=1.25;
     var w=36;
 
     var cn=new strip(
-            new propC(getGUID(), parent, 625, height-40, w+10, w, 1, true, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            new propC(getGUID(), parent, 625, 5, w+10, w, 1, true, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
 
@@ -4667,7 +4942,7 @@ var factor=1.25;
     var w=36;
 
     var cn=new strip(
-            new propC(getGUID(), parent, 450, height-40, w+10, w, 1, true, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            new propC(getGUID(), parent, 450, 5, w+10, w, 1, true, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
 
@@ -5122,7 +5397,7 @@ var factor=1.25;
     var ctrls=[];
 
     var cn=new grid(
-            new propC(getGUID(), parent, 210, 5, parent.w-420, parent.h-50, 5, false, COMMANDS.UNDEF[0], 0),
+            new propC(getGUID(), parent, 210, 45, parent.w-420, parent.h-90, 5, false, COMMANDS.UNDEF[0], 0),
             new propL(getColor(CLRS.GRID,65), CLRS.GRID, CLRS.WHITE, CLRS.YELLOW, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
@@ -5617,11 +5892,27 @@ var factor=1.25;
     var ctrls=[];
     var top=30;
     var h=15;
+    var w=30;
 
     var cn=new container(
-            new propC(getGUID(), parent, parent.w/2-300, app.height-45, 600, 50, 2, false, COMMANDS.UNDEF[0],COMMANDS.FOOTER[1]),
+            new propC(getGUID(), parent, parent.w/2-300, app.height-40, 600, 50, 2, false, COMMANDS.UNDEF[0],COMMANDS.FOOTER[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TITLE));
+
+    ctrls.push(new buttonT(
+                new propC(getGUID(), cn, 5, 5, w, w, 0, false, COMMANDS.SNAPTOGRID[0], getColor(CLRS.GRAY,25)),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonT(
+                new propC(getGUID(), cn, 35, 5, w, w, 0, false, COMMANDS.ORTHO[0], COMMANDS.UNDEF[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new labelP(
+                new propC(getGUID(), cn, cn.w-10, 13, 10, 10, 0, false, COMMANDS.COORDINATES[0], COMMANDS.UNDEF[1]),
+                getStyle(STYLES.BUTTON),
+                new propA(CLRS.GRAY, CLRS.WHITE, RIGHT, CENTER, 12, 12)));
 
     cn.ctrls=ctrls;
 
@@ -5820,8 +6111,8 @@ var factor=1.25;
     //~ ctrls.push(getMeasure(cn));
 
     //~ ctrls.push(getHeader(cn));
-    //~ ctrls.push(getFooter(cn));
-    //~ ctrls.push(getProperties(cn));
+    ctrls.push(getFooter(cn));
+    ctrls.push(getProperties(cn));
     ctrls.push(getTelemetry(cn));
     //~ ctrls.push(getColors(cn));
 
