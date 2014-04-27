@@ -113,6 +113,45 @@ var proc = function(processingInstance){ with (processingInstance){
     CYCLE:      7
   };
 
+  var KEYCODES={
+    BACKSPACE:  8,
+    TAB:        9,
+    ENTER:      10,
+    RETURN:     13,
+    ESC:        27,
+    DELETE:     127,
+    CODED:      0xffff,
+    SHIFT:      16,
+    CONTROL:    17,
+    ALT:        18,
+    CAPSLK:     20,
+    SPACE:      32,
+    PGUP:       33,
+    PGDN:       34,
+    END:        35,
+    HOME:       36,
+    LEFT:       37,
+    UP:         38,
+    RIGHT:      39,
+    DOWN:       40,
+    F1:         112,
+    F2:         113,
+    F3:         114,
+    F4:         115,
+    F5:         116,
+    F6:         117,
+    SNAPTOGRID: 118,  //~ F7:
+    OTHO:       119,  //~ F8:
+    F9:         120,
+    F10:        121,
+    F11:        122,
+    F12:        123,
+    NUMLK:      144,
+    META:       157,
+    INSERT:     155,
+    Z:          90
+  };
+
   var COMMANDS={
 
 
@@ -147,8 +186,10 @@ var proc = function(processingInstance){ with (processingInstance){
 
     SPACER:       [  22,  'Spacer',           'SPACER'                ],
 
+    COMMAND:      [  23,  'Command',          'COMMAND'               ],
+
     //~ Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    GRID:         [ 100,  'Grid',             'COMMAND'               ],
+    GRID:         [ 100,  'Grid',             'GRID'                  ],
 
     ORIGIN:       [ 101,  'Origin',           'ORIGIN'                ],
     BORDER:       [ 102,  'Border',           'BORDER'                ],
@@ -169,8 +210,8 @@ var proc = function(processingInstance){ with (processingInstance){
     LABELSY:      [ 117,  'LabelsY',          'LABLESY'               ],
 
     COORDINATES:  [ 118,  'Coordinates',      'COORDINATES'           ],
-    ORTHO:        [ 119,  'LabelsX',          'LABELSX'               ],
-    SNAPTOGRID:   [ 120,  'LabelsY',          'LABLESY'               ],
+    ORTHO:        [ 119,  'LabelsX',          'LABELSX',  KEYCODES.ORTHO  ],
+    SNAPTOGRID:   [ 120,  'LabelsY',          'LABLESY',  KEYCODES.SNAPTOGRID  ],
     FULLSCREEN:   [ 121,  'Grid',             'COMMAND'               ],
 
 
@@ -245,7 +286,7 @@ var proc = function(processingInstance){ with (processingInstance){
     DISTANCE:     [ 701,  'Distance',         'DISTANCE'              ],
     PERIMETER:    [ 702,  'Perimeter',        'PERIMETER'             ],
     AREA:         [ 703,  'Area',             'AREA'                  ],
-    VOLUME:      [ 704,  'Volume',           'VOLUME'                ],
+    VOLUME:       [ 704,  'Volume',           'VOLUME'                ],
     RADIUS:       [ 705,  'Radius',           'RADIUS'                ],
     DIAMETER:     [ 706,  'Diamter',          'DIAMETER'              ],
     SLOPE:        [ 707,  'Slope',            'SLOPE'                 ],
@@ -383,7 +424,7 @@ var proc = function(processingInstance){ with (processingInstance){
   var app={
 
     width:          1350, //~screen.width,
-    height:         550,  //~ screen.height,
+    height:         600,  //~ screen.height,
 
     debug:          true,
     frameRate:      0,
@@ -3315,14 +3356,36 @@ var factor=1.25;
 
         switch(p.c){
 
+          case COMMANDS.GRID[0]:
+
+            noStroke();
+            strokeWeight(0.5);
+            stroke(CLRS.LINE);
+
+            for(var row=-8; row<=8; row+=4){
+              
+              line(d+cX-8,   d+cY+row, d+cX+8,   d+cY+row);
+              line(d+cX+row, d+cY-8,   d+cX+row, d+cY+8);
+              
+            }
+
+            noFill();
+            stroke(CLRS.LINE);
+            strokeWeight(1);
+
+            //~ line(d+cX-8, d+cY,   d+cX+9, d+cY);
+            //~ line(d+cX,   d+cY-9, d+cX,   d+cY+9);
+
+            break;
+
           case COMMANDS.SNAPTOGRID[0]:
 
             noStroke();
             strokeWeight(0);
             fill(CLRS.LINE);
 
-            for(var row=-10; row<15; row+=5){
-              for(var col=-10; col<15; col+=5){
+            for(var row=-8; row<9; row+=4){
+              for(var col=-8; col<9; col+=4){
                 ellipse(d+cX+col, d+cY+row, 1, 1);
               }
             }
@@ -3342,13 +3405,13 @@ var factor=1.25;
             stroke(CLRS.LINE);
             strokeWeight(1);
 
-            line(d+cX-10, d+cY+10, d+cX+10, d+cY+10);
-            line(d+cX-10, d+cY-10, d+cX-10, d+cY+10);
+            line(d+cX-8, d+cY+8, d+cX+8, d+cY+8);
+            line(d+cX-8, d+cY-8, d+cX-8, d+cY+8);
 
             strokeWeight(0.5);
 
-            line(d+cX-10, d+cY+4, d+cX-4, d+cY+4);
-            line(d+cX-4,  d+cY+4, d+cX-4, d+cY+10);
+            line(d+cX-8, d+cY+4, d+cX-4, d+cY+4);
+            line(d+cX-4, d+cY+4, d+cX-4, d+cY+8);
 
             break;
 
@@ -3389,6 +3452,7 @@ var factor=1.25;
           if(p.v){ fill(CLRS.Gray10); }
           //~ if(app.command===p.c){ fill(getColor(CLRS.GRAY,25)); }
 
+          //~ stroke(CLRS.WHITE);
           rect(d, d, p.w, p.h, p.r);
 
           switch(true){
@@ -3554,6 +3618,7 @@ var factor=1.25;
 
 
   };
+
   //~ Rotate
   var labelR=function(cp,lp,ap,ctrls){
     control.call(this,cp,lp,ap,ctrls);
@@ -3621,6 +3686,63 @@ var factor=1.25;
     }
 
   };
+
+  //~ TextBox ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  var textBox=function(cp,lp,ap,ctrls){
+    control.call(this,cp,lp,ap,ctrls);
+  };
+  textBox.prototype=Object.create(control.prototype);
+  textBox.prototype.draw=function(){
+
+    var p=this;
+    var d=0;
+
+    pushMatrix();
+
+      translate(p.x, p.y);
+
+        pushStyle();
+
+          textSize(p.size);
+          //~ p.w=textWidth(p.g);
+
+          fill(p.fill);
+          stroke(p.stroke);
+          strokeWeight(p.weight);
+
+          if(p.hit){
+
+            if(app.left){ d=1; }
+
+            fill(p.fillH);
+            stroke(p.strokeH);
+            strokeWeight(p.weightH);
+
+          }
+
+          if(p.alignX===LEFT)       {  rect(d, d, p.w, p.h, p.r);      }
+          else if(p.alignX===CENTER){ rect(d-p.w/2, d, p.w, p.h, p.r); }
+
+          fill(p.tfill);
+
+          textAlign(p.alignX,p.alignY);
+          textSize(p.size);
+
+          if(p.hit){
+            fill(p.tfillH);
+            //~ textSize(p.sizeH);
+          }
+
+          text(p.g, d+5, d+p.h/2);
+
+        popStyle();
+
+        for(var c in p.ctrls){ p.ctrls[c].draw() }
+
+    popMatrix();
+
+  };
+
 
   //~ Return property
   var checkbox=function(cp,lp,ap,ctrls){
@@ -4562,44 +4684,7 @@ var factor=1.25;
     process();
   };
 
-  var KEYCODES={
-    BACKSPACE:  8,
-    TAB:        9,
-    ENTER:      10,
-    RETURN:     13,
-    ESC:        27,
-    DELETE:     127,
-    CODED:      0xffff,
-    SHIFT:      16,
-    CONTROL:    17,
-    ALT:        18,
-    CAPSLK:     20,
-    SPACE:      32,
-    PGUP:       33,
-    PGDN:       34,
-    END:        35,
-    HOME:       36,
-    LEFT:       37,
-    UP:         38,
-    RIGHT:      39,
-    DOWN:       40,
-    F1:         112,
-    F2:         113,
-    F3:         114,
-    F4:         115,
-    F5:         116,
-    F6:         117,
-    F7:         118,
-    F8:         119,
-    F9:         120,
-    F10:        121,
-    F11:        122,
-    F12:        123,
-    NUMLK:      144,
-    META:       157,
-    INSERT:     155,
-    Z:          90
-  };
+
 
   var keyPressed=function(){
 
@@ -4620,12 +4705,12 @@ var factor=1.25;
            commands(COMMANDS.UNDO[0]);
            break;
 
-      case KEYCODES.F7:
+      case KEYCODES.SNAPTOGRID: //~ F7
 
         commands(COMMANDS.SNAPTOGRID[0]);
         break;
 
-      case KEYCODES.F8:
+      case KEYCODES.ORTHO:      //~ F8
 
         commands(COMMANDS.ORTHO[0]);
         break;
@@ -5397,7 +5482,7 @@ var factor=1.25;
     var ctrls=[];
 
     var cn=new grid(
-            new propC(getGUID(), parent, 210, 45, parent.w-420, parent.h-90, 5, false, COMMANDS.UNDEF[0], 0),
+            new propC(getGUID(), parent, 210, 45, parent.w-420, parent.h-80, 5, false, COMMANDS.UNDEF[0], 0),
             new propL(getColor(CLRS.GRID,65), CLRS.GRID, CLRS.WHITE, CLRS.YELLOW, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
@@ -5890,27 +5975,42 @@ var factor=1.25;
   var getFooter=function(parent){
 
     var ctrls=[];
-    var top=30;
+    var top=28;
     var h=15;
-    var w=30;
+    var w=24;
 
     var cn=new container(
-            new propC(getGUID(), parent, parent.w/2-300, app.height-40, 600, 50, 2, false, COMMANDS.UNDEF[0],COMMANDS.FOOTER[1]),
+            new propC(getGUID(), parent, parent.w/2-300, app.height-30, 600, 34, 2, false, COMMANDS.UNDEF[0],COMMANDS.FOOTER[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TITLE));
 
+    ctrls.push(new label(
+                new propC(getGUID(), cn, 100, 3, w, w, 0, false, COMMANDS.COMMAND[0], COMMANDS.COMMAND[1]+":"),
+                getStyle(STYLES.BUTTON),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 12, 12)));
+
+    ctrls.push(new textBox(
+                new propC(getGUID(), cn, 180, 3, 340, 24, 0, false, COMMANDS.SNAPTOGRID[0], getColor(CLRS.GRAY,25)),
+                new propL(CLRS.Gray8, CLRS.GRAY, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
+                getStyle(STYLES.TEXT)));
+
     ctrls.push(new buttonT(
-                new propC(getGUID(), cn, 5, 5, w, w, 0, false, COMMANDS.SNAPTOGRID[0], getColor(CLRS.GRAY,25)),
+                new propC(getGUID(), cn, 3, 3, w, w, 0, false, COMMANDS.SNAPTOGRID[0], getColor(CLRS.GRAY,25)),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonT(
-                new propC(getGUID(), cn, 35, 5, w, w, 0, false, COMMANDS.ORTHO[0], COMMANDS.UNDEF[1]),
+                new propC(getGUID(), cn, 27, 3, w, w, 0, false, COMMANDS.ORTHO[0], COMMANDS.UNDEF[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
+    ctrls.push(new buttonT(
+                new propC(getGUID(), cn, 51, 3, w, w, 0, false, COMMANDS.GRID[0], COMMANDS.UNDEF[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+                
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, cn.w-10, 13, 10, 10, 0, false, COMMANDS.COORDINATES[0], COMMANDS.UNDEF[1]),
+                new propC(getGUID(), cn, cn.w-10, 9, 10, 10, 0, false, COMMANDS.COORDINATES[0], COMMANDS.UNDEF[1]),
                 getStyle(STYLES.BUTTON),
                 new propA(CLRS.GRAY, CLRS.WHITE, RIGHT, CENTER, 12, 12)));
 
