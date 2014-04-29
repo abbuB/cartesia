@@ -464,14 +464,14 @@ var proc = function(processingInstance){ with (processingInstance){
     stroke:         getColor(CLRS.Yellow,100),
     strokeH:        getColor(CLRS.GREEN,25),
 
-    pSize:             5,
+    pSize:          5,
 
     layer:          8,
 
     linetype:       LINETYPES.HAIRLINE,
     lineweight:     0.75,
 
-    command:        COMMANDS.P_DEFAULT[0],
+    command:        COMMANDS.L_2P[0],
 
     border:         true,
     origin:         true,
@@ -489,7 +489,7 @@ var proc = function(processingInstance){ with (processingInstance){
 
     coordinates:    false,
     ortho:          false,
-    snaptogrid:     false,
+    snaptogrid:     true,
     fullscreen:     false,
 
     cursorSize:     0,
@@ -497,7 +497,7 @@ var proc = function(processingInstance){ with (processingInstance){
     ctrls:          [],
     shapes:         [],
 
-    factor:     0
+    factor:         0
 
     //~ points:         []
 
@@ -550,8 +550,8 @@ var proc = function(processingInstance){ with (processingInstance){
       case COMMANDS.HEIGHT[0]:      return app.height;
       case COMMANDS.FRAMERATE[0]:   return app.frameRate;
       case COMMANDS.FRAMERATEA[0]:  return __frameRate;
-      case COMMANDS.MOUSEX[0]:      return app.gridX;     //~app.mouseX;
-      case COMMANDS.MOUSEY[0]:      return app.gridY;     //~app.mouseY;
+      case COMMANDS.MOUSEX[0]:      return app.mouseX;
+      case COMMANDS.MOUSEY[0]:      return app.mouseY;
       case COMMANDS.PRESSED[0]:     return app.left;
 
       case COMMANDS.COLOR[0]:       return app.stroke;
@@ -712,16 +712,17 @@ var factor=1.25;
       pushMatrix();
 
         //~ resetMatrix();
-
+        scale(1,-1);
+        
           fill(CLRS.GRAY);
           textAlign(LEFT,CENTER);
           textFont(createFont('monospace'));
 
           textSize(9);
-          text("rise:     " + p.deltaX,         p.points[0].x+10, p.points[0].y+5);
-          text("run:      " + p.deltaY,         p.points[0].x+10, p.points[0].y+15);
-          text("slope:    " + nf(p.slope,1,2),  p.points[0].x+10, p.points[0].y+25);
-          text("length:   " + nf(p.length,1,2), p.points[0].x+10, p.points[0].y+35);
+          text("rise:     " + p.deltaX,         p.points[0].x/app.factor+10, -1*p.points[0].y/app.factor+5);
+          text("run:      " + p.deltaY,         p.points[0].x/app.factor+10, -1*p.points[0].y/app.factor+15);
+          text("slope:    " + nf(p.slope,1,2),  p.points[0].x/app.factor+10, -1*p.points[0].y/app.factor+25);
+          text("length:   " + nf(p.length,1,2), p.points[0].x/app.factor+10, -1*p.points[0].y/app.factor+35);
 
       popMatrix();
 
@@ -851,15 +852,18 @@ var factor=1.25;
 
       if(p.SELECTED){ strokeWeight(p.lineweight*2); }
 
-      line(p.points[0].x, p.points[0].y, p.points[1].x, p.points[1].y);
+      line(p.points[0].x/app.factor, p.points[0].y/app.factor,
+           p.points[1].x/app.factor, p.points[1].y/app.factor);
 
       fill(p.fill);
       noStroke();
       strokeWeight(0);
 
-      for(var n in p.points){
-        ellipse(p.points[n].x, p.points[n].y, sz, sz);
-      }
+      //~ for(var n in p.points){
+        //~ ellipse(p.points[n].x/app.factor,
+                //~ p.points[n].y/app.factor,
+                //~ sz, sz);
+      //~ }
 
       if(p.hit){ meta(); }
 
@@ -872,12 +876,12 @@ var factor=1.25;
 
     for(var n in this.points){
 
-      if(dist(mouseX, mouseY,
-              this.points[n].x, this.points[n].y)<this.w){
+      if(dist(app.gridx, app.gridy,
+              this.points[n].x/app.factor, this.points[n].y/app.factor)<this.w){
 
         this.hitP[n]=true;
-        mouseX=this.points[n].x;
-        mouseY=this.points[n].y;
+        mouseX=this.points[n].x/app.factor;
+        mouseY=this.points[n].y/app.factor;
 
       }
       else{
@@ -886,8 +890,8 @@ var factor=1.25;
 
     }
 
-    if(dist(mouseX, mouseY, this.points[0].x, this.points[0].y)+
-       dist(mouseX, mouseY, this.points[1].x, this.points[1].y)<
+    if(dist(mouseX, mouseY, this.points[0].x/app.factor, this.points[0].y/app.factor)+
+       dist(mouseX, mouseY, this.points[1].x/app.factor, this.points[1].y/app.factor)<
        dist(this.points[0].x, this.points[0].y, this.points[1].x, this.points[1].y)+1){
 
       tmp=true;
@@ -1082,7 +1086,19 @@ var factor=1.25;
       case COMMANDS.AXES[0]:                                          break;
       case COMMANDS.AXISX[0]:       app.axisx=!app.axisx;             break;
       case COMMANDS.AXISY[0]:       app.axisy=!app.axisy;             break;
-      case COMMANDS.LINES[0]:                                         break;
+      case COMMANDS.LINES[0]:
+
+        if(app.linesx || app.linesy){
+          app.linesx=false;
+          app.linesy=false;
+        }
+        else{
+          app.linesx=true;
+          app.linesy=true;
+        }
+
+        break;
+
       case COMMANDS.LINESX[0]:      app.linesx=!app.linesx;           break;
       case COMMANDS.LINESY[0]:      app.linesy=!app.linesy;           break;
       case COMMANDS.ARROWS[0]:                                        break;
@@ -3356,25 +3372,20 @@ var factor=1.25;
 
         switch(p.c){
 
-          case COMMANDS.GRID[0]:
+          case COMMANDS.LINES[0]:
 
             noStroke();
             strokeWeight(0.5);
             stroke(CLRS.LINE);
 
+            if(p.v){ stroke(CLRS.LINEH); }
+
             for(var row=-8; row<=8; row+=4){
-              
-              line(d+cX-8,   d+cY+row, d+cX+8,   d+cY+row);
-              line(d+cX+row, d+cY-8,   d+cX+row, d+cY+8);
-              
+
+              line(d+cX-9,   d+cY+row, d+cX+9,   d+cY+row);
+              line(d+cX+row, d+cY-9,   d+cX+row, d+cY+9);
+
             }
-
-            noFill();
-            stroke(CLRS.LINE);
-            strokeWeight(1);
-
-            //~ line(d+cX-8, d+cY,   d+cX+9, d+cY);
-            //~ line(d+cX,   d+cY-9, d+cX,   d+cY+9);
 
             break;
 
@@ -3394,6 +3405,8 @@ var factor=1.25;
             stroke(CLRS.LINE);
             strokeWeight(1);
 
+            if(p.v){ stroke(CLRS.LINEH); }
+
             line(d+cX-8, d+cY,   d+cX+9, d+cY);
             line(d+cX,   d+cY-9, d+cX,   d+cY+9);
 
@@ -3404,6 +3417,8 @@ var factor=1.25;
             noFill();
             stroke(CLRS.LINE);
             strokeWeight(1);
+
+            if(p.v){ stroke(CLRS.LINEH); }
 
             line(d+cX-8, d+cY+8, d+cX+8, d+cY+8);
             line(d+cX-8, d+cY-8, d+cX-8, d+cY+8);
@@ -4160,8 +4175,6 @@ var factor=1.25;
 
       pushStyle();
 
-
-
           fill(p.fill);
           stroke(p.stroke);
           strokeWeight(p.weight);
@@ -4209,7 +4222,7 @@ var factor=1.25;
       strokeWeight(0.25);
 
       if(app.linesx){
-        for(var n=1; n<p.w/2/incr; n++){
+        for(var n=1; n<p.w/2*app.factor; n++){
 
           if(n%5===0){ strokeWeight(0.75);  }
           else       { strokeWeight(0.25); }
@@ -4221,7 +4234,7 @@ var factor=1.25;
       }
       if(app.linesy){
 
-      for(var n=1; n<p.h/2/incr; n++){
+      for(var n=1; n<p.h/2*app.factor; n++){
 
           if(n%5===0){ strokeWeight(0.75);  }
           else       { strokeWeight(0.25); }
@@ -4322,19 +4335,17 @@ var factor=1.25;
             resetMatrix();
             translate(0.5, 0.5);
 
-              if(app.snaptogrid){
-                mouseX-=mouseX%incr-(p.x+p.w/2)%incr;
-                mouseY-=mouseY%incr-(p.y+p.h/2)%incr;
-              }
 
-              app.gridX=   (mouseX-p.x-p.w/2)*app.factor;
-              app.gridY=-1*(mouseY-p.y-p.h/2)*app.factor;
+
+              //~ app.gridX=   (mouseX-p.x-p.w/2)*app.factor;
+              //~ app.gridY=-1*(mouseY-p.y-p.h/2)*app.factor;
 
               app.coordinates=nf(app.gridX,1,1)+", "+nf(app.gridY,1,1);
 
               rectMode(CENTER);
 
-              stroke(app.color);
+              stroke(CLRS.White);
+              strokeWeight(0.25);
 
               if(sz===0){
 
@@ -4394,14 +4405,18 @@ var factor=1.25;
               stroke(app.stroke);
               strokeWeight(app.lineweight);
 
-              line(mouseX, mouseY, p.points[0].x, p.points[0].y);
+              line(mouseX, mouseY,
+                   p.points[0].x,
+                   p.points[0].y);
 
               fill(app.fill);
               noStroke();
               strokeWeight(0);
 
-              ellipse(p.points[0].x, p.points[0].y, app.pSize, app.pSize);
-              ellipse(mouseX,          mouseY,      app.pSize, app.pSize);
+              ellipse(p.points[0].x, p.points[0].y,
+                      app.pSize, app.pSize);
+              ellipse(mouseX, mouseY,
+                      app.pSize, app.pSize);
 
             }
 
@@ -4480,9 +4495,6 @@ var factor=1.25;
 
       pushMatrix();
 
-        translate(this.x+this.w/2+0.5, this.y+this.h/2+0.5);
-        scale(1,-1);
-
         var _x=app.gridX;
         var _y=app.gridY;
 
@@ -4500,10 +4512,18 @@ var factor=1.25;
           case COMMANDS.L_2P[0]:  //~ Line 2 point
 
             if(this.points.length===0){
-              this.points.push(new pt(mouseX,mouseY));
+              this.points.push(new pt(mouseX, mouseY));
             }
             else if(this.points.length===1){
-              this.points.push(new pt(mouseX,mouseY));
+
+                this.points[0].x=   (this.points[0].x-this.x-this.w/2)*app.factor;
+                this.points[0].y=-1*(this.points[0].y-this.y-this.h/2)*app.factor;
+
+                this.points.push(new pt((    mouseX-this.x-this.w/2)*app.factor,
+                                         -1*(mouseY-this.y-this.h/2)*app.factor));
+
+                //~ this.points.push(new pt(_x, _y));
+
               app.shapes.push(new Line(new propS(getGUID(),this.points)));
               this.points=[];
             }
@@ -4513,17 +4533,18 @@ var factor=1.25;
           case COMMANDS.C_CENTERP[0]:  //~ Circle: Center-Point
 
             if(this.points.length===0){
-              this.points.push(new pt(_x,_y));
+              this.points.push(new pt(mouseX, mouseY));
             }
             else if(this.points.length===1){
 
-              println(this.points[0].y);
-              this.points.push(new pt(_x,_y));
+                this.points[0].x=   (this.points[0].x-this.x-this.w/2)*app.factor;
+                this.points[0].y=-1*(this.points[0].y-this.y-this.h/2)*app.factor;
+
+                this.points.push(new pt((    mouseX-this.x-this.w/2)*app.factor,
+                                         -1*(mouseY-this.y-this.h/2)*app.factor));
 
               app.shapes.push(new Circle(new propS(getGUID(),this.points)));
-
               this.points=[];
-
             }
 
             break;
@@ -4542,7 +4563,17 @@ var factor=1.25;
     if(mouseX>this.x && mouseX<this.x+this.w &&
        mouseY>this.y && mouseY<this.y+this.h){
 
+      if(app.snaptogrid){
+        var incr=(1/app.factor);
+        mouseX-=mouseX%incr-(this.x+this.w/2)%incr;
+        mouseY-=mouseY%incr-(this.y+this.h/2)%incr;
+      }
+
+      app.gridX=   (mouseX-this.x-this.w/2)*app.factor;
+      app.gridY=-1*(mouseY-this.y-this.h/2)*app.factor;
+
       this.hit=true;
+
       app.focus=this.i;
 
       for(var s in app.shapes){ app.shapes[s].moved(x,y); }
@@ -4599,6 +4630,10 @@ var factor=1.25;
     //~ frameRate(app.frameRate);
 
     for(var c in app.ctrls){ app.ctrls[c].draw() }
+
+    //~ text(modelX(mouseX,mouseY,0), 100, 400);
+
+    text(app.factor, 100, 400);
 
   };
 
@@ -6005,10 +6040,10 @@ var factor=1.25;
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonT(
-                new propC(getGUID(), cn, 51, 3, w, w, 0, false, COMMANDS.GRID[0], COMMANDS.UNDEF[1]),
+                new propC(getGUID(), cn, 51, 3, w, w, 0, false, COMMANDS.LINES[0], COMMANDS.UNDEF[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
-                
+
     ctrls.push(new labelP(
                 new propC(getGUID(), cn, cn.w-10, 9, 10, 10, 0, false, COMMANDS.COORDINATES[0], COMMANDS.UNDEF[1]),
                 getStyle(STYLES.BUTTON),
