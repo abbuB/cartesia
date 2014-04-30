@@ -471,7 +471,7 @@ var proc = function(processingInstance){ with (processingInstance){
     linetype:       LINETYPES.HAIRLINE,
     lineweight:     0.75,
 
-    command:        COMMANDS.L_2P[0],
+    command:        COMMANDS.P_DEFAULT[0],
 
     border:         true,
     origin:         true,
@@ -495,7 +495,7 @@ var proc = function(processingInstance){ with (processingInstance){
     cursorSize:     0,
 
     ctrls:          [],
-    shapes:         [],
+    //~ shapes:         [],
 
     factor:         0
 
@@ -638,11 +638,14 @@ var proc = function(processingInstance){ with (processingInstance){
     this.hit=false;
 
     this.i=           p.i;
-
+    this.parent=      p.parent;
     this.points=      p.points;
 
-    this.x=           p.x;
-    this.y=           p.y;
+    this.xG=          p.x;
+    this.yG=          p.y;
+
+    this.xM=          p.xM;
+    this.yM=          p.yM;
 
     this.w=           app.pSize;
     this.h=           app.pSize;
@@ -698,6 +701,10 @@ var factor=1.25;
   //~ Point ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var Point=function(p){
     Shape.call(this, p);
+    this.xG=p.x;
+    this.yG=p.y;
+    this.xM=p.x/app.factor;
+    this.yM=p.y/app.factor;
   };
   Point.prototype=Object.create(Shape.prototype);
   Point.prototype.draw=function(){
@@ -719,10 +726,10 @@ var factor=1.25;
           textFont(createFont('monospace'));
 
           textSize(9);
-          text("rise:     " + p.deltaX,         p.points[0].x/app.factor+10, -1*p.points[0].y/app.factor+5);
-          text("run:      " + p.deltaY,         p.points[0].x/app.factor+10, -1*p.points[0].y/app.factor+15);
-          text("slope:    " + nf(p.slope,1,2),  p.points[0].x/app.factor+10, -1*p.points[0].y/app.factor+25);
-          text("length:   " + nf(p.length,1,2), p.points[0].x/app.factor+10, -1*p.points[0].y/app.factor+35);
+          text("xG: " + nf(p.xG,1,2), p.xG/app.factor+10, -1*p.yG/app.factor+5);
+          text("yG: " + nf(p.yG,1,2), p.xG/app.factor+10, -1*p.yG/app.factor+15);
+          text("xW: " + nf(p.xM,1,2), p.xG/app.factor+10, -1*p.yG/app.factor+25);
+          text("yW: " + nf(p.yM,1,2), p.xG/app.factor+10, -1*p.yG/app.factor+35);
 
       popMatrix();
 
@@ -745,23 +752,24 @@ var factor=1.25;
       strokeWeight(0);
 
       //~ for(var n in p.points){
-        ellipse(p.points[0].x/app.factor, p.points[0].y/app.factor, sz, sz);
+        ellipse(p.xG/app.factor, p.yG/app.factor, sz, sz);
       //~ }
 
-      if(p.hit){ meta(); }
+      if(p.hit){
+        meta();
+      }
 
     popStyle();
 
   };
   Point.prototype.moved=function(x,y){
 
-    if(dist(app.gridX,
-            app.gridY,
-            this.points[0].x,
-            this.points[0].y)<app.pSize*app.factor){
+    if(dist(this.parent.cursorX, this.parent.cursorY,
+            this.xG, this.yG)<app.pSize*app.factor){
       this.hit=true;
-      //~ mouseX=this.points[0].x;
-      //~ mouseY=this.points[0].y;
+      mouseX=this.xM+this.parent.x+this.parent.w/2;
+      mouseY=-1*this.yM+this.parent.y+this.parent.h/2;
+      println(mouseX);
     }
     else{
       this.hit=false;
@@ -786,9 +794,10 @@ var factor=1.25;
 
   //~ Line ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var Line=function(p){
-
-    p.points.push(new pt((p.points[0].x+p.points[1].x)/2,
-                       (p.points[0].y+p.points[1].y)/2));
+//~ println(p.points.length);
+    //~ p.points.push(new Point(getGUID,this,
+                            //~ (p.points[0].xG+p.points[1].xG)/2,
+                            //~ (p.points[0].yG+p.points[1].yG)/2));
 
     Shape.call(this,p);
 
@@ -801,13 +810,13 @@ var factor=1.25;
 
     this.recalc=function(){
 
-      this.deltaX=abs(this.points[1].x-this.points[0].x);
-      this.deltaY=abs(this.points[1].y-this.points[0].y);
-      this.length=dist(this.points[0].x, this.points[0].y, this.points[1].x, this.points[1].y);
-      this.points[2].x=(this.points[0].x+this.points[1].x)/2;
-      this.points[2].y=(this.points[0].y+this.points[1].y)/2;
-      if(this.deltaX===0){ this.slope=-0;                 }
-      else               { this.slope=-1*(this.points[1].y-this.points[0].y)/(this.points[1].x-this.points[0].x); }
+      //~ this.deltaX=abs(this.points[1].xG-this.points[0].xG);
+      //~ this.deltaY=abs(this.points[1].y-this.points[0].y);
+      //~ this.length=dist(this.points[0].x, this.points[0].y, this.points[1].x, this.points[1].y);
+      //~ this.points[2].x=(this.points[0].x+this.points[1].x)/2;
+      //~ this.points[2].y=(this.points[0].y+this.points[1].y)/2;
+      //~ if(this.deltaX===0){ this.slope=-0;                 }
+      //~ else               { this.slope=-1*(this.points[1].y-this.points[0].y)/(this.points[1].x-this.points[0].x); }
 
     };
 
@@ -852,18 +861,16 @@ var factor=1.25;
 
       if(p.SELECTED){ strokeWeight(p.lineweight*2); }
 
-      line(p.points[0].x/app.factor, p.points[0].y/app.factor,
-           p.points[1].x/app.factor, p.points[1].y/app.factor);
+      line(p.points[0].xG/app.factor, p.points[0].yG/app.factor,
+           p.points[1].xG/app.factor, p.points[1].yG/app.factor);
 
       fill(p.fill);
       noStroke();
       strokeWeight(0);
 
-      //~ for(var n in p.points){
-        //~ ellipse(p.points[n].x/app.factor,
-                //~ p.points[n].y/app.factor,
-                //~ sz, sz);
-      //~ }
+      for(var n in p.points){
+        p.points[n].draw();
+      }
 
       if(p.hit){ meta(); }
 
@@ -876,25 +883,27 @@ var factor=1.25;
 
     for(var n in this.points){
 
-      if(dist(app.gridx, app.gridy,
-              this.points[n].x/app.factor, this.points[n].y/app.factor)<this.w){
+      this.points[n].moved(x,y);
 
-        this.hitP[n]=true;
-        mouseX=this.points[n].x/app.factor;
-        mouseY=this.points[n].y/app.factor;
-
-      }
-      else{
-        this.hitP[n]=false;
-      }
-
-    }
-
-    if(dist(mouseX, mouseY, this.points[0].x/app.factor, this.points[0].y/app.factor)+
-       dist(mouseX, mouseY, this.points[1].x/app.factor, this.points[1].y/app.factor)<
-       dist(this.points[0].x, this.points[0].y, this.points[1].x, this.points[1].y)+1){
-
-      tmp=true;
+      //~ if(dist(this.parent.cursorX, this.parent.cursorY,
+              //~ this.xG, this.yG)<app.pSize*app.factor){
+//~ 
+        //~ this.hitP[n]=true;
+        //~ mouseX=this.xM+this.parent.x+this.parent.w/2;
+        //~ mouseY=-1*this.yM+this.parent.y+this.parent.h/2;
+//~ 
+      //~ }
+      //~ else{
+        //~ this.hitP[n]=false;
+      //~ }
+//~ 
+    //~ }
+//~ 
+    //~ if(dist(mouseX, mouseY, this.points[0].x/app.factor, this.points[0].y/app.factor)+
+       //~ dist(mouseX, mouseY, this.points[1].x/app.factor, this.points[1].y/app.factor)<
+       //~ dist(this.points[0].x, this.points[0].y, this.points[1].x, this.points[1].y)+1){
+//~ 
+      //~ tmp=true;
 
     }
 
@@ -1173,8 +1182,8 @@ var factor=1.25;
 
       case c===COMMANDS.UNDO[0]:
 
-          app.shapes.splice(app.shapes.length-1,1);
-          process();
+          //~ this.shapes.splice(this.shapes.length-1,1);
+          //~ process();
           break;
 
       //~ case COMMANDS.RECTANGLE[0]: println('Rectangle');         break;
@@ -1230,14 +1239,14 @@ var factor=1.25;
 
   };
 
-  var propS=function(i,points){
+  var propS=function(i,p,points){
 
     this.i=           i;
+    this.parent=      p;
+    this.points=      points;
 
-    this.points=        points;
-
-    //~ this.x=                 points[0].x;
-    //~ this.y=                 points[0].y;
+    //~ this.x=           points[0].x;
+    //~ this.y=           points[0].y;
 
     this.w=           2;
     this.h=           2;
@@ -1254,7 +1263,30 @@ var factor=1.25;
     this.lineweightH= app.lineweightH;
 
   };
+  var propP=function(i,p,x,y){
 
+    this.i=           i;
+    this.parent=      p;
+
+    this.x=           x;
+    this.y=           y;
+
+    this.w=           2;
+    this.h=           2;
+
+    this.fill=        app.fill;
+    this.fillH=       app.fillH;
+    this.stroke=      app.stroke;
+    this.strokeH=     app.strokeH;
+
+    this.layer=       app.layer;
+    this.linetype=    app.linetype;
+
+    this.lineweight=  app.lineweight;
+    this.lineweightH= app.lineweightH;
+
+  };
+  
   //~ Controls =========================================================
   var control=function(cp,lp,ap,ctrls){
 
@@ -4156,11 +4188,21 @@ var factor=1.25;
 
   //~ Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var grid=function(cp,lp,ap,ctrls){
+
     control.call(this,cp,lp,ap,ctrls);
-    app.factor=22/this.h;
-    println(app.factor+","+this.h);
+
+    app.factor=30/this.h;
+
+    println(app.factor+", "+this.h);
+
     this.points=[];
     this.ortho=false;
+
+    this.cursorX=mouseX;
+    this.cursorY=mouseY;
+
+    this.shapes=[];
+
   };
   grid.prototype=Object.create(control.prototype);
   grid.prototype.draw=function(){
@@ -4335,12 +4377,10 @@ var factor=1.25;
             resetMatrix();
             translate(0.5, 0.5);
 
-
-
               //~ app.gridX=   (mouseX-p.x-p.w/2)*app.factor;
               //~ app.gridY=-1*(mouseY-p.y-p.h/2)*app.factor;
 
-              app.coordinates=nf(app.gridX,1,1)+", "+nf(app.gridY,1,1);
+              app.coordinates=nf(this.cursorX,1,1)+", "+nf(this.cursorY,1,1);
 
               rectMode(CENTER);
 
@@ -4479,7 +4519,7 @@ var factor=1.25;
 
         popStyle();
 
-      for(var s in app.shapes){ app.shapes[s].draw() };
+      for(var s in this.shapes){ this.shapes[s].draw() };
 
     popMatrix();
 
@@ -4491,21 +4531,23 @@ var factor=1.25;
   };
   grid.prototype.clicked=function(){
 
+    //~ var convertX=function(x){
+      //~ return (x-this.x-this.w/2)*app.factor;
+    //~ };
+    //~ var convertY=function(y){
+      //~ return -1*(y-this.y-this.h/2)*app.factor;
+    //~ };    
     if(this.hit){
 
       pushMatrix();
-
-        var _x=app.gridX;
-        var _y=app.gridY;
 
         switch(app.command){
 
           case COMMANDS.P_DEFAULT[0]: //~ Point
 
-            this.points.push(new pt(_x, _y));
-            app.shapes.push(new Point(new propS(getGUID(),this.points)));
-
-            this.points=[];
+            this.shapes.push(
+              new Point(
+                new propP(getGUID(),this,this.cursorX,this.cursorY)));
 
             break;
 
@@ -4516,16 +4558,22 @@ var factor=1.25;
             }
             else if(this.points.length===1){
 
-                this.points[0].x=   (this.points[0].x-this.x-this.w/2)*app.factor;
-                this.points[0].y=-1*(this.points[0].y-this.y-this.h/2)*app.factor;
+              var L=new Line(new propS(getGUID(),this));
 
-                this.points.push(new pt((    mouseX-this.x-this.w/2)*app.factor,
-                                         -1*(mouseY-this.y-this.h/2)*app.factor));
+              var x=   (this.points[0].x-this.x-this.w/2)*app.factor;
+              var y=-1*(this.points[0].y-this.y-this.h/2)*app.factor;
+              //~ var x=convertX(this.points[0].x);
+              //~ var y=convertY(this.points[0].y);
 
-                //~ this.points.push(new pt(_x, _y));
+              this.points[0]=new Point(new propP(getGUID(), this, x, y));
+              this.points.push(new Point(new propP(getGUID(), this, this.cursorX, this.cursorY)));
 
-              app.shapes.push(new Line(new propS(getGUID(),this.points)));
+              L.points=this.points;
+
+              this.shapes.push(L);
+
               this.points=[];
+
             }
 
             break;
@@ -4543,7 +4591,7 @@ var factor=1.25;
                 this.points.push(new pt((    mouseX-this.x-this.w/2)*app.factor,
                                          -1*(mouseY-this.y-this.h/2)*app.factor));
 
-              app.shapes.push(new Circle(new propS(getGUID(),this.points)));
+              this.shapes.push(new Circle(new propS(getGUID(),this,this.points)));
               this.points=[];
             }
 
@@ -4569,14 +4617,14 @@ var factor=1.25;
         mouseY-=mouseY%incr-(this.y+this.h/2)%incr;
       }
 
-      app.gridX=   (mouseX-this.x-this.w/2)*app.factor;
-      app.gridY=-1*(mouseY-this.y-this.h/2)*app.factor;
+      this.cursorX=   (mouseX-this.x-this.w/2)*app.factor;
+      this.cursorY=-1*(mouseY-this.y-this.h/2)*app.factor;
 
       this.hit=true;
 
       app.focus=this.i;
 
-      for(var s in app.shapes){ app.shapes[s].moved(x,y); }
+      for(var s in this.shapes){ this.shapes[s].moved(x,y); }
 
     }
     else{
@@ -4585,33 +4633,39 @@ var factor=1.25;
 
   };
   grid.prototype.dragged=function(x,y){
-    for(var s in app.shapes){ app.shapes[s].dragged(); }
+    for(var s in this.shapes){ this.shapes[s].dragged(); }
   };
   grid.prototype.typed=function(){
 
     if(app.keys[KEYCODES.SPACE]){
       this.points=[];
-    };
+    }
+
+    if(app.keys[KEYCODES.CONTROL] &&
+      app.keys[KEYCODES.Z]){
+      this.shapes.splice(this.shapes.length-1,1);
+      process();
+    }
 
   };
-  //~ if(app.shapes.length>0){
+  //~ if(this.shapes.length>0){
 
-      //~ println(app.shapes.length);
-      //~ println("GUID " + app.shapes[0].i);
-      //~ println("points: " + app.shapes[0].points);
-      //~ println("x: "+ app.shapes[0].x);
-      //~ println("y: "+ app.shapes[0].y);
-      //~ println("w: "+ app.shapes[0].w);
-      //~ println("h: "+ app.shapes[0].h);
+      //~ println(this.shapes.length);
+      //~ println("GUID " + this.shapes[0].i);
+      //~ println("points: " + this.shapes[0].points);
+      //~ println("x: "+ this.shapes[0].x);
+      //~ println("y: "+ this.shapes[0].y);
+      //~ println("w: "+ this.shapes[0].w);
+      //~ println("h: "+ this.shapes[0].h);
 
-      //~ println("fill: "+ app.shapes[0].f);
-      //~ println("fillH: "+ app.shapes[0].fH);
-      //~ println("stroke: "+ app.shapes[0].s);
-      //~ println("strokeH: "+ app.shapes[0].sH);
-      //~ println("layer: "+ app.shapes[0].layer);
-      //~ println("LineType: "+ app.shapes[0].linetype);
-      //~ println("LineWeight: "+ app.shapes[0].lineweight);
-      //~ println("LineType: "+ app.shapes[0].linetype);
+      //~ println("fill: "+ this.shapes[0].f);
+      //~ println("fillH: "+ this.shapes[0].fH);
+      //~ println("stroke: "+ this.shapes[0].s);
+      //~ println("strokeH: "+ this.shapes[0].sH);
+      //~ println("layer: "+ this.shapes[0].layer);
+      //~ println("LineType: "+ this.shapes[0].linetype);
+      //~ println("LineWeight: "+ this.shapes[0].lineweight);
+      //~ println("LineType: "+ this.shapes[0].linetype);
 
     //~ }
 
@@ -4651,7 +4705,7 @@ var factor=1.25;
       case LEFT:
 
         for(var c in app.ctrls){ app.ctrls[c].clicked(); }
-        for(var c in app.shapes){ app.shapes[c].clicked(); }
+        //~ for(var c in this.shapes){ this.shapes[c].clicked(); }
         break;
 
       case RIGHT:
@@ -4675,13 +4729,11 @@ var factor=1.25;
     app.mouseX=mouseX;
     app.mouseY=mouseY;
     for(var c in app.ctrls){ app.ctrls[c].moved(0,0); }
-    for(var s in app.shapes){ app.shapes[s].moved(0,0); }
     process();
   };
   var mouseDragged=function(){
     //~ app.left=true;
     for(var c in app.ctrls) { app.ctrls[c].dragged(); }
-    for(var s in app.shapes){ app.shapes[s].dragged(); }
     process();
   };
   var mousePressed=function(){
@@ -4769,9 +4821,9 @@ var factor=1.25;
     switch(key){
 
       case app.keys[KEYCODES.CONTROL] &&
-                     app.keys[KEYCODES.Z]:
+           app.keys[KEYCODES.Z]:
 
-           commands(COMMANDS.UNDO[0]);
+           //~ commands(COMMANDS.UNDO[0]);
            break;
 
       case app.keys[KEYCODES.F7]:
