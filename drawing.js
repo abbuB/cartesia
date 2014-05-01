@@ -437,6 +437,9 @@ var proc = function(processingInstance){ with (processingInstance){
     gridX:          0,
     gridY:          0,
 
+    worldX:         0,
+    worldY:         0,
+
     //~ mousePressed:   0,
 
     left:           false,
@@ -686,8 +689,8 @@ var proc = function(processingInstance){ with (processingInstance){
     for(var n in this.points){
 
       if(this.hitP[n] && app.left){
-        this.points[n].x=mouseX;
-        this.points[n].y=mouseY;
+        this.points[n].x=app.mouseX;
+        this.points[n].y=app.mouseY;
             //~ println("dragged");
         this.recalc();
       }
@@ -718,34 +721,21 @@ var factor=1.25;
 
       pushMatrix();
 
-        //~ resetMatrix();
         scale(1,-1);
-        
+
           fill(CLRS.GRAY);
           textAlign(LEFT,CENTER);
           textFont(createFont('monospace'));
 
           textSize(9);
-          text("xG: " + nf(p.xG,1,2), p.xG/app.factor+10, -1*p.yG/app.factor+5);
-          text("yG: " + nf(p.yG,1,2), p.xG/app.factor+10, -1*p.yG/app.factor+15);
-          text("xW: " + nf(p.xM,1,2), p.xG/app.factor+10, -1*p.yG/app.factor+25);
-          text("yW: " + nf(p.yM,1,2), p.xG/app.factor+10, -1*p.yG/app.factor+35);
+          text("g: " + nf(p.xG,1,2)+", "+nf(p.yG,1,2), p.xG/app.factor+10, -1*p.yG/app.factor+5);
+          text("w: " + nf(p.xM,1,2)+", "+nf(p.yM,1,2), p.xG/app.factor+10, -1*p.yG/app.factor+15);
 
       popMatrix();
 
     };
 
     pushStyle();
-
-      //~ rectMode(CENTER);
-
-      fill(getColor(p.fill,5));
-      stroke(p.stroke);
-      strokeWeight(p.hit ? p.lineweight*factor : p.lineweight);
-
-      if(p.SELECTED){ strokeWeight(p.lineweight*2); }
-
-      //~ line(p.points[0].x/app.factor, p.points[0].y/app.factor, mouseX, mouseY);
 
       fill(p.fill);
       noStroke();
@@ -764,12 +754,14 @@ var factor=1.25;
   };
   Point.prototype.moved=function(x,y){
 
-    if(dist(this.parent.cursorX, this.parent.cursorY,
+    //~ if(dist(this.parent.cursorX, this.parent.cursorY,
+            //~ this.xG, this.yG)<app.pSize*app.factor){
+    if(dist(app.gridX, app.gridY,
             this.xG, this.yG)<app.pSize*app.factor){
       this.hit=true;
-      mouseX=this.xM+this.parent.x+this.parent.w/2;
-      mouseY=-1*this.yM+this.parent.y+this.parent.h/2;
-      println(mouseX);
+      app.mouseX=   this.xM+this.parent.x+this.parent.w/2;
+      app.mouseY=-1*this.yM+this.parent.y+this.parent.h/2;
+      //~ println(mouseX);
     }
     else{
       this.hit=false;
@@ -778,8 +770,8 @@ var factor=1.25;
   };
   Point.prototype.dragged=function(){
     if(this.hit && app.left){
-      this.points[0].x=mouseX;
-      this.points[0].y=mouseY;
+      this.points[0].x=app.mouseX;
+      this.points[0].y=app.mouseY;
     }
   };
 
@@ -869,7 +861,7 @@ var factor=1.25;
       strokeWeight(0);
 
       for(var n in p.points){
-        p.points[n].draw();
+        //~ p.points[n].draw();
       }
 
       if(p.hit){ meta(); }
@@ -879,54 +871,26 @@ var factor=1.25;
   };
   Line.prototype.moved=function(x,y){
 
-    var tmp=false;
-
     for(var n in this.points){
-
       this.points[n].moved(x,y);
-
-      //~ if(dist(this.parent.cursorX, this.parent.cursorY,
-              //~ this.xG, this.yG)<app.pSize*app.factor){
-//~ 
-        //~ this.hitP[n]=true;
-        //~ mouseX=this.xM+this.parent.x+this.parent.w/2;
-        //~ mouseY=-1*this.yM+this.parent.y+this.parent.h/2;
-//~ 
-      //~ }
-      //~ else{
-        //~ this.hitP[n]=false;
-      //~ }
-//~ 
-    //~ }
-//~ 
-    //~ if(dist(mouseX, mouseY, this.points[0].x/app.factor, this.points[0].y/app.factor)+
-       //~ dist(mouseX, mouseY, this.points[1].x/app.factor, this.points[1].y/app.factor)<
-       //~ dist(this.points[0].x, this.points[0].y, this.points[1].x, this.points[1].y)+1){
-//~ 
-      //~ tmp=true;
-
     }
-
-    //~ println(this.hitP);
-
-    this.hit=tmp;
 
   };
   Line.prototype.dragged=function(){
 
     for(var n in this.points){
 
-      if(dist(mouseX, mouseY,
+      if(dist(app.mouseX, app.mouseY,
               this.points[n].x, this.points[n].y)<this.w){
 
-        mouseX=this.points[n].x;
-        mouseY=this.points[n].y;
+        app.mouseX=this.points[n].x;
+        app.mouseY=this.points[n].y;
 
       }
 
       if(this.hitP[n] && app.left){
-        this.points[n].x=mouseX;
-        this.points[n].y=mouseY;
+        this.points[n].x=app.mouseX;
+        this.points[n].y=app.mouseY;
             //~ println("dragged");
         this.recalc();
       }
@@ -948,19 +912,19 @@ var factor=1.25;
 
     Shape.call(this,p);
 
-    this.radius=dist(this.points[0].x, this.points[0].y, this.points[1].x, this.points[1].y);
-    this.diameter=2*this.radius;
-    this.area=PI*pow(this.radius,2);
-    this.circumference=PI*this.diameter;
+    //~ this.radius=dist(this.points[0].x, this.points[0].y, this.points[1].x, this.points[1].y);
+    //~ this.diameter=2*this.radius;
+    //~ this.area=PI*pow(this.radius,2);
+    //~ this.circumference=PI*this.diameter;
+//~
+    //~ this.recalc=function(){
+//~
+      //~ this.radius=dist(this.points[0].x, this.points[0].y, this.points[1].x, this.points[1].y);
+      //~ this.diameter=2*this.radius;
+      //~ this.area=PI*pow(this.radius,2);
+      //~ this.circumference=PI*this.diameter;
 
-    this.recalc=function(){
-
-      this.radius=dist(this.points[0].x, this.points[0].y, this.points[1].x, this.points[1].y);
-      this.diameter=2*this.radius;
-      this.area=PI*pow(this.radius,2);
-      this.circumference=PI*this.diameter;
-
-    };
+    //~ };
 
   };
   Circle.prototype=Object.create(Shape.prototype);
@@ -969,18 +933,23 @@ var factor=1.25;
     var p=this;
     var d=0;
 
+    var sz=p.hit ? p.w*factor : p.w;
+
     var meta=function(){
 
-      fill(CLRS.WHITE);
+      fill(CLRS.GRAY);
       textAlign(LEFT,CENTER);
       textFont(createFont('monospace'));
 
       textSize(9);
-      text("Center:        " + p.points[0].x+","+p.points[0].y, p.points[0].x+10, p.points[0].y+5);
-      text("Radius:        " + round(p.radius),             p.points[0].x+10, p.points[0].y+15);
-      text("Diameter:      " + round(p.diameter),           p.points[0].x+10, p.points[0].y+25);
-      text("Circumference: " + round(p.circumference),      p.points[0].x+10, p.points[0].y+35);
-      text("Area:          " + round(p.area),               p.points[0].x+10, p.points[0].y+45);
+      text("rise:     " + p.deltaX,         p.points[0].x+10, p.points[0].y+5);
+      text("run:      " + p.deltaY,         p.points[0].x+10, p.points[0].y+15);
+      text("slope:    " + nf(p.slope,1,2),  p.points[0].x+10, p.points[0].y+25);
+      text("length:   " + nf(p.length,1,2), p.points[0].x+10, p.points[0].y+35);
+
+      fill(p.fill);
+      noStroke();
+      strokeWeight(0);
 
     };
 
@@ -990,16 +959,21 @@ var factor=1.25;
       stroke(p.stroke);
       strokeWeight(p.hit ? p.lineweight*factor : p.lineweight);
 
-      ellipse(p.points[0].x, p.points[0].y, p.diameter, p.diameter);
+      if(p.SELECTED){ strokeWeight(p.lineweight*2); }
 
-      fill(CLRS.WHITE);
+      var sz=dist(p.points[0].xG/app.factor, p.points[0].yG/app.factor,
+                  p.points[1].xG/app.factor, p.points[1].yG/app.factor);
+
+      ellipse(p.points[0].xG/app.factor, p.points[0].yG/app.factor,
+              sz*2,sz*2);
+
+      fill(p.fill);
       noStroke();
       strokeWeight(0);
 
-      var sz=p.hit ? p.w*factor : p.w;
-
-      ellipse(p.points[0].x, p.points[0].y, sz, sz);
-      ellipse(p.points[1].x, p.points[1].y, sz, sz);
+      for(var n in p.points){
+        p.points[n].draw();
+      }
 
       if(p.hit){ meta(); }
 
@@ -1008,32 +982,10 @@ var factor=1.25;
   };
   Circle.prototype.moved=function(x,y){
 
-    var tmp=false;
-
     for(var n in this.points){
-
-      if(dist(mouseX, mouseY, this.points[n].x, this.points[n].y)<10){
-        this.hitP[n]=true;
-        tmp=true;
-        mouseX=this.points[n].x;
-        mouseY=this.points[n].y;
-      }
-      else{
-        this.hitP[n]=false;
-      }
-
+      this.points[n].moved(x,y);
+      this.hit=true;
     }
-
-    if(dist(mouseX, mouseY, this.points[0].x, this.points[0].y)>this.radius-3 &&
-       dist(mouseX, mouseY, this.points[0].x, this.points[0].y)<this.radius+3){
-
-      tmp=true;
-
-    }
-
-    //~ println(this.hitP);
-
-    this.hit=tmp;
 
   };
 
@@ -1051,6 +1003,65 @@ var factor=1.25;
   };
   Arc.prototype=Object.create(Shape.prototype);
   Arc.prototype.draw=function(){};
+
+  //~ Ellipse ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  var Rectangle=function(p){
+    Shape.call(this,p);
+  };
+  Rectangle.prototype=Object.create(Shape.prototype);
+  Rectangle.prototype.draw=function(){
+
+    var p=this;
+    var d=0;
+
+    var sz=p.hit ? p.w*factor : p.w;
+
+    var meta=function(){
+
+      fill(CLRS.GRAY);
+      textAlign(LEFT,CENTER);
+      textFont(createFont('monospace'));
+
+      textSize(9);
+      text("rise:     " + p.deltaX,         p.points[0].x+10, p.points[0].y+5);
+      text("run:      " + p.deltaY,         p.points[0].x+10, p.points[0].y+15);
+      text("slope:    " + nf(p.slope,1,2),  p.points[0].x+10, p.points[0].y+25);
+      text("length:   " + nf(p.length,1,2), p.points[0].x+10, p.points[0].y+35);
+
+      fill(p.fill);
+      noStroke();
+      strokeWeight(0);
+
+      //~ ellipse(p.midX, p.midY, sz, sz);
+
+    };
+
+    pushStyle();
+
+      //~ rectMode(CENTER);
+
+      fill(getColor(p.fill,5));
+      stroke(p.stroke);
+      strokeWeight(p.hit ? p.lineweight*factor : p.lineweight);
+
+      if(p.SELECTED){ strokeWeight(p.lineweight*2); }
+
+      rect(p.points[0].xG/app.factor, p.points[0].yG/app.factor,
+           p.points[1].xG/app.factor, p.points[1].yG/app.factor);
+
+      fill(p.fill);
+      noStroke();
+      strokeWeight(0);
+
+      for(var n in p.points){
+        p.points[n].draw();
+      }
+
+      if(p.hit){ meta(); }
+
+    popStyle();
+
+  };
 
 
   //~ Polygon ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1078,7 +1089,7 @@ var factor=1.25;
 
 
   //~ Annotation ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  var Annotation=function(p){
+  var Annotation=function(p){m
     Shape.call(this,p);
   };
   Annotation.prototype=Object.create(Shape.prototype);
@@ -1286,7 +1297,7 @@ var factor=1.25;
     this.lineweightH= app.lineweightH;
 
   };
-  
+
   //~ Controls =========================================================
   var control=function(cp,lp,ap,ctrls){
 
@@ -1347,8 +1358,8 @@ var factor=1.25;
 
     if(this.alignX===LEFT){
 
-      if(mouseX>x+this.x && mouseX<x+this.x+this.w &&
-         mouseY>y+this.y && mouseY<y+this.y+this.h){
+      if(app.mouseX>x+this.x && app.mouseX<x+this.x+this.w &&
+         app.mouseY>y+this.y && app.mouseY<y+this.y+this.h){
         this.hit=true;
         app.focus=this.i;
       }
@@ -1361,8 +1372,8 @@ var factor=1.25;
     }
     else if(this.alignX===CENTER){
 
-      if(mouseX>=x+this.x-this.w/2 && mouseX<=x+this.x+this.w/2 &&
-         mouseY>=y+this.y-this.h/2 && mouseY<=y+this.y+this.h/2){
+      if(app.mouseX>=x+this.x-this.w/2 && app.mouseX<=x+this.x+this.w/2 &&
+         app.mouseY>=y+this.y-this.h/2 && app.mouseY<=y+this.y+this.h/2){
         this.hit=true;
         app.focus=this.i;
         for(var c in this.ctrls){ this.ctrls[c].moved(x+this.x,y+this.y) }
@@ -1374,8 +1385,8 @@ var factor=1.25;
     }
     else if(this.alignX===RIGHT){
 
-      if(mouseX>x+this.x && mouseX<x+this.x+this.w &&
-         mouseY>y+this.y && mouseY<y+this.y+this.h){
+      if(app.mouseX>x+this.x && app.mouseX<x+this.x+this.w &&
+         app.mouseY>y+this.y && app.mouseY<y+this.y+this.h){
         this.hit=true;
         app.focus=this.i;
       }
@@ -3723,8 +3734,8 @@ var factor=1.25;
   };
   labelR.prototype.moved=function(x,y){
 
-    if(mouseX>x+this.x-this.w/2 && mouseX<x+this.x+this.w/2 &&
-       mouseY>y+this.y-this.h/2 && mouseY<y+this.y+this.h/2){
+    if(app.mouseX>x+this.x-this.w/2 && app.mouseX<x+this.x+this.w/2 &&
+       app.mouseY>y+this.y-this.h/2 && app.mouseY<y+this.y+this.h/2){
       this.hit=true;
       for(var c in this.ctrls){ this.ctrls[c].moved(x+this.x,y+this.y) }
     }
@@ -3972,15 +3983,15 @@ var factor=1.25;
   };
   sliderH.prototype.clicked=function(){
     if(this.hit && app.left){
-      this.v=constrain(mouseX-this.parent.x-this.x, 0, this.w);
+      this.v=constrain(app.mouseX-this.parent.x-this.x, 0, this.w);
       commands(this.c, this.w*this.v/this.w);
       for(var c in this.ctrls){ this.ctrls[c].clicked() }
     }
   };
   sliderH.prototype.moved=function(x,y){
 
-    if(mouseX>x+this.x && mouseX<x+this.x+this.w &&
-       mouseY>y+this.y && mouseY<y+this.y+this.h){
+    if(app.mouseX>x+this.x && app.mouseX<x+this.x+this.w &&
+       app.mouseY>y+this.y && app.mouseY<y+this.y+this.h){
       this.hit=true;
       app.focus=this.i;
       for(var c in this.ctrls){ this.ctrls[c].moved(x+this.x,y+this.y) }
@@ -3992,7 +4003,7 @@ var factor=1.25;
   };
   sliderH.prototype.dragged=function(){
     if(this.hit && app.left){
-      this.v=constrain(mouseX-this.parent.x-this.x, 0, this.w);
+      this.v=constrain(app.mouseX-this.parent.x-this.x, 0, this.w);
       commands(this.c, this.w*this.v/this.w);
       for(var c in this.ctrls){ this.ctrls[c].dragged() }
     }
@@ -4088,12 +4099,12 @@ var factor=1.25;
 
     if(this.alignX===LEFT){
 
-      if(mouseX>x+this.x && mouseX<x+this.x+this.w &&
-         mouseY>y+this.y && mouseY<y+this.y+this.h){
+      if(app.mouseX>x+this.x && app.mouseX<x+this.x+this.w &&
+         app.mouseY>y+this.y && app.mouseY<y+this.y+this.h){
 
         this.hit=true;
 
-        if(mouseX>x+this.x+this.w-10){
+        if(app.mouseX>x+this.x+this.w-10){
           this.hitExpand=true;
         }
         else{
@@ -4116,8 +4127,8 @@ var factor=1.25;
     }
     else if(this.alignX===CENTER){
 
-      if(mouseX>=x+this.x-this.w/2 && mouseX<=x+this.x+this.w/2 &&
-         mouseY>=y+this.y-this.h/2 && mouseY<=y+this.y+this.h/2){
+      if(app.mouseX>=x+this.x-this.w/2 && app.mouseX<=x+this.x+this.w/2 &&
+         app.mouseY>=y+this.y-this.h/2 && app.mouseY<=y+this.y+this.h/2){
         this.hit=true;
         app.focus=this.i;
         for(var c in this.ctrls){ this.ctrls[c].moved(x+this.x,y+this.y) }
@@ -4193,16 +4204,12 @@ var factor=1.25;
 
     app.factor=30/this.h;
 
-    println(app.factor+", "+this.h);
-
     this.points=[];
     this.ortho=false;
 
-    this.cursorX=mouseX;
-    this.cursorY=mouseY;
-
     this.shapes=[];
-
+    this.Temp=0;
+    
   };
   grid.prototype=Object.create(control.prototype);
   grid.prototype.draw=function(){
@@ -4380,7 +4387,7 @@ var factor=1.25;
               //~ app.gridX=   (mouseX-p.x-p.w/2)*app.factor;
               //~ app.gridY=-1*(mouseY-p.y-p.h/2)*app.factor;
 
-              app.coordinates=nf(this.cursorX,1,1)+", "+nf(this.cursorY,1,1);
+              app.coordinates=this.cursorX;
 
               rectMode(CENTER);
 
@@ -4390,34 +4397,34 @@ var factor=1.25;
               if(sz===0){
 
                 //~ horizontal
-                line(p.x,      mouseY, mouseX-4, mouseY);
-                line(mouseX+4, mouseY, p.x+p.w,  mouseY);
+                line(p.x,          app.mouseY, app.mouseX-4, app.mouseY);
+                line(app.mouseX+4, app.mouseY, p.x+p.w,      app.mouseY);
 
                 //~ vertical
-                line(mouseX, p.y,      mouseX, mouseY-4);
-                line(mouseX, mouseY+4, mouseX, p.y+p.h);
+                line(app.mouseX, p.y,          app.mouseX, app.mouseY-4);
+                line(app.mouseX, app.mouseY+4, app.mouseX, p.y+p.h);
 
               }
               else{
 
                 //~ horizontal
-                line(mouseX-sz, mouseY, mouseX-4,  mouseY);
-                line(mouseX+4,  mouseY, mouseX+sz, mouseY);
+                line(app.mouseX-sz, app.mouseY, app.mouseX-4,  app.mouseY);
+                line(app.mouseX+4,  app.mouseY, app.mouseX+sz, app.mouseY);
 
                 //~ vertical
-                line(mouseX, mouseY-4, mouseX, mouseY-sz);
-                line(mouseX, mouseY+4, mouseX, mouseY+sz);
+                line(app.mouseX, app.mouseY-4, app.mouseX, app.mouseY-sz);
+                line(app.mouseX, app.mouseY+4, app.mouseX, app.mouseY+sz);
 
               }
 
               noFill();
 
               //~ if(p.ortho){
-                //~ mouseX-=mouseX%incr;
-                //~ mouseY-=mouseY%incr;
+                //~ app.mouseX-=app.mouseX%incr;
+                //~app. mouseY-=app.mouseY%incr;
               //~ }
 
-              ellipse(mouseX, mouseY, app.pSize, app.pSize);
+              ellipse(app.mouseX, app.mouseY, app.pSize, app.pSize);
 
           popMatrix();
 
@@ -4428,76 +4435,97 @@ var factor=1.25;
     };
     var drawTemp=function(){
 
-      //~ if(p.hit){
+      switch(app.command){
 
-        switch(app.command){
+        case COMMANDS.P_DEFAULT[0]:
 
-          case COMMANDS.P_DEFAULT[0]:
+          //~ Point is saved on initial click
+          break;
 
-            //~ Point is saved on initial click
-            break;
+        case COMMANDS.L_SEGMENT2P[0]:
 
-          case COMMANDS.L_2P[0]:
+          if(this.Temp.points.length===1){
 
-            if(p.points.length===1){
+            var _x=(this.Temp.points[0].x)*app.factor;
+            var _y=(this.Temp.points[0].y)*app.factor;
 
-              noFill();
-              stroke(app.stroke);
-              strokeWeight(app.lineweight);
+            noFill();
+            stroke(app.stroke);
+            strokeWeight(app.lineweight);
 
-              line(mouseX, mouseY,
-                   p.points[0].x,
-                   p.points[0].y);
+            line(app.worldX, app.worldY, _x, _y);
 
-              fill(app.fill);
-              noStroke();
-              strokeWeight(0);
+            fill(app.fill);
+            noStroke();
+            strokeWeight(0);
 
-              ellipse(p.points[0].x, p.points[0].y,
-                      app.pSize, app.pSize);
-              ellipse(mouseX, mouseY,
-                      app.pSize, app.pSize);
+            ellipse(_x, _y,
+                    app.pSize, app.pSize);
+            ellipse(app.worldX, app.worldY,
+                    app.pSize, app.pSize);
 
-            }
+          }
 
-            break;
+          break;
 
-          case COMMANDS.C_CENTERP[0]:
+        case COMMANDS.C_CENTERP[0]:
 
-            //~ println("C_CENTERP");
+          if(p.points.length===1){
 
-            if(p.points.length===1){
+            noFill();
+            stroke(app.stroke);
+            strokeWeight(app.lineweight);
 
-              noFill();
-              stroke(app.stroke);
-              strokeWeight(app.lineweight);
+            //~ line(app.mouseX,  app.mouseY, app.points[0].x, app.points[0].y);
 
-              //~ line(mouseX,  mouseY, app.points[0].x, app.points[0].y);
+            fill(app.fill);
+            noStroke();
+            strokeWeight(0);
 
-              fill(app.fill);
-              noStroke();
-              strokeWeight(0);
+            ellipse(p.points[0].x, p.points[0].y, app.pSize, app.pSize);
+            ellipse(app.mouseX,    app.mouseY,    app.pSize, app.pSize);
 
-              ellipse(p.points[0].x, p.points[0].y, app.pSize, app.pSize);
-              ellipse(mouseX,        mouseY,        app.pSize, app.pSize);
+            noFill();
+            stroke(app.stroke);
+            strokeWeight(app.lineweight);
 
-              noFill();
-              stroke(app.stroke);
-              strokeWeight(app.lineweight);
+            var r=2*dist(p.points[0].x, p.points[0].y, app.mouseX, app.mouseY);
 
-              var r=2*dist(p.points[0].x, p.points[0].y, mouseX, mouseY);
+            ellipse(p.points[0].x, p.points[0].y, r, r);
 
-              ellipse(p.points[0].x, p.points[0].y, r, r);
+          }
 
-            }
+          break;
 
-            break;
+        case COMMANDS.Q_RECTANGLE[0]:
 
-          default:                  break;
+          if(p.points.length===1){
 
-        };
+            noFill();
+            stroke(app.stroke);
+            strokeWeight(app.lineweight);
 
-      //~ }
+            fill(app.fill);
+            noStroke();
+            strokeWeight(0);
+
+            ellipse(p.points[0].x, p.points[0].y, app.pSize, app.pSize);
+            ellipse(app.mouseX,    app.mouseY,    app.pSize, app.pSize);
+
+            noFill();
+            stroke(app.stroke);
+            strokeWeight(app.lineweight);
+
+            var r=dist(p.points[0].x, p.points[0].y, app.mouseX, app.mouseY);
+
+            rect(p.points[0].x, p.points[0].y, r, r);
+
+          }
+
+          break;
+        default:                  break;
+
+      };
 
     };
     pushMatrix();
@@ -4521,56 +4549,69 @@ var factor=1.25;
 
       for(var s in this.shapes){ this.shapes[s].draw() };
 
+      drawTemp();
+
     popMatrix();
 
     crosshair();
-    drawTemp();
+    
 
-    //~ for(var c in p.ctrls){ p.ctrls[c].draw() };
+    //~ println(this.cursorX);
 
   };
   grid.prototype.clicked=function(){
 
-    //~ var convertX=function(x){
-      //~ return (x-this.x-this.w/2)*app.factor;
-    //~ };
-    //~ var convertY=function(y){
-      //~ return -1*(y-this.y-this.h/2)*app.factor;
-    //~ };    
     if(this.hit){
 
       pushMatrix();
 
         switch(app.command){
 
-          case COMMANDS.P_DEFAULT[0]: //~ Point
+          case COMMANDS.P_DEFAULT[0]: //~ Point:  Default
 
             this.shapes.push(
               new Point(
-                new propP(getGUID(),this,this.cursorX,this.cursorY)));
+                new propP(getGUID(), this, app.gridX, app.gridY)));
 
             break;
 
-          case COMMANDS.L_2P[0]:  //~ Line 2 point
+          case COMMANDS.L_SEGMENT2P[0]:  //~ Line:  2 point
 
-            if(this.points.length===0){
-              this.points.push(new pt(mouseX, mouseY));
+            if(this.Temp===0){
+              this.Temp=new Line(new propS(getGUID(), this));
+              this.Temp.points.push(new Point(new propP(getGUID(), this.Temp, app.gridX, app.gridY)));
             }
             else if(this.points.length===1){
 
-              var L=new Line(new propS(getGUID(),this));
+              //~ this.points.push(new Point(new propP(getGUID(), this, app.gridX, app.gridY)));
+              this.Temp.points.push(new Point(new propP(getGUID(), this.Temp, app.gridX, app.gridY)));
+              this.shapes.push(this.Temp);
+
+              this.points=[];
+              this.Temp=0;
+
+            }
+
+            break;
+
+          case COMMANDS.C_CENTERP[0]:  //~ Circle:  Center-Point
+
+            if(this.points.length===0){
+              this.points.push(new pt(app.mouseX, app.mouseY));
+            }
+            else if(this.points.length===1){
+
+              var C=new Circle(new propS(getGUID(),this));
 
               var x=   (this.points[0].x-this.x-this.w/2)*app.factor;
               var y=-1*(this.points[0].y-this.y-this.h/2)*app.factor;
-              //~ var x=convertX(this.points[0].x);
-              //~ var y=convertY(this.points[0].y);
 
               this.points[0]=new Point(new propP(getGUID(), this, x, y));
               this.points.push(new Point(new propP(getGUID(), this, this.cursorX, this.cursorY)));
 
-              L.points=this.points;
+              C.points=this.points;
 
-              this.shapes.push(L);
+              this.shapes.push(C);
 
               this.points=[];
 
@@ -4578,21 +4619,27 @@ var factor=1.25;
 
             break;
 
-          case COMMANDS.C_CENTERP[0]:  //~ Circle: Center-Point
+          case COMMANDS.Q_RECTANGLE[0]:  //~ Quad:  Rectangle
 
             if(this.points.length===0){
-              this.points.push(new pt(mouseX, mouseY));
+              this.points.push(new pt(app.mouseX, app.mouseY));
             }
             else if(this.points.length===1){
 
-                this.points[0].x=   (this.points[0].x-this.x-this.w/2)*app.factor;
-                this.points[0].y=-1*(this.points[0].y-this.y-this.h/2)*app.factor;
+              var R=new Rectangle(new propS(getGUID(),this));
 
-                this.points.push(new pt((    mouseX-this.x-this.w/2)*app.factor,
-                                         -1*(mouseY-this.y-this.h/2)*app.factor));
+              var x=   (this.points[0].x-this.x-this.w/2)*app.factor;
+              var y=-1*(this.points[0].y-this.y-this.h/2)*app.factor;
 
-              this.shapes.push(new Circle(new propS(getGUID(),this,this.points)));
+              this.points[0]=new Point(new propP(getGUID(), this, x, y));
+              this.points.push(new Point(new propP(getGUID(), this, this.cursorX, this.cursorY)));
+
+              R.points=this.points;
+
+              this.shapes.push(R);
+
               this.points=[];
+
             }
 
             break;
@@ -4608,21 +4655,28 @@ var factor=1.25;
   };
   grid.prototype.moved=function(x,y){
 
-    if(mouseX>this.x && mouseX<this.x+this.w &&
-       mouseY>this.y && mouseY<this.y+this.h){
+    app.mouseX=mouseX;
+    app.mouseY=mouseY;
+
+    if(app.mouseX>this.x && app.mouseX<this.x+this.w &&
+       app.mouseY>this.y && app.mouseY<this.y+this.h){
+
+      this.hit=true;
+      app.focus=this.i;
 
       if(app.snaptogrid){
         var incr=(1/app.factor);
-        mouseX-=mouseX%incr-(this.x+this.w/2)%incr;
-        mouseY-=mouseY%incr-(this.y+this.h/2)%incr;
+        app.mouseX-=app.mouseX%incr-(this.x+this.w/2)%incr;
+        app.mouseY-=app.mouseY%incr-(this.y+this.h/2)%incr;
       }
 
-      this.cursorX=   (mouseX-this.x-this.w/2)*app.factor;
-      this.cursorY=-1*(mouseY-this.y-this.h/2)*app.factor;
+      app.worldX=   (app.mouseX-this.x-this.w/2);
+      app.worldY=-1*(app.mouseY-this.y-this.h/2);
 
-      this.hit=true;
+      app.gridX=   (app.mouseX-this.x-this.w/2)*app.factor;
+      app.gridY=-1*(app.mouseY-this.y-this.h/2)*app.factor;
 
-      app.focus=this.i;
+      app.coordinates=app.gridX + ", " + app.gridY;
 
       for(var s in this.shapes){ this.shapes[s].moved(x,y); }
 
@@ -4639,6 +4693,7 @@ var factor=1.25;
 
     if(app.keys[KEYCODES.SPACE]){
       this.points=[];
+      this.temp=0;
     }
 
     if(app.keys[KEYCODES.CONTROL] &&
@@ -4685,10 +4740,19 @@ var factor=1.25;
 
     for(var c in app.ctrls){ app.ctrls[c].draw() }
 
-    //~ text(modelX(mouseX,mouseY,0), 100, 400);
+    //~ text(modelX(app.mouseX,app.mouseY,0), 100, 400);
 
-    text(app.factor, 100, 400);
+    text(app.factor, 40, 200);
 
+    text(app.mouseX, 100, 300);
+    text(app.mouseY, 100, 320);
+
+    text(app.worldX, 100, 360);
+    text(app.worldY, 100, 380);
+
+    text(app.gridX, 100, 420);
+    text(app.gridY, 100, 440);
+    
   };
 
   //~ translate(0.5,0.5);
@@ -4726,8 +4790,6 @@ var factor=1.25;
     process();
   };
   var mouseMoved=function(){
-    app.mouseX=mouseX;
-    app.mouseY=mouseY;
     for(var c in app.ctrls){ app.ctrls[c].moved(0,0); }
     process();
   };
