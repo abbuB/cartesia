@@ -175,18 +175,22 @@ var proc = function(processingInstance){ with (processingInstance){
     FRAMERATE:    [  13,  'FrameRate',        'FRAMERATE'             ],
     MOUSEX:       [  14,  'MouseX',           'MOUSEX'                ],
     MOUSEY:       [  15,  'MouseY',           'MOUSEY'                ],
-    PRESSED:      [  16,  'Pressed',          'PRESSED'               ],
-    VISIBLE:      [  17,  'Visible',          'VISIBLE'               ],
+    WORLDX:       [  16,  'WorldX',           'WORLDX'                ],
+    WORLDY:       [  17,  'WorldY',           'WORLDY'                ],
+    GRIDX:        [  18,  'GridX',            'GRIDX'                 ],
+    GRIDY:        [  19,  'GridY',            'GRIDY'                 ],
+    PRESSED:      [  20,  'Pressed',          'PRESSED'               ],
+    VISIBLE:      [  21,  'Visible',          'VISIBLE'               ],
 
-    FOCUS:        [  18,  'Focus',            'FOCUS'                 ],
+    FOCUS:        [  22,  'Focus',            'FOCUS'                 ],
 
-    LEFT:         [  19,  'Left button',      'LEFT'                  ],
-    CENTER:       [  20,  'Center button',    'CENTER'                ],
-    RIGHT:        [  21,  'Right button',     'RIGHT'                 ],
+    LEFT:         [  23,  'Left button',      'LEFT'                  ],
+    CENTER:       [  24,  'Center button',    'CENTER'                ],
+    RIGHT:        [  25,  'Right button',     'RIGHT'                 ],
 
-    SPACER:       [  22,  'Spacer',           'SPACER'                ],
+    SPACER:       [  26,  'Spacer',           'SPACER'                ],
 
-    COMMAND:      [  23,  'Command',          'COMMAND'               ],
+    COMMAND:      [  27,  'Command',          'COMMAND'               ],
 
     //~ Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     GRID:         [ 100,  'Grid',             'GRID'                  ],
@@ -313,8 +317,8 @@ var proc = function(processingInstance){ with (processingInstance){
 
     //~ Line (L) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     LINE:         [1100,  'Line',             'LINE'                  ],
-    L_2P:         [1101,  'Line2P',           'LINE2P'                ],    //~ through 2 points
-    L_SEGMENT2P:  [1102,  'LineSegment2P',    'LINESEGMENT2P'         ],    //~ between 2 points
+    L_2P:         [1101,  'Line2P',           'LINE2P'                ],    //~ through 2 vertices
+    L_SEGMENT2P:  [1102,  'LineSegment2P',    'LINESEGMENT2P'         ],    //~ between 2 vertices
     L_SEGMENTLEN: [1103,  'LineSegmentLen',   'LINESEGMENTLEN'        ],    //~ from point given length
     L_PERP:       [1104,  'LinePerp',         'LINEPERP'              ],    //~ perpendicular
     L_PERPB:      [1105,  'LinePerpB',        'LINEPERPB'             ],    //~  perpendicular bisector
@@ -324,8 +328,8 @@ var proc = function(processingInstance){ with (processingInstance){
     L_DIAMETER:   [1109,  'LineDiameter',     'LINEDIAMETER'          ],    //~ Diameter
     L_RADIUS:     [1110,  'LineRadius',       'LINERADIUS'            ],    //~ Radius
 
-    RAY_2P:       [1211,  'Ray2P',            'RAY2P'                 ],    //~ Ray between 2 points
-    V_2P:         [1212,  'Vector2P',         'VECTOR2P'              ],    //~ Vector between 2 points
+    RAY_2P:       [1211,  'Ray2P',            'RAY2P'                 ],    //~ Ray between 2 vertices
+    V_2P:         [1212,  'Vector2P',         'VECTOR2P'              ],    //~ Vector between 2 vertices
     V_FP:         [1213,  'VectorFP',         'VECTORFP'              ],    //~ Vector from point
 
 
@@ -341,7 +345,7 @@ var proc = function(processingInstance){ with (processingInstance){
     C_CENTERP:    [1401,  'C_CenterP',        'C_CENTERP'             ],    //~ center point
     C_CENTERR:    [1402,  'C_CenterR',        'C_CENTERR'             ],    //~ center radius
 
-    C_3P:         [1403,  'C_3P',             'C_3P'                  ],    //  3 points
+    C_3P:         [1403,  'C_3P',             'C_3P'                  ],    //  3 vertices
 
     //~ Quadrilateral (Q)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     QUAD:         [1500,  'Quadrilateral',    'QUADRILATERAL'         ],
@@ -354,7 +358,7 @@ var proc = function(processingInstance){ with (processingInstance){
 
     //~ Arc (A)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ARC:          [1600,  'Arc',              'ARC'                   ],
-    A_2P:         [1601,  'Arc2Points',       'ARC2POINTS'            ],    //~ SemiCircleThrough2Points
+    A_2P:         [1601,  'Arc2vertices',       'ARC2vertices'            ],    //~ SemiCircleThrough2vertices
     A_CA:         [1602,  'CircularArc',      'CIRCULARARC'           ],    //~ CircularArc
     A_CCA:        [1603,  'CircumCircularArc','CIRCUMCIRCULARARC'     ],    //~ CircumcircularArc
     A_CS:         [1604,  'CircularSector',   'CIRCULARSECTOR'        ],    //~ CircularSector
@@ -374,7 +378,7 @@ var proc = function(processingInstance){ with (processingInstance){
     S_ELLIPSE:    [1800,  'Ellipse',          'ELLIPSE'               ],
     S_HYPERBOLA:  [1801,  'Hyperbola',        'HYPERBOLA'             ],
     S_PARABOLA:   [1802,  'Parabola',         'PARABOLA'              ],
-    S_5POINTS:    [1803,  'Conic5points',     'CONIC5POINTS'          ],
+    S_5vertices:    [1803,  'Conic5vertices',     'CONIC5vertices'          ],
 
 
     //~ Angle ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -502,7 +506,7 @@ var proc = function(processingInstance){ with (processingInstance){
 
     factor:         0
 
-    //~ points:         []
+    //~ vertices:         []
 
   };
 
@@ -555,6 +559,10 @@ var proc = function(processingInstance){ with (processingInstance){
       case COMMANDS.FRAMERATEA[0]:  return __frameRate;
       case COMMANDS.MOUSEX[0]:      return app.mouseX;
       case COMMANDS.MOUSEY[0]:      return app.mouseY;
+      case COMMANDS.WORLDX[0]:      return app.worldX;
+      case COMMANDS.WORLDY[0]:      return app.worldY;
+      case COMMANDS.GRIDX[0]:       return app.gridX;
+      case COMMANDS.GRIDY[0]:       return app.gridY;
       case COMMANDS.PRESSED[0]:     return app.left;
 
       case COMMANDS.COLOR[0]:       return app.stroke;
@@ -600,7 +608,7 @@ var proc = function(processingInstance){ with (processingInstance){
 
   var reset=function(){
     app.command=0;
-    app.points=[];
+    app.vertices=[];
   };
   var getDottedLine=function(x0, y0, x1, y1, n){
 
@@ -635,20 +643,14 @@ var proc = function(processingInstance){ with (processingInstance){
   };
 
   //~ Shapes ===========================================================
-  var Shape=function(p){
+  var Shape=function(i,p){
 
     this.hitP=[];
     this.hit=false;
 
-    this.i=           p.i;
-    this.parent=      p.parent;
-    this.points=      p.points;
-
-    this.xG=          p.x;
-    this.yG=          p.y;
-
-    this.xM=          p.xM;
-    this.yM=          p.yM;
+    this.i=           i;
+    this.parent=      p;
+    this.vertices=    [];
 
     this.w=           app.pSize;
     this.h=           app.pSize;
@@ -658,8 +660,8 @@ var proc = function(processingInstance){ with (processingInstance){
     this.stroke=      app.stroke;
     this.strokeH=     app.strokeH;
 
-    this.layer=       p.layer;
-    this.linetype=    p.linetype;
+    this.layer=       app.layer;
+    this.linetype=    app.linetype;
 
     this.lineweight=  app.lineweight;
     this.lineweightH= app.lineweightH;
@@ -669,8 +671,11 @@ var proc = function(processingInstance){ with (processingInstance){
     this.SELECTED=    false;
     this.DELETED=     false;
 
-    for(var p=0; p<=this.length; p++){ this.hit[p]=0; }
+    //~ for(var p=0; p<=this.length; p++){ this.hit[p]=0; }
 
+  };
+  Shape.prototype.add=function(pnt){
+    this.vertices.push(pnt);
   };
   Shape.prototype.draw=function(){};
   Shape.prototype.clicked=function(){
@@ -686,11 +691,11 @@ var proc = function(processingInstance){ with (processingInstance){
   Shape.prototype.moved=function(x,y){};
   Shape.prototype.dragged=function(){
 
-    for(var n in this.points){
+    for(var n in this.vertices){
 
       if(this.hitP[n] && app.left){
-        this.points[n].x=app.mouseX;
-        this.points[n].y=app.mouseY;
+        this.vertices[n].x=app.mouseX;
+        this.vertices[n].y=app.mouseY;
             //~ println("dragged");
         this.recalc();
       }
@@ -702,12 +707,12 @@ var proc = function(processingInstance){ with (processingInstance){
 var factor=1.25;
 
   //~ Point ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  var Point=function(p){
-    Shape.call(this, p);
-    this.xG=p.x;
-    this.yG=p.y;
-    this.xM=p.x/app.factor;
-    this.yM=p.y/app.factor;
+  var Point=function(i,p,x,y){
+    Shape.call(this, i, p, 0);
+    this.xG=x;
+    this.yG=y;
+    this.xM=x/app.factor;
+    this.yM=y/app.factor;
   };
   Point.prototype=Object.create(Shape.prototype);
   Point.prototype.draw=function(){
@@ -741,7 +746,7 @@ var factor=1.25;
       noStroke();
       strokeWeight(0);
 
-      //~ for(var n in p.points){
+      //~ for(var n in p.vertices){
         ellipse(p.xG/app.factor, p.yG/app.factor, sz, sz);
       //~ }
 
@@ -759,8 +764,9 @@ var factor=1.25;
     if(dist(app.gridX, app.gridY,
             this.xG, this.yG)<app.pSize*app.factor){
       this.hit=true;
-      app.mouseX=   this.xM+this.parent.x+this.parent.w/2;
-      app.mouseY=-1*this.yM+this.parent.y+this.parent.h/2;
+      this.parent.hit=true;
+      //~ app.mouseX=   this.xW+this.parent.x+this.parent.w/2;
+      //~ app.mouseY=-1*this.yW+this.parent.y+this.parent.h/2;
       //~ println(mouseX);
     }
     else{
@@ -770,8 +776,8 @@ var factor=1.25;
   };
   Point.prototype.dragged=function(){
     if(this.hit && app.left){
-      this.points[0].x=app.mouseX;
-      this.points[0].y=app.mouseY;
+      this.vertices[0].x=app.mouseX;
+      this.vertices[0].y=app.mouseY;
     }
   };
 
@@ -785,15 +791,15 @@ var factor=1.25;
   };
 
   //~ Line ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  var Line=function(p){
-//~ println(p.points.length);
-    //~ p.points.push(new Point(getGUID,this,
-                            //~ (p.points[0].xG+p.points[1].xG)/2,
-                            //~ (p.points[0].yG+p.points[1].yG)/2));
+  var Line=function(i,p){
+//~ println(p.vertices.length);
+    //~ p.vertices.push(new Point(getGUID,this,
+                            //~ (p.vertices[0].xG+p.vertices[1].xG)/2,
+                            //~ (p.vertices[0].yG+p.vertices[1].yG)/2));
 
-    Shape.call(this,p);
+    Shape.call(this, i, p);
 
-    //~ println(this.points.length);
+    //~ println(this.vertices.length);
 
     this.deltaX=0;
     this.deltaY=0;
@@ -802,13 +808,13 @@ var factor=1.25;
 
     this.recalc=function(){
 
-      //~ this.deltaX=abs(this.points[1].xG-this.points[0].xG);
-      //~ this.deltaY=abs(this.points[1].y-this.points[0].y);
-      //~ this.length=dist(this.points[0].x, this.points[0].y, this.points[1].x, this.points[1].y);
-      //~ this.points[2].x=(this.points[0].x+this.points[1].x)/2;
-      //~ this.points[2].y=(this.points[0].y+this.points[1].y)/2;
+      //~ this.deltaX=abs(this.vertices[1].xG-this.vertices[0].xG);
+      //~ this.deltaY=abs(this.vertices[1].y-this.vertices[0].y);
+      //~ this.length=dist(this.vertices[0].x, this.vertices[0].y, this.vertices[1].x, this.vertices[1].y);
+      //~ this.vertices[2].x=(this.vertices[0].x+this.vertices[1].x)/2;
+      //~ this.vertices[2].y=(this.vertices[0].y+this.vertices[1].y)/2;
       //~ if(this.deltaX===0){ this.slope=-0;                 }
-      //~ else               { this.slope=-1*(this.points[1].y-this.points[0].y)/(this.points[1].x-this.points[0].x); }
+      //~ else               { this.slope=-1*(this.vertices[1].y-this.vertices[0].y)/(this.vertices[1].x-this.vertices[0].x); }
 
     };
 
@@ -830,10 +836,10 @@ var factor=1.25;
       textFont(createFont('monospace'));
 
       textSize(9);
-      text("rise:     " + p.deltaX,         p.points[0].x+10, p.points[0].y+5);
-      text("run:      " + p.deltaY,         p.points[0].x+10, p.points[0].y+15);
-      text("slope:    " + nf(p.slope,1,2),  p.points[0].x+10, p.points[0].y+25);
-      text("length:   " + nf(p.length,1,2), p.points[0].x+10, p.points[0].y+35);
+      text("rise:     " + p.deltaX,         p.vertices[0].x+10, p.vertices[0].y+5);
+      text("run:      " + p.deltaY,         p.vertices[0].x+10, p.vertices[0].y+15);
+      text("slope:    " + nf(p.slope,1,2),  p.vertices[0].x+10, p.vertices[0].y+25);
+      text("length:   " + nf(p.length,1,2), p.vertices[0].x+10, p.vertices[0].y+35);
 
       fill(p.fill);
       noStroke();
@@ -853,15 +859,15 @@ var factor=1.25;
 
       if(p.SELECTED){ strokeWeight(p.lineweight*2); }
 
-      line(p.points[0].xG/app.factor, p.points[0].yG/app.factor,
-           p.points[1].xG/app.factor, p.points[1].yG/app.factor);
+      line(p.vertices[0].xG/app.factor, p.vertices[0].yG/app.factor,
+           p.vertices[1].xG/app.factor, p.vertices[1].yG/app.factor);
 
       fill(p.fill);
       noStroke();
       strokeWeight(0);
 
-      for(var n in p.points){
-        //~ p.points[n].draw();
+      for(var n in p.vertices){
+        p.vertices[n].draw();
       }
 
       if(p.hit){ meta(); }
@@ -871,26 +877,26 @@ var factor=1.25;
   };
   Line.prototype.moved=function(x,y){
 
-    for(var n in this.points){
-      this.points[n].moved(x,y);
+    for(var n in this.vertices){
+      this.vertices[n].moved(x,y);
     }
 
   };
   Line.prototype.dragged=function(){
 
-    for(var n in this.points){
+    for(var n in this.vertices){
 
       if(dist(app.mouseX, app.mouseY,
-              this.points[n].x, this.points[n].y)<this.w){
+              this.vertices[n].x, this.vertices[n].y)<this.w){
 
-        app.mouseX=this.points[n].x;
-        app.mouseY=this.points[n].y;
+        app.mouseX=this.vertices[n].x;
+        app.mouseY=this.vertices[n].y;
 
       }
 
       if(this.hitP[n] && app.left){
-        this.points[n].x=app.mouseX;
-        this.points[n].y=app.mouseY;
+        this.vertices[n].x=app.mouseX;
+        this.vertices[n].y=app.mouseY;
             //~ println("dragged");
         this.recalc();
       }
@@ -912,14 +918,14 @@ var factor=1.25;
 
     Shape.call(this,p);
 
-    //~ this.radius=dist(this.points[0].x, this.points[0].y, this.points[1].x, this.points[1].y);
+    //~ this.radius=dist(this.vertices[0].x, this.vertices[0].y, this.vertices[1].x, this.vertices[1].y);
     //~ this.diameter=2*this.radius;
     //~ this.area=PI*pow(this.radius,2);
     //~ this.circumference=PI*this.diameter;
 //~
     //~ this.recalc=function(){
 //~
-      //~ this.radius=dist(this.points[0].x, this.points[0].y, this.points[1].x, this.points[1].y);
+      //~ this.radius=dist(this.vertices[0].x, this.vertices[0].y, this.vertices[1].x, this.vertices[1].y);
       //~ this.diameter=2*this.radius;
       //~ this.area=PI*pow(this.radius,2);
       //~ this.circumference=PI*this.diameter;
@@ -942,10 +948,10 @@ var factor=1.25;
       textFont(createFont('monospace'));
 
       textSize(9);
-      text("rise:     " + p.deltaX,         p.points[0].x+10, p.points[0].y+5);
-      text("run:      " + p.deltaY,         p.points[0].x+10, p.points[0].y+15);
-      text("slope:    " + nf(p.slope,1,2),  p.points[0].x+10, p.points[0].y+25);
-      text("length:   " + nf(p.length,1,2), p.points[0].x+10, p.points[0].y+35);
+      text("rise:     " + p.deltaX,         p.vertices[0].x+10, p.vertices[0].y+5);
+      text("run:      " + p.deltaY,         p.vertices[0].x+10, p.vertices[0].y+15);
+      text("slope:    " + nf(p.slope,1,2),  p.vertices[0].x+10, p.vertices[0].y+25);
+      text("length:   " + nf(p.length,1,2), p.vertices[0].x+10, p.vertices[0].y+35);
 
       fill(p.fill);
       noStroke();
@@ -961,18 +967,18 @@ var factor=1.25;
 
       if(p.SELECTED){ strokeWeight(p.lineweight*2); }
 
-      var sz=dist(p.points[0].xG/app.factor, p.points[0].yG/app.factor,
-                  p.points[1].xG/app.factor, p.points[1].yG/app.factor);
+      var sz=dist(p.vertices[0].xG/app.factor, p.vertices[0].yG/app.factor,
+                  p.vertices[1].xG/app.factor, p.vertices[1].yG/app.factor);
 
-      ellipse(p.points[0].xG/app.factor, p.points[0].yG/app.factor,
+      ellipse(p.vertices[0].xG/app.factor, p.vertices[0].yG/app.factor,
               sz*2,sz*2);
 
       fill(p.fill);
       noStroke();
       strokeWeight(0);
 
-      for(var n in p.points){
-        p.points[n].draw();
+      for(var n in p.vertices){
+        p.vertices[n].draw();
       }
 
       if(p.hit){ meta(); }
@@ -982,8 +988,8 @@ var factor=1.25;
   };
   Circle.prototype.moved=function(x,y){
 
-    for(var n in this.points){
-      this.points[n].moved(x,y);
+    for(var n in this.vertices){
+      this.vertices[n].moved(x,y);
       this.hit=true;
     }
 
@@ -1023,10 +1029,10 @@ var factor=1.25;
       textFont(createFont('monospace'));
 
       textSize(9);
-      text("rise:     " + p.deltaX,         p.points[0].x+10, p.points[0].y+5);
-      text("run:      " + p.deltaY,         p.points[0].x+10, p.points[0].y+15);
-      text("slope:    " + nf(p.slope,1,2),  p.points[0].x+10, p.points[0].y+25);
-      text("length:   " + nf(p.length,1,2), p.points[0].x+10, p.points[0].y+35);
+      text("rise:     " + p.deltaX,         p.vertices[0].x+10, p.vertices[0].y+5);
+      text("run:      " + p.deltaY,         p.vertices[0].x+10, p.vertices[0].y+15);
+      text("slope:    " + nf(p.slope,1,2),  p.vertices[0].x+10, p.vertices[0].y+25);
+      text("length:   " + nf(p.length,1,2), p.vertices[0].x+10, p.vertices[0].y+35);
 
       fill(p.fill);
       noStroke();
@@ -1046,15 +1052,15 @@ var factor=1.25;
 
       if(p.SELECTED){ strokeWeight(p.lineweight*2); }
 
-      rect(p.points[0].xG/app.factor, p.points[0].yG/app.factor,
-           p.points[1].xG/app.factor, p.points[1].yG/app.factor);
+      rect(p.vertices[0].xG/app.factor, p.vertices[0].yG/app.factor,
+           p.vertices[1].xG/app.factor, p.vertices[1].yG/app.factor);
 
       fill(p.fill);
       noStroke();
       strokeWeight(0);
 
-      for(var n in p.points){
-        p.points[n].draw();
+      for(var n in p.vertices){
+        p.vertices[n].draw();
       }
 
       if(p.hit){ meta(); }
@@ -1131,7 +1137,7 @@ var factor=1.25;
       case COMMANDS.LABELSX[0]:     app.labelsx=!app.labelsx;         break;
       case COMMANDS.LABELSY[0]:     app.labelsy=!app.labelsy;         break;
 
-      case COMMANDS.COORDINATES[0]: app.coordinates=!app.coordinates; break;
+      //~ case COMMANDS.COORDINATES[0]: app.coordinates=!app.coordinates; break;
       case COMMANDS.ORTHO[0]:       app.ortho=!app.ortho;             break;
       case COMMANDS.SNAPTOGRID[0]:  app.snaptogrid=!app.snaptogrid;   break;
       case COMMANDS.FULLSCREEN[0]:  app.fullscreen=!app.fullscreen;   break;
@@ -1250,53 +1256,6 @@ var factor=1.25;
 
   };
 
-  var propS=function(i,p,points){
-
-    this.i=           i;
-    this.parent=      p;
-    this.points=      points;
-
-    //~ this.x=           points[0].x;
-    //~ this.y=           points[0].y;
-
-    this.w=           2;
-    this.h=           2;
-
-    this.fill=        app.fill;
-    this.fillH=       app.fillH;
-    this.stroke=      app.stroke;
-    this.strokeH=     app.strokeH;
-
-    this.layer=       app.layer;
-    this.linetype=    app.linetype;
-
-    this.lineweight=  app.lineweight;
-    this.lineweightH= app.lineweightH;
-
-  };
-  var propP=function(i,p,x,y){
-
-    this.i=           i;
-    this.parent=      p;
-
-    this.x=           x;
-    this.y=           y;
-
-    this.w=           2;
-    this.h=           2;
-
-    this.fill=        app.fill;
-    this.fillH=       app.fillH;
-    this.stroke=      app.stroke;
-    this.strokeH=     app.strokeH;
-
-    this.layer=       app.layer;
-    this.linetype=    app.linetype;
-
-    this.lineweight=  app.lineweight;
-    this.lineweightH= app.lineweightH;
-
-  };
 
   //~ Controls =========================================================
   var control=function(cp,lp,ap,ctrls){
@@ -4204,12 +4163,12 @@ var factor=1.25;
 
     app.factor=30/this.h;
 
-    this.points=[];
+    //~ this.vertices=[];
     this.ortho=false;
 
     this.shapes=[];
     this.Temp=0;
-    
+
   };
   grid.prototype=Object.create(control.prototype);
   grid.prototype.draw=function(){
@@ -4381,13 +4340,8 @@ var factor=1.25;
 
           pushMatrix();
 
-            resetMatrix();
+            //~ resetMatrix();
             translate(0.5, 0.5);
-
-              //~ app.gridX=   (mouseX-p.x-p.w/2)*app.factor;
-              //~ app.gridY=-1*(mouseY-p.y-p.h/2)*app.factor;
-
-              app.coordinates=this.cursorX;
 
               rectMode(CENTER);
 
@@ -4419,11 +4373,6 @@ var factor=1.25;
 
               noFill();
 
-              //~ if(p.ortho){
-                //~ app.mouseX-=app.mouseX%incr;
-                //~app. mouseY-=app.mouseY%incr;
-              //~ }
-
               ellipse(app.mouseX, app.mouseY, app.pSize, app.pSize);
 
           popMatrix();
@@ -4444,22 +4393,22 @@ var factor=1.25;
 
         case COMMANDS.L_SEGMENT2P[0]:
 
-          if(this.Temp.points.length===1){
+          if(p.Temp!=0){
 
-            var _x=(this.Temp.points[0].x)*app.factor;
-            var _y=(this.Temp.points[0].y)*app.factor;
+            var x=(p.Temp.vertices[0].xG)/app.factor;
+            var y=(p.Temp.vertices[0].yG)/app.factor;
 
             noFill();
             stroke(app.stroke);
             strokeWeight(app.lineweight);
 
-            line(app.worldX, app.worldY, _x, _y);
+            line(app.worldX, app.worldY, x, y);
 
             fill(app.fill);
             noStroke();
             strokeWeight(0);
 
-            ellipse(_x, _y,
+            ellipse(x, y,
                     app.pSize, app.pSize);
             ellipse(app.worldX, app.worldY,
                     app.pSize, app.pSize);
@@ -4470,28 +4419,28 @@ var factor=1.25;
 
         case COMMANDS.C_CENTERP[0]:
 
-          if(p.points.length===1){
+          if(p.vertices.length===1){
 
             noFill();
             stroke(app.stroke);
             strokeWeight(app.lineweight);
 
-            //~ line(app.mouseX,  app.mouseY, app.points[0].x, app.points[0].y);
+            //~ line(app.mouseX,  app.mouseY, app.vertices[0].x, app.vertices[0].y);
 
             fill(app.fill);
             noStroke();
             strokeWeight(0);
 
-            ellipse(p.points[0].x, p.points[0].y, app.pSize, app.pSize);
+            ellipse(p.vertices[0].x, p.vertices[0].y, app.pSize, app.pSize);
             ellipse(app.mouseX,    app.mouseY,    app.pSize, app.pSize);
 
             noFill();
             stroke(app.stroke);
             strokeWeight(app.lineweight);
 
-            var r=2*dist(p.points[0].x, p.points[0].y, app.mouseX, app.mouseY);
+            var r=2*dist(p.vertices[0].x, p.vertices[0].y, app.mouseX, app.mouseY);
 
-            ellipse(p.points[0].x, p.points[0].y, r, r);
+            ellipse(p.vertices[0].x, p.vertices[0].y, r, r);
 
           }
 
@@ -4499,7 +4448,7 @@ var factor=1.25;
 
         case COMMANDS.Q_RECTANGLE[0]:
 
-          if(p.points.length===1){
+          if(p.vertices.length===1){
 
             noFill();
             stroke(app.stroke);
@@ -4509,16 +4458,16 @@ var factor=1.25;
             noStroke();
             strokeWeight(0);
 
-            ellipse(p.points[0].x, p.points[0].y, app.pSize, app.pSize);
+            ellipse(p.vertices[0].x, p.vertices[0].y, app.pSize, app.pSize);
             ellipse(app.mouseX,    app.mouseY,    app.pSize, app.pSize);
 
             noFill();
             stroke(app.stroke);
             strokeWeight(app.lineweight);
 
-            var r=dist(p.points[0].x, p.points[0].y, app.mouseX, app.mouseY);
+            var r=dist(p.vertices[0].x, p.vertices[0].y, app.mouseX, app.mouseY);
 
-            rect(p.points[0].x, p.points[0].y, r, r);
+            rect(p.vertices[0].x, p.vertices[0].y, r, r);
 
           }
 
@@ -4554,7 +4503,7 @@ var factor=1.25;
     popMatrix();
 
     crosshair();
-    
+
 
     //~ println(this.cursorX);
 
@@ -4570,24 +4519,32 @@ var factor=1.25;
           case COMMANDS.P_DEFAULT[0]: //~ Point:  Default
 
             this.shapes.push(
-              new Point(
-                new propP(getGUID(), this, app.gridX, app.gridY)));
+              new Point(getGUID(), this, app.gridX, app.gridY));
 
             break;
 
           case COMMANDS.L_SEGMENT2P[0]:  //~ Line:  2 point
 
             if(this.Temp===0){
-              this.Temp=new Line(new propS(getGUID(), this));
-              this.Temp.points.push(new Point(new propP(getGUID(), this.Temp, app.gridX, app.gridY)));
-            }
-            else if(this.points.length===1){
 
-              //~ this.points.push(new Point(new propP(getGUID(), this, app.gridX, app.gridY)));
-              this.Temp.points.push(new Point(new propP(getGUID(), this.Temp, app.gridX, app.gridY)));
+              this.Temp=new Line(getGUID(), this, 0);
+
+              this.Temp.add(new Point(getGUID(), this.Temp, app.gridX, app.gridY));
+              this.Temp.add(new Point(getGUID(), this.Temp, app.gridX, app.gridY));
+
+            }
+            else{
+
+              this.Temp.vertices[1].xG=app.gridX;
+              this.Temp.vertices[1].yG=app.gridY;
+
+              //~ println(this.Temp.vertices[0].xG);
+              //~ println(this.Temp.vertices[0].yG);
+              //~ println(this.Temp.vertices[1].xG);
+              //~ println(this.Temp.vertices[1].yG);
+
               this.shapes.push(this.Temp);
 
-              this.points=[];
               this.Temp=0;
 
             }
@@ -4596,24 +4553,24 @@ var factor=1.25;
 
           case COMMANDS.C_CENTERP[0]:  //~ Circle:  Center-Point
 
-            if(this.points.length===0){
-              this.points.push(new pt(app.mouseX, app.mouseY));
+            if(this.vertices.length===0){
+              this.vertices.push(new pt(app.mouseX, app.mouseY));
             }
-            else if(this.points.length===1){
+            else if(this.vertices.length===1){
 
               var C=new Circle(new propS(getGUID(),this));
 
-              var x=   (this.points[0].x-this.x-this.w/2)*app.factor;
-              var y=-1*(this.points[0].y-this.y-this.h/2)*app.factor;
+              var x=   (this.vertices[0].x-this.x-this.w/2)*app.factor;
+              var y=-1*(this.vertices[0].y-this.y-this.h/2)*app.factor;
 
-              this.points[0]=new Point(new propP(getGUID(), this, x, y));
-              this.points.push(new Point(new propP(getGUID(), this, this.cursorX, this.cursorY)));
+              this.vertices[0]=new Point(new propP(getGUID(), this, x, y));
+              this.vertices.push(new Point(new propP(getGUID(), this, this.cursorX, this.cursorY)));
 
-              C.points=this.points;
+              C.vertices=this.vertices;
 
               this.shapes.push(C);
 
-              this.points=[];
+              this.vertices=[];
 
             }
 
@@ -4621,24 +4578,24 @@ var factor=1.25;
 
           case COMMANDS.Q_RECTANGLE[0]:  //~ Quad:  Rectangle
 
-            if(this.points.length===0){
-              this.points.push(new pt(app.mouseX, app.mouseY));
+            if(this.vertices.length===0){
+              this.vertices.push(new pt(app.mouseX, app.mouseY));
             }
-            else if(this.points.length===1){
+            else if(this.vertices.length===1){
 
               var R=new Rectangle(new propS(getGUID(),this));
 
-              var x=   (this.points[0].x-this.x-this.w/2)*app.factor;
-              var y=-1*(this.points[0].y-this.y-this.h/2)*app.factor;
+              var x=   (this.vertices[0].x-this.x-this.w/2)*app.factor;
+              var y=-1*(this.vertices[0].y-this.y-this.h/2)*app.factor;
 
-              this.points[0]=new Point(new propP(getGUID(), this, x, y));
-              this.points.push(new Point(new propP(getGUID(), this, this.cursorX, this.cursorY)));
+              this.vertices[0]=new Point(new propP(getGUID(), this, x, y));
+              this.vertices.push(new Point(new propP(getGUID(), this, this.cursorX, this.cursorY)));
 
-              R.points=this.points;
+              R.vertices=this.vertices;
 
               this.shapes.push(R);
 
-              this.points=[];
+              this.vertices=[];
 
             }
 
@@ -4666,8 +4623,8 @@ var factor=1.25;
 
       if(app.snaptogrid){
         var incr=(1/app.factor);
-        app.mouseX-=app.mouseX%incr-(this.x+this.w/2)%incr;
-        app.mouseY-=app.mouseY%incr-(this.y+this.h/2)%incr;
+        app.mouseX-=mouseX%incr-(this.x+this.w/2)%incr;
+        app.mouseY-=mouseY%incr-(this.y+this.h/2)%incr;
       }
 
       app.worldX=   (app.mouseX-this.x-this.w/2);
@@ -4676,7 +4633,7 @@ var factor=1.25;
       app.gridX=   (app.mouseX-this.x-this.w/2)*app.factor;
       app.gridY=-1*(app.mouseY-this.y-this.h/2)*app.factor;
 
-      app.coordinates=app.gridX + ", " + app.gridY;
+      app.coordinates=nf(app.gridX,1,1) + ", " + nf(app.gridY,1,1);
 
       for(var s in this.shapes){ this.shapes[s].moved(x,y); }
 
@@ -4692,7 +4649,7 @@ var factor=1.25;
   grid.prototype.typed=function(){
 
     if(app.keys[KEYCODES.SPACE]){
-      this.points=[];
+      this.vertices=[];
       this.temp=0;
     }
 
@@ -4707,7 +4664,7 @@ var factor=1.25;
 
       //~ println(this.shapes.length);
       //~ println("GUID " + this.shapes[0].i);
-      //~ println("points: " + this.shapes[0].points);
+      //~ println("vertices: " + this.shapes[0].vertices);
       //~ println("x: "+ this.shapes[0].x);
       //~ println("y: "+ this.shapes[0].y);
       //~ println("w: "+ this.shapes[0].w);
@@ -4742,17 +4699,6 @@ var factor=1.25;
 
     //~ text(modelX(app.mouseX,app.mouseY,0), 100, 400);
 
-    text(app.factor, 40, 200);
-
-    text(app.mouseX, 100, 300);
-    text(app.mouseY, 100, 320);
-
-    text(app.worldX, 100, 360);
-    text(app.worldY, 100, 380);
-
-    text(app.gridX, 100, 420);
-    text(app.gridY, 100, 440);
-    
   };
 
   //~ translate(0.5,0.5);
@@ -4956,7 +4902,7 @@ var factor=1.25;
 
   };
 
-  var getPoints=function(parent){
+  var getvertices=function(parent){
 
     var ctrls=[];
     var top=30;
@@ -4970,7 +4916,7 @@ var factor=1.25;
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
 
-    //~ Points ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //~ vertices ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //~ POINT:            [ -100, 'Point',            'POINT'         ],
     //~ P_OBJECT:         [ -101, 'P_Object',         'P_OBJECT'      ],
     //~ P_INTERSECT:      [ -102, 'P_Intersect',      'P_INTERSECT'   ],
@@ -5031,8 +4977,8 @@ var factor=1.25;
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
 
-    //~ L_2P:         [-200, 'Line2P',           'LINE2P'                 ],    //~ through 2 points
-    //~ L_SEGMENT2P:  [-201,  'Line',             'LINE'                  ],    //~ between 2 points
+    //~ L_2P:         [-200, 'Line2P',           'LINE2P'                 ],    //~ through 2 vertices
+    //~ L_SEGMENT2P:  [-201,  'Line',             'LINE'                  ],    //~ between 2 vertices
     //~ L_SEGMENTLEN: [-202,  'Line',             'LINE'                  ],    //~ from point given length
     //~ L_PERP:       [-203,  'LinePerp',         'LINEPERP'              ],    //~ perpendicular
     //~ L_PERPB:      [-204,  'LinePerpB',        'LINEPERPB'             ],    //~  perpendicular bisector
@@ -5042,8 +4988,8 @@ var factor=1.25;
     //~ L_DIAMETER:   [-208,  'LineDiameter',     'LINEDIAMETER'          ],    //~ Diameter
     //~ L_RADIUS:     [-209,  'LineRadius',       'LINERADIUS'            ],    //~ Radius
 
-    //~ RAY_2P:       [-210,  'Ray2P',            'RAY2P'                 ],    //~ Ray between 2 points
-    //~ V_2P:         [-211,  'Vector2P',         'VECTOR2P'              ],    //~ Vector between 2 points
+    //~ RAY_2P:       [-210,  'Ray2P',            'RAY2P'                 ],    //~ Ray between 2 vertices
+    //~ V_2P:         [-211,  'Vector2P',         'VECTOR2P'              ],    //~ Vector between 2 vertices
     //~ V_FP:         [-212,  'VectorFP',         'VECTORFP'              ],    //~ Vector from point
 
     ctrls.push(new buttonI(
@@ -5184,7 +5130,7 @@ var factor=1.25;
     //~ CIRCLE:       [-400,  'Circle',           'CIRCLE'                ],
     //~ C_CENTERP:    [-401,  'CircleCenterP',    'CIRCLECENTERP'         ],    //~ center point
     //~ C_CENTERR:    [-402,  'CircleCenterR',    'CIRCLECENTERR'         ],    //~ center radius
-    //~ C_3P:         [-403,  'Circle3P',         'CIRCL3P'               ],    //  3 points
+    //~ C_3P:         [-403,  'Circle3P',         'CIRCL3P'               ],    //  3 vertices
     ctrls.push(new buttonI(
                 new propC(getGUID(), cn, 0*w, 0, w, w, 0, false, COMMANDS.C_CENTERP[0], COMMANDS.C_CENTERP[1]),
                 getStyle(STYLES.BUTTON),
@@ -5289,7 +5235,7 @@ var factor=1.25;
 
     //~ Arc (A)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //~ ARC:          [-500,  'Arc',              'ARC'                   ],
-    //~ A_2P:         [-501,  'Arc2P',            'ARC2P'                 ],    //~SEMICIRCLETHROUGH2POINTS
+    //~ A_2P:         [-501,  'Arc2P',            'ARC2P'                 ],    //~SEMICIRCLETHROUGH2vertices
     //~ A_1:          [-502,  'Arc1',             'ARC1'                  ],    //~Circulararc
     //~ A_2:          [-503,  'Arc2',             'ARC2'                  ],    //~CIRCUMCIRCULARARC
     //~ A_3:          [-504,  'Arc3',             'ARC4'                  ],    //~ CIRCULARSECTOR
@@ -5398,7 +5344,7 @@ var factor=1.25;
     //~ S_ELLIPSE:    [-700,  'Ellipse',          'ELLIPSE'               ],
     //~ S_HYPERBOLA:  [-701,  'Hyperbola',        'HYPERBOLA'             ],
     //~ S_PARABOLA:   [-702,  'Parabola',         'PARABOLA'              ],
-    //~ S_5POINTS:    [-703,  'Conic5points',     'CONIC5POINTS'          ],
+    //~ S_5vertices:    [-703,  'Conic5vertices',     'CONIC5vertices'          ],
     ctrls.push(new buttonI(
                 new propC(getGUID(), cn, 0*w, 0, w, w, 0, false, COMMANDS.CONIC[0], COMMANDS.CONIC[1]),
                 getStyle(STYLES.BUTTON),
@@ -5420,7 +5366,7 @@ var factor=1.25;
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonI(
-                new propC(getGUID(), cn, 4*w, 0, w, w, 0, false, COMMANDS.S_5POINTS[0], COMMANDS.S_5POINTS[1]),
+                new propC(getGUID(), cn, 4*w, 0, w, w, 0, false, COMMANDS.S_5vertices[0], COMMANDS.S_5vertices[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
@@ -5716,27 +5662,59 @@ var factor=1.25;
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+11*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.LEFT[1]),
+                new propC(getGUID(), cn, 5, top+11*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.WORLDX[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+
+    ctrls.push(new label(
+                new propC(getGUID(), cn, 5, top+12*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.WORLDY[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new spacer(
+                new propC(getGUID(), cn, 5, top+13*h+5, 150, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.SPACER[0]),
+                getStyle(STYLES.SPACER),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new label(
+                new propC(getGUID(), cn, 5, top+14*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.GRIDX[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+
+    ctrls.push(new label(
+                new propC(getGUID(), cn, 5, top+15*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.GRIDY[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new spacer(
+                new propC(getGUID(), cn, 5, top+16*h+5, 150, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.SPACER[0]),
+                getStyle(STYLES.SPACER),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new label(
+                new propC(getGUID(), cn, 5, top+17*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.LEFT[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+12*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.CENTER[1]),
+                new propC(getGUID(), cn, 5, top+18*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.CENTER[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+13*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.RIGHT[1]),
+                new propC(getGUID(), cn, 5, top+19*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.RIGHT[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+15*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.FOCUS[1]),
+                new propC(getGUID(), cn, 5, top+21*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.FOCUS[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+17*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+                new propC(getGUID(), cn, 5, top+23*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
@@ -5777,29 +5755,51 @@ var factor=1.25;
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
+    ctrls.push(new labelP(
+                new propC(getGUID(), cn, 100, top+11*h, 10, 10, 0, false, COMMANDS.WORLDX[0], COMMANDS.WORLDX[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
 
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, 100, top+11*h, 10, 10, 0, false, COMMANDS.LEFT[0], COMMANDS.LEFT[1]),
+                new propC(getGUID(), cn, 100, top+12*h, 10, 10, 0, false, COMMANDS.WORLDY[0], COMMANDS.WORLDY[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, 100, top+12*h, 10, 10, 0, false, COMMANDS.CENTER[0], COMMANDS.CENTER[1]),
+                new propC(getGUID(), cn, 100, top+14*h, 10, 10, 0, false, COMMANDS.GRIDX[0], COMMANDS.GRIDX[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+
+    ctrls.push(new labelP(
+                new propC(getGUID(), cn, 100, top+15*h, 10, 10, 0, false, COMMANDS.GRIDY[0], COMMANDS.GRIDY[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+
+    ctrls.push(new labelP(
+                new propC(getGUID(), cn, 100, top+17*h, 10, 10, 0, false, COMMANDS.LEFT[0], COMMANDS.LEFT[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, 100, top+13*h, 10, 10, 0, false, COMMANDS.RIGHT[0], COMMANDS.RIGHT[1]),
+                new propC(getGUID(), cn, 100, top+18*h, 10, 10, 0, false, COMMANDS.CENTER[0], COMMANDS.CENTER[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, 50, top+15*h, 10, 10, 0, false, COMMANDS.FOCUS[0], COMMANDS.FOCUS[1]),
+                new propC(getGUID(), cn, 100, top+19*h, 10, 10, 0, false, COMMANDS.RIGHT[0], COMMANDS.RIGHT[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, 100, top+17*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+                new propC(getGUID(), cn, 50, top+21*h, 10, 10, 0, false, COMMANDS.FOCUS[0], COMMANDS.FOCUS[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new labelP(
+                new propC(getGUID(), cn, 100, top+23*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
@@ -6346,7 +6346,7 @@ var factor=1.25;
             //~ getStyle(STYLES.BUTTON),
             //~ getStyle(STYLES.TEXTCENTER)));
 
-    ctrls.push(getPoints(cn));
+    ctrls.push(getvertices(cn));
     ctrls.push(getLines(cn));
     //~ ctrls.push(getTriangles(cn));
     ctrls.push(getCircles(cn));
