@@ -1,6 +1,6 @@
 var proc = function(processingInstance){ with (processingInstance){
 
-  //~ size(screen.width, screen.height-200);  //~ set size of canvas
+  size(screen.width-20, screen.height-165);  //~ set size of canvas
 
   /**
 
@@ -9,6 +9,8 @@ var proc = function(processingInstance){ with (processingInstance){
 
 
   **/
+
+var process;
 
   var getColor=function(clr,alpha){
 
@@ -25,7 +27,7 @@ var proc = function(processingInstance){ with (processingInstance){
 
     BROWN:    color(155,145,135),
 
-    //~ control:  color(128,128,128),     controlF: color(242,242,242),
+    control:  color(128,128,128),     controlF: color(242,242,242),
 
     TEXT:     color(255,255,255),
 
@@ -256,7 +258,7 @@ var proc = function(processingInstance){ with (processingInstance){
     COPY:         [ 403,  'Copy',             'COPY'                  ],
     CUT:          [ 404,  'Cut',              'CUT'                   ],
     PASTE:        [ 405,  'Paste',            'PASTE'                 ],
-    EDIT:         [ 406,  'Edit',             'EDIT'                  ],
+    //EDIT:         [ 406,  'Edit',             'EDIT'                  ],
     DELETE:       [ 407,  'Delete',           'DELETE'                ],
 
 
@@ -299,7 +301,7 @@ var proc = function(processingInstance){ with (processingInstance){
 
 
     //~ Layers ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    LAYER:        [ 800,  'Layer',            'LAYER'                 ],
+    //LAYER:        [ 800,  'Layer',            'LAYER'                 ],
     FORWARD:      [ 801,  'Forward',          'FORWARD'               ],
     BACK:         [ 802,  'Back',             'BACK'                  ],
 
@@ -480,7 +482,8 @@ var proc = function(processingInstance){ with (processingInstance){
     linetype:       LINETYPES.HAIRLINE,
     lineweight:     0.75,
 
-    command:        COMMANDS.P_DEFAULT[0],
+    //~ command:        COMMANDS.P_DEFAULT[0],
+    command:        COMMANDS.PAN[0],
 
     border:         true,
     origin:         true,
@@ -512,17 +515,7 @@ var proc = function(processingInstance){ with (processingInstance){
 
   };
 
-  var drawing=function(){
 
-    this.guid=getGUID();
-    this.shapes=[];
-
-    this.color=CLRS.RED;
-    this.layer=11;
-    this.linetype=LINETYPES.HAIRLINE;
-    this.lineweight=7;
-
-  };
 
   //~ Methods ==========================================================
   var getGUID=function(){
@@ -558,7 +551,7 @@ var proc = function(processingInstance){ with (processingInstance){
       case COMMANDS.WIDTH[0]:       return app.width;
       case COMMANDS.HEIGHT[0]:      return app.height;
       case COMMANDS.FRAMERATE[0]:   return app.frameRate;
-      case COMMANDS.FRAMERATEA[0]:  return __frameRate;
+      //case COMMANDS.FRAMERATEA[0]:  return __frameRate;
       case COMMANDS.MOUSEX[0]:      return app.mouseX;
       case COMMANDS.MOUSEY[0]:      return app.mouseY;
       case COMMANDS.WORLDX[0]:      return app.worldX;
@@ -606,7 +599,7 @@ var proc = function(processingInstance){ with (processingInstance){
 
       case COMMANDS.FACTOR[0]:      return app.factor;
 
-    };
+    }
 
   };
 
@@ -627,7 +620,7 @@ var proc = function(processingInstance){ with (processingInstance){
 
     }
 
-  }
+  };
 
   var rec=function(x,y,w,h,r){
 
@@ -644,6 +637,18 @@ var proc = function(processingInstance){ with (processingInstance){
     this.x=x;
     this.y=y;
     //~ println(this.x+","+this.y);
+  };
+
+  var drawing=function(){
+
+    this.guid=getGUID();
+    this.shapes=[];
+
+    this.color=CLRS.RED;
+    this.layer=11;
+    this.linetype=LINETYPES.HAIRLINE;
+    this.lineweight=7;
+
   };
 
   //~ Shapes ===========================================================
@@ -1106,7 +1111,7 @@ var factor=1.25;
 
 
   //~ Annotation ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  var Annotation=function(p){m
+  var Annotation=function(p){
     Shape.call(this,p);
   };
   Annotation.prototype=Object.create(Shape.prototype);
@@ -1171,8 +1176,8 @@ var factor=1.25;
 
       //~ case COMMANDS.POINT[0]:       println('Point:');          break;
       //~ case COMMANDS.P_OBJECT[0]:    println('Point: bound');    break;
-      case COMMANDS.P_INTERSECT[0]:     app.factor*=2;            break;
-      case COMMANDS.P_MIDPOINT[0]:      app.factor/=2;            break;
+      case COMMANDS.P_INTERSECT[0]: println('Point: Intersect');  break;
+      case COMMANDS.P_MIDPOINT[0]:  println('Point: Midpoint');   break;
 
       //~ case COMMANDS.ORIGIN[0]:      app.origin=!app.origin;       break;
       //~ case COMMANDS.BORDER[0]:      app.border=!app.border;       break;
@@ -1183,6 +1188,7 @@ var factor=1.25;
 
   };
 
+var zoomfactor=0;
 
   //~ Commands =========================================================
   var commands=function(c,p){
@@ -1192,7 +1198,6 @@ var factor=1.25;
     //~ println(COMMANDS.FULLSCREEN[0]);
 
     switch(true){
-
 
       //~ Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       case (c>COMMANDS.GRID[0] &&
@@ -1208,17 +1213,12 @@ var factor=1.25;
                                         println("this is it");
                                         break;
 
-      case c===COMMANDS.UNDO[0]:
+      case c===COMMANDS.ZOOMIN[0]:       app.factor/=1.25;         break;
+      case c===COMMANDS.ZOOMOUT[0]:      app.factor*=1.25;         break;
 
-          //~ this.shapes.splice(this.shapes.length-1,1);
-          //~ process();
-          break;
+      case c===COMMANDS.PAN[0]:          println("pan");           break;
 
-      //~ case COMMANDS.RECTANGLE[0]: println('Rectangle');         break;
-
-      //~ case COMMANDS.RED[0]:         app.red=red(app.color);     break;
-      //~ case COMMANDS.GREEN[0]:       app.green=green(app.color); break;
-      //~ case COMMANDS.BLUE[0]:        app.blue=blue(app.color);   break;
+      case c===COMMANDS.UNDO[0]:                                  break;
 
       default:  break;
 
@@ -1315,13 +1315,13 @@ var factor=1.25;
 
   };
   control.prototype.draw=function(){
-    for(var c in this.ctrls){ this.ctrls[c].draw() }
+    for(var c in this.ctrls){ this.ctrls[c].draw(); }
   };
   control.prototype.clicked=function(){
     if(this.hit){
       //~ app.focus=this.i;
       commands(this.c, this.v);
-      for(var c in this.ctrls){ this.ctrls[c].clicked() }
+      for(var c in this.ctrls){ this.ctrls[c].clicked(); }
     }
   };
   control.prototype.moved=function(x,y){
@@ -1337,7 +1337,7 @@ var factor=1.25;
         this.hit=false;
       }
 
-      for(var c in this.ctrls){ this.ctrls[c].moved(x+this.x, y+this.y) }
+      for(var c in this.ctrls){ this.ctrls[c].moved(x+this.x, y+this.y); }
 
     }
     else if(this.alignX===CENTER){
@@ -1346,7 +1346,7 @@ var factor=1.25;
          app.mouseY>=y+this.y-this.h/2 && app.mouseY<=y+this.y+this.h/2){
         this.hit=true;
         app.focus=this.i;
-        for(var c in this.ctrls){ this.ctrls[c].moved(x+this.x,y+this.y) }
+        for(var c in this.ctrls){ this.ctrls[c].moved(x+this.x,y+this.y); }
       }
       else{
         this.hit=false;
@@ -1364,7 +1364,7 @@ var factor=1.25;
         this.hit=false;
       }
 
-      for(var c in this.ctrls){ this.ctrls[c].moved(x+this.x, y+this.y) }
+      for(var c in this.ctrls){ this.ctrls[c].moved(x+this.x, y+this.y); }
 
     }
     else{
@@ -1373,24 +1373,24 @@ var factor=1.25;
 
   };
   control.prototype.dragged=function(){
-    //~ for(var c in this.ctrls){ this.ctrls[c].dragged() }
+    for(var c in this.ctrls){ this.ctrls[c].dragged(); }
   };
   control.prototype.pressed=function(){
-    for(var c in this.ctrls){ this.ctrls[c].pressed() }
+    for(var c in this.ctrls){ this.ctrls[c].pressed(); }
   };
   control.prototype.released=function(){
     //~ this.hit=false;
-    for(var c in this.ctrls){ this.ctrls[c].released() }
+    for(var c in this.ctrls){ this.ctrls[c].released(); }
   };
   control.prototype.typed=function(){
-    for(var c in this.ctrls){ this.ctrls[c].typed() }
+    for(var c in this.ctrls){ this.ctrls[c].typed(); }
   };
   control.prototype.over=function(){
-    for(var c in this.ctrls){ this.ctrls[c].over() }
+    for(var c in this.ctrls){ this.ctrls[c].over(); }
   };
   control.prototype.out=function(){
     this.hit=false;
-    for(var c in this.ctrls){ this.ctrls[c].out() }
+    for(var c in this.ctrls){ this.ctrls[c].out(); }
   };
 
   //~ Telemetry ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1445,7 +1445,7 @@ var factor=1.25;
 
         popStyle();
 
-        for(var c in p.ctrls){ p.ctrls[c].draw() }
+        for(var c in p.ctrls){ p.ctrls[c].draw(); }
 
     popMatrix();
 
@@ -1502,7 +1502,7 @@ var factor=1.25;
 
         popStyle();
 
-        for(var c in p.ctrls){ p.ctrls[c].draw() }
+        for(var c in p.ctrls){ p.ctrls[c].draw(); }
 
     popMatrix();
 
@@ -1510,7 +1510,7 @@ var factor=1.25;
   button.prototype.clicked=function(){
     if(this.hit){
       commands(this.c, this.g);
-      for(var c in this.ctrls){ this.ctrls[c].clicked() }
+      for(var c in this.ctrls){ this.ctrls[c].clicked(); }
     }
   };
 
@@ -1549,7 +1549,7 @@ var factor=1.25;
 
         popStyle();
 
-        for(var c in p.ctrls){ p.ctrls[c].draw() }
+        for(var c in p.ctrls){ p.ctrls[c].draw(); }
 
     popMatrix();
 
@@ -1557,7 +1557,7 @@ var factor=1.25;
   buttonC.prototype.clicked=function(){
     if(this.hit & app.left){
       commands(this.c, this.g);
-      for(var c in this.ctrls){ this.ctrls[c].clicked() }
+      for(var c in this.ctrls){ this.ctrls[c].clicked(); }
     }
   };
 
@@ -1598,7 +1598,7 @@ var factor=1.25;
 
         popStyle();
 
-        for(var c in p.ctrls){ p.ctrls[c].draw() }
+        for(var c in p.ctrls){ p.ctrls[c].draw(); }
 
     popMatrix();
 
@@ -1606,7 +1606,7 @@ var factor=1.25;
   buttonP.prototype.clicked=function(){
     if(this.hit){
       commands(this.c, this.g);
-      for(var c in this.ctrls){ this.ctrls[c].clicked() }
+      for(var c in this.ctrls){ this.ctrls[c].clicked(); }
     }
   };
 
@@ -1656,7 +1656,7 @@ var factor=1.25;
 
             beginShape();
               vertex(d+cX-10, d+cY-10);
-              vertex(d+cX-10, d+cY+5)
+              vertex(d+cX-10, d+cY+5);
               vertex(d+cX+10, d+cY+10);
               vertex(d+cX+4,  d+cY-6);
             endShape(CLOSE);
@@ -1671,7 +1671,7 @@ var factor=1.25;
             fill(CLRS.VERTEX);
 
             ellipse(d+cX-10, d+cY-10, sz, sz);
-            ellipse(d+cX-10, d+cY+5,  sz, sz)
+            ellipse(d+cX-10, d+cY+5,  sz, sz);
             ellipse(d+cX+10, d+cY+10, sz, sz);
             ellipse(d+cX+4,  d+cY-6,  sz, sz);
 
@@ -2098,7 +2098,7 @@ var factor=1.25;
 
       popStyle();
 
-    }
+    };
     var drawCircle=function(){
 
       pushStyle();
@@ -2181,7 +2181,7 @@ var factor=1.25;
 
       popStyle();
 
-    }
+    };
     var drawQuad=function(){
 
       pushStyle();
@@ -2364,7 +2364,7 @@ var factor=1.25;
 
       popStyle();
 
-    }
+    };
     var drawArc=function(){
 
       pushStyle();
@@ -2533,7 +2533,7 @@ var factor=1.25;
 
       popStyle();
 
-    }
+    };
     var drawPolygon=function(){
 
       pushStyle();
@@ -2802,7 +2802,7 @@ var factor=1.25;
 
       popStyle();
 
-    }
+    };
     var drawGeneral=function(){
 
       pushMatrix();
@@ -2938,7 +2938,7 @@ var factor=1.25;
       popStyle();
       popMatrix();
 
-    }
+    };
     var drawMeasure=function(){
 
       pushMatrix();
@@ -3331,7 +3331,7 @@ var factor=1.25;
 
         popStyle();
 
-        for(var c in p.ctrls){ p.ctrls[c].draw() }
+        for(var c in p.ctrls){ p.ctrls[c].draw(); }
 
     popMatrix();
 
@@ -3350,7 +3350,7 @@ var factor=1.25;
 
       app.command=this.c;
 
-      for(var c in this.ctrls){ this.ctrls[c].clicked() }
+      for(var c in this.ctrls){ this.ctrls[c].clicked(); }
 
     }
   };
@@ -3451,6 +3451,88 @@ var factor=1.25;
       popMatrix();
 
     };
+    var drawView=function(){
+
+      pushMatrix();
+
+        translate(0.5,0.5);
+
+      pushStyle();
+
+        rectMode(CENTER);
+
+        switch(p.c){
+
+          case COMMANDS.PAN[0]:
+
+            noFill();
+            fill(CLRS.LINE);
+            strokeWeight(1);
+
+            textAlign(CENTER,CENTER);
+            textSize(16);
+            text("P", d+cX, d+cY);
+
+            break;
+
+          case COMMANDS.ZOOMIN[0]:
+
+            noFill();
+            stroke(CLRS.LINE);
+            strokeWeight(1.5);
+
+            if(p.v){ stroke(CLRS.LINEH); }
+
+            fill(CLRS.FILL);
+
+            ellipse(d+cX-4, d+cY-4, 12, 12);
+
+            strokeWeight(2);
+
+            line(d+cX, d+cY, d+cX+7, d+cY+7);
+
+            fill(CLRS.White);
+            strokeWeight(1);
+
+            textAlign(CENTER,CENTER);
+            textSize(10);
+            text("+", d+cX-4, d+cY-4);
+
+            break;
+
+          case COMMANDS.ZOOMOUT[0]:
+
+            noFill();
+            stroke(CLRS.LINE);
+            strokeWeight(1.5);
+
+            if(p.v){ stroke(CLRS.LINEH); }
+
+            fill(CLRS.FILL);
+
+            ellipse(d+cX-4, d+cY-4, 12, 12);
+
+            strokeWeight(2);
+
+            line(d+cX, d+cY, d+cX+7, d+cY+7);
+
+            fill(CLRS.White);
+            strokeWeight(1);
+
+            textAlign(CENTER,CENTER);
+            textSize(10);
+            text("-", d+cX-4, d+cY-4);
+
+            break;
+
+          default:  break;
+
+        }
+
+      popStyle();
+      popMatrix();
+
+    };
 
     pushMatrix();
 
@@ -3488,6 +3570,9 @@ var factor=1.25;
             case (p.c>=COMMANDS.GRID[0] &&
                   p.c<=COMMANDS.FULLSCREEN[0]): drawGrid();       break;
 
+            case (p.c>=COMMANDS.VIEW[0] &&
+                  p.c<=COMMANDS.MODIFY[0]):     drawView();       break;
+
             default:      break;
 
           }
@@ -3524,9 +3609,9 @@ var factor=1.25;
 
       //~ this.parent.v=!this.parent.v;
 
-      //~ app.command=this.c;
+      app.command=this.c;
 
-      for(var c in this.ctrls){ this.ctrls[c].clicked() }
+      for(var c in this.ctrls){ this.ctrls[c].clicked(); }
 
     }
   };
@@ -3581,7 +3666,7 @@ var factor=1.25;
 
         popStyle();
 
-        for(var c in p.ctrls){ p.ctrls[c].draw() }
+        for(var c in p.ctrls){ p.ctrls[c].draw(); }
 
     popMatrix();
 
@@ -3637,7 +3722,7 @@ var factor=1.25;
 
         popStyle();
 
-        for(var c in p.ctrls){ p.ctrls[c].draw() }
+        for(var c in p.ctrls){ p.ctrls[c].draw(); }
 
     popMatrix();
 
@@ -3696,7 +3781,7 @@ var factor=1.25;
 
         popStyle();
 
-        for(var c in p.ctrls){ p.ctrls[c].draw() }
+        for(var c in p.ctrls){ p.ctrls[c].draw(); }
 
     popMatrix();
 
@@ -3707,7 +3792,7 @@ var factor=1.25;
     if(app.mouseX>x+this.x-this.w/2 && app.mouseX<x+this.x+this.w/2 &&
        app.mouseY>y+this.y-this.h/2 && app.mouseY<y+this.y+this.h/2){
       this.hit=true;
-      for(var c in this.ctrls){ this.ctrls[c].moved(x+this.x,y+this.y) }
+      for(var c in this.ctrls){ this.ctrls[c].moved(x+this.x,y+this.y); }
     }
     else{
       this.hit=false;
@@ -3765,7 +3850,7 @@ var factor=1.25;
 
         popStyle();
 
-        for(var c in p.ctrls){ p.ctrls[c].draw() }
+        for(var c in p.ctrls){ p.ctrls[c].draw(); }
 
     popMatrix();
 
@@ -3834,7 +3919,7 @@ var factor=1.25;
 
         popStyle();
 
-        for(var c in p.ctrls){ p.ctrls[c].draw() }
+        for(var c in p.ctrls){ p.ctrls[c].draw(); }
 
     popMatrix();
 
@@ -3888,7 +3973,7 @@ var factor=1.25;
 
         popStyle();
 
-        for(var c in p.ctrls){ p.ctrls[c].draw() }
+        for(var c in p.ctrls){ p.ctrls[c].draw(); }
 
     popMatrix();
 
@@ -3946,7 +4031,7 @@ var factor=1.25;
 
         popStyle();
 
-        for(var c in p.ctrls){ p.ctrls[c].draw() }
+        for(var c in p.ctrls){ p.ctrls[c].draw(); }
 
     popMatrix();
 
@@ -3955,7 +4040,7 @@ var factor=1.25;
     if(this.hit && app.left){
       this.v=constrain(app.mouseX-this.parent.x-this.x, 0, this.w);
       commands(this.c, this.w*this.v/this.w);
-      for(var c in this.ctrls){ this.ctrls[c].clicked() }
+      for(var c in this.ctrls){ this.ctrls[c].clicked(); }
     }
   };
   sliderH.prototype.moved=function(x,y){
@@ -3964,7 +4049,7 @@ var factor=1.25;
        app.mouseY>y+this.y && app.mouseY<y+this.y+this.h){
       this.hit=true;
       app.focus=this.i;
-      for(var c in this.ctrls){ this.ctrls[c].moved(x+this.x,y+this.y) }
+      for(var c in this.ctrls){ this.ctrls[c].moved(x+this.x,y+this.y); }
     }
     else{
       this.hit=false;
@@ -3975,7 +4060,7 @@ var factor=1.25;
     if(this.hit && app.left){
       this.v=constrain(app.mouseX-this.parent.x-this.x, 0, this.w);
       commands(this.c, this.w*this.v/this.w);
-      for(var c in this.ctrls){ this.ctrls[c].dragged() }
+      for(var c in this.ctrls){ this.ctrls[c].dragged(); }
     }
   };
 
@@ -4062,7 +4147,7 @@ var factor=1.25;
         this.v=!this.v;
       }
       //~ commands(this.c, this.v);
-      for(var c in this.ctrls){ this.ctrls[c].clicked() }
+      for(var c in this.ctrls){ this.ctrls[c].clicked(); }
     }
   };
   strip.prototype.moved=function(x,y){
@@ -4084,10 +4169,10 @@ var factor=1.25;
         app.focus=this.i;
 
         if(this.v){
-          for(var c in this.ctrls){ this.ctrls[c].moved(x+this.x, y+this.y) }
+          for(var c in this.ctrls){ this.ctrls[c].moved(x+this.x, y+this.y); }
         }
         else{
-          this.ctrls[0].moved(x+this.x, y+this.y)
+          this.ctrls[0].moved(x+this.x, y+this.y);
         }
       }
       else{
@@ -4101,7 +4186,7 @@ var factor=1.25;
          app.mouseY>=y+this.y-this.h/2 && app.mouseY<=y+this.y+this.h/2){
         this.hit=true;
         app.focus=this.i;
-        for(var c in this.ctrls){ this.ctrls[c].moved(x+this.x,y+this.y) }
+        for(var c in this.ctrls){ this.ctrls[c].moved(x+this.x,y+this.y); }
       }
       else{
         this.hit=false;
@@ -4159,7 +4244,7 @@ var factor=1.25;
 
         popStyle();
 
-        for(var c in p.ctrls){ p.ctrls[c].draw() }
+        for(var c in p.ctrls){ p.ctrls[c].draw(); }
 
     popMatrix();
 
@@ -4180,6 +4265,9 @@ var factor=1.25;
     this.shapes=[];
     this.Temp=0;
 
+    this.cX=0;
+    this.cY=0;
+
   };
   grid.prototype=Object.create(control.prototype);
   grid.prototype.draw=function(){
@@ -4188,7 +4276,7 @@ var factor=1.25;
 
     var p=this;
     var d=0;
-    var incr=1/app.factor
+    var incr=1/app.factor;
 
     var border=function(){
 
@@ -4217,11 +4305,11 @@ var factor=1.25;
         noStroke();
 
         if(this.hit){ fill(CLRS.RED); }
-        else        { fill(CLRS.RED, 25); }
+        else        { fill(CLRS.RED); }
+fill(CLRS.RED);
+        ellipse(p.cX, -p.cY, 16, 16);
 
-        ellipse(0,0,6,6);
-
-      };
+      }
 
     };
     var axis=function(){
@@ -4404,7 +4492,7 @@ var factor=1.25;
 
         case COMMANDS.L_SEGMENT2P[0]:
 
-          if(p.Temp!=0){
+          if(p.Temp!==0){
 
             var x=(p.Temp.vertices[0].xG)/app.factor;
             var y=(p.Temp.vertices[0].yG)/app.factor;
@@ -4485,12 +4573,15 @@ var factor=1.25;
           break;
         default:                  break;
 
-      };
+      }
 
     };
+
     pushMatrix();
 
-      translate(p.x+p.w/2+0.5, p.y+p.h/2+0.5);
+      translate(p.x+p.w/2+0.5,
+                p.y+p.h/2+0.5);
+
       scale(1,-1);
 
         pushStyle();
@@ -4507,7 +4598,7 @@ var factor=1.25;
 
         popStyle();
 
-      for(var s in this.shapes){ this.shapes[s].draw() };
+      for(var s in this.shapes){ this.shapes[s].draw(); }
 
       drawTemp();
 
@@ -4566,57 +4657,16 @@ var factor=1.25;
 
           case COMMANDS.C_CENTERP[0]:  //~ Circle:  Center-Point
 
-            if(this.vertices.length===0){
-              this.vertices.push(new pt(app.mouseX, app.mouseY));
-            }
-            else if(this.vertices.length===1){
-
-              var C=new Circle(new propS(getGUID(),this));
-
-              var x=   (this.vertices[0].x-this.x-this.w/2)*app.factor;
-              var y=-1*(this.vertices[0].y-this.y-this.h/2)*app.factor;
-
-              this.vertices[0]=new Point(new propP(getGUID(), this, x, y));
-              this.vertices.push(new Point(new propP(getGUID(), this, this.cursorX, this.cursorY)));
-
-              C.vertices=this.vertices;
-
-              this.shapes.push(C);
-
-              this.vertices=[];
-
-            }
-
             break;
 
           case COMMANDS.Q_RECTANGLE[0]:  //~ Quad:  Rectangle
 
-            if(this.vertices.length===0){
-              this.vertices.push(new pt(app.mouseX, app.mouseY));
-            }
-            else if(this.vertices.length===1){
-
-              var R=new Rectangle(new propS(getGUID(),this));
-
-              var x=   (this.vertices[0].x-this.x-this.w/2)*app.factor;
-              var y=-1*(this.vertices[0].y-this.y-this.h/2)*app.factor;
-
-              this.vertices[0]=new Point(new propP(getGUID(), this, x, y));
-              this.vertices.push(new Point(new propP(getGUID(), this, this.cursorX, this.cursorY)));
-
-              R.vertices=this.vertices;
-
-              this.shapes.push(R);
-
-              this.vertices=[];
-
-            }
 
             break;
 
           default:  break;
 
-        };
+        }
 
       popMatrix();
 
@@ -4625,8 +4675,7 @@ var factor=1.25;
   };
   grid.prototype.moved=function(x,y){
 
-    app.mouseX=mouseX;
-    app.mouseY=mouseY;
+
 
     if(app.mouseX>this.x && app.mouseX<this.x+this.w &&
        app.mouseY>this.y && app.mouseY<this.y+this.h){
@@ -4656,7 +4705,15 @@ var factor=1.25;
     }
 
   };
+  var mStartX=0;
+  var mStartY=0;
   grid.prototype.dragged=function(x,y){
+
+    this.cX=app.mouseX-mStartX;
+    this.cY=app.mouseY-mStartY;
+
+    println(this.cX+", "+this.cY);
+
     for(var s in this.shapes){ this.shapes[s].dragged(); }
   };
   grid.prototype.typed=function(){
@@ -4696,7 +4753,7 @@ var factor=1.25;
 
   var n=100;
 
-  var process;
+
 
   var main=function(){
 
@@ -4708,7 +4765,7 @@ var factor=1.25;
     //~
     //~ frameRate(app.frameRate);
 
-    for(var c in app.ctrls){ app.ctrls[c].draw() }
+    for(var c in app.ctrls){ app.ctrls[c].draw(); }
 
     //~ text(modelX(app.mouseX,app.mouseY,0), 100, 400);
 
@@ -4749,16 +4806,22 @@ var factor=1.25;
     process();
   };
   var mouseMoved=function(){
+    app.mouseX=mouseX;
+    app.mouseY=mouseY;
     for(var c in app.ctrls){ app.ctrls[c].moved(0,0); }
     process();
   };
   var mouseDragged=function(){
     //~ app.left=true;
+    app.mouseX=mouseX;
+    app.mouseY=mouseY;
     for(var c in app.ctrls) { app.ctrls[c].dragged(); }
+
     process();
   };
   var mousePressed=function(){
-
+    mStartX=mouseX;
+    mStartY=mouseY;
     switch(mouseButton){
 
       case LEFT:    app.left=true;    break;
@@ -4773,7 +4836,8 @@ var factor=1.25;
     process();
   };
   var mouseReleased=function(){
-
+    mStartX=0;
+    mStartY=0;
     //~ println(mouseButton);
 
     app.left=false;
@@ -6199,7 +6263,7 @@ var factor=1.25;
     var w=24;
 
     var cn=new container(
-            new propC(getGUID(), parent, parent.w-340, app.height-30, 78, 34, 2, false, COMMANDS.UNDEF[0],COMMANDS.UTIL[1]),
+            new propC(getGUID(), parent, parent.w-340, app.height-30, 78, 34, 2, false, COMMANDS.UNDEF[0],COMMANDS.VIEW[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TITLE));
 
@@ -6442,7 +6506,7 @@ var factor=1.25;
 
     loadCommands();
 
-    size(app.width, app.height);
+    //size(app.width, app.height);
 
     if(app.debug) { app.frameRate=62; }
     else          { app.frameRate=32;  }
@@ -6462,5 +6526,6 @@ var factor=1.25;
   initialize();
 
   process();
+
 
 }};
