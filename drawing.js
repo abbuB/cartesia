@@ -191,6 +191,8 @@ var proc = function(processingInstance){ with (processingInstance){
     SPACER:       [  26,  'Spacer',           'SPACER'                ],
 
     COMMAND:      [  27,  'Command',          'COMMAND'               ],
+    FACTOR:       [  28,  'Factor',           'FACTOR'                ],
+    UTIL:         [  29,  'Util',             'UTIL'                  ],
 
     //~ Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     GRID:         [ 100,  'Grid',             'GRID'                  ],
@@ -602,6 +604,8 @@ var proc = function(processingInstance){ with (processingInstance){
       case COMMANDS.SNAPTOGRID[0]:  return app.snaptogird;
       case COMMANDS.FULLSCREEN[0]:  return app.fullscreen;
 
+      case COMMANDS.FACTOR[0]:      return app.factor;
+
     };
 
   };
@@ -708,11 +712,19 @@ var factor=1.25;
 
   //~ Point ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var Point=function(i,p,x,y){
+
     Shape.call(this, i, p, 0);
+
     this.xG=x;
     this.yG=y;
     this.xM=x/app.factor;
     this.yM=y/app.factor;
+
+    this.recalc=function(){
+      this.xM=this.xG/app.factor;
+      this.yM=this.yG/app.factor;
+    };
+
   };
   Point.prototype=Object.create(Shape.prototype);
   Point.prototype.draw=function(){
@@ -732,23 +744,22 @@ var factor=1.25;
           textAlign(LEFT,CENTER);
           textFont(createFont('monospace'));
 
-          textSize(9);
-          text("g: " + nf(p.xG,1,2)+", "+nf(p.yG,1,2), p.xG/app.factor+10, -1*p.yG/app.factor+5);
-          text("w: " + nf(p.xM,1,2)+", "+nf(p.yM,1,2), p.xG/app.factor+10, -1*p.yG/app.factor+15);
+          textSize(16);
+          text("g: " + nf(p.xG,1,2)+", "+nf(p.yG,1,2), p.xM+10, -1*p.yM+5);
+          text("w: " + nf(p.xM,1,2)+", "+nf(p.yM,1,2), p.xM+10, -1*p.yM+20);
 
       popMatrix();
 
     };
 
+    p.recalc();
     pushStyle();
 
       fill(p.fill);
       noStroke();
       strokeWeight(0);
 
-      //~ for(var n in p.vertices){
-        ellipse(p.xG/app.factor, p.yG/app.factor, sz, sz);
-      //~ }
+      ellipse(p.xM, p.yM, sz, sz);
 
       if(p.hit){
         meta();
@@ -831,19 +842,19 @@ var factor=1.25;
 
     var meta=function(){
 
-      fill(CLRS.GRAY);
-      textAlign(LEFT,CENTER);
-      textFont(createFont('monospace'));
-
-      textSize(9);
-      text("rise:     " + p.deltaX,         p.vertices[0].x+10, p.vertices[0].y+5);
-      text("run:      " + p.deltaY,         p.vertices[0].x+10, p.vertices[0].y+15);
-      text("slope:    " + nf(p.slope,1,2),  p.vertices[0].x+10, p.vertices[0].y+25);
-      text("length:   " + nf(p.length,1,2), p.vertices[0].x+10, p.vertices[0].y+35);
-
-      fill(p.fill);
-      noStroke();
-      strokeWeight(0);
+      //~ fill(CLRS.GRAY);
+      //~ textAlign(LEFT,CENTER);
+      //~ textFont(createFont('monospace'));
+//~
+      //~ textSize(9);
+      //~ text("rise:     " + p.deltaX,         p.vertices[0].x+10, p.vertices[0].y+5);
+      //~ text("run:      " + p.deltaY,         p.vertices[0].x+10, p.vertices[0].y+15);
+      //~ text("slope:    " + nf(p.slope,1,2),  p.vertices[0].x+10, p.vertices[0].y+25);
+      //~ text("length:   " + nf(p.length,1,2), p.vertices[0].x+10, p.vertices[0].y+35);
+//~
+      //~ fill(p.fill);
+      //~ noStroke();
+      //~ strokeWeight(0);
 
       //~ ellipse(p.midX, p.midY, sz, sz);
 
@@ -870,7 +881,7 @@ var factor=1.25;
         p.vertices[n].draw();
       }
 
-      if(p.hit){ meta(); }
+      //~ if(p.hit){ meta(); }
 
     popStyle();
 
@@ -1160,8 +1171,8 @@ var factor=1.25;
 
       //~ case COMMANDS.POINT[0]:       println('Point:');          break;
       //~ case COMMANDS.P_OBJECT[0]:    println('Point: bound');    break;
-      //~ case COMMANDS.P_INTERSECT[0]: println('Point: interset'); break;
-      //~ case COMMANDS.P_MIDPOINT[0]:  println('Point: midpoint'); break;
+      case COMMANDS.P_INTERSECT[0]:     app.factor*=2;            break;
+      case COMMANDS.P_MIDPOINT[0]:      app.factor/=2;            break;
 
       //~ case COMMANDS.ORIGIN[0]:      app.origin=!app.origin;       break;
       //~ case COMMANDS.BORDER[0]:      app.border=!app.border;       break;
@@ -4161,7 +4172,7 @@ var factor=1.25;
 
     control.call(this,cp,lp,ap,ctrls);
 
-    app.factor=30/this.h;
+    app.factor=22/this.h;
 
     //~ this.vertices=[];
     this.ortho=false;
@@ -4502,7 +4513,9 @@ var factor=1.25;
 
     popMatrix();
 
-    crosshair();
+    if(!app.keys[KEYCODES.CONTROL]){
+      crosshair();
+    }
 
 
     //~ println(this.cursorX);
@@ -5718,6 +5731,11 @@ var factor=1.25;
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
+    ctrls.push(new label(
+                new propC(getGUID(), cn, 5, top+25*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.FACTOR[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
     //~ Values ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ctrls.push(new checkbox(
                 new propC(getGUID(), cn, 105, top+0*h+5, 10, 10, 0, false, COMMANDS.DEBUG[0], COMMANDS.DEBUG[1]),
@@ -5800,6 +5818,11 @@ var factor=1.25;
 
     ctrls.push(new labelP(
                 new propC(getGUID(), cn, 100, top+23*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new labelP(
+                new propC(getGUID(), cn, 100, top+25*h, 10, 10, 0, false, COMMANDS.FACTOR[0], COMMANDS.FACTOR[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
@@ -6168,6 +6191,38 @@ var factor=1.25;
     return cn;
 
   };
+  var getView=function(parent){
+
+    var ctrls=[];
+    var top=28;
+    var h=15;
+    var w=24;
+
+    var cn=new container(
+            new propC(getGUID(), parent, parent.w-340, app.height-30, 78, 34, 2, false, COMMANDS.UNDEF[0],COMMANDS.UTIL[1]),
+            getStyle(STYLES.CONTAINER),
+            getStyle(STYLES.TITLE));
+
+    ctrls.push(new buttonT(
+                new propC(getGUID(), cn, 3, 3, w, w, 0, false, COMMANDS.PAN[0], COMMANDS.PAN[0]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonT(
+                new propC(getGUID(), cn, 27, 3, w, w, 0, false, COMMANDS.ZOOMIN[0], COMMANDS.ZOOMIN[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonT(
+                new propC(getGUID(), cn, 51, 3, w, w, 0, false, COMMANDS.ZOOMOUT[0], COMMANDS.ZOOMOUT[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    cn.ctrls=ctrls;
+
+    return cn;
+
+  };
 
   var getGridProps=function(parent){
 
@@ -6361,6 +6416,7 @@ var factor=1.25;
 
     //~ ctrls.push(getHeader(cn));
     ctrls.push(getFooter(cn));
+    ctrls.push(getView(cn));
     ctrls.push(getProperties(cn));
     ctrls.push(getTelemetry(cn));
     //~ ctrls.push(getColors(cn));
