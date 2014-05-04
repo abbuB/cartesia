@@ -1,6 +1,6 @@
 var proc = function(processingInstance){ with (processingInstance){
 
-  size(screen.width-20, screen.height-165);  //~ set size of canvas
+  size(screen.width-20, screen.height-215); //~ set size of canvas
 
   /**
 
@@ -432,7 +432,7 @@ var process;
   var app={
 
     width:          1350, //~screen.width,
-    height:         600,  //~ screen.height,
+    height:         screen.height-215,
 
     debug:          true,
     frameRate:      0,
@@ -1206,17 +1206,18 @@ var zoomfactor=0;
       case (c>=COMMANDS.POINT[0] &&
             c<=COMMANDS.SKETCH[0]):       ShapeCommands(c,p);     break;
 
-      case c===COMMANDS.COLOR[0]:       app.stroke=p;
-                                        app.red=red(app.color);
-                                        app.green=green(app.color);
-                                        app.blue=blue(app.color);
-                                        println("this is it");
-                                        break;
+      case c===COMMANDS.COLOR[0]:         app.stroke=p;
+                                          app.red=red(app.color);
+                                          app.green=green(app.color);
+                                          app.blue=blue(app.color);
+                                          println("this is it");
+                                          break;
 
-      case c===COMMANDS.ZOOMIN[0]:       app.factor/=1.25;         break;
-      case c===COMMANDS.ZOOMOUT[0]:      app.factor*=1.25;         break;
+      case c===COMMANDS.ZOOMIN[0]:        app.factor*=1.25;       break;
 
-      case c===COMMANDS.PAN[0]:          println("pan");           break;
+      case c===COMMANDS.ZOOMOUT[0]:       app.factor/=1.25;       break;
+
+      case c===COMMANDS.PAN[0]:           println("pan");         break;
 
       case c===COMMANDS.UNDO[0]:                                  break;
 
@@ -4093,7 +4094,7 @@ var zoomfactor=0;
             fill(p.fillH);
             stroke(p.strokeH);
             strokeWeight(p.weightH);
-            cursor(ARROW);
+            //~cursor(ARROW);
           }
 
           noStroke();
@@ -4227,7 +4228,7 @@ var zoomfactor=0;
             fill(p.fillH);
             stroke(p.strokeH);
             strokeWeight(p.weightH);
-            cursor(ARROW);
+            //~cursor(ARROW);
           }
 
           rect(d, d, p.w, p.h, p.r);
@@ -4257,16 +4258,19 @@ var zoomfactor=0;
 
     control.call(this,cp,lp,ap,ctrls);
 
-    app.factor=22/this.h;
-
-    //~ this.vertices=[];
-    this.ortho=false;
+    app.factor=this.h/22;   //~ required for initial grid height
 
     this.shapes=[];
     this.Temp=0;
 
     this.cX=0;
     this.cY=0;
+
+    this.originX=0;
+    this.originY=0;
+
+    this.offsetX=0;
+    this.offsetY=0;
 
   };
   grid.prototype=Object.create(control.prototype);
@@ -4290,7 +4294,7 @@ var zoomfactor=0;
             fill(p.fillH);
             stroke(p.strokeH);
             strokeWeight(p.weightH);
-            cursor(ARROW);
+            //~cursor(ARROW);
           }
 
           rect(d, d, p.w, p.h, p.r);
@@ -4298,16 +4302,24 @@ var zoomfactor=0;
       popStyle();
 
     };
+
     var origin=function(){
 
       if(app.origin){
 
-        noStroke();
+        if(p.originX< p.w/2 &&
+           p.originX>-p.w/2 &&
+           p.originY< p.h/2 &&
+           p.originY>-p.h/2){
 
-        if(this.hit){ fill(CLRS.RED); }
-        else        { fill(CLRS.RED); }
-fill(CLRS.RED);
-        ellipse(p.cX, -p.cY, 16, 16);
+          noStroke();
+
+          if(this.hit){ fill(CLRS.RED); }
+          else        { fill(CLRS.RED); }
+
+          ellipse(p.originX, -p.originY, 8, 8);
+
+        }
 
       }
 
@@ -4315,41 +4327,109 @@ fill(CLRS.RED);
     var axis=function(){
 
       noFill();
-      stroke(getColor(CLRS.WHITE,20));
-      strokeWeight(0.5);
+      stroke(getColor(CLRS.WHITE,40));
+      strokeWeight(0.75);
 
-      if(app.axisx){ line(-p.w/2, 0, p.w/2, 0); }
-      if(app.axisy){ line(0,-p.h/2, 0, p.h/2);  }
+      if(app.axisx &&
+         p.h/2>p.y &&
+         p.originY<p.h/2 &&
+         p.originY>-p.h/2){ line(-p.w/2,-p.originY,
+                                  p.w/2,-p.originY); }
+      println(p.originY);
+
+      if(app.axisy &&
+         p.w/2>p.x &&
+         p.originX< p.w/2 &&
+         p.originX>-p.w/2){ line(p.originX, -p.h/2,
+                                 p.originX,  p.h/2); }
 
     };
     var lines=function(){
 
       noFill();
-      stroke(getColor(CLRS.WHITE,10));
+      stroke(getColor(CLRS.WHITE,20));
       strokeWeight(0.25);
 
+      var factor=app.factor;
+      var count=1;
+
       if(app.linesx){
-        for(var n=1; n<p.w/2*app.factor; n++){
 
-          if(n%5===0){ strokeWeight(0.75);  }
-          else       { strokeWeight(0.25); }
+        //~ Left
+        for(var n=p.originX-factor; n>-p.w/2; n-=factor){
 
-          line( n*incr, -p.h/2,  n*incr, p.h/2);
-          line(-n*incr, -p.h/2, -n*incr, p.h/2);
+          if(n< p.w/2 &&
+             n>-p.w/2){
+
+            if(count%5===0){ strokeWeight(0.5); }
+            else           { strokeWeight(0.25); }
+
+            line(n, -p.h/2,  n, p.h/2);
+
+            count++;
+
+          }
+
 
         }
+
+        //~ Right
+        count=1;
+        for(var n=p.originX+factor; n<p.w/2; n+=factor){
+
+          if(n< p.w/2 &&
+             n>-p.w/2){
+
+            if(count%5===0){ strokeWeight(0.5); }
+            else           { strokeWeight(0.25); }
+
+            line(n, -p.h/2,  n, p.h/2);
+
+            count++;
+
+          }
+
+        }
+
       }
       if(app.linesy){
 
-      for(var n=1; n<p.h/2*app.factor; n++){
+        //~ Bottom
+        count=1;
+        for(var n=-p.originY-factor; n>-p.h/2; n-=factor){
 
-          if(n%5===0){ strokeWeight(0.75);  }
-          else       { strokeWeight(0.25); }
+          if(n< p.h/2 &&
+             n>-p.h/2){
 
-          line(-p.w/2,  n*incr, p.w/2,  n*incr);
-          line(-p.w/2, -n*incr, p.w/2, -n*incr);
+            if(count%5===0){ strokeWeight(0.5); }
+            else           { strokeWeight(0.25); }
+
+            line(-p.w/2,  n, p.w/2, n);
+
+            count++;
+
+          }
 
         }
+
+        //~ Top
+        count=1;
+        for(var n=-p.originY+factor; n<p.h/2; n+=factor){
+
+          if(n< p.h/2 &&
+             n>-p.h/2){
+
+            if(count%5===0){ strokeWeight(0.5); }
+            else           { strokeWeight(0.25); }
+
+            line(-p.w/2,  n, p.w/2, n);
+
+            count++;
+
+          }
+
+        }
+
       }
 
     };
@@ -4360,14 +4440,34 @@ fill(CLRS.RED);
 
       if(app.arrowsx){
 
-        triangle(-p.w/2, 0, -p.w/2+7, 3, -p.w/2+7, -3);   //~ left
-        triangle( p.w/2, 0,  p.w/2-7, 3,  p.w/2-7, -3);   //~ right
+        var y=-p.originY;
+
+        if(p.originX>-p.w/2 &&
+           p.originY< p.h/2 &&
+           p.originY>-p.h/2){
+          triangle(-p.w/2, y, -p.w/2+7, y+3, -p.w/2+7, y-3);   //~ left
+        }
+        if(p.originX<p.w/2 &&
+           p.originY< p.h/2 &&
+           p.originY>-p.h/2){
+          triangle( p.w/2, y,  p.w/2-7, y+3,  p.w/2-7, y-3);   //~ right
+        }
 
       }
       if(app.arrowsy){
 
-        triangle( 0,  p.h/2, 3,  p.h/2-7, -3,  p.h/2-7);  //~ top
-        triangle( 0, -p.h/2, 3, -p.h/2+7, -3, -p.h/2+7);  //~ bottom
+        var x=p.originX;
+
+        if(p.originY>-p.h/2 &&
+           p.originX< p.w/2 &&
+           p.originX>-p.w/2){
+          triangle( x,  p.h/2, x+3,  p.h/2-7, x-3,  p.h/2-7); //~ top
+        }
+        if(p.originY< p.h/2 &&
+           p.originX< p.w/2 &&
+           p.originX>-p.w/2){
+          triangle( x, -p.h/2, x+3, -p.h/2+7, x-3, -p.h/2+7); //~ bottom
+        }
 
       }
 
@@ -4375,20 +4475,96 @@ fill(CLRS.RED);
     var ticks=function(){
 
       noFill();
-      stroke(getColor(CLRS.Gray8,100));
+      stroke(getColor(CLRS.WHITE,20));
       strokeWeight(0.25);
 
-      if(app.ticksx){
-        for(var n=0; n<p.w/2/incr; n++){
-          line( n*incr, 3,  n*incr, -3);
-          line(-n*incr, 3, -n*incr, -3);
+      var factor=app.factor;
+      var count=1;
+
+      if(app.linesx){
+
+        //~ Left
+        for(var n=p.originX-factor; n>-p.w/2; n-=factor){
+
+          if(p.originX< p.w/2 &&
+             p.originX>-p.w/2 &&
+             p.originY< p.h/2 &&
+             p.originY>-p.h/2){
+
+            if(count%5===0){ strokeWeight(0.75); }
+            else           { strokeWeight(0.25); }
+
+            line(n, -p.originY-3,  n, -p.originY+3);
+
+            count++;
+
+          }
+
         }
+
+        //~ Right
+        count=1;
+        for(var n=p.originX+factor; n<p.w/2; n+=factor){
+
+          if(p.originX< p.w/2 &&
+             p.originX>-p.w/2 &&
+             p.originY< p.h/2 &&
+             p.originY>-p.h/2){
+
+            if(count%5===0){ strokeWeight(0.75); }
+            else           { strokeWeight(0.25); }
+
+            line(n, -p.originY-3,  n, -p.originY+3);
+
+            count++;
+
+          }
+
+        }
+
       }
-      if(app.ticksy){
-        for(var n=0; n<p.h/2/incr; n++){
-          line( 3,  n*incr, -3,  n*incr);
-          line( 3, -n*incr, -3, -n*incr);
+      if(app.linesy){
+
+        //~ Top
+        count=1;
+        for(var n=-p.originY-factor; n>-p.h/2; n-=factor){
+
+          if(p.originX< p.w/2 &&
+             p.originX>-p.w/2 &&
+             p.originY< p.h/2 &&
+             p.originY>-p.h/2){
+
+            if(count%5===0){ strokeWeight(0.75); }
+            else           { strokeWeight(0.25); }
+
+            line(p.originX-3,  n, p.originX+3, n);
+
+            count++;
+
+          }
+
         }
+
+        //~ Bottom
+        count=1;
+        for(var n=-p.originY+factor; n<p.h/2; n+=factor){
+
+          if(p.originX< p.w/2 &&
+             p.originX>-p.w/2 &&
+             p.originY< p.h/2 &&
+             p.originY>-p.h/2){
+
+            if(count%5===0){ strokeWeight(0.75); }
+            else           { strokeWeight(0.25); }
+
+            line(p.originX-3,  n, p.originX+3, n);
+
+            count++;
+
+          }
+
+        }
+
       }
 
     };
@@ -4404,24 +4580,114 @@ fill(CLRS.RED);
 
           textSize(9);
 
-          //~ x-axis
-          textAlign(CENTER,TOP);
+          var factor=app.factor;
+          var count=1;
 
-          if(app.labelsx){
-            for(var n=1; n<p.w/2/incr; n++){
-              text( n, n*incr, 3);
-              text(-n,-n*incr, 3);
+          if(app.linesx){
+
+            //~ Top
+            textAlign(RIGHT, CENTER);
+
+            for(var n=p.originY-factor; n>-p.h/2; n-=factor){
+
+              if(n< p.h/2 &&
+                 n>-p.h/2){
+
+                if(p.originX>p.w/2){
+                  text(count, p.w/2,  n);
+                }
+                else if(p.originX<-p.w/2){
+                  text(count, -p.w/2,  n);
+                }
+                else{
+                  text(count, p.originX-6,  n);
+                }
+
+              }
+
+              count++;
+
             }
+
+            //~ Bottom
+            count=1;
+            for(var n=p.originY+factor; n<p.h/2; n+=factor){
+
+              textAlign(RIGHT, CENTER);
+
+              if(n< p.h/2 &&
+                 n>-p.h/2){
+
+                if(p.originX>p.w/2){
+                  text(count, p.w/2,  n);
+                }
+                else if(p.originX<-p.w/2){
+                  text(count, -p.w/2,  n);
+                }
+                else{
+                  text(count, p.originX-6,  n);
+                }
+
+              }
+
+              count++;
+
+            }
+
           }
+          if(app.linesy){
 
-          //~ y-axis
-          textAlign(RIGHT,CENTER);
+            textAlign(CENTER,TOP);
 
-          if(app.labelsy){
-            for(var n=1; n<p.h/2/incr; n++){
-              text( n, -5, -n*incr);
-              text(-n, -5,  n*incr);
+            //~ Right
+            count=1;
+            for(var n=-p.originX-factor; n>-p.w/2; n-=factor){
+
+              if(n< p.w/2 &&
+                 n>-p.w/2){
+
+                if(p.originY>p.h/2){
+                  text(count, -n, p.h/2);
+                }
+                else if(p.originY<-p.h/2){
+                  text(count, -n, -p.h/2);
+                }
+                else{
+                  text(count, -n, p.originY-6);
+                }
+
+              }
+
+              count++;
+
             }
+
+            //~ Left
+            count=1;
+
+            for(var n=-p.originX+factor; n<p.w/2; n+=factor){
+
+              textAlign(CENTER,TOP);
+
+              if(n< p.w/2 &&
+                 n>-p.w/2){
+
+                if(p.originY>p.h/2){
+                  text(count, -n, p.h/2);
+                }
+                else if(p.originY<-p.h/2){
+                  text(count, -n, -p.h/2);
+                }
+                else{
+                  text(count, -n, p.originY+6);
+                }
+
+              }
+
+              count++;
+
+            }
+
           }
 
       popMatrix();
@@ -4579,8 +4845,8 @@ fill(CLRS.RED);
 
     pushMatrix();
 
-      translate(p.x+p.w/2+0.5,
-                p.y+p.h/2+0.5);
+      translate(p.x+p.w/2,
+                p.y+p.h/2);
 
       scale(1,-1);
 
@@ -4589,12 +4855,14 @@ fill(CLRS.RED);
           rectMode(CENTER);
 
           border();
+
           axis();
+          origin();
           lines();
           arrows();
           ticks();
           labels();
-          origin();
+
 
         popStyle();
 
@@ -4605,7 +4873,7 @@ fill(CLRS.RED);
     popMatrix();
 
     if(!app.keys[KEYCODES.CONTROL]){
-      crosshair();
+      //~ crosshair();
     }
 
 
@@ -4675,8 +4943,6 @@ fill(CLRS.RED);
   };
   grid.prototype.moved=function(x,y){
 
-
-
     if(app.mouseX>this.x && app.mouseX<this.x+this.w &&
        app.mouseY>this.y && app.mouseY<this.y+this.h){
 
@@ -4689,11 +4955,11 @@ fill(CLRS.RED);
         app.mouseY-=mouseY%incr-(this.y+this.h/2)%incr;
       }
 
-      app.worldX=   (app.mouseX-this.x-this.w/2);
-      app.worldY=-1*(app.mouseY-this.y-this.h/2);
+      app.worldX=   (app.mouseX-this.x-this.w/2-this.originX);
+      app.worldY=-1*(app.mouseY-this.y-this.h/2-this.originY);
 
-      app.gridX=   (app.mouseX-this.x-this.w/2)*app.factor;
-      app.gridY=-1*(app.mouseY-this.y-this.h/2)*app.factor;
+      app.gridX=   (app.mouseX-this.x-this.w/2-this.originX)/app.factor;
+      app.gridY=-1*(app.mouseY-this.y-this.h/2-this.originY)/app.factor;
 
       app.coordinates=nf(app.gridX,1,1) + ", " + nf(app.gridY,1,1);
 
@@ -4705,16 +4971,49 @@ fill(CLRS.RED);
     }
 
   };
-  var mStartX=0;
-  var mStartY=0;
   grid.prototype.dragged=function(x,y){
 
-    this.cX=app.mouseX-mStartX;
-    this.cY=app.mouseY-mStartY;
+    if(app.mouseX>this.x && app.mouseX<this.x+this.w &&
+       app.mouseY>this.y && app.mouseY<this.y+this.h){
 
-    println(this.cX+", "+this.cY);
+      if(app.command===COMMANDS.PAN[0]){
 
-    for(var s in this.shapes){ this.shapes[s].dragged(); }
+        if(app.mouseX<this.x+this.w &&
+           app.mouseX>this.x &&
+           app.mouseY<this.y+this.h &&
+           app.mouseY>this.y){
+
+             cursor(MOVE);
+
+          this.originX=app.mouseX-this.x-this.w/2-this.offsetX;
+          this.originY=app.mouseY-this.y-this.h/2+this.offsetY;
+
+        }
+
+      }
+
+      for(var s in this.shapes){ this.shapes[s].dragged(); }
+
+    }
+
+  };
+  grid.prototype.pressed=function(){
+
+    if(this.hit){
+      println("pressed");
+      this.offsetX=app.worldX;
+      this.offsetY=app.worldY;
+    };
+
+  };
+  grid.prototype.released=function(){
+
+    if(this.hit){
+      println("released");
+      this.offsetX=0;
+      this.offsetY=0;
+    };
+
   };
   grid.prototype.typed=function(){
 
@@ -6465,10 +6764,10 @@ fill(CLRS.RED);
             //~ getStyle(STYLES.BUTTON),
             //~ getStyle(STYLES.TEXTCENTER)));
 
-    ctrls.push(getvertices(cn));
-    ctrls.push(getLines(cn));
+    //~ ctrls.push(getvertices(cn));
+    //~ ctrls.push(getLines(cn));
     //~ ctrls.push(getTriangles(cn));
-    ctrls.push(getCircles(cn));
+    //~ ctrls.push(getCircles(cn));
     //~ ctrls.push(getQuads(cn));
     //~ ctrls.push(getArcs(cn));
     //~ ctrls.push(getPolygons(cn));
@@ -6479,10 +6778,10 @@ fill(CLRS.RED);
     //~ ctrls.push(getMeasure(cn));
 
     //~ ctrls.push(getHeader(cn));
-    ctrls.push(getFooter(cn));
+    //~ ctrls.push(getFooter(cn));
     ctrls.push(getView(cn));
-    ctrls.push(getProperties(cn));
-    ctrls.push(getTelemetry(cn));
+    //~ ctrls.push(getProperties(cn));
+    //~ ctrls.push(getTelemetry(cn));
     //~ ctrls.push(getColors(cn));
 
     //~ ctrls.push(getGridProps(cn));
