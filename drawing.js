@@ -482,8 +482,8 @@ var process;
     linetype:       LINETYPES.HAIRLINE,
     lineweight:     0.75,
 
-    //~ command:        COMMANDS.P_DEFAULT[0],
-    command:        COMMANDS.PAN[0],
+    command:        COMMANDS.P_DEFAULT[0],
+    //~ command:        COMMANDS.PAN[0],
 
     border:         true,
     origin:         true,
@@ -498,6 +498,7 @@ var process;
     ticksy:         true,
     labelsx:        true,
     labelsy:        true,
+    quadrants:      true,
 
     coordinates:    false,
     ortho:          false,
@@ -718,21 +719,22 @@ var factor=1.25;
   //~ Point ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var Point=function(i,p,x,y){
 
-    Shape.call(this, i, p, 0);
+    Shape.call(this, i, p);
 
-    this.xG=x;
-    this.yG=y;
-    this.xM=x/app.factor;
-    this.yM=y/app.factor;
+    this.xG=x;                //~ world X
+    this.yG=y;                //~ world Y
+    this.xW=x*app.factor;     //~ grid X
+    this.yW=y*app.factor;     //~ grid Y
 
     this.recalc=function(){
-      this.xM=this.xG/app.factor;
-      this.yM=this.yG/app.factor;
+      this.xW=this.xG*app.factor;
+      this.yW=this.yG*app.factor;
+      println("recalc point");
     };
 
   };
   Point.prototype=Object.create(Shape.prototype);
-  Point.prototype.draw=function(){
+  Point.prototype.draw=function(x,y){
 
     var p=this;
     var d=0;
@@ -750,9 +752,9 @@ var factor=1.25;
           textFont(createFont('monospace'));
 
           textSize(16);
-          text("g: " + nf(p.xG,1,2)+", "+nf(p.yG,1,2), p.xM+10, -1*p.yM+5);
-          text("w: " + nf(p.xM,1,2)+", "+nf(p.yM,1,2), p.xM+10, -1*p.yM+20);
-
+          text("g: " + nf(p.xG,1,2)+", "+nf(p.yG,1,2), p.xW+10+x, -1*p.yW+5+y);
+          text("w: " + nf(p.xW,1,2)+", "+nf(p.yW,1,2), p.xW+10+x, -1*p.yW+20+y);
+      
       popMatrix();
 
     };
@@ -764,7 +766,7 @@ var factor=1.25;
       noStroke();
       strokeWeight(0);
 
-      ellipse(p.xM, p.yM, sz, sz);
+      ellipse(p.xW+x, p.yW-y, sz, sz);
 
       if(p.hit){
         meta();
@@ -775,15 +777,10 @@ var factor=1.25;
   };
   Point.prototype.moved=function(x,y){
 
-    //~ if(dist(this.parent.cursorX, this.parent.cursorY,
-            //~ this.xG, this.yG)<app.pSize*app.factor){
-    if(dist(app.gridX, app.gridY,
-            this.xG, this.yG)<app.pSize*app.factor){
+    if(dist(app.worldX, app.worldY,
+            this.xW, this.yW)<app.pSize){
       this.hit=true;
       this.parent.hit=true;
-      //~ app.mouseX=   this.xW+this.parent.x+this.parent.w/2;
-      //~ app.mouseY=-1*this.yW+this.parent.y+this.parent.h/2;
-      //~ println(mouseX);
     }
     else{
       this.hit=false;
@@ -791,6 +788,7 @@ var factor=1.25;
 
   };
   Point.prototype.dragged=function(){
+    this.recalc();
     if(this.hit && app.left){
       this.vertices[0].x=app.mouseX;
       this.vertices[0].y=app.mouseY;
@@ -808,10 +806,6 @@ var factor=1.25;
 
   //~ Line ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var Line=function(i,p){
-//~ println(p.vertices.length);
-    //~ p.vertices.push(new Point(getGUID,this,
-                            //~ (p.vertices[0].xG+p.vertices[1].xG)/2,
-                            //~ (p.vertices[0].yG+p.vertices[1].yG)/2));
 
     Shape.call(this, i, p);
 
@@ -838,7 +832,7 @@ var factor=1.25;
 
   };
   Line.prototype=Object.create(Shape.prototype);
-  Line.prototype.draw=function(){
+  Line.prototype.draw=function(x,y){
 
     var p=this;
     var d=0;
@@ -875,15 +869,15 @@ var factor=1.25;
 
       if(p.SELECTED){ strokeWeight(p.lineweight*2); }
 
-      line(p.vertices[0].xG/app.factor, p.vertices[0].yG/app.factor,
-           p.vertices[1].xG/app.factor, p.vertices[1].yG/app.factor);
+      line(p.vertices[0].xG*app.factor+x, p.vertices[0].yG*app.factor-y,
+           p.vertices[1].xG*app.factor+x, p.vertices[1].yG*app.factor-y);
 
       fill(p.fill);
       noStroke();
       strokeWeight(0);
 
       for(var n in p.vertices){
-        p.vertices[n].draw();
+        p.vertices[n].draw(x,y);
       }
 
       //~ if(p.hit){ meta(); }
@@ -4317,7 +4311,7 @@ var zoomfactor=0;
           if(this.hit){ fill(CLRS.RED); }
           else        { fill(CLRS.RED); }
 
-          ellipse(p.originX, -p.originY, 8, 8);
+          ellipse(p.originX, -p.originY, 4, 4);
 
         }
 
@@ -4335,7 +4329,6 @@ var zoomfactor=0;
          p.originY<p.h/2 &&
          p.originY>-p.h/2){ line(-p.w/2,-p.originY,
                                   p.w/2,-p.originY); }
-      println(p.originY);
 
       if(app.axisy &&
          p.w/2>p.x &&
@@ -4583,21 +4576,21 @@ var zoomfactor=0;
           var factor=app.factor;
           var count=1;
 
+          textAlign(RIGHT, CENTER);
+
           if(app.linesx){
 
             //~ Top
-            textAlign(RIGHT, CENTER);
-
             for(var n=p.originY-factor; n>-p.h/2; n-=factor){
 
               if(n< p.h/2 &&
                  n>-p.h/2){
 
                 if(p.originX>p.w/2){
-                  text(count, p.w/2,  n);
+                  text(count, p.w/2-2,  n);
                 }
-                else if(p.originX<-p.w/2){
-                  text(count, -p.w/2,  n);
+                else if(p.originX<-p.w/2+12){
+                  text(count, -p.w/2+12,  n);
                 }
                 else{
                   text(count, p.originX-6,  n);
@@ -4611,18 +4604,17 @@ var zoomfactor=0;
 
             //~ Bottom
             count=1;
-            for(var n=p.originY+factor; n<p.h/2; n+=factor){
 
-              textAlign(RIGHT, CENTER);
+            for(var n=p.originY+factor; n<p.h/2; n+=factor){
 
               if(n< p.h/2 &&
                  n>-p.h/2){
 
                 if(p.originX>p.w/2){
-                  text(count, p.w/2,  n);
+                  text(count, p.w/2-2,  n);
                 }
-                else if(p.originX<-p.w/2){
-                  text(count, -p.w/2,  n);
+                else if(p.originX<-p.w/2+12){
+                  text(count, -p.w/2+12,  n);
                 }
                 else{
                   text(count, p.originX-6,  n);
@@ -4635,25 +4627,27 @@ var zoomfactor=0;
             }
 
           }
-          if(app.linesy){
 
-            textAlign(CENTER,TOP);
+          textAlign(CENTER,TOP);
+
+          if(app.linesy){
 
             //~ Right
             count=1;
+
             for(var n=-p.originX-factor; n>-p.w/2; n-=factor){
 
               if(n< p.w/2 &&
                  n>-p.w/2){
 
-                if(p.originY>p.h/2){
-                  text(count, -n, p.h/2);
+                if(p.originY>p.h/2-18){
+                  text(count, -n, p.h/2-12);
                 }
                 else if(p.originY<-p.h/2){
-                  text(count, -n, -p.h/2);
+                  text(count, -n, -p.h/2+2);
                 }
                 else{
-                  text(count, -n, p.originY-6);
+                  text(count, -n, p.originY+6);
                 }
 
               }
@@ -4667,16 +4661,16 @@ var zoomfactor=0;
 
             for(var n=-p.originX+factor; n<p.w/2; n+=factor){
 
-              textAlign(CENTER,TOP);
+
 
               if(n< p.w/2 &&
                  n>-p.w/2){
 
-                if(p.originY>p.h/2){
-                  text(count, -n, p.h/2);
+                if(p.originY>p.h/2-18){
+                  text(count, -n, p.h/2-12);
                 }
                 else if(p.originY<-p.h/2){
-                  text(count, -n, -p.h/2);
+                  text(count, -n, -p.h/2+2);
                 }
                 else{
                   text(count, -n, p.originY+6);
@@ -4693,6 +4687,40 @@ var zoomfactor=0;
       popMatrix();
 
     };
+    var quadrants=function(){
+
+      pushMatrix();
+
+        scale(1,-1);
+
+        textSize(60);
+        fill(CLRS.Gray9);
+        textFont(createFont('fantasy'));
+        
+        //~ Quadrant I        
+        textAlign(RIGHT,CENTER);
+        
+        text("I",p.w/2-10, p.y-p.h/2);
+
+        //~ Quadrant II
+        textAlign(LEFT,CENTER);
+
+        text("II",-p.w/2+10, p.y-p.h/2);
+        
+        //~ Quadrant III
+        textAlign(LEFT,BASELINE);
+
+        text("III",-p.w/2+10, p.y+p.h/2-60);
+        
+        //~ Quadrant IV
+        textAlign(RIGHT,BASELINE);
+
+        text("IV", p.w/2-10, p.y+p.h/2-60);
+        
+      popMatrix();
+
+    };
+
     var crosshair=function(){
 
       if(app.focus===p.i){
@@ -4747,6 +4775,7 @@ var zoomfactor=0;
       }
 
     };
+
     var drawTemp=function(){
 
       switch(app.command){
@@ -4760,14 +4789,14 @@ var zoomfactor=0;
 
           if(p.Temp!==0){
 
-            var x=(p.Temp.vertices[0].xG)/app.factor;
-            var y=(p.Temp.vertices[0].yG)/app.factor;
+            var x=(p.Temp.vertices[0].xG)*app.factor+p.originX;
+            var y=(p.Temp.vertices[0].yG)*app.factor-p.originY;
 
             noFill();
             stroke(app.stroke);
             strokeWeight(app.lineweight);
 
-            line(app.worldX, app.worldY, x, y);
+            line(app.worldX+p.originX, app.worldY-p.originY, x, y);
 
             fill(app.fill);
             noStroke();
@@ -4775,7 +4804,7 @@ var zoomfactor=0;
 
             ellipse(x, y,
                     app.pSize, app.pSize);
-            ellipse(app.worldX, app.worldY,
+            ellipse(app.worldX+p.originX, app.worldY-p.originY,
                     app.pSize, app.pSize);
 
           }
@@ -4797,7 +4826,7 @@ var zoomfactor=0;
             strokeWeight(0);
 
             ellipse(p.vertices[0].x, p.vertices[0].y, app.pSize, app.pSize);
-            ellipse(app.mouseX,    app.mouseY,    app.pSize, app.pSize);
+            ellipse(app.mouseX,      app.mouseY,      app.pSize, app.pSize);
 
             noFill();
             stroke(app.stroke);
@@ -4862,18 +4891,18 @@ var zoomfactor=0;
           arrows();
           ticks();
           labels();
-
+          quadrants();
 
         popStyle();
 
-      for(var s in this.shapes){ this.shapes[s].draw(); }
+      for(var s in this.shapes){ this.shapes[s].draw(p.originX,p.originY); }
 
       drawTemp();
 
     popMatrix();
 
     if(!app.keys[KEYCODES.CONTROL]){
-      //~ crosshair();
+      crosshair();
     }
 
 
@@ -4950,9 +4979,9 @@ var zoomfactor=0;
       app.focus=this.i;
 
       if(app.snaptogrid){
-        var incr=(1/app.factor);
-        app.mouseX-=mouseX%incr-(this.x+this.w/2)%incr;
-        app.mouseY-=mouseY%incr-(this.y+this.h/2)%incr;
+        var incr=app.factor;
+        app.mouseX-=mouseX%incr-(this.x+this.w/2)%incr-this.originX%incr;
+        app.mouseY-=mouseY%incr-(this.y+this.h/2)%incr-this.originY%incr;
       }
 
       app.worldX=   (app.mouseX-this.x-this.w/2-this.originX);
@@ -5278,7 +5307,7 @@ var zoomfactor=0;
 
   };
 
-  var getvertices=function(parent){
+  var getVertices=function(parent){
 
     var ctrls=[];
     var top=30;
@@ -6764,10 +6793,10 @@ var zoomfactor=0;
             //~ getStyle(STYLES.BUTTON),
             //~ getStyle(STYLES.TEXTCENTER)));
 
-    //~ ctrls.push(getvertices(cn));
-    //~ ctrls.push(getLines(cn));
+    ctrls.push(getVertices(cn));
+    ctrls.push(getLines(cn));
     //~ ctrls.push(getTriangles(cn));
-    //~ ctrls.push(getCircles(cn));
+    ctrls.push(getCircles(cn));
     //~ ctrls.push(getQuads(cn));
     //~ ctrls.push(getArcs(cn));
     //~ ctrls.push(getPolygons(cn));
@@ -6778,10 +6807,10 @@ var zoomfactor=0;
     //~ ctrls.push(getMeasure(cn));
 
     //~ ctrls.push(getHeader(cn));
-    //~ ctrls.push(getFooter(cn));
+    ctrls.push(getFooter(cn));
     ctrls.push(getView(cn));
     //~ ctrls.push(getProperties(cn));
-    //~ ctrls.push(getTelemetry(cn));
+    ctrls.push(getTelemetry(cn));
     //~ ctrls.push(getColors(cn));
 
     //~ ctrls.push(getGridProps(cn));
@@ -6826,5 +6855,7 @@ var zoomfactor=0;
 
   process();
 
+  var fontList = PFont.list();
+  println(fontList);
 
 }};
