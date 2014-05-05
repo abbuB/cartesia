@@ -729,7 +729,7 @@ var factor=1.25;
     this.recalc=function(){
       this.xW=this.xG*app.factor;
       this.yW=this.yG*app.factor;
-      println("recalc point");
+      //~ println("recalc point");
     };
 
   };
@@ -754,7 +754,7 @@ var factor=1.25;
           textSize(16);
           text("g: " + nf(p.xG,1,2)+", "+nf(p.yG,1,2), p.xW+10+x, -1*p.yW+5+y);
           text("w: " + nf(p.xW,1,2)+", "+nf(p.yW,1,2), p.xW+10+x, -1*p.yW+20+y);
-      
+
       popMatrix();
 
     };
@@ -4222,7 +4222,7 @@ var zoomfactor=0;
             fill(p.fillH);
             stroke(p.strokeH);
             strokeWeight(p.weightH);
-            //~cursor(ARROW);
+            cursor(ARROW);
           }
 
           rect(d, d, p.w, p.h, p.r);
@@ -4696,27 +4696,27 @@ var zoomfactor=0;
         textSize(60);
         fill(CLRS.Gray9);
         textFont(createFont('fantasy'));
-        
-        //~ Quadrant I        
+
+        //~ Quadrant I
         textAlign(RIGHT,CENTER);
-        
+
         text("I",p.w/2-10, p.y-p.h/2);
 
         //~ Quadrant II
         textAlign(LEFT,CENTER);
 
         text("II",-p.w/2+10, p.y-p.h/2);
-        
+
         //~ Quadrant III
         textAlign(LEFT,BASELINE);
 
         text("III",-p.w/2+10, p.y+p.h/2-60);
-        
+
         //~ Quadrant IV
         textAlign(RIGHT,BASELINE);
 
         text("IV", p.w/2-10, p.y+p.h/2-60);
-        
+
       popMatrix();
 
     };
@@ -4791,21 +4791,22 @@ var zoomfactor=0;
 
             var x=(p.Temp.vertices[0].xG)*app.factor+p.originX;
             var y=(p.Temp.vertices[0].yG)*app.factor-p.originY;
-
+            var xW=app.worldX+p.originX;
+            var yW=app.worldY-p.originY;
+            var sz=app.pSize;
+            
             noFill();
             stroke(app.stroke);
             strokeWeight(app.lineweight);
 
-            line(app.worldX+p.originX, app.worldY-p.originY, x, y);
+            line(xW, yW, x, y);
 
             fill(app.fill);
             noStroke();
             strokeWeight(0);
 
-            ellipse(x, y,
-                    app.pSize, app.pSize);
-            ellipse(app.worldX+p.originX, app.worldY-p.originY,
-                    app.pSize, app.pSize);
+            ellipse(x,  y,  sz, sz);
+            ellipse(xW, yW, sz, sz);
 
           }
 
@@ -4901,11 +4902,27 @@ var zoomfactor=0;
 
     popMatrix();
 
-    if(!app.keys[KEYCODES.CONTROL]){
+    if(!app.keys[KEYCODES.CONTROL] && app.command!==COMMANDS.PAN[0]){
       crosshair();
     }
+    else{
+      if(app.left){
+        cursor(MOVE);
+      }
+      else{
+        cursor(HAND);
+      }
+    }
 
+    noStroke();
+    fill(CLRS.Black);
 
+    rect(0,0,p.x,app.height);
+    rect(0,0,app.width,p.y);
+
+    rect(p.x+p.w,0,app.width,app.height);
+    rect(p.x,p.y+p.h,app.width,app.height-p.y-p.h);
+        
     //~ println(this.cursorX);
 
   };
@@ -5011,9 +5028,7 @@ var zoomfactor=0;
            app.mouseX>this.x &&
            app.mouseY<this.y+this.h &&
            app.mouseY>this.y){
-
-             cursor(MOVE);
-
+      cursor(MOVE);
           this.originX=app.mouseX-this.x-this.w/2-this.offsetX;
           this.originY=app.mouseY-this.y-this.h/2+this.offsetY;
 
