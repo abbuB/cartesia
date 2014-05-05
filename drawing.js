@@ -685,6 +685,7 @@ var process;
 
   };
   Shape.prototype.add=function(pnt){
+    println(pnt.i);
     this.vertices.push(pnt);
   };
   Shape.prototype.draw=function(){};
@@ -751,7 +752,7 @@ var factor=1.25;
           textAlign(LEFT,CENTER);
           textFont(createFont('monospace'));
 
-          textSize(16);
+          textSize(9);
           text("g: " + nf(p.xG,1,2)+", "+nf(p.yG,1,2), p.xW+10+x, -1*p.yW+5+y);
           text("w: " + nf(p.xW,1,2)+", "+nf(p.yW,1,2), p.xW+10+x, -1*p.yW+20+y);
 
@@ -770,6 +771,7 @@ var factor=1.25;
 
       if(p.hit){
         meta();
+        println("point: "  + this.i);
       }
 
     popStyle();
@@ -780,7 +782,7 @@ var factor=1.25;
     if(dist(app.worldX, app.worldY,
             this.xW, this.yW)<app.pSize){
       this.hit=true;
-      this.parent.hit=true;
+      this.parent.hit=true;      
     }
     else{
       this.hit=false;
@@ -818,17 +820,17 @@ var factor=1.25;
 
     this.recalc=function(){
 
-      //~ this.deltaX=abs(this.vertices[1].xG-this.vertices[0].xG);
-      //~ this.deltaY=abs(this.vertices[1].y-this.vertices[0].y);
-      //~ this.length=dist(this.vertices[0].x, this.vertices[0].y, this.vertices[1].x, this.vertices[1].y);
+      this.deltaX=abs(this.vertices[1].xG-this.vertices[0].xG);
+      this.deltaY=abs(this.vertices[1].yG-this.vertices[0].yG);
+      this.length=dist(this.vertices[0].xG, this.vertices[0].yG, this.vertices[1].xG, this.vertices[1].yG);
       //~ this.vertices[2].x=(this.vertices[0].x+this.vertices[1].x)/2;
       //~ this.vertices[2].y=(this.vertices[0].y+this.vertices[1].y)/2;
-      //~ if(this.deltaX===0){ this.slope=-0;                 }
-      //~ else               { this.slope=-1*(this.vertices[1].y-this.vertices[0].y)/(this.vertices[1].x-this.vertices[0].x); }
+      if(this.deltaX===0){ this.slope=-0;                 }
+      else               { this.slope=(this.vertices[1].yG-this.vertices[0].yG)/(this.vertices[1].xG-this.vertices[0].xG); }
 
     };
 
-    this.recalc();
+    
 
   };
   Line.prototype=Object.create(Shape.prototype);
@@ -841,34 +843,44 @@ var factor=1.25;
 
     var meta=function(){
 
-      //~ fill(CLRS.GRAY);
-      //~ textAlign(LEFT,CENTER);
-      //~ textFont(createFont('monospace'));
-//~
-      //~ textSize(9);
-      //~ text("rise:     " + p.deltaX,         p.vertices[0].x+10, p.vertices[0].y+5);
-      //~ text("run:      " + p.deltaY,         p.vertices[0].x+10, p.vertices[0].y+15);
-      //~ text("slope:    " + nf(p.slope,1,2),  p.vertices[0].x+10, p.vertices[0].y+25);
-      //~ text("length:   " + nf(p.length,1,2), p.vertices[0].x+10, p.vertices[0].y+35);
-//~
-      //~ fill(p.fill);
-      //~ noStroke();
-      //~ strokeWeight(0);
+      pushMatrix();
 
-      //~ ellipse(p.midX, p.midY, sz, sz);
+        scale(1,-1);
+
+          fill(CLRS.GRAY);
+          textAlign(LEFT,CENTER);
+          textFont(createFont('monospace'));
+
+          var _x= (p.vertices[0].xW+p.vertices[1].xW)/2;
+          var _y=-(p.vertices[0].yW+p.vertices[1].yW)/2;
+          
+          textSize(9);
+          text("rise:     " + p.deltaX,         _x+x, _y+5+y);
+          text("run:      " + p.deltaY,         _x+x, _y+15+y);
+          text("slope:    " + nf(p.slope,1,2),  _x+x, _y+25+y);
+          text("length:   " + nf(p.length,1,2), _x+x, _y+35+y);
+
+          //~ fill(p.fill);
+          //~ noStroke();
+          //~ strokeWeight(0);
+
+          //~ ellipse(p.midX, p.midY, sz, sz);
+
+      popMatrix();
 
     };
 
-    pushStyle();
+    this.recalc();
 
-      //~ rectMode(CENTER);
+    pushStyle();
 
       fill(getColor(p.fill,5));
       stroke(p.stroke);
       strokeWeight(p.hit ? p.lineweight*factor : p.lineweight);
 
       if(p.SELECTED){ strokeWeight(p.lineweight*2); }
-
+      if(p.hit){ stroke(CLRS.RED); }
+      
       line(p.vertices[0].xG*app.factor+x, p.vertices[0].yG*app.factor-y,
            p.vertices[1].xG*app.factor+x, p.vertices[1].yG*app.factor-y);
 
@@ -880,15 +892,28 @@ var factor=1.25;
         p.vertices[n].draw(x,y);
       }
 
-      //~ if(p.hit){ meta(); }
+      if(p.hit){
+        meta();
+        println("line: " +this.i);
+      }
 
     popStyle();
 
   };
   Line.prototype.moved=function(x,y){
 
+    this.hit=false;
+
     for(var n in this.vertices){
+
       this.vertices[n].moved(x,y);
+
+      if(dist(app.worldX+x, app.worldY+y,
+              this.vertices[n].xW+x, this.vertices[n].yW+y)<app.pSize){        
+        //~ this.hit=true;
+        //~ this.recalc();
+      }
+
     }
 
   };
@@ -896,22 +921,24 @@ var factor=1.25;
 
     for(var n in this.vertices){
 
-      if(dist(app.mouseX, app.mouseY,
-              this.vertices[n].x, this.vertices[n].y)<this.w){
-
-        app.mouseX=this.vertices[n].x;
-        app.mouseY=this.vertices[n].y;
-
-      }
+      //~ if(dist(app.mouseX, app.mouseY,
+              //~ this.vertices[n].x, this.vertices[n].y)<this.w){
+//~ 
+        //~ app.mouseX=this.vertices[n].x;
+        //~ app.mouseY=this.vertices[n].y;
+//~ 
+      //~ }
 
       if(this.hitP[n] && app.left){
         this.vertices[n].x=app.mouseX;
         this.vertices[n].y=app.mouseY;
             //~ println("dragged");
-        this.recalc();
+        
       }
 
     }
+
+    //~ this.recalc();
 
   };
 
@@ -4922,8 +4949,6 @@ var zoomfactor=0;
 
     rect(p.x+p.w,0,app.width,app.height);
     rect(p.x,p.y+p.h,app.width,app.height-p.y-p.h);
-        
-    //~ println(this.cursorX);
 
   };
   grid.prototype.clicked=function(){
@@ -4955,11 +4980,6 @@ var zoomfactor=0;
 
               this.Temp.vertices[1].xG=app.gridX;
               this.Temp.vertices[1].yG=app.gridY;
-
-              //~ println(this.Temp.vertices[0].xG);
-              //~ println(this.Temp.vertices[0].yG);
-              //~ println(this.Temp.vertices[1].xG);
-              //~ println(this.Temp.vertices[1].yG);
 
               this.shapes.push(this.Temp);
 
@@ -4997,8 +5017,8 @@ var zoomfactor=0;
 
       if(app.snaptogrid){
         var incr=app.factor;
-        app.mouseX-=mouseX%incr-(this.x+this.w/2)%incr-this.originX%incr;
-        app.mouseY-=mouseY%incr-(this.y+this.h/2)%incr-this.originY%incr;
+        //~ app.mouseX-=mouseX%incr-(this.x+this.w/2)%incr-this.originX%incr;
+        //~ app.mouseY-=mouseY%incr-(this.y+this.h/2)%incr-this.originY%incr;
       }
 
       app.worldX=   (app.mouseX-this.x-this.w/2-this.originX);
