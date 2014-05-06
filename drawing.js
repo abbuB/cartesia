@@ -56,8 +56,10 @@ var process;
     FILL:     getColor(color(255*7/11),10),
     FILLA:    getColor(color(255*7/11),25),
 
-    RULER:    color(231,189,33)
+    RULER:    color(231,189,33),
 
+    SELECTED: color(0,0,255),
+    HIT:      color(255,0,0)
 
   };
 
@@ -502,7 +504,7 @@ var process;
 
     coordinates:    false,
     ortho:          false,
-    snaptogrid:     true,
+    snaptogrid:     false,
     fullscreen:     false,
 
     cursorSize:     0,
@@ -678,8 +680,8 @@ var process;
 
     this.hit=         false;
 
-    this.SELECTED=    false;
-    this.DELETED=     false;
+    this.selected=    false;
+    this.deleted=     false;
 
     //~ for(var p=0; p<=this.length; p++){ this.hit[p]=0; }
 
@@ -691,11 +693,15 @@ var process;
   Shape.prototype.draw=function(){};
   Shape.prototype.clicked=function(){
 
-  println(app.command);
+    println(app.command);
 
     if(app.command===COMMANDS.SELECT[0]){
-      println(app.command);
-      if(this.hit){ this.SELECTED=!this.SELECTED; }
+
+      if(this.hit){
+        this.selected=!this.selected;
+        for(var n in this.vertices){ this.vertices[n].selected=this.selected; }
+      }
+
     }
 
   };
@@ -753,8 +759,9 @@ var factor=1.25;
           textFont(createFont('monospace'));
 
           textSize(9);
-          text("g: " + nf(p.xG,1,2)+", "+nf(p.yG,1,2), p.xW+10+x, -1*p.yW+5+y);
-          text("w: " + nf(p.xW,1,2)+", "+nf(p.yW,1,2), p.xW+10+x, -1*p.yW+20+y);
+          text("g: "        + nf(p.xG,1,2) + ", " + nf(p.yG,1,2), p.xW+10+x, -1*p.yW+5+y);
+          text("w: "        + nf(p.xW,1,2) + ", " + nf(p.yW,1,2), p.xW+10+x, -1*p.yW+15+y);
+          text("selected: " + p.selected,                         p.xW+10+x, -1*p.yW+25+y);
 
       popMatrix();
 
@@ -767,12 +774,13 @@ var factor=1.25;
       noStroke();
       strokeWeight(0);
 
-      ellipse(p.xW+x, p.yW-y, sz, sz);
-
+      if(p.selected){ fill(CLRS.SELECTED); }
       if(p.hit){
         meta();
-        println("point: "  + this.i);
+        fill(CLRS.HIT);
       }
+
+      ellipse(p.xW+x, p.yW-y, sz, sz);
 
     popStyle();
 
@@ -782,7 +790,7 @@ var factor=1.25;
     if(dist(app.worldX, app.worldY,
             this.xW, this.yW)<app.pSize){
       this.hit=true;
-      this.parent.hit=true;      
+      this.parent.hit=true;
     }
     else{
       this.hit=false;
@@ -818,19 +826,24 @@ var factor=1.25;
     this.length=0;
     this.slope=0;
 
+
     this.recalc=function(){
+
+      if(this.vertices.length===2){
+        this.vertices.push(new Point(getGUID(),this,0,0));
+      }
 
       this.deltaX=abs(this.vertices[1].xG-this.vertices[0].xG);
       this.deltaY=abs(this.vertices[1].yG-this.vertices[0].yG);
       this.length=dist(this.vertices[0].xG, this.vertices[0].yG, this.vertices[1].xG, this.vertices[1].yG);
-      //~ this.vertices[2].x=(this.vertices[0].x+this.vertices[1].x)/2;
-      //~ this.vertices[2].y=(this.vertices[0].y+this.vertices[1].y)/2;
+      this.vertices[2].xG=(this.vertices[0].xG+this.vertices[1].xG)/2;
+      this.vertices[2].yG=(this.vertices[0].yG+this.vertices[1].yG)/2;
       if(this.deltaX===0){ this.slope=-0;                 }
       else               { this.slope=(this.vertices[1].yG-this.vertices[0].yG)/(this.vertices[1].xG-this.vertices[0].xG); }
 
     };
 
-    
+
 
   };
   Line.prototype=Object.create(Shape.prototype);
@@ -853,12 +866,13 @@ var factor=1.25;
 
           var _x= (p.vertices[0].xW+p.vertices[1].xW)/2;
           var _y=-(p.vertices[0].yW+p.vertices[1].yW)/2;
-          
+
           textSize(9);
           text("rise:     " + p.deltaX,         _x+x, _y+5+y);
           text("run:      " + p.deltaY,         _x+x, _y+15+y);
           text("slope:    " + nf(p.slope,1,2),  _x+x, _y+25+y);
           text("length:   " + nf(p.length,1,2), _x+x, _y+35+y);
+          text("selected: " + p.selected,       _x+x, _y+45+y);
 
           //~ fill(p.fill);
           //~ noStroke();
@@ -878,23 +892,32 @@ var factor=1.25;
       stroke(p.stroke);
       strokeWeight(p.hit ? p.lineweight*factor : p.lineweight);
 
-      if(p.SELECTED){ strokeWeight(p.lineweight*2); }
-      if(p.hit){ stroke(CLRS.RED); }
+      if(p.hit){
+        meta();
+        strokeWeight(p.lineweight*2);
+      }
       
-      line(p.vertices[0].xG*app.factor+x, p.vertices[0].yG*app.factor-y,
-           p.vertices[1].xG*app.factor+x, p.vertices[1].yG*app.factor-y);
+      if(p.selected){
 
-      fill(p.fill);
-      noStroke();
-      strokeWeight(0);
+        //~ stroke(CLRS.SELECTED);
+
+        for(var i=0; i<=30; i++) {
+
+          var _x = lerp(p.vertices[0].xG*app.factor, p.vertices[1].xG*app.factor, i/30);
+          var _y = lerp(p.vertices[0].yG*app.factor, p.vertices[1].yG*app.factor, i/30);
+
+          ellipse(_x, _y, 2, 2);
+
+        }
+        
+      }
+      else{
+        line(p.vertices[0].xG*app.factor+x, p.vertices[0].yG*app.factor-y,
+             p.vertices[1].xG*app.factor+x, p.vertices[1].yG*app.factor-y);
+      }
 
       for(var n in p.vertices){
         p.vertices[n].draw(x,y);
-      }
-
-      if(p.hit){
-        meta();
-        println("line: " +this.i);
       }
 
     popStyle();
@@ -902,18 +925,22 @@ var factor=1.25;
   };
   Line.prototype.moved=function(x,y){
 
-    this.hit=false;
+    var dist1=dist(app.worldX, app.worldY,
+                   this.vertices[0].xW+x, this.vertices[0].yW+y);
+    var dist2=dist(app.worldX, app.worldY, this.vertices[1].xW+x,
+                   this.vertices[1].yW+y);
+
+    if(dist1+dist2-this.length*app.factor<app.pSize/8){
+      this.hit=true;
+      //~ println("hit");
+      //~ this.recalc();
+    }
+    else{
+      this.hit=false;
+    }
 
     for(var n in this.vertices){
-
       this.vertices[n].moved(x,y);
-
-      if(dist(app.worldX+x, app.worldY+y,
-              this.vertices[n].xW+x, this.vertices[n].yW+y)<app.pSize){        
-        //~ this.hit=true;
-        //~ this.recalc();
-      }
-
     }
 
   };
@@ -923,17 +950,17 @@ var factor=1.25;
 
       //~ if(dist(app.mouseX, app.mouseY,
               //~ this.vertices[n].x, this.vertices[n].y)<this.w){
-//~ 
+//~
         //~ app.mouseX=this.vertices[n].x;
         //~ app.mouseY=this.vertices[n].y;
-//~ 
+//~
       //~ }
 
       if(this.hitP[n] && app.left){
         this.vertices[n].x=app.mouseX;
         this.vertices[n].y=app.mouseY;
             //~ println("dragged");
-        
+
       }
 
     }
@@ -4821,7 +4848,7 @@ var zoomfactor=0;
             var xW=app.worldX+p.originX;
             var yW=app.worldY-p.originY;
             var sz=app.pSize;
-            
+
             noFill();
             stroke(app.stroke);
             strokeWeight(app.lineweight);
@@ -4929,9 +4956,13 @@ var zoomfactor=0;
 
     popMatrix();
 
-    if(!app.keys[KEYCODES.CONTROL] && app.command!==COMMANDS.PAN[0]){
-      crosshair();
+    //~ ARROW, CROSS, HAND, MOVE, TEXT, WAIT
+    if(app.command==COMMANDS.SELECT[0]){
+      cursor(ARROW);
     }
+    else if(!app.keys[KEYCODES.CONTROL] && app.command!==COMMANDS.PAN[0]){
+      crosshair();
+    }    
     else{
       if(app.left){
         cursor(MOVE);
@@ -4958,6 +4989,12 @@ var zoomfactor=0;
       pushMatrix();
 
         switch(app.command){
+
+          case COMMANDS.SELECT[0]:
+
+            for(var s in this.shapes){ this.shapes[s].clicked(0,0); }
+
+            break;
 
           case COMMANDS.P_DEFAULT[0]: //~ Point:  Default
 
@@ -5006,6 +5043,8 @@ var zoomfactor=0;
 
     }
 
+    
+
   };
   grid.prototype.moved=function(x,y){
 
@@ -5017,8 +5056,8 @@ var zoomfactor=0;
 
       if(app.snaptogrid){
         var incr=app.factor;
-        //~ app.mouseX-=mouseX%incr-(this.x+this.w/2)%incr-this.originX%incr;
-        //~ app.mouseY-=mouseY%incr-(this.y+this.h/2)%incr-this.originY%incr;
+        app.mouseX-=mouseX%incr-(this.x+this.w/2)%incr-this.originX%incr;
+        app.mouseY-=mouseY%incr-(this.y+this.h/2)%incr-this.originY%incr;
       }
 
       app.worldX=   (app.mouseX-this.x-this.w/2-this.originX);
@@ -5064,7 +5103,7 @@ var zoomfactor=0;
   grid.prototype.pressed=function(){
 
     if(this.hit){
-      println("pressed");
+      //~ println("pressed");
       this.offsetX=app.worldX;
       this.offsetY=app.worldY;
     };
@@ -5073,7 +5112,7 @@ var zoomfactor=0;
   grid.prototype.released=function(){
 
     if(this.hit){
-      println("released");
+      //~ println("released");
       this.offsetX=0;
       this.offsetY=0;
     };
