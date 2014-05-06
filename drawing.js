@@ -207,21 +207,21 @@ var process;
     AXISX:        [ 104,  'x',                'X'                     ],
     AXISY:        [ 105,  'y',                'Y'                     ],
     LINES:        [ 106,  'Lines',            'LINES'                 ],
-    LINESX:       [ 107,  'LinesX',           'LINESX'                ],
-    LINESY:       [ 108,  'LinesY',           'LINESY'                ],
+    LINESX:       [ 107,  'x',                'X'                     ],
+    LINESY:       [ 108,  'y',                'Y'                     ],
     ARROWS:       [ 109,  'Arrows',           'ARROWS'                ],
-    ARROWSX:      [ 110,  'ArrowsX',          'ARROWSX'               ],
-    ARROWSY:      [ 111,  'ArrowsY',          'ARROWSY'               ],
+    ARROWSX:      [ 110,  'x',                'X'                     ],
+    ARROWSY:      [ 111,  'y',                'Y'                     ],
     TICKS:        [ 112,  'Ticks',            'TICKS'                 ],
-    TICKSX:       [ 113,  'TicksX',           'TICKSX'                ],
-    TICKSY:       [ 114,  'TicksY',           'TICKSY'                ],
+    TICKSX:       [ 113,  'x',                'X'                     ],
+    TICKSY:       [ 114,  'y',                'Y'                     ],
     LABELS:       [ 115,  'Labels',           'LABELS'                ],
-    LABELSX:      [ 116,  'LabelsX',          'LABELSX'               ],
-    LABELSY:      [ 117,  'LabelsY',          'LABLESY'               ],
+    LABELSX:      [ 116,  'x',                'X'                     ],
+    LABELSY:      [ 117,  'y',                'Y'                     ],
 
     COORDINATES:  [ 118,  'Coordinates',      'COORDINATES'           ],
-    ORTHO:        [ 119,  'LabelsX',          'LABELSX',  KEYCODES.ORTHO  ],
-    SNAPTOGRID:   [ 120,  'LabelsY',          'LABLESY',  KEYCODES.SNAPTOGRID  ],
+    ORTHO:        [ 119,  'Ortho',            'ORTHO',      KEYCODES.ORTHO      ],
+    SNAPTOGRID:   [ 120,  'SnaptoGrid',       'SNAPTOGRID', KEYCODES.SNAPTOGRID ],
     FULLSCREEN:   [ 121,  'Grid',             'COMMAND'               ],
 
 
@@ -364,7 +364,7 @@ var process;
 
     //~ Arc (A)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ARC:          [1600,  'Arc',              'ARC'                   ],
-    A_2P:         [1601,  'Arc2vertices',       'ARC2vertices'            ],    //~ SemiCircleThrough2vertices
+    A_2P:         [1601,  'Arc2vertices',     'ARC2vertices'          ],    //~ SemiCircleThrough2vertices
     A_CA:         [1602,  'CircularArc',      'CIRCULARARC'           ],    //~ CircularArc
     A_CCA:        [1603,  'CircumCircularArc','CIRCUMCIRCULARARC'     ],    //~ CircumcircularArc
     A_CS:         [1604,  'CircularSector',   'CIRCULARSECTOR'        ],    //~ CircularSector
@@ -384,7 +384,7 @@ var process;
     S_ELLIPSE:    [1800,  'Ellipse',          'ELLIPSE'               ],
     S_HYPERBOLA:  [1801,  'Hyperbola',        'HYPERBOLA'             ],
     S_PARABOLA:   [1802,  'Parabola',         'PARABOLA'              ],
-    S_5vertices:    [1803,  'Conic5vertices',     'CONIC5vertices'          ],
+    S_5vertices:  [1803,  'Conic5vertices',     'CONIC5vertices'      ],
 
 
     //~ Angle ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -490,16 +490,16 @@ var process;
     border:         true,
     origin:         true,
 
-    axisx:          true,
-    axisy:          true,
-    linesx:         true,
-    linesy:         true,
-    arrowsx:        true,
-    arrowsy:        true,
-    ticksx:         true,
-    ticksy:         true,
-    labelsx:        true,
-    labelsy:        true,
+    axisX:          true,
+    axisY:          true,
+    linesX:         true,
+    linesY:         true,
+    arrowsX:        true,
+    arrowsY:        true,
+    ticksX:         true,
+    ticksY:         true,
+    labelsX:        true,
+    labelsY:        true,
     quadrants:      true,
 
     coordinates:    false,
@@ -541,7 +541,7 @@ var process;
   //~ println(p);
     switch(p){
 
-      case COMMANDS.UNDEF[0]:     return app.command;
+      case COMMANDS.UNDEF[0]:       return app.command;
 
       case COMMANDS.FOCUS[0]:       return app.focus;
       case COMMANDS.LEFT[0]:        return app.left;
@@ -561,6 +561,7 @@ var process;
       case COMMANDS.WORLDY[0]:      return app.worldY;
       case COMMANDS.GRIDX[0]:       return app.gridX;
       case COMMANDS.GRIDY[0]:       return app.gridY;
+
       case COMMANDS.PRESSED[0]:     return app.left;
 
       case COMMANDS.COLOR[0]:       return app.stroke;
@@ -580,20 +581,20 @@ var process;
       //~ Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       case COMMANDS.ORIGIN[0]:      return app.origin;
 
-      case COMMANDS.AXISX[0]:       return app.axisx;
-      case COMMANDS.AXISY[0]:       return app.axisy;
+      case COMMANDS.AXISX[0]:       return app.axisX;
+      case COMMANDS.AXISY[0]:       return app.axisY;
 
-      case COMMANDS.LINESX[0]:      return app.linesx;
-      case COMMANDS.LINESY[0]:      return app.linesy;
+      case COMMANDS.LINESX[0]:      return app.linesX;
+      case COMMANDS.LINESY[0]:      return app.linesY;
 
-      case COMMANDS.ARROWSX[0]:     return app.arrowsx;
-      case COMMANDS.ARROWSY[0]:     return app.arrowsy;
+      case COMMANDS.ARROWSX[0]:     return app.arrowsX;
+      case COMMANDS.ARROWSY[0]:     return app.arrowsY;
 
-      case COMMANDS.TICKSX[0]:      return app.ticksx;
-      case COMMANDS.TICKSY[0]:      return app.ticksy;
+      case COMMANDS.TICKSX[0]:      return app.ticksX;
+      case COMMANDS.TICKSY[0]:      return app.ticksY;
 
-      case COMMANDS.LABELSX[0]:     return app.labelsx;
-      case COMMANDS.LABELSY[0]:     return app.labelsy;
+      case COMMANDS.LABELSX[0]:     return app.labelsX;
+      case COMMANDS.LABELSY[0]:     return app.labelsY;
 
       case COMMANDS.COORDINATES[0]: return app.coordinates;
       case COMMANDS.ORTHO[0]:       return app.ortho;
@@ -894,31 +895,32 @@ var factor=1.25;
 
       if(p.hit){
         meta();
-        strokeWeight(p.lineweight*2);
+        strokeWeight(p.lineweight*1.25);
       }
-      
+
       if(p.selected){
 
-        //~ stroke(CLRS.SELECTED);
+        stroke(getColor(p.stroke,50));
 
         for(var i=0; i<=30; i++) {
 
-          var _x = lerp(p.vertices[0].xG*app.factor, p.vertices[1].xG*app.factor, i/30);
-          var _y = lerp(p.vertices[0].yG*app.factor, p.vertices[1].yG*app.factor, i/30);
+          var _x = lerp(p.vertices[0].xG*app.factor+x, p.vertices[1].xG*app.factor+x, i/30);
+          var _y = lerp(p.vertices[0].yG*app.factor-y, p.vertices[1].yG*app.factor-y, i/30);
 
           ellipse(_x, _y, 2, 2);
 
         }
-        
+        for(var n in p.vertices){
+          p.vertices[n].draw(x,y);
+        }
+
       }
       else{
         line(p.vertices[0].xG*app.factor+x, p.vertices[0].yG*app.factor-y,
              p.vertices[1].xG*app.factor+x, p.vertices[1].yG*app.factor-y);
       }
 
-      for(var n in p.vertices){
-        p.vertices[n].draw(x,y);
-      }
+
 
     popStyle();
 
@@ -1174,32 +1176,32 @@ var factor=1.25;
       case COMMANDS.ORIGIN[0]:      app.origin=!app.origin;           break;
       case COMMANDS.BORDER[0]:      app.border=!app.border;           break;
       case COMMANDS.AXES[0]:                                          break;
-      case COMMANDS.AXISX[0]:       app.axisx=!app.axisx;             break;
-      case COMMANDS.AXISY[0]:       app.axisy=!app.axisy;             break;
+      case COMMANDS.AXISX[0]:       app.axisX=!app.axisX;             break;
+      case COMMANDS.AXISY[0]:       app.axisY=!app.axisY;             break;
       case COMMANDS.LINES[0]:
 
         if(app.linesx || app.linesy){
-          app.linesx=false;
-          app.linesy=false;
+          app.linesX=false;
+          app.linesY=false;
         }
         else{
-          app.linesx=true;
-          app.linesy=true;
+          app.linesX=true;
+          app.linesY=true;
         }
 
         break;
 
-      case COMMANDS.LINESX[0]:      app.linesx=!app.linesx;           break;
-      case COMMANDS.LINESY[0]:      app.linesy=!app.linesy;           break;
+      case COMMANDS.LINESX[0]:      app.linesX=!app.linesX;           break;
+      case COMMANDS.LINESY[0]:      app.linesY=!app.linesY;           break;
       case COMMANDS.ARROWS[0]:                                        break;
-      case COMMANDS.ARROWSX[0]:     app.arrowsx=!app.arrowsx;         break;
-      case COMMANDS.ARROWSY[0]:     app.arrowsy=!app.arrowsy;         break;
+      case COMMANDS.ARROWSX[0]:     app.arrowsX=!app.arrowsX;         break;
+      case COMMANDS.ARROWSY[0]:     app.arrowsY=!app.arrowsY;         break;
       case COMMANDS.TICKS[0]:                                         break;
-      case COMMANDS.TICKSX[0]:      app.ticksx=!app.ticksx;           break;
-      case COMMANDS.TICKSY[0]:      app.ticksy=!app.ticksy;           break;
+      case COMMANDS.TICKSX[0]:      app.ticksX=!app.ticksX;           break;
+      case COMMANDS.TICKSY[0]:      app.ticksY=!app.ticksY;           break;
       case COMMANDS.LABELS[0]:                                        break;
-      case COMMANDS.LABELSX[0]:     app.labelsx=!app.labelsx;         break;
-      case COMMANDS.LABELSY[0]:     app.labelsy=!app.labelsy;         break;
+      case COMMANDS.LABELSX[0]:     app.labelsX=!app.labelsX;         break;
+      case COMMANDS.LABELSY[0]:     app.labelsY=!app.labelsY;         break;
 
       //~ case COMMANDS.COORDINATES[0]: app.coordinates=!app.coordinates; break;
       case COMMANDS.ORTHO[0]:       app.ortho=!app.ortho;             break;
@@ -4378,13 +4380,13 @@ var zoomfactor=0;
       stroke(getColor(CLRS.WHITE,40));
       strokeWeight(0.75);
 
-      if(app.axisx &&
+      if(app.axisX &&
          p.h/2>p.y &&
          p.originY<p.h/2 &&
          p.originY>-p.h/2){ line(-p.w/2,-p.originY,
                                   p.w/2,-p.originY); }
 
-      if(app.axisy &&
+      if(app.axisY &&
          p.w/2>p.x &&
          p.originX< p.w/2 &&
          p.originX>-p.w/2){ line(p.originX, -p.h/2,
@@ -4400,7 +4402,7 @@ var zoomfactor=0;
       var factor=app.factor;
       var count=1;
 
-      if(app.linesx){
+      if(app.linesX){
 
         //~ Left
         for(var n=p.originX-factor; n>-p.w/2; n-=factor){
@@ -4439,7 +4441,7 @@ var zoomfactor=0;
         }
 
       }
-      if(app.linesy){
+      if(app.linesY){
 
         //~ Bottom
         count=1;
@@ -4485,7 +4487,7 @@ var zoomfactor=0;
       noStroke();
       fill(getColor(CLRS.WHITE,50));
 
-      if(app.arrowsx){
+      if(app.arrowsX){
 
         var y=-p.originY;
 
@@ -4501,7 +4503,7 @@ var zoomfactor=0;
         }
 
       }
-      if(app.arrowsy){
+      if(app.arrowsY){
 
         var x=p.originX;
 
@@ -4528,7 +4530,7 @@ var zoomfactor=0;
       var factor=app.factor;
       var count=1;
 
-      if(app.linesx){
+      if(app.ticksX){
 
         //~ Left
         for(var n=p.originX-factor; n>-p.w/2; n-=factor){
@@ -4570,7 +4572,7 @@ var zoomfactor=0;
         }
 
       }
-      if(app.linesy){
+      if(app.ticksY){
 
         //~ Top
         count=1;
@@ -4632,7 +4634,7 @@ var zoomfactor=0;
 
           textAlign(RIGHT, CENTER);
 
-          if(app.linesx){
+          if(app.labelsX){
 
             //~ Top
             for(var n=p.originY-factor; n>-p.h/2; n-=factor){
@@ -4684,7 +4686,7 @@ var zoomfactor=0;
 
           textAlign(CENTER,TOP);
 
-          if(app.linesy){
+          if(app.labelsY){
 
             //~ Right
             count=1;
@@ -4962,7 +4964,7 @@ var zoomfactor=0;
     }
     else if(!app.keys[KEYCODES.CONTROL] && app.command!==COMMANDS.PAN[0]){
       crosshair();
-    }    
+    }
     else{
       if(app.left){
         cursor(MOVE);
@@ -4975,11 +4977,11 @@ var zoomfactor=0;
     noStroke();
     fill(CLRS.Black);
 
-    rect(0,0,p.x,app.height);
-    rect(0,0,app.width,p.y);
+    rect(0, 0, p.x,       app.height);
+    rect(0, 0, app.width, p.y);
 
-    rect(p.x+p.w,0,app.width,app.height);
-    rect(p.x,p.y+p.h,app.width,app.height-p.y-p.h);
+    rect(p.x+p.w, 0,       app.width, app.height);
+    rect(p.x,     p.y+p.h, app.width, app.height-p.y-p.h);
 
   };
   grid.prototype.clicked=function(){
@@ -5043,7 +5045,7 @@ var zoomfactor=0;
 
     }
 
-    
+
 
   };
   grid.prototype.moved=function(x,y){
@@ -6695,11 +6697,11 @@ var zoomfactor=0;
     var ctrls=[];
     var top=10;
     var h=15;
-    var l=800;
+    var l=app.width-200-135;
     var ch=255;
 
     var cn=new container(
-            new propC(getGUID(),parent, l, 2, 120, ch, 3, false, COMMANDS.CONTAINER[0],COMMANDS.CONTAINER[1]),
+            new propC(getGUID(),parent, l, 50, 120, ch, 3, false, COMMANDS.CONTAINER[0],COMMANDS.CONTAINER[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
 
@@ -6883,11 +6885,11 @@ var zoomfactor=0;
     //~ ctrls.push(getHeader(cn));
     ctrls.push(getFooter(cn));
     ctrls.push(getView(cn));
-    //~ ctrls.push(getProperties(cn));
+    ctrls.push(getProperties(cn));
     ctrls.push(getTelemetry(cn));
-    //~ ctrls.push(getColors(cn));
+    ctrls.push(getColors(cn));
 
-    //~ ctrls.push(getGridProps(cn));
+    ctrls.push(getGridProps(cn));
 
     cn.ctrls=ctrls;
 
