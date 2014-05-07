@@ -144,7 +144,7 @@ var process;
     F4:         115,
     F5:         116,
     F6:         117,
-    SNAPTOGRID: 118,  //~ F7:
+    stg: 118,  //~ F7:
     OTHO:       119,  //~ F8:
     F9:         120,
     F10:        121,
@@ -201,28 +201,31 @@ var process;
     //~ Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     GRID:         [ 100,  'Grid',             'GRID'                  ],
 
-    ORIGIN:       [ 101,  'Origin',           'ORIGIN'                ],
-    BORDER:       [ 102,  'Border',           'BORDER'                ],
-    AXES:         [ 103,  'Axes',             'AXES'                  ],
-    AXISX:        [ 104,  'x',                'X'                     ],
-    AXISY:        [ 105,  'y',                'Y'                     ],
-    LINES:        [ 106,  'Lines',            'LINES'                 ],
-    LINESX:       [ 107,  'x',                'X'                     ],
-    LINESY:       [ 108,  'y',                'Y'                     ],
-    ARROWS:       [ 109,  'Arrows',           'ARROWS'                ],
-    ARROWSX:      [ 110,  'x',                'X'                     ],
-    ARROWSY:      [ 111,  'y',                'Y'                     ],
-    TICKS:        [ 112,  'Ticks',            'TICKS'                 ],
-    TICKSX:       [ 113,  'x',                'X'                     ],
-    TICKSY:       [ 114,  'y',                'Y'                     ],
-    LABELS:       [ 115,  'Labels',           'LABELS'                ],
-    LABELSX:      [ 116,  'x',                'X'                     ],
-    LABELSY:      [ 117,  'y',                'Y'                     ],
+    GRIDPROPS:    [ 101,  'GridProps',        'GRIDPROPS'             ],
 
-    COORDINATES:  [ 118,  'Coordinates',      'COORDINATES'           ],
-    ORTHO:        [ 119,  'Ortho',            'ORTHO',      KEYCODES.ORTHO      ],
-    SNAPTOGRID:   [ 120,  'SnaptoGrid',       'SNAPTOGRID', KEYCODES.SNAPTOGRID ],
-    FULLSCREEN:   [ 121,  'Grid',             'COMMAND'               ],
+    ORIGIN:       [ 102,  'Origin',           'ORIGIN'                ],
+    BORDER:       [ 103,  'Border',           'BORDER'                ],
+    AXES:         [ 104,  'Axes',             'AXES'                  ],
+    AXISX:        [ 105,  'x',                'X'                     ],
+    AXISY:        [ 106,  'y',                'Y'                     ],
+    LINES:        [ 107,  'Lines',            'LINES'                 ],
+    LINESX:       [ 108,  'x',                'X'                     ],
+    LINESY:       [ 109,  'y',                'Y'                     ],
+    ARROWS:       [ 110,  'Arrows',           'ARROWS'                ],
+    ARROWSX:      [ 111,  'x',                'X'                     ],
+    ARROWSY:      [ 112,  'y',                'Y'                     ],
+    TICKS:        [ 113,  'Ticks',            'TICKS'                 ],
+    TICKSX:       [ 114,  'x',                'X'                     ],
+    TICKSY:       [ 115,  'y',                'Y'                     ],
+    LABELS:       [ 116,  'Labels',           'LABELS'                ],
+    LABELSX:      [ 117,  'x',                'X'                     ],
+    LABELSY:      [ 118,  'y',                'Y'                     ],
+    QUADRANTS:    [ 119,  'Quadrants',        'QUADRANTS'             ],
+
+    COORDINATES:  [ 120,  'Coordinates',  'COORDINATES'               ],
+    ORTHO:        [ 121,  'Ortho',        'ORTHO',      KEYCODES.ORTHO],
+    STG:          [ 122,  'stg',          'stg',        KEYCODES.stg  ],
+    FS:           [ 123,  'Grid',         'COMMAND'                   ],
 
 
     //~ Properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -405,7 +408,7 @@ var process;
 
     //~ Footer ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //~ ORTHO:
-    //~ SNAPTOGRID:
+    //~ stg:
     //~ GRIDLINES:
     //~ COORDINATES:
     //~ DISPLAY:
@@ -490,6 +493,8 @@ var process;
     border:         true,
     origin:         true,
 
+    gridprops:      true,
+
     axisX:          true,
     axisY:          true,
     linesX:         true,
@@ -504,8 +509,8 @@ var process;
 
     coordinates:    false,
     ortho:          false,
-    snaptogrid:     false,
-    fullscreen:     false,
+    stg:            false,  //~ snap to grid
+    fs:             false,  //~ full screen
 
     cursorSize:     0,
 
@@ -579,6 +584,8 @@ var process;
 
 
       //~ Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      case COMMANDS.GRIDPROPS[0]:   return app.gridprops;
+
       case COMMANDS.ORIGIN[0]:      return app.origin;
 
       case COMMANDS.AXISX[0]:       return app.axisX;
@@ -596,10 +603,13 @@ var process;
       case COMMANDS.LABELSX[0]:     return app.labelsX;
       case COMMANDS.LABELSY[0]:     return app.labelsY;
 
+      case COMMANDS.QUADRANTS[0]:   return app.quadrants;
+
+      //~ Footer ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       case COMMANDS.COORDINATES[0]: return app.coordinates;
       case COMMANDS.ORTHO[0]:       return app.ortho;
-      case COMMANDS.SNAPTOGRID[0]:  return app.snaptogird;
-      case COMMANDS.FULLSCREEN[0]:  return app.fullscreen;
+      case COMMANDS.STG[0]:         return app.stg;
+      case COMMANDS.FS[0]:          return app.fs;
 
       case COMMANDS.FACTOR[0]:      return app.factor;
 
@@ -688,13 +698,13 @@ var process;
 
   };
   Shape.prototype.add=function(pnt){
-    println(pnt.i);
+    //println(pnt.i);
     this.vertices.push(pnt);
   };
   Shape.prototype.draw=function(){};
   Shape.prototype.clicked=function(){
 
-    println(app.command);
+    //println(app.command);
 
     if(app.command===COMMANDS.SELECT[0]){
 
@@ -1173,40 +1183,44 @@ var factor=1.25;
 
       case COMMANDS.GRID[0]:        break;
 
-      case COMMANDS.ORIGIN[0]:      app.origin=!app.origin;           break;
-      case COMMANDS.BORDER[0]:      app.border=!app.border;           break;
-      case COMMANDS.AXES[0]:                                          break;
-      case COMMANDS.AXISX[0]:       app.axisX=!app.axisX;             break;
-      case COMMANDS.AXISY[0]:       app.axisY=!app.axisY;             break;
-      case COMMANDS.LINES[0]:
+      case COMMANDS.GRIDPROPS[0]:   app.gridprops=!app.gridprops;
+println(app.gridprops);
+      break;
 
-        if(app.linesx || app.linesy){
-          app.linesX=false;
-          app.linesY=false;
-        }
-        else{
-          app.linesX=true;
-          app.linesY=true;
-        }
+      case COMMANDS.ORIGIN[0]:      app.origin=!app.origin;       break;
+      case COMMANDS.BORDER[0]:      app.border=!app.border;       break;
 
-        break;
+      case COMMANDS.AXES[0]:        app.axisX=!app.axisX;
+                                    app.axisY=app.axisX;          break;
+      case COMMANDS.AXISX[0]:       app.axisX=!app.axisX;         break;
+      case COMMANDS.AXISY[0]:       app.axisY=!app.axisY;         break;
 
-      case COMMANDS.LINESX[0]:      app.linesX=!app.linesX;           break;
-      case COMMANDS.LINESY[0]:      app.linesY=!app.linesY;           break;
-      case COMMANDS.ARROWS[0]:                                        break;
-      case COMMANDS.ARROWSX[0]:     app.arrowsX=!app.arrowsX;         break;
-      case COMMANDS.ARROWSY[0]:     app.arrowsY=!app.arrowsY;         break;
-      case COMMANDS.TICKS[0]:                                         break;
-      case COMMANDS.TICKSX[0]:      app.ticksX=!app.ticksX;           break;
-      case COMMANDS.TICKSY[0]:      app.ticksY=!app.ticksY;           break;
-      case COMMANDS.LABELS[0]:                                        break;
-      case COMMANDS.LABELSX[0]:     app.labelsX=!app.labelsX;         break;
-      case COMMANDS.LABELSY[0]:     app.labelsY=!app.labelsY;         break;
+      case COMMANDS.LINES[0]:       app.linesX=!app.linesX;
+                                    app.linesY=app.linesX;        break;
+      case COMMANDS.LINESX[0]:      app.linesX=!app.linesX;       break;
+      case COMMANDS.LINESY[0]:      app.linesY=!app.linesY;       break;
+
+      case COMMANDS.ARROWS[0]:      app.arrowsX=!app.arrowsX;
+                                    app.arrowsY=app.arrowsX;      break;
+      case COMMANDS.ARROWSX[0]:     app.arrowsX=!app.arrowsX;     break;
+      case COMMANDS.ARROWSY[0]:     app.arrowsY=!app.arrowsY;     break;
+
+      case COMMANDS.TICKS[0]:       app.ticksX=!app.ticksX;
+                                    app.ticksY=app.ticksX;        break;
+      case COMMANDS.TICKSX[0]:      app.ticksX=!app.ticksX;       break;
+      case COMMANDS.TICKSY[0]:      app.ticksY=!app.ticksY;       break;
+
+      case COMMANDS.LABELS[0]:      app.labelsX=!app.labelsX;
+                                    app.labelsY=app.labelsX;      break;
+      case COMMANDS.LABELSX[0]:     app.labelsX=!app.labelsX;     break;
+      case COMMANDS.LABELSY[0]:     app.labelsY=!app.labelsY;     break;
+
+      case COMMANDS.QUADRANTS[0]:   app.quadrants=!app.quadrants; break;
 
       //~ case COMMANDS.COORDINATES[0]: app.coordinates=!app.coordinates; break;
-      case COMMANDS.ORTHO[0]:       app.ortho=!app.ortho;             break;
-      case COMMANDS.SNAPTOGRID[0]:  app.snaptogrid=!app.snaptogrid;   break;
-      case COMMANDS.FULLSCREEN[0]:  app.fullscreen=!app.fullscreen;   break;
+      case COMMANDS.ORTHO[0]:       app.ortho=!app.ortho;         break;
+      case COMMANDS.STG[0]:         app.stg=!app.stg;             break;  //~ Snap-to-grid
+      case COMMANDS.FS[0]:          app.fs=!app.fs;               break;  //~ Full Screen
 
       default:      break;
 
@@ -1245,13 +1259,13 @@ var zoomfactor=0;
 
     //~ println(c+':'+p);
 
-    //~ println(COMMANDS.FULLSCREEN[0]);
+    //~ println(COMMANDS.fs[0]);
 
     switch(true){
 
       //~ Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       case (c>COMMANDS.GRID[0] &&
-            c<=COMMANDS.FULLSCREEN[0]):   GridCommands(c,p);      break;
+            c<=COMMANDS.FS[0]):           GridCommands(c,p);      break;
 
       case (c>=COMMANDS.POINT[0] &&
             c<=COMMANDS.SKETCH[0]):       ShapeCommands(c,p);     break;
@@ -3263,7 +3277,19 @@ var zoomfactor=0;
 
         switch(p.c){
 
-          case COMMANDS.SNAPTOGRID[0]:
+          case COMMANDS.GRIDPROPS[0]:
+
+            noFill();
+            stroke(CLRS.LINE);
+            strokeWeight(3);
+
+            line(d+cX-7, d+cY-6, d+cX+7, d+cY-6);
+            line(d+cX-7, d+cY,   d+cX+7, d+cY);
+            line(d+cX-7, d+cY+6, d+cX+7, d+cY+6);
+
+            break;
+
+          case COMMANDS.STGGRID[0]:
 
             noStroke();
             strokeWeight(0);
@@ -3341,7 +3367,7 @@ var zoomfactor=0;
           switch(true){
 
             case (p.c>=COMMANDS.GRID[0] &&
-                  p.c<=COMMANDS.FULLSCREEN[0]): drawGrid();       break;
+                  p.c<=COMMANDS.FS[0]): drawGrid();               break;
             case (p.c>=COMMANDS.POINT[0] &&
                   p.c<=COMMANDS.P_MIDPOINT[0]): drawPoint();      break;
             case (p.c>=COMMANDS.LINE[0] &&
@@ -3401,7 +3427,7 @@ var zoomfactor=0;
 
       app.command=this.c;
 
-      for(var c in this.ctrls){ this.ctrls[c].clicked(); }
+      //~ for(var c in this.ctrls){ this.ctrls[c].clicked(); }
 
     }
   };
@@ -3453,7 +3479,7 @@ var zoomfactor=0;
 
             break;
 
-          case COMMANDS.SNAPTOGRID[0]:
+          case COMMANDS.STG[0]:
 
             noStroke();
             strokeWeight(0);
@@ -3619,7 +3645,7 @@ var zoomfactor=0;
           switch(true){
 
             case (p.c>=COMMANDS.GRID[0] &&
-                  p.c<=COMMANDS.FULLSCREEN[0]): drawGrid();       break;
+                  p.c<=COMMANDS.FS[0]): drawGrid();       break;
 
             case (p.c>=COMMANDS.VIEW[0] &&
                   p.c<=COMMANDS.MODIFY[0]):     drawView();       break;
@@ -4302,31 +4328,90 @@ var zoomfactor=0;
 
   };
 
+  //~ Container ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  var cnProps=function(cp,lp,ap,ctrls){
+    control.call(this,cp,lp,ap,ctrls);
+  };
+  cnProps.prototype=Object.create(control.prototype);
+  cnProps.prototype.draw=function(){
+
+    var p=this;
+    var d=0;
+
+    pushMatrix();
+
+      translate(p.x, p.y);
+
+        pushStyle();
+
+          fill(p.fill);
+          stroke(p.stroke);
+          strokeWeight(p.strokeweight);
+
+          if(p.hit){
+            fill(p.fillH);
+            stroke(p.strokeH);
+            strokeWeight(p.weightH);
+            cursor(ARROW);
+          }
+
+          if(getProp(p.c)){
+            rect(d, d+26, p.w, p.h-26, p.r);
+          }
+
+          fill(p.tfill);
+
+          if(p.hit){
+            fill(p.tfillH);
+          }
+
+          textAlign(p.alignX,p.alignY);
+
+          //~ text(p.g, p.w/2, p.h/2);
+
+        popStyle();
+
+        p.ctrls[0].draw();
+        //~ println(p.c);
+        if(getProp(p.c)){
+          for(var c=1; c<p.ctrls.length; c++){ p.ctrls[c].draw(); }
+        }
+
+    popMatrix();
+
+
+  };
+  cnProps.prototype.clicked=function(){
+    for(var c in this.ctrls){ this.ctrls[c].clicked(); }
+  };
+
 
   //~ Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var grid=function(cp,lp,ap,ctrls){
 
     control.call(this,cp,lp,ap,ctrls);
 
-    app.factor=this.h/22;   //~ required for initial grid height
+    app.factor=     this.h/22;   //~ required for initial grid height
 
-    this.shapes=[];
-    this.Temp=0;
+    this.shapes=    [];
+    this.Temp=      0;
 
-    this.cX=0;
-    this.cY=0;
+    this.cX=        0;
+    this.cY=        0;
 
-    this.originX=0;
-    this.originY=0;
+    this.originX=   0;
+    this.originY=   0;
 
-    this.offsetX=0;
-    this.offsetY=0;
+    this.offsetX=   0;
+    this.offsetY=   0;
+
+    this.hitProp=   false;
 
   };
   grid.prototype=Object.create(control.prototype);
   grid.prototype.draw=function(){
 
-    this.snaptogrid=app.snaptogrid;
+    this.stg=app.stg;
 
     var p=this;
     var d=0;
@@ -4745,35 +4830,39 @@ var zoomfactor=0;
     };
     var quadrants=function(){
 
-      pushMatrix();
+      if(app.quadrants){
 
-        scale(1,-1);
+        pushMatrix();
 
-        textSize(60);
-        fill(CLRS.Gray9);
-        textFont(createFont('fantasy'));
+          scale(1,-1);
 
-        //~ Quadrant I
-        textAlign(RIGHT,CENTER);
+          textSize(60);
+          fill(CLRS.Gray9);
+          textFont(createFont('fantasy'));
 
-        text("I",p.w/2-10, p.y-p.h/2);
+          //~ Quadrant I
+          textAlign(RIGHT,CENTER);
 
-        //~ Quadrant II
-        textAlign(LEFT,CENTER);
+          text("I",p.w/2-10, p.y-p.h/2);
 
-        text("II",-p.w/2+10, p.y-p.h/2);
+          //~ Quadrant II
+          textAlign(LEFT,CENTER);
 
-        //~ Quadrant III
-        textAlign(LEFT,BASELINE);
+          text("II",-p.w/2+10, p.y-p.h/2);
 
-        text("III",-p.w/2+10, p.y+p.h/2-60);
+          //~ Quadrant III
+          textAlign(LEFT,BASELINE);
 
-        //~ Quadrant IV
-        textAlign(RIGHT,BASELINE);
+          text("III",-p.w/2+10, p.y+p.h/2-60);
 
-        text("IV", p.w/2-10, p.y+p.h/2-60);
+          //~ Quadrant IV
+          textAlign(RIGHT,BASELINE);
 
-      popMatrix();
+          text("IV", p.w/2-10, p.y+p.h/2-60);
+
+        popMatrix();
+
+      }
 
     };
 
@@ -4958,6 +5047,11 @@ var zoomfactor=0;
 
     popMatrix();
 
+    for(var c in this.ctrls){ this.ctrls[c].draw(0,0); }
+
+//~ println(this.hitProp);
+//~ println(this.ctrls[0].x);
+
     //~ ARROW, CROSS, HAND, MOVE, TEXT, WAIT
     if(app.command==COMMANDS.SELECT[0]){
       cursor(ARROW);
@@ -4977,105 +5071,127 @@ var zoomfactor=0;
     noStroke();
     fill(CLRS.Black);
 
-    rect(0, 0, p.x,       app.height);
-    rect(0, 0, app.width, p.y);
-
-    rect(p.x+p.w, 0,       app.width, app.height);
-    rect(p.x,     p.y+p.h, app.width, app.height-p.y-p.h);
+    //~ rect(0, 0, p.x,       app.height);
+    //~ rect(0, 0, app.width, p.y);
+//~
+    //~ rect(p.x+p.w, 0,       app.width, app.height);
+    //~ rect(p.x,     p.y+p.h, app.width, app.height-p.y-p.h);
 
   };
   grid.prototype.clicked=function(){
 
-    if(this.hit){
+    if(app.focus===this.i){
 
-      pushMatrix();
-
-        switch(app.command){
-
-          case COMMANDS.SELECT[0]:
-
-            for(var s in this.shapes){ this.shapes[s].clicked(0,0); }
-
-            break;
-
-          case COMMANDS.P_DEFAULT[0]: //~ Point:  Default
-
-            this.shapes.push(
-              new Point(getGUID(), this, app.gridX, app.gridY));
-
-            break;
-
-          case COMMANDS.L_SEGMENT2P[0]:  //~ Line:  2 point
-
-            if(this.Temp===0){
-
-              this.Temp=new Line(getGUID(), this, 0);
-
-              this.Temp.add(new Point(getGUID(), this.Temp, app.gridX, app.gridY));
-              this.Temp.add(new Point(getGUID(), this.Temp, app.gridX, app.gridY));
-
-            }
-            else{
-
-              this.Temp.vertices[1].xG=app.gridX;
-              this.Temp.vertices[1].yG=app.gridY;
-
-              this.shapes.push(this.Temp);
-
-              this.Temp=0;
-
-            }
-
-            break;
-
-          case COMMANDS.C_CENTERP[0]:  //~ Circle:  Center-Point
-
-            break;
-
-          case COMMANDS.Q_RECTANGLE[0]:  //~ Quad:  Rectangle
+      if(this.hit){
 
 
-            break;
+        pushMatrix();
 
-          default:  break;
+          switch(app.command){
 
-        }
+            case COMMANDS.SELECT[0]:
 
-      popMatrix();
+              for(var s in this.shapes){ this.shapes[s].clicked(0,0); }
 
+              break;
+
+            case COMMANDS.P_DEFAULT[0]: //~ Point:  Default
+
+              this.shapes.push(
+                new Point(getGUID(), this, app.gridX, app.gridY));
+
+              break;
+
+            case COMMANDS.L_SEGMENT2P[0]:  //~ Line:  2 point
+
+              if(this.Temp===0){
+
+                this.Temp=new Line(getGUID(), this, 0);
+
+                this.Temp.add(new Point(getGUID(), this.Temp, app.gridX, app.gridY));
+                this.Temp.add(new Point(getGUID(), this.Temp, app.gridX, app.gridY));
+
+              }
+              else{
+
+                this.Temp.vertices[1].xG=app.gridX;
+                this.Temp.vertices[1].yG=app.gridY;
+
+                this.shapes.push(this.Temp);
+
+                this.Temp=0;
+
+              }
+
+              break;
+
+            case COMMANDS.C_CENTERP[0]:  //~ Circle:  Center-Point
+
+              break;
+
+            case COMMANDS.Q_RECTANGLE[0]:  //~ Quad:  Rectangle
+
+
+              break;
+
+            default:  break;
+
+          }
+
+        popMatrix();
+
+      }
     }
 
-
+    for(var c in this.ctrls){ this.ctrls[c].clicked(0,0); }
 
   };
   grid.prototype.moved=function(x,y){
 
-    if(app.mouseX>this.x && app.mouseX<this.x+this.w &&
-       app.mouseY>this.y && app.mouseY<this.y+this.h){
+    if(app.mouseX>this.x &&
+       app.mouseX<this.x+this.w &&
+       app.mouseY>this.y &&
+       app.mouseY<this.y+this.h){
 
-      this.hit=true;
-      app.focus=this.i;
+      if(app.mouseX>this.ctrls[0].x &&
+         app.mouseX<this.ctrls[0].x+this.ctrls[0].w &&
+         app.mouseY>this.ctrls[0].y &&
+         app.mouseY<this.ctrls[0].y+this.ctrls[0].h){
 
-      if(app.snaptogrid){
-        var incr=app.factor;
-        app.mouseX-=mouseX%incr-(this.x+this.w/2)%incr-this.originX%incr;
-        app.mouseY-=mouseY%incr-(this.y+this.h/2)%incr-this.originY%incr;
+        this.hitProp=true;
+
       }
+      else{
 
-      app.worldX=   (app.mouseX-this.x-this.w/2-this.originX);
-      app.worldY=-1*(app.mouseY-this.y-this.h/2-this.originY);
+        this.hitProp=false;
+        this.hit=true;
+        app.focus=this.i;
 
-      app.gridX=   (app.mouseX-this.x-this.w/2-this.originX)/app.factor;
-      app.gridY=-1*(app.mouseY-this.y-this.h/2-this.originY)/app.factor;
+        if(app.stg){
+          var incr=app.factor;
+          app.mouseX-=mouseX%incr-(this.x+this.w/2)%incr-this.originX%incr;
+          app.mouseY-=mouseY%incr-(this.y+this.h/2)%incr-this.originY%incr;
+        }
 
-      app.coordinates=nf(app.gridX,1,1) + ", " + nf(app.gridY,1,1);
+        app.worldX=   (app.mouseX-this.x-this.w/2-this.originX);
+        app.worldY=-1*(app.mouseY-this.y-this.h/2-this.originY);
 
-      for(var s in this.shapes){ this.shapes[s].moved(x,y); }
+        app.gridX=   (app.mouseX-this.x-this.w/2-this.originX)/app.factor;
+        app.gridY=-1*(app.mouseY-this.y-this.h/2-this.originY)/app.factor;
+
+        app.coordinates=nf(app.gridX,1,1) + ", " + nf(app.gridY,1,1);
+
+        for(var s in this.shapes){ this.shapes[s].moved(x,y); }
+
+      }
 
     }
     else{
       this.hit=false;
+      this.hitProp=false;
     }
+
+    for(var c in app.ctrls){ this.ctrls[c].moved(0,0); }
 
   };
   grid.prototype.dragged=function(x,y){
@@ -5281,9 +5397,9 @@ var zoomfactor=0;
            commands(COMMANDS.UNDO[0]);
            break;
 
-      case KEYCODES.SNAPTOGRID: //~ F7
+      case KEYCODES.stg: //~ F7
 
-        commands(COMMANDS.SNAPTOGRID[0]);
+        commands(COMMANDS.stg[0]);
         break;
 
       case KEYCODES.ORTHO:      //~ F8
@@ -5317,7 +5433,7 @@ var zoomfactor=0;
 
       case app.keys[KEYCODES.F7]:
 
-        commands(COMMANDS.SNAPTOGRID[0]);
+        commands(COMMANDS.stg[0]);
         break;
 
       case app.keys[KEYCODES.F8]:
@@ -5390,10 +5506,10 @@ var zoomfactor=0;
     var h=15;
     var l=parent.w-202;
     var ch=app.height-14;
-    var w=36;
+    var w=30;
 
     var cn=new strip(
-            new propC(getGUID(), parent, 210, 5, w+10, w, 1, true, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            new propC(getGUID(), parent, 205, 45, w+10, w, 1, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
 
@@ -5451,10 +5567,10 @@ var zoomfactor=0;
     var h=15;
     var l=parent.w-202;
     var ch=app.height-14;
-    var w=36;
+    var w=30;
 
     var cn=new strip(
-            new propC(getGUID(), parent, 625, 5, w+10, w, 1, true, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            new propC(getGUID(), parent, 205, 75, w+10, w, 1, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
 
@@ -5555,10 +5671,10 @@ var zoomfactor=0;
     var h=15;
     var l=parent.w-202;
     var ch=app.height-14;
-    var w=36;
+    var w=30;
 
     var cn=new strip(
-            new propC(getGUID(), parent, 500,140, w+10, w, 1, true, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            new propC(getGUID(), parent, 205, 105, w+10, w, 1, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
 
@@ -5600,10 +5716,10 @@ var zoomfactor=0;
     var h=15;
     var l=parent.w-202;
     var ch=app.height-14;
-    var w=36;
+    var w=30;
 
     var cn=new strip(
-            new propC(getGUID(), parent, 450, 5, w+10, w, 1, true, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            new propC(getGUID(), parent, 205, 135, w+10, w, 1, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
 
@@ -5644,10 +5760,10 @@ var zoomfactor=0;
     var h=15;
     var l=parent.w-202;
     var ch=app.height-14;
-    var w=36;
+    var w=30;
 
     var cn=new strip(
-            new propC(getGUID(), parent, 500, 230, w+10, w+10, 1, true, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            new propC(getGUID(), parent, 205, 165, w+10, w, 1, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
 
@@ -5707,10 +5823,10 @@ var zoomfactor=0;
     var h=15;
     var l=parent.w-202;
     var ch=app.height-14;
-    var w=36;
+    var w=30;
 
     var cn=new strip(
-            new propC(getGUID(), parent, 500, 275, w+10, w, 1, true, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            new propC(getGUID(), parent, 205, 195, w+10, w, 1, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
 
@@ -5769,10 +5885,10 @@ var zoomfactor=0;
     var h=15;
     var l=parent.w-202;
     var ch=app.height-14;
-    var w=36;
+    var w=30;
 
     var cn=new strip(
-            new propC(getGUID(), parent, 900, 320, w+10, w, 1, true, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            new propC(getGUID(), parent, 205, 225, w+10, w, 1, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
 
@@ -5813,10 +5929,10 @@ var zoomfactor=0;
     var h=15;
     var l=parent.w-202;
     var ch=app.height-14;
-    var w=36;
+    var w=30;
 
     var cn=new strip(
-            new propC(getGUID(), parent, 500, 320, w+10, w, 1, true, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            new propC(getGUID(), parent, 205, 255, w+10, w, 1, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
 
@@ -5863,10 +5979,10 @@ var zoomfactor=0;
     var h=15;
     var l=parent.w-202;
     var ch=app.height-14;
-    var w=36;
+    var w=30;
 
     var cn=new strip(
-            new propC(getGUID(), parent, 500, 365, w+10, w, 1, true, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            new propC(getGUID(), parent, 205, 285, w+10, w, 1, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
 
@@ -5895,10 +6011,10 @@ var zoomfactor=0;
     var h=15;
     var l=parent.w-202;
     var ch=app.height-14;
-    var w=36;
+    var w=30;
 
     var cn=new strip(
-            new propC(getGUID(), parent, 500, 410, w+10, w, 1, true, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            new propC(getGUID(), parent, 205, 315, w+10, w, 1, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
 
@@ -5927,10 +6043,10 @@ var zoomfactor=0;
     var h=15;
     var l=parent.w-202;
     var ch=app.height-14;
-    var w=36;
+    var w=30;
 
     var cn=new strip(
-            new propC(getGUID(), parent, 600, 460, w+10, w, 1, true, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            new propC(getGUID(), parent, 205, 345, w+10, w, 1, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
 
@@ -5991,10 +6107,10 @@ var zoomfactor=0;
     var h=15;
     var l=parent.w-202;
     var ch=app.height-14;
-    var w=36;
+    var w=30;
 
     var cn=new strip(
-            new propC(getGUID(), parent, 200,460, w+10, w, 1, true, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            new propC(getGUID(), parent, 205, 375, w+10, w, 1, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
 
@@ -6053,20 +6169,6 @@ var zoomfactor=0;
 
   };
 
-  var getGrid=function(parent){
-
-    var ctrls=[];
-
-    var cn=new grid(
-            new propC(getGUID(), parent, 210, 45, parent.w-420, parent.h-80, 5, false, COMMANDS.UNDEF[0], 0),
-            new propL(getColor(CLRS.GRID,65), CLRS.GRID, CLRS.WHITE, CLRS.YELLOW, 0.125, 0.25),
-            new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
-
-    cn.ctrls=ctrls;
-
-    return cn;
-
-  };
   var getTelemetry=function(parent){
 
     var ctrls=[];
@@ -6630,12 +6732,12 @@ var zoomfactor=0;
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 12, 12)));
 
     ctrls.push(new textBox(
-                new propC(getGUID(), cn, 180, 3, 340, 24, 0, false, COMMANDS.SNAPTOGRID[0], getColor(CLRS.GRAY,25)),
+                new propC(getGUID(), cn, 180, 3, 340, 24, 0, false, COMMANDS.STG[0], getColor(CLRS.GRAY,25)),
                 new propL(CLRS.Gray8, CLRS.GRAY, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonT(
-                new propC(getGUID(), cn, 3, 3, w, w, 0, false, COMMANDS.SNAPTOGRID[0], getColor(CLRS.GRAY,25)),
+                new propC(getGUID(), cn, 3, 3, w, w, 0, false, COMMANDS.STG[0], getColor(CLRS.GRAY,25)),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
@@ -6692,99 +6794,177 @@ var zoomfactor=0;
 
   };
 
+
+  var getGrid=function(parent){
+
+    var ctrls=[];
+
+    var cn=new grid(
+            new propC(getGUID(), parent, 250, 45, parent.w-460, parent.h-80, 5, false, COMMANDS.UNDEF[0], 0),
+            new propL(getColor(CLRS.GRID,65), CLRS.GRID, CLRS.WHITE, CLRS.YELLOW, 0.125, 0.25),
+            new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
+
+
+
+    ctrls.push(getGridProps(cn));
+
+    cn.ctrls=ctrls;
+
+    return cn;
+
+  };
+
   var getGridProps=function(parent){
 
     var ctrls=[];
-    var top=10;
+    var top=35;
     var h=15;
-    var l=app.width-200-135;
+    var l=parent.x+parent.w-123;
     var ch=255;
+    var lX=80;
 
-    var cn=new container(
-            new propC(getGUID(),parent, l, 50, 120, ch, 3, false, COMMANDS.CONTAINER[0],COMMANDS.CONTAINER[1]),
+    var cn=new cnProps(
+            new propC(getGUID(),parent, l, 50, 120, 310, 3, false, COMMANDS.GRIDPROPS[0],COMMANDS.GRIDPROPS[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
 
-    //~ Labels ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+0*h, 10, 10, 0, false, COMMANDS.ORIGIN[0], COMMANDS.ORIGIN[1]),
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 94, 2, 24, 24, 0, false, COMMANDS.GRIDPROPS[0], COMMANDS.GRIDPROPS[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
+
+    //~ Labels ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ctrls.push(new label(
+                new propC(getGUID(), cn, 10, top+0*h, 10, 10, 0, false, COMMANDS.ORIGIN[0], COMMANDS.ORIGIN[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+
 
     ctrls.push(new spacer(
                 new propC(getGUID(), cn, 5, top+1*h+5, 110, 10, 0, false, COMMANDS.SPACER[0], COMMANDS.SPACER[0]),
                 getStyle(STYLES.SPACER),
                 getStyle(STYLES.TEXT)));
 
-    ctrls.push(new label(
-                new propC(getGUID(), cn, 15, top+2*h, 10, 10, 0, false, COMMANDS.AXISX[0], COMMANDS.AXISX[1]),
+
+
+    ctrls.push(new label( //~ Axes
+                new propC(getGUID(), cn, 10, top+2*h, 10, 10, 0, false, COMMANDS.AXES[0], COMMANDS.AXES[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 15, top+3*h, 10, 10, 0, false, COMMANDS.AXISY[0], COMMANDS.AXISY[1]),
+                new propC(getGUID(), cn, lX, top+2*h, 10, 10, 0, false, COMMANDS.AXISX[0], COMMANDS.AXISX[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
+
+    ctrls.push(new label(
+                new propC(getGUID(), cn, lX, top+3*h, 10, 10, 0, false, COMMANDS.AXISY[0], COMMANDS.AXISY[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+
 
     ctrls.push(new spacer(
                 new propC(getGUID(), cn, 5, top+4*h+5, 110, 10, 0, false, COMMANDS.SPACER[0], COMMANDS.SPACER[0]),
                 getStyle(STYLES.SPACER),
                 getStyle(STYLES.TEXT)));
 
-    ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+5*h, 10, 10, 0, false, COMMANDS.LINESX[0], COMMANDS.LINESX[1]),
+
+
+    ctrls.push(new label( //~ Lines
+                new propC(getGUID(), cn, 10, top+5*h, 10, 10, 0, false, COMMANDS.LINES[0], COMMANDS.LINES[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+6*h, 10, 10, 0, false, COMMANDS.LINESY[0], COMMANDS.LINESY[1]),
+                new propC(getGUID(), cn, lX, top+5*h, 10, 10, 0, false, COMMANDS.LINESX[0], COMMANDS.LINESX[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
+
+    ctrls.push(new label(
+                new propC(getGUID(), cn, lX, top+6*h, 10, 10, 0, false, COMMANDS.LINESY[0], COMMANDS.LINESY[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
 
     ctrls.push(new spacer(
                 new propC(getGUID(), cn, 5, top+7*h+5, 110, 10, 0, false, COMMANDS.SPACER[0], COMMANDS.SPACER[0]),
                 getStyle(STYLES.SPACER),
                 getStyle(STYLES.TEXT)));
 
-    ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+8*h, 10, 10, 0, false, COMMANDS.ARROWSX[0], COMMANDS.ARROWSX[1]),
+
+    ctrls.push(new label( //~ Arrows
+                new propC(getGUID(), cn, 10, top+8*h, 10, 10, 0, false, COMMANDS.ARROWS[0], COMMANDS.ARROWS[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+9*h, 10, 10, 0, false, COMMANDS.ARROWSY[0], COMMANDS.ARROWSY[1]),
+                new propC(getGUID(), cn, lX, top+8*h, 10, 10, 0, false, COMMANDS.ARROWSX[0], COMMANDS.ARROWSX[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
+
+    ctrls.push(new label(
+                new propC(getGUID(), cn, lX, top+9*h, 10, 10, 0, false, COMMANDS.ARROWSY[0], COMMANDS.ARROWSY[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
 
     ctrls.push(new spacer(
                 new propC(getGUID(), cn, 5, top+10*h+5, 110, 10, 0, false, COMMANDS.SPACER[0], COMMANDS.SPACER[0]),
                 getStyle(STYLES.SPACER),
                 getStyle(STYLES.TEXT)));
 
-    ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+11*h, 10, 10, 0, false, COMMANDS.TICKSX[0], COMMANDS.TICKSX[1]),
+
+    ctrls.push(new label( //~ Ticks
+                new propC(getGUID(), cn, 10, top+11*h, 10, 10, 0, false, COMMANDS.TICKS[0], COMMANDS.TICKS[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+12*h, 10, 10, 0, false, COMMANDS.TICKSY[0], COMMANDS.TICKSY[1]),
+                new propC(getGUID(), cn, lX, top+11*h, 10, 10, 0, false, COMMANDS.TICKSX[0], COMMANDS.TICKSX[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
+
+    ctrls.push(new label(
+                new propC(getGUID(), cn, lX, top+12*h, 10, 10, 0, false, COMMANDS.TICKSY[0], COMMANDS.TICKSY[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
 
     ctrls.push(new spacer(
                 new propC(getGUID(), cn, 5, top+13*h+5, 110, 10, 0, false, COMMANDS.SPACER[0], COMMANDS.SPACER[0]),
                 getStyle(STYLES.SPACER),
                 getStyle(STYLES.TEXT)));
 
-    ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+14*h, 10, 10, 0, false, COMMANDS.LABELSX[0], COMMANDS.LABELSX[1]),
+
+    ctrls.push(new label( //~ Labels
+                new propC(getGUID(), cn, 10, top+14*h, 10, 10, 0, false, COMMANDS.LABELS[0], COMMANDS.LABELS[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+15*h, 10, 10, 0, false, COMMANDS.LABELSY[0], COMMANDS.LABELSY[1]),
+                new propC(getGUID(), cn, lX, top+14*h, 10, 10, 0, false, COMMANDS.LABELSX[0], COMMANDS.LABELSX[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
+
+    ctrls.push(new label(
+                new propC(getGUID(), cn, lX, top+15*h, 10, 10, 0, false, COMMANDS.LABELSY[0], COMMANDS.LABELSY[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+
+    ctrls.push(new spacer(
+                new propC(getGUID(), cn, 5, top+16*h+5, 110, 10, 0, false, COMMANDS.SPACER[0], COMMANDS.SPACER[0]),
+                getStyle(STYLES.SPACER),
+                getStyle(STYLES.TEXT)));
+
+
+    ctrls.push(new label( //~ Quadrants
+                new propC(getGUID(), cn, 10, top+17*h, 10, 10, 0, false, COMMANDS.QUADRANTS[0], COMMANDS.QUADRANTS[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
 
     //~ Values ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ctrls.push(new checkbox(
@@ -6842,6 +7022,11 @@ var zoomfactor=0;
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXTCENTER)));
 
+    ctrls.push(new checkbox(
+                new propC(getGUID(), cn, 105, top+17*h+5, 10, 10, 0, false, COMMANDS.QUADRANTS[0], COMMANDS.QUADRANTS[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXTCENTER)));
+
     cn.ctrls=ctrls;
 
     return cn;
@@ -6871,25 +7056,25 @@ var zoomfactor=0;
 
     ctrls.push(getVertices(cn));
     ctrls.push(getLines(cn));
-    //~ ctrls.push(getTriangles(cn));
+    ctrls.push(getTriangles(cn));
     ctrls.push(getCircles(cn));
-    //~ ctrls.push(getQuads(cn));
-    //~ ctrls.push(getArcs(cn));
-    //~ ctrls.push(getPolygons(cn));
-    //~ ctrls.push(getConics(cn));
-    //~ ctrls.push(getAngles(cn));
-    //~ ctrls.push(getAnnotations(cn));
-    //~ ctrls.push(getTransform(cn));
-    //~ ctrls.push(getMeasure(cn));
+    ctrls.push(getQuads(cn));
+    ctrls.push(getArcs(cn));
+    ctrls.push(getPolygons(cn));
+    ctrls.push(getConics(cn));
+    ctrls.push(getAngles(cn));
+    ctrls.push(getAnnotations(cn));
+    ctrls.push(getTransform(cn));
+    ctrls.push(getMeasure(cn));
 
-    //~ ctrls.push(getHeader(cn));
+    ctrls.push(getHeader(cn));
     ctrls.push(getFooter(cn));
-    ctrls.push(getView(cn));
+    //~ ctrls.push(getView(cn));
     ctrls.push(getProperties(cn));
     ctrls.push(getTelemetry(cn));
-    ctrls.push(getColors(cn));
+    //~ ctrls.push(getColors(cn));
 
-    ctrls.push(getGridProps(cn));
+
 
     cn.ctrls=ctrls;
 
