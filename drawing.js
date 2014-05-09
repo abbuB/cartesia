@@ -1,3 +1,4 @@
+/* @pjs globalKeyEvents="true"; */
 var proc = function(processingInstance){ with (processingInstance){
 
   size(screen.width-20, screen.height-215); //~ set size of canvas
@@ -10,6 +11,8 @@ var proc = function(processingInstance){ with (processingInstance){
 
   **/
 
+
+
 var process;
 
   var getColor=function(clr,alpha){
@@ -19,6 +22,8 @@ var process;
   };
 
   var CLRS={
+
+    TRANSPARENT:  color(-1,-1,-1),
 
     WHITE:    color(255,255,255),     BLACK:    color(0,0,0),
     RED:      color(170,29,29),       GREEN:    color(158,182,58),
@@ -139,13 +144,13 @@ var process;
     RIGHT:      39,
     DOWN:       40,
     F1:         112,
-    F2:         113,
+    F2:         113,  //  Rename
     F3:         114,
     F4:         115,
     F5:         116,
     F6:         117,
-    stg: 118,  //~ F7:
-    OTHO:       119,  //~ F8:
+    STG:        118,  //~ F7: snap to grid
+    ORTHO:      119,  //~ F8:
     F9:         120,
     F10:        121,
     F11:        122,
@@ -199,32 +204,32 @@ var process;
     UTIL:         [  29,  'Util',             'UTIL'                  ],
 
     //~ Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    GRID:         [ 100,  'Grid',             'GRID'                  ],
+    GRID:         [ 100,  'Grid',             'GRID',       KEYCODES.GRID       ],
 
-    GRIDPROPS:    [ 101,  'GridProps',        'GRIDPROPS'             ],
+    GRIDPROPS:    [ 101,  'GridProps',        'GRIDPROPS',  KEYCODES.GRIDPROPS  ],
 
-    ORIGIN:       [ 102,  'Origin',           'ORIGIN'                ],
-    BORDER:       [ 103,  'Border',           'BORDER'                ],
-    AXES:         [ 104,  'Axes',             'AXES'                  ],
-    AXISX:        [ 105,  'x',                'X'                     ],
-    AXISY:        [ 106,  'y',                'Y'                     ],
-    LINES:        [ 107,  'Lines',            'LINES'                 ],
-    LINESX:       [ 108,  'x',                'X'                     ],
-    LINESY:       [ 109,  'y',                'Y'                     ],
-    ARROWS:       [ 110,  'Arrows',           'ARROWS'                ],
-    ARROWSX:      [ 111,  'x',                'X'                     ],
-    ARROWSY:      [ 112,  'y',                'Y'                     ],
-    TICKS:        [ 113,  'Ticks',            'TICKS'                 ],
-    TICKSX:       [ 114,  'x',                'X'                     ],
-    TICKSY:       [ 115,  'y',                'Y'                     ],
-    LABELS:       [ 116,  'Labels',           'LABELS'                ],
-    LABELSX:      [ 117,  'x',                'X'                     ],
-    LABELSY:      [ 118,  'y',                'Y'                     ],
-    QUADRANTS:    [ 119,  'Quadrants',        'QUADRANTS'             ],
+    ORIGIN:       [ 102,  'Origin',           'ORIGIN',     KEYCODES.ORIGIN     ],
+    BORDER:       [ 103,  'Border',           'BORDER',     KEYCODES.BORDER     ],
+    AXES:         [ 104,  'Axes',             'AXES',       KEYCODES.AXES       ],
+    AXISX:        [ 105,  'x',                'X',          KEYCODES.AXISX      ],
+    AXISY:        [ 106,  'y',                'Y',          KEYCODES.AXISY      ],
+    LINES:        [ 107,  'Lines',            'LINES',      KEYCODES.LINES      ],
+    LINESX:       [ 108,  'x',                'X',          KEYCODES.LINESX     ],
+    LINESY:       [ 109,  'y',                'Y',          KEYCODES.LINESY     ],
+    ARROWS:       [ 110,  'Arrows',           'ARROWS',     KEYCODES.ARROWS     ],
+    ARROWSX:      [ 111,  'x',                'X',          KEYCODES.ARROWSX    ],
+    ARROWSY:      [ 112,  'y',                'Y',          KEYCODES.ARROWSY    ],
+    TICKS:        [ 113,  'Ticks',            'TICKS',      KEYCODES.TICKS      ],
+    TICKSX:       [ 114,  'x',                'X',          KEYCODES.TICKSX     ],
+    TICKSY:       [ 115,  'y',                'Y',          KEYCODES.TICKSY     ],
+    LABELS:       [ 116,  'Labels',           'LABELS',     KEYCODES.LABELS     ],
+    LABELSX:      [ 117,  'x',                'X',          KEYCODES.LABELSX    ],
+    LABELSY:      [ 118,  'y',                'Y',          KEYCODES.LABELSY    ],
+    QUADRANTS:    [ 119,  'Quadrants',        'QUADRANTS',  KEYCODES.QUADRANTS  ],
 
     COORDINATES:  [ 120,  'Coordinates',  'COORDINATES'               ],
     ORTHO:        [ 121,  'Ortho',        'ORTHO',      KEYCODES.ORTHO],
-    STG:          [ 122,  'stg',          'stg',        KEYCODES.stg  ],
+    STG:          [ 122,  'stg',          'STG',        KEYCODES.STG  ],
     FS:           [ 123,  'Grid',         'COMMAND'                   ],
 
 
@@ -248,36 +253,39 @@ var process;
 
 
     //~ File ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    FILE:         [ 301,  'File',             'FILE'                  ],
-    NEW:          [ 302,  'New',              'NEW'                   ],
-    OPEN:         [ 303,  'Open',             'OPEN'                  ],
-    SAVE:         [ 304,  'Save',             'SAVE'                  ],
-    SAVEAS:       [ 305,  'Save As',          'SAVEAS'                ],
-    CLOSE:        [ 306,  'Close',            'CLOSE'                 ],
+    FILE:         [ 301,  'File',             'FILE',     KEYCODES.FILE   ],
+    NEW:          [ 302,  'New',              'NEW',      KEYCODES.NEW    ],
+    OPEN:         [ 303,  'Open',             'OPEN',     KEYCODES.OPEN   ],
+    SAVE:         [ 304,  'Save',             'SAVE',     KEYCODES.SAVE   ],
+    SAVEAS:       [ 305,  'Save As',          'SAVEAS',   KEYCODES.SAVEAS ],
+    CLOSE:        [ 306,  'Close',            'CLOSE',    KEYCODES.CLOSE  ],
 
 
     //~ Edit ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    EDIT:         [ 400,  'Edit',             'EDIT'                  ],
-    UNDO:         [ 401,  'Undo',             'UNDO'                  ],
-    REDO:         [ 402,  'Redo',             'REDO'                  ],
-    COPY:         [ 403,  'Copy',             'COPY'                  ],
-    CUT:          [ 404,  'Cut',              'CUT'                   ],
-    PASTE:        [ 405,  'Paste',            'PASTE'                 ],
-    //EDIT:         [ 406,  'Edit',             'EDIT'                  ],
-    DELETE:       [ 407,  'Delete',           'DELETE'                ],
+    EDIT:         [ 400,  'Edit',             'EDIT',     KEYCODES.EDIT   ],
+    UNDO:         [ 401,  'Undo',             'UNDO',     KEYCODES.UNDO   ],
+    REDO:         [ 402,  'Redo',             'REDO',     KEYCODES.REDO   ],
+    COPY:         [ 403,  'Copy',             'COPY',     KEYCODES.COPY   ],
+    CUT:          [ 404,  'Cut',              'CUT',      KEYCODES.CUT    ],
+    PASTE:        [ 405,  'Paste',            'PASTE',    KEYCODES.PASTE  ],
+    DELETE:       [ 406,  'Delete',           'DELETE',   KEYCODES.DELETE ],
 
 
     //~ View ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    VIEW:         [ 500,  'View',             'VIEW'                  ],
-    ZOOMIN:       [ 501,  'Zoomin',           'ZOOMIN'                ],
-    ZOOMOUT:      [ 502,  'Zoomout',          'ZOOMOUT'               ],
-    PAN:          [ 503,  'Pan',              'PAN'                   ],
+    VIEW:         [ 500,  'View',             'VIEW',     KEYCODES.VIEW   ],
+    ZOOMIN:       [ 501,  'Zoomin',           'ZOOMIN',   KEYCODES.ZOOMIN ],
+    ZOOMOUT:      [ 502,  'Zoomout',          'ZOOMOUT',  KEYCODES.ZOOMOUT],
+    PAN:          [ 503,  'Pan',              'PAN',      KEYCODES.PAN    ],
 
 
     //~ Modify ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    MODIFY:       [ 600,  'Modify',           'MODIFY'                ],
-    TRANSLATE:    [ 601,  'Translate',        'TRANSLATE'             ],
-    TRANSVECTOR:  [ 602,  'Transvector',      'TRANSVECTOR'           ],    //~ TranslateByVector
+    MODIFY:       [ 600,  'Modify',           'MODIFY',       KEYCODES.MODIFY       ],
+    TRANSLATE:    [ 601,  'Translate',        'TRANSLATE',    KEYCODES.TRANSLATE    ],
+    TRANS_UP:     [ 601,  'Translate',        'TRANSLATE',    KEYCODES.TRANS_UP     ],
+    TRANS_DOWN:   [ 601,  'Translate',        'TRANSLATE',    KEYCODES.TRANS_DOWN   ],
+    TRANS_LEFT:   [ 601,  'Translate',        'TRANSLATE',    KEYCODES.TRANS_LEFT   ],
+    TRANS_RIGHT:  [ 601,  'Translate',        'TRANSLATE',    KEYCODES.TRANS_RIGHT  ],
+    TRANS_VECTOR: [ 602,  'Transvector',      'TRANSVECTOR',  KEYCODES.TRANS_VECTOR ],    //~ TranslateByVector
 
     REFLECT:      [ 603,  'Reflect',          'REFLECT'               ],
     REFLECTTLINE: [ 604,  'ReflectLine',      'REFLECTLINE'           ],    //~ ReflectAboutLIne
@@ -546,7 +554,7 @@ var process;
   //~ println(p);
     switch(p){
 
-      case COMMANDS.UNDEF[0]:       return app.command;
+      case COMMANDS.COMMAND[0]:     return app.command;
 
       case COMMANDS.FOCUS[0]:       return app.focus;
       case COMMANDS.LEFT[0]:        return app.left;
@@ -618,7 +626,7 @@ var process;
   };
 
   var reset=function(){
-    app.command=0;
+    //~ app.command=0;
     app.vertices=[];
   };
   var getDottedLine=function(x0, y0, x1, y1, n){
@@ -1184,7 +1192,7 @@ var factor=1.25;
       case COMMANDS.GRID[0]:        break;
 
       case COMMANDS.GRIDPROPS[0]:   app.gridprops=!app.gridprops;
-println(app.gridprops);
+
       break;
 
       case COMMANDS.ORIGIN[0]:      app.origin=!app.origin;       break;
@@ -1240,15 +1248,14 @@ println(app.gridprops);
 
       //~ case COMMANDS.POINT[0]:       println('Point:');          break;
       //~ case COMMANDS.P_OBJECT[0]:    println('Point: bound');    break;
-      case COMMANDS.P_INTERSECT[0]: println('Point: Intersect');  break;
-      case COMMANDS.P_MIDPOINT[0]:  println('Point: Midpoint');   break;
-
-      //~ case COMMANDS.ORIGIN[0]:      app.origin=!app.origin;       break;
-      //~ case COMMANDS.BORDER[0]:      app.border=!app.border;       break;
+      case COMMANDS.P_INTERSECT[0]:     break;
+      case COMMANDS.P_MIDPOINT[0]:      break;
 
       default:      break;
 
     }
+
+    app.command=c;
 
   };
 
@@ -1266,7 +1273,6 @@ var zoomfactor=0;
       //~ Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       case (c>COMMANDS.GRID[0] &&
             c<=COMMANDS.FS[0]):           GridCommands(c,p);      break;
-
       case (c>=COMMANDS.POINT[0] &&
             c<=COMMANDS.SKETCH[0]):       ShapeCommands(c,p);     break;
 
@@ -1274,14 +1280,15 @@ var zoomfactor=0;
                                           app.red=red(app.color);
                                           app.green=green(app.color);
                                           app.blue=blue(app.color);
-                                          println("this is it");
+                                          app.fill=p;
                                           break;
 
       case c===COMMANDS.ZOOMIN[0]:        app.factor*=1.25;       break;
 
       case c===COMMANDS.ZOOMOUT[0]:       app.factor/=1.25;       break;
 
-      case c===COMMANDS.PAN[0]:           println("pan");         break;
+      case c===COMMANDS.PAN[0]:           app.command=c;
+                                          println("pan");         break;
 
       case c===COMMANDS.UNDO[0]:                                  break;
 
@@ -1387,6 +1394,12 @@ var zoomfactor=0;
       //~ app.focus=this.i;
       commands(this.c, this.v);
       for(var c in this.ctrls){ this.ctrls[c].clicked(); }
+    }
+  };
+    control.prototype.clickedR=function(){
+    if(this.hit){
+      println(this.i);
+      for(var c in this.ctrls){ this.ctrls[c].clickedR(); }
     }
   };
   control.prototype.moved=function(x,y){
@@ -3280,12 +3293,22 @@ var zoomfactor=0;
           case COMMANDS.GRIDPROPS[0]:
 
             noFill();
-            stroke(CLRS.LINE);
+            stroke(p.stroke);
+            if(p.hit){ stroke(p.fillH); }
             strokeWeight(3);
 
-            line(d+cX-7, d+cY-6, d+cX+7, d+cY-6);
+            line(d+cX-7, d+cY-5, d+cX+7, d+cY-5);
             line(d+cX-7, d+cY,   d+cX+7, d+cY);
-            line(d+cX-7, d+cY+6, d+cX+7, d+cY+6);
+            line(d+cX-7, d+cY+5, d+cX+7, d+cY+5);
+
+            noFill();
+            stroke(p.stroke);
+            if(p.hit){ stroke(p.fillH); }
+            strokeWeight(2);
+
+            line(d+cX-6, d+cY-5, d+cX+6, d+cY-5);
+            line(d+cX-6, d+cY,   d+cX+6, d+cY);
+            line(d+cX-6, d+cY+5, d+cX+6, d+cY+5);
 
             break;
 
@@ -3360,6 +3383,12 @@ var zoomfactor=0;
           }
 
           if(p.v){ fill(getProp(p.g)); }
+          
+          if(p.fill===CLRS.TRANSPARENT){
+            noFill();
+            noStroke();
+          }
+
           if(app.command===p.c){ fill(getColor(CLRS.GRAY,25)); }
 
           rect(d, d, p.w, p.h, p.r);
@@ -3424,8 +3453,6 @@ var zoomfactor=0;
       this.parent.ctrls[0].g=this.g;
 
       //~ this.parent.v=!this.parent.v;
-
-      app.command=this.c;
 
       //~ for(var c in this.ctrls){ this.ctrls[c].clicked(); }
 
@@ -3686,7 +3713,7 @@ var zoomfactor=0;
 
       //~ this.parent.v=!this.parent.v;
 
-      app.command=this.c;
+      //~ app.command=this.c;
 
       for(var c in this.ctrls){ this.ctrls[c].clicked(); }
 
@@ -4220,11 +4247,16 @@ var zoomfactor=0;
   };
   strip.prototype.clicked=function(){
     if(this.hit){
-      if(app.focus===this.i){
+      //~ if(app.focus===this.i){
+      if(mouseX>this.x+this.ctrls[0].w){
         this.v=!this.v;
       }
-      //~ commands(this.c, this.v);
       for(var c in this.ctrls){ this.ctrls[c].clicked(); }
+    }
+  };
+  strip.prototype.clickedR=function(){
+    if(this.hit){
+      for(var c in this.ctrls){ this.ctrls[c].clickedR(); }
     }
   };
   strip.prototype.moved=function(x,y){
@@ -4959,59 +4991,60 @@ var zoomfactor=0;
 
         case COMMANDS.C_CENTERP[0]:
 
-          if(p.vertices.length===1){
-
-            noFill();
-            stroke(app.stroke);
-            strokeWeight(app.lineweight);
-
+          //~ if(p.vertices.length===1){
+//~
+            //~ noFill();
+            //~ stroke(app.stroke);
+            //~ strokeWeight(app.lineweight);
+//~
             //~ line(app.mouseX,  app.mouseY, app.vertices[0].x, app.vertices[0].y);
-
-            fill(app.fill);
-            noStroke();
-            strokeWeight(0);
-
-            ellipse(p.vertices[0].x, p.vertices[0].y, app.pSize, app.pSize);
-            ellipse(app.mouseX,      app.mouseY,      app.pSize, app.pSize);
-
-            noFill();
-            stroke(app.stroke);
-            strokeWeight(app.lineweight);
-
-            var r=2*dist(p.vertices[0].x, p.vertices[0].y, app.mouseX, app.mouseY);
-
-            ellipse(p.vertices[0].x, p.vertices[0].y, r, r);
-
-          }
+//~
+            //~ fill(app.fill);
+            //~ noStroke();
+            //~ strokeWeight(0);
+//~
+            //~ ellipse(p.vertices[0].x, p.vertices[0].y, app.pSize, app.pSize);
+            //~ ellipse(app.mouseX,      app.mouseY,      app.pSize, app.pSize);
+//~
+            //~ noFill();
+            //~ stroke(app.stroke);
+            //~ strokeWeight(app.lineweight);
+//~
+            //~ var r=2*dist(p.vertices[0].x, p.vertices[0].y, app.mouseX, app.mouseY);
+//~
+            //~ ellipse(p.vertices[0].x, p.vertices[0].y, r, r);
+//~
+          //~ }
 
           break;
 
         case COMMANDS.Q_RECTANGLE[0]:
 
-          if(p.vertices.length===1){
-
-            noFill();
-            stroke(app.stroke);
-            strokeWeight(app.lineweight);
-
-            fill(app.fill);
-            noStroke();
-            strokeWeight(0);
-
-            ellipse(p.vertices[0].x, p.vertices[0].y, app.pSize, app.pSize);
-            ellipse(app.mouseX,    app.mouseY,    app.pSize, app.pSize);
-
-            noFill();
-            stroke(app.stroke);
-            strokeWeight(app.lineweight);
-
-            var r=dist(p.vertices[0].x, p.vertices[0].y, app.mouseX, app.mouseY);
-
-            rect(p.vertices[0].x, p.vertices[0].y, r, r);
-
-          }
+          //~ if(p.vertices.length===1){
+//~
+            //~ noFill();
+            //~ stroke(app.stroke);
+            //~ strokeWeight(app.lineweight);
+//~
+            //~ fill(app.fill);
+            //~ noStroke();
+            //~ strokeWeight(0);
+//~
+            //~ ellipse(p.vertices[0].x, p.vertices[0].y, app.pSize, app.pSize);
+            //~ ellipse(app.mouseX,    app.mouseY,    app.pSize, app.pSize);
+//~
+            //~ noFill();
+            //~ stroke(app.stroke);
+            //~ strokeWeight(app.lineweight);
+//~
+            //~ var r=dist(p.vertices[0].x, p.vertices[0].y, app.mouseX, app.mouseY);
+//~
+            //~ rect(p.vertices[0].x, p.vertices[0].y, r, r);
+//~
+          //~ }
 
           break;
+
         default:                  break;
 
       }
@@ -5305,14 +5338,13 @@ var zoomfactor=0;
       case LEFT:
 
         for(var c in app.ctrls){ app.ctrls[c].clicked(); }
-        //~ for(var c in this.shapes){ this.shapes[c].clicked(); }
         break;
 
       case RIGHT:
 
         //~ println(mouseButton);
 
-        //~ for(var c in app.ctrls){ app.ctrls[c].clickedR() }
+        for(var c in app.ctrls){ app.ctrls[c].clickedR() }
         break;
 
       case CENTER:
@@ -5411,6 +5443,8 @@ var zoomfactor=0;
 
     }
 
+  println(keyCode);
+
     app.keys[keyCode]=true;
 
     //~ for(var c in app.ctrls){ app.ctrls[c].pressed(); }
@@ -5499,7 +5533,7 @@ var zoomfactor=0;
 
   };
 
-  var getVertices=function(parent){
+  var getPoints=function(parent){
 
     var ctrls=[];
     var top=30;
@@ -6387,7 +6421,7 @@ var zoomfactor=0;
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, 100, top+23*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+                new propC(getGUID(), cn, 100, top+23*h, 10, 10, 0, false, COMMANDS.COMMAND[0], COMMANDS.UNDEF[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
@@ -6824,13 +6858,13 @@ var zoomfactor=0;
     var lX=80;
 
     var cn=new cnProps(
-            new propC(getGUID(),parent, l, 50, 120, 310, 3, false, COMMANDS.GRIDPROPS[0],COMMANDS.GRIDPROPS[1]),
+            new propC(getGUID(),parent, l, 42, 120, 310, 3, false, COMMANDS.GRIDPROPS[0],COMMANDS.GRIDPROPS[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
 
     ctrls.push(new buttonI(
-                new propC(getGUID(), cn, 94, 2, 24, 24, 0, false, COMMANDS.GRIDPROPS[0], COMMANDS.GRIDPROPS[1]),
-                getStyle(STYLES.BUTTON),
+                new propC(getGUID(), cn, 98, 2, 24, 24, 0, false, COMMANDS.GRIDPROPS[0], COMMANDS.GRIDPROPS[1]),
+                new propL(CLRS.TRANSPARENT, CLRS.TRANSPARENT, CLRS.BUTTON, CLRS.BUTTONH, 0.125, 0.25),
                 getStyle(STYLES.TEXT)));
 
     //~ Labels ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -7054,7 +7088,7 @@ var zoomfactor=0;
             //~ getStyle(STYLES.BUTTON),
             //~ getStyle(STYLES.TEXTCENTER)));
 
-    ctrls.push(getVertices(cn));
+    ctrls.push(getPoints(cn));
     ctrls.push(getLines(cn));
     ctrls.push(getTriangles(cn));
     ctrls.push(getCircles(cn));
@@ -7069,10 +7103,10 @@ var zoomfactor=0;
 
     ctrls.push(getHeader(cn));
     ctrls.push(getFooter(cn));
-    //~ ctrls.push(getView(cn));
+    ctrls.push(getView(cn));
     ctrls.push(getProperties(cn));
     ctrls.push(getTelemetry(cn));
-    //~ ctrls.push(getColors(cn));
+    ctrls.push(getColors(cn));
 
 
 
