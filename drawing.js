@@ -3350,12 +3350,12 @@ var zoomfactor=0;
               noFill();
               stroke(CLRS.White);
 
-              line(n, d+cY, n+4, d+cY);
+              line(n, d+cY, n+3, d+cY);
 
               noStroke();
               fill(CLRS.White);
 
-              ellipse(n+7.5, d+cY, 1, 1);
+              ellipse(n+6.5, d+cY, 1, 1);
 
             }
 
