@@ -174,7 +174,6 @@ var process;
     FOOTER:       [   5,  'Footer',           'FOOTER'                ],
     TELEMETRY:    [   6,  'Telemetry',        'TELEMETRY'             ],
     TOOLTIP:      [   7,  'ToolTip',          'TOOLTIP'               ],
-    FORMULA:      [   8,  'Formula',          'FORMULA'               ],
 
     DEBUG:        [   9,  'Debug',            'DEBUG'                 ],
     WIDTH:        [  10,  'Width',            'WIDTH'                 ],
@@ -238,22 +237,29 @@ var process;
 
     NAME:         [ 202,  'Name',             'NAME'                  ],
     CAPTION:      [ 203,  'Caption',          'CAPTION'               ],
-    FORMULA:      [ 203,  'Formula',          'FORMULA'               ],
+    FORMULA:      [ 204,  'Formula',          'FORMULA'               ],
 
-    STROKE:       [ 204,  'Color',            'COLOR'                 ],
-    STROKEA:      [ 205,  'Color Alpha',      'COLORALPHA'            ],  //~ Stroke Alpha
-    FILL:         [ 206,  'Fill',             'FILL'                  ],
-    FILLA:        [ 207,  'Fill Alpha',       'fillA'                 ],  //~ Fill Alpha
+    STROKE:       [ 205,  'Stroke',           'STROKE'                ],
+    STROKEA:      [ 206,  'Stroke Alpha',     'STROKEALPHA'           ],  //~ Stroke Alpha
+    FILL:         [ 207,  'Fill',             'FILL'                  ],
+    FILLA:        [ 208,  'Fill Alpha',       'fillA'                 ],  //~ Fill Alpha
 
-    COLORG:       [ 208,  'ColorG',           'COLORG'                ],
+    COLORG:       [ 209,  'ColorG',           'COLORG'                ],
 
-    LAYER:        [ 209,  'Layer',            'LAYER'                 ],
-    LINETYPE:     [ 210,  'Line Type',        'LINE TYPE'             ],
-    LINEWEIGHT:   [ 211,  'Line Weight',      'LINE WEIGHT'           ],
+    LAYER:        [ 210,  'Layer',            'LAYER'                 ],
 
-    RED:          [ 212,  'Red',              'RED'                   ],
-    BLUE:         [ 213,  'Blue',             'BLUE'                  ],
-    GREEN:        [ 214,  'Green',            'GREEN'                 ],
+    LINETYPE:     [ 211,  'Line Type',        'LINE TYPE'             ],
+    LT_HAIRLINE:  [ 212,  'Hairline',         'HAIRLINE'              ],
+    LT_SOLID:     [ 213,  'Solid',            'SOLID'                 ],
+    LT_DASHED:    [ 214,  'Dashed',           'DASHED'                ],
+    LT_DOTTED:    [ 215,  'Dottted',          'DOTTED'                ],
+    LT_DASHDOT:   [ 216,  'DashDot',          'DASHDOT'               ],
+
+    LINEWEIGHT:   [ 217,  'Line Weight',      'LINE WEIGHT'           ],
+
+    RED:          [ 213,  'Red',              'RED'                   ],
+    BLUE:         [ 214,  'Blue',             'BLUE'                  ],
+    GREEN:        [ 215,  'Green',            'GREEN'                 ],
 
     //~ File ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     FILE:         [ 301,  'File',             'FILE',     KEYCODES.FILE   ],
@@ -468,8 +474,8 @@ var process;
     green:          127,
     blue:           126,
 
-    caption:        'caption',
-    name:           'name',
+    caption:        'woo hoo',
+    name:           'brad',
     formula:        'x^2+y^2=r^2',
 
     stroke:         CLRS.GREEN,
@@ -479,24 +485,21 @@ var process;
     fillA:          76,
 
     //~ fill:           getColor(CLRS.WHITE,100),
-    fillH:          getColor(CLRS.ORANGE,25),
-    stroke:         getColor(CLRS.Yellow,100),
-    strokeH:        getColor(CLRS.GREEN,25),
+    //~ fillH:          getColor(CLRS.ORANGE,25),
+    //~ stroke:         getColor(CLRS.Yellow,100),
+    //~ strokeH:        getColor(CLRS.GREEN,25),
 
     pSize:          5,
 
     layer:          8,
 
-    linetype:       LINETYPES.HAIRLINE,
+    linetype:       LINETYPES.DOTTED,
     lineweight:     0.75,
-
-    command:        COMMANDS.P_DEFAULT[0],
-    //~ command:        COMMANDS.PAN[0],
 
     border:         true,
     origin:         true,
 
-    gridprops:      true,
+    gridprops:      false,
 
     axisX:          true,
     axisY:          true,
@@ -515,14 +518,14 @@ var process;
     stg:            false,  //~ snap to grid
     fs:             false,  //~ full screen
 
+    command:        COMMANDS.P_DEFAULT[0],
+    //~ command:        COMMANDS.PAN[0],
+
     cursorSize:     0,
 
     ctrls:          [],
-    //~ shapes:         [],
 
     factor:         0
-
-    //~ vertices:         []
 
   };
 
@@ -555,9 +558,6 @@ var process;
       case COMMANDS.LEFT[0]:        return app.left;
       case COMMANDS.CENTER[0]:      return app.center;
       case COMMANDS.RIGHT[0]:       return app.right;
-      case COMMANDS.CAPTION[0]:     return app.caption;
-      case COMMANDS.NAME[0]:        return app.name;
-      case COMMANDS.FORMULA[0]:     return app.formula;
 
       case COMMANDS.WIDTH[0]:       return app.width;
       case COMMANDS.HEIGHT[0]:      return app.height;
@@ -590,7 +590,6 @@ var process;
       case COMMANDS.GREEN[0]:       return app.green;
       case COMMANDS.BLUE[0]:        return app.blue;
 
-      //~ case COMMANDS.COLORG[0]:      return app.stroke;
       //~ case COMMANDS.LAYER[0]:       return app.layer;
 
       //~ Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1283,6 +1282,10 @@ var zoomfactor=0;
                                           app.green=green(app.color);
                                           app.blue=blue(app.color);
                                           app.fill=p;
+                                          break;
+
+      case c>COMMANDS.LINETYPE[0] &&
+             COMMANDS.LT_DASHDOT[0]:      app.linetype=c;
                                           break;
 
       case c===COMMANDS.ZOOMIN[0]:        app.factor*=1.25;       break;
@@ -3280,6 +3283,94 @@ var zoomfactor=0;
 
     };
 
+    var drawLineType=function(){
+
+      //~ LT_HAIRLINE:  [ 212,  'Hairline',         'HAIRLINE'              ],
+      //~ LT_SOLID:     [ 213,  'Solid',            'SOLID'                 ],
+      //~ LT_DASHED:    [ 214,  'Dashed',           'DASHED'                ],
+      //~ LT_DOTTED:    [ 215,  'Dottted',          'DOTTED'                ],
+      //~ LT_DASHDOT:   [ 216,  'DashDot',          'DASHDOT'               ],
+
+      pushMatrix();
+
+        translate(0.5,0.5);
+
+      pushStyle();
+
+        rectMode(CENTER);
+
+        noFill();
+        stroke(CLRS.White);
+        strokeWeight(1);
+
+        var start=d+cX-p.w/2+10;
+        var end=  d+cX+p.w/2-10;
+
+        switch(p.c){
+
+          case COMMANDS.LT_HAIRLINE[0]:
+
+            strokeWeight(0.25);
+
+            line(d+cX-p.w/2+10, d+cY, d+cX+p.w/2-10, d+cY);
+
+            break;
+
+          case COMMANDS.LT_SOLID[0]:
+
+            line(d+cX-p.w/2+10, d+cY, d+cX+p.w/2-10, d+cY);
+
+            break;
+
+          case COMMANDS.LT_DASHED[0]:
+
+            for(var n=start; n<end; n+=10) {
+
+              line(n, d+cY, n+5, d+cY);
+
+            }
+
+            break;
+
+          case COMMANDS.LT_DOTTED[0]:
+
+            noStroke();
+            fill(CLRS.White);
+
+            for(var n=start; n<end; n+=5) {
+              ellipse(n, d+cY, 1, 1);
+            }
+
+            break;
+
+          case COMMANDS.LT_DASHDOT[0]:
+
+            for(var n=start; n<end; n+=10){
+
+              noFill();
+              stroke(CLRS.White);
+
+              line(n, d+cY, n+4, d+cY);
+
+              noStroke();
+              fill(CLRS.White);
+
+              ellipse(n+7.5, d+cY, 1, 1);
+
+            }
+
+            break;
+
+          default:    break;
+
+        }
+
+      popStyle();
+
+      popMatrix();
+
+    };
+
     var drawGrid=function(){
 
       pushMatrix();
@@ -3419,6 +3510,8 @@ var zoomfactor=0;
                   p.c<=COMMANDS.SHEAR[0]):      drawTransform();  break;
             case (p.c>=COMMANDS.MEASURE[0] &&
                   p.c<=COMMANDS.SLOPE[0]):      drawMeasure();    break;
+            case (p.c>=COMMANDS.LINETYPE[0] &&
+                  p.c<=COMMANDS.LT_DASHDOT[0]): drawLineType();   break;
 
             default:      break;
 
@@ -4173,12 +4266,14 @@ println(p.fill);
   };
 
 
-  //~ Strip ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  var strip=function(cp,lp,ap,ctrls){
+  //~ Strips ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  //~ Horizontal
+  var stripH=function(cp,lp,ap,ctrls){
     control.call(this,cp,lp,ap,ctrls);
   };
-  strip.prototype=Object.create(control.prototype);
-  strip.prototype.draw=function(){
+  stripH.prototype=Object.create(control.prototype);
+  stripH.prototype.draw=function(){
 
     var p=this;
     var d=0;
@@ -4249,7 +4344,7 @@ println(p.fill);
     popMatrix();
 
   };
-  strip.prototype.clicked=function(){
+  stripH.prototype.clicked=function(){
     if(this.hit){
       //~ if(app.focus===this.i){
       if(mouseX>this.x+this.ctrls[0].w){
@@ -4258,12 +4353,154 @@ println(p.fill);
       for(var c in this.ctrls){ this.ctrls[c].clicked(); }
     }
   };
-  strip.prototype.clickedR=function(){
+  stripH.prototype.clickedR=function(){
     if(this.hit){
       for(var c in this.ctrls){ this.ctrls[c].clickedR(); }
     }
   };
-  strip.prototype.moved=function(x,y){
+  stripH.prototype.moved=function(x,y){
+
+    if(this.alignX===LEFT){
+
+      if(app.mouseX>x+this.x && app.mouseX<x+this.x+this.w &&
+         app.mouseY>y+this.y && app.mouseY<y+this.y+this.h){
+
+        this.hit=true;
+
+        if(app.mouseX>x+this.x+this.w-10){
+          this.hitExpand=true;
+        }
+        else{
+          this.hitExpand=false;
+        }
+
+        app.focus=this.i;
+
+        if(this.v){
+          for(var c in this.ctrls){ this.ctrls[c].moved(x+this.x, y+this.y); }
+        }
+        else{
+          this.ctrls[0].moved(x+this.x, y+this.y);
+        }
+      }
+      else{
+        this.hit=false;
+      }
+
+    }
+    else if(this.alignX===CENTER){
+
+      if(app.mouseX>=x+this.x-this.w/2 && app.mouseX<=x+this.x+this.w/2 &&
+         app.mouseY>=y+this.y-this.h/2 && app.mouseY<=y+this.y+this.h/2){
+        this.hit=true;
+        app.focus=this.i;
+        for(var c in this.ctrls){ this.ctrls[c].moved(x+this.x,y+this.y); }
+      }
+      else{
+        this.hit=false;
+      }
+
+    }
+    else if(this.alignX===RIGHT){
+      app.focus=this.i;
+    }
+    else{
+      app.focus=this.i;
+    }
+
+  };
+
+  //~ Vertical
+  var stripV=function(cp,lp,ap,ctrls){
+    control.call(this,cp,lp,ap,ctrls);
+  };
+  stripV.prototype=Object.create(control.prototype);
+  stripV.prototype.draw=function(){
+
+    var p=this;
+    var d=0;
+
+    pushMatrix();
+
+      translate(p.x, p.y);
+
+        pushStyle();
+
+          //~ set width
+          if(p.v){ p.w=p.ctrls[0].w*p.ctrls.length+10; }
+          else   { p.w=p.ctrls[0].w+10;                }
+
+          fill(p.fill);
+          stroke(p.stroke);
+          strokeWeight(p.weight);
+
+          if(p.hit){
+            fill(p.fillH);
+            stroke(p.strokeH);
+            strokeWeight(p.weightH);
+            //~cursor(ARROW);
+          }
+
+          noStroke();
+
+          rect(d, d, p.w, p.h, p.r);
+
+          fill(color(32,32,32));
+
+          if(p.hit && p.hitExpand){
+            fill(color(48,48,48));
+          }
+
+          rect(d+p.w-9, d+1, 8, p.h-2, 0);
+
+          fill(CLRS.Gray_9);
+
+          if(p.hit && p.hitExpand){
+            fill(CLRS.Gray_6);
+          }
+
+          if(p.v){
+            triangle(d+p.w-2, d+p.h/2-3,
+                     d+p.w-7, d+p.h/2,
+                     d+p.w-2, d+p.h/2+3);
+          }
+          else{
+            triangle(d+p.w-7, d+p.h/2-3,
+                     d+p.w-2, d+p.h/2,
+                     d+p.w-7, d+p.h/2+3);
+          }
+
+          if(p.hit){
+            fill(p.tfillH);
+          }
+
+          textAlign(p.alignX,p.alignY);
+
+          //~ text(p.g, p.w/2, p.h/2);
+
+        popStyle();
+
+        if(p.v){ for(var c in p.ctrls){ p.ctrls[c].draw(); } }
+        else   { p.ctrls[0].draw();                          }
+
+    popMatrix();
+
+  };
+  stripV.prototype.clicked=function(){
+    if(this.hit){
+      //~ if(app.focus===this.i){
+      if(mouseX>this.x+this.ctrls[0].w){
+        this.v=!this.v;
+      }
+      for(var c in this.ctrls){ this.ctrls[c].clicked(); }
+    }
+  };
+  stripV.prototype.clickedR=function(){
+    if(this.hit){
+      for(var c in this.ctrls){ this.ctrls[c].clickedR(); }
+    }
+  };
+  stripV.prototype.moved=function(x,y){
 
     if(this.alignX===LEFT){
 
@@ -4922,6 +5159,8 @@ println(p.fill);
               stroke(CLRS.White);
               strokeWeight(0.25);
 
+              sz=50;
+
               if(sz===0){
 
                 //~ horizontal
@@ -5550,7 +5789,7 @@ println(p.fill);
     var ch=app.height-14;
     var w=30;
 
-    var cn=new strip(
+    var cn=new stripH(
             new propC(getGUID(), parent, 205, 45, w+10, w, 1, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
@@ -5611,7 +5850,7 @@ println(p.fill);
     var ch=app.height-14;
     var w=30;
 
-    var cn=new strip(
+    var cn=new stripH(
             new propC(getGUID(), parent, 205, 75, w+10, w, 1, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
@@ -5715,7 +5954,7 @@ println(p.fill);
     var ch=app.height-14;
     var w=30;
 
-    var cn=new strip(
+    var cn=new stripH(
             new propC(getGUID(), parent, 205, 105, w+10, w, 1, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
@@ -5760,7 +5999,7 @@ println(p.fill);
     var ch=app.height-14;
     var w=30;
 
-    var cn=new strip(
+    var cn=new stripH(
             new propC(getGUID(), parent, 205, 135, w+10, w, 1, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
@@ -5804,7 +6043,7 @@ println(p.fill);
     var ch=app.height-14;
     var w=30;
 
-    var cn=new strip(
+    var cn=new stripH(
             new propC(getGUID(), parent, 205, 165, w+10, w, 1, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
@@ -5867,7 +6106,7 @@ println(p.fill);
     var ch=app.height-14;
     var w=30;
 
-    var cn=new strip(
+    var cn=new stripH(
             new propC(getGUID(), parent, 205, 195, w+10, w, 1, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
@@ -5929,7 +6168,7 @@ println(p.fill);
     var ch=app.height-14;
     var w=30;
 
-    var cn=new strip(
+    var cn=new stripH(
             new propC(getGUID(), parent, 205, 225, w+10, w, 1, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
@@ -5973,7 +6212,7 @@ println(p.fill);
     var ch=app.height-14;
     var w=30;
 
-    var cn=new strip(
+    var cn=new stripH(
             new propC(getGUID(), parent, 205, 255, w+10, w, 1, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
@@ -6023,7 +6262,7 @@ println(p.fill);
     var ch=app.height-14;
     var w=30;
 
-    var cn=new strip(
+    var cn=new stripH(
             new propC(getGUID(), parent, 205, 285, w+10, w, 1, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
@@ -6055,7 +6294,7 @@ println(p.fill);
     var ch=app.height-14;
     var w=30;
 
-    var cn=new strip(
+    var cn=new stripH(
             new propC(getGUID(), parent, 205, 315, w+10, w, 1, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
@@ -6087,7 +6326,7 @@ println(p.fill);
     var ch=app.height-14;
     var w=30;
 
-    var cn=new strip(
+    var cn=new stripH(
             new propC(getGUID(), parent, 205, 345, w+10, w, 1, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
@@ -6151,7 +6390,7 @@ println(p.fill);
     var ch=app.height-14;
     var w=30;
 
-    var cn=new strip(
+    var cn=new stripH(
             new propC(getGUID(), parent, 205, 375, w+10, w, 1, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
@@ -6202,6 +6441,65 @@ println(p.fill);
 
     ctrls.push(new buttonI(
                 new propC(getGUID(), cn, 7*w, 0, w, w, 0, false, COMMANDS.SLOPE[0], COMMANDS.SLOPE[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    cn.ctrls=ctrls;
+
+    return cn;
+
+  };
+
+  var getLineTypes=function(parent){
+
+    var ctrls=[];
+    var top=30;
+    var h=15;
+    var l=parent.w-202;
+    var ch=app.height-14;
+    var w=100;
+    var h=20;
+
+    var cn=new stripH(
+            new propC(getGUID(), parent, 10, 300, w+10, h, 1, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            getStyle(STYLES.CONTAINER),
+            getStyle(STYLES.TEXT));
+
+    //~ LineTypes ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //~ LINETYPE:     [ 211,  'Line Type',        'LINE TYPE'             ],
+    //~ LT_HAIRLINE:  [ 212,  'Hairline',         'HAIRLINE'              ],
+    //~ LT_SOLID:     [ 213,  'Solid',            'SOLID'                 ],
+    //~ LT_DASHED:    [ 214,  'Dashed',           'DASHED'                ],
+    //~ LT_DOTTED:    [ 215,  'Dottted',          'DOTTED'                ],
+    //~ LT_DASHDOT:   [ 216,  'DashDot',          'DASHDOT'               ],
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 0*w, 0, w, h, 0, false, COMMANDS.LINETYPE[0], COMMANDS.LINETYPE[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 1*w, 0, w, h, 0, false, COMMANDS.LT_HAIRLINE[0], COMMANDS.LT_HAIRLINE[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 2*w, 0, w, h, 0, false, COMMANDS.LT_SOLID[0], COMMANDS.LT_SOLID[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 3*w, 0, w, h, 0, false, COMMANDS.LT_DASHED[0], COMMANDS.LT_DASHED[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 4*w, 0, w, h, 0, false, COMMANDS.LT_DOTTED[0], COMMANDS.LT_DOTTED[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new buttonI(
+                new propC(getGUID(), cn, 5*w, 0, w, h, 0, false, COMMANDS.LT_DASHDOT[0], COMMANDS.LT_DASHDOT[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
@@ -6539,7 +6837,7 @@ println(p.fill);
                 new propA(CLRS.GRAY, CLRS.BLACK, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new textBox(
-                new propC(getGUID(), cn, l+col1, top+2*h, 100, 14, 0, false, COMMANDS.FORMULA[0], COMMANDS.FORMULA[1]),
+                new propC(getGUID(), cn, l+col1, top+2*h, 100, 14, 0, app.formula, COMMANDS.FORMULA[0], COMMANDS.FORMULA[1]),
                 new propL(CLRS.BLACK, CLRS.Gray3, CLRS.BLACK, CLRS.BLACK, 0.5, 1),
                 new propA(CLRS.GRAY, CLRS.BLACK, LEFT, CENTER, 10, 11)));
 
@@ -6554,7 +6852,7 @@ println(p.fill);
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new textBox(
-                new propC(getGUID(), cn, l+col1, top+7*h, 100, 14, 0, false, COMMANDS.FILL[0], COMMANDS.FILL[1]),
+                new propC(getGUID(), cn, l+col1, top+7*h, 100, 14, 0, app.fill, COMMANDS.FILL[0], COMMANDS.FILL[1]),
                 new propL(CLRS.BLACK, CLRS.Gray3, CLRS.BLACK, CLRS.BLACK, 0.5, 1),
                 new propA(CLRS.GRAY, CLRS.BLACK, LEFT, CENTER, 10, 11)));
 
@@ -6569,12 +6867,12 @@ println(p.fill);
                 //~ new propA(CLRS.GRAY, CLRS.BLACK, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new textBox(
-                new propC(getGUID(), cn, l+col1, top+10*h, 100, 14, 0, false, COMMANDS.LINETYPE[0], COMMANDS.LINETYPE[1]),
+                new propC(getGUID(), cn, l+col1, top+10*h, 100, 14, 0, app.linetype, COMMANDS.LINETYPE[0], COMMANDS.LINETYPE[1]),
                 new propL(CLRS.BLACK, CLRS.Gray3, CLRS.BLACK, CLRS.BLACK, 0.5, 1),
                 new propA(CLRS.GRAY, CLRS.BLACK, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new textBox(
-                new propC(getGUID(), cn, l+col1, top+11*h, 100, 14, 0, false, COMMANDS.LINEWEIGHT[0], COMMANDS.LINEWEIGHT[1]),
+                new propC(getGUID(), cn, l+col1, top+11*h, 100, 14, 0, app.lineweight, COMMANDS.LINEWEIGHT[0], COMMANDS.LINEWEIGHT[1]),
                 new propL(CLRS.BLACK, CLRS.Gray3, CLRS.BLACK, CLRS.BLACK, 0.5, 1),
                 new propA(CLRS.GRAY, CLRS.BLACK, LEFT, CENTER, 10, 11)));
 
@@ -6582,6 +6880,8 @@ println(p.fill);
                 //~ new propC(getGUID(), cn, l+100, top+9*h, 10, 10, 0, false, COMMANDS.LAYER[0], COMMANDS.LAYER[1]),
                 //~ getStyle(STYLES.BUTTON),
                 //~ getStyle(STYLES.TEXT)));
+
+    ctrls.push(getLineTypes(cn));
 
     cn.ctrls=ctrls;
 
@@ -6833,7 +7133,7 @@ println(p.fill);
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, cn.w-10, 9, 10, 10, 0, false, COMMANDS.COORDINATES[0], COMMANDS.UNDEF[1]),
+                new propC(getGUID(), cn, cn.w-10, 9, 10, 10, 0, false, COMMANDS.COORDINATES[0], COMMANDS.COORDINATES[1]),
                 getStyle(STYLES.BUTTON),
                 new propA(CLRS.GRAY, CLRS.WHITE, RIGHT, CENTER, 12, 12)));
 
@@ -6879,12 +7179,11 @@ println(p.fill);
 
     var ctrls=[];
 
+//~ 250, 45, parent.w-460, parent.h-80
     var cn=new grid(
-            new propC(getGUID(), parent, 250, 45, parent.w-460, parent.h-80, 5, false, COMMANDS.UNDEF[0], 0),
+            new propC(getGUID(), parent, 10, 10, app.width-20, app.height-20, 5, false, COMMANDS.UNDEF[0], 0),
             new propL(getColor(CLRS.GRID,65), CLRS.GRID, CLRS.WHITE, CLRS.YELLOW, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
-
-
 
     ctrls.push(getGridProps(cn));
 
@@ -7127,7 +7426,7 @@ println(p.fill);
             //~ getStyle(STYLES.BUTTON),
             //~ getStyle(STYLES.TEXT)));
 
-    //~ ctrls.push(getGrid(cn));
+    ctrls.push(getGrid(cn));
 
     //~ ctrls.push(new labelR(
             //~ new propC(getGUID(), cn, cn.w/2, cn.h/2, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.CARTESIA[1]),
@@ -7147,12 +7446,14 @@ println(p.fill);
     //~ ctrls.push(getTransform(cn));
     //~ ctrls.push(getMeasure(cn));
 
+    ctrls.push(getTelemetry(cn));
+
     //~ ctrls.push(getHeader(cn));
     ctrls.push(getFooter(cn));
     ctrls.push(getView(cn));
     ctrls.push(getProperties(cn));
-    //~ ctrls.push(getTelemetry(cn));
-    ctrls.push(getColors(cn));
+
+    //~ ctrls.push(getColors(cn));
 
 
 
