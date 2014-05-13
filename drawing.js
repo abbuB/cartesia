@@ -1397,11 +1397,11 @@ var zoomfactor=0;
     for(var c in this.ctrls){ this.ctrls[c].draw(); }
   };
   control.prototype.clicked=function(){
-    if(this.hit){
-      //~ app.focus=this.i;
-      commands(this.c, this.v);
+    if(this.hit && app.left){
+      commands(this.c, this.g);
       for(var c in this.ctrls){ this.ctrls[c].clicked(); }
     }
+
   };
   control.prototype.clickedR=function(){
     if(this.hit){
@@ -1592,12 +1592,12 @@ var zoomfactor=0;
     popMatrix();
 
   };
-  button.prototype.clicked=function(){
-    if(this.hit){
-      commands(this.c, this.g);
-      for(var c in this.ctrls){ this.ctrls[c].clicked(); }
-    }
-  };
+  //~ button.prototype.clicked=function(){
+    //~ if(this.hit){
+      //~ commands(this.c, this.g);
+      //~ for(var c in this.ctrls){ this.ctrls[c].clicked(); }
+    //~ }
+  //~ };
 
   //~ Color
   var buttonC=function(cp,lp,ap,ctrls){
@@ -1639,12 +1639,12 @@ var zoomfactor=0;
     popMatrix();
 
   };
-  buttonC.prototype.clicked=function(){
-    if(this.hit & app.left){
-      commands(this.c, this.g);
-      for(var c in this.ctrls){ this.ctrls[c].clicked(); }
-    }
-  };
+  //~ buttonC.prototype.clicked=function(){
+    //~ if(this.hit & app.left){
+      //~ commands(this.c, this.g);
+      //~ for(var c in this.ctrls){ this.ctrls[c].clicked(); }
+    //~ }
+  //~ };
 
   //~ Return Property
   var buttonP=function(cp,lp,ap,ctrls){
@@ -1688,12 +1688,12 @@ var zoomfactor=0;
     popMatrix();
 
   };
-  buttonP.prototype.clicked=function(){
-    if(this.hit){
-      commands(this.c, this.g);
-      for(var c in this.ctrls){ this.ctrls[c].clicked(); }
-    }
-  };
+  //~ buttonP.prototype.clicked=function(){
+    //~ if(this.hit){
+      //~ commands(this.c, this.g);
+      //~ for(var c in this.ctrls){ this.ctrls[c].clicked(); }
+    //~ }
+  //~ };
 
   //~ Icon
   var buttonI=function(cp,lp,ap,ctrls){
@@ -3961,10 +3961,6 @@ println(this.g);
     popMatrix();
 
   };
-  labelP.prototype.clicked=function(){
-
-
-  };
 
   //~ Rotate
   var labelR=function(cp,lp,ap,ctrls){
@@ -4637,6 +4633,158 @@ println(this.g);
 
   };
 
+  //~ Container Scroll ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  var containerS=function(cp,lp,ap,ctrls){
+    control.call(this,cp,lp,ap,ctrls);
+
+    this.hitLeft=   false;  //~ left button
+    this.hitRight=  false;  //~ right button
+    this.cursor=    0;      //~ position of the first item
+    this.incr=      this.h*1.618;
+
+  };
+  containerS.prototype=Object.create(control.prototype);
+  containerS.prototype.draw=function(){
+
+    var p=this;
+    var d=0;
+
+    pushMatrix();
+
+      translate(p.x, p.y);
+
+        pushStyle();
+
+          var y=p.h/2;
+
+          fill(p.fill);
+          stroke(p.stroke);
+          strokeWeight(p.strokeweight);
+
+          if(p.hit){
+
+            fill(p.fillH);
+            stroke(p.strokeH);
+            strokeWeight(p.weightH);
+            cursor(ARROW);
+
+            if(this.hitLeft || this.hitRight){
+              cursor(HAND);
+            }
+
+          }
+
+          //~ border
+          rect(0, 0, p.w, p.h, p.r);
+
+          noStroke();
+
+          //~ Scroll left
+          fill(CLRS.RED);
+
+          if(this.hitLeft && app.left){
+
+            rect(0, 1, 20, p.h, p.r);
+
+            fill(CLRS.Gray5);
+
+            triangle(4,  y,
+                     14, y-5,
+                     14, y+5);
+
+          }
+          else{
+
+            rect(1, 1, 20, p.h, p.r);
+
+            fill(CLRS.Gray5);
+
+            triangle(5,  y,
+                     15, y-5,
+                     15, y+5);
+
+          }
+
+          fill(CLRS.RED);
+
+          //~ Scroll right
+          if(this.hitRight && app.left){
+
+            rect(p.w-d-19, 0, 20, p.h-1, p.r);
+
+            fill(CLRS.Gray5);
+
+            triangle(p.w-d-4,  y,
+                     p.w-d-14, y-5,
+                     p.w-d-14, y+5);
+
+          }
+          else{
+
+            rect(p.w-d-20, 0, 20, p.h-1, p.r);
+
+            fill(CLRS.Gray5);
+
+            triangle(p.w-d-5,  y,
+                     p.w-d-15, y-5,
+                     p.w-d-15, y+5);
+
+          }
+
+          fill(CLRS.YELLOW);
+
+          textSize(20);
+          textAlign(CENTER,CENTER);
+          text(this.cursor, p.w/2, -20);
+
+          noStroke();
+          fill(getColor(CLRS.GREEN,20));
+          
+        popStyle();
+
+        for(var c in p.ctrls){
+          p.ctrls[c].draw();
+        }
+
+    popMatrix();
+
+  };
+  containerS.prototype.clicked=function(){
+    
+    if(this.hit & app.left){
+
+      if      (this.hitLeft) { this.cursor+=this.incr; }
+      else if (this.hitRight){ this.cursor-=this.incr; }
+
+      for(var c in this.ctrls){ this.ctrls[c].clicked(); }
+
+    }
+
+  };
+  containerS.prototype.moved=function(x,y){
+
+      if(app.mouseX>x+this.x && app.mouseX<x+this.x+this.w &&
+         app.mouseY>y+this.y && app.mouseY<y+this.y+this.h){
+           
+        this.hit=true;
+        
+        app.focus=this.i;
+
+        if(app.mouseX<x+this.x+20){ this.hitLeft=true;  }
+        else                      { this.hitLeft=false; }
+
+        if(app.mouseX>x+this.x+this.w-20){ this.hitRight=true; }
+        else                             { this.hitRight=false; }
+
+      }
+      else{
+        this.hit=false;
+      }
+
+      for(var c in this.ctrls){ this.ctrls[c].moved(x+this.x, y+this.y); }
+
+  };
+  
   //~ Container ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var cnProps=function(cp,lp,ap,ctrls){
     control.call(this,cp,lp,ap,ctrls);
@@ -6497,7 +6645,7 @@ println(this.g);
     var h=20;
 
     var cn=new stripV(
-            new propC(getGUID(), parent, 95, 180, w, 15, 1, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            new propC(getGUID(), parent, 90, 230, w, 15, 1, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
 
@@ -6555,7 +6703,7 @@ println(this.g);
     //~ var h=20;
 
     var cn=new stripV(
-            new propC(getGUID(), parent, 95, 90, w, 20, 1, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            new propC(getGUID(), parent, 90, 110, w, 20, 1, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
 
@@ -6670,7 +6818,7 @@ println(this.g);
     //~ var h=20;
 
     var cn=new stripV(
-            new propC(getGUID(), parent, 95, 130, w, 20, 1, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            new propC(getGUID(), parent, 90, 170, w, 20, 1, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
 
@@ -7010,14 +7158,14 @@ println(this.g);
 
     var ctrls=[];
     var top=30;
-    var h=15;
-    var l=5;
+    var h=20;
+    var l=10;
     var ch=app.height-14;
     var col0=5;
     var col1=90;
 
     var cn=new container(
-            new propC(getGUID(),parent, l, 2, 200, ch, 3, false, COMMANDS.CONTAINER[0],COMMANDS.CONTAINER[1]),
+            new propC(getGUID(),parent, 5, 2, 200, ch, 3, false, COMMANDS.CONTAINER[0],COMMANDS.CONTAINER[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
 
@@ -7040,54 +7188,52 @@ println(this.g);
                 getStyle(STYLES.TEXTCENTER)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, l+col0, top+0*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.NAME[1]),
+                new propC(getGUID(), cn, col0, top+0*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.NAME[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, l+col0, top+1*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.CAPTION[1]),
+                new propC(getGUID(), cn, col0, top+1*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.CAPTION[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, l+col0, top+2*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.FORMULA[1]),
+                new propC(getGUID(), cn, col0, top+2*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.FORMULA[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new spacer(
-                new propC(getGUID(), cn, l+col0, top+3*h+5, 150, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.SPACER[0]),
+                new propC(getGUID(), cn, col0, top+3*h+5, 150, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.SPACER[0]),
                 getStyle(STYLES.SPACER),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, l+col0, top+4*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.STROKE[1]),
+                new propC(getGUID(), cn, col0, top+4*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.STROKE[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, l+col0, top+5*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.STROKEA[1]),
+                new propC(getGUID(), cn, col0, top+5*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.STROKEA[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, l+col0, top+7*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.FILL[1]),
+                new propC(getGUID(), cn, col0, top+7*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.FILL[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, l+col0, top+8*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.FILLA[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
-
-
-
-    ctrls.push(new label(
-                new propC(getGUID(), cn, l+col0, top+10*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.LINETYPE[1]),
+                new propC(getGUID(), cn, col0, top+8*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.FILLA[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, l+col0, top+11*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.LINEWEIGHT[1]),
+                new propC(getGUID(), cn, col0, top+10*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.LINETYPE[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new label(
+                new propC(getGUID(), cn, col0, top+11*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.LINEWEIGHT[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
@@ -7097,32 +7243,32 @@ println(this.g);
                 //~ getStyle(STYLES.TEXT)));
 
     ctrls.push(new textBox(
-                new propC(getGUID(), cn, l+col1, top+0*h, 100, 14, 0, false, COMMANDS.NAME[0], COMMANDS.NAME[1]),
+                new propC(getGUID(), cn, col1, top+0*h, 100, 14, 0, false, COMMANDS.NAME[0], COMMANDS.NAME[1]),
                 new propL(CLRS.BLACK, CLRS.Gray3, CLRS.BLACK, CLRS.BLACK, 0.5, 1),
                 new propA(CLRS.GRAY, CLRS.BLACK, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new textBox(
-                new propC(getGUID(), cn, l+col1, top+1*h, 100, 14, 0, false, COMMANDS.CAPTION[0], COMMANDS.CAPTION[1]),
+                new propC(getGUID(), cn, col1, top+1*h, 100, 14, 0, false, COMMANDS.CAPTION[0], COMMANDS.CAPTION[1]),
                 new propL(CLRS.BLACK, CLRS.Gray3, CLRS.BLACK, CLRS.BLACK, 0.5, 1),
                 new propA(CLRS.GRAY, CLRS.BLACK, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new textBox(
-                new propC(getGUID(), cn, l+col1, top+2*h, 100, 14, 0, app.formula, COMMANDS.FORMULA[0], COMMANDS.FORMULA[1]),
+                new propC(getGUID(), cn, col1, top+2*h, 100, 14, 0, app.formula, COMMANDS.FORMULA[0], COMMANDS.FORMULA[1]),
                 new propL(CLRS.BLACK, CLRS.Gray3, CLRS.BLACK, CLRS.BLACK, 0.5, 1),
                 new propA(CLRS.GRAY, CLRS.BLACK, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new sliderH(
-                new propC(getGUID(), cn, l+col1, top+5*h, 100, 8, 5, app.strokeA, COMMANDS.STROKEA[0], COMMANDS.STROKEA[1]),
+                new propC(getGUID(), cn, col1, top+5*h, 100, 8, 5, app.strokeA, COMMANDS.STROKEA[0], COMMANDS.STROKEA[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new sliderH(
-                new propC(getGUID(), cn, l+col1, top+8*h, 100, 8, 5, app.fillA, COMMANDS.FILLA[0], COMMANDS.FILLA[1]),
+                new propC(getGUID(), cn, col1, top+8*h, 100, 8, 5, app.fillA, COMMANDS.FILLA[0], COMMANDS.FILLA[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new textBox(
-                new propC(getGUID(), cn, l+col1, top+11*h, 100, 14, 0, app.lineweight, COMMANDS.LINEWEIGHT[0], COMMANDS.LINEWEIGHT[1]),
+                new propC(getGUID(), cn, col1, top+11*h, 100, 14, 0, app.lineweight, COMMANDS.LINEWEIGHT[0], COMMANDS.LINEWEIGHT[1]),
                 new propL(CLRS.BLACK, CLRS.Gray3, CLRS.BLACK, CLRS.BLACK, 0.5, 1),
                 new propA(CLRS.GRAY, CLRS.BLACK, LEFT, CENTER, 10, 11)));
 
@@ -7428,6 +7574,32 @@ println(this.g);
 
   };
 
+  var getSamples=function(parent){
+
+    var ctrls=[];
+    var incr=161.8;
+    var top=28;
+    var h=15;
+    var w=3*incr+40;
+    
+    var cn=new containerS(
+            new propC(getGUID(), parent, parent.w/2-w/2, 100, w, 100, 2, false, COMMANDS.UNDEF[0],COMMANDS.VIEW[1]),
+            getStyle(STYLES.CONTAINER),
+            getStyle(STYLES.TITLE));
+
+    for(var n=0; n<10; n++){
+      ctrls.push(new buttonT(
+                  new propC(getGUID(), cn, 20+n*incr, 5, incr, 90, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[0]),
+                  getStyle(STYLES.BUTTON),
+                  getStyle(STYLES.TEXT)));
+    }
+
+    cn.ctrls=ctrls;
+
+    return cn;
+
+  };
+
   var getGrid=function(parent){
 
     var ctrls=[];
@@ -7701,14 +7873,14 @@ println(this.g);
 
     ctrls.push(getTelemetry(cn));
 
-    //~ ctrls.push(getHeader(cn));
+    ctrls.push(getHeader(cn));
     ctrls.push(getFooter(cn));
     ctrls.push(getView(cn));
     ctrls.push(getProperties(cn));
 
     //~ ctrls.push(getColors(cn));
 
-
+    ctrls.push(getSamples(cn));
 
     cn.ctrls=ctrls;
 
