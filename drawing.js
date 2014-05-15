@@ -1,7 +1,7 @@
 /* @pjs globalKeyEvents="true"; */
 var proc = function(processingInstance){ with (processingInstance){
 
-  size(screen.width-30, screen.height-215); //~ set size of canvas
+  //~ size(screen.width-20, screen.height-215); //~ set size of canvas
 
   /**
 
@@ -10,8 +10,6 @@ var proc = function(processingInstance){ with (processingInstance){
 
 
   **/
-
-
 
 var process;
 
@@ -398,12 +396,12 @@ var process;
     S_ELLIPSE:    [1800,  'Ellipse',          'ELLIPSE'               ],
     S_HYPERBOLA:  [1801,  'Hyperbola',        'HYPERBOLA'             ],
     S_PARABOLA:   [1802,  'Parabola',         'PARABOLA'              ],
-    S_5vertices:  [1803,  'Conic5vertices',     'CONIC5vertices'      ],
+    S_5VERTICES:  [1803,  'Conic 5 Vertices', 'CONIC5VERTICES'        ],
 
     //~ Angle ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     ANGLE:        [1900,  'Angle',            'ANGLE'                 ],
-    ANGLE_SIZE:   [1901,  'AngelSize',        'ANGELSIZE'             ],
+    ANGLE_SIZE:   [1901,  'Angle Size',       'ANGLESize'             ],
 
     //~ Annotation ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -444,8 +442,8 @@ var process;
 
   var app={
 
-    width:          1350, //~screen.width,
-    height:         screen.height-215,
+    width:          screen.width-20,
+    height:         screen.height-115,
 
     debug:          true,
     frameRate:      0,
@@ -494,8 +492,8 @@ var process;
     linetype:       LINETYPES.DASHDOT,
     lineweight:     0.75,
 
-    border:         true,
-    origin:         true,
+    border:         false,
+    origin:         false,
 
     gridprops:      false,
 
@@ -518,6 +516,7 @@ var process;
 
     command:        COMMANDS.P_DEFAULT[0],
     //~ command:        COMMANDS.PAN[0],
+    stack:          [],
 
     cursorSize:     0,
 
@@ -1267,8 +1266,6 @@ var zoomfactor=0;
   var commands=function(c,p){
 
     //~ println(c+':'+p);
-
-    //~ println(COMMANDS.fs[0]);
 
     switch(true){
 
@@ -3504,7 +3501,7 @@ var zoomfactor=0;
 
             noFill();
             stroke(p.stroke);
-            if(p.hit){ stroke(p.fillH); }
+            if(p.hit){ stroke(p.strokeH); }
             strokeWeight(3);
 
             line(d+cX-7, d+cY-5, d+cX+7, d+cY-5);
@@ -3513,7 +3510,7 @@ var zoomfactor=0;
 
             noFill();
             stroke(p.stroke);
-            if(p.hit){ stroke(p.fillH); }
+            if(p.hit){ stroke(p.strokeH); }
             strokeWeight(2);
 
             line(d+cX-6, d+cY-5, d+cX+6, d+cY-5);
@@ -4249,13 +4246,14 @@ println(this.g);
 
           noStroke();
           fill(CLRS.WHITE);
+
           if     (p.alignX===LEFT)  { rect(d, d, p.w, p.h, p.r); }
           else if(p.alignX===CENTER){ rect(d, d, p.w, p.h, p.r); }
 
           if(getProp(p.c)){
 
-            fill(CLRS.BLUE);
-            rect(d,d,p.w*0.6,p.h*0.6);
+            fill(getColor(CLRS.GRID,90));
+            rect(d,d,p.w*0.64,p.h*0.64);
 
           }
 
@@ -4835,7 +4833,7 @@ println(this.g);
 
           fill(p.fill);
           stroke(p.stroke);
-          strokeWeight(p.strokeweight);
+          strokeWeight(p.weight);
 
           if(p.hit){
             fill(p.fillH);
@@ -4891,7 +4889,7 @@ println(this.g);
 
           fill(p.fill);
           stroke(p.stroke);
-          strokeWeight(p.strokeweight);
+          strokeWeight(p.weight);
 
           if(p.hit){
 
@@ -5033,7 +5031,7 @@ println(this.g);
 
           fill(p.fill);
           stroke(p.stroke);
-          strokeWeight(p.strokeweight);
+          strokeWeight(p.weight);
 
           if(p.hit){
             fill(p.fillH);
@@ -5059,7 +5057,7 @@ println(this.g);
         popStyle();
 
         p.ctrls[0].draw();
-        //~ println(p.c);
+
         if(getProp(p.c)){
           for(var c=1; c<p.ctrls.length; c++){ p.ctrls[c].draw(); }
         }
@@ -5169,12 +5167,20 @@ println(this.g);
 
       noFill();
       stroke(getColor(CLRS.WHITE,20));
-      strokeWeight(0.25);
+
 
       var factor=app.factor;
       var count=1;
 
       if(app.linesX){
+
+        if(p.originX<p.w/2 &&
+           p.originX>-p.w/2){
+
+          strokeWeight(0.5);
+          line(p.originX, -p.h/2,  p.originX, p.h/2);
+
+        }
 
         //~ Left
         for(var n=p.originX-factor; n>-p.w/2; n-=factor){
@@ -5214,6 +5220,14 @@ println(this.g);
 
       }
       if(app.linesY){
+
+        if(-p.originY< p.h/2 &&
+           -p.originY>-p.h/2){
+
+          strokeWeight(0.5);
+          line(-p.w/2,  -p.originY, p.w/2, -p.originY);
+
+        }
 
         //~ Bottom
         count=1;
@@ -5439,13 +5453,13 @@ println(this.g);
                  n>-p.h/2){
 
                 if(p.originX>p.w/2){
-                  text(count, p.w/2-2,  n);
+                  text(-count, p.w/2-2,  n);
                 }
                 else if(p.originX<-p.w/2+12){
-                  text(count, -p.w/2+12,  n);
+                  text(-count, -p.w/2+12,  n);
                 }
                 else{
-                  text(count, p.originX-6,  n);
+                  text(-count, p.originX-6,  n);
                 }
 
               }
@@ -5489,19 +5503,17 @@ println(this.g);
 
             for(var n=-p.originX+factor; n<p.w/2; n+=factor){
 
-
-
               if(n< p.w/2 &&
                  n>-p.w/2){
 
                 if(p.originY>p.h/2-18){
-                  text(count, -n, p.h/2-12);
+                  text(-count, -n, p.h/2-12);
                 }
                 else if(p.originY<-p.h/2){
-                  text(count, -n, -p.h/2+2);
+                  text(-count, -n, -p.h/2+2);
                 }
                 else{
-                  text(count, -n, p.originY+6);
+                  text(-count, -n, p.originY+6);
                 }
 
               }
@@ -5523,29 +5535,29 @@ println(this.g);
 
           scale(1,-1);
 
-          textSize(60);
-          fill(CLRS.Gray9);
+          textSize(30);
+          fill(CLRS.Gray8);
           textFont(createFont('fantasy'));
 
           //~ Quadrant I
-          textAlign(RIGHT,CENTER);
+          textAlign(RIGHT,TOP);
 
-          text("I",p.w/2-10, p.y-p.h/2);
+          text("I",p.w/2-10, p.y-p.h/2-15);
 
           //~ Quadrant II
-          textAlign(LEFT,CENTER);
+          textAlign(LEFT,TOP);
 
-          text("II",-p.w/2+10, p.y-p.h/2);
+          text("II",-p.w/2+10, p.y-p.h/2-15);
 
           //~ Quadrant III
-          textAlign(LEFT,BASELINE);
+          textAlign(LEFT,BOTTOM);
 
-          text("III",-p.w/2+10, p.y+p.h/2-60);
+          text("III",-p.w/2+10, p.y+p.h/2-10);
 
           //~ Quadrant IV
-          textAlign(RIGHT,BASELINE);
+          textAlign(RIGHT,BOTTOM);
 
-          text("IV", p.w/2-10, p.y+p.h/2-60);
+          text("IV", p.w/2-10, p.y+p.h/2-10);
 
         popMatrix();
 
@@ -5739,9 +5751,6 @@ println(this.g);
 
     for(var c in this.ctrls){ this.ctrls[c].draw(0,0); }
 
-//~ println(this.hitProp);
-//~ println(this.ctrls[0].x);
-
     //~ ARROW, CROSS, HAND, MOVE, TEXT, WAIT
     if(app.command==COMMANDS.SELECT[0]){
       cursor(ARROW);
@@ -5763,7 +5772,7 @@ println(this.g);
 
     //~ rect(0, 0, p.x,       app.height);
     //~ rect(0, 0, app.width, p.y);
-//~
+
     //~ rect(p.x+p.w, 0,       app.width, app.height);
     //~ rect(p.x,     p.y+p.h, app.width, app.height-p.y-p.h);
 
@@ -5773,7 +5782,6 @@ println(this.g);
     if(app.focus===this.i){
 
       if(this.hit){
-
 
         pushMatrix();
 
@@ -5789,6 +5797,8 @@ println(this.g);
 
               this.shapes.push(
                 new Point(getGUID(), this, app.gridX, app.gridY));
+                app.stack.push(app.command);
+                println(app.stack);
 
               break;
 
@@ -5967,7 +5977,7 @@ println(this.g);
 
   var main=function(){
 
-    //~ background(getColor(CLRS.BLACK,n));
+    background(CLRS.GRID);
 
     //~ if(n<100){ n++; }
 
@@ -6636,7 +6646,7 @@ println(this.g);
     //~ S_ELLIPSE:    [-700,  'Ellipse',          'ELLIPSE'               ],
     //~ S_HYPERBOLA:  [-701,  'Hyperbola',        'HYPERBOLA'             ],
     //~ S_PARABOLA:   [-702,  'Parabola',         'PARABOLA'              ],
-    //~ S_5vertices:    [-703,  'Conic5vertices',     'CONIC5vertices'          ],
+    //~ S_5VERTICES:    [-703,  'Conic5VERTICES',     'CONIC5VERTICES'          ],
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 0*w, 0, w, w, 0, false, COMMANDS.CONIC[0], COMMANDS.CONIC[1]),
                 getStyle(STYLES.BUTTON),
@@ -6658,7 +6668,7 @@ println(this.g);
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new buttonS(
-                new propC(getGUID(), cn, 4*w, 0, w, w, 0, false, COMMANDS.S_5vertices[0], COMMANDS.S_5vertices[1]),
+                new propC(getGUID(), cn, 4*w, 0, w, w, 0, false, COMMANDS.S_5VERTICES[0], COMMANDS.S_5VERTICES[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
@@ -7157,11 +7167,9 @@ println(this.g);
     var ctrls=[];
     var top=30;
     var h=15;
-    var l=parent.w-202;
-    var ch=app.height-14;
 
     var cn=new container(
-            new propC(getGUID(),parent, l, 2, 200, ch, 3, false, COMMANDS.CONTAINER[0],COMMANDS.CONTAINER[1]),
+            new propC(getGUID(), parent, parent.w-205, 5, 200, parent.h-10, 3, false, COMMANDS.CONTAINER[0],COMMANDS.CONTAINER[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
 
@@ -7390,12 +7398,12 @@ println(this.g);
     var top=30;
     var h=20;
     var l=10;
-    var ch=app.height-14;
+    var ch=parent.h-10;
     var col0=5;
     var col1=90;
 
     var cn=new container(
-            new propC(getGUID(),parent, 5, 2, 200, ch, 3, false, COMMANDS.CONTAINER[0],COMMANDS.CONTAINER[1]),
+            new propC(getGUID(),parent, 5, 5, 200, ch, 3, false, COMMANDS.CONTAINER[0],COMMANDS.CONTAINER[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
 
@@ -7876,11 +7884,15 @@ println(this.g);
 
     var ctrls=[];
 
-//~ 250, 45, parent.w-460, parent.h-80
     var cn=new grid(
-            new propC(getGUID(), parent, 210, 10, app.width-220, app.height-20, 5, false, COMMANDS.UNDEF[0], 0),
-            new propL(getColor(CLRS.GRID,65), CLRS.GRID, CLRS.WHITE, CLRS.YELLOW, 0.125, 0.25),
+            new propC(getGUID(), parent, 210, 10, parent.w-440, parent.h-20, 5, false, COMMANDS.UNDEF[0], 0),
+            new propL(CLRS.GRID, getColor(CLRS.GRID,65), CLRS.WHITE, CLRS.YELLOW, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
+
+    //~ ctrls.push(new labelR(
+            //~ new propC(getGUID(), cn, cn.w/2, cn.h/2, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.CARTESIA[1]),
+            //~ getStyle(STYLES.BUTTON),
+            //~ getStyle(STYLES.TEXTCENTER)));
 
     ctrls.push(getGridProps(cn));
 
@@ -7900,13 +7912,13 @@ println(this.g);
     var lX=80;
 
     var cn=new cnProps(
-            new propC(getGUID(),parent, l, 42, 120, 310, 3, false, COMMANDS.GRIDPROPS[0],COMMANDS.GRIDPROPS[1]),
-            getStyle(STYLES.CONTAINER),
+            new propC(getGUID(),parent, l, 10, 120, 310, 3, false, COMMANDS.GRIDPROPS[0],COMMANDS.GRIDPROPS[1]),
+            new propL(getColor(CLRS.GRID,40), CLRS.GRID, CLRS.WHITE, CLRS.YELLOW, 0.125, 0.25),
             getStyle(STYLES.TEXT));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 98, 2, 24, 24, 0, false, COMMANDS.GRIDPROPS[0], COMMANDS.GRIDPROPS[1]),
-                new propL(CLRS.TRANSPARENT, CLRS.TRANSPARENT, CLRS.BUTTON, CLRS.BUTTONH, 0.125, 0.25),
+                new propL(CLRS.TRANSPARENT, CLRS.TRANSPARENT, CLRS.Gray6, CLRS.Gray3, 0.125, 0.25),
                 getStyle(STYLES.TEXT)));
 
     //~ Labels ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -8114,46 +8126,36 @@ println(this.g);
     var ctrls=[];
 
     var cn=new container(
-            new propC(getGUID(), 0, 0, 0, app.width, app.height,2, false, COMMANDS.UNDEF[0], 0),
-            getStyle(STYLES.BACKGROUND),
-            getStyle(STYLES.TEXT));
+            new propC(getGUID(), 0, 0, 0, app.width-1, app.height-1, 3, false, COMMANDS.UNDEF[0], 0),
+            new propL(CLRS.BLACK, CLRS.BLACK, CLRS.Gray9, CLRS.Gray0, 0.125, 0.25),
+            new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
-    //~ ctrls.push(new sliderH(
-            //~ new propC(getGUID(), cn, 226, 300, 200, 10, 0, 10, COMMANDS.FRAMERATE[0], false),
-            //~ getStyle(STYLES.BUTTON),
-            //~ getStyle(STYLES.TEXT)));
+    ctrls.push(getGrid(cn));          //~ Grid
 
-    ctrls.push(getGrid(cn));
+    //~ ctrls.push(getPoints(cn));        //~ Points
+    //~ ctrls.push(getLines(cn));         //~ Lines
+    //~ ctrls.push(getTriangles(cn));     //~ Triangles
+    //~ ctrls.push(getCircles(cn));       //~ Circles
+    //~ ctrls.push(getQuads(cn));         //~ Quads
+    //~ ctrls.push(getArcs(cn));          //~ Arcs
+    //~ ctrls.push(getPolygons(cn));      //~ Polygons
+    //~ ctrls.push(getConics(cn));        //~ Conics
+    //~ ctrls.push(getAngles(cn));        //~ Angles
+    //~ ctrls.push(getAnnotations(cn));   //~ Annotations
+    //~ ctrls.push(getTransform(cn));     //~ Transforms
+    //~ ctrls.push(getMeasure(cn));       //~ Measure
 
-    //~ ctrls.push(new labelR(
-            //~ new propC(getGUID(), cn, cn.w/2, cn.h/2, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.CARTESIA[1]),
-            //~ getStyle(STYLES.BUTTON),
-            //~ getStyle(STYLES.TEXTCENTER)));
+    if(app.debug){ ctrls.push(getTelemetry(cn)); }
 
-    ctrls.push(getPoints(cn));
-    ctrls.push(getLines(cn));
-    ctrls.push(getTriangles(cn));
-    ctrls.push(getCircles(cn));
-    ctrls.push(getQuads(cn));
-    ctrls.push(getArcs(cn));
-    ctrls.push(getPolygons(cn));
-    ctrls.push(getConics(cn));
-    ctrls.push(getAngles(cn));
-    ctrls.push(getAnnotations(cn));
-    ctrls.push(getTransform(cn));
-    ctrls.push(getMeasure(cn));
-
-    ctrls.push(getTelemetry(cn));
-
-    ctrls.push(getHeader(cn));
-    ctrls.push(getFooter(cn));
+    //~ ctrls.push(getHeader(cn));
+    //~ ctrls.push(getFooter(cn));
     ctrls.push(getView(cn));
-    ctrls.push(getProperties(cn));
+    //~ ctrls.push(getProperties(cn));
 
     //~ ctrls.push(getColors(cn));
 
-    ctrls.push(getSamples(cn));
-    ctrls.push(getSelect(cn));
+    //~ ctrls.push(getSamples(cn));
+    //~ ctrls.push(getSelect(cn));
 
     cn.ctrls=ctrls;
 
@@ -8172,9 +8174,11 @@ println(this.g);
 
   var initialize=function(){
 
+    strokeJoin(ROUND);
+
     loadCommands();
 
-    //size(app.width, app.height);
+    size(app.width, app.height);
 
     if(app.debug) { app.frameRate=62; }
     else          { app.frameRate=32;  }
