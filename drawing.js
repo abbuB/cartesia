@@ -443,7 +443,7 @@ var process;
   var app={
 
     width:          screen.width-20,
-    height:         screen.height-115,
+    height:         screen.height-215,
 
     debug:          true,
     frameRate:      0,
@@ -1269,6 +1269,10 @@ var zoomfactor=0;
 
     switch(true){
 
+      case c===COMMANDS.DEBUG[0]:         app.debug=!app.debug;
+                                          println(app.debug);
+                                          break;
+
       //~ Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       case (c>COMMANDS.GRID[0] &&
             c<=COMMANDS.FS[0]):           GridCommands(c,p);      break;
@@ -1292,8 +1296,8 @@ var zoomfactor=0;
              COMMANDS.LT_DASHDOT[0]:      app.linetype=c;
                                           break;
 
-      case c===COMMANDS.ZOOMIN[0]:        app.factor*=1.25;       break;
-      case c===COMMANDS.ZOOMOUT[0]:       app.factor/=1.25;       break;
+      case c===COMMANDS.ZOOMIN[0]:        app.factor*=2.25;       break;
+      case c===COMMANDS.ZOOMOUT[0]:       app.factor/=2.25;       break;
       case c===COMMANDS.PAN[0]:           app.command=c;
                                           println("pan");         break;
 
@@ -1453,7 +1457,7 @@ var zoomfactor=0;
 
     }
     else{
-      app.focus=this.i;
+      //~ app.focus=this.i;
     }
 
   };
@@ -4020,7 +4024,7 @@ println(this.g);
 
         popStyle();
 
-        for(var c in p.ctrls){ p.ctrls[c].draw(); }
+        //~ for(var c in p.ctrls){ p.ctrls[c].draw(); }
 
     popMatrix();
 
@@ -5056,10 +5060,11 @@ println(this.g);
 
         popStyle();
 
-        p.ctrls[0].draw();
+        //~ p.ctrls[0].draw();
 
         if(getProp(p.c)){
-          for(var c=1; c<p.ctrls.length; c++){ p.ctrls[c].draw(); }
+          //~ for(var c=1; c<p.ctrls.length; c++){ p.ctrls[c].draw(); }
+          for(var c in this.ctrls){ this.ctrls[c].draw(); }
         }
 
     popMatrix();
@@ -5069,7 +5074,30 @@ println(this.g);
   cnProps.prototype.clicked=function(){
     for(var c in this.ctrls){ this.ctrls[c].clicked(); }
   };
+  cnProps.prototype.moved=function(x,y){
 
+      if(app.mouseX>x+this.x && app.mouseX<x+this.x+this.w &&
+         app.mouseY>y+this.y && app.mouseY<y+this.y+this.h &&
+         app.gridprops){
+
+        this.hit=true;
+
+        app.focus=this.i;
+
+        //~ if(app.mouseX<x+this.x+20){ this.hitLeft=true;  }
+        //~ else                      { this.hitLeft=false; }
+//~ 
+        //~ if(app.mouseX>x+this.x+this.w-20){ this.hitRight=true; }
+        //~ else                             { this.hitRight=false; }
+
+      }
+      else{
+        this.hit=false;
+      }
+
+      for(var c in this.ctrls){ this.ctrls[c].moved(x+this.x, y+this.y); }
+
+  };
 
   //~ Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var grid=function(cp,lp,ap,ctrls){
@@ -5848,23 +5876,25 @@ println(this.g);
   };
   grid.prototype.moved=function(x,y){
 
-    if(app.mouseX>this.x &&
-       app.mouseX<this.x+this.w &&
-       app.mouseY>this.y &&
-       app.mouseY<this.y+this.h){
+    if(app.mouseX>x+this.x &&
+       app.mouseX<x+this.x+this.w &&
+       app.mouseY>y+this.y &&
+       app.mouseY<y+this.y+this.h){
 
-      if(app.mouseX>this.ctrls[0].x &&
-         app.mouseX<this.ctrls[0].x+this.ctrls[0].w &&
-         app.mouseY>this.ctrls[0].y &&
-         app.mouseY<this.ctrls[0].y+this.ctrls[0].h){
+      this.hit=true;
 
-        this.hitProp=true;
+      //~ if(app.mouseX>this.ctrls[0].x &&
+         //~ app.mouseX<this.ctrls[0].x+this.ctrls[0].w &&
+         //~ app.mouseY>this.ctrls[0].y &&
+         //~ app.mouseY<this.ctrls[0].y+this.ctrls[0].h){
+//~ 
+        //~ this.hitProp=true;
+//~ 
+      //~ }
+      //~ else{
 
-      }
-      else{
-
-        this.hitProp=false;
-        this.hit=true;
+        //~ this.hitProp=false;
+        
         app.focus=this.i;
 
         if(app.stg && app.focus===this.i){
@@ -5883,15 +5913,15 @@ println(this.g);
 
         for(var s in this.shapes){ this.shapes[s].moved(x,y); }
 
-      }
+      //~ }
 
     }
     else{
       this.hit=false;
-      this.hitProp=false;
+      //~ this.hitProp=false;
     }
 
-    for(var c in app.ctrls){ this.ctrls[c].moved(0,0); }
+    for(var c in this.ctrls){ this.ctrls[c].moved(x,y); }
 
   };
   grid.prototype.dragged=function(x,y){
@@ -7894,6 +7924,11 @@ println(this.g);
             //~ getStyle(STYLES.BUTTON),
             //~ getStyle(STYLES.TEXTCENTER)));
 
+    ctrls.push(new buttonS(
+                new propC(getGUID(), cn, 98, 2, 24, 24, 0, false, COMMANDS.GRIDPROPS[0], COMMANDS.GRIDPROPS[1]),
+                new propL(CLRS.TRANSPARENT, CLRS.TRANSPARENT, CLRS.Gray6, CLRS.Gray3, 0.125, 0.25),
+                getStyle(STYLES.TEXT)));
+
     ctrls.push(getGridProps(cn));
 
     cn.ctrls=ctrls;
@@ -7912,14 +7947,14 @@ println(this.g);
     var lX=80;
 
     var cn=new cnProps(
-            new propC(getGUID(),parent, l, 10, 120, 310, 3, false, COMMANDS.GRIDPROPS[0],COMMANDS.GRIDPROPS[1]),
+            new propC(getGUID(),parent, l, 10, 120, 310, 3, false, COMMANDS.GRIDPROPS[0], COMMANDS.GRIDPROPS[1]),
             new propL(getColor(CLRS.GRID,40), CLRS.GRID, CLRS.WHITE, CLRS.YELLOW, 0.125, 0.25),
             getStyle(STYLES.TEXT));
 
-    ctrls.push(new buttonS(
-                new propC(getGUID(), cn, 98, 2, 24, 24, 0, false, COMMANDS.GRIDPROPS[0], COMMANDS.GRIDPROPS[1]),
-                new propL(CLRS.TRANSPARENT, CLRS.TRANSPARENT, CLRS.Gray6, CLRS.Gray3, 0.125, 0.25),
-                getStyle(STYLES.TEXT)));
+    //~ ctrls.push(new buttonS(
+                //~ new propC(getGUID(), cn, 98, 2, 24, 24, 0, false, COMMANDS.GRIDPROPS[0], COMMANDS.GRIDPROPS[1]),
+                //~ new propL(CLRS.TRANSPARENT, CLRS.TRANSPARENT, CLRS.Gray6, CLRS.Gray3, 0.125, 0.25),
+                //~ getStyle(STYLES.TEXT)));
 
     //~ Labels ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ctrls.push(new label(
