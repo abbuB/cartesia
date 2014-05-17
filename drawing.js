@@ -1311,7 +1311,7 @@ var zoomfactor=0;
 
 
   //~ Properties =======================================================
-  var propC=function(i,p,x,y,w,h,r,v,c,g){
+  var propC=function(i,p,x,y,w,h,r,k,v,c,g){
 
     this.i=i;     //~ guid
     this.p=p;     //~ parent
@@ -1322,6 +1322,7 @@ var zoomfactor=0;
     this.h=h;     //~ height
     this.r=r;     //~ radius
 
+    this.k=k;     //~ hit cursor
     this.v=v;     //~ value
     this.c=c;     //~ command
     this.g=g;     //~ tag
@@ -1352,48 +1353,50 @@ var zoomfactor=0;
 
 
   //~ Controls =========================================================
-  var control=function(cp,lp,ap,ctrls){
+  var control=function(c,l,a,ctrls){
 
 
     //~ controls properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    this.i=cp.i;                //~ guid
-    this.parent=cp.p;           //~ parent
+    this.i=c.i;                //~ guid
+    this.parent=c.p;           //~ parent
 
-    this.x=cp.x;                //~ left
-    this.y=cp.y;                //~ top
-    this.w=cp.w;                //~ width
-    this.h=cp.h;                //~ height
-    this.r=cp.r;                //~ corner radius
+    this.x=c.x;                //~ left
+    this.y=c.y;                //~ top
+    this.w=c.w;                //~ width
+    this.h=c.h;                //~ height
+    this.r=c.r;                //~ corner radius
 
-    this.v=cp.v;                //~ value
-    this.c=cp.c;                //~ command
-    this.g=cp.g;                //~ tag
+    this.k=c.k;                //~ hit cursor
+
+    this.v=c.v;                //~ value
+    this.c=c.c;                //~ command
+    this.g=c.g;                //~ tag
 
 
     //~ appearance properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    this.fill=lp.fill;          //~ fill color
-    this.fillH=lp.fillH;        //~ fill color highlight
-    this.stroke=lp.stroke;      //~ stroke color
-    this.strokeH=lp.strokeH;    //~ stroke color highlight
+    this.fill=l.fill;          //~ fill color
+    this.fillH=l.fillH;        //~ fill color highlight
+    this.stroke=l.stroke;      //~ stroke color
+    this.strokeH=l.strokeH;    //~ stroke color highlight
 
-    this.weight=lp.weight;      //~ strokeWeight
-    this.weightH=lp.weightH;    //~ strokeWeight highlight
+    this.weight=l.weight;      //~ strokeWeight
+    this.weightH=l.weightH;    //~ strokeWeight highlight
 
 
     //~ text properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    this.text=ap.text;          //~ text caption
+    this.text=a.text;          //~ text caption
 
-    this.tfill=ap.fill;         //~ text color
-    this.tfillH=ap.fillH;       //~ text color highlight
-    this.alignX=ap.alignX;      //~ horizontal alignment
-    this.alignY=ap.alignY;      //~ vertical alignment
-    this.size=ap.size;          //~ text size
-    this.sizeH=ap.sizeH;        //~ text size highlight
+    this.tfill=a.fill;         //~ text color
+    this.tfillH=a.fillH;       //~ text color highlight
+    this.alignX=a.alignX;      //~ horizontal alignment
+    this.alignY=a.alignY;      //~ vertical alignment
+    this.size=a.size;          //~ text size
+    this.sizeH=a.sizeH;        //~ text size highlight
 
     //~ misc properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     this.hit=false;             //~ mouse is over the control
     this.hitExpand=false;       //~ mouse is over the expand/collapse area
-
+    this.visible=true;          //~ is the control currently being displayed
     this.ctrls=ctrls;           //~ array of child controls
 
   };
@@ -1418,15 +1421,18 @@ var zoomfactor=0;
     if(this.alignX===LEFT){
 
       if(app.mouseX>x+this.x && app.mouseX<x+this.x+this.w &&
-         app.mouseY>y+this.y && app.mouseY<y+this.y+this.h){
+         app.mouseY>y+this.y && app.mouseY<y+this.y+this.h &&
+         this.visible){
         this.hit=true;
         app.focus=this.i;
+        cursor(this.k);
+        if(app.focus===this.i){
+          println(this.k);
+        }
       }
       else{
         this.hit=false;
       }
-
-      for(var c in this.ctrls){ this.ctrls[c].moved(x+this.x, y+this.y); }
 
     }
     else if(this.alignX===CENTER){
@@ -1435,7 +1441,7 @@ var zoomfactor=0;
          app.mouseY>=y+this.y-this.h/2 && app.mouseY<=y+this.y+this.h/2){
         this.hit=true;
         app.focus=this.i;
-        for(var c in this.ctrls){ this.ctrls[c].moved(x+this.x,y+this.y); }
+        cursor(this.k);
       }
       else{
         this.hit=false;
@@ -1448,17 +1454,20 @@ var zoomfactor=0;
          app.mouseY>y+this.y && app.mouseY<y+this.y+this.h){
         this.hit=true;
         app.focus=this.i;
+        cursor(this.k);
       }
       else{
         this.hit=false;
       }
 
-      for(var c in this.ctrls){ this.ctrls[c].moved(x+this.x, y+this.y); }
-
     }
     else{
-      //~ app.focus=this.i;
+
+      cursor(ARROW);
+
     }
+
+    for(var c in this.ctrls){ this.ctrls[c].moved(x+this.x, y+this.y); }
 
   };
   control.prototype.dragged=function(){
@@ -1483,8 +1492,8 @@ var zoomfactor=0;
   };
 
   //~ Telemetry ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  var telemetry=function(cp,lp,ap,ctrls){
-    control.call(this,cp,lp,ap,ctrls);
+  var telemetry=function(c,l,a,ctrls){
+    control.call(this,c,l,a,ctrls);
   };
   telemetry.prototype=Object.create(control.prototype);
   telemetry.prototype.draw=function(){
@@ -1542,8 +1551,8 @@ var zoomfactor=0;
 
 
   //~ Buttons ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  var button=function(cp,lp,ap,ctrls){
-    control.call(this,cp,lp,ap,ctrls);
+  var button=function(c,l,a,ctrls){
+    control.call(this,c,l,a,ctrls);
   };
   button.prototype=Object.create(control.prototype);
   button.prototype.draw=function(){
@@ -1569,11 +1578,9 @@ var zoomfactor=0;
             stroke(p.strokeH);
             strokeWeight(p.weightH);
 
-            cursor(HAND);
-
           }
 
-          if(p.v){  fill(getProp(p.g)); }
+          if(p.v){ fill(getProp(p.g)); }
 
           rect(d, d, p.w, p.h, p.r);
 
@@ -1591,15 +1598,13 @@ var zoomfactor=0;
 
         popStyle();
 
-        for(var c in p.ctrls){ p.ctrls[c].draw(); }
-
     popMatrix();
 
   };
 
   //~ Icon
-  var buttonI=function(cp,lp,ap,ctrls){
-    control.call(this,cp,lp,ap,ctrls);
+  var buttonI=function(c,l,a,ctrls){
+    control.call(this,c,l,a,ctrls);
   };
   buttonI.prototype=Object.create(control.prototype);
   buttonI.prototype.draw=function(){
@@ -1635,8 +1640,6 @@ var zoomfactor=0;
             stroke(p.strokeH);
             strokeWeight(p.weightH);
 
-            cursor(HAND);
-
           }
 
           if(p.v){ fill(getProp(p.g)); }
@@ -1660,22 +1663,7 @@ var zoomfactor=0;
 
           }
 
-          fill(p.tfill);
-
-          //~ textAlign(p.alignX,p.alignY);
-          textAlign(CENTER,BOTTOM);
-          //~ textSize(p.size);
-          textSize(8);
-          if(p.hit){
-            fill(p.v);
-            //~ textSize(p.sizeH);
-          }
-
-          //~ text(p.g, d+p.w/2, d+p.h);
-
         popStyle();
-
-        //~ for(var c in p.ctrls){ p.ctrls[c].draw(); }
 
     popMatrix();
 
@@ -1690,16 +1678,12 @@ var zoomfactor=0;
       this.parent.ctrls[0].c=this.c;
       this.parent.ctrls[0].g=this.g;
 
-      //~ this.parent.v=!this.parent.v;
-
-      //~ for(var c in this.ctrls){ this.ctrls[c].clicked(); }
-
     }
   };
 
   //~ Color
-  var buttonC=function(cp,lp,ap,ctrls){
-    control.call(this,cp,lp,ap,ctrls);
+  var buttonC=function(c,l,a,ctrls){
+    control.call(this,c,l,a,ctrls);
   };
   buttonC.prototype=Object.create(control.prototype);
   buttonC.prototype.draw=function(){
@@ -1724,23 +1708,19 @@ var zoomfactor=0;
             stroke(p.strokeH);
             strokeWeight(p.weightH);
 
-            cursor(HAND);
-
           }
 
           rect(d, d, p.w, p.h, p.r);
 
         popStyle();
 
-        for(var c in p.ctrls){ p.ctrls[c].draw(); }
-
     popMatrix();
 
   };
 
   //~ Return Property
-  var buttonP=function(cp,lp,ap,ctrls){
-    control.call(this,cp,lp,ap,ctrls);
+  var buttonP=function(c,l,a,ctrls){
+    control.call(this,c,l,a,ctrls);
   };
   buttonP.prototype=Object.create(control.prototype);
   buttonP.prototype.draw=function(){
@@ -1766,24 +1746,19 @@ var zoomfactor=0;
             stroke(p.strokeH);
             strokeWeight(p.weightH);
 
-            cursor(HAND);
-
           }
 
           rect(d, d, p.w, p.h, p.r);
 
-
         popStyle();
-
-        for(var c in p.ctrls){ p.ctrls[c].draw(); }
 
     popMatrix();
 
   };
 
   //~ Shape
-  var buttonS=function(cp,lp,ap,ctrls){
-    control.call(this,cp,lp,ap,ctrls);
+  var buttonS=function(c,l,a,ctrls){
+    control.call(this,c,l,a,ctrls);
   };
   buttonS.prototype=Object.create(control.prototype);
   buttonS.prototype.draw=function(){
@@ -3589,8 +3564,6 @@ var zoomfactor=0;
             stroke(p.strokeH);
             strokeWeight(p.weightH);
 
-            cursor(HAND);
-
           }
 
           if(p.v){ fill(getProp(p.g)); }
@@ -3607,7 +3580,7 @@ var zoomfactor=0;
           switch(true){
 
             case (p.c>=COMMANDS.GRID[0] &&
-                  p.c<=COMMANDS.FS[0]): drawGrid();               break;
+                  p.c<=COMMANDS.FS[0]):         drawGrid();       break;
             case (p.c>=COMMANDS.POINT[0] &&
                   p.c<=COMMANDS.P_MIDPOINT[0]): drawPoint();      break;
             case (p.c>=COMMANDS.LINE[0] &&
@@ -3639,20 +3612,7 @@ var zoomfactor=0;
 
           fill(p.tfill);
 
-          //~ textAlign(p.alignX,p.alignY);
-          textAlign(CENTER,BOTTOM);
-          //~ textSize(p.size);
-          textSize(8);
-          if(p.hit){
-            fill(p.v);
-            //~ textSize(p.sizeH);
-          }
-
-          //~ text(p.g, d+p.w/2, d+p.h);
-
         popStyle();
-
-        //~ for(var c in p.ctrls){ p.ctrls[c].draw(); }
 
     popMatrix();
 
@@ -3663,20 +3623,16 @@ var zoomfactor=0;
       reset();
 
       commands(this.c, this.g);
-println(this.g);
+
       this.parent.ctrls[0].c=this.c;
       this.parent.ctrls[0].g=this.g;
-
-      //~ this.parent.v=!this.parent.v;
-
-      //~ for(var c in this.ctrls){ this.ctrls[c].clicked(); }
 
     }
   };
 
   //~ Toggle
-  var buttonT=function(cp,lp,ap,ctrls){
-    control.call(this,cp,lp,ap,ctrls);
+  var buttonT=function(c,l,a,ctrls){
+    control.call(this,c,l,a,ctrls);
   };
   buttonT.prototype=Object.create(control.prototype);
   buttonT.prototype.draw=function(){
@@ -3909,8 +3865,6 @@ println(this.g);
             stroke(p.strokeH);
             strokeWeight(p.weightH);
 
-            cursor(HAND);
-
           }
 
           if(p.v){ fill(CLRS.Gray10); }
@@ -3934,22 +3888,7 @@ println(this.g);
 
           }
 
-          fill(p.tfill);
-
-          //~ textAlign(p.alignX,p.alignY);
-          textAlign(CENTER,BOTTOM);
-          //~ textSize(p.size);
-          textSize(8);
-          if(p.hit){
-            fill(p.v);
-            //~ textSize(p.sizeH);
-          }
-
-          //~ text(p.g, d+p.w/2, d+p.h);
-
         popStyle();
-
-        //~ for(var c in p.ctrls){ p.ctrls[c].draw() }
 
     popMatrix();
 
@@ -3968,14 +3907,12 @@ println(this.g);
 
       //~ app.command=this.c;
 
-      for(var c in this.ctrls){ this.ctrls[c].clicked(); }
-
     }
   };
 
   //~ Labels ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  var label=function(cp,lp,ap,ctrls){
-    control.call(this,cp,lp,ap,ctrls);
+  var label=function(c,l,a,ctrls){
+    control.call(this,c,l,a,ctrls);
   };
   label.prototype=Object.create(control.prototype);
   label.prototype.draw=function(){
@@ -4001,14 +3938,17 @@ println(this.g);
 
             if(app.left){ d=1; }
 
-            fill(CLRS.YELLOW);
+            fill(p.fillH);
             stroke(p.strokeH);
             strokeWeight(p.weightH);
 
+            //~ cursor(p.k);
           }
 
-          //~ if(p.alignX===LEFT)       {  rect(d, d, p.w, p.h, p.r);      }
-          //~ else if(p.alignX===CENTER){ rect(d-p.w/2, d, p.w, p.h, p.r); }
+          if(app.debug){
+            if(p.alignX===LEFT)       {  rect(d, d, p.w, p.h, p.r);      }
+            else if(p.alignX===CENTER){ rect(d-p.w/2, d, p.w, p.h, p.r); }
+          }
 
           fill(p.tfill);
 
@@ -4024,15 +3964,13 @@ println(this.g);
 
         popStyle();
 
-        //~ for(var c in p.ctrls){ p.ctrls[c].draw(); }
-
     popMatrix();
 
   };
 
   //~ Return property
-  var labelP=function(cp,lp,ap,ctrls){
-    control.call(this,cp,lp,ap,ctrls);
+  var labelP=function(c,l,a,ctrls){
+    control.call(this,c,l,a,ctrls);
   };
   labelP.prototype=Object.create(control.prototype);
   labelP.prototype.draw=function(){
@@ -4053,7 +3991,7 @@ println(this.g);
           stroke(p.stroke);
           strokeWeight(p.weight);
 
-          if(p.hit){
+          if(p.hit && app.debug){
 
             if(app.left){ d=1; }
 
@@ -4071,7 +4009,7 @@ println(this.g);
           textAlign(p.alignX,p.alignY);
           textSize(p.size);
 
-          if(p.parent.hit){
+          if(p.parent.hit && app.debug){
             fill(CLRS.YELLOW);
             //~ textSize(p.sizeH);
           }
@@ -4080,15 +4018,13 @@ println(this.g);
 
         popStyle();
 
-        for(var c in p.ctrls){ p.ctrls[c].draw(); }
-
     popMatrix();
 
   };
 
   //~ Rotate
-  var labelR=function(cp,lp,ap,ctrls){
-    control.call(this,cp,lp,ap,ctrls);
+  var labelR=function(c,l,a,ctrls){
+    control.call(this,c,l,a,ctrls);
   };
   labelR.prototype=Object.create(control.prototype);
   labelR.prototype.draw=function(){
@@ -4135,8 +4071,6 @@ println(this.g);
 
         popStyle();
 
-        for(var c in p.ctrls){ p.ctrls[c].draw(); }
-
     popMatrix();
 
 
@@ -4146,7 +4080,6 @@ println(this.g);
     if(app.mouseX>x+this.x-this.w/2 && app.mouseX<x+this.x+this.w/2 &&
        app.mouseY>y+this.y-this.h/2 && app.mouseY<y+this.y+this.h/2){
       this.hit=true;
-      for(var c in this.ctrls){ this.ctrls[c].moved(x+this.x,y+this.y); }
     }
     else{
       this.hit=false;
@@ -4155,8 +4088,8 @@ println(this.g);
   };
 
   //~ TextBox ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  var textBox=function(cp,lp,ap,ctrls){
-    control.call(this,cp,lp,ap,ctrls);
+  var textBox=function(c,l,a,ctrls){
+    control.call(this,c,l,a,ctrls);
   };
   textBox.prototype=Object.create(control.prototype);
   textBox.prototype.draw=function(){
@@ -4205,16 +4138,14 @@ println(this.g);
 
         popStyle();
 
-        //~ for(var c in p.ctrls){ p.ctrls[c].draw(); }
-
     popMatrix();
 
   };
 
 
   //~ Return property
-  var checkbox=function(cp,lp,ap,ctrls){
-    control.call(this,cp,lp,ap,ctrls);
+  var checkbox=function(c,l,a,ctrls){
+    control.call(this,c,l,a,ctrls);
   };
   checkbox.prototype=Object.create(control.prototype);
   checkbox.prototype.draw=function(){
@@ -4238,7 +4169,7 @@ println(this.g);
 
           if(p.hit){
 
-            cursor(HAND);
+            //~ cursor(p.k);
 
             if(app.left){ d=1; }
 
@@ -4261,21 +4192,7 @@ println(this.g);
 
           }
 
-          fill(p.tfill);
-
-          textAlign(p.alignX,p.alignY);
-          textSize(p.size);
-
-          if(p.parent.hit){
-            fill(CLRS.YELLOW);
-            textSize(p.sizeH);
-          }
-
-          //~ text(getProp(p.c), d, d+p.h/2);
-
         popStyle();
-
-        for(var c in p.ctrls){ p.ctrls[c].draw(); }
 
     popMatrix();
 
@@ -4283,8 +4200,8 @@ println(this.g);
 
 
   //~ Spacer ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  var spacer=function(cp,lp,ap,ctrls){
-    control.call(this,cp,lp,ap,ctrls);
+  var spacer=function(c,l,a,ctrls){
+    control.call(this,c,l,a,ctrls);
   };
   spacer.prototype=Object.create(control.prototype);
   spacer.prototype.draw=function(){
@@ -4302,7 +4219,7 @@ println(this.g);
           stroke(p.stroke);
           strokeWeight(p.weight);
 
-          if(p.hit){
+          if(p.hit && app.debug){
 
             if(app.left){ d=1; }
 
@@ -4314,22 +4231,7 @@ println(this.g);
 
           rect(d, d, p.w, p.weight, p.r);
 
-          fill(p.tfill);
-
-          textAlign(p.alignX,p.alignY);
-          textSize(p.size);
-
-          if(p.hit){
-            fill(p.tfillH);
-            textSize(p.sizeH);
-          }
-
-          //~ text(p.g, d+5, d+p.h/2);
-          //~ text(p.v(), d+100, d+p.h/2);
-
         popStyle();
-
-        for(var c in p.ctrls){ p.ctrls[c].draw(); }
 
     popMatrix();
 
@@ -4338,8 +4240,8 @@ println(this.g);
 
 
   //~ Slider ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  var sliderH=function(cp,lp,ap,ctrls){
-    control.call(this,cp,lp,ap,ctrls);
+  var sliderH=function(c,l,a,ctrls){
+    control.call(this,c,l,a,ctrls);
   };
   sliderH.prototype=Object.create(control.prototype);
   sliderH.prototype.draw=function(){
@@ -4387,8 +4289,6 @@ println(this.g);
 
         popStyle();
 
-        for(var c in p.ctrls){ p.ctrls[c].draw(); }
-
     popMatrix();
 
   };
@@ -4396,7 +4296,6 @@ println(this.g);
     if(this.hit && app.left){
       this.v=constrain(app.mouseX-this.parent.x-this.x, 0, this.w);
       commands(this.c, this.w*this.v/this.w);
-      for(var c in this.ctrls){ this.ctrls[c].clicked(); }
     }
   };
   sliderH.prototype.moved=function(x,y){
@@ -4405,7 +4304,6 @@ println(this.g);
        app.mouseY>y+this.y && app.mouseY<y+this.y+this.h){
       this.hit=true;
       app.focus=this.i;
-      for(var c in this.ctrls){ this.ctrls[c].moved(x+this.x,y+this.y); }
     }
     else{
       this.hit=false;
@@ -4416,7 +4314,6 @@ println(this.g);
     if(this.hit && app.left){
       this.v=constrain(app.mouseX-this.parent.x-this.x, 0, this.w);
       commands(this.c, this.w*this.v/this.w);
-      for(var c in this.ctrls){ this.ctrls[c].dragged(); }
     }
   };
 
@@ -4424,8 +4321,8 @@ println(this.g);
   //~ Strips ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   //~ Horizontal
-  var stripH=function(cp,lp,ap,ctrls){
-    control.call(this,cp,lp,ap,ctrls);
+  var stripH=function(c,l,a,ctrls){
+    control.call(this,c,l,a,ctrls);
   };
   stripH.prototype=Object.create(control.prototype);
   stripH.prototype.draw=function(){
@@ -4566,8 +4463,8 @@ println(this.g);
   };
 
   //~ Vertical
-  var stripV=function(cp,lp,ap,ctrls){
-    control.call(this,cp,lp,ap,ctrls);
+  var stripV=function(c,l,a,ctrls){
+    control.call(this,c,l,a,ctrls);
   };
   stripV.prototype=Object.create(control.prototype);
   stripV.prototype.draw=function(){
@@ -4710,8 +4607,8 @@ println(this.g);
   };
 
   //~ Preset ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  var preset=function(cp,lp,ap,ctrls){
-    control.call(this,cp,lp,ap,ctrls);
+  var preset=function(c,l,a,ctrls){
+    control.call(this,c,l,a,ctrls);
   };
   preset.prototype=Object.create(control.prototype);
   preset.prototype.draw=function(){
@@ -4820,8 +4717,8 @@ println(this.g);
   };
 
   //~ Container ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  var container=function(cp,lp,ap,ctrls){
-    control.call(this,cp,lp,ap,ctrls);
+  var container=function(c,l,a,ctrls){
+    control.call(this,c,l,a,ctrls);
   };
   container.prototype=Object.create(control.prototype);
   container.prototype.draw=function(){
@@ -4843,20 +4740,10 @@ println(this.g);
             fill(p.fillH);
             stroke(p.strokeH);
             strokeWeight(p.weightH);
-            cursor(ARROW);
+            cursor(p.k);
           }
 
           rect(d, d, p.w, p.h, p.r);
-
-          fill(p.tfill);
-
-          if(p.hit){
-            fill(p.tfillH);
-          }
-
-          textAlign(p.alignX,p.alignY);
-
-          //~ text(p.g, p.w/2, p.h/2);
 
         popStyle();
 
@@ -4864,12 +4751,11 @@ println(this.g);
 
     popMatrix();
 
-
   };
 
   //~ Container Scroll ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  var containerS=function(cp,lp,ap,ctrls){
-    control.call(this,cp,lp,ap,ctrls);
+  var containerS=function(c,l,a,ctrls){
+    control.call(this,c,l,a,ctrls);
 
     this.hitLeft=   false;  //~ left button
     this.hitRight=  false;  //~ right button
@@ -5018,8 +4904,8 @@ println(this.g);
   };
 
   //~ Container ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  var cnProps=function(cp,lp,ap,ctrls){
-    control.call(this,cp,lp,ap,ctrls);
+  var cnProps=function(c,l,a,ctrls){
+    control.call(this,c,l,a,ctrls);
   };
   cnProps.prototype=Object.create(control.prototype);
   cnProps.prototype.draw=function(){
@@ -5041,7 +4927,7 @@ println(this.g);
             fill(p.fillH);
             stroke(p.strokeH);
             strokeWeight(p.weightH);
-            cursor(ARROW);
+            cursor(p.k);
           }
 
           if(getProp(p.c)){
@@ -5064,7 +4950,11 @@ println(this.g);
 
         if(getProp(p.c)){
           //~ for(var c=1; c<p.ctrls.length; c++){ p.ctrls[c].draw(); }
+          p.visible=true;
           for(var c in this.ctrls){ this.ctrls[c].draw(); }
+        }
+        else{
+          p.visible=false;
         }
 
     popMatrix();
@@ -5078,7 +4968,7 @@ println(this.g);
 
       if(app.mouseX>x+this.x && app.mouseX<x+this.x+this.w &&
          app.mouseY>y+this.y && app.mouseY<y+this.y+this.h &&
-         app.gridprops){
+         this.visible){
 
         this.hit=true;
 
@@ -5086,23 +4976,23 @@ println(this.g);
 
         //~ if(app.mouseX<x+this.x+20){ this.hitLeft=true;  }
         //~ else                      { this.hitLeft=false; }
-//~ 
+//~
         //~ if(app.mouseX>x+this.x+this.w-20){ this.hitRight=true; }
         //~ else                             { this.hitRight=false; }
+
+        for(var c in this.ctrls){ this.ctrls[c].moved(x+this.x, y+this.y); }
 
       }
       else{
         this.hit=false;
       }
 
-      for(var c in this.ctrls){ this.ctrls[c].moved(x+this.x, y+this.y); }
-
   };
 
   //~ Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  var grid=function(cp,lp,ap,ctrls){
+  var grid=function(c,l,a,ctrls){
 
-    control.call(this,cp,lp,ap,ctrls);
+    control.call(this,c,l,a,ctrls);
 
     app.factor=     this.h/22;   //~ required for initial grid height
 
@@ -5142,7 +5032,6 @@ println(this.g);
             fill(p.fillH);
             stroke(p.strokeH);
             strokeWeight(p.weightH);
-            //~cursor(ARROW);
           }
 
           rect(d, d, p.w, p.h, p.r);
@@ -5562,30 +5451,31 @@ println(this.g);
         pushMatrix();
 
           scale(1,-1);
+          var offset=50;
 
           textSize(30);
           fill(CLRS.Gray8);
           textFont(createFont('fantasy'));
 
           //~ Quadrant I
-          textAlign(RIGHT,TOP);
+          textAlign(CENTER,CENTER);
 
-          text("I",p.w/2-10, p.y-p.h/2-15);
+          text("I", p.originX+offset, p.originY-offset);
 
           //~ Quadrant II
-          textAlign(LEFT,TOP);
+          textAlign(CENTER,CENTER);
 
-          text("II",-p.w/2+10, p.y-p.h/2-15);
+          text("II", p.originX-offset, p.originY-offset);
 
           //~ Quadrant III
-          textAlign(LEFT,BOTTOM);
+          textAlign(CENTER,CENTER);
 
-          text("III",-p.w/2+10, p.y+p.h/2-10);
+          text("III",p.originX-offset, p.originY+offset);
 
           //~ Quadrant IV
-          textAlign(RIGHT,BOTTOM);
+          textAlign(CENTER,CENTER);
 
-          text("IV", p.w/2-10, p.y+p.h/2-10);
+          text("IV", p.originX+offset, p.originY+offset);
 
         popMatrix();
 
@@ -5777,31 +5667,38 @@ println(this.g);
 
     popMatrix();
 
-    for(var c in this.ctrls){ this.ctrls[c].draw(0,0); }
+    for(var c in this.ctrls){ p.ctrls[c].draw(0,0); }
 
-    //~ ARROW, CROSS, HAND, MOVE, TEXT, WAIT
-    if(app.command==COMMANDS.SELECT[0]){
-      cursor(ARROW);
-    }
-    else if(!app.keys[KEYCODES.CONTROL] && app.command!==COMMANDS.PAN[0]){
-      crosshair();
-    }
-    else{
-      if(app.left){
-        cursor(MOVE);
+    if(p.hit){
+      //~ ARROW, CROSS, HAND, MOVE, TEXT, WAIT
+      if(app.command==COMMANDS.SELECT[0]){
+        cursor(ARROW);
+      }
+      else if(!app.keys[KEYCODES.CONTROL] && app.command!==COMMANDS.PAN[0]){
+        crosshair();
+      }
+      else if(app.command==COMMANDS.PAN[0]){
+
+        if(app.left && app.focus===p.i){
+          cursor(MOVE);
+        }
+        else{
+          cursor(HAND);
+        }
+
       }
       else{
-        cursor(HAND);
+        cursor(ARROW);
       }
-    }
 
+    }
     noStroke();
     fill(CLRS.Black);
 
     //~ rect(0, 0, p.x,       app.height);
-    //~ rect(0, 0, app.width, p.y);
-
-    //~ rect(p.x+p.w, 0,       app.width, app.height);
+    //~ rect(0, 0, app.width, p.y-1);
+//~
+    //~ rect(p.x+p.w+1, 0,       app.width, app.height);
     //~ rect(p.x,     p.y+p.h, app.width, app.height-p.y-p.h);
 
   };
@@ -5883,51 +5780,34 @@ println(this.g);
 
       this.hit=true;
 
-      //~ if(app.mouseX>this.ctrls[0].x &&
-         //~ app.mouseX<this.ctrls[0].x+this.ctrls[0].w &&
-         //~ app.mouseY>this.ctrls[0].y &&
-         //~ app.mouseY<this.ctrls[0].y+this.ctrls[0].h){
-//~ 
-        //~ this.hitProp=true;
-//~ 
-      //~ }
-      //~ else{
+      app.focus=this.i;
 
-        //~ this.hitProp=false;
-        
-        app.focus=this.i;
+      if(app.stg && app.focus===this.i){
+        var incr=app.factor;
+        app.mouseX-=mouseX%incr-(this.x+this.w/2)%incr-this.originX%incr;
+        app.mouseY-=mouseY%incr-(this.y+this.h/2)%incr-this.originY%incr;
+      }
 
-        if(app.stg && app.focus===this.i){
-          var incr=app.factor;
-          app.mouseX-=mouseX%incr-(this.x+this.w/2)%incr-this.originX%incr;
-          app.mouseY-=mouseY%incr-(this.y+this.h/2)%incr-this.originY%incr;
-        }
+      app.worldX=   (app.mouseX-this.x-this.w/2-this.originX);
+      app.worldY=-1*(app.mouseY-this.y-this.h/2-this.originY);
 
-        app.worldX=   (app.mouseX-this.x-this.w/2-this.originX);
-        app.worldY=-1*(app.mouseY-this.y-this.h/2-this.originY);
+      app.gridX=   (app.mouseX-this.x-this.w/2-this.originX)/app.factor;
+      app.gridY=-1*(app.mouseY-this.y-this.h/2-this.originY)/app.factor;
 
-        app.gridX=   (app.mouseX-this.x-this.w/2-this.originX)/app.factor;
-        app.gridY=-1*(app.mouseY-this.y-this.h/2-this.originY)/app.factor;
+      app.coordinates=nf(app.gridX,1,1) + ", " + nf(app.gridY,1,1);
 
-        app.coordinates=nf(app.gridX,1,1) + ", " + nf(app.gridY,1,1);
-
-        for(var s in this.shapes){ this.shapes[s].moved(x,y); }
-
-      //~ }
+      for(var s in this.shapes){ this.shapes[s].moved(x,y); }
+      for(var c in this.ctrls){ this.ctrls[c].moved(x,y); }
 
     }
     else{
       this.hit=false;
-      //~ this.hitProp=false;
     }
-
-    for(var c in this.ctrls){ this.ctrls[c].moved(x,y); }
 
   };
   grid.prototype.dragged=function(x,y){
 
-    if(app.mouseX>this.x && app.mouseX<this.x+this.w &&
-       app.mouseY>this.y && app.mouseY<this.y+this.h){
+    if(this.hit && app.focus===this.i){
 
       if(app.command===COMMANDS.PAN[0]){
 
@@ -5935,7 +5815,8 @@ println(this.g);
            app.mouseX>this.x &&
            app.mouseY<this.y+this.h &&
            app.mouseY>this.y){
-      cursor(MOVE);
+
+          //~ cursor(MOVE);
           this.originX=app.mouseX-this.x-this.w/2-this.offsetX;
           this.originY=app.mouseY-this.y-this.h/2+this.offsetY;
 
@@ -5980,26 +5861,6 @@ println(this.g);
     }
 
   };
-  //~ if(this.shapes.length>0){
-
-      //~ println(this.shapes.length);
-      //~ println("GUID " + this.shapes[0].i);
-      //~ println("vertices: " + this.shapes[0].vertices);
-      //~ println("x: "+ this.shapes[0].x);
-      //~ println("y: "+ this.shapes[0].y);
-      //~ println("w: "+ this.shapes[0].w);
-      //~ println("h: "+ this.shapes[0].h);
-
-      //~ println("fill: "+ this.shapes[0].f);
-      //~ println("fillH: "+ this.shapes[0].fH);
-      //~ println("stroke: "+ this.shapes[0].s);
-      //~ println("strokeH: "+ this.shapes[0].sH);
-      //~ println("layer: "+ this.shapes[0].layer);
-      //~ println("LineType: "+ this.shapes[0].linetype);
-      //~ println("LineWeight: "+ this.shapes[0].lineweight);
-      //~ println("LineType: "+ this.shapes[0].linetype);
-
-    //~ }
 
   var n=100;
 
@@ -7199,221 +7060,221 @@ println(this.g);
     var h=15;
 
     var cn=new container(
-            new propC(getGUID(), parent, parent.w-205, 5, 200, parent.h-10, 3, false, COMMANDS.CONTAINER[0],COMMANDS.CONTAINER[1]),
+            new propC(getGUID(), parent, parent.w-205, 5, 200, parent.h-10, 3, ARROW, false, COMMANDS.CONTAINER[0],COMMANDS.CONTAINER[1]),
             getStyle(STYLES.CONTAINER),
             getStyle(STYLES.TEXT));
 
     //~ Labels ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ctrls.push(new label(
-                new propC(getGUID(), cn, cn.w/2, 10, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.TELEMETRY[1]),
+                new propC(getGUID(), cn, cn.w/2, 10, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.TELEMETRY[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXTCENTER)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+0*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.DEBUG[1]),
+                new propC(getGUID(), cn, 5, top+0*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.DEBUG[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new spacer(
-                new propC(getGUID(), cn, 5, top+1*h+5, 150, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.SPACER[0]),
+                new propC(getGUID(), cn, 5, top+1*h+5, 150, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.SPACER[0]),
                 getStyle(STYLES.SPACER),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+2*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.WIDTH[1]),
+                new propC(getGUID(), cn, 5, top+2*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.WIDTH[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+3*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.HEIGHT[1]),
+                new propC(getGUID(), cn, 5, top+3*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.HEIGHT[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new spacer(
-                new propC(getGUID(), cn, 5, top+4*h+5, 150, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.SPACER[0]),
+                new propC(getGUID(), cn, 5, top+4*h+5, 150, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.SPACER[0]),
                 getStyle(STYLES.SPACER),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+5*h, 10, 10, 0, false, COMMANDS.FRAMERATE[0], COMMANDS.FRAMERATE[1]),
+                new propC(getGUID(), cn, 5, top+5*h, 10, 10, 0, ARROW, false, COMMANDS.FRAMERATE[0], COMMANDS.FRAMERATE[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+6*h, 10, 10, 0, false, COMMANDS.FRAMERATEA[0], COMMANDS.FRAMERATEA[1]),
+                new propC(getGUID(), cn, 5, top+6*h, 10, 10, 0, ARROW, false, COMMANDS.FRAMERATEA[0], COMMANDS.FRAMERATEA[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new spacer(
-                new propC(getGUID(), cn, 5, top+7*h+5, 150, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.SPACER[0]),
+                new propC(getGUID(), cn, 5, top+7*h+5, 150, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.SPACER[0]),
                 getStyle(STYLES.SPACER),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+8*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.MOUSEX[1]),
+                new propC(getGUID(), cn, 5, top+8*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.MOUSEX[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+9*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.MOUSEY[1]),
+                new propC(getGUID(), cn, 5, top+9*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.MOUSEY[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new spacer(
-                new propC(getGUID(), cn, 5, top+10*h+5, 150, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.SPACER[0]),
+                new propC(getGUID(), cn, 5, top+10*h+5, 150, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.SPACER[0]),
                 getStyle(STYLES.SPACER),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+11*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.WORLDX[1]),
+                new propC(getGUID(), cn, 5, top+11*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.WORLDX[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+12*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.WORLDY[1]),
+                new propC(getGUID(), cn, 5, top+12*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.WORLDY[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new spacer(
-                new propC(getGUID(), cn, 5, top+13*h+5, 150, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.SPACER[0]),
+                new propC(getGUID(), cn, 5, top+13*h+5, 150, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.SPACER[0]),
                 getStyle(STYLES.SPACER),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+14*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.GRIDX[1]),
+                new propC(getGUID(), cn, 5, top+14*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.GRIDX[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+15*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.GRIDY[1]),
+                new propC(getGUID(), cn, 5, top+15*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.GRIDY[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new spacer(
-                new propC(getGUID(), cn, 5, top+16*h+5, 150, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.SPACER[0]),
+                new propC(getGUID(), cn, 5, top+16*h+5, 150, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.SPACER[0]),
                 getStyle(STYLES.SPACER),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+17*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.LEFT[1]),
+                new propC(getGUID(), cn, 5, top+17*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.LEFT[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+18*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.CENTER[1]),
+                new propC(getGUID(), cn, 5, top+18*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.CENTER[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+19*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.RIGHT[1]),
+                new propC(getGUID(), cn, 5, top+19*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.RIGHT[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+21*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.FOCUS[1]),
+                new propC(getGUID(), cn, 5, top+21*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.FOCUS[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+23*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+                new propC(getGUID(), cn, 5, top+23*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+25*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.FACTOR[1]),
+                new propC(getGUID(), cn, 5, top+25*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.FACTOR[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     //~ Values ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ctrls.push(new checkbox(
-                new propC(getGUID(), cn, 105, top+0*h+5, 10, 10, 0, false, COMMANDS.DEBUG[0], COMMANDS.DEBUG[1]),
+                new propC(getGUID(), cn, 105, top+0*h+5, 10, 10, 0, HAND, false, COMMANDS.DEBUG[0], COMMANDS.DEBUG[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXTCENTER)));
 
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, 100, top+2*h, 10, 10, 0, false, COMMANDS.WIDTH[0], COMMANDS.WIDTH[1]),
+                new propC(getGUID(), cn, 100, top+2*h, 10, 10, 0, HAND, false, COMMANDS.WIDTH[0], COMMANDS.WIDTH[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, 100, top+3*h, 10, 10, 0, false, COMMANDS.HEIGHT[0], COMMANDS.HEIGHT[1]),
+                new propC(getGUID(), cn, 100, top+3*h, 10, 10, 0, HAND, false, COMMANDS.HEIGHT[0], COMMANDS.HEIGHT[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, 100, top+5*h, 10, 10, 0, 30, COMMANDS.FRAMERATE[0], COMMANDS.FRAMERATE[1]),
+                new propC(getGUID(), cn, 100, top+5*h, 10, 10, 0, HAND, false, COMMANDS.FRAMERATE[0], COMMANDS.FRAMERATE[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, 100, top+6*h, 10, 10, 0, false, COMMANDS.FRAMERATEA[0], COMMANDS.FRAMERATEA[1]),
+                new propC(getGUID(), cn, 100, top+6*h, 10, 10, 0, HAND, false, COMMANDS.FRAMERATEA[0], COMMANDS.FRAMERATEA[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, 100, top+8*h, 10, 10, 0, false, COMMANDS.MOUSEX[0], COMMANDS.MOUSEX[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
-
-
-    ctrls.push(new labelP(
-                new propC(getGUID(), cn, 100, top+9*h, 10, 10, 0, false, COMMANDS.MOUSEY[0], COMMANDS.MOUSEY[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
-
-    ctrls.push(new labelP(
-                new propC(getGUID(), cn, 100, top+11*h, 10, 10, 0, false, COMMANDS.WORLDX[0], COMMANDS.WORLDX[1]),
+                new propC(getGUID(), cn, 100, top+8*h, 10, 10, 0, HAND, false, COMMANDS.MOUSEX[0], COMMANDS.MOUSEX[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
 
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, 100, top+12*h, 10, 10, 0, false, COMMANDS.WORLDY[0], COMMANDS.WORLDY[1]),
+                new propC(getGUID(), cn, 100, top+9*h, 10, 10, 0, HAND, false, COMMANDS.MOUSEY[0], COMMANDS.MOUSEY[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, 100, top+14*h, 10, 10, 0, false, COMMANDS.GRIDX[0], COMMANDS.GRIDX[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
-
-
-    ctrls.push(new labelP(
-                new propC(getGUID(), cn, 100, top+15*h, 10, 10, 0, false, COMMANDS.GRIDY[0], COMMANDS.GRIDY[1]),
+                new propC(getGUID(), cn, 100, top+11*h, 10, 10, 0, HAND, false, COMMANDS.WORLDX[0], COMMANDS.WORLDX[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
 
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, 100, top+17*h, 10, 10, 0, false, COMMANDS.LEFT[0], COMMANDS.LEFT[1]),
+                new propC(getGUID(), cn, 100, top+12*h, 10, 10, 0, HAND, false, COMMANDS.WORLDY[0], COMMANDS.WORLDY[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, 100, top+18*h, 10, 10, 0, false, COMMANDS.CENTER[0], COMMANDS.CENTER[1]),
+                new propC(getGUID(), cn, 100, top+14*h, 10, 10, 0, HAND, false, COMMANDS.GRIDX[0], COMMANDS.GRIDX[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+
+    ctrls.push(new labelP(
+                new propC(getGUID(), cn, 100, top+15*h, 10, 10, 0, HAND, false, COMMANDS.GRIDY[0], COMMANDS.GRIDY[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+
+    ctrls.push(new labelP(
+                new propC(getGUID(), cn, 100, top+17*h, 10, 10, 0, HAND, false, COMMANDS.LEFT[0], COMMANDS.LEFT[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, 100, top+19*h, 10, 10, 0, false, COMMANDS.RIGHT[0], COMMANDS.RIGHT[1]),
+                new propC(getGUID(), cn, 100, top+18*h, 10, 10, 0, HAND, false, COMMANDS.CENTER[0], COMMANDS.CENTER[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, 50, top+21*h, 10, 10, 0, false, COMMANDS.FOCUS[0], COMMANDS.FOCUS[1]),
+                new propC(getGUID(), cn, 100, top+19*h, 10, 10, 0, HAND, false, COMMANDS.RIGHT[0], COMMANDS.RIGHT[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, 100, top+23*h, 10, 10, 0, false, COMMANDS.COMMAND[0], COMMANDS.UNDEF[1]),
+                new propC(getGUID(), cn, 50, top+21*h, 10, 10, 0, HAND, false, COMMANDS.FOCUS[0], COMMANDS.FOCUS[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, 100, top+25*h, 10, 10, 0, false, COMMANDS.FACTOR[0], COMMANDS.FACTOR[1]),
+                new propC(getGUID(), cn, 100, top+23*h, 10, 10, 0, HAND, false, COMMANDS.COMMAND[0], COMMANDS.UNDEF[1]),
+                getStyle(STYLES.BUTTON),
+                getStyle(STYLES.TEXT)));
+
+    ctrls.push(new labelP(
+                new propC(getGUID(), cn, 100, top+25*h, 10, 10, 0, HAND, false, COMMANDS.FACTOR[0], COMMANDS.FACTOR[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
@@ -7915,7 +7776,7 @@ println(this.g);
     var ctrls=[];
 
     var cn=new grid(
-            new propC(getGUID(), parent, 210, 10, parent.w-440, parent.h-20, 5, false, COMMANDS.UNDEF[0], 0),
+            new propC(getGUID(), parent, 210, 10, parent.w-440, parent.h-20, 5, ARROW, false, COMMANDS.UNDEF[0], 0),
             new propL(CLRS.GRID, getColor(CLRS.GRID,65), CLRS.WHITE, CLRS.YELLOW, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
@@ -7925,7 +7786,7 @@ println(this.g);
             //~ getStyle(STYLES.TEXTCENTER)));
 
     ctrls.push(new buttonS(
-                new propC(getGUID(), cn, 98, 2, 24, 24, 0, false, COMMANDS.GRIDPROPS[0], COMMANDS.GRIDPROPS[1]),
+                new propC(getGUID(), cn, cn.x+cn.w-26, cn.y, 24, 24, 0, HAND, false, COMMANDS.GRIDPROPS[0], COMMANDS.GRIDPROPS[1]),
                 new propL(CLRS.TRANSPARENT, CLRS.TRANSPARENT, CLRS.Gray6, CLRS.Gray3, 0.125, 0.25),
                 getStyle(STYLES.TEXT)));
 
@@ -7947,7 +7808,7 @@ println(this.g);
     var lX=80;
 
     var cn=new cnProps(
-            new propC(getGUID(),parent, l, 10, 120, 310, 3, false, COMMANDS.GRIDPROPS[0], COMMANDS.GRIDPROPS[1]),
+            new propC(getGUID(),parent, l, 10, 120, 310, 3, ARROW, false, COMMANDS.GRIDPROPS[0], COMMANDS.GRIDPROPS[1]),
             new propL(getColor(CLRS.GRID,40), CLRS.GRID, CLRS.WHITE, CLRS.YELLOW, 0.125, 0.25),
             getStyle(STYLES.TEXT));
 
@@ -7957,196 +7818,202 @@ println(this.g);
                 //~ getStyle(STYLES.TEXT)));
 
     //~ Labels ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    //~ Origin
     ctrls.push(new label(
-                new propC(getGUID(), cn, 10, top+0*h, 10, 10, 0, false, COMMANDS.ORIGIN[0], COMMANDS.ORIGIN[1]),
+                new propC(getGUID(), cn, 10, top+0*h, 10, 10, 0, HAND, false, COMMANDS.ORIGIN[0], COMMANDS.ORIGIN[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
 
 
     ctrls.push(new spacer(
-                new propC(getGUID(), cn, 5, top+1*h+5, 110, 10, 0, false, COMMANDS.SPACER[0], COMMANDS.SPACER[0]),
+                new propC(getGUID(), cn, 5, top+1*h+5, 110, 10, 0, ARROW, false, COMMANDS.SPACER[0], COMMANDS.SPACER[0]),
                 getStyle(STYLES.SPACER),
                 getStyle(STYLES.TEXT)));
 
 
-
-    ctrls.push(new label( //~ Axes
-                new propC(getGUID(), cn, 10, top+2*h, 10, 10, 0, false, COMMANDS.AXES[0], COMMANDS.AXES[1]),
+    //~ Axes
+    ctrls.push(new label(
+                new propC(getGUID(), cn, 10, top+2*h, 10, 10, 0, HAND, false, COMMANDS.AXES[0], COMMANDS.AXES[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, lX, top+2*h, 10, 10, 0, false, COMMANDS.AXISX[0], COMMANDS.AXISX[1]),
+                new propC(getGUID(), cn, lX, top+2*h, 10, 10, 0, HAND, false, COMMANDS.AXISX[0], COMMANDS.AXISX[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, lX, top+3*h, 10, 10, 0, false, COMMANDS.AXISY[0], COMMANDS.AXISY[1]),
+                new propC(getGUID(), cn, lX, top+3*h, 10, 10, 0, HAND, false, COMMANDS.AXISY[0], COMMANDS.AXISY[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
 
 
     ctrls.push(new spacer(
-                new propC(getGUID(), cn, 5, top+4*h+5, 110, 10, 0, false, COMMANDS.SPACER[0], COMMANDS.SPACER[0]),
+                new propC(getGUID(), cn, 5, top+4*h+5, 110, 10, 0, ARROW, false, COMMANDS.SPACER[0], COMMANDS.SPACER[0]),
                 getStyle(STYLES.SPACER),
                 getStyle(STYLES.TEXT)));
 
 
-
-    ctrls.push(new label( //~ Lines
-                new propC(getGUID(), cn, 10, top+5*h, 10, 10, 0, false, COMMANDS.LINES[0], COMMANDS.LINES[1]),
+    //~ Lines
+    ctrls.push(new label(
+                new propC(getGUID(), cn, 10, top+5*h, 10, 10, 0, HAND, false, COMMANDS.LINES[0], COMMANDS.LINES[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, lX, top+5*h, 10, 10, 0, false, COMMANDS.LINESX[0], COMMANDS.LINESX[1]),
+                new propC(getGUID(), cn, lX, top+5*h, 10, 10, 0, HAND, false, COMMANDS.LINESX[0], COMMANDS.LINESX[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, lX, top+6*h, 10, 10, 0, false, COMMANDS.LINESY[0], COMMANDS.LINESY[1]),
+                new propC(getGUID(), cn, lX, top+6*h, 10, 10, 0, HAND, false, COMMANDS.LINESY[0], COMMANDS.LINESY[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
 
     ctrls.push(new spacer(
-                new propC(getGUID(), cn, 5, top+7*h+5, 110, 10, 0, false, COMMANDS.SPACER[0], COMMANDS.SPACER[0]),
+                new propC(getGUID(), cn, 5, top+7*h+5, 110, 10, 0, ARROW, false, COMMANDS.SPACER[0], COMMANDS.SPACER[0]),
                 getStyle(STYLES.SPACER),
                 getStyle(STYLES.TEXT)));
 
 
-    ctrls.push(new label( //~ Arrows
-                new propC(getGUID(), cn, 10, top+8*h, 10, 10, 0, false, COMMANDS.ARROWS[0], COMMANDS.ARROWS[1]),
+    //~ Arrows
+    ctrls.push(new label(
+                new propC(getGUID(), cn, 10, top+8*h, 10, 10, 0, HAND, false, COMMANDS.ARROWS[0], COMMANDS.ARROWS[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, lX, top+8*h, 10, 10, 0, false, COMMANDS.ARROWSX[0], COMMANDS.ARROWSX[1]),
+                new propC(getGUID(), cn, lX, top+8*h, 10, 10, 0, HAND, false, COMMANDS.ARROWSX[0], COMMANDS.ARROWSX[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, lX, top+9*h, 10, 10, 0, false, COMMANDS.ARROWSY[0], COMMANDS.ARROWSY[1]),
+                new propC(getGUID(), cn, lX, top+9*h, 10, 10, 0, HAND, false, COMMANDS.ARROWSY[0], COMMANDS.ARROWSY[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
 
     ctrls.push(new spacer(
-                new propC(getGUID(), cn, 5, top+10*h+5, 110, 10, 0, false, COMMANDS.SPACER[0], COMMANDS.SPACER[0]),
+                new propC(getGUID(), cn, 5, top+10*h+5, 110, 10, 0, ARROW, false, COMMANDS.SPACER[0], COMMANDS.SPACER[0]),
                 getStyle(STYLES.SPACER),
                 getStyle(STYLES.TEXT)));
 
 
-    ctrls.push(new label( //~ Ticks
-                new propC(getGUID(), cn, 10, top+11*h, 10, 10, 0, false, COMMANDS.TICKS[0], COMMANDS.TICKS[1]),
+    //~ Ticks
+    ctrls.push(new label(
+                new propC(getGUID(), cn, 10, top+11*h, 10, 10, 0, HAND, false, COMMANDS.TICKS[0], COMMANDS.TICKS[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, lX, top+11*h, 10, 10, 0, false, COMMANDS.TICKSX[0], COMMANDS.TICKSX[1]),
+                new propC(getGUID(), cn, lX, top+11*h, 10, 10, 0, HAND, false, COMMANDS.TICKSX[0], COMMANDS.TICKSX[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, lX, top+12*h, 10, 10, 0, false, COMMANDS.TICKSY[0], COMMANDS.TICKSY[1]),
+                new propC(getGUID(), cn, lX, top+12*h, 10, 10, 0, HAND, false, COMMANDS.TICKSY[0], COMMANDS.TICKSY[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
 
     ctrls.push(new spacer(
-                new propC(getGUID(), cn, 5, top+13*h+5, 110, 10, 0, false, COMMANDS.SPACER[0], COMMANDS.SPACER[0]),
+                new propC(getGUID(), cn, 5, top+13*h+5, 110, 10, 0, ARROW, false, COMMANDS.SPACER[0], COMMANDS.SPACER[0]),
                 getStyle(STYLES.SPACER),
                 getStyle(STYLES.TEXT)));
 
 
-    ctrls.push(new label( //~ Labels
-                new propC(getGUID(), cn, 10, top+14*h, 10, 10, 0, false, COMMANDS.LABELS[0], COMMANDS.LABELS[1]),
+    //~ Labels
+    ctrls.push(new label(
+                new propC(getGUID(), cn, 10, top+14*h, 10, 10, 0, HAND, false, COMMANDS.LABELS[0], COMMANDS.LABELS[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, lX, top+14*h, 10, 10, 0, false, COMMANDS.LABELSX[0], COMMANDS.LABELSX[1]),
+                new propC(getGUID(), cn, lX, top+14*h, 10, 10, 0, HAND, false, COMMANDS.LABELSX[0], COMMANDS.LABELSX[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, lX, top+15*h, 10, 10, 0, false, COMMANDS.LABELSY[0], COMMANDS.LABELSY[1]),
+                new propC(getGUID(), cn, lX, top+15*h, 10, 10, 0, HAND, false, COMMANDS.LABELSY[0], COMMANDS.LABELSY[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
 
     ctrls.push(new spacer(
-                new propC(getGUID(), cn, 5, top+16*h+5, 110, 10, 0, false, COMMANDS.SPACER[0], COMMANDS.SPACER[0]),
+                new propC(getGUID(), cn, 5, top+16*h+5, 110, 10, 0, ARROW, false, COMMANDS.SPACER[0], COMMANDS.SPACER[0]),
                 getStyle(STYLES.SPACER),
                 getStyle(STYLES.TEXT)));
 
 
-    ctrls.push(new label( //~ Quadrants
-                new propC(getGUID(), cn, 10, top+17*h, 10, 10, 0, false, COMMANDS.QUADRANTS[0], COMMANDS.QUADRANTS[1]),
+    //~ Quadrants
+    ctrls.push(new label(
+                new propC(getGUID(), cn, 10, top+17*h, 10, 10, 0, HAND, false, COMMANDS.QUADRANTS[0], COMMANDS.QUADRANTS[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXT)));
 
 
     //~ Values ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ctrls.push(new checkbox(
-                new propC(getGUID(), cn, 105, top+0*h+5, 10, 10, 0, false, COMMANDS.ORIGIN[0], COMMANDS.ORIGIN[1]),
+                new propC(getGUID(), cn, 105, top+0*h+5, 10, 10, 0, HAND, false, COMMANDS.ORIGIN[0], COMMANDS.ORIGIN[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXTCENTER)));
 
     ctrls.push(new checkbox(
-                new propC(getGUID(), cn, 105, top+2*h+5, 10, 10, 0, false, COMMANDS.AXISX[0], COMMANDS.AXISX[1]),
+                new propC(getGUID(), cn, 105, top+2*h+5, 10, 10, 0, HAND, false, COMMANDS.AXISX[0], COMMANDS.AXISX[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXTCENTER)));
 
     ctrls.push(new checkbox(
-                new propC(getGUID(), cn, 105, top+3*h+5, 10, 10, 0, false, COMMANDS.AXISY[0], COMMANDS.AXISY[1]),
+                new propC(getGUID(), cn, 105, top+3*h+5, 10, 10, 0, HAND, false, COMMANDS.AXISY[0], COMMANDS.AXISY[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXTCENTER)));
 
     ctrls.push(new checkbox(
-                new propC(getGUID(), cn, 105, top+5*h+5, 10, 10, 0, false, COMMANDS.LINESX[0], COMMANDS.LINESX[1]),
+                new propC(getGUID(), cn, 105, top+5*h+5, 10, 10, 0, HAND, false, COMMANDS.LINESX[0], COMMANDS.LINESX[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXTCENTER)));
 
     ctrls.push(new checkbox(
-                new propC(getGUID(), cn, 105, top+6*h+5, 10, 10, 0, false, COMMANDS.LINESY[0], COMMANDS.LINESY[1]),
+                new propC(getGUID(), cn, 105, top+6*h+5, 10, 10, 0, HAND, false, COMMANDS.LINESY[0], COMMANDS.LINESY[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXTCENTER)));
 
     ctrls.push(new checkbox(
-                new propC(getGUID(), cn, 105, top+8*h+5, 10, 10, 0, false, COMMANDS.ARROWSX[0], COMMANDS.ARROWSX[1]),
+                new propC(getGUID(), cn, 105, top+8*h+5, 10, 10, 0, HAND, false, COMMANDS.ARROWSX[0], COMMANDS.ARROWSX[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXTCENTER)));
 
     ctrls.push(new checkbox(
-                new propC(getGUID(), cn, 105, top+9*h+5, 10, 10, 0, false, COMMANDS.ARROWSY[0], COMMANDS.ARROWSY[1]),
+                new propC(getGUID(), cn, 105, top+9*h+5, 10, 10, 0, HAND, false, COMMANDS.ARROWSY[0], COMMANDS.ARROWSY[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXTCENTER)));
 
     ctrls.push(new checkbox(
-                new propC(getGUID(), cn, 105, top+11*h+5, 10, 10, 0, false, COMMANDS.TICKSX[0], COMMANDS.TICKSX[1]),
+                new propC(getGUID(), cn, 105, top+11*h+5, 10, 10, 0, HAND, false, COMMANDS.TICKSX[0], COMMANDS.TICKSX[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXTCENTER)));
 
     ctrls.push(new checkbox(
-                new propC(getGUID(), cn, 105, top+12*h+5, 10, 10, 0, false, COMMANDS.TICKSY[0], COMMANDS.TICKSY[1]),
+                new propC(getGUID(), cn, 105, top+12*h+5, 10, 10, 0, HAND, false, COMMANDS.TICKSY[0], COMMANDS.TICKSY[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXTCENTER)));
 
     ctrls.push(new checkbox(
-                new propC(getGUID(), cn, 105, top+14*h+5, 10, 10, 0, false, COMMANDS.LABELSX[0], COMMANDS.LABELSX[1]),
+                new propC(getGUID(), cn, 105, top+14*h+5, 10, 10, 0, HAND, false, COMMANDS.LABELSX[0], COMMANDS.LABELSX[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXTCENTER)));
 
     ctrls.push(new checkbox(
-                new propC(getGUID(), cn, 105, top+15*h+5, 10, 10, 0, false, COMMANDS.LABELSY[0], COMMANDS.LABELSY[1]),
+                new propC(getGUID(), cn, 105, top+15*h+5, 10, 10, 0, HAND, false, COMMANDS.LABELSY[0], COMMANDS.LABELSY[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXTCENTER)));
 
     ctrls.push(new checkbox(
-                new propC(getGUID(), cn, 105, top+17*h+5, 10, 10, 0, false, COMMANDS.QUADRANTS[0], COMMANDS.QUADRANTS[1]),
+                new propC(getGUID(), cn, 105, top+17*h+5, 10, 10, 0, HAND, false, COMMANDS.QUADRANTS[0], COMMANDS.QUADRANTS[1]),
                 getStyle(STYLES.BUTTON),
                 getStyle(STYLES.TEXTCENTER)));
 
@@ -8161,7 +8028,7 @@ println(this.g);
     var ctrls=[];
 
     var cn=new container(
-            new propC(getGUID(), 0, 0, 0, app.width-1, app.height-1, 3, false, COMMANDS.UNDEF[0], 0),
+            new propC(getGUID(), 0, 0, 0, app.width-1, app.height-1, 3, ARROW, false, COMMANDS.UNDEF[0], 0),
             new propL(CLRS.BLACK, CLRS.BLACK, CLRS.Gray9, CLRS.Gray0, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
