@@ -334,9 +334,10 @@ var zoomfactor=0;
     POINT:        [1000,  'Point',            'POINT'                 ],
     P_DEFAULT:    [1001,  'P_DEFAULT',        'P_DEFAULT'             ],
     P_OBJECT:     [1002,  'P_Object',         'P_OBJECT'              ],
-    P_INTERSECT:  [1003,  'P_Intersect',      'P_INTERSECT'           ],
-    P_MIDPOINT:   [1004,  'P_Midpoint',       'P_MIDPOINT'            ],    //~ Midpoint/Center
-    P_ATDETACH:   [1005,  'P_AttachDetach',   'P_ATTACHDETACH'        ],    //~ AttachDetachPoint
+    P_BOUND:      [1003,  'P_Bound',          'P_BOUND'               ],
+    P_INTERSECT:  [1004,  'P_Intersect',      'P_INTERSECT'           ],
+    P_MIDPOINT:   [1005,  'P_Midpoint',       'P_MIDPOINT'            ],    //~ Midpoint/Center
+    P_ATDETACH:   [1006,  'P_AttachDetach',   'P_ATTACHDETACH'        ],    //~ AttachDetachPoint
 
     //~ Line (L) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     LINE:         [1100,  'Line',             'LINE'                  ],
@@ -445,9 +446,9 @@ var zoomfactor=0;
   var app={
 
     width:          screen.width-20,
-    height:         screen.height-215,
+    height:         screen.height-115,
 
-    debug:          true,
+    debug:          false,
     frameRate:      0,
 
     focus:          0,
@@ -494,15 +495,15 @@ var zoomfactor=0;
     linetype:       LINETYPES.DASHDOT,
     lineweight:     0.75,
 
-    border:         false,
-    origin:         false,
+    border:         true,
+    origin:         true,
 
-    gridprops:      false,
+    gridprops:      true,
 
     axisX:          true,
     axisY:          true,
-    linesX:         false,
-    linesY:         false,
+    linesX:         true,
+    linesY:         true,
     arrowsX:        true,
     arrowsY:        true,
     ticksX:         true,
@@ -547,7 +548,6 @@ var zoomfactor=0;
 
   var getProp=function(p){
 
-  //~ println(p);
     switch(p){
 
       case COMMANDS.COMMAND[0]:     return app.command;
@@ -658,7 +658,6 @@ var zoomfactor=0;
   var pt=function(x,y){
     this.x=x;
     this.y=y;
-    //~ println(this.x+","+this.y);
   };
 
   var drawing=function(){
@@ -709,13 +708,10 @@ var zoomfactor=0;
 
   };
   Shape.prototype.add=function(pnt){
-    //println(pnt.i);
     this.vertices.push(pnt);
   };
   Shape.prototype.draw=function(){};
   Shape.prototype.clicked=function(){
-
-    //println(app.command);
 
     if(app.command===COMMANDS.SELECT[0]){
 
@@ -735,7 +731,6 @@ var zoomfactor=0;
       if(this.hitP[n] && app.left){
         this.vertices[n].x=app.mouseX;
         this.vertices[n].y=app.mouseY;
-            //~ println("dragged");
         this.recalc();
       }
 
@@ -758,7 +753,6 @@ var factor=1.25;
     this.recalc=function(){
       this.xW=this.xG*app.factor;
       this.yW=this.yG*app.factor;
-      //~ println("recalc point");
     };
 
   };
@@ -840,8 +834,6 @@ var factor=1.25;
   var Line=function(i,p){
 
     Shape.call(this, i, p);
-
-    //~ println(this.vertices.length);
 
     this.deltaX=0;
     this.deltaY=0;
@@ -955,8 +947,6 @@ var factor=1.25;
 
     if(dist1+dist2-this.length*app.factor<app.pSize/8){
       this.hit=true;
-      //~ println("hit");
-      //~ this.recalc();
     }
     else{
       this.hit=false;
@@ -982,8 +972,6 @@ var factor=1.25;
       if(this.hitP[n] && app.left){
         this.vertices[n].x=app.mouseX;
         this.vertices[n].y=app.mouseY;
-            //~ println("dragged");
-
       }
 
     }
@@ -1247,8 +1235,8 @@ var factor=1.25;
       case COMMANDS.P_DEFAULT[0]:                                 break;
       case COMMANDS.LINE[0]:                                      break;
 
-      //~ case COMMANDS.POINT[0]:       println('Point:');          break;
-      //~ case COMMANDS.P_OBJECT[0]:    println('Point: bound');    break;
+      //~ case COMMANDS.POINT[0]:       break;
+      //~ case COMMANDS.P_OBJECT[0]:    break;
       case COMMANDS.P_INTERSECT[0]:     break;
       case COMMANDS.P_MIDPOINT[0]:      break;
 
@@ -1270,7 +1258,6 @@ var factor=1.25;
     switch(true){
 
       case c===COMMANDS.DEBUG[0]:         app.debug=!app.debug;
-                                          //~ println(app.debug);
                                           break;
 
       //~ Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1285,11 +1272,10 @@ var factor=1.25;
                                           app.green=green(app.color);
                                           app.blue=blue(app.color);
                                           app.fill=p;
-                                          println(p);
                                           break;
 
       case c===COMMANDS.STROKEA[0]:       app.strokeA=p;          break;
-      case c===COMMANDS.FILL[0]:          app.fill=p;            break;
+      case c===COMMANDS.FILL[0]:          app.fill=p;             break;
       case c===COMMANDS.FILLA[0]:         app.fillA=p;            break;
 
       case c>COMMANDS.LINETYPE[0] &&
@@ -1298,8 +1284,7 @@ var factor=1.25;
 
       case c===COMMANDS.ZOOMIN[0]:        app.factor*=2.25;       break;
       case c===COMMANDS.ZOOMOUT[0]:       app.factor/=2.25;       break;
-      case c===COMMANDS.PAN[0]:           app.command=c;
-                                          println("pan");         break;
+      case c===COMMANDS.PAN[0]:           app.command=c;          break;
 
       case c===COMMANDS.UNDO[0]:                                  break;
 
@@ -1413,7 +1398,6 @@ var factor=1.25;
   };
   control.prototype.clickedR=function(){
     if(this.hit){
-      println(this.i);
       for(var c in this.ctrls){ this.ctrls[c].clickedR(); }
     }
   };
@@ -1773,7 +1757,7 @@ var factor=1.25;
     var cVERTEX=CLRS.VERTEXA;
     var cLINE=CLRS.LINE;
     var cFILL=CLRS.FILL;
-    var sz=3;
+    var sz=p.w/10;
 
     var drawPoint=function(){
 
@@ -1795,7 +1779,7 @@ var factor=1.25;
 
             break;
 
-          case COMMANDS.P_OBJECT[0]:
+          case COMMANDS.P_BOUND[0]:
 
             fill(CLRS.FILL);
             strokeWeight(0.5);
@@ -1841,7 +1825,7 @@ var factor=1.25;
 
             break;
 
-          case COMMANDS.P_MIDPOINT[0]:
+          case COMMANDS.P_OBJECT[0]:
 
             noFill();
 
@@ -5755,7 +5739,7 @@ var factor=1.25;
               this.shapes.push(
                 new Point(getGUID(), this, app.gridX, app.gridY));
                 app.stack.push(app.command);
-                println(app.stack);
+                //~ println(app.stack);
 
               break;
 
@@ -5866,7 +5850,6 @@ var factor=1.25;
   grid.prototype.pressed=function(){
 
     if(this.hit){
-      //~ println("pressed");
       this.offsetX=app.worldX;
       this.offsetY=app.worldY;
     };
@@ -5875,7 +5858,6 @@ var factor=1.25;
   grid.prototype.released=function(){
 
     if(this.hit){
-      //~ println("released");
       this.offsetX=0;
       this.offsetY=0;
     };
@@ -5935,8 +5917,6 @@ var factor=1.25;
 
       case RIGHT:
 
-        //~ println(mouseButton);
-
         for(var c in app.ctrls){ app.ctrls[c].clickedR() }
         break;
 
@@ -5983,7 +5963,6 @@ var factor=1.25;
   var mouseReleased=function(){
     mStartX=0;
     mStartY=0;
-    //~ println(mouseButton);
 
     app.left=false;
     app.center=false;
@@ -6003,9 +5982,6 @@ var factor=1.25;
 
   //~ Keys ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var keyPressed=function(){
-
-    //~ println(str(key));
-    //~ println(app.keys);
 
     if(keyCode===32){
       app.command=COMMANDS.SELECT[0];
@@ -6034,8 +6010,6 @@ var factor=1.25;
       default:  break;
 
     }
-
-  println(keyCode);
 
     app.keys[keyCode]=true;
 
@@ -6079,54 +6053,62 @@ var factor=1.25;
   //~ Initialize =======================================================
 
   //~ Load Controls ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  var getStyle=function(s){
 
-      var style;
+//~ ********************************************************************
 
-      switch(s){
+  //~ ***** NOTE *****
+  //~   DO NOT REMOVE!!  Implement styles when all controls have been designed
 
-        case STYLES.BACKGROUND:
+//~ ********************************************************************
 
-          style=new propL(CLRS.BLACK, CLRS.BLACK, CLRS.BLUE, CLRS.GRAY, 0.125, 0.25);
-          break;
-
-        case STYLES.CONTAINER:
-
-          style=new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25);
-          break;
-
-        case STYLES.BUTTON:
-
-          style=new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25);
-          break;
-
-        case STYLES.SPACER:
-
-          style=new propL(getColor(CLRS.BLUE,50), CLRS.BLUE, CLRS.WHITE, CLRS.YELLOW, 0.125, 0.25);
-          break;
-
-        case STYLES.TEXT:
-
-          style=new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11);
-          break;
-
-        case STYLES.TEXTCENTER:
-
-          style=new propA(CLRS.WHITE, CLRS.YELLOW, CENTER, CENTER, 11, 12);
-          break;
-
-        case STYLES.TITLE:
-
-          style=new propA(CLRS.WHITE, CLRS.YELLOW, LEFT, CENTER, 12, 14);
-          break;
-
-        default:  break;
-
-      }
-
-    return style;
-
-  };
+  //~ var getStyle=function(s){
+//~ 
+      //~ var style;
+//~ 
+      //~ switch(s){
+//~ 
+        //~ case STYLES.BACKGROUND:
+//~ 
+          //~ style=new propL(CLRS.BLACK, CLRS.BLACK, CLRS.BLUE, CLRS.GRAY, 0.125, 0.25);
+          //~ break;
+//~ 
+        //~ case STYLES.CONTAINER:
+//~ 
+          //~ style=new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25);
+          //~ break;
+//~ 
+        //~ case STYLES.BUTTON:
+//~ 
+          //~ style=new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25);
+          //~ break;
+//~ 
+        //~ case STYLES.SPACER:
+//~ 
+          //~ style=new propL(getColor(CLRS.BLUE,50), CLRS.BLUE, CLRS.WHITE, CLRS.YELLOW, 0.125, 0.25);
+          //~ break;
+//~ 
+        //~ case STYLES.TEXT:
+//~ 
+          //~ style=new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11);
+          //~ break;
+//~ 
+        //~ case STYLES.TEXTCENTER:
+//~ 
+          //~ style=new propA(CLRS.WHITE, CLRS.YELLOW, CENTER, CENTER, 11, 12);
+          //~ break;
+//~ 
+        //~ case STYLES.TITLE:
+//~ 
+          //~ style=new propA(CLRS.WHITE, CLRS.YELLOW, LEFT, CENTER, 12, 14);
+          //~ break;
+//~ 
+        //~ default:  break;
+//~ 
+      //~ }
+//~ 
+    //~ return style;
+//~ 
+  //~ };
 
   var getPoints=function(parent){
 
@@ -6135,12 +6117,12 @@ var factor=1.25;
     var h=15;
     var l=parent.w-202;
     var ch=app.height-14;
-    var w=30;
+    var w=40;
 
     var cn=new stripH(
-            new propC(getGUID(), parent, 205, 45, w+10, w, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
-            getStyle(STYLES.CONTAINER),
-            getStyle(STYLES.TEXT));
+            new propC(getGUID(), parent, 5, 5, w+10, w, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
+            new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
     //~ vertices ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //~ POINT:            [ -100, 'Point',            'POINT'         ],
@@ -6152,37 +6134,42 @@ var factor=1.25;
 
       //~ ctrls.push(new buttonS(
                   //~ new propC(getGUID(), cn, n*w, 0, w, w, 0, false, COMMANDS[n], COMMANDS[n]),
-                  //~ getStyle(STYLES.BUTTON),
-                  //~ getStyle(STYLES.TEXT)));
-                  //~ println(n);
-                  //~ println(COMMANDS[n]);
+                  //~ new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                  //~ new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     //~ }
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 0*w, 0, w, w, 0, HAND, false, COMMANDS.P_DEFAULT[0], COMMANDS.P_DEFAULT[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 1*w, 0, w, w, 0, HAND, false, COMMANDS.P_DEFAULT[0], COMMANDS.P_DEFAULT[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 2*w, 0, w, w, 0, HAND, false, COMMANDS.P_OBJECT[0], COMMANDS.P_OBJECT[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
-                new propC(getGUID(), cn, 3*w, 0, w, w, 0, HAND, false, COMMANDS.P_INTERSECT[0], COMMANDS.P_INTERSECT[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propC(getGUID(), cn, 3*w, 0, w, w, 0, HAND, false, COMMANDS.P_BOUND[0], COMMANDS.P_BOUND[1]),
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
-    ctrls.push(new buttonS(
-                new propC(getGUID(), cn, 4*w, 0, w, w, 0, HAND, false, COMMANDS.P_MIDPOINT[0], COMMANDS.P_MIDPOINT[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+    //~ ctrls.push(new buttonS(
+                //~ new propC(getGUID(), cn, 4*w, 0, w, w, 0, HAND, false, COMMANDS.P_INTERSECT[0], COMMANDS.P_INTERSECT[1]),
+                //~ new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                //~ new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
+
+    //~ ctrls.push(new buttonS(
+                //~ new propC(getGUID(), cn, 5*w, 0, w, w, 0, HAND, false, COMMANDS.P_MIDPOINT[0], COMMANDS.P_MIDPOINT[1]),
+                //~ new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                //~ new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
+
+
 
     cn.ctrls=ctrls;
 
@@ -6200,8 +6187,8 @@ var factor=1.25;
 
     var cn=new stripH(
             new propC(getGUID(), parent, 205, 75, w+10, w, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
-            getStyle(STYLES.CONTAINER),
-            getStyle(STYLES.TEXT));
+            new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
+            new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
     //~ L_2P:         [-200, 'Line2P',           'LINE2P'                 ],    //~ through 2 vertices
     //~ L_SEGMENT2P:  [-201,  'Line',             'LINE'                  ],    //~ between 2 vertices
@@ -6220,73 +6207,73 @@ var factor=1.25;
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 0*w, 0, w, w, 0, HAND, false, COMMANDS.L_2P[0], COMMANDS.L_2P[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 1*w, 0, w, w, 0, HAND, false, COMMANDS.L_2P[0], COMMANDS.L_2P[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 2*w, 0, w, w, 0, HAND, false, COMMANDS.L_SEGMENT2P[0], COMMANDS.L_SEGMENT2P[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 3*w, 0, w, w, 0, HAND, false, COMMANDS.L_SEGMENTLEN[0], COMMANDS.L_SEGMENTLEN[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 4*w, 0, w, w, 0, HAND, false, COMMANDS.L_PERP[0], COMMANDS.L_PERP[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 5*w, 0, w, w, 0, HAND, false, COMMANDS.L_PERPB[0], COMMANDS.L_PERPB[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 6*w, 0, w, w, 0, HAND, false, COMMANDS.L_ANGB[0], COMMANDS.L_ANGB[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 7*w, 0, w, w, 0, HAND, false, COMMANDS.L_PARR[0], COMMANDS.L_PARR[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 8*w, 0, w, w, 0, HAND, false, COMMANDS.L_TANGENT[0], COMMANDS.L_TANGENT[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 9*w, 0, w, w, 0, HAND, false, COMMANDS.L_DIAMETER[0], COMMANDS.L_DIAMETER[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 10*w, 0, w, w, 0, HAND, false, COMMANDS.L_RADIUS[0], COMMANDS.L_RADIUS[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 11*w, 0, w, w, 0, HAND, false, COMMANDS.RAY_2P[0], COMMANDS.RAY_2P[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 12*w, 0, w, w, 0, HAND, false, COMMANDS.V_2P[0], COMMANDS.V_2P[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 13*w, 0, w, w, 0, HAND, false, COMMANDS.V_FP[0], COMMANDS.V_FP[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     cn.ctrls=ctrls;
 
@@ -6304,8 +6291,8 @@ var factor=1.25;
 
     var cn=new stripH(
             new propC(getGUID(), parent, 205, 105, w+10, w, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
-            getStyle(STYLES.CONTAINER),
-            getStyle(STYLES.TEXT));
+            new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
+            new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
     //~ Triangle (T)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //~ TRIANGLE:     [-300,  'Triangle',         'TRIANGLE'              ],
@@ -6315,23 +6302,23 @@ var factor=1.25;
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 0*w, 0, w, w, 0, HAND, false, COMMANDS.T_EQUILATERAL[0], COMMANDS.T_EQUILATERAL[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 1*w, 0, w, w, 0, HAND, false, COMMANDS.T_EQUILATERAL[0], COMMANDS.T_EQUILATERAL[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 2*w, 0, w, w, 0, HAND, false, COMMANDS.T_ISOSCELES[0], COMMANDS.T_ISOSCELES[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 3*w, 0, w, w, 0, HAND, false, COMMANDS.T_SCALENE[0], COMMANDS.T_SCALENE[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     cn.ctrls=ctrls;
 
@@ -6349,8 +6336,8 @@ var factor=1.25;
 
     var cn=new stripH(
             new propC(getGUID(), parent, 205, 135, w+10, w, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
-            getStyle(STYLES.CONTAINER),
-            getStyle(STYLES.TEXT));
+            new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
+            new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
     //~ Circle (C)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //~ CIRCLE:       [-400,  'Circle',           'CIRCLE'                ],
@@ -6359,23 +6346,23 @@ var factor=1.25;
     //~ C_3P:         [-403,  'Circle3P',         'CIRCL3P'               ],    //  3 vertices
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 0*w, 0, w, w, 0, HAND, false, COMMANDS.C_CENTERP[0], COMMANDS.C_CENTERP[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 1*w, 0, w, w, 0, HAND, false, COMMANDS.C_CENTERP[0], COMMANDS.C_CENTERP[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 2*w, 0, w, w, 0, HAND, false, COMMANDS.C_CENTERR[0], COMMANDS.C_CENTERR[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 3*w, 0, w, w, 0, HAND, false, COMMANDS.C_3P[0], COMMANDS.C_3P[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     cn.ctrls=ctrls;
 
@@ -6393,8 +6380,8 @@ var factor=1.25;
 
     var cn=new stripH(
             new propC(getGUID(), parent, 205, 165, w+10, w, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
-            getStyle(STYLES.CONTAINER),
-            getStyle(STYLES.TEXT));
+            new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
+            new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
     //~ Quadrilateral (C)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //~ QUADRILATERAL:[1500,  'Quadrilateral',    'QUADRILATERAL'         ],
@@ -6407,38 +6394,38 @@ var factor=1.25;
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 0*w, 0, w, w, 0, HAND, false, COMMANDS.Q_RECTANGLE[0], COMMANDS.Q_RECTANGLE[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 1*w, 0, w, w, 0, HAND, false, COMMANDS.Q_RECTANGLE[0], COMMANDS.Q_RECTANGLE[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 2*w, 0, w, w, 0, HAND, false, COMMANDS.Q_SQUARE[0], COMMANDS.Q_SQUARE[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 3*w, 0, w, w, 0, HAND, false, COMMANDS.Q_RHOMBUS[0], COMMANDS.Q_RHOMBUS[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 4*w, 0, w, w, 0, HAND, false, COMMANDS.Q_PGRAM[0], COMMANDS.Q_PGRAM[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 5*w, 0, w, w, 0, HAND, false, COMMANDS.Q_TRAPEZOID[0], COMMANDS.Q_TRAPEZOID[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 6*w, 0, w, w, 0, HAND, false, COMMANDS.Q_KITE[0], COMMANDS.Q_KITE[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     cn.ctrls=ctrls;
 
@@ -6456,8 +6443,8 @@ var factor=1.25;
 
     var cn=new stripH(
             new propC(getGUID(), parent, 205, 195, w+10, w, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
-            getStyle(STYLES.CONTAINER),
-            getStyle(STYLES.TEXT));
+            new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
+            new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
     //~ Arc (A)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //~ ARC:          [-500,  'Arc',              'ARC'                   ],
@@ -6469,38 +6456,38 @@ var factor=1.25;
     //~ COMPASS:      [-506,  'Compass',          'COMPASS'               ],    //~ ??
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 0*w, 0, w, w, 0, HAND, false, COMMANDS.A_2P[0], COMMANDS.A_2P[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 1*w, 0, w, w, 0, HAND, false, COMMANDS.A_2P[0], COMMANDS.A_2P[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 2*w, 0, w, w, 0, HAND, false, COMMANDS.A_CA[0], COMMANDS.A_CA[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 3*w, 0, w, w, 0, HAND, false, COMMANDS.A_CCA[0], COMMANDS.A_CCA[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 4*w, 0, w, w, 0, HAND, false, COMMANDS.A_CS[0], COMMANDS.A_CS[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 5*w, 0, w, w, 0, HAND, false, COMMANDS.A_CCS[0], COMMANDS.A_CCS[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 6*w, 0, w, w, 0, HAND, false, COMMANDS.COMPASS[0], COMMANDS.COMPASS[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     cn.ctrls=ctrls;
 
@@ -6518,8 +6505,8 @@ var factor=1.25;
 
     var cn=new stripH(
             new propC(getGUID(), parent, 205, 225, w+10, w, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
-            getStyle(STYLES.CONTAINER),
-            getStyle(STYLES.TEXT));
+            new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
+            new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
       //~ Polygon ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //~ POLYGON:      [-600,  'Polygon',          'POLYGON'               ],
@@ -6528,23 +6515,23 @@ var factor=1.25;
     //~ POLYGONV:     [-603,  'PolygonV',         'POLYGONV'              ],    //~ Vector
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 0*w, 0, w, w, 0, HAND, false, COMMANDS.POLYGONR[0], COMMANDS.POLYGONR[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 1*w, 0, w, w, 0, HAND, false, COMMANDS.POLYGONR[0], COMMANDS.POLYGONR[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 2*w, 0, w, w, 0, HAND, false, COMMANDS.POLYGONRIGID[0], COMMANDS.POLYGONRIGID[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 3*w, 0, w, w, 0, HAND, false, COMMANDS.POLYGONV[0], COMMANDS.POLYGONV[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     cn.ctrls=ctrls;
 
@@ -6562,8 +6549,8 @@ var factor=1.25;
 
     var cn=new stripH(
             new propC(getGUID(), parent, 205, 255, w+10, w, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
-            getStyle(STYLES.CONTAINER),
-            getStyle(STYLES.TEXT));
+            new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
+            new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
     //~ Conics (S) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //~ CONIC:        [-700,  'Conic',            'CONIC'                 ],
@@ -6573,28 +6560,28 @@ var factor=1.25;
     //~ S_5VERTICES:    [-703,  'Conic5VERTICES',     'CONIC5VERTICES'    ],
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 0*w, 0, w, w, 0, HAND, false, COMMANDS.CONIC[0], COMMANDS.CONIC[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 1*w, 0, w, w, 0, HAND, false, COMMANDS.S_ELLIPSE[0], COMMANDS.S_ELLIPSE[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 2*w, 0, w, w, 0, HAND, false, COMMANDS.S_HYPERBOLA[0], COMMANDS.S_HYPERBOLA[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 3*w, 0, w, w, 0, HAND, false, COMMANDS.S_PARABOLA[0], COMMANDS.S_PARABOLA[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 4*w, 0, w, w, 0, HAND, false, COMMANDS.S_5VERTICES[0], COMMANDS.S_5VERTICES[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     cn.ctrls=ctrls;
 
@@ -6612,21 +6599,21 @@ var factor=1.25;
 
     var cn=new stripH(
             new propC(getGUID(), parent, 205, 285, w+10, w, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
-            getStyle(STYLES.CONTAINER),
-            getStyle(STYLES.TEXT));
+            new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
+            new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
     //~ Angle ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //~ ANGLE:        [-800,  'Angle',            'ANGLE'                 ],
     //~ ANGLE_SIZE:   [-801,  'AngelSize',        'ANGELSIZE'             ],
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 0*w, 0, w, w, 0, HAND, false, COMMANDS.ANGLE[0], COMMANDS.ANGLE[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 1*w, 0, w, w, 0, HAND, false, COMMANDS.ANGLE_SIZE[0], COMMANDS.ANGLE_SIZE[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     cn.ctrls=ctrls;
 
@@ -6644,21 +6631,21 @@ var factor=1.25;
 
     var cn=new stripH(
             new propC(getGUID(), parent, 205, 315, w+10, w, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
-            getStyle(STYLES.CONTAINER),
-            getStyle(STYLES.TEXT));
+            new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
+            new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
     //~ Annotation ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //~ TEXT:         [-900,  'Text',             'TEXT'                  ],
     //~ TEXT:         [-901,  'Text',             'TEXT'                  ],
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 0*w, 0, w, w, 0, HAND, false, COMMANDS.TEXT[0], COMMANDS.TEXT[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 1*w, 0, w, w, 0, HAND, false, COMMANDS.TEXT[0], COMMANDS.TEXT[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     cn.ctrls=ctrls;
 
@@ -6676,8 +6663,8 @@ var factor=1.25;
 
     var cn=new stripH(
             new propC(getGUID(), parent, 205, 345, w+10, w, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
-            getStyle(STYLES.CONTAINER),
-            getStyle(STYLES.TEXT));
+            new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
+            new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
     //~ MODIFY:       [ 600,  'Modify',           'MODIFY'                ],
     //~ TRANSLATE:    [ 601,  'Translate',        'TRANSLATE'             ],
@@ -6696,33 +6683,33 @@ var factor=1.25;
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 0*w, 0, w, w, 0, HAND, false, COMMANDS.TRANSLATE[0], COMMANDS.TRANSLATE[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 1*w, 0, w, w, 0, HAND, false, COMMANDS.TRANSLATE[0], COMMANDS.TRANSLATE[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 2*w, 0, w, w, 0, HAND, false, COMMANDS.REFLECT[0], COMMANDS.REFLECT[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 3*w, 0, w, w, 0, HAND, false, COMMANDS.ROTATE[0], COMMANDS.ROTATE[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 4*w, 0, w, w, 0, HAND, false, COMMANDS.SCALE[0], COMMANDS.SCALE[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 5*w, 0, w, w, 0, HAND, false, COMMANDS.SHEAR[0], COMMANDS.SHEAR[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     cn.ctrls=ctrls;
 
@@ -6740,8 +6727,8 @@ var factor=1.25;
 
     var cn=new stripH(
             new propC(getGUID(), parent, 205, 375, w+10, w, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
-            getStyle(STYLES.CONTAINER),
-            getStyle(STYLES.TEXT));
+            new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
+            new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
     //~ MEASURE:      [ 700,  'Measure',          'MEASURE'               ],
     //~ DISTANCE:     [ 701,  'Distance',         'DISTANCE'              ],
@@ -6754,43 +6741,43 @@ var factor=1.25;
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 0*w, 0, w, w, 0, HAND, false, COMMANDS.DISTANCE[0], COMMANDS.DISTANCE[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 1*w, 0, w, w, 0, HAND, false, COMMANDS.DISTANCE[0], COMMANDS.DISTANCE[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 2*w, 0, w, w, 0, HAND, false, COMMANDS.PERIMETER[0], COMMANDS.PERIMETER[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 3*w, 0, w, w, 0, HAND, false, COMMANDS.AREA[0], COMMANDS.AREA[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 4*w, 0, w, w, 0, HAND, false, COMMANDS.VOLUME[0], COMMANDS.VOLUME[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 5*w, 0, w, w, 0, HAND, false, COMMANDS.RADIUS[0], COMMANDS.RADIUS[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 6*w, 0, w, w, 0, HAND, false, COMMANDS.DIAMETER[0], COMMANDS.DIAMETER[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 7*w, 0, w, w, 0, HAND, false, COMMANDS.SLOPE[0], COMMANDS.SLOPE[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     cn.ctrls=ctrls;
 
@@ -6806,230 +6793,229 @@ var factor=1.25;
     var h=15;
 
     var cn=new container(
-            new propC(getGUID(), parent, parent.w-205, 5, 200, parent.h-10, 3, ARROW, false, COMMANDS.UNDEF[0],COMMANDS.UNDEF[1]),
-            getStyle(STYLES.CONTAINER),
-            getStyle(STYLES.TEXT));
+            new propC(getGUID(), parent, 905, 40, 200, parent.h-200, 3, ARROW, false, COMMANDS.UNDEF[0],COMMANDS.UNDEF[1]),
+            new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
+            new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
     //~ Labels ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ctrls.push(new label(
                 new propC(getGUID(), cn, cn.w/2, 10, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.TELEMETRY[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXTCENTER)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.WHITE, CLRS.YELLOW, CENTER, CENTER, 11, 12)));
 
     ctrls.push(new label(
                 new propC(getGUID(), cn, 5, top+0*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.DEBUG[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new spacer(
                 new propC(getGUID(), cn, 5, top+1*h+5, 150, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[0]),
-                getStyle(STYLES.SPACER),
-                getStyle(STYLES.TEXT)));
+                new propL(getColor(CLRS.BLUE,50), CLRS.BLUE, CLRS.WHITE, CLRS.YELLOW, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new label(
                 new propC(getGUID(), cn, 5, top+2*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.WIDTH[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new label(
                 new propC(getGUID(), cn, 5, top+3*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.HEIGHT[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new spacer(
                 new propC(getGUID(), cn, 5, top+4*h+5, 150, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.SPACER[0]),
-                getStyle(STYLES.SPACER),
-                getStyle(STYLES.TEXT)));
+                new propL(getColor(CLRS.BLUE,50), CLRS.BLUE, CLRS.WHITE, CLRS.YELLOW, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new label(
                 new propC(getGUID(), cn, 5, top+5*h, 10, 10, 0, ARROW, false, COMMANDS.FRAMERATE[0], COMMANDS.FRAMERATE[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new label(
                 new propC(getGUID(), cn, 5, top+6*h, 10, 10, 0, ARROW, false, COMMANDS.FRAMERATEA[0], COMMANDS.FRAMERATEA[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new spacer(
                 new propC(getGUID(), cn, 5, top+7*h+5, 150, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.SPACER[0]),
-                getStyle(STYLES.SPACER),
-                getStyle(STYLES.TEXT)));
+                new propL(getColor(CLRS.BLUE,50), CLRS.BLUE, CLRS.WHITE, CLRS.YELLOW, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new label(
                 new propC(getGUID(), cn, 5, top+8*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.MOUSEX[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
 
     ctrls.push(new label(
                 new propC(getGUID(), cn, 5, top+9*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.MOUSEY[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new spacer(
                 new propC(getGUID(), cn, 5, top+10*h+5, 150, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.SPACER[0]),
-                getStyle(STYLES.SPACER),
-                getStyle(STYLES.TEXT)));
+                new propL(getColor(CLRS.BLUE,50), CLRS.BLUE, CLRS.WHITE, CLRS.YELLOW, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new label(
                 new propC(getGUID(), cn, 5, top+11*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.WORLDX[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
 
     ctrls.push(new label(
                 new propC(getGUID(), cn, 5, top+12*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.WORLDY[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new spacer(
                 new propC(getGUID(), cn, 5, top+13*h+5, 150, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.SPACER[0]),
-                getStyle(STYLES.SPACER),
-                getStyle(STYLES.TEXT)));
+                new propL(getColor(CLRS.BLUE,50), CLRS.BLUE, CLRS.WHITE, CLRS.YELLOW, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new label(
                 new propC(getGUID(), cn, 5, top+14*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.GRIDX[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
 
     ctrls.push(new label(
                 new propC(getGUID(), cn, 5, top+15*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.GRIDY[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new spacer(
                 new propC(getGUID(), cn, 5, top+16*h+5, 150, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.SPACER[0]),
-                getStyle(STYLES.SPACER),
-                getStyle(STYLES.TEXT)));
+                new propL(getColor(CLRS.BLUE,50), CLRS.BLUE, CLRS.WHITE, CLRS.YELLOW, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new label(
                 new propC(getGUID(), cn, 5, top+17*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.LEFT[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new label(
                 new propC(getGUID(), cn, 5, top+18*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.CENTER[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new label(
                 new propC(getGUID(), cn, 5, top+19*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.RIGHT[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new label(
                 new propC(getGUID(), cn, 5, top+21*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.FOCUS[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new label(
                 new propC(getGUID(), cn, 5, top+23*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new label(
                 new propC(getGUID(), cn, 5, top+25*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.FACTOR[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     //~ Values ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ctrls.push(new checkbox(
                 new propC(getGUID(), cn, 105, top+0*h+5, 10, 10, 0, HAND, false, COMMANDS.DEBUG[0], COMMANDS.DEBUG[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXTCENTER)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.WHITE, CLRS.YELLOW, CENTER, CENTER, 11, 12)));
 
     ctrls.push(new labelP(
                 new propC(getGUID(), cn, 100, top+2*h, 10, 10, 0, HAND, false, COMMANDS.WIDTH[0], COMMANDS.WIDTH[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new labelP(
                 new propC(getGUID(), cn, 100, top+3*h, 10, 10, 0, HAND, false, COMMANDS.HEIGHT[0], COMMANDS.HEIGHT[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new labelP(
                 new propC(getGUID(), cn, 100, top+5*h, 10, 10, 0, HAND, false, COMMANDS.FRAMERATE[0], COMMANDS.FRAMERATE[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new labelP(
                 new propC(getGUID(), cn, 100, top+6*h, 10, 10, 0, HAND, false, COMMANDS.FRAMERATEA[0], COMMANDS.FRAMERATEA[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new labelP(
                 new propC(getGUID(), cn, 100, top+8*h, 10, 10, 0, HAND, false, COMMANDS.MOUSEX[0], COMMANDS.MOUSEX[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
 
     ctrls.push(new labelP(
                 new propC(getGUID(), cn, 100, top+9*h, 10, 10, 0, HAND, false, COMMANDS.MOUSEY[0], COMMANDS.MOUSEY[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new labelP(
                 new propC(getGUID(), cn, 100, top+11*h, 10, 10, 0, HAND, false, COMMANDS.WORLDX[0], COMMANDS.WORLDX[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
 
     ctrls.push(new labelP(
                 new propC(getGUID(), cn, 100, top+12*h, 10, 10, 0, HAND, false, COMMANDS.WORLDY[0], COMMANDS.WORLDY[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new labelP(
                 new propC(getGUID(), cn, 100, top+14*h, 10, 10, 0, HAND, false, COMMANDS.GRIDX[0], COMMANDS.GRIDX[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
 
     ctrls.push(new labelP(
                 new propC(getGUID(), cn, 100, top+15*h, 10, 10, 0, HAND, false, COMMANDS.GRIDY[0], COMMANDS.GRIDY[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
 
     ctrls.push(new labelP(
                 new propC(getGUID(), cn, 100, top+17*h, 10, 10, 0, HAND, false, COMMANDS.LEFT[0], COMMANDS.LEFT[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new labelP(
                 new propC(getGUID(), cn, 100, top+18*h, 10, 10, 0, HAND, false, COMMANDS.CENTER[0], COMMANDS.CENTER[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new labelP(
                 new propC(getGUID(), cn, 100, top+19*h, 10, 10, 0, HAND, false, COMMANDS.RIGHT[0], COMMANDS.RIGHT[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new labelP(
                 new propC(getGUID(), cn, 50, top+21*h, 10, 10, 0, HAND, false, COMMANDS.FOCUS[0], COMMANDS.FOCUS[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new labelP(
                 new propC(getGUID(), cn, 100, top+23*h, 10, 10, 0, HAND, false, COMMANDS.COMMAND[0], COMMANDS.UNDEF[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new labelP(
                 new propC(getGUID(), cn, 100, top+25*h, 10, 10, 0, HAND, false, COMMANDS.FACTOR[0], COMMANDS.FACTOR[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     cn.ctrls=ctrls;
 
     return cn;
 
   };
-
 
   var getLineTypes=function(parent){
 
@@ -7043,8 +7029,8 @@ var factor=1.25;
 
     var cn=new stripV(
             new propC(getGUID(), parent, 90, 230, w, 15, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
-            getStyle(STYLES.CONTAINER),
-            getStyle(STYLES.TEXT));
+            new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
+            new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
     //~ LineTypes ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //~ LINETYPE:     [ 211,  'Line Type',        'LINE TYPE'             ],
@@ -7056,33 +7042,33 @@ var factor=1.25;
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 0, 0, w-16, 15, 0, HAND, false, COMMANDS.LT_SOLID[0], COMMANDS.LT_SOLID[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 0, 15, w, h, 0, HAND, false, COMMANDS.LT_HAIRLINE[0], COMMANDS.LT_HAIRLINE[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 0, 15+h, w, h, 0, HAND, false, COMMANDS.LT_SOLID[0], COMMANDS.LT_SOLID[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 0, 15+2*h, w, h, 0, HAND, false, COMMANDS.LT_DASHED[0], COMMANDS.LT_DASHED[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 0, 15+3*h, w, h, 0, HAND, false, COMMANDS.LT_DOTTED[0], COMMANDS.LT_DOTTED[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 0, 15+4*h, w, h, 0, HAND, false, COMMANDS.LT_DASHDOT[0], COMMANDS.LT_DASHDOT[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     cn.ctrls=ctrls;
 
@@ -7101,8 +7087,8 @@ var factor=1.25;
 
     var cn=new stripV(
             new propC(getGUID(), parent, 90, 110, w, 20, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
-            getStyle(STYLES.CONTAINER),
-            getStyle(STYLES.TEXT));
+            new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
+            new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
     //~ Colors
     //~
@@ -7115,88 +7101,88 @@ var factor=1.25;
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 0, 0, w-20, 15, 0, HAND, false, COMMANDS.STROKE[0], CLRS.Red),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 0,   15, h, h, 0, HAND, false, COMMANDS.STROKE[0], CLRS.Red),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, h,   15, h, h, 0, HAND, false, COMMANDS.STROKE[0], CLRS.RedOrange),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 2*h, 15, h, h, 0, HAND, false, COMMANDS.STROKE[0], CLRS.Orange),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 3*h, 15, h, h, 0, HAND, false, COMMANDS.STROKE[0], CLRS.YellowOrange),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 0,   40, h, h, 0, HAND, false, COMMANDS.STROKE[0], CLRS.Yellow),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, h,   40, h, h, 0, HAND, false, COMMANDS.STROKE[0], CLRS.YellowGreen),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 2*h, 40, h, h, 0, HAND, false, COMMANDS.STROKE[0], CLRS.Green),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 3*h, 40, h, h, 0, HAND, false, COMMANDS.STROKE[0], CLRS.BlueGreen),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 0,   65, h, h, 0, HAND, false, COMMANDS.STROKE[0], CLRS.Blue),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, h,   65, h, h, 0, HAND, false, COMMANDS.STROKE[0], CLRS.BlueViolet),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 2*h, 65, h, h, 0, HAND, false, COMMANDS.STROKE[0], CLRS.Violet),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 3*h, 65, h, h, 0, HAND, false, COMMANDS.STROKE[0], CLRS.RedViolet),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 0,   90, h, h, 0, HAND, false, COMMANDS.STROKE[0], CLRS.White),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, h,   90, h, h, 0, HAND, false, COMMANDS.STROKE[0], CLRS.Gray3),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 2*h, 90, h, h, 0, HAND, false, COMMANDS.STROKE[0], CLRS.Gray6),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 3*h, 90, h, h, 0, HAND, false, COMMANDS.STROKE[0], CLRS.Black),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
 
     cn.ctrls=ctrls;
@@ -7216,8 +7202,8 @@ var factor=1.25;
 
     var cn=new stripV(
             new propC(getGUID(), parent, 90, 170, w, 20, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
-            getStyle(STYLES.CONTAINER),
-            getStyle(STYLES.TEXT));
+            new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
+            new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
     //~ Colors
     //~
@@ -7230,88 +7216,88 @@ var factor=1.25;
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 0, 0, w-20, 15, 0, HAND, false, COMMANDS.FILL[0], CLRS.Red),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 0,   15, h, h, 0, HAND, false, COMMANDS.FILL[0], CLRS.Red),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, h,   15, h, h, 0, HAND, false, COMMANDS.FILL[0], CLRS.RedOrange),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 2*h, 15, h, h, 0, HAND, false, COMMANDS.FILL[0], CLRS.Orange),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 3*h, 15, h, h, 0, HAND, false, COMMANDS.FILL[0], CLRS.YellowOrange),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 0,   40, h, h, 0, HAND, false, COMMANDS.FILL[0], CLRS.Yellow),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, h,   40, h, h, 0, HAND, false, COMMANDS.FILL[0], CLRS.YellowGreen),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 2*h, 40, h, h, 0, HAND, false, COMMANDS.FILL[0], CLRS.Green),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 3*h, 40, h, h, 0, HAND, false, COMMANDS.FILL[0], CLRS.BlueGreen),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 0,   65, h, h, 0, HAND, false, COMMANDS.FILL[0], CLRS.Blue),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, h,   65, h, h, 0, HAND, false, COMMANDS.FILL[0], CLRS.BlueViolet),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 2*h, 65, h, h, 0, HAND, false, COMMANDS.FILL[0], CLRS.Violet),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 3*h, 65, h, h, 0, HAND, false, COMMANDS.FILL[0], CLRS.RedViolet),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 0,   90, h, h, 0, HAND, false, COMMANDS.FILL[0], CLRS.White),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, h,   90, h, h, 0, HAND, false, COMMANDS.FILL[0], CLRS.Gray3),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 2*h, 90, h, h, 0, HAND, false, COMMANDS.FILL[0], CLRS.Gray6),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 3*h, 90, h, h, 0, HAND, false, COMMANDS.FILL[0], CLRS.Black),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
 
     cn.ctrls=ctrls;
@@ -7326,14 +7312,14 @@ var factor=1.25;
     var top=30;
     var h=20;
     var l=10;
-    var ch=parent.h-10;
+    var ch=300;
     var col0=5;
     var col1=90;
 
     var cn=new container(
-            new propC(getGUID(),parent, 5, 5, 200, ch, 3, ARROW, false, COMMANDS.CONTAINER[0],COMMANDS.CONTAINER[1]),
-            getStyle(STYLES.CONTAINER),
-            getStyle(STYLES.TEXT));
+            new propC(getGUID(),parent, 300, 170, 200, 275, 3, ARROW, false, COMMANDS.CONTAINER[0],COMMANDS.CONTAINER[1]),
+            new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
+            new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
     //~ Name
     //~ Caption
@@ -7350,63 +7336,63 @@ var factor=1.25;
 
     ctrls.push(new label(
                 new propC(getGUID(), cn, cn.w/2, 10, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.PROPERTIES[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXTCENTER)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.WHITE, CLRS.YELLOW, CENTER, CENTER, 11, 12)));
 
     ctrls.push(new label(
                 new propC(getGUID(), cn, col0, top+0*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.NAME[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new label(
                 new propC(getGUID(), cn, col0, top+1*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.CAPTION[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new label(
                 new propC(getGUID(), cn, col0, top+2*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.FORMULA[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new spacer(
-                new propC(getGUID(), cn, col0, top+3*h+5, 150, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.SPACER[0]),
-                getStyle(STYLES.SPACER),
-                getStyle(STYLES.TEXT)));
+                new propC(getGUID(), cn, col0, top+3*h+5, 190, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.SPACER[0]),
+                new propL(getColor(CLRS.BLUE,50), CLRS.BLUE, CLRS.WHITE, CLRS.YELLOW, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new label(
                 new propC(getGUID(), cn, col0, top+4*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.STROKE[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new label(
                 new propC(getGUID(), cn, col0, top+5*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.STROKEA[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new label(
                 new propC(getGUID(), cn, col0, top+7*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.FILL[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new label(
                 new propC(getGUID(), cn, col0, top+8*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.FILLA[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new label(
                 new propC(getGUID(), cn, col0, top+10*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.LINETYPE[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new label(
                 new propC(getGUID(), cn, col0, top+11*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.LINEWEIGHT[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     //~ ctrls.push(new label(
                 //~ new propC(getGUID(), cn, l+5, top+9*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.LAYER[1]),
-                //~ getStyle(STYLES.BUTTON),
-                //~ getStyle(STYLES.TEXT)));
+                //~ new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                //~ new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new textBox(
                 new propC(getGUID(), cn, col1, top+0*h, 100, 14, 0, TEXT, false, COMMANDS.NAME[0], COMMANDS.NAME[1]),
@@ -7425,13 +7411,13 @@ var factor=1.25;
 
     ctrls.push(new sliderH(
                 new propC(getGUID(), cn, col1, top+5*h, 100, 8, 5, HAND, app.strokeA, COMMANDS.STROKEA[0], COMMANDS.STROKEA[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new sliderH(
                 new propC(getGUID(), cn, col1, top+8*h, 100, 8, 5, HAND, app.fillA, COMMANDS.FILLA[0], COMMANDS.FILLA[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new textBox(
                 new propC(getGUID(), cn, col1, top+11*h, 100, 14, 0, HAND, app.lineweight, COMMANDS.LINEWEIGHT[0], COMMANDS.LINEWEIGHT[1]),
@@ -7440,8 +7426,8 @@ var factor=1.25;
 
     //~ ctrls.push(new labelP(
                 //~ new propC(getGUID(), cn, l+100, top+9*h, 10, 10, 0, false, COMMANDS.LAYER[0], COMMANDS.LAYER[1]),
-                //~ getStyle(STYLES.BUTTON),
-                //~ getStyle(STYLES.TEXT)));
+                //~ new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                //~ new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(getLineTypes(cn));
     ctrls.push(getFill(cn));
@@ -7462,188 +7448,189 @@ var factor=1.25;
     var ch=200;
 
     var cn=new container(
-            new propC(getGUID(),parent, 10, 260, 180, 270, 3, false, COMMANDS.UNDEF[0],0),
-            getStyle(STYLES.CONTAINER),
-            getStyle(STYLES.TEXT));
+            new propC(getGUID(),parent, 900, 220, 180, 270, 3, ARROW, false, COMMANDS.UNDEF[0],0),
+            new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
+            new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
     //~ Colors
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+0*h, top, h, h, 0, false, COMMANDS.STROKE[1] ,CLRS.Red),
+                new propC(getGUID(),cn, l+0*h, top, h, h, 0, HAND, false, COMMANDS.STROKE[1] ,CLRS.Red),
                 new propL(CLRS.Red, CLRS.Red, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
-                getStyle(STYLES.TEXT)));
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+1*h+5, top, h, h, 0, false, COMMANDS.STROKE[1], CLRS.RedOrange),
+                new propC(getGUID(),cn, l+1*h+5, top, h, h, 0, HAND, false, COMMANDS.STROKE[1], CLRS.RedOrange),
                 new propL(CLRS.RedOrange, CLRS.RedOrange, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
-                getStyle(STYLES.TEXT)));
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+2*h+10, top, h, h, 0, false, COMMANDS.STROKE[1], CLRS.Orange),
+                new propC(getGUID(),cn, l+2*h+10, top, h, h, 0, HAND, false, COMMANDS.STROKE[1], CLRS.Orange),
                 new propL(CLRS.Orange, CLRS.Orange, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
-                getStyle(STYLES.TEXT)));
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+3*h+15, top, h, h, 0, false, COMMANDS.STROKE[1], CLRS.YellowOrange),
+                new propC(getGUID(),cn, l+3*h+15, top, h, h, 0, HAND, false, COMMANDS.STROKE[1], CLRS.YellowOrange),
                 new propL(CLRS.YellowOrange, CLRS.YellowOrange, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
-                getStyle(STYLES.TEXT)));
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+4*h+20, top, h, h, 0, false, COMMANDS.STROKE[1], CLRS.Yellow),
+                new propC(getGUID(),cn, l+4*h+20, top, h, h, 0, HAND, false, COMMANDS.STROKE[1], CLRS.Yellow),
                 new propL(CLRS.Yellow, CLRS.Yellow, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
-                getStyle(STYLES.TEXT)));
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+5*h+25, top, h, h, 0, false, COMMANDS.STROKE[1], CLRS.YellowGreen),
+                new propC(getGUID(),cn, l+5*h+25, top, h, h, 0, HAND, false, COMMANDS.STROKE[1], CLRS.YellowGreen),
                 new propL(CLRS.YellowGreen, CLRS.YellowGreen, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
-                getStyle(STYLES.TEXT)));
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+0*h, top+1*h+5, h, h, 0, false, COMMANDS.STROKE[1], CLRS.Green),
+                new propC(getGUID(),cn, l+0*h, top+1*h+5, h, h, 0, HAND, false, COMMANDS.STROKE[1], CLRS.Green),
                 new propL(CLRS.Green, CLRS.Green, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
-                getStyle(STYLES.TEXT)));
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+1*h+5, top+1*h+5, h, h, 0, false, COMMANDS.STROKE[1], CLRS.BlueGreen),
+                new propC(getGUID(),cn, l+1*h+5, top+1*h+5, h, h, 0, HAND, false, COMMANDS.STROKE[1], CLRS.BlueGreen),
                 new propL(CLRS.BlueGreen, CLRS.BlueGreen, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
-                getStyle(STYLES.TEXT)));
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+2*h+10, top+1*h+5, h, h, 0, false, COMMANDS.STROKE[1], CLRS.Blue),
+                new propC(getGUID(),cn, l+2*h+10, top+1*h+5, h, h, 0, HAND, false, COMMANDS.STROKE[1], CLRS.Blue),
                 new propL(CLRS.Blue, CLRS.Blue, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
-                getStyle(STYLES.TEXT)));
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+3*h+15, top+1*h+5, h, h, 0, false, COMMANDS.STROKE[1], CLRS.BlueViolet),
+                new propC(getGUID(),cn, l+3*h+15, top+1*h+5, h, h, 0, HAND, false, COMMANDS.STROKE[1], CLRS.BlueViolet),
                 new propL(CLRS.BlueViolet, CLRS.BlueViolet, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
-                getStyle(STYLES.TEXT)));
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+4*h+20, top+1*h+5, h, h, 0, false, COMMANDS.STROKE[1], CLRS.Violet),
+                new propC(getGUID(),cn, l+4*h+20, top+1*h+5, h, h, 0, HAND, false, COMMANDS.STROKE[1], CLRS.Violet),
                 new propL(CLRS.Violet, CLRS.Violet, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
-                getStyle(STYLES.TEXT)));
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+5*h+25, top+1*h+5, h, h, 0, false, COMMANDS.STROKE[1], CLRS.RedViolet),
+                new propC(getGUID(),cn, l+5*h+25, top+1*h+5, h, h, 0, HAND, false, COMMANDS.STROKE[1], CLRS.RedViolet),
                 new propL(getColor(CLRS.RedViolet,90), CLRS.RedViolet, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
-                getStyle(STYLES.TEXT)));
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     //~ Gray Scale
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+0*h, top+2*h+10, h, h, 0, false, COMMANDS.STROKE[1] ,CLRS.White),
+                new propC(getGUID(),cn, l+0*h, top+2*h+10, h, h, 0, HAND, false, COMMANDS.STROKE[1] ,CLRS.White),
                 new propL(CLRS.White, CLRS.White, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
-                getStyle(STYLES.TEXT)));
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+1*h+5, top+2*h+10, h, h, 0, false, COMMANDS.STROKE[1], CLRS.Gray1),
+                new propC(getGUID(),cn, l+1*h+5, top+2*h+10, h, h, 0, HAND, false, COMMANDS.STROKE[1], CLRS.Gray1),
                 new propL(CLRS.Gray1, CLRS.Gray1, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
-                getStyle(STYLES.TEXT)));
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+2*h+10, top+2*h+10, h, h, 0, false, COMMANDS.STROKE[1], CLRS.Gray2),
+                new propC(getGUID(),cn, l+2*h+10, top+2*h+10, h, h, 0, HAND, false, COMMANDS.STROKE[1], CLRS.Gray2),
                 new propL(CLRS.Gray2, CLRS.Gray2, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
-                getStyle(STYLES.TEXT)));
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+3*h+15, top+2*h+10, h, h, 0, false, COMMANDS.STROKE[1], CLRS.Gray3),
+                new propC(getGUID(),cn, l+3*h+15, top+2*h+10, h, h, 0, HAND, false, COMMANDS.STROKE[1], CLRS.Gray3),
                 new propL(CLRS.Gray3, CLRS.Gray3, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
-                getStyle(STYLES.TEXT)));
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+4*h+20, top+2*h+10, h, h, 0, false, COMMANDS.STROKE[1], CLRS.Gray4),
+                new propC(getGUID(),cn, l+4*h+20, top+2*h+10, h, h, 0, HAND, false, COMMANDS.STROKE[1], CLRS.Gray4),
                 new propL(CLRS.Gray4, CLRS.Gray4, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
-                getStyle(STYLES.TEXT)));
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+5*h+25, top+2*h+10, h, h, 0, false, COMMANDS.STROKE[1], CLRS.Gray5),
+                new propC(getGUID(),cn, l+5*h+25, top+2*h+10, h, h, 0, HAND, false, COMMANDS.STROKE[1], CLRS.Gray5),
                 new propL(CLRS.Gray5, CLRS.Gray5, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
-                getStyle(STYLES.TEXT)));
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+0*h, top+3*h+15, h, h, 0, false, COMMANDS.STROKE[1], CLRS.Gray6),
+                new propC(getGUID(),cn, l+0*h, top+3*h+15, h, h, 0, HAND, false, COMMANDS.STROKE[1], CLRS.Gray6),
                 new propL(CLRS.Gray6, CLRS.Gray6, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
-                getStyle(STYLES.TEXT)));
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+1*h+5, top+3*h+15, h, h, 0, false, COMMANDS.STROKE[1], CLRS.Gray7),
+                new propC(getGUID(),cn, l+1*h+5, top+3*h+15, h, h, 0, HAND, false, COMMANDS.STROKE[1], CLRS.Gray7),
                 new propL(CLRS.Gray7, CLRS.Gray7, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
-                getStyle(STYLES.TEXT)));
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+2*h+10, top+3*h+15, h, h, 0, false, COMMANDS.STROKE[1], CLRS.Gray8),
+                new propC(getGUID(),cn, l+2*h+10, top+3*h+15, h, h, 0, HAND, false, COMMANDS.STROKE[1], CLRS.Gray8),
                 new propL(CLRS.Gray8, CLRS.Gray8, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
-                getStyle(STYLES.TEXT)));
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+3*h+15, top+3*h+15, h, h, 0, false, COMMANDS.STROKE[1], CLRS.Gray9),
+                new propC(getGUID(),cn, l+3*h+15, top+3*h+15, h, h, 0, HAND, false, COMMANDS.STROKE[1], CLRS.Gray9),
                 new propL(CLRS.Gray9, CLRS.Gray9, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
-                getStyle(STYLES.TEXT)));
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+4*h+20, top+3*h+15, h, h, 0, false, COMMANDS.STROKE[1], CLRS.Gray10),
+                new propC(getGUID(),cn, l+4*h+20, top+3*h+15, h, h, 0, HAND, false, COMMANDS.STROKE[1], CLRS.Gray10),
                 new propL(CLRS.Gray10, CLRS.Gray10, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
-                getStyle(STYLES.TEXT)));
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
-                new propC(getGUID(),cn, l+5*h+25, top+3*h+15, h, h, 0, false, COMMANDS.STROKE[1], CLRS.Black),
+                new propC(getGUID(),cn, l+5*h+25, top+3*h+15, h, h, 0, HAND, false, COMMANDS.STROKE[1], CLRS.Black),
                 new propL(getColor(CLRS.Black,90), CLRS.Black, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
-                getStyle(STYLES.TEXT)));
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     //~ Current Color
     ctrls.push(new buttonP(
-                new propC(getGUID(),cn, l+5*h+25, top+5*h+15, 40, 40, 0, false, COMMANDS.COLORG[0], COMMANDS.COLORG[0]),
+                new propC(getGUID(),cn, l+5*h+25, top+5*h+15, 40, 40, 0, HAND, false, COMMANDS.COLORG[0], COMMANDS.COLORG[0]),
                 new propL(getColor(CLRS.YELLOW,90), CLRS.YELLOW, CLRS.YELLOW, CLRS.YELLOW, 0.125, 0.25),
-                getStyle(STYLES.TEXT)));
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, l, top+5*h+20, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.RED[1]),
-                getStyle(STYLES.BUTTON),
+                new propC(getGUID(), cn, l, top+5*h+20, 10, 10, 0, HAND, false, COMMANDS.UNDEF[0], COMMANDS.RED[1]),
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.RED, CLRS.YELLOW, LEFT, CENTER, 14, 14)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, l, top+5*h+40, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.GREEN[1]),
-                getStyle(STYLES.BUTTON),
+                new propC(getGUID(), cn, l, top+5*h+40, 10, 10, 0, HAND, false, COMMANDS.UNDEF[0], COMMANDS.GREEN[1]),
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GREEN, CLRS.YELLOW, LEFT, CENTER, 14, 14)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, l, top+5*h+60, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.BLUE[1]),
-                getStyle(STYLES.BUTTON),
+                new propC(getGUID(), cn, l, top+5*h+60, 10, 10, 0, HAND, false, COMMANDS.UNDEF[0], COMMANDS.BLUE[1]),
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.BLUE, CLRS.YELLOW, LEFT, CENTER, 14, 14)));
 
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, l+60, top+5*h+20, 10, 10, 0, false, COMMANDS.RED[0], COMMANDS.RED[1]),
-                getStyle(STYLES.BUTTON),
+                new propC(getGUID(), cn, l+60, top+5*h+20, 10, 10, 0, HAND, false, COMMANDS.RED[0], COMMANDS.RED[1]),
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.RED, CLRS.YELLOW, LEFT, CENTER, 14, 14)));
 
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, l+60, top+5*h+40, 10, 10, 0, false, COMMANDS.GREEN[0], COMMANDS.GREEN[1]),
-                getStyle(STYLES.BUTTON),
+                new propC(getGUID(), cn, l+60, top+5*h+40, 10, 10, 0, HAND, false, COMMANDS.GREEN[0], COMMANDS.GREEN[1]),
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GREEN, CLRS.YELLOW, LEFT, CENTER, 14, 14)));
 
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, l+60, top+5*h+60, 10, 10, 0, false, COMMANDS.BLUE[0], COMMANDS.BLUE[1]),
-                getStyle(STYLES.BUTTON),
+                new propC(getGUID(), cn, l+60, top+5*h+60, 10, 10, 0, HAND, false, COMMANDS.BLUE[0], COMMANDS.BLUE[1]),
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.BLUE, CLRS.YELLOW, LEFT, CENTER, 16, 16)));
 
     ctrls.push(new sliderH(
-                new propC(getGUID(), cn, l, top+5*h+90, 128, 10, 5, 10, COMMANDS.RED[0], false),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propC(getGUID(), cn, l, top+5*h+90, 128, 10, 5, HAND, 10, COMMANDS.RED[0], false),
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new sliderH(
-                new propC(getGUID(), cn, l, top+5*h+110, 128, 10, 5, 10, COMMANDS.GREEN[0], false),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propC(getGUID(), cn, l, top+5*h+110, 128, 10, 5, HAND, 10, COMMANDS.GREEN[0], false),
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new sliderH(
-                new propC(getGUID(), cn, l, top+5*h+130, 128, 10, 5, 10, COMMANDS.BLUE[0], false),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propC(getGUID(), cn, l, top+5*h+130, 128, 10, 5, HAND, 10, COMMANDS.BLUE[0], false),
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     cn.ctrls=ctrls;
 
     return cn;
 
   };
+
   var getHeader=function(parent){
 
     var ctrls=[];
@@ -7652,8 +7639,8 @@ var factor=1.25;
 
     var cn=new container(
             new propC(getGUID(), parent, parent.w/2-400, -5, 800, 45, 5, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.HEADER[1]),
-            getStyle(STYLES.CONTAINER),
-            getStyle(STYLES.TEXT));
+            new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
+            new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
     cn.ctrls=ctrls;
 
@@ -7668,38 +7655,38 @@ var factor=1.25;
     var w=24;
 
     var cn=new container(
-            new propC(getGUID(), parent, parent.w/2-300, app.height-30, 600, 34, 2, ARROW, false, COMMANDS.UNDEF[0],COMMANDS.UNDEF[1]),
-            getStyle(STYLES.CONTAINER),
-            getStyle(STYLES.TITLE));
+            new propC(getGUID(), parent, parent.x+210, app.height-30, parent.w-215, 28, 0, ARROW, false, COMMANDS.UNDEF[0],COMMANDS.UNDEF[1]),
+            new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
+            new propA(CLRS.WHITE, CLRS.YELLOW, LEFT, CENTER, 12, 14));
 
     ctrls.push(new label(
                 new propC(getGUID(), cn, 100, 3, w, w, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.COMMAND[1]+":"),
-                getStyle(STYLES.BUTTON),
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 12, 12)));
 
     ctrls.push(new textBox(
                 new propC(getGUID(), cn, 180, 3, 340, 24, 0, HAND, false, COMMANDS.STG[0], getColor(CLRS.GRAY,25)),
                 new propL(CLRS.Gray8, CLRS.GRAY, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
-                getStyle(STYLES.TEXT)));
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonT(
                 new propC(getGUID(), cn, 3, 3, w, w, 0, HAND, false, COMMANDS.STG[0], getColor(CLRS.GRAY,25)),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonT(
                 new propC(getGUID(), cn, 27, 3, w, w, 0, HAND, false,COMMANDS.ORTHO[0], COMMANDS.UNDEF[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonT(
                 new propC(getGUID(), cn, 51, 3, w, w, 0, HAND, false, COMMANDS.LINES[0], COMMANDS.UNDEF[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new labelP(
                 new propC(getGUID(), cn, cn.w-10, 9, 10, 10, 0, ARROW, false, COMMANDS.COORDINATES[0], COMMANDS.COORDINATES[1]),
-                getStyle(STYLES.BUTTON),
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, RIGHT, CENTER, 12, 12)));
 
     cn.ctrls=ctrls;
@@ -7716,23 +7703,23 @@ var factor=1.25;
 
     var cn=new container(
             new propC(getGUID(), parent, parent.w-340, app.height-30, 78, 34, 2, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
-            getStyle(STYLES.CONTAINER),
-            getStyle(STYLES.TITLE));
+            new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
+            new propA(CLRS.WHITE, CLRS.YELLOW, LEFT, CENTER, 12, 14));
 
     ctrls.push(new buttonT(
                 new propC(getGUID(), cn, 3, 3, w, w, 0, HAND, false, COMMANDS.PAN[0], COMMANDS.PAN[0]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonT(
                 new propC(getGUID(), cn, 27, 3, w, w, 0, HAND, false, COMMANDS.ZOOMIN[0], COMMANDS.ZOOMIN[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonT(
                 new propC(getGUID(), cn, 51, 3, w, w, 0, HAND, false, COMMANDS.ZOOMOUT[0], COMMANDS.ZOOMOUT[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     cn.ctrls=ctrls;
 
@@ -7747,34 +7734,34 @@ var factor=1.25;
     var w=24;
 
     var cn=new container(
-            new propC(getGUID(), parent, 600, 300, 150, 34, 2, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
-            getStyle(STYLES.CONTAINER),
-            getStyle(STYLES.TITLE));
+            new propC(getGUID(), parent, 600, 300, 150, 34, 2, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
+            new propA(CLRS.WHITE, CLRS.YELLOW, LEFT, CENTER, 12, 14));
 
     ctrls.push(new buttonT(
-                new propC(getGUID(), cn, 3, 3, w, w, 0, false, COMMANDS.SELECT[0], COMMANDS.SELECT[0]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propC(getGUID(), cn, 3, 3, w, w, 0, HAND, false, COMMANDS.SELECT[0], COMMANDS.SELECT[0]),
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonT(
-                new propC(getGUID(), cn, 27, 3, w, w, 0, false, COMMANDS.SELECTALL[0], COMMANDS.SELECTALL[0]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propC(getGUID(), cn, 27, 3, w, w, 0, HAND, false, COMMANDS.SELECTALL[0], COMMANDS.SELECTALL[0]),
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonT(
-                new propC(getGUID(), cn, 51, 3, w, w, 0, false, COMMANDS.SELECT_WINDOW[0], COMMANDS.SELECT_WINDOW[0]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propC(getGUID(), cn, 51, 3, w, w, 0, HAND, false, COMMANDS.SELECT_WINDOW[0], COMMANDS.SELECT_WINDOW[0]),
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonT(
-                new propC(getGUID(), cn, 75, 3, w, w, 0, false, COMMANDS.UNDO[0], COMMANDS.UNDO[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propC(getGUID(), cn, 75, 3, w, w, 0, HAND, false, COMMANDS.UNDO[0], COMMANDS.UNDO[1]),
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonT(
-                new propC(getGUID(), cn, 99, 3, w, w, 0, false, COMMANDS.REDO[0], COMMANDS.REDO[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propC(getGUID(), cn, 99, 3, w, w, 0, HAND, false, COMMANDS.REDO[0], COMMANDS.REDO[1]),
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     cn.ctrls=ctrls;
 
@@ -7792,14 +7779,14 @@ var factor=1.25;
 
     var cn=new containerS(
             new propC(getGUID(), parent, parent.w/2-w/2, 100, w, 100, 2, false, COMMANDS.UNDEF[0],COMMANDS.VIEW[1]),
-            getStyle(STYLES.CONTAINER),
-            getStyle(STYLES.TITLE));
+            new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
+            new propA(CLRS.WHITE, CLRS.YELLOW, LEFT, CENTER, 12, 14));
 
     for(var n=0; n<10; n++){
       ctrls.push(new preset(
                   new propC(getGUID(), cn, 20+n*incr, 5, incr, 90, n, n, n),
-                  getStyle(STYLES.BUTTON),
-                  getStyle(STYLES.TEXT)));
+                  new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                  new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
     }
 
     cn.ctrls=ctrls;
@@ -7813,19 +7800,19 @@ var factor=1.25;
     var ctrls=[];
 
     var cn=new grid(
-            new propC(getGUID(), parent, 210, 10, parent.w-440, parent.h-20, 5, ARROW, false, COMMANDS.UNDEF[0], 0),
+            new propC(getGUID(), parent, parent.x+210, parent.y+5, parent.w-215, parent.h-40, 5, ARROW, false, COMMANDS.UNDEF[0], 0),
             new propL(CLRS.GRID, getColor(CLRS.GRID,65), CLRS.WHITE, CLRS.YELLOW, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
     //~ ctrls.push(new labelR(
             //~ new propC(getGUID(), cn, cn.w/2, cn.h/2, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.CARTESIA[1]),
-            //~ getStyle(STYLES.BUTTON),
-            //~ getStyle(STYLES.TEXTCENTER)));
+            //~ new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+            //~ new propA(CLRS.WHITE, CLRS.YELLOW, CENTER, CENTER, 11, 12)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, cn.x+cn.w-26, cn.y, 24, 24, 0, HAND, false, COMMANDS.GRIDPROPS[0], COMMANDS.GRIDPROPS[1]),
                 new propL(CLRS.TRANSPARENT, CLRS.TRANSPARENT, CLRS.Gray6, CLRS.Gray3, 0.125, 0.25),
-                getStyle(STYLES.TEXT)));
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(getGridProps(cn));
 
@@ -7847,218 +7834,246 @@ var factor=1.25;
     var cn=new cnProps(
             new propC(getGUID(),parent, l, parent.y+25, 120, 290, 3, ARROW, false, COMMANDS.GRIDPROPS[0], COMMANDS.GRIDPROPS[1]),
             new propL(getColor(CLRS.GRID,40), CLRS.GRID, CLRS.WHITE, CLRS.YELLOW, 0.125, 0.25),
-            getStyle(STYLES.TEXT));
+            new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
     //~ ctrls.push(new buttonS(
                 //~ new propC(getGUID(), cn, 98, 2, 24, 24, 0, false, COMMANDS.GRIDPROPS[0], COMMANDS.GRIDPROPS[1]),
                 //~ new propL(CLRS.TRANSPARENT, CLRS.TRANSPARENT, CLRS.Gray6, CLRS.Gray3, 0.125, 0.25),
-                //~ getStyle(STYLES.TEXT)));
+                //~ new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     //~ Labels ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     //~ Origin
     ctrls.push(new label(
                 new propC(getGUID(), cn, 10, top+0*h, 10, 10, 0, HAND, false, COMMANDS.ORIGIN[0], COMMANDS.ORIGIN[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
 
 
     ctrls.push(new spacer(
                 new propC(getGUID(), cn, 5, top+1*h+5, 110, 10, 0, ARROW, false, COMMANDS.SPACER[0], COMMANDS.SPACER[0]),
-                getStyle(STYLES.SPACER),
-                getStyle(STYLES.TEXT)));
+                new propL(getColor(CLRS.BLUE,50), CLRS.BLUE, CLRS.WHITE, CLRS.YELLOW, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
 
     //~ Axes
     ctrls.push(new label(
                 new propC(getGUID(), cn, 10, top+2*h, 10, 10, 0, HAND, false, COMMANDS.AXES[0], COMMANDS.AXES[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new label(
                 new propC(getGUID(), cn, lX, top+2*h, 10, 10, 0, HAND, false, COMMANDS.AXISX[0], COMMANDS.AXISX[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new label(
                 new propC(getGUID(), cn, lX, top+3*h, 10, 10, 0, HAND, false, COMMANDS.AXISY[0], COMMANDS.AXISY[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
 
 
     ctrls.push(new spacer(
                 new propC(getGUID(), cn, 5, top+4*h+5, 110, 10, 0, ARROW, false, COMMANDS.SPACER[0], COMMANDS.SPACER[0]),
-                getStyle(STYLES.SPACER),
-                getStyle(STYLES.TEXT)));
+                new propL(getColor(CLRS.BLUE,50), CLRS.BLUE, CLRS.WHITE, CLRS.YELLOW, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
 
     //~ Lines
     ctrls.push(new label(
                 new propC(getGUID(), cn, 10, top+5*h, 10, 10, 0, HAND, false, COMMANDS.LINES[0], COMMANDS.LINES[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new label(
                 new propC(getGUID(), cn, lX, top+5*h, 10, 10, 0, HAND, false, COMMANDS.LINESX[0], COMMANDS.LINESX[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new label(
                 new propC(getGUID(), cn, lX, top+6*h, 10, 10, 0, HAND, false, COMMANDS.LINESY[0], COMMANDS.LINESY[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
 
     ctrls.push(new spacer(
                 new propC(getGUID(), cn, 5, top+7*h+5, 110, 10, 0, ARROW, false, COMMANDS.SPACER[0], COMMANDS.SPACER[0]),
-                getStyle(STYLES.SPACER),
-                getStyle(STYLES.TEXT)));
+                new propL(getColor(CLRS.BLUE,50), CLRS.BLUE, CLRS.WHITE, CLRS.YELLOW, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
 
     //~ Arrows
     ctrls.push(new label(
                 new propC(getGUID(), cn, 10, top+8*h, 10, 10, 0, HAND, false, COMMANDS.ARROWS[0], COMMANDS.ARROWS[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new label(
                 new propC(getGUID(), cn, lX, top+8*h, 10, 10, 0, HAND, false, COMMANDS.ARROWSX[0], COMMANDS.ARROWSX[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new label(
                 new propC(getGUID(), cn, lX, top+9*h, 10, 10, 0, HAND, false, COMMANDS.ARROWSY[0], COMMANDS.ARROWSY[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
 
     ctrls.push(new spacer(
                 new propC(getGUID(), cn, 5, top+10*h+5, 110, 10, 0, ARROW, false, COMMANDS.SPACER[0], COMMANDS.SPACER[0]),
-                getStyle(STYLES.SPACER),
-                getStyle(STYLES.TEXT)));
+                new propL(getColor(CLRS.BLUE,50), CLRS.BLUE, CLRS.WHITE, CLRS.YELLOW, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
 
     //~ Ticks
     ctrls.push(new label(
                 new propC(getGUID(), cn, 10, top+11*h, 10, 10, 0, HAND, false, COMMANDS.TICKS[0], COMMANDS.TICKS[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new label(
                 new propC(getGUID(), cn, lX, top+11*h, 10, 10, 0, HAND, false, COMMANDS.TICKSX[0], COMMANDS.TICKSX[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new label(
                 new propC(getGUID(), cn, lX, top+12*h, 10, 10, 0, HAND, false, COMMANDS.TICKSY[0], COMMANDS.TICKSY[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
 
     ctrls.push(new spacer(
                 new propC(getGUID(), cn, 5, top+13*h+5, 110, 10, 0, ARROW, false, COMMANDS.SPACER[0], COMMANDS.SPACER[0]),
-                getStyle(STYLES.SPACER),
-                getStyle(STYLES.TEXT)));
+                new propL(getColor(CLRS.BLUE,50), CLRS.BLUE, CLRS.WHITE, CLRS.YELLOW, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
 
     //~ Labels
     ctrls.push(new label(
                 new propC(getGUID(), cn, 10, top+14*h, 10, 10, 0, HAND, false, COMMANDS.LABELS[0], COMMANDS.LABELS[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new label(
                 new propC(getGUID(), cn, lX, top+14*h, 10, 10, 0, HAND, false, COMMANDS.LABELSX[0], COMMANDS.LABELSX[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new label(
                 new propC(getGUID(), cn, lX, top+15*h, 10, 10, 0, HAND, false, COMMANDS.LABELSY[0], COMMANDS.LABELSY[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
 
     ctrls.push(new spacer(
                 new propC(getGUID(), cn, 5, top+16*h+5, 110, 10, 0, ARROW, false, COMMANDS.SPACER[0], COMMANDS.SPACER[0]),
-                getStyle(STYLES.SPACER),
-                getStyle(STYLES.TEXT)));
+                new propL(getColor(CLRS.BLUE,50), CLRS.BLUE, CLRS.WHITE, CLRS.YELLOW, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
 
     //~ Quadrants
     ctrls.push(new label(
                 new propC(getGUID(), cn, 10, top+17*h, 10, 10, 0, HAND, false, COMMANDS.QUADRANTS[0], COMMANDS.QUADRANTS[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXT)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
 
     //~ Values ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ctrls.push(new checkbox(
                 new propC(getGUID(), cn, 105, top+0*h+5, 10, 10, 0, HAND, false, COMMANDS.ORIGIN[0], COMMANDS.ORIGIN[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXTCENTER)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.WHITE, CLRS.YELLOW, CENTER, CENTER, 11, 12)));
 
     ctrls.push(new checkbox(
                 new propC(getGUID(), cn, 105, top+2*h+5, 10, 10, 0, HAND, false, COMMANDS.AXISX[0], COMMANDS.AXISX[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXTCENTER)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.WHITE, CLRS.YELLOW, CENTER, CENTER, 11, 12)));
 
     ctrls.push(new checkbox(
                 new propC(getGUID(), cn, 105, top+3*h+5, 10, 10, 0, HAND, false, COMMANDS.AXISY[0], COMMANDS.AXISY[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXTCENTER)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.WHITE, CLRS.YELLOW, CENTER, CENTER, 11, 12)));
 
     ctrls.push(new checkbox(
                 new propC(getGUID(), cn, 105, top+5*h+5, 10, 10, 0, HAND, false, COMMANDS.LINESX[0], COMMANDS.LINESX[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXTCENTER)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.WHITE, CLRS.YELLOW, CENTER, CENTER, 11, 12)));
 
     ctrls.push(new checkbox(
                 new propC(getGUID(), cn, 105, top+6*h+5, 10, 10, 0, HAND, false, COMMANDS.LINESY[0], COMMANDS.LINESY[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXTCENTER)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.WHITE, CLRS.YELLOW, CENTER, CENTER, 11, 12)));
 
     ctrls.push(new checkbox(
                 new propC(getGUID(), cn, 105, top+8*h+5, 10, 10, 0, HAND, false, COMMANDS.ARROWSX[0], COMMANDS.ARROWSX[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXTCENTER)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.WHITE, CLRS.YELLOW, CENTER, CENTER, 11, 12)));
 
     ctrls.push(new checkbox(
                 new propC(getGUID(), cn, 105, top+9*h+5, 10, 10, 0, HAND, false, COMMANDS.ARROWSY[0], COMMANDS.ARROWSY[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXTCENTER)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.WHITE, CLRS.YELLOW, CENTER, CENTER, 11, 12)));
 
     ctrls.push(new checkbox(
                 new propC(getGUID(), cn, 105, top+11*h+5, 10, 10, 0, HAND, false, COMMANDS.TICKSX[0], COMMANDS.TICKSX[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXTCENTER)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.WHITE, CLRS.YELLOW, CENTER, CENTER, 11, 12)));
 
     ctrls.push(new checkbox(
                 new propC(getGUID(), cn, 105, top+12*h+5, 10, 10, 0, HAND, false, COMMANDS.TICKSY[0], COMMANDS.TICKSY[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXTCENTER)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.WHITE, CLRS.YELLOW, CENTER, CENTER, 11, 12)));
 
     ctrls.push(new checkbox(
                 new propC(getGUID(), cn, 105, top+14*h+5, 10, 10, 0, HAND, false, COMMANDS.LABELSX[0], COMMANDS.LABELSX[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXTCENTER)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.WHITE, CLRS.YELLOW, CENTER, CENTER, 11, 12)));
 
     ctrls.push(new checkbox(
                 new propC(getGUID(), cn, 105, top+15*h+5, 10, 10, 0, HAND, false, COMMANDS.LABELSY[0], COMMANDS.LABELSY[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXTCENTER)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.WHITE, CLRS.YELLOW, CENTER, CENTER, 11, 12)));
 
     ctrls.push(new checkbox(
                 new propC(getGUID(), cn, 105, top+17*h+5, 10, 10, 0, HAND, false, COMMANDS.QUADRANTS[0], COMMANDS.QUADRANTS[1]),
-                getStyle(STYLES.BUTTON),
-                getStyle(STYLES.TEXTCENTER)));
+                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.WHITE, CLRS.YELLOW, CENTER, CENTER, 11, 12)));
 
     cn.ctrls=ctrls;
 
     return cn;
 
   };
+
+  var getShapes=function(parent){
+
+    var ctrls=[];
+
+    var cn=new container(
+            new propC(getGUID(), parent, parent.x+5, parent.y+5, 200, parent.h-10, 3, ARROW, false, COMMANDS.UNDEF[0],COMMANDS.UNDEF[1]),
+            new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
+            new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
+
+    ctrls.push(getPoints(cn));        //~ Points
+    //~ ctrls.push(getLines(cn));         //~ Lines
+    //~ ctrls.push(getTriangles(cn));     //~ Triangles
+    //~ ctrls.push(getCircles(cn));       //~ Circles
+    //~ ctrls.push(getQuads(cn));         //~ Quads
+    //~ ctrls.push(getArcs(cn));          //~ Arcs
+    //~ ctrls.push(getPolygons(cn));      //~ Polygons
+    //~ ctrls.push(getConics(cn));        //~ Conics
+    //~ ctrls.push(getAngles(cn));        //~ Angles
+    //~ ctrls.push(getAnnotations(cn));   //~ Annotations
+
+    cn.ctrls=ctrls;
+
+    return cn;
+
+  };
+
+
 
   var addControls=function(){
 
@@ -8071,29 +8086,22 @@ var factor=1.25;
 
     ctrls.push(getGrid(cn));          //~ Grid
 
-    ctrls.push(getPoints(cn));        //~ Points
-    ctrls.push(getLines(cn));         //~ Lines
-    ctrls.push(getTriangles(cn));     //~ Triangles
-    ctrls.push(getCircles(cn));       //~ Circles
-    ctrls.push(getQuads(cn));         //~ Quads
-    ctrls.push(getArcs(cn));          //~ Arcs
-    ctrls.push(getPolygons(cn));      //~ Polygons
-    ctrls.push(getConics(cn));        //~ Conics
-    ctrls.push(getAngles(cn));        //~ Angles
-    ctrls.push(getAnnotations(cn));   //~ Annotations
-    ctrls.push(getTransform(cn));     //~ Transforms
-    ctrls.push(getMeasure(cn));       //~ Measure
+    ctrls.push(getShapes(cn));        //~ Shapes
+
+
+    //~ ctrls.push(getTransform(cn));     //~ Transforms
+    //~ ctrls.push(getMeasure(cn));       //~ Measure
 
     if(app.debug){ ctrls.push(getTelemetry(cn)); }
 
-    ctrls.push(getHeader(cn));
+    //~ ctrls.push(getHeader(cn));
     ctrls.push(getFooter(cn));
-    ctrls.push(getView(cn));
+    //~ ctrls.push(getView(cn));
     ctrls.push(getProperties(cn));
 
-    ctrls.push(getColors(cn));
+    //~ ctrls.push(getColors(cn));
 
-    ctrls.push(getSamples(cn));
+    //~ ctrls.push(getSamples(cn));
     ctrls.push(getSelect(cn));
 
     cn.ctrls=ctrls;
@@ -8105,8 +8113,6 @@ var factor=1.25;
   var loadCommands=function(){
 
     saveStrings('Rectangle', COMMANDS.DEBUG);
-
-    //~ println(loadStrings('Rectangle'));
 
   };
 
@@ -8139,6 +8145,6 @@ var factor=1.25;
   process();
 
   var fontList = PFont.list();
-  println(fontList);
+  //~ println(fontList);
 
 }};
