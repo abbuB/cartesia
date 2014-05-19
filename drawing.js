@@ -448,7 +448,7 @@ var zoomfactor=0;
     width:          screen.width-20,
     height:         screen.height-115,
 
-    debug:          false,
+    debug:          true,
     frameRate:      0,
 
     focus:          0,
@@ -1271,7 +1271,6 @@ var factor=1.25;
                                           app.red=red(app.color);
                                           app.green=green(app.color);
                                           app.blue=blue(app.color);
-                                          app.fill=p;
                                           break;
 
       case c===COMMANDS.STROKEA[0]:       app.strokeA=p;          break;
@@ -1706,7 +1705,21 @@ var factor=1.25;
 
   };
   buttonC.prototype.clicked=function(){
-    if(this.hit){ commands(this.c, this.g); }
+    if(this.hit && app.focus===this.i){ commands(this.c, this.g); }
+  };
+  buttonC.prototype.moved=function(x,y){
+
+    if(app.mouseX>x+this.x &&
+       app.mouseX<x+this.x+this.w &&
+       app.mouseY>y+this.y &&
+       app.mouseY<y+this.y+this.h){
+      this.hit=true;
+      app.focus=this.i;
+    }
+    else{
+      this.parent.hit=false;
+    }
+
   };
 
   //~ Return Property
@@ -4678,13 +4691,9 @@ var factor=1.25;
   };
   stripVC.prototype.clicked=function(){
     if(this.hit){
-      //~ if(app.focus===this.i){
-      //~ if(this.hitExpand){
-        this.v=!this.v;
-      //~ }
+      this.v=!this.v;
       for(var c in this.ctrls){ this.ctrls[c].clicked(); }
     }
-    process();
   };
   stripVC.prototype.clickedR=function(){
     if(this.hit){
@@ -7138,9 +7147,14 @@ var factor=1.25;
     var w=100;
     var h=20;
 
+    var st=parent.fill;
+    var stH=CLRS.Gray7;
+    var f=CLRS.BUTTON;
+    var fH=CLRS.BUTTONH;
+
     var cn=new stripV(
             new propC(getGUID(), parent, 90, 230, w, 15, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
-            new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
+            new propL(parent.fill, f, CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
     //~ LineTypes ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -7153,32 +7167,32 @@ var factor=1.25;
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 0, 0, w-16, 15, 0, HAND, false, COMMANDS.LT_SOLID[0], COMMANDS.LT_SOLID[1]),
-                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propL(f, fH, st, stH, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 0, 15, w, h, 0, HAND, false, COMMANDS.LT_HAIRLINE[0], COMMANDS.LT_HAIRLINE[1]),
-                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propL(f, fH, st, stH, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 0, 15+h, w, h, 0, HAND, false, COMMANDS.LT_SOLID[0], COMMANDS.LT_SOLID[1]),
-                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propL(f, fH, st, stH, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 0, 15+2*h, w, h, 0, HAND, false, COMMANDS.LT_DASHED[0], COMMANDS.LT_DASHED[1]),
-                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propL(f, fH, st, stH, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 0, 15+3*h, w, h, 0, HAND, false, COMMANDS.LT_DOTTED[0], COMMANDS.LT_DOTTED[1]),
-                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propL(f, fH, st, stH, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 0, 15+4*h, w, h, 0, HAND, false, COMMANDS.LT_DASHDOT[0], COMMANDS.LT_DASHDOT[1]),
-                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propL(f, fH, st, stH, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     cn.ctrls=ctrls;
@@ -7196,9 +7210,14 @@ var factor=1.25;
     var w=100;
     //~ var h=20;
 
+    var st=CLRS.Gray5;
+    var stH=CLRS.Gray2;
+    var f=CLRS.BUTTON;
+    var fH=CLRS.BUTTONH;
+
     var cn=new stripVC(
             new propC(getGUID(), parent, 90, 110, w, 15, 1, HAND, false, COMMANDS.STROKE[0], COMMANDS.STROKE[1]),
-            new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
+            new propL(parent.fill, f, st, stH, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
     //~ Colors
@@ -7212,82 +7231,82 @@ var factor=1.25;
 
     ctrls.push(new buttonC(
                 new propC(getGUID(), cn, 0,   15, h, h, 0, HAND, false, COMMANDS.STROKE[0], CLRS.Red),
-                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propL(f, fH, st, stH, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
                 new propC(getGUID(), cn, h,   15, h, h, 0, HAND, false, COMMANDS.STROKE[0], CLRS.RedOrange),
-                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propL(f, fH, st, stH, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
                 new propC(getGUID(), cn, 2*h, 15, h, h, 0, HAND, false, COMMANDS.STROKE[0], CLRS.Orange),
-                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propL(f, fH, st, stH, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
                 new propC(getGUID(), cn, 3*h, 15, h, h, 0, HAND, false, COMMANDS.STROKE[0], CLRS.YellowOrange),
-                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propL(f, fH, st, stH, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
                 new propC(getGUID(), cn, 0,   40, h, h, 0, HAND, false, COMMANDS.STROKE[0], CLRS.Yellow),
-                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propL(f, fH, st, stH, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
                 new propC(getGUID(), cn, h,   40, h, h, 0, HAND, false, COMMANDS.STROKE[0], CLRS.YellowGreen),
-                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propL(f, fH, st, stH, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
                 new propC(getGUID(), cn, 2*h, 40, h, h, 0, HAND, false, COMMANDS.STROKE[0], CLRS.Green),
-                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propL(f, fH, st, stH, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
                 new propC(getGUID(), cn, 3*h, 40, h, h, 0, HAND, false, COMMANDS.STROKE[0], CLRS.BlueGreen),
-                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propL(f, fH, st, stH, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
                 new propC(getGUID(), cn, 0,   65, h, h, 0, HAND, false, COMMANDS.STROKE[0], CLRS.Blue),
-                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propL(f, fH, st, stH, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
                 new propC(getGUID(), cn, h,   65, h, h, 0, HAND, false, COMMANDS.STROKE[0], CLRS.BlueViolet),
-                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propL(f, fH, st, stH, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
                 new propC(getGUID(), cn, 2*h, 65, h, h, 0, HAND, false, COMMANDS.STROKE[0], CLRS.Violet),
-                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propL(f, fH, st, stH, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
                 new propC(getGUID(), cn, 3*h, 65, h, h, 0, HAND, false, COMMANDS.STROKE[0], CLRS.RedViolet),
-                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propL(f, fH, st, stH, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
                 new propC(getGUID(), cn, 0,   90, h, h, 0, HAND, false, COMMANDS.STROKE[0], CLRS.White),
-                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propL(f, fH, st, stH, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
                 new propC(getGUID(), cn, h,   90, h, h, 0, HAND, false, COMMANDS.STROKE[0], CLRS.Gray3),
-                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propL(f, fH, st, stH, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
                 new propC(getGUID(), cn, 2*h, 90, h, h, 0, HAND, false, COMMANDS.STROKE[0], CLRS.Gray6),
-                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propL(f, fH, st, stH, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
                 new propC(getGUID(), cn, 3*h, 90, h, h, 0, HAND, false, COMMANDS.STROKE[0], CLRS.Black),
-                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propL(f, fH, st, stH, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
 
@@ -7306,9 +7325,14 @@ var factor=1.25;
     //~ var w=100;
     //~ var h=20;
 
+    var st=CLRS.Gray5;
+    var stH=CLRS.Gray2;
+    var f=CLRS.BUTTON;
+    var fH=CLRS.BUTTONH;
+
     var cn=new stripVC(
             new propC(getGUID(), parent, 90, 170, 100, 15, 1, HAND, false, COMMANDS.FILL[0], COMMANDS.FILL[1]),
-            new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
+            new propL(parent.fill, f, CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
     //~ Colors
@@ -7322,82 +7346,82 @@ var factor=1.25;
 
     ctrls.push(new buttonC(
                 new propC(getGUID(), cn, 0,   15, h, h, 2, HAND, false, COMMANDS.FILL[0], CLRS.Red),
-                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propL(f, fH, st, stH, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
                 new propC(getGUID(), cn, h,   15, h, h, 0, HAND, false, COMMANDS.FILL[0], CLRS.RedOrange),
-                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propL(f, fH, st, stH, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
                 new propC(getGUID(), cn, 2*h, 15, h, h, 0, HAND, false, COMMANDS.FILL[0], CLRS.Orange),
-                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propL(f, fH, st, stH, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
                 new propC(getGUID(), cn, 3*h, 15, h, h, 0, HAND, false, COMMANDS.FILL[0], CLRS.YellowOrange),
-                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propL(f, fH, st, stH, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
                 new propC(getGUID(), cn, 0,   40, h, h, 0, HAND, false, COMMANDS.FILL[0], CLRS.Yellow),
-                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propL(f, fH, st, stH, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
                 new propC(getGUID(), cn, h,   40, h, h, 0, HAND, false, COMMANDS.FILL[0], CLRS.YellowGreen),
-                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propL(f, fH, st, stH, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
                 new propC(getGUID(), cn, 2*h, 40, h, h, 0, HAND, false, COMMANDS.FILL[0], CLRS.Green),
-                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propL(f, fH, st, stH, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
                 new propC(getGUID(), cn, 3*h, 40, h, h, 0, HAND, false, COMMANDS.FILL[0], CLRS.BlueGreen),
-                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propL(f, fH, st, stH, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
                 new propC(getGUID(), cn, 0,   65, h, h, 0, HAND, false, COMMANDS.FILL[0], CLRS.Blue),
-                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propL(f, fH, st, stH, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
                 new propC(getGUID(), cn, h,   65, h, h, 0, HAND, false, COMMANDS.FILL[0], CLRS.BlueViolet),
-                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propL(f, fH, st, stH, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
                 new propC(getGUID(), cn, 2*h, 65, h, h, 0, HAND, false, COMMANDS.FILL[0], CLRS.Violet),
-                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propL(f, fH, st, stH, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
                 new propC(getGUID(), cn, 3*h, 65, h, h, 0, HAND, false, COMMANDS.FILL[0], CLRS.RedViolet),
-                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propL(f, fH, st, stH, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
                 new propC(getGUID(), cn, 0,   90, h, h, 0, HAND, false, COMMANDS.FILL[0], CLRS.White),
-                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propL(f, fH, st, stH, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
                 new propC(getGUID(), cn, h,   90, h, h, 0, HAND, false, COMMANDS.FILL[0], CLRS.Gray3),
-                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propL(f, fH, st, stH, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
                 new propC(getGUID(), cn, 2*h, 90, h, h, 0, HAND, false, COMMANDS.FILL[0], CLRS.Gray6),
-                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propL(f, fH, st, stH, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new buttonC(
                 new propC(getGUID(), cn, 3*h, 90, h, h, 0, HAND, false, COMMANDS.FILL[0], CLRS.Black),
-                new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propL(f, fH, st, stH, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
 
@@ -7456,7 +7480,7 @@ var factor=1.25;
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new spacer(
-                new propC(getGUID(), cn, col0, top+3*h+5, 190, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.SPACER[0]),
+                new propC(getGUID(), cn, col0, top+3*h+5, 180, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.SPACER[0]),
                 new propL(getColor(CLRS.BLUE,50), CLRS.BLUE, CLRS.WHITE, CLRS.YELLOW, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
@@ -7470,6 +7494,11 @@ var factor=1.25;
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
+    ctrls.push(new spacer(
+                new propC(getGUID(), cn, col0, top+6*h+5, 180, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.SPACER[0]),
+                new propL(getColor(CLRS.BLUE,50), CLRS.BLUE, CLRS.WHITE, CLRS.YELLOW, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
+
     ctrls.push(new label(
                 new propC(getGUID(), cn, col0, top+7*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.FILL[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
@@ -7478,6 +7507,11 @@ var factor=1.25;
     ctrls.push(new label(
                 new propC(getGUID(), cn, col0, top+8*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.FILLA[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
+
+    ctrls.push(new spacer(
+                new propC(getGUID(), cn, col0, top+9*h+5, 180, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.SPACER[0]),
+                new propL(getColor(CLRS.BLUE,50), CLRS.BLUE, CLRS.WHITE, CLRS.YELLOW, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new label(
