@@ -1254,7 +1254,7 @@ var factor=1.25;
   var commands=function(c,p){
 
     //~ println(c+':'+p);
-
+app.command=c;
     switch(true){
 
       case c===COMMANDS.DEBUG[0]:         app.debug=!app.debug;
@@ -1350,6 +1350,9 @@ var factor=1.25;
     this.h=c.h;                //~ height
     this.r=c.r;                //~ corner radius
 
+    this.cX=c.w/2;
+    this.cY=c.h/2;
+    
     this.k=c.k;                //~ hit cursor
 
     this.v=c.v;                //~ value
@@ -1707,20 +1710,20 @@ var factor=1.25;
   buttonC.prototype.clicked=function(){
     if(this.hit && app.focus===this.i){ commands(this.c, this.g); }
   };
-  buttonC.prototype.moved=function(x,y){
-
-    if(app.mouseX>x+this.x &&
-       app.mouseX<x+this.x+this.w &&
-       app.mouseY>y+this.y &&
-       app.mouseY<y+this.y+this.h){
-      this.hit=true;
-      app.focus=this.i;
-    }
-    else{
-      this.parent.hit=false;
-    }
-
-  };
+  //~ buttonC.prototype.moved=function(x,y){
+//~
+    //~ if(app.mouseX>x+this.x &&
+       //~ app.mouseX<x+this.x+this.w &&
+       //~ app.mouseY>y+this.y &&
+       //~ app.mouseY<y+this.y+this.h){
+      //~ this.hit=true;
+      //~ app.focus=this.i;
+    //~ }
+    //~ else{
+      //~ this.parent.hit=false;
+    //~ }
+//~
+  //~ };
 
   //~ Return Property
   var buttonP=function(c,l,a,ctrls){
@@ -1761,17 +1764,48 @@ var factor=1.25;
 
   };
 
-  //~ Shape
-  var buttonS=function(c,l,a,ctrls){
+  var buttonA=function(c,l,a,ctrls){
     control.call(this,c,l,a,ctrls);
   };
-  buttonS.prototype=Object.create(control.prototype);
-  buttonS.prototype.draw=function(){
+  buttonA.prototype=Object.create(control.prototype);
+  buttonA.prototype.draw=function(){
 
     var p=this;
     var d=0;
-    var cX=p.w/2;
-    var cY=p.h/2;
+
+    pushMatrix();
+
+      translate(p.x, p.y);
+
+        pushStyle();
+
+          fill(getProp(p.g));
+          stroke(p.stroke);
+          strokeWeight(p.weight);
+
+          if(p.hit){
+
+            if(app.left){ d=1; }
+
+            //~ fill(p.g);
+            stroke(p.strokeH);
+            strokeWeight(p.weightH);
+            cursor(p.k);
+
+          }
+
+          rect(d, d, p.w, p.h, p.r);
+
+          drawIcon(getProp(p.c), d, p.w/2, p.h/2, p.w, p.hit);
+
+        popStyle();
+
+    popMatrix();
+
+  };
+
+  var drawIcon=function(p, d){
+
     var cPNT=CLRS.VERTEX;
     var cMEASURE=CLRS.RED;
     var cVERTEX=CLRS.VERTEXA;
@@ -1795,7 +1829,7 @@ var factor=1.25;
             noStroke();
             fill(cPNT);
 
-            ellipse(d+cX, d+cY, sz, sz);
+            ellipse(d+p.cX, d+p.cY, sz, sz);
 
             break;
 
@@ -1806,25 +1840,25 @@ var factor=1.25;
             stroke(CLRS.LINE);
 
             beginShape();
-              vertex(d+cX-10, d+cY-10);
-              vertex(d+cX-10, d+cY+5);
-              vertex(d+cX+10, d+cY+10);
-              vertex(d+cX+4,  d+cY-6);
+              vertex(d+p.cX-10, d+p.cY-10);
+              vertex(d+p.cX-10, d+p.cY+5);
+              vertex(d+p.cX+10, d+p.cY+10);
+              vertex(d+p.cX+4,  d+p.cY-6);
             endShape(CLOSE);
 
             noStroke();
             strokeWeight(0);
             fill(CLRS.VERTEX);
 
-            ellipse(d+cX, d+cY, sz, sz);
+            ellipse(d+p.cX, d+p.cY, sz, sz);
 
             noStroke();
             fill(CLRS.VERTEX);
 
-            ellipse(d+cX-10, d+cY-10, sz, sz);
-            ellipse(d+cX-10, d+cY+5,  sz, sz);
-            ellipse(d+cX+10, d+cY+10, sz, sz);
-            ellipse(d+cX+4,  d+cY-6,  sz, sz);
+            ellipse(d+p.cX-10, d+p.cY-10, sz, sz);
+            ellipse(d+p.cX-10, d+p.cY+5,  sz, sz);
+            ellipse(d+p.cX+10, d+p.cY+10, sz, sz);
+            ellipse(d+p.cX+4,  d+p.cY-6,  sz, sz);
 
             break;
 
@@ -1834,14 +1868,14 @@ var factor=1.25;
             strokeWeight(0.5);
             stroke(cVERTEX);
 
-            line(d+cX-10, d+cY+10, d+cX+10, d+cY-10);
-            line(d+cX+4,  d+cY+10, d+cX-4, d+cY-10);
+            line(d+p.cX-10, d+p.cY+10, d+p.cX+10, d+p.cY-10);
+            line(d+p.cX+4,  d+p.cY+10, d+p.cX-4, d+p.cY-10);
 
             noStroke();
             strokeWeight(0.5);
             fill(cPNT);
 
-            ellipse(d+cX, d+cY, sz, sz);
+            ellipse(d+p.cX, d+p.cY, sz, sz);
 
             break;
 
@@ -1852,13 +1886,13 @@ var factor=1.25;
             strokeWeight(0.5);
             stroke(cVERTEX);
 
-            line(d+cX-10, d+cY+10, d+cX+10, d+cY-10);
+            line(d+p.cX-10, d+p.cY+10, d+p.cX+10, d+p.cY-10);
 
             noStroke();
             strokeWeight(0);
             fill(cPNT);
 
-            ellipse(d+cX, d+cY, sz, sz);
+            ellipse(d+p.cX, d+p.cY, sz, sz);
 
             break;
 
@@ -1884,14 +1918,14 @@ var factor=1.25;
             strokeWeight(0.5);
             stroke(cVERTEX);
 
-            line(d+cX-10, d+cY+10, d+cX+10, d+cY-10);
+            line(d+p.cX-10, d+p.cY+10, d+p.cX+10, d+p.cY-10);
 
             noStroke();
             strokeWeight(0);
             fill(cPNT);
 
-            ellipse(d+cX+5, d+cY-5, sz, sz);
-            ellipse(d+cX-5, d+cY+5, sz, sz);
+            ellipse(d+p.cX+5, d+p.cY-5, sz, sz);
+            ellipse(d+p.cX-5, d+p.cY+5, sz, sz);
 
             break;
 
@@ -1902,14 +1936,14 @@ var factor=1.25;
             strokeWeight(0.5);
             stroke(cVERTEX);
 
-            line(d+cX-7, d+cY+7, d+cX+7, d+cY-7);
+            line(d+p.cX-7, d+p.cY+7, d+p.cX+7, d+p.cY-7);
 
             noStroke();
             strokeWeight(0);
             fill(cPNT);
 
-            ellipse(d+cX+7, d+cY-7, sz, sz);
-            ellipse(d+cX-7, d+cY+7, sz, sz);
+            ellipse(d+p.cX+7, d+p.cY-7, sz, sz);
+            ellipse(d+p.cX-7, d+p.cY+7, sz, sz);
 
             break;
 
@@ -1920,16 +1954,16 @@ var factor=1.25;
             strokeWeight(0.5);
             stroke(cVERTEX);
 
-            line(d+cX-7, d+cY+7, d+cX+7, d+cY-7);
+            line(d+p.cX-7, d+p.cY+7, d+p.cX+7, d+p.cY-7);
 
             noStroke();
             strokeWeight(0);
             fill(cMEASURE);
 
-            ellipse(d+cX+7, d+cY-7, sz, sz);
+            ellipse(d+p.cX+7, d+p.cY-7, sz, sz);
 
             fill(cPNT);
-            ellipse(d+cX-7, d+cY+7, sz, sz);
+            ellipse(d+p.cX-7, d+p.cY+7, sz, sz);
 
             break;
 
@@ -1940,16 +1974,16 @@ var factor=1.25;
             strokeWeight(0.5);
             stroke(cVERTEX);
 
-            line(d+cX-7, d+cY+7, d+cX+7, d+cY-7);
+            line(d+p.cX-7, d+p.cY+7, d+p.cX+7, d+p.cY-7);
 
             stroke(cLINE);
-            getDottedLine(d+cX-7, d+cY-7, d+cX+10, d+cY+10, 10);
+            getDottedLine(d+p.cX-7, d+p.cY-7, d+p.cX+10, d+p.cY+10, 10);
 
             noStroke();
             strokeWeight(0);
             fill(cPNT);
 
-            ellipse(d+cX-7, d+cY-7, sz, sz);
+            ellipse(d+p.cX-7, d+p.cY-7, sz, sz);
 
             break;
 
@@ -1960,17 +1994,17 @@ var factor=1.25;
             strokeWeight(0.5);
             stroke(cMEASURE);
 
-            line(d+cX-7, d+cY+7, d+cX+7, d+cY-7);
+            line(d+p.cX-7, d+p.cY+7, d+p.cX+7, d+p.cY-7);
 
             stroke(cVERTEX);
-            line(d+cX-7, d+cY-7, d+cX+10, d+cY+10);
+            line(d+p.cX-7, d+p.cY-7, d+p.cX+10, d+p.cY+10);
 
             noStroke();
             strokeWeight(0);
             fill(cPNT);
 
-            ellipse(d+cX-7, d+cY-7, sz, sz);
-            ellipse(d+cX+7, d+cY+7, sz, sz);
+            ellipse(d+p.cX-7, d+p.cY-7, sz, sz);
+            ellipse(d+p.cX+7, d+p.cY+7, sz, sz);
 
             break;
 
@@ -1981,20 +2015,20 @@ var factor=1.25;
             strokeWeight(0.5);
             stroke(cMEASURE);
 
-            line(d+cX-10, d+cY+10, d+cX+10, d+cY-10);
+            line(d+p.cX-10, d+p.cY+10, d+p.cX+10, d+p.cY-10);
 
             stroke(cVERTEX);
 
-            line(d+cX-5, d+cY+5, d+cX-2, d+cY-10);
-            line(d+cX-5, d+cY+5, d+cX+10, d+cY+2);
+            line(d+p.cX-5, d+p.cY+5, d+p.cX-2, d+p.cY-10);
+            line(d+p.cX-5, d+p.cY+5, d+p.cX+10, d+p.cY+2);
 
             noStroke();
             strokeWeight(0);
             fill(cPNT);
 
-            ellipse(d+cX-5,  d+cY+5,  sz, sz);
-            ellipse(d+cX-2,  d+cY-10, sz, sz);
-            ellipse(d+cX+10, d+cY+2,  sz, sz);
+            ellipse(d+p.cX-5,  d+p.cY+5,  sz, sz);
+            ellipse(d+p.cX-2,  d+p.cY-10, sz, sz);
+            ellipse(d+p.cX+10, d+p.cY+2,  sz, sz);
 
             break;
 
@@ -2005,17 +2039,17 @@ var factor=1.25;
             strokeWeight(0.5);
             stroke(cVERTEX);
 
-            line(d+cX+10, d+cY+5, d+cX-10, d+cY+10);
+            line(d+p.cX+10, d+p.cY+5, d+p.cX-10, d+p.cY+10);
 
             stroke(cMEASURE);
 
-            line(d+cX-10, d+cY-5, d+cX+10, d+cY-10);
+            line(d+p.cX-10, d+p.cY-5, d+p.cX+10, d+p.cY-10);
 
             noStroke();
             strokeWeight(0);
             fill(cPNT);
 
-            ellipse(d+cX,  d+cY-7.5,  sz, sz);
+            ellipse(d+p.cX,  d+p.cY-7.5,  sz, sz);
 
             break;
 
@@ -2026,17 +2060,17 @@ var factor=1.25;
             strokeWeight(0.5);
             stroke(cVERTEX);
 
-            ellipse(d+cX+5, d+cY+5,12,12);
+            ellipse(d+p.cX+5, d+p.cY+5,12,12);
 
             stroke(cMEASURE);
 
-            line(d+cX-10, d+cY+10, d+cX+10, d+cY-10);
+            line(d+p.cX-10, d+p.cY+10, d+p.cX+10, d+p.cY-10);
 
             noStroke();
             strokeWeight(0);
             fill(cPNT);
 
-            ellipse(d+cX, d+cY, sz, sz);
+            ellipse(d+p.cX, d+p.cY, sz, sz);
 
             break;
 
@@ -2047,18 +2081,18 @@ var factor=1.25;
             strokeWeight(0.5);
             stroke(cVERTEX);
 
-            ellipse(d+cX, d+cY, 20, 20);
+            ellipse(d+p.cX, d+p.cY, 20, 20);
 
             stroke(cMEASURE);
 
-            line(d+cX+10*cos(PI/4),   d+cY-10*sin(PI/4),
-                 d+cX+10*cos(PI*3/4), d+cY+10*sin(PI*3/4));
+            line(d+p.cX+10*cos(PI/4),   d+p.cY-10*sin(PI/4),
+                 d+p.cX+10*cos(PI*3/4), d+p.cY+10*sin(PI*3/4));
 
             noStroke();
             strokeWeight(0);
             fill(cPNT);
 
-            ellipse(d+cX, d+cY, sz, sz);
+            ellipse(d+p.cX, d+p.cY, sz, sz);
 
             break;
 
@@ -2069,18 +2103,18 @@ var factor=1.25;
             strokeWeight(0.5);
             stroke(cVERTEX);
 
-            ellipse(d+cX, d+cY, 20, 20);
+            ellipse(d+p.cX, d+p.cY, 20, 20);
 
             stroke(cMEASURE);
 
-            line(d+cX, d+cY,
-                 d+cX+10*cos(PI/4), d+cY-10*sin(PI/4));
+            line(d+p.cX, d+p.cY,
+                 d+p.cX+10*cos(PI/4), d+p.cY-10*sin(PI/4));
 
             noStroke();
             strokeWeight(0);
             fill(cPNT);
 
-            ellipse(d+cX, d+cY, sz, sz);
+            ellipse(d+p.cX, d+p.cY, sz, sz);
 
             break;
 
@@ -2091,14 +2125,14 @@ var factor=1.25;
             strokeWeight(0.5);
             stroke(cVERTEX);
 
-            line(d+cX-10, d+cY+10, d+cX+10, d+cY-10);
+            line(d+p.cX-10, d+p.cY+10, d+p.cX+10, d+p.cY-10);
 
             noStroke();
             strokeWeight(0);
             fill(cPNT);
 
-            ellipse(d+cX+3, d+cY-3, sz, sz);
-            ellipse(d+cX-10, d+cY+10, sz, sz);
+            ellipse(d+p.cX+3, d+p.cY-3, sz, sz);
+            ellipse(d+p.cX-10, d+p.cY+10, sz, sz);
 
             break;
 
@@ -2109,22 +2143,22 @@ var factor=1.25;
             strokeWeight(0.5);
             stroke(cVERTEX);
 
-            line(d+cX-10, d+cY+10, d+cX+10, d+cY-10);
+            line(d+p.cX-10, d+p.cY+10, d+p.cX+10, d+p.cY-10);
 
             noStroke();
             strokeWeight(0);
             fill(cPNT);
 
-            ellipse(d+cX+10, d+cY-10, sz, sz);
-            ellipse(d+cX-10, d+cY+10, sz, sz);
+            ellipse(d+p.cX+10, d+p.cY-10, sz, sz);
+            ellipse(d+p.cX-10, d+p.cY+10, sz, sz);
 
             noStroke();
             fill(cVERTEX);
 
             beginShape();
-              vertex(d+cX+9, d+cY-9);
-              vertex(d+cX+4, d+cY-9);
-              vertex(d+cX+9, d+cY-4);
+              vertex(d+p.cX+9, d+p.cY-9);
+              vertex(d+p.cX+4, d+p.cY-9);
+              vertex(d+p.cX+9, d+p.cY-4);
             endShape(CLOSE);
 
             break;
@@ -2136,24 +2170,24 @@ var factor=1.25;
             strokeWeight(0.5);
             stroke(cVERTEX);
 
-            line(d+cX-10, d+cY+10, d+cX+10, d+cY-10);
+            line(d+p.cX-10, d+p.cY+10, d+p.cX+10, d+p.cY-10);
 
             noStroke();
             strokeWeight(0);
 
             fill(cMEASURE);
-            ellipse(d+cX+10, d+cY-10, sz, sz);
+            ellipse(d+p.cX+10, d+p.cY-10, sz, sz);
 
             fill(cPNT);
-            ellipse(d+cX-10, d+cY+10, sz, sz);
+            ellipse(d+p.cX-10, d+p.cY+10, sz, sz);
 
             noStroke();
             fill(cVERTEX);
 
             beginShape();
-              vertex(d+cX+9, d+cY-9);
-              vertex(d+cX+4, d+cY-9);
-              vertex(d+cX+9, d+cY-4);
+              vertex(d+p.cX+9, d+p.cY-9);
+              vertex(d+p.cX+4, d+p.cY-9);
+              vertex(d+p.cX+9, d+p.cY-4);
             endShape(CLOSE);
 
             break;
@@ -2179,9 +2213,9 @@ var factor=1.25;
             stroke(CLRS.LINE);
 
             beginShape();
-              vertex(d+cX,              d+cY-15*sin(PI/4));
-              vertex(d+cX+15*cos(PI/4), d+cY+15*sin(PI/4));
-              vertex(d+cX-15*cos(PI/4), d+cY+15*sin(PI/4));
+              vertex(d+p.cX,              d+p.cY-15*sin(PI/4));
+              vertex(d+p.cX+15*cos(PI/4), d+p.cY+15*sin(PI/4));
+              vertex(d+p.cX-15*cos(PI/4), d+p.cY+15*sin(PI/4));
             endShape(CLOSE);
 
             //~ Vertices
@@ -2189,9 +2223,9 @@ var factor=1.25;
             strokeWeight(0);
             fill(CLRS.VERTEX);
 
-            ellipse(d+cX,              d+cY-15*sin(PI/4), sz, sz);
-            ellipse(d+cX+15*cos(PI/4), d+cY+15*sin(PI/4), sz, sz);
-            ellipse(d+cX-15*cos(PI/4), d+cY+15*sin(PI/4), sz, sz);
+            ellipse(d+p.cX,              d+p.cY-15*sin(PI/4), sz, sz);
+            ellipse(d+p.cX+15*cos(PI/4), d+p.cY+15*sin(PI/4), sz, sz);
+            ellipse(d+p.cX-15*cos(PI/4), d+p.cY+15*sin(PI/4), sz, sz);
 
             break;
 
@@ -2203,9 +2237,9 @@ var factor=1.25;
             stroke(CLRS.LINE);
 
             beginShape();
-              vertex(d+cX,   d+cY-10);
-              vertex(d+cX+7, d+cY+10);
-              vertex(d+cX-7, d+cY+10);
+              vertex(d+p.cX,   d+p.cY-10);
+              vertex(d+p.cX+7, d+p.cY+10);
+              vertex(d+p.cX-7, d+p.cY+10);
             endShape(CLOSE);
 
             //~ Vertices
@@ -2213,9 +2247,9 @@ var factor=1.25;
             strokeWeight(0);
             fill(CLRS.VERTEX);
 
-            ellipse(d+cX,   d+cY-10, sz, sz);
-            ellipse(d+cX+7, d+cY+10, sz, sz);
-            ellipse(d+cX-7, d+cY+10, sz, sz);
+            ellipse(d+p.cX,   d+p.cY-10, sz, sz);
+            ellipse(d+p.cX+7, d+p.cY+10, sz, sz);
+            ellipse(d+p.cX-7, d+p.cY+10, sz, sz);
 
             break;
 
@@ -2227,9 +2261,9 @@ var factor=1.25;
             stroke(CLRS.LINE);
 
             beginShape();
-              vertex(d+cX-10, d+cY-10);
-              vertex(d+cX-5,  d+cY+10);
-              vertex(d+cX+10, d+cY+10);
+              vertex(d+p.cX-10, d+p.cY-10);
+              vertex(d+p.cX-5,  d+p.cY+10);
+              vertex(d+p.cX+10, d+p.cY+10);
             endShape(CLOSE);
 
             //~ Vertices
@@ -2237,9 +2271,9 @@ var factor=1.25;
             strokeWeight(0);
             fill(CLRS.VERTEX);
 
-            ellipse(d+cX-10, d+cY-10, sz, sz);
-            ellipse(d+cX-5,  d+cY+10, sz, sz);
-            ellipse(d+cX+10, d+cY+10, sz, sz);
+            ellipse(d+p.cX-10, d+p.cY-10, sz, sz);
+            ellipse(d+p.cX-5,  d+p.cY+10, sz, sz);
+            ellipse(d+p.cX+10, d+p.cY+10, sz, sz);
 
             break;
 
@@ -2264,16 +2298,16 @@ var factor=1.25;
             strokeWeight(0);
             fill(CLRS.VERTEX);
 
-            ellipse(d+cX, d+cY, sz, sz);
-            ellipse(d+cX+10*cos(PI/4),
-                    d+cY-10*sin(PI/4),
+            ellipse(d+p.cX, d+p.cY, sz, sz);
+            ellipse(d+p.cX+10*cos(PI/4),
+                    d+p.cY-10*sin(PI/4),
                     sz, sz);
 
             noFill();
             strokeWeight(0.5);
             stroke(CLRS.LINE);
 
-            ellipse(d+cX, d+cY, 20, 20);
+            ellipse(d+p.cX, d+p.cY, 20, 20);
 
             break;
 
@@ -2283,21 +2317,21 @@ var factor=1.25;
             strokeWeight(0);
             fill(CLRS.VERTEX);
 
-            ellipse(d+cX, d+cY, sz, sz);
+            ellipse(d+p.cX, d+p.cY, sz, sz);
 
             noFill();
             strokeWeight(1);
             stroke(CLRS.LINEA);
 
-            line(d+cX, d+cY,
-                 d+cX+10*cos(PI/4),
-                 d+cY-10*sin(PI/4));
+            line(d+p.cX, d+p.cY,
+                 d+p.cX+10*cos(PI/4),
+                 d+p.cY-10*sin(PI/4));
 
             noFill();
             strokeWeight(0.5);
             stroke(CLRS.LINE);
 
-            ellipse(d+cX, d+cY, 20, 20);
+            ellipse(d+p.cX, d+p.cY, 20, 20);
 
             break;
 
@@ -2308,21 +2342,21 @@ var factor=1.25;
             fill(CLRS.VERTEX);
 
             //~ ellipse(d+cX, d+cY, sz, sz);
-            ellipse(d+cX+10*cos(PI/4),
-                    d+cY-10*sin(PI/4),
+            ellipse(d+p.cX+10*cos(PI/4),
+                    d+p.cY-10*sin(PI/4),
                     sz, sz);
-            ellipse(d+cX+10*cos(PI),
-                    d+cY+10*sin(PI),
+            ellipse(d+p.cX+10*cos(PI),
+                    d+p.cY+10*sin(PI),
                     sz, sz);
-            ellipse(d+cX+10*cos(PI/4),
-                    d+cY+10*sin(PI/4),
+            ellipse(d+p.cX+10*cos(PI/4),
+                    d+p.cY+10*sin(PI/4),
                     sz, sz);
 
             noFill();
             strokeWeight(0.5);
             stroke(CLRS.LINE);
 
-            ellipse(d+cX, d+cY, 20, 20);
+            ellipse(d+p.cX, d+p.cY, 20, 20);
 
             break;
 
@@ -2351,18 +2385,18 @@ var factor=1.25;
                 strokeWeight(0);
                 fill(CLRS.VERTEX);
 
-                ellipse(d+cX-10, d+cY-8, sz, sz);
-                ellipse(d+cX+10, d+cY+8, sz, sz);
+                ellipse(d+p.cX-10, d+p.cY-8, sz, sz);
+                ellipse(d+p.cX+10, d+p.cY+8, sz, sz);
 
                 noFill();
                 strokeWeight(0.5);
                 stroke(CLRS.LINE);
 
                 beginShape();
-                  vertex(d+cX-10, d+cY-8);
-                  vertex(d+cX+10, d+cY-8);
-                  vertex(d+cX+10, d+cY+8);
-                  vertex(d+cX-10, d+cY+8);
+                  vertex(d+p.cX-10, d+p.cY-8);
+                  vertex(d+p.cX+10, d+p.cY-8);
+                  vertex(d+p.cX+10, d+p.cY+8);
+                  vertex(d+p.cX-10, d+p.cY+8);
                 endShape(CLOSE);
 
             popMatrix();
@@ -2379,18 +2413,18 @@ var factor=1.25;
                 strokeWeight(0);
                 fill(CLRS.VERTEX);
 
-                ellipse(d+cX-8, d+cY-8, sz, sz);
-                ellipse(d+cX+8, d+cY+8, sz, sz);
+                ellipse(d+p.cX-8, d+p.cY-8, sz, sz);
+                ellipse(d+p.cX+8, d+p.cY+8, sz, sz);
 
                 noFill();
                 strokeWeight(0.5);
                 stroke(CLRS.LINE);
 
                 beginShape();
-                  vertex(d+cX-8, d+cY-8);
-                  vertex(d+cX+8, d+cY-8);
-                  vertex(d+cX+8, d+cY+8);
-                  vertex(d+cX-8, d+cY+8);
+                  vertex(d+p.cX-8, d+p.cY-8);
+                  vertex(d+p.cX+8, d+p.cY-8);
+                  vertex(d+p.cX+8, d+p.cY+8);
+                  vertex(d+p.cX-8, d+p.cY+8);
                 endShape(CLOSE);
 
             popMatrix();
@@ -2407,18 +2441,18 @@ var factor=1.25;
                 strokeWeight(0);
                 fill(CLRS.VERTEX);
 
-                ellipse(d+cX-6, d+cY-8, sz, sz);
-                ellipse(d+cX+6, d+cY+8, sz, sz);
+                ellipse(d+p.cX-6, d+p.cY-8, sz, sz);
+                ellipse(d+p.cX+6, d+p.cY+8, sz, sz);
 
                 noFill();
                 strokeWeight(0.5);
                 stroke(CLRS.LINE);
 
                 beginShape();
-                  vertex(d+cX-6,  d+cY-8);
-                  vertex(d+cX+10, d+cY-8);
-                  vertex(d+cX+6,  d+cY+8);
-                  vertex(d+cX-10, d+cY+8);
+                  vertex(d+p.cX-6,  d+p.cY-8);
+                  vertex(d+p.cX+10, d+p.cY-8);
+                  vertex(d+p.cX+6,  d+p.cY+8);
+                  vertex(d+p.cX-10, d+p.cY+8);
                 endShape(CLOSE);
 
               popMatrix();
@@ -2435,18 +2469,18 @@ var factor=1.25;
                   strokeWeight(0);
                   fill(CLRS.VERTEX);
 
-                  ellipse(d+cX-8, d+cY-8, sz, sz);
-                  ellipse(d+cX+8, d+cY+8, sz, sz);
+                  ellipse(d+p.cX-8, d+p.cY-8, sz, sz);
+                  ellipse(d+p.cX+8, d+p.cY+8, sz, sz);
 
                   noFill();
                   strokeWeight(0.5);
                   stroke(CLRS.LINE);
 
                   beginShape();
-                    vertex(d+cX-8,  d+cY-8);
-                    vertex(d+cX+12, d+cY-8);
-                    vertex(d+cX+8,  d+cY+8);
-                    vertex(d+cX-12, d+cY+8);
+                    vertex(d+p.cX-8,  d+p.cY-8);
+                    vertex(d+p.cX+12, d+p.cY-8);
+                    vertex(d+p.cX+8,  d+p.cY+8);
+                    vertex(d+p.cX-12, d+p.cY+8);
                   endShape(CLOSE);
 
                 popMatrix();
@@ -2463,18 +2497,18 @@ var factor=1.25;
                   strokeWeight(0);
                   fill(CLRS.VERTEX);
 
-                  ellipse(d+cX-8, d+cY-8, sz, sz);
-                  ellipse(d+cX+8, d+cY+8, sz, sz);
+                  ellipse(d+p.cX-8, d+p.cY-8, sz, sz);
+                  ellipse(d+p.cX+8, d+p.cY+8, sz, sz);
 
                   noFill();
                   strokeWeight(0.5);
                   stroke(CLRS.LINE);
 
                   beginShape();
-                    vertex(d+cX-8,  d+cY-8);
-                    vertex(d+cX+4, d+cY-8);
-                    vertex(d+cX+8,  d+cY+8);
-                    vertex(d+cX-12, d+cY+8);
+                    vertex(d+p.cX-8,  d+p.cY-8);
+                    vertex(d+p.cX+4,  d+p.cY-8);
+                    vertex(d+p.cX+8,  d+p.cY+8);
+                    vertex(d+p.cX-12, d+p.cY+8);
                   endShape(CLOSE);
 
                 popMatrix();
@@ -2491,18 +2525,18 @@ var factor=1.25;
                   strokeWeight(0);
                   fill(CLRS.VERTEX);
 
-                  ellipse(d+cX,   d+cY, sz, sz);
-                  ellipse(d+cX+12, d+cY, sz, sz);
+                  ellipse(d+p.cX,    d+p.cY, sz, sz);
+                  ellipse(d+p.cX+12, d+p.cY, sz, sz);
 
                   noFill();
                   strokeWeight(0.5);
                   stroke(CLRS.LINE);
 
                   beginShape();
-                    vertex(d+cX,    d+cY-12);
-                    vertex(d+cX+12, d+cY);
-                    vertex(d+cX,    d+cY+12);
-                    vertex(d+cX-12, d+cY);
+                    vertex(d+p.cX,    d+p.cY-12);
+                    vertex(d+p.cX+12, d+p.cY);
+                    vertex(d+p.cX,    d+p.cY+12);
+                    vertex(d+p.cX-12, d+p.cY);
                   endShape(CLOSE);
 
                 popMatrix();
@@ -2530,18 +2564,18 @@ var factor=1.25;
             strokeWeight(0);
             fill(CLRS.VERTEX);
 
-            ellipse(d+cX+10*cos(PI/4),
-                    d+cY-10*sin(PI/4),
+            ellipse(d+p.cX+10*cos(PI/4),
+                    d+p.cY-10*sin(PI/4),
                     sz, sz);
-            ellipse(d+cX-10*cos(PI/4),
-                    d+cY+10*sin(PI/4),
+            ellipse(d+p.cX-10*cos(PI/4),
+                    d+p.cY+10*sin(PI/4),
                     sz, sz);
 
             noFill();
             strokeWeight(0.5);
             stroke(CLRS.LINE);
 
-            arc(d+cX, d+cY, 20, 20, PI*3/4, 2*PI*7/8);
+            arc(d+p.cX, d+p.cY, 20, 20, PI*3/4, 2*PI*7/8);
 
             break;
 
@@ -2551,19 +2585,19 @@ var factor=1.25;
             strokeWeight(0);
             fill(CLRS.VERTEX);
 
-            ellipse(d+cX, d+cY, sz, sz);
-            ellipse(d+cX+10*cos(PI/4),
-                    d+cY-10*sin(PI/4),
+            ellipse(d+p.cX, d+p.cY, sz, sz);
+            ellipse(d+p.cX+10*cos(PI/4),
+                    d+p.cY-10*sin(PI/4),
                     sz, sz);
-            ellipse(d+cX+10*cos(PI/4),
-                    d+cY+10*sin(PI/4),
+            ellipse(d+p.cX+10*cos(PI/4),
+                    d+p.cY+10*sin(PI/4),
                     sz, sz);
 
             noFill();
             strokeWeight(0.5);
             stroke(CLRS.LINE);
 
-            arc(d+cX, d+cY, 20, 20, -PI/4, PI/4);
+            arc(d+p.cX, d+p.cY, 20, 20, -PI/4, PI/4);
 
             break;
 
@@ -2574,21 +2608,21 @@ var factor=1.25;
             fill(CLRS.VERTEX);
 
             //~ ellipse(d+cX, d+cY, sz, sz);
-            ellipse(d+cX+10*cos(PI/4),
-                    d+cY-10*sin(PI/4),
+            ellipse(d+p.cX+10*cos(PI/4),
+                    d+p.cY-10*sin(PI/4),
                     sz, sz);
-            ellipse(d+cX+10*cos(PI),
-                    d+cY+10*sin(PI),
+            ellipse(d+p.cX+10*cos(PI),
+                    d+p.cY+10*sin(PI),
                     sz, sz);
-            ellipse(d+cX+10*cos(PI/4),
-                    d+cY+10*sin(PI/4),
+            ellipse(d+p.cX+10*cos(PI/4),
+                    d+p.cY+10*sin(PI/4),
                     sz, sz);
 
             noFill();
             strokeWeight(0.5);
             stroke(CLRS.LINE);
 
-            arc(d+cX, d+cY, 20, 20, -PI, PI/4);
+            arc(d+p.cX, d+p.cY, 20, 20, -PI, PI/4);
 
             break;
 
@@ -2598,27 +2632,27 @@ var factor=1.25;
             strokeWeight(0);
             fill(CLRS.VERTEX);
 
-            ellipse(d+cX, d+cY, sz, sz);
-            ellipse(d+cX+10*cos(PI/3),
-                    d+cY-10*sin(PI/3),
+            ellipse(d+p.cX, d+p.cY, sz, sz);
+            ellipse(d+p.cX+10*cos(PI/3),
+                    d+p.cY-10*sin(PI/3),
                     sz, sz);
-            ellipse(d+cX+10*cos(PI/3),
-                    d+cY+10*sin(PI/3),
+            ellipse(d+p.cX+10*cos(PI/3),
+                    d+p.cY+10*sin(PI/3),
                     sz, sz);
 
             noFill();
             strokeWeight(0.5);
             stroke(CLRS.LINE);
 
-            line(d+cX, d+cY,
-                 d+cX+10*cos(PI/3),
-                 d+cY+10*sin(PI/3));
+            line(d+p.cX, d+p.cY,
+                 d+p.cX+10*cos(PI/3),
+                 d+p.cY+10*sin(PI/3));
 
-            line(d+cX, d+cY,
-                 d+cX+10*cos(PI/3),
-                 d+cY-10*sin(PI/3));
+            line(d+p.cX, d+p.cY,
+                 d+p.cX+10*cos(PI/3),
+                 d+p.cY-10*sin(PI/3));
 
-            arc(d+cX, d+cY, 20, 20, -PI/3, PI/3);
+            arc(d+p.cX, d+p.cY, 20, 20, -PI/3, PI/3);
 
             break;
 
@@ -2629,29 +2663,29 @@ var factor=1.25;
             fill(CLRS.VERTEX);
 
             //~ ellipse(d+cX, d+cY, sz, sz);
-            ellipse(d+cX+10*cos(PI/4),
-                    d+cY-10*sin(PI/4),
+            ellipse(d+p.cX+10*cos(PI/4),
+                    d+p.cY-10*sin(PI/4),
                     sz, sz);
-            ellipse(d+cX+10*cos(PI),
-                    d+cY+10*sin(PI),
+            ellipse(d+p.cX+10*cos(PI),
+                    d+p.cY+10*sin(PI),
                     sz, sz);
-            ellipse(d+cX+10*cos(PI/4),
-                    d+cY+10*sin(PI/4),
+            ellipse(d+p.cX+10*cos(PI/4),
+                    d+p.cY+10*sin(PI/4),
                     sz, sz);
 
             noFill();
             strokeWeight(0.5);
             stroke(CLRS.LINE);
 
-            line(d+cX, d+cY,
-                 d+cX+10*cos(PI/3),
-                 d+cY+10*sin(PI/3));
+            line(d+p.cX, d+p.cY,
+                 d+p.cX+10*cos(PI/3),
+                 d+p.cY+10*sin(PI/3));
 
-            line(d+cX, d+cY,
-                 d+cX+10*cos(PI),
-                 d+cY-10*sin(PI));
+            line(d+p.cX, d+p.cY,
+                 d+p.cX+10*cos(PI),
+                 d+p.cY-10*sin(PI));
 
-            arc(d+cX, d+cY, 20, 20, -PI, PI/4);
+            arc(d+p.cX, d+p.cY, 20, 20, -PI, PI/4);
 
             break;
 
@@ -2662,19 +2696,19 @@ var factor=1.25;
             fill(CLRS.VERTEX);
 
             //~ ellipse(d+cX, d+cY, sz, sz);
-            ellipse(d+cX, d+cY, sz, sz);
+            ellipse(d+p.cX, d+p.cY, sz, sz);
 
             noFill();
             strokeWeight(0.5);
             stroke(CLRS.Red);
 
-            ellipse(d+cX, d+cY, 20, 20);
+            ellipse(d+p.cX, d+p.cY, 20, 20);
 
             noFill();
             strokeWeight(0.5);
             stroke(CLRS.LINE);
 
-            line(d+cX, d+cY, d+cX+10, d+cY);
+            line(d+p.cX, d+p.cY, d+p.cX+10, d+p.cY);
 
             break;
 
@@ -2700,28 +2734,28 @@ var factor=1.25;
             stroke(CLRS.LINE);
 
             beginShape();
-              vertex(d+cX+10*cos(2*PI/5),  d+cY+10*sin(2*PI/5));
-              vertex(d+cX+10*cos(4*PI/5),  d+cY+10*sin(4*PI/5));
-              vertex(d+cX+10*cos(6*PI/5),  d+cY+10*sin(6*PI/5));
-              vertex(d+cX+10*cos(8*PI/5),  d+cY+10*sin(8*PI/5));
-              vertex(d+cX+10*cos(10*PI/5), d+cY+10*sin(10*PI/5));
+              vertex(d+p.cX+10*cos(2*PI/5),  d+p.cY+10*sin(2*PI/5));
+              vertex(d+p.cX+10*cos(4*PI/5),  d+p.cY+10*sin(4*PI/5));
+              vertex(d+p.cX+10*cos(6*PI/5),  d+p.cY+10*sin(6*PI/5));
+              vertex(d+p.cX+10*cos(8*PI/5),  d+p.cY+10*sin(8*PI/5));
+              vertex(d+p.cX+10*cos(10*PI/5), d+p.cY+10*sin(10*PI/5));
             endShape(CLOSE);
 
             noFill();
             strokeWeight(1);
             stroke(CLRS.LINEA);
 
-            line(d+cX, d+cY, d+cX+10*cos(8*PI/5), d+cY+10*sin(8*PI/5));
+            line(d+p.cX, d+p.cY, d+p.cX+10*cos(8*PI/5), d+p.cY+10*sin(8*PI/5));
 
             noStroke();
             strokeWeight(0);
             fill(CLRS.VERTEX);
 
-            ellipse(d+cX+10*cos(2*PI/5),  d+cY+10*sin(2*PI/5),  sz, sz);
-            ellipse(d+cX+10*cos(4*PI/5),  d+cY+10*sin(4*PI/5),  sz, sz);
-            ellipse(d+cX+10*cos(6*PI/5),  d+cY+10*sin(6*PI/5),  sz, sz);
-            ellipse(d+cX+10*cos(8*PI/5),  d+cY+10*sin(8*PI/5),  sz, sz);
-            ellipse(d+cX+10*cos(10*PI/5), d+cY+10*sin(10*PI/5), sz, sz);
+            ellipse(d+p.cX+10*cos(2*PI/5),  d+p.cY+10*sin(2*PI/5),  sz, sz);
+            ellipse(d+p.cX+10*cos(4*PI/5),  d+p.cY+10*sin(4*PI/5),  sz, sz);
+            ellipse(d+p.cX+10*cos(6*PI/5),  d+p.cY+10*sin(6*PI/5),  sz, sz);
+            ellipse(d+p.cX+10*cos(8*PI/5),  d+p.cY+10*sin(8*PI/5),  sz, sz);
+            ellipse(d+p.cX+10*cos(10*PI/5), d+p.cY+10*sin(10*PI/5), sz, sz);
 
             break;
 
@@ -2732,28 +2766,28 @@ var factor=1.25;
             stroke(CLRS.LINE);
 
             beginShape();
-              vertex(d+cX+10*cos(2*PI/5),  d+cY+10*sin(2*PI/5));
-              vertex(d+cX+10*cos(4*PI/5),  d+cY+10*sin(4*PI/5));
-              vertex(d+cX+10*cos(6*PI/5),  d+cY+10*sin(6*PI/5));
-              vertex(d+cX+10*cos(8*PI/5),  d+cY+10*sin(8*PI/5));
-              vertex(d+cX+10*cos(10*PI/5), d+cY+10*sin(10*PI/5));
+              vertex(d+p.cX+10*cos(2*PI/5),  d+p.cY+10*sin(2*PI/5));
+              vertex(d+p.cX+10*cos(4*PI/5),  d+p.cY+10*sin(4*PI/5));
+              vertex(d+p.cX+10*cos(6*PI/5),  d+p.cY+10*sin(6*PI/5));
+              vertex(d+p.cX+10*cos(8*PI/5),  d+p.cY+10*sin(8*PI/5));
+              vertex(d+p.cX+10*cos(10*PI/5), d+p.cY+10*sin(10*PI/5));
             endShape(CLOSE);
 
             noFill();
             strokeWeight(1);
             stroke(CLRS.LINEA);
 
-            line(d+cX, d+cY, d+cX+10*cos(8*PI/5), d+cY+10*sin(8*PI/5));
+            line(d+p.cX, d+p.cY, d+p.cX+10*cos(8*PI/5), d+p.cY+10*sin(8*PI/5));
 
             noStroke();
             strokeWeight(0);
             fill(CLRS.VERTEX);
 
-            ellipse(d+cX+10*cos(2*PI/5),  d+cY+10*sin(2*PI/5),  sz, sz);
-            ellipse(d+cX+10*cos(4*PI/5),  d+cY+10*sin(4*PI/5),  sz, sz);
-            ellipse(d+cX+10*cos(6*PI/5),  d+cY+10*sin(6*PI/5),  sz, sz);
-            ellipse(d+cX+10*cos(8*PI/5),  d+cY+10*sin(8*PI/5),  sz, sz);
-            ellipse(d+cX+10*cos(10*PI/5), d+cY+10*sin(10*PI/5), sz, sz);
+            ellipse(d+p.cX+10*cos(2*PI/5),  d+p.cY+10*sin(2*PI/5),  sz, sz);
+            ellipse(d+p.cX+10*cos(4*PI/5),  d+p.cY+10*sin(4*PI/5),  sz, sz);
+            ellipse(d+p.cX+10*cos(6*PI/5),  d+p.cY+10*sin(6*PI/5),  sz, sz);
+            ellipse(d+p.cX+10*cos(8*PI/5),  d+p.cY+10*sin(8*PI/5),  sz, sz);
+            ellipse(d+p.cX+10*cos(10*PI/5), d+p.cY+10*sin(10*PI/5), sz, sz);
 
             break;
 
@@ -2763,14 +2797,14 @@ var factor=1.25;
             strokeWeight(0);
             fill(CLRS.VERTEX);
 
-            ellipse(d+cX+10*cos(PI/4),
-                    d+cY-10*sin(PI/4),
+            ellipse(d+p.cX+10*cos(PI/4),
+                    d+p.cY-10*sin(PI/4),
                     sz, sz);
-            ellipse(d+cX+10*cos(PI),
-                    d+cY+10*sin(PI),
+            ellipse(d+p.cX+10*cos(PI),
+                    d+p.cY+10*sin(PI),
                     sz, sz);
-            ellipse(d+cX+10*cos(PI/4),
-                    d+cY+10*sin(PI/4),
+            ellipse(d+p.cX+10*cos(PI/4),
+                    d+p.cY+10*sin(PI/4),
                     sz, sz);
 
             noFill();
@@ -2778,9 +2812,9 @@ var factor=1.25;
             stroke(CLRS.LINE);
 
             beginShape();
-              vertex(d+cX+10*cos(PI/4), d+cY-10*sin(PI/4));
-              vertex(d+cX+10*cos(PI),   d+cY+10*sin(PI));
-              vertex(d+cX+10*cos(PI/4), d+cY+10*sin(PI/4));
+              vertex(d+p.cX+10*cos(PI/4), d+p.cY-10*sin(PI/4));
+              vertex(d+p.cX+10*cos(PI),   d+p.cY+10*sin(PI));
+              vertex(d+p.cX+10*cos(PI/4), d+p.cY+10*sin(PI/4));
             endShape(CLOSE);
 
             break;
@@ -2811,19 +2845,19 @@ var factor=1.25;
                 strokeWeight(0.5);
                 stroke(CLRS.LINE);
 
-                line(d+cX-9, d+cY,   d+cX+9, d+cY);
-                line(d+cX,   d+cY-9, d+cX,   d+cY+9);
+                line(d+p.cX-9, d+p.cY,   d+p.cX+9, d+p.cY);
+                line(d+p.cX,   d+p.cY-9, d+p.cX,   d+p.cY+9);
 
-                rect(d+cX, d+cY, 4, 4);
+                rect(d+p.cX, d+p.cY, 4, 4);
 
                 noStroke();
                 strokeWeight(0.0);
                 fill(CLRS.LINE);
 
-                triangle(d+cX+10, d+cY,    d+cX+6, d+cY-3, d+cX+6, d+cY+3);
-                triangle(d+cX-10, d+cY,    d+cX-6, d+cY-3, d+cX-6, d+cY+3);
-                triangle(d+cX,    d+cY-10, d+cX-3, d+cY-6, d+cX+3, d+cY-6);
-                triangle(d+cX,    d+cY+10, d+cX-3, d+cY+6, d+cX+3, d+cY+6);
+                triangle(d+p.cX+10, d+p.cY,    d+p.cX+6, d+p.cY-3, d+p.cX+6, d+p.cY+3);
+                triangle(d+p.cX-10, d+p.cY,    d+p.cX-6, d+p.cY-3, d+p.cX-6, d+p.cY+3);
+                triangle(d+p.cX,    d+p.cY-10, d+p.cX-3, d+p.cY-6, d+p.cX+3, d+p.cY-6);
+                triangle(d+p.cX,    d+p.cY+10, d+p.cX-3, d+p.cY+6, d+p.cX+3, d+p.cY+6);
 
             popMatrix();
 
@@ -2839,16 +2873,16 @@ var factor=1.25;
                 strokeWeight(0.25);
                 stroke(CLRS.VERTEX);
 
-                line(d+cX, d+cY-12, d+cX, d+cY+12);
+                line(d+p.cX, d+p.cY-12, d+p.cX, d+p.cY+12);
 
                 noFill();
                 strokeWeight(0.5);
                 stroke(CLRS.LINEA);
 
-                triangle(d+cX+3, d+cY-8, d+cX+3, d+cY+8, d+cX+10, d+cY+8);
+                triangle(d+p.cX+3, d+p.cY-8, d+p.cX+3, d+p.cY+8, d+p.cX+10, d+p.cY+8);
 
                 stroke(CLRS.LINE);
-                triangle(d+cX-3, d+cY-8, d+cX-3, d+cY+8, d+cX-10, d+cY+8);
+                triangle(d+p.cX-3, d+p.cY-8, d+p.cX-3, d+p.cY+8, d+p.cX-10, d+p.cY+8);
 
             popMatrix();
 
@@ -2864,13 +2898,13 @@ var factor=1.25;
                 strokeWeight(0.5);
                 stroke(CLRS.LINE);
 
-                arc(d+cX, d+cY, 20, 20, -PI/4, 3/2*PI);
+                arc(d+p.cX, d+p.cY, 20, 20, -PI/4, 3/2*PI);
 
                 noStroke();
                 strokeWeight(0);
                 fill(CLRS.VERTEX);
 
-                triangle(d+cX+2, d+cY-10, d+cX-2, d+cY-6, d+cX-2, d+cY-14);
+                triangle(d+p.cX+2, d+p.cY-10, d+p.cX-2, d+p.cY-6, d+p.cX-2, d+p.cY-14);
 
               popMatrix();
 
@@ -2886,23 +2920,23 @@ var factor=1.25;
                   strokeWeight(0.5);
                   stroke(CLRS.LINEA);
 
-                  rect(d+cX, d+cY, 20, 20);
+                  rect(d+p.cX, d+p.cY, 20, 20);
 
                   stroke(CLRS.LINE);
 
-                  rect(d+cX-5, d+cY+5, 10, 10);
+                  rect(d+p.cX-5, d+p.cY+5, 10, 10);
 
                   noFill();
                   strokeWeight(0.5);
                   stroke(CLRS.VERTEX);
 
-                  line(d+cX+1, d+cY-1, d+cX+7, d+cY-7);
+                  line(d+p.cX+1, d+p.cY-1, d+p.cX+7, d+p.cY-7);
 
                   noStroke();
                   strokeWeight(0);
                   fill(CLRS.VERTEX);
 
-                  triangle(d+cX+7, d+cY-7, d+cX+3, d+cY-7, d+cX+7, d+cY-3);
+                  triangle(d+p.cX+7, d+p.cY-7, d+p.cX+3, d+p.cY-7, d+p.cX+7, d+p.cY-3);
 
                 popMatrix();
 
@@ -2919,29 +2953,29 @@ var factor=1.25;
                   stroke(CLRS.LINE);
 
                   beginShape();
-                    vertex(d+cX-8, d+cY-8);
-                    vertex(d+cX+4, d+cY-8);
-                    vertex(d+cX+8, d+cY+8);
-                    vertex(d+cX-8, d+cY+8);
+                    vertex(d+p.cX-8, d+p.cY-8);
+                    vertex(d+p.cX+4, d+p.cY-8);
+                    vertex(d+p.cX+8, d+p.cY+8);
+                    vertex(d+p.cX-8, d+p.cY+8);
                   endShape(CLOSE);
 
                   noFill();
                   strokeWeight(0.75);
                   stroke(CLRS.LINEA);
 
-                  line(d+cX+1, d+cY-12, d+cX+1, d+cY+12);
+                  line(d+p.cX+1, d+p.cY-12, d+p.cX+1, d+p.cY+12);
 
                   noFill();
                   strokeWeight(0.75);
                   stroke(CLRS.VERTEX);
 
-                  line(d+cX-5, d+cY+2, d+cX+4, d+cY+2);
+                  line(d+p.cX-5, d+p.cY+2, d+p.cX+4, d+p.cY+2);
 
                   noStroke();
                   strokeWeight(0);
                   fill(CLRS.VERTEX);
 
-                  triangle(d+cX+5, d+cY+2, d+cX+2, d+cY-1, d+cX+2, d+cY+5);
+                  triangle(d+p.cX+5, d+p.cY+2, d+p.cX+2, d+p.cY-1, d+p.cX+2, d+p.cY+5);
 
                 popMatrix();
 
@@ -2972,19 +3006,19 @@ var factor=1.25;
             strokeWeight(0.5);
             stroke(CLRS.LINE);
 
-            line(d+cX-9, d+cY,   d+cX+9, d+cY);
-            line(d+cX,   d+cY-9, d+cX,   d+cY+9);
+            line(d+p.cX-9, d+p.cY,   d+p.cX+9, d+p.cY);
+            line(d+p.cX,   d+p.cY-9, d+p.cX,   d+p.cY+9);
 
-            rect(d+cX, d+cY, 4, 4);
+            rect(d+p.cX, d+p.cY, 4, 4);
 
             noStroke();
             strokeWeight(0.0);
             fill(CLRS.LINE);
 
-            triangle(d+cX+10, d+cY,    d+cX+6, d+cY-3, d+cX+6, d+cY+3);
-            triangle(d+cX-10, d+cY,    d+cX-6, d+cY-3, d+cX-6, d+cY+3);
-            triangle(d+cX,    d+cY-10, d+cX-3, d+cY-6, d+cX+3, d+cY-6);
-            triangle(d+cX,    d+cY+10, d+cX-3, d+cY+6, d+cX+3, d+cY+6);
+            triangle(d+p.cX+10, d+p.cY,    d+p.cX+6, d+p.cY-3, d+p.cX+6, d+p.cY+3);
+            triangle(d+p.cX-10, d+p.cY,    d+p.cX-6, d+p.cY-3, d+p.cX-6, d+p.cY+3);
+            triangle(d+p.cX,    d+p.cY-10, d+p.cX-3, d+p.cY-6, d+p.cX+3, d+p.cY-6);
+            triangle(d+p.cX,    d+p.cY+10, d+p.cX-3, d+p.cY+6, d+p.cX+3, d+p.cY+6);
 
             break;
 
@@ -2994,16 +3028,16 @@ var factor=1.25;
             strokeWeight(0.25);
             stroke(CLRS.VERTEX);
 
-            line(d+cX, d+cY-12, d+cX, d+cY+12);
+            line(d+p.cX, d+p.cY-12, d+p.cX, d+p.cY+12);
 
             noFill();
             strokeWeight(0.5);
             stroke(CLRS.LINEA);
 
-            triangle(d+cX+3, d+cY-8, d+cX+3, d+cY+8, d+cX+10, d+cY+8);
+            triangle(d+p.cX+3, d+p.cY-8, d+p.cX+3, d+p.cY+8, d+p.cX+10, d+p.cY+8);
 
             stroke(CLRS.LINE);
-            triangle(d+cX-3, d+cY-8, d+cX-3, d+cY+8, d+cX-10, d+cY+8);
+            triangle(d+p.cX-3, d+p.cY-8, d+p.cX-3, d+p.cY+8, d+p.cX-10, d+p.cY+8);
 
             break;
 
@@ -3013,13 +3047,13 @@ var factor=1.25;
             strokeWeight(0.5);
             stroke(CLRS.LINE);
 
-            arc(d+cX, d+cY, 20, 20, -PI/4, 3/2*PI);
+            arc(d+p.cX, d+p.cY, 20, 20, -PI/4, 3/2*PI);
 
             noStroke();
             strokeWeight(0);
             fill(CLRS.VERTEX);
 
-            triangle(d+cX+2, d+cY-10, d+cX-2, d+cY-6, d+cX-2, d+cY-14);
+            triangle(d+p.cX+2, d+p.cY-10, d+p.cX-2, d+p.cY-6, d+p.cX-2, d+p.cY-14);
 
             break;
 
@@ -3029,23 +3063,23 @@ var factor=1.25;
             strokeWeight(0.5);
             stroke(CLRS.LINEA);
 
-            rect(d+cX, d+cY, 20, 20);
+            rect(d+p.cX, d+p.cY, 20, 20);
 
             stroke(CLRS.LINE);
 
-            rect(d+cX-5, d+cY+5, 10, 10);
+            rect(d+p.cX-5, d+p.cY+5, 10, 10);
 
             noFill();
             strokeWeight(0.5);
             stroke(CLRS.VERTEX);
 
-            line(d+cX+1, d+cY-1, d+cX+7, d+cY-7);
+            line(d+p.cX+1, d+p.cY-1, d+p.cX+7, d+p.cY-7);
 
             noStroke();
             strokeWeight(0);
             fill(CLRS.VERTEX);
 
-            triangle(d+cX+7, d+cY-7, d+cX+3, d+cY-7, d+cX+7, d+cY-3);
+            triangle(d+p.cX+7, d+p.cY-7, d+p.cX+3, d+p.cY-7, d+p.cX+7, d+p.cY-3);
 
             break;
 
@@ -3056,29 +3090,29 @@ var factor=1.25;
             stroke(CLRS.LINE);
 
             beginShape();
-              vertex(d+cX-8, d+cY-8);
-              vertex(d+cX+4, d+cY-8);
-              vertex(d+cX+8, d+cY+8);
-              vertex(d+cX-8, d+cY+8);
+              vertex(d+p.cX-8, d+p.cY-8);
+              vertex(d+p.cX+4, d+p.cY-8);
+              vertex(d+p.cX+8, d+p.cY+8);
+              vertex(d+p.cX-8, d+p.cY+8);
             endShape(CLOSE);
 
             noFill();
             strokeWeight(0.75);
             stroke(CLRS.LINEA);
 
-            line(d+cX+1, d+cY-12, d+cX+1, d+cY+12);
+            line(d+p.cX+1, d+p.cY-12, d+p.cX+1, d+p.cY+12);
 
             noFill();
             strokeWeight(0.75);
             stroke(CLRS.VERTEX);
 
-            line(d+cX-5, d+cY+2, d+cX+4, d+cY+2);
+            line(d+p.cX-5, d+p.cY+2, d+p.cX+4, d+p.cY+2);
 
             noStroke();
             strokeWeight(0);
             fill(CLRS.VERTEX);
 
-            triangle(d+cX+5, d+cY+2, d+cX+2, d+cY-1, d+cX+2, d+cY+5);
+            triangle(d+p.cX+5, d+p.cY+2, d+p.cX+2, d+p.cY-1, d+p.cX+2, d+p.cY+5);
 
             break;
 
@@ -3109,28 +3143,28 @@ var factor=1.25;
             strokeWeight(0.25);
             stroke(CLRS.BLACK);
 
-            rect(d+cX, d+cY+8, 20, 6);
+            rect(d+p.cX, d+p.cY+8, 20, 6);
 
             strokeWeight(0.5);
             stroke(CLRS.BLACK);
 
             for(var n=-10; n<10; n+=2){
-              if(n%4===0){ line(d+cX+n, d+cY+4, d+cX+n, d+cY+8); }
-              else       { line(d+cX+n, d+cY+4, d+cX+n, d+cY+6); }
+              if(n%4===0){ line(d+p.cX+n, d+p.cY+4, d+p.cX+n, d+p.cY+8); }
+              else       { line(d+p.cX+n, d+p.cY+4, d+p.cX+n, d+p.cY+6); }
             }
 
             stroke(CLRS.LINE);
 
-            line(d+cX-10, d+cY, d+cX-10, d+cY-10);
-            line(d+cX+10, d+cY, d+cX+10, d+cY-10);
-            line(d+cX-10, d+cY-5, d+cX+10, d+cY-5);
+            line(d+p.cX-10, d+p.cY,   d+p.cX-10, d+p.cY-10);
+            line(d+p.cX+10, d+p.cY,   d+p.cX+10, d+p.cY-10);
+            line(d+p.cX-10, d+p.cY-5, d+p.cX+10, d+p.cY-5);
 
             fill(CLRS.LINE);
             noStroke();
             strokeWeight(0);
 
-            triangle(d+cX-10, d+cY-5, d+cX-7, d+cY-8, d+cX-7, d+cY-2);
-            triangle(d+cX+10, d+cY-5, d+cX+7, d+cY-8, d+cX+7, d+cY-2);
+            triangle(d+p.cX-10, d+p.cY-5, d+p.cX-7, d+p.cY-8, d+p.cX-7, d+p.cY-2);
+            triangle(d+p.cX+10, d+p.cY-5, d+p.cX+7, d+p.cY-8, d+p.cX+7, d+p.cY-2);
 
             break;
 
@@ -3141,14 +3175,14 @@ var factor=1.25;
             strokeWeight(0.25);
             stroke(CLRS.BLACK);
 
-            rect(d+cX, d+cY+8, 20, 6);
+            rect(d+p.cX, d+p.cY+8, 20, 6);
 
             strokeWeight(0.5);
             stroke(CLRS.BLACK);
 
             for(var n=-10; n<10; n+=2){
-              if(n%4===0){ line(d+cX+n, d+cY+4, d+cX+n, d+cY+8); }
-              else       { line(d+cX+n, d+cY+4, d+cX+n, d+cY+6); }
+              if(n%4===0){ line(d+p.cX+n, d+p.cY+4, d+p.cX+n, d+p.cY+8); }
+              else       { line(d+p.cX+n, d+p.cY+4, d+p.cX+n, d+p.cY+6); }
             }
 
             noFill();
@@ -3156,10 +3190,10 @@ var factor=1.25;
             stroke(CLRS.LINE);
 
             beginShape();
-              vertex(d+cX-10, d+cY-12);
-              vertex(d+cX+10, d+cY-6);
-              vertex(d+cX+10, d+cY+2);
-              vertex(d+cX-10, d+cY+2);
+              vertex(d+p.cX-10, d+p.cY-12);
+              vertex(d+p.cX+10, d+p.cY-6);
+              vertex(d+p.cX+10, d+p.cY+2);
+              vertex(d+p.cX-10, d+p.cY+2);
             endShape(CLOSE);
 
             break;
@@ -3171,14 +3205,14 @@ var factor=1.25;
             strokeWeight(0.25);
             stroke(CLRS.BLACK);
 
-            rect(d+cX, d+cY+8, 20, 6);
+            rect(d+p.cX, d+p.cY+8, 20, 6);
 
             strokeWeight(0.5);
             stroke(CLRS.BLACK);
 
             for(var n=-10; n<10; n+=2){
-              if(n%4===0){ line(d+cX+n, d+cY+4, d+cX+n, d+cY+8); }
-              else       { line(d+cX+n, d+cY+4, d+cX+n, d+cY+6); }
+              if(n%4===0){ line(d+p.cX+n, d+p.cY+4, d+p.cX+n, d+p.cY+8); }
+              else       { line(d+p.cX+n, d+p.cY+4, d+p.cX+n, d+p.cY+6); }
             }
 
             noFill();
@@ -3186,10 +3220,10 @@ var factor=1.25;
             stroke(CLRS.LINE);
 
             beginShape();
-              vertex(d+cX-10, d+cY-12);
-              vertex(d+cX+10, d+cY-6);
-              vertex(d+cX+10, d+cY+2);
-              vertex(d+cX-10, d+cY+2);
+              vertex(d+p.cX-10, d+p.cY-12);
+              vertex(d+p.cX+10, d+p.cY-6);
+              vertex(d+p.cX+10, d+p.cY+2);
+              vertex(d+p.cX-10, d+p.cY+2);
             endShape(CLOSE);
 
             break;
@@ -3202,27 +3236,27 @@ var factor=1.25;
             strokeWeight(0.25);
             stroke(CLRS.BLACK);
 
-            rect(d+cX, d+cY+8, 20, 6);
+            rect(d+p.cX, d+p.cY+8, 20, 6);
 
             strokeWeight(0.5);
             stroke(CLRS.BLACK);
 
             for(var n=-10; n<10; n+=2){
-              if(n%4===0){ line(d+cX+n, d+cY+4, d+cX+n, d+cY+8); }
-              else       { line(d+cX+n, d+cY+4, d+cX+n, d+cY+6); }
+              if(n%4===0){ line(d+p.cX+n, d+p.cY+4, d+p.cX+n, d+p.cY+8); }
+              else       { line(d+p.cX+n, d+p.cY+4, d+p.cX+n, d+p.cY+6); }
             }
 
             fill(CLRS.BLACK);
             strokeWeight(0.5);
             stroke(CLRS.LINE);
 
-            ellipse(d+cX, d+cY+2, 12, 4);
+            ellipse(d+p.cX, d+p.cY+2, 12, 4);
 
-            line(d+cX-6, d+cY-12, d+cX-6, d+cY+2);
-            line(d+cX+6, d+cY-12, d+cX+6, d+cY+2);
+            line(d+p.cX-6, d+p.cY-12, d+p.cX-6, d+p.cY+2);
+            line(d+p.cX+6, d+p.cY-12, d+p.cX+6, d+p.cY+2);
 
-            ellipse(d+cX, d+cY-12, 12, 4);
-            ellipse(d+cX, d+cY-12, 12, 4);
+            ellipse(d+p.cX, d+p.cY-12, 12, 4);
+            ellipse(d+p.cX, d+p.cY-12, 12, 4);
 
             break;
 
@@ -3233,25 +3267,25 @@ var factor=1.25;
             strokeWeight(0.25);
             stroke(CLRS.BLACK);
 
-            rect(d+cX, d+cY+8, 20, 6);
+            rect(d+p.cX, d+p.cY+8, 20, 6);
 
             strokeWeight(0.5);
             stroke(CLRS.BLACK);
 
             for(var n=-10; n<10; n+=2){
-              if(n%4===0){ line(d+cX+n, d+cY+4, d+cX+n, d+cY+8); }
-              else       { line(d+cX+n, d+cY+4, d+cX+n, d+cY+6); }
+              if(n%4===0){ line(d+p.cX+n, d+p.cY+4, d+p.cX+n, d+p.cY+8); }
+              else       { line(d+p.cX+n, d+p.cY+4, d+p.cX+n, d+p.cY+6); }
             }
 
             fill(CLRS.BLACK);
             strokeWeight(0.5);
             stroke(CLRS.LINE);
 
-            ellipse(d+cX, d+cY-5, 15, 15);
+            ellipse(d+p.cX, d+p.cY-5, 15, 15);
 
             pushMatrix();
 
-              translate(d+cX, d+cY-5);
+              translate(d+p.cX, d+p.cY-5);
 
               rotate(-PI/4);
 
@@ -3274,25 +3308,25 @@ var factor=1.25;
             strokeWeight(0.25);
             stroke(CLRS.BLACK);
 
-            rect(d+cX, d+cY+8, 20, 6);
+            rect(d+p.cX, d+p.cY+8, 20, 6);
 
             strokeWeight(0.5);
             stroke(CLRS.BLACK);
 
             for(var n=-10; n<10; n+=2){
-              if(n%4===0){ line(d+cX+n, d+cY+4, d+cX+n, d+cY+8); }
-              else       { line(d+cX+n, d+cY+4, d+cX+n, d+cY+6); }
+              if(n%4===0){ line(d+p.cX+n, d+p.cY+4, d+p.cX+n, d+p.cY+8); }
+              else       { line(d+p.cX+n, d+p.cY+4, d+p.cX+n, d+p.cY+6); }
             }
 
             fill(CLRS.BLACK);
             strokeWeight(0.5);
             stroke(CLRS.LINE);
 
-            ellipse(d+cX, d+cY-5, 15, 15);
+            ellipse(d+p.cX, d+p.cY-5, 15, 15);
 
             pushMatrix();
 
-              translate(d+cX, d+cY-5);
+              translate(d+p.cX, d+p.cY-5);
 
               rotate(-PI/4);
 
@@ -3316,29 +3350,29 @@ var factor=1.25;
             stroke(CLRS.LINE);
 
             beginShape();
-              vertex(d+cX-8, d+cY-8);
-              vertex(d+cX+4, d+cY-8);
-              vertex(d+cX+8, d+cY+8);
-              vertex(d+cX-8, d+cY+8);
+              vertex(d+p.cX-8, d+p.cY-8);
+              vertex(d+p.cX+4, d+p.cY-8);
+              vertex(d+p.cX+8, d+p.cY+8);
+              vertex(d+p.cX-8, d+p.cY+8);
             endShape(CLOSE);
 
             noFill();
             strokeWeight(0.75);
             stroke(CLRS.LINEA);
 
-            line(d+cX+1, d+cY-12, d+cX+1, d+cY+12);
+            line(d+p.cX+1, d+p.cY-12, d+p.cX+1, d+p.cY+12);
 
             noFill();
             strokeWeight(0.75);
             stroke(CLRS.VERTEX);
 
-            line(d+cX-5, d+cY+2, d+cX+4, d+cY+2);
+            line(d+p.cX-5, d+p.cY+2, d+p.cX+4, d+p.cY+2);
 
             noStroke();
             strokeWeight(0);
             fill(CLRS.VERTEX);
 
-            triangle(d+cX+5, d+cY+2, d+cX+2, d+cY-1, d+cX+2, d+cY+5);
+            triangle(d+p.cX+5, d+p.cY+2, d+p.cX+2, d+p.cY-1, d+p.cX+2, d+p.cY+5);
 
             break;
 
@@ -3371,8 +3405,8 @@ var factor=1.25;
         stroke(CLRS.White);
         strokeWeight(1);
 
-        var start=d+cX-p.w/2+10;
-        var end=  d+cX+p.w/2-10;
+        var start=d+p.cX-p.w/2+10;
+        var end=  d+p.cX+p.w/2-10;
 
         switch(p.c){
 
@@ -3380,13 +3414,13 @@ var factor=1.25;
 
             strokeWeight(0.25);
 
-            line(d+cX-p.w/2+10, d+cY, d+cX+p.w/2-10, d+cY);
+            line(d+p.cX-w/2+10, d+p.cY, d+p.cX+w/2-10, d+p.cY);
 
             break;
 
           case COMMANDS.LT_SOLID[0]:
 
-            line(d+cX-p.w/2+10, d+cY, d+cX+p.w/2-10, d+cY);
+            line(d+p.cX-p.w/2+10, d+p.cY, d+p.cX+p.w/2-10, d+p.cY);
 
             break;
 
@@ -3394,7 +3428,7 @@ var factor=1.25;
 
             for(var n=start; n<end; n+=10) {
 
-              line(n, d+cY, n+5, d+cY);
+              line(n, d+p.cY, n+5, d+p.cY);
 
             }
 
@@ -3406,7 +3440,7 @@ var factor=1.25;
             fill(CLRS.White);
 
             for(var n=start; n<end; n+=5) {
-              ellipse(n, d+cY, 1, 1);
+              ellipse(n, d+p.cY, 1, 1);
             }
 
             break;
@@ -3418,12 +3452,12 @@ var factor=1.25;
               noFill();
               stroke(CLRS.White);
 
-              line(n, d+cY, n+3, d+cY);
+              line(n, d+p.cY, n+3, d+p.cY);
 
               noStroke();
               fill(CLRS.White);
 
-              ellipse(n+6.5, d+cY, 1, 1);
+              ellipse(n+6.5, d+p.cY, 1, 1);
 
             }
 
@@ -3484,22 +3518,22 @@ var factor=1.25;
           case COMMANDS.GRIDPROPS[0]:
 
             noFill();
-            stroke(p.stroke);
-            if(p.hit){ stroke(p.strokeH); }
+            stroke(CLRS.Gray2);
+            if(p.hit){ stroke(CLRS.WHITE); }
             strokeWeight(3);
 
-            line(d+cX-7, d+cY-5, d+cX+7, d+cY-5);
-            line(d+cX-7, d+cY,   d+cX+7, d+cY);
-            line(d+cX-7, d+cY+5, d+cX+7, d+cY+5);
+            line(d+p.cX-7, d+p.cY-5, d+p.cX+7, d+p.cY-5);
+            line(d+p.cX-7, d+p.cY,   d+p.cX+7, d+p.cY);
+            line(d+p.cX-7, d+p.cY+5, d+p.cX+7, d+p.cY+5);
 
             noFill();
-            stroke(p.stroke);
-            if(p.hit){ stroke(p.strokeH); }
+            stroke(CLRS.Gray2);
+            if(p.hit){ stroke(CLRS.WHITE); }
             strokeWeight(2);
 
-            line(d+cX-6, d+cY-5, d+cX+6, d+cY-5);
-            line(d+cX-6, d+cY,   d+cX+6, d+cY);
-            line(d+cX-6, d+cY+5, d+cX+6, d+cY+5);
+            line(d+p.cX-6, d+p.cY-5, d+p.cX+6, d+p.cY-5);
+            line(d+p.cX-6, d+p.cY,   d+p.cX+6, d+p.cY);
+            line(d+p.cX-6, d+p.cY+5, d+p.cX+6, d+p.cY+5);
 
             break;
 
@@ -3511,7 +3545,7 @@ var factor=1.25;
 
             for(var row=-10; row<15; row+=5){
               for(var col=-10; col<15; col+=5){
-                ellipse(d+cX+col, d+cY+row, 1, 1);
+                ellipse(d+p.cX+col, d+p.cY+row, 1, 1);
               }
             }
 
@@ -3519,8 +3553,8 @@ var factor=1.25;
             stroke(CLRS.LINE);
             strokeWeight(1);
 
-            line(d+cX-8, d+cY,   d+cX+9, d+cY);
-            line(d+cX,   d+cY-9, d+cX,   d+cY+9);
+            line(d+p.cX-8, d+p.cY,   d+p.cX+9, d+p.cY);
+            line(d+p.cX,   d+p.cY-9, d+p.cX,   d+p.cY+9);
 
             break;
 
@@ -3530,13 +3564,13 @@ var factor=1.25;
             stroke(CLRS.LINE);
             strokeWeight(1);
 
-            line(d+cX-10, d+cY+10, d+cX+10, d+cY+10);
-            line(d+cX-10, d+cY-10, d+cX-10, d+cY+10);
+            line(d+p.cX-10, d+p.cY+10, d+p.cX+10, d+p.cY+10);
+            line(d+p.cX-10, d+p.cY-10, d+p.cX-10, d+p.cY+10);
 
             strokeWeight(0.5);
 
-            line(d+cX-10, d+cY+4, d+cX-4, d+cY+4);
-            line(d+cX-4,  d+cY+4, d+cX-4, d+cY+10);
+            line(d+p.cX-10, d+p.cY+4, d+p.cX-4, d+p.cY+4);
+            line(d+p.cX-4,  d+p.cY+4, d+p.cX-4, d+p.cY+10);
 
             break;
 
@@ -3549,13 +3583,56 @@ var factor=1.25;
 
     };
 
+    switch(true){
+
+      case (p.c>=COMMANDS.GRID[0] &&
+            p.c<=COMMANDS.FS[0]):         drawGrid();       break;
+      case (p.c>=COMMANDS.POINT[0] &&
+            p.c<=COMMANDS.P_MIDPOINT[0]): drawPoint();      break;
+      case (p.c>=COMMANDS.LINE[0] &&
+            p.c<=COMMANDS.V_FP[0]):       drawLine();       break;
+      case (p.c>=COMMANDS.TRIANGLE[0] &&
+            p.c<=COMMANDS.T_SCALENE[0]):  drawTriangle();   break;
+      case (p.c>=COMMANDS.CIRCLE[0] &&
+            p.c<=COMMANDS.C_3P[0]):       drawCircle();     break;
+      case (p.c>=COMMANDS.QUAD[0] &&
+            p.c<=COMMANDS.Q_KITE[0]):     drawQuad();       break;
+      case (p.c>=COMMANDS.ARC[0] &&
+            p.c<=COMMANDS.COMPASS[0]):    drawArc();        break;
+      case (p.c>=COMMANDS.POLYGON[0] &&
+            p.c<=COMMANDS.POLYGONV[0]):   drawPolygon();    break;
+      case (p.c>=COMMANDS.TRANSLATE[0] &&
+            p.c<=COMMANDS.SHEAR[0]):      drawTransform();  break;
+      case (p.c>=COMMANDS.TRANSLATE[0] &&
+            p.c<=COMMANDS.SHEAR[0]):      drawTransform();  break;
+      case (p.c>=COMMANDS.MEASURE[0] &&
+            p.c<=COMMANDS.SLOPE[0]):      drawMeasure();    break;
+      case (p.c>=COMMANDS.LINETYPE[0] &&
+            p.c<=COMMANDS.LT_DASHDOT[0]): drawLineType();   break;
+      case (p.c>=COMMANDS.STROKE[0] &&
+            p.c<=COMMANDS.FILL[0]):       drawColor();      break;
+
+      default:      break;
+
+    }
+
+  };
+
+  //~ Shape
+  var buttonS=function(c,l,a,ctrls){
+    control.call(this,c,l,a,ctrls);
+  };
+  buttonS.prototype=Object.create(control.prototype);
+  buttonS.prototype.draw=function(){
+
+    var p=this;
+    var d=0;
+
     pushMatrix();
 
       translate(p.x, p.y);
 
         pushStyle();
-
-          //~ rectMode(CENTER);
 
           fill(p.fill);
           stroke(p.stroke);
@@ -3583,38 +3660,7 @@ var factor=1.25;
 
           rect(d, d, p.w, p.h, p.r);
 
-          switch(true){
-
-            case (p.c>=COMMANDS.GRID[0] &&
-                  p.c<=COMMANDS.FS[0]):         drawGrid();       break;
-            case (p.c>=COMMANDS.POINT[0] &&
-                  p.c<=COMMANDS.P_MIDPOINT[0]): drawPoint();      break;
-            case (p.c>=COMMANDS.LINE[0] &&
-                  p.c<=COMMANDS.V_FP[0]):       drawLine();       break;
-            case (p.c>=COMMANDS.TRIANGLE[0] &&
-                  p.c<=COMMANDS.T_SCALENE[0]):  drawTriangle();   break;
-            case (p.c>=COMMANDS.CIRCLE[0] &&
-                  p.c<=COMMANDS.C_3P[0]):       drawCircle();     break;
-            case (p.c>=COMMANDS.QUAD[0] &&
-                  p.c<=COMMANDS.Q_KITE[0]):     drawQuad();       break;
-            case (p.c>=COMMANDS.ARC[0] &&
-                  p.c<=COMMANDS.COMPASS[0]):    drawArc();        break;
-            case (p.c>=COMMANDS.POLYGON[0] &&
-                  p.c<=COMMANDS.POLYGONV[0]):   drawPolygon();    break;
-            case (p.c>=COMMANDS.TRANSLATE[0] &&
-                  p.c<=COMMANDS.SHEAR[0]):      drawTransform();  break;
-            case (p.c>=COMMANDS.TRANSLATE[0] &&
-                  p.c<=COMMANDS.SHEAR[0]):      drawTransform();  break;
-            case (p.c>=COMMANDS.MEASURE[0] &&
-                  p.c<=COMMANDS.SLOPE[0]):      drawMeasure();    break;
-            case (p.c>=COMMANDS.LINETYPE[0] &&
-                  p.c<=COMMANDS.LT_DASHDOT[0]): drawLineType();   break;
-            case (p.c>=COMMANDS.STROKE[0] &&
-                  p.c<=COMMANDS.FILL[0]):       drawColor();      break;
-
-            default:      break;
-
-          }
+          drawIcon(p, d);
 
           fill(p.tfill);
 
@@ -4304,7 +4350,7 @@ var factor=1.25;
 
   };
   sliderH.prototype.clicked=function(){
-    if(this.hit && app.left){
+    if(this.hit && app.focus===this.i){
       this.v=constrain(app.mouseX-this.parent.x-this.x, 0, this.w);
       commands(this.c, this.w*this.v/this.w);
     }
@@ -6233,14 +6279,10 @@ var factor=1.25;
   var getPoints=function(parent){
 
     var ctrls=[];
-    var top=30;
-    var h=15;
-    var l=parent.w-202;
-    var ch=app.height-14;
     var w=40;
 
     var cn=new stripH(
-            new propC(getGUID(), parent, 5, 5, w+10, w, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            new propC(getGUID(), parent, parent.x+50, parent.y+30, w+10, w, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
@@ -6299,14 +6341,10 @@ var factor=1.25;
   var getLines=function(parent){
 
     var ctrls=[];
-    var top=30;
-    var h=15;
-    var l=parent.w-202;
-    var ch=app.height-14;
     var w=30;
 
     var cn=new stripH(
-            new propC(getGUID(), parent, parent.x+5, parent.y+75, w+10, w, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            new propC(getGUID(), parent, parent.x+50, parent.y+75, w+10, w, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
@@ -6403,14 +6441,10 @@ var factor=1.25;
   var getTriangles=function(parent){
 
     var ctrls=[];
-    var top=30;
-    var h=15;
-    var l=parent.w-202;
-    var ch=app.height-14;
     var w=30;
 
     var cn=new stripH(
-            new propC(getGUID(), parent, 205, 105, w+10, w, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            new propC(getGUID(), parent, parent.x+50, parent.y+105, w+10, w, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
@@ -6448,14 +6482,10 @@ var factor=1.25;
   var getCircles=function(parent){
 
     var ctrls=[];
-    var top=30;
-    var h=15;
-    var l=parent.w-202;
-    var ch=app.height-14;
     var w=30;
 
     var cn=new stripH(
-            new propC(getGUID(), parent, 205, 135, w+10, w, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            new propC(getGUID(), parent, parent.x+50, 140, w+10, w, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
@@ -6492,14 +6522,10 @@ var factor=1.25;
   var getQuads=function(parent){
 
     var ctrls=[];
-    var top=30;
-    var h=15;
-    var l=parent.w-202;
-    var ch=app.height-14;
     var w=30;
 
     var cn=new stripH(
-            new propC(getGUID(), parent, 205, 165, w+10, w, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            new propC(getGUID(), parent, parent.x+50, parent.y+165, w+10, w, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
@@ -6555,14 +6581,10 @@ var factor=1.25;
   var getArcs=function(parent){
 
     var ctrls=[];
-    var top=30;
-    var h=15;
-    var l=parent.w-202;
-    var ch=app.height-14;
     var w=30;
 
     var cn=new stripH(
-            new propC(getGUID(), parent, 205, 195, w+10, w, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            new propC(getGUID(), parent, parent.x+50, parent.y+195, w+10, w, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
@@ -6617,14 +6639,10 @@ var factor=1.25;
   var getPolygons=function(parent){
 
     var ctrls=[];
-    var top=30;
-    var h=15;
-    var l=parent.w-202;
-    var ch=app.height-14;
     var w=30;
 
     var cn=new stripH(
-            new propC(getGUID(), parent, 205, 225, w+10, w, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            new propC(getGUID(), parent, parent.x+50, parent.y+225, w+10, w, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
@@ -6661,14 +6679,10 @@ var factor=1.25;
   var getConics=function(parent){
 
     var ctrls=[];
-    var top=30;
-    var h=15;
-    var l=parent.w-202;
-    var ch=app.height-14;
     var w=30;
 
     var cn=new stripH(
-            new propC(getGUID(), parent, 205, 255, w+10, w, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            new propC(getGUID(), parent, parent.x+50, parent.y+255, w+10, w, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
@@ -6711,14 +6725,10 @@ var factor=1.25;
   var getAngles=function(parent){
 
     var ctrls=[];
-    var top=30;
-    var h=15;
-    var l=parent.w-202;
-    var ch=app.height-14;
     var w=30;
 
     var cn=new stripH(
-            new propC(getGUID(), parent, 205, 285, w+10, w, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            new propC(getGUID(), parent, parent.x+50, parent.y+285, w+10, w, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
@@ -6743,14 +6753,10 @@ var factor=1.25;
   var getAnnotations=function(parent){
 
     var ctrls=[];
-    var top=30;
-    var h=15;
-    var l=parent.w-202;
-    var ch=app.height-14;
     var w=30;
 
     var cn=new stripH(
-            new propC(getGUID(), parent, 205, 315, w+10, w, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            new propC(getGUID(), parent, parent.x+50, parent.y+315, w+10, w, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
@@ -6775,14 +6781,10 @@ var factor=1.25;
   var getTransform=function(parent){
 
     var ctrls=[];
-    var top=30;
-    var h=15;
-    var l=parent.w-202;
-    var ch=app.height-14;
     var w=30;
 
     var cn=new stripH(
-            new propC(getGUID(), parent, 205, 345, w+10, w, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            new propC(getGUID(), parent, parent.x+50, parent.y+345, w+10, w, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
@@ -6839,14 +6841,10 @@ var factor=1.25;
   var getMeasure=function(parent){
 
     var ctrls=[];
-    var top=30;
-    var h=15;
-    var l=parent.w-202;
-    var ch=app.height-14;
     var w=30;
 
     var cn=new stripH(
-            new propC(getGUID(), parent, 205, 375, w+10, w, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            new propC(getGUID(), parent, parent.x+50, parent.y+375, w+10, w, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
@@ -6924,120 +6922,120 @@ var factor=1.25;
                 new propA(CLRS.WHITE, CLRS.YELLOW, CENTER, CENTER, 11, 12)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+0*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.DEBUG[1]),
+                new propC(getGUID(), cn, 10, top+0*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.DEBUG[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new spacer(
-                new propC(getGUID(), cn, 5, top+1*h+5, 150, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[0]),
+                new propC(getGUID(), cn, 10, top+1*h+5, 150, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[0]),
                 new propL(getColor(CLRS.BLUE,50), CLRS.BLUE, CLRS.WHITE, CLRS.YELLOW, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+2*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.WIDTH[1]),
+                new propC(getGUID(), cn, 10, top+2*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.WIDTH[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+3*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.HEIGHT[1]),
+                new propC(getGUID(), cn, 10, top+3*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.HEIGHT[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new spacer(
-                new propC(getGUID(), cn, 5, top+4*h+5, 150, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.SPACER[0]),
+                new propC(getGUID(), cn, 10, top+4*h+5, 150, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.SPACER[0]),
                 new propL(getColor(CLRS.BLUE,50), CLRS.BLUE, CLRS.WHITE, CLRS.YELLOW, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+5*h, 10, 10, 0, ARROW, false, COMMANDS.FRAMERATE[0], COMMANDS.FRAMERATE[1]),
+                new propC(getGUID(), cn, 10, top+5*h, 10, 10, 0, ARROW, false, COMMANDS.FRAMERATE[0], COMMANDS.FRAMERATE[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+6*h, 10, 10, 0, ARROW, false, COMMANDS.FRAMERATEA[0], COMMANDS.FRAMERATEA[1]),
+                new propC(getGUID(), cn, 10, top+6*h, 10, 10, 0, ARROW, false, COMMANDS.FRAMERATEA[0], COMMANDS.FRAMERATEA[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new spacer(
-                new propC(getGUID(), cn, 5, top+7*h+5, 150, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.SPACER[0]),
+                new propC(getGUID(), cn, 10, top+7*h+5, 150, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.SPACER[0]),
                 new propL(getColor(CLRS.BLUE,50), CLRS.BLUE, CLRS.WHITE, CLRS.YELLOW, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+8*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.MOUSEX[1]),
+                new propC(getGUID(), cn, 10, top+8*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.MOUSEX[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+9*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.MOUSEY[1]),
+                new propC(getGUID(), cn, 10, top+9*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.MOUSEY[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new spacer(
-                new propC(getGUID(), cn, 5, top+10*h+5, 150, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.SPACER[0]),
+                new propC(getGUID(), cn, 10, top+10*h+5, 150, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.SPACER[0]),
                 new propL(getColor(CLRS.BLUE,50), CLRS.BLUE, CLRS.WHITE, CLRS.YELLOW, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+11*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.WORLDX[1]),
+                new propC(getGUID(), cn, 10, top+11*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.WORLDX[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+12*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.WORLDY[1]),
+                new propC(getGUID(), cn, 10, top+12*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.WORLDY[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new spacer(
-                new propC(getGUID(), cn, 5, top+13*h+5, 150, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.SPACER[0]),
+                new propC(getGUID(), cn, 10, top+13*h+5, 150, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.SPACER[0]),
                 new propL(getColor(CLRS.BLUE,50), CLRS.BLUE, CLRS.WHITE, CLRS.YELLOW, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+14*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.GRIDX[1]),
+                new propC(getGUID(), cn, 10, top+14*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.GRIDX[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+15*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.GRIDY[1]),
+                new propC(getGUID(), cn, 10, top+15*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.GRIDY[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new spacer(
-                new propC(getGUID(), cn, 5, top+16*h+5, 150, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.SPACER[0]),
+                new propC(getGUID(), cn, 10, top+16*h+5, 150, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.SPACER[0]),
                 new propL(getColor(CLRS.BLUE,50), CLRS.BLUE, CLRS.WHITE, CLRS.YELLOW, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+17*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.LEFT[1]),
+                new propC(getGUID(), cn, 10, top+17*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.LEFT[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+18*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.CENTER[1]),
+                new propC(getGUID(), cn, 10, top+18*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.CENTER[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+19*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.RIGHT[1]),
+                new propC(getGUID(), cn, 10, top+19*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.RIGHT[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+21*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.FOCUS[1]),
+                new propC(getGUID(), cn, 10, top+21*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.FOCUS[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+23*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+                new propC(getGUID(), cn, 10, top+23*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 5, top+25*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.FACTOR[1]),
+                new propC(getGUID(), cn, 10, top+25*h, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.FACTOR[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
@@ -7122,7 +7120,7 @@ var factor=1.25;
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, 100, top+23*h, 10, 10, 0, HAND, false, COMMANDS.COMMAND[0], COMMANDS.UNDEF[1]),
+                new propC(getGUID(), cn, 100, top+23*h, 10, 10, 0, HAND, false, COMMANDS.COMMAND[0], COMMANDS.COMMAND[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
@@ -7567,7 +7565,6 @@ var factor=1.25;
     ctrls.push(getLineTypes(cn));
     ctrls.push(getFill(cn));
     ctrls.push(getStroke(cn));
-
 
     cn.ctrls=ctrls;
 
@@ -8191,16 +8188,24 @@ var factor=1.25;
             new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
+    ctrls.push(new buttonA(
+                new propC(getGUID(), cn, 10, 10, 36, 36, 0, HAND, false, COMMANDS.COMMAND[0], COMMANDS.COMMAND[1]),
+                new propL(CLRS.BLACK, CLRS.BLACK, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
+                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
+
     ctrls.push(getPoints(cn));        //~ Points
     ctrls.push(getLines(cn));         //~ Lines
-    //~ ctrls.push(getTriangles(cn));     //~ Triangles
-    //~ ctrls.push(getCircles(cn));       //~ Circles
-    //~ ctrls.push(getQuads(cn));         //~ Quads
-    //~ ctrls.push(getArcs(cn));          //~ Arcs
-    //~ ctrls.push(getPolygons(cn));      //~ Polygons
-    //~ ctrls.push(getConics(cn));        //~ Conics
-    //~ ctrls.push(getAngles(cn));        //~ Angles
-    //~ ctrls.push(getAnnotations(cn));   //~ Annotations
+    ctrls.push(getTriangles(cn));     //~ Triangles
+    ctrls.push(getCircles(cn));       //~ Circles
+    ctrls.push(getQuads(cn));         //~ Quads
+    ctrls.push(getArcs(cn));          //~ Arcs
+    ctrls.push(getPolygons(cn));      //~ Polygons
+    ctrls.push(getConics(cn));        //~ Conics
+    ctrls.push(getAngles(cn));        //~ Angles
+    ctrls.push(getAnnotations(cn));   //~ Annotations
+
+    ctrls.push(getTransform(cn));     //~ Transforms
+    ctrls.push(getMeasure(cn));       //~ Measure
 
     cn.ctrls=ctrls;
 
@@ -8224,20 +8229,19 @@ var factor=1.25;
     ctrls.push(getShapes(cn));        //~ Shapes
 
 
-    //~ ctrls.push(getTransform(cn));     //~ Transforms
-    //~ ctrls.push(getMeasure(cn));       //~ Measure
+
 
     if(app.debug){ ctrls.push(getTelemetry(cn)); }
 
     //~ ctrls.push(getHeader(cn));
     ctrls.push(getFooter(cn));
-    //~ ctrls.push(getView(cn));
+    ctrls.push(getView(cn));
     ctrls.push(getProperties(cn));
 
     //~ ctrls.push(getColors(cn));
 
     //~ ctrls.push(getSamples(cn));
-    ctrls.push(getSelect(cn));
+    //~ ctrls.push(getSelect(cn));
 
     cn.ctrls=ctrls;
 
