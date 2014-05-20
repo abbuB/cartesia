@@ -1,0 +1,26 @@
+<!DOCTYPE html><html>
+  <head>
+  <title>Cartesia</title>
+  </head>
+  <style>
+    canvas {
+      outline: none;
+      -webkit-tap-highlight-color: rgba(255, 255, 255, 0); /* mobile webkit */  
+    }
+  </style>
+
+  <body bgcolor="#212830">
+
+    <canvas id="dwg">
+    </canvas>
+
+  </body>
+
+  <script src="processing.js"></script>
+  <script src="drawing.js"></script>
+  <script type="application/javascript">
+     var canvas = document.getElementById("dwg");
+     var processingInstance = new Processing(canvas, proc);
+  </script>
+
+</html>
