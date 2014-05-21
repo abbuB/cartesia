@@ -197,7 +197,7 @@ var zoomfactor=0;
 
     SPACER:       [  26,  'Spacer',           'SPACER'                ],
 
-    COMMAND:      [  27,  'Command',          'COMMAND'               ],
+    CURRENT:      [  27,  'Current',          'CURRENT'               ],
     FACTOR:       [  28,  'Factor',           'FACTOR'                ],
     UTIL:         [  29,  'Util',             'UTIL'                  ],
 
@@ -517,8 +517,8 @@ var zoomfactor=0;
     STG:            false,  //~ snap to grid
     fs:             false,  //~ full screen
 
-    command:        COMMANDS.P_DEFAULT[0],
-    //~ command:        COMMANDS.PAN[0],
+    current:        COMMANDS.P_DEFAULT[0],
+    
     stack:          [],
 
     cursorSize:     0,
@@ -550,7 +550,8 @@ var zoomfactor=0;
 
     switch(p){
 
-      case COMMANDS.COMMAND[0]:     return app.command;
+      case COMMANDS.CURRENT[0]:     return app.current;
+
       case COMMANDS.DEBUG[0]:       return app.debug;
 
       case COMMANDS.FOCUS[0]:       return app.focus;
@@ -621,12 +622,14 @@ var zoomfactor=0;
 
       case COMMANDS.FACTOR[0]:      return app.factor;
 
+      default:  return 0;
+
     }
 
   };
 
   var reset=function(){
-    //~ app.command=0;
+    //~ app.current=0;
     app.vertices=[];
   };
   var getDottedLine=function(x0, y0, x1, y1, n){
@@ -713,7 +716,7 @@ var zoomfactor=0;
   Shape.prototype.draw=function(){};
   Shape.prototype.clicked=function(){
 
-    if(app.command===COMMANDS.SELECT[0]){
+    if(app.current===COMMANDS.SELECT[0]){
 
       if(this.hit){
         this.selected=!this.selected;
@@ -1226,9 +1229,9 @@ var factor=1.25;
   };
   var ShapeCommands=function(c,p){
 
-    //~ println(c+","+p);
+    println(c+","+p);
 
-    //~ app.command=p;
+    //~ app.current=p;
 
     switch(c){
 
@@ -1244,7 +1247,7 @@ var factor=1.25;
 
     }
 
-    app.command=c;
+    app.current=c;
 
   };
 
@@ -1254,7 +1257,7 @@ var factor=1.25;
   var commands=function(c,p){
 
     //~ println(c+':'+p);
-app.command=c;
+
     switch(true){
 
       case c===COMMANDS.DEBUG[0]:         app.debug=!app.debug;
@@ -1264,7 +1267,7 @@ app.command=c;
       case (c>COMMANDS.GRID[0] &&
             c<=COMMANDS.FS[0]):           GridCommands(c,p);      break;
 
-      case (c>=COMMANDS.POINT[0] &&
+      case (c>=COMMANDS.MODIFY[0] &&
             c<=COMMANDS.SKETCH[0]):       ShapeCommands(c,p);     break;
 
       case c===COMMANDS.STROKE[0]:        app.stroke=p;
@@ -1283,524 +1286,13 @@ app.command=c;
 
       case c===COMMANDS.ZOOMIN[0]:        app.factor*=2.25;       break;
       case c===COMMANDS.ZOOMOUT[0]:       app.factor/=2.25;       break;
-      case c===COMMANDS.PAN[0]:           app.command=c;          break;
+      case c===COMMANDS.PAN[0]:           app.current=c;          break;
 
       case c===COMMANDS.UNDO[0]:                                  break;
 
       default:  break;
 
     }
-
-  };
-
-
-  //~ Properties =======================================================
-  var propC=function(i,p,x,y,w,h,r,k,v,c,g){
-
-    this.i=i;     //~ guid
-    this.p=p;     //~ parent
-
-    this.x=x;     //~ left
-    this.y=y;     //~ top
-    this.w=w;     //~ width
-    this.h=h;     //~ height
-    this.r=r;     //~ radius
-
-    this.k=k;     //~ hit cursor
-    this.v=v;     //~ value
-    this.c=c;     //~ command
-    this.g=g;     //~ tag
-
-  };
-  var propL=function(fill,fillH,stroke,strokeH,weight,weightH){
-
-    this.fill=fill;         //~ fill color
-    this.fillH=fillH;       //~ fill color highlight
-
-    this.stroke=stroke;     //~ stroke color
-    this.strokeH=strokeH;   //~ stroke color highlight
-
-    this.weight=weight;     //~ strokeWeight
-    this.weightH=weightH;   //~ strokeWeight highlight
-
-  };
-  var propA=function(fill, fillH, alignX, alignY, size, sizeH){
-
-    this.fill=fill;         //~ text color
-    this.fillH=fillH;       //~ text color highlight
-    this.alignX=alignX;     //~ horizontal alignment
-    this.alignY=alignY;     //~ vertical alignment
-    this.size=size;         //~ text size
-    this.sizeH=sizeH;       //~ text size highlight
-
-  };
-
-
-  //~ Controls =========================================================
-  var control=function(c,l,a,ctrls){
-
-
-    //~ controls properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    this.i=c.i;                //~ guid
-    this.parent=c.p;           //~ parent
-
-    this.x=c.x;                //~ left
-    this.y=c.y;                //~ top
-    this.w=c.w;                //~ width
-    this.h=c.h;                //~ height
-    this.r=c.r;                //~ corner radius
-
-    this.cX=c.w/2;
-    this.cY=c.h/2;
-    
-    this.k=c.k;                //~ hit cursor
-
-    this.v=c.v;                //~ value
-    this.c=c.c;                //~ command
-    this.g=c.g;                //~ tag
-
-
-    //~ appearance properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    this.fill=l.fill;          //~ fill color
-    this.fillH=l.fillH;        //~ fill color highlight
-    this.stroke=l.stroke;      //~ stroke color
-    this.strokeH=l.strokeH;    //~ stroke color highlight
-
-    this.weight=l.weight;      //~ strokeWeight
-    this.weightH=l.weightH;    //~ strokeWeight highlight
-
-
-    //~ text properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    this.text=a.text;          //~ text caption
-
-    this.tfill=a.fill;         //~ text color
-    this.tfillH=a.fillH;       //~ text color highlight
-    this.alignX=a.alignX;      //~ horizontal alignment
-    this.alignY=a.alignY;      //~ vertical alignment
-    this.size=a.size;          //~ text size
-    this.sizeH=a.sizeH;        //~ text size highlight
-
-    //~ misc properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    this.hit=false;             //~ mouse is over the control
-    this.hitExpand=false;       //~ mouse is over the expand/collapse area
-    this.visible=true;          //~ is the control currently being displayed
-    this.ctrls=ctrls;           //~ array of child controls
-
-  };
-  control.prototype.draw=function(){
-    for(var c in this.ctrls){ this.ctrls[c].draw(); }
-  };
-  control.prototype.clicked=function(){
-
-    if(this.hit && app.left){
-      commands(this.c, this.g);
-      for(var c in this.ctrls){ this.ctrls[c].clicked(); }
-    }
-
-  };
-  control.prototype.clickedR=function(){
-    if(this.hit){
-      for(var c in this.ctrls){ this.ctrls[c].clickedR(); }
-    }
-  };
-  control.prototype.moved=function(x,y){
-
-    if(this.alignX===LEFT){
-
-      if(app.mouseX>x+this.x && app.mouseX<x+this.x+this.w &&
-         app.mouseY>y+this.y && app.mouseY<y+this.y+this.h){
-
-        this.hit=true;
-        app.focus=this.i;
-
-      }
-      else{
-        this.hit=false;
-      }
-
-    }
-    else if(this.alignX===CENTER){
-
-      if(app.mouseX>=x+this.x-this.w/2 && app.mouseX<=x+this.x+this.w/2 &&
-         app.mouseY>=y+this.y-this.h/2 && app.mouseY<=y+this.y+this.h/2){
-
-        this.hit=true;
-        app.focus=this.i;
-
-      }
-      else{
-        this.hit=false;
-      }
-
-    }
-    else if(this.alignX===RIGHT){
-
-      if(app.mouseX>x+this.x && app.mouseX<x+this.x+this.w &&
-         app.mouseY>y+this.y && app.mouseY<y+this.y+this.h){
-
-        this.hit=true;
-        app.focus=this.i;
-
-      }
-      else{
-        this.hit=false;
-      }
-
-    }
-    else{}
-
-    for(var c in this.ctrls){ this.ctrls[c].moved(x+this.x, y+this.y); }
-
-  };
-  control.prototype.dragged=function(){
-    for(var c in this.ctrls){ this.ctrls[c].dragged(); }
-  };
-  control.prototype.pressed=function(){
-    for(var c in this.ctrls){ this.ctrls[c].pressed(); }
-  };
-  control.prototype.released=function(){
-    //~ this.hit=false;
-    for(var c in this.ctrls){ this.ctrls[c].released(); }
-  };
-  control.prototype.typed=function(){
-    for(var c in this.ctrls){ this.ctrls[c].typed(); }
-  };
-  control.prototype.over=function(){
-    for(var c in this.ctrls){ this.ctrls[c].over(); }
-  };
-  control.prototype.out=function(){
-    this.hit=false;
-    for(var c in this.ctrls){ this.ctrls[c].out(); }
-  };
-
-  //~ Telemetry ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  var telemetry=function(c,l,a,ctrls){
-    control.call(this,c,l,a,ctrls);
-  };
-  telemetry.prototype=Object.create(control.prototype);
-  telemetry.prototype.draw=function(){
-
-    var p=this;
-    var d=0;
-
-    pushMatrix();
-
-      translate(p.x,p.y);
-
-        pushStyle();
-
-          fill(p.fill);
-          stroke(p.stroke);
-          strokeWeight(p.weight);
-
-          if(p.hit){
-
-            if(app.left){ d=1; }
-
-            fill(p.fillH);
-            stroke(p.strokeH);
-            strokeWeight(p.weightH);
-            cursor(p.k);
-
-          }
-
-          rect(d,d,p.w,p.h);
-
-          fill(p.tfill);
-
-          if(p.hit){
-            fill(p.tfillH);
-          }
-
-          textFont(createFont('monospace'));
-          textAlign(p.alignX, p.alignY);
-          textSize(p.size);
-          var w=textWidth(p.g);
-
-          if(p.hit){
-            fill(p.tfillH);
-            textSize(p.sizeH);
-          }
-
-          text(p.g, d+p.w/2, d+10);
-
-        popStyle();
-
-        for(var c in p.ctrls){ p.ctrls[c].draw(); }
-
-    popMatrix();
-
-  };
-
-
-  //~ Buttons ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  var button=function(c,l,a,ctrls){
-    control.call(this,c,l,a,ctrls);
-  };
-  button.prototype=Object.create(control.prototype);
-  button.prototype.draw=function(){
-
-    var p=this;
-    var d=0;
-
-    pushMatrix();
-
-      translate(p.x, p.y);
-
-        pushStyle();
-
-          fill(p.fill);
-          stroke(p.stroke);
-          strokeWeight(p.weight);
-
-          if(p.hit){
-
-            if(app.left){ d=1; }
-
-            fill(p.g);
-            stroke(p.strokeH);
-            strokeWeight(p.weightH);
-            cursor(p.k);
-
-          }
-
-          if(p.v){ fill(getProp(p.g)); }
-
-          rect(d, d, p.w, p.h, p.r);
-
-          fill(p.tfill);
-
-          textAlign(p.alignX,p.alignY);
-          textSize(p.size);
-
-          if(p.hit){
-            fill(p.v);
-            textSize(p.sizeH);
-          }
-
-          text(p.g, d+5, d+p.h/2);
-
-        popStyle();
-
-    popMatrix();
-
-  };
-
-  //~ Icon
-  var buttonI=function(c,l,a,ctrls){
-    control.call(this,c,l,a,ctrls);
-  };
-  buttonI.prototype=Object.create(control.prototype);
-  buttonI.prototype.draw=function(){
-
-    var p=this;
-    var d=0;
-    var cX=p.w/2;
-    var cY=p.h/2;
-    var cPNT=CLRS.VERTEX;
-    var cMEASURE=CLRS.RED;
-    var cVERTEX=CLRS.VERTEXA;
-    var cLINE=CLRS.LINE;
-    var cFILL=CLRS.FILL;
-    var sz=3;
-
-    pushMatrix();
-
-      translate(p.x, p.y);
-
-        pushStyle();
-
-          //~ rectMode(CENTER);
-
-          fill(p.fill);
-          stroke(p.stroke);
-          strokeWeight(p.weight);
-
-          if(p.hit && p.parent.hit){
-
-            if(app.left){ d=1; }
-
-            fill(p.fillH);
-            stroke(p.strokeH);
-            strokeWeight(p.weightH);
-            cursor(p.k);
-
-          }
-
-          if(p.v){ fill(getProp(p.g)); }
-
-          if(p.fill===CLRS.TRANSPARENT){
-            noFill();
-            noStroke();
-          }
-
-          if(app.command===p.c){ fill(getColor(CLRS.GRAY,25)); }
-
-          rect(d, d, p.w, p.h, p.r);
-
-          switch(true){
-
-            case (p.c>=COMMANDS.GRID[0] &&
-                  p.c<=COMMANDS.FS[0]): drawGrid();               break;
-
-
-            default:      break;
-
-          }
-
-        popStyle();
-
-    popMatrix();
-
-  };
-  buttonI.prototype.clicked=function(){
-    if(this.hit){
-
-      reset();
-
-      commands(this.c, this.g);
-
-      this.parent.ctrls[0].c=this.c;
-      this.parent.ctrls[0].g=this.g;
-
-    }
-  };
-
-  //~ Color
-  var buttonC=function(c,l,a,ctrls){
-    control.call(this,c,l,a,ctrls);
-  };
-  buttonC.prototype=Object.create(control.prototype);
-  buttonC.prototype.draw=function(){
-
-    var p=this;
-    var d=0;
-
-    pushMatrix();
-
-      translate(p.x, p.y);
-
-        pushStyle();
-
-          fill(p.fill);
-          stroke(p.stroke);
-          strokeWeight(p.weight);
-
-          if(p.hit){
-
-            if(app.left){ d=1; }
-
-            stroke(p.strokeH);
-            strokeWeight(p.weightH);
-            cursor(p.k);
-
-          }
-
-          rect(d, d, p.w, p.h, p.r);
-
-          fill(p.g);
-
-          rect(d+4, d+4, p.w-8, p.h-8, p.r);
-
-        popStyle();
-
-    popMatrix();
-
-  };
-  buttonC.prototype.clicked=function(){
-    if(this.hit && app.focus===this.i){ commands(this.c, this.g); }
-  };
-  //~ buttonC.prototype.moved=function(x,y){
-//~
-    //~ if(app.mouseX>x+this.x &&
-       //~ app.mouseX<x+this.x+this.w &&
-       //~ app.mouseY>y+this.y &&
-       //~ app.mouseY<y+this.y+this.h){
-      //~ this.hit=true;
-      //~ app.focus=this.i;
-    //~ }
-    //~ else{
-      //~ this.parent.hit=false;
-    //~ }
-//~
-  //~ };
-
-  //~ Return Property
-  var buttonP=function(c,l,a,ctrls){
-    control.call(this,c,l,a,ctrls);
-  };
-  buttonP.prototype=Object.create(control.prototype);
-  buttonP.prototype.draw=function(){
-
-    var p=this;
-    var d=0;
-
-    pushMatrix();
-
-      translate(p.x, p.y);
-
-        pushStyle();
-
-          fill(getProp(p.g));
-          stroke(p.stroke);
-          strokeWeight(p.weight);
-
-          if(p.hit){
-
-            if(app.left){ d=1; }
-
-            //~ fill(p.g);
-            stroke(p.strokeH);
-            strokeWeight(p.weightH);
-            cursor(p.k);
-
-          }
-
-          rect(d, d, p.w, p.h, p.r);
-
-        popStyle();
-
-    popMatrix();
-
-  };
-
-  var buttonA=function(c,l,a,ctrls){
-    control.call(this,c,l,a,ctrls);
-  };
-  buttonA.prototype=Object.create(control.prototype);
-  buttonA.prototype.draw=function(){
-
-    var p=this;
-    var d=0;
-
-    pushMatrix();
-
-      translate(p.x, p.y);
-
-        pushStyle();
-
-          fill(getProp(p.g));
-          stroke(p.stroke);
-          strokeWeight(p.weight);
-
-          if(p.hit){
-
-            if(app.left){ d=1; }
-
-            //~ fill(p.g);
-            stroke(p.strokeH);
-            strokeWeight(p.weightH);
-            cursor(p.k);
-
-          }
-
-          rect(d, d, p.w, p.h, p.r);
-
-          drawIcon(getProp(p.c), d, p.w/2, p.h/2, p.w, p.hit);
-
-        popStyle();
-
-    popMatrix();
 
   };
 
@@ -3582,8 +3074,83 @@ app.command=c;
       popMatrix();
 
     };
+    var drawMisc=function(){
+
+      
+      pushMatrix();
+
+        translate(0.5,0.5);
+
+      pushStyle();
+
+        rectMode(CENTER);
+
+        switch(p.c){
+
+          case COMMANDS.SELECT[0]:
+
+            noFill();
+            strokeWeight(0.5);
+            stroke(CLRS.LINE);
+
+            line(d+p.cX-9, d+p.cY,   d+p.cX+9, d+p.cY);
+            line(d+p.cX,   d+p.cY-9, d+p.cX,   d+p.cY+9);
+
+            rect(d+p.cX, d+p.cY, 4, 4);
+
+            break;
+
+          case COMMANDS.STG[0]:
+
+            noStroke();
+            strokeWeight(0);
+            fill(CLRS.LINE);
+
+            for(var row=-10; row<15; row+=5){
+              for(var col=-10; col<15; col+=5){
+                ellipse(d+p.cX+col, d+p.cY+row, 1, 1);
+              }
+            }
+
+            noFill();
+            stroke(CLRS.LINE);
+            strokeWeight(1);
+
+            line(d+p.cX-8, d+p.cY,   d+p.cX+9, d+p.cY);
+            line(d+p.cX,   d+p.cY-9, d+p.cX,   d+p.cY+9);
+
+            break;
+
+          case COMMANDS.ORTHO[0]:
+
+            noFill();
+            stroke(CLRS.LINE);
+            strokeWeight(1);
+
+            line(d+p.cX-10, d+p.cY+10, d+p.cX+10, d+p.cY+10);
+            line(d+p.cX-10, d+p.cY-10, d+p.cX-10, d+p.cY+10);
+
+            strokeWeight(0.5);
+
+            line(d+p.cX-10, d+p.cY+4, d+p.cX-4, d+p.cY+4);
+            line(d+p.cX-4,  d+p.cY+4, d+p.cX-4, d+p.cY+10);
+
+            break;
+
+          default:  break;
+
+        }
+
+      popStyle();
+      popMatrix();
+
+    };
 
     switch(true){
+      
+      case p.c===COMMANDS.SELECT[0]:      drawMisc();       break;
+      
+      case (p.c===COMMANDS.CURRENT[0]):    break;
 
       case (p.c>=COMMANDS.GRID[0] &&
             p.c<=COMMANDS.FS[0]):         drawGrid();       break;
@@ -3615,6 +3182,519 @@ app.command=c;
       default:      break;
 
     }
+
+  };
+
+
+  //~ Properties =======================================================
+  var propC=function(i,p,x,y,w,h,r,k,v,c,g){
+
+    this.i=i;     //~ guid
+    this.p=p;     //~ parent
+
+    this.x=x;     //~ left
+    this.y=y;     //~ top
+    this.w=w;     //~ width
+    this.h=h;     //~ height
+    this.r=r;     //~ radius
+
+    this.k=k;     //~ hit cursor
+    this.v=v;     //~ value
+    this.c=c;     //~ command
+    this.g=g;     //~ tag
+
+  };
+  var propL=function(fill,fillH,stroke,strokeH,weight,weightH){
+
+    this.fill=fill;         //~ fill color
+    this.fillH=fillH;       //~ fill color highlight
+
+    this.stroke=stroke;     //~ stroke color
+    this.strokeH=strokeH;   //~ stroke color highlight
+
+    this.weight=weight;     //~ strokeWeight
+    this.weightH=weightH;   //~ strokeWeight highlight
+
+  };
+  var propA=function(fill, fillH, alignX, alignY, size, sizeH){
+
+    this.fill=fill;         //~ text color
+    this.fillH=fillH;       //~ text color highlight
+    this.alignX=alignX;     //~ horizontal alignment
+    this.alignY=alignY;     //~ vertical alignment
+    this.size=size;         //~ text size
+    this.sizeH=sizeH;       //~ text size highlight
+
+  };
+
+
+  //~ Controls =========================================================
+  var control=function(c,l,a,ctrls){
+
+
+    //~ controls properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    this.i=c.i;                //~ guid
+    this.parent=c.p;           //~ parent
+
+    this.x=c.x;                //~ left
+    this.y=c.y;                //~ top
+    this.w=c.w;                //~ width
+    this.h=c.h;                //~ height
+    this.r=c.r;                //~ corner radius
+
+    this.cX=c.w/2;
+    this.cY=c.h/2;
+
+    this.k=c.k;                //~ hit cursor
+
+    this.v=c.v;                //~ value
+    this.c=c.c;                //~ command
+    this.g=c.g;                //~ tag
+
+
+    //~ appearance properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    this.fill=l.fill;          //~ fill color
+    this.fillH=l.fillH;        //~ fill color highlight
+    this.stroke=l.stroke;      //~ stroke color
+    this.strokeH=l.strokeH;    //~ stroke color highlight
+
+    this.weight=l.weight;      //~ strokeWeight
+    this.weightH=l.weightH;    //~ strokeWeight highlight
+
+
+    //~ text properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    this.text=a.text;          //~ text caption
+
+    this.tfill=a.fill;         //~ text color
+    this.tfillH=a.fillH;       //~ text color highlight
+    this.alignX=a.alignX;      //~ horizontal alignment
+    this.alignY=a.alignY;      //~ vertical alignment
+    this.size=a.size;          //~ text size
+    this.sizeH=a.sizeH;        //~ text size highlight
+
+    //~ misc properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    this.hit=false;             //~ mouse is over the control
+    this.hitExpand=false;       //~ mouse is over the expand/collapse area
+    this.visible=true;          //~ is the control currently being displayed
+    this.ctrls=ctrls;           //~ array of child controls
+
+  };
+  control.prototype.draw=function(){
+    for(var c in this.ctrls){ this.ctrls[c].draw(); }
+  };
+  control.prototype.clicked=function(){
+
+    if(this.hit && app.left){
+      commands(this.c, this.g);
+      for(var c in this.ctrls){ this.ctrls[c].clicked(); }
+    }
+
+  };
+  control.prototype.clickedR=function(){
+    if(this.hit){
+      for(var c in this.ctrls){ this.ctrls[c].clickedR(); }
+    }
+  };
+  control.prototype.moved=function(x,y){
+
+    if(this.alignX===LEFT){
+
+      if(app.mouseX>x+this.x && app.mouseX<x+this.x+this.w &&
+         app.mouseY>y+this.y && app.mouseY<y+this.y+this.h){
+
+        this.hit=true;
+        app.focus=this.i;
+
+      }
+      else{
+        this.hit=false;
+      }
+
+    }
+    else if(this.alignX===CENTER){
+
+      if(app.mouseX>=x+this.x-this.w/2 && app.mouseX<=x+this.x+this.w/2 &&
+         app.mouseY>=y+this.y-this.h/2 && app.mouseY<=y+this.y+this.h/2){
+
+        this.hit=true;
+        app.focus=this.i;
+
+      }
+      else{
+        this.hit=false;
+      }
+
+    }
+    else if(this.alignX===RIGHT){
+
+      if(app.mouseX>x+this.x && app.mouseX<x+this.x+this.w &&
+         app.mouseY>y+this.y && app.mouseY<y+this.y+this.h){
+
+        this.hit=true;
+        app.focus=this.i;
+
+      }
+      else{
+        this.hit=false;
+      }
+
+    }
+    else{}
+
+    for(var c in this.ctrls){ this.ctrls[c].moved(x+this.x, y+this.y); }
+
+  };
+  control.prototype.dragged=function(){
+    for(var c in this.ctrls){ this.ctrls[c].dragged(); }
+  };
+  control.prototype.pressed=function(){
+    for(var c in this.ctrls){ this.ctrls[c].pressed(); }
+  };
+  control.prototype.released=function(){
+    //~ this.hit=false;
+    for(var c in this.ctrls){ this.ctrls[c].released(); }
+  };
+  control.prototype.typed=function(){
+    for(var c in this.ctrls){ this.ctrls[c].typed(); }
+  };
+  control.prototype.over=function(){
+    for(var c in this.ctrls){ this.ctrls[c].over(); }
+  };
+  control.prototype.out=function(){
+    this.hit=false;
+    for(var c in this.ctrls){ this.ctrls[c].out(); }
+  };
+
+  //~ Telemetry ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  var telemetry=function(c,l,a,ctrls){
+    control.call(this,c,l,a,ctrls);
+  };
+  telemetry.prototype=Object.create(control.prototype);
+  telemetry.prototype.draw=function(){
+
+    var p=this;
+    var d=0;
+
+    pushMatrix();
+
+      translate(p.x,p.y);
+
+        pushStyle();
+
+          fill(p.fill);
+          stroke(p.stroke);
+          strokeWeight(p.weight);
+
+          if(p.hit){
+
+            if(app.left){ d=1; }
+
+            fill(p.fillH);
+            stroke(p.strokeH);
+            strokeWeight(p.weightH);
+            cursor(p.k);
+
+          }
+
+          rect(d,d,p.w,p.h);
+
+          fill(p.tfill);
+
+          if(p.hit){
+            fill(p.tfillH);
+          }
+
+          textFont(createFont('monospace'));
+          textAlign(p.alignX, p.alignY);
+          textSize(p.size);
+          var w=textWidth(p.g);
+
+          if(p.hit){
+            fill(p.tfillH);
+            textSize(p.sizeH);
+          }
+
+          text(p.g, d+p.w/2, d+10);
+
+        popStyle();
+
+        for(var c in p.ctrls){ p.ctrls[c].draw(); }
+
+    popMatrix();
+
+  };
+
+
+  //~ Buttons ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  var button=function(c,l,a,ctrls){
+    control.call(this,c,l,a,ctrls);
+  };
+  button.prototype=Object.create(control.prototype);
+  button.prototype.draw=function(){
+
+    var p=this;
+    var d=0;
+
+    pushMatrix();
+
+      translate(p.x, p.y);
+
+        pushStyle();
+
+          fill(p.fill);
+          stroke(p.stroke);
+          strokeWeight(p.weight);
+
+          if(p.hit){
+
+            if(app.left){ d=1; }
+
+            fill(p.g);
+            stroke(p.strokeH);
+            strokeWeight(p.weightH);
+            cursor(p.k);
+
+          }
+
+          if(p.v){ fill(getProp(p.g)); }
+
+          rect(d, d, p.w, p.h, p.r);
+
+          fill(p.tfill);
+
+          textAlign(p.alignX,p.alignY);
+          textSize(p.size);
+
+          if(p.hit){
+            fill(p.v);
+            textSize(p.sizeH);
+          }
+
+          text(p.g, d+5, d+p.h/2);
+
+        popStyle();
+
+    popMatrix();
+
+  };
+
+  //~ Icon
+  var buttonI=function(c,l,a,ctrls){
+    control.call(this,c,l,a,ctrls);
+  };
+  buttonI.prototype=Object.create(control.prototype);
+  buttonI.prototype.draw=function(){
+
+    var p=this;
+    var d=0;
+    var cX=p.w/2;
+    var cY=p.h/2;
+    var cPNT=CLRS.VERTEX;
+    var cMEASURE=CLRS.RED;
+    var cVERTEX=CLRS.VERTEXA;
+    var cLINE=CLRS.LINE;
+    var cFILL=CLRS.FILL;
+    var sz=3;
+
+    pushMatrix();
+
+      translate(p.x, p.y);
+
+        pushStyle();
+
+          //~ rectMode(CENTER);
+
+          fill(p.fill);
+          stroke(p.stroke);
+          strokeWeight(p.weight);
+
+          if(p.hit && p.parent.hit){
+
+            if(app.left){ d=1; }
+
+            fill(p.fillH);
+            stroke(p.strokeH);
+            strokeWeight(p.weightH);
+            cursor(p.k);
+
+          }
+
+          if(p.v){ fill(getProp(p.g)); }
+
+          if(p.fill===CLRS.TRANSPARENT){
+            noFill();
+            noStroke();
+          }
+
+          if(app.current===p.c){ fill(getColor(CLRS.GRAY,25)); }
+
+          rect(d, d, p.w, p.h, p.r);
+
+          switch(true){
+
+            case (p.c>=COMMANDS.GRID[0] &&
+                  p.c<=COMMANDS.FS[0]): drawGrid();               break;
+
+
+            default:      break;
+
+          }
+
+        popStyle();
+
+    popMatrix();
+
+  };
+  buttonI.prototype.clicked=function(){
+    if(this.hit){
+
+      reset();
+
+      commands(this.c, this.g);
+
+      this.parent.ctrls[0].c=this.c;
+      this.parent.ctrls[0].g=this.g;
+
+    }
+  };
+
+  //~ Color
+  var buttonC=function(c,l,a,ctrls){
+    control.call(this,c,l,a,ctrls);
+  };
+  buttonC.prototype=Object.create(control.prototype);
+  buttonC.prototype.draw=function(){
+
+    var p=this;
+    var d=0;
+
+    pushMatrix();
+
+      translate(p.x, p.y);
+
+        pushStyle();
+
+          fill(p.fill);
+          stroke(p.stroke);
+          strokeWeight(p.weight);
+
+          if(p.hit){
+
+            if(app.left){ d=1; }
+
+            stroke(p.strokeH);
+            strokeWeight(p.weightH);
+            cursor(p.k);
+
+          }
+
+          rect(d, d, p.w, p.h, p.r);
+
+          fill(p.g);
+
+          rect(d+4, d+4, p.w-8, p.h-8, p.r);
+
+        popStyle();
+
+    popMatrix();
+
+  };
+  buttonC.prototype.clicked=function(){
+    if(this.hit && app.focus===this.i){ commands(this.c, this.g); }
+  };
+  //~ buttonC.prototype.moved=function(x,y){
+//~
+    //~ if(app.mouseX>x+this.x &&
+       //~ app.mouseX<x+this.x+this.w &&
+       //~ app.mouseY>y+this.y &&
+       //~ app.mouseY<y+this.y+this.h){
+      //~ this.hit=true;
+      //~ app.focus=this.i;
+    //~ }
+    //~ else{
+      //~ this.parent.hit=false;
+    //~ }
+//~
+  //~ };
+
+  //~ Return Property
+  var buttonP=function(c,l,a,ctrls){
+    control.call(this,c,l,a,ctrls);
+  };
+  buttonP.prototype=Object.create(control.prototype);
+  buttonP.prototype.draw=function(){
+
+    var p=this;
+    var d=0;
+
+    pushMatrix();
+
+      translate(p.x, p.y);
+
+        pushStyle();
+
+          fill(getProp(p.g));
+          stroke(p.stroke);
+          strokeWeight(p.weight);
+
+          if(p.hit){
+
+            if(app.left){ d=1; }
+
+            //~ fill(p.g);
+            stroke(p.strokeH);
+            strokeWeight(p.weightH);
+            cursor(p.k);
+
+          }
+
+          rect(d, d, p.w, p.h, p.r);
+
+        popStyle();
+
+    popMatrix();
+
+  };
+
+  var buttonA=function(c,l,a,ctrls){
+    control.call(this,c,l,a,ctrls);
+  };
+  buttonA.prototype=Object.create(control.prototype);
+  buttonA.prototype.draw=function(){
+
+    var p=this;
+    var d=0;
+
+    pushMatrix();
+
+      translate(p.x, p.y);
+
+        pushStyle();
+
+          fill(getProp(p.g));
+          stroke(p.stroke);
+          strokeWeight(p.weight);
+
+          if(p.hit){
+
+            if(app.left){ d=1; }
+
+            //~ fill(p.g);
+            stroke(p.strokeH);
+            strokeWeight(p.weightH);
+            cursor(p.k);
+
+          }
+
+          p.c=app.current;
+          
+          rect(d, d, p.w, p.h, p.r);
+
+          drawIcon(p, d);
+
+        popStyle();
+
+    popMatrix();
 
   };
 
@@ -3656,7 +3736,7 @@ app.command=c;
             noStroke();
           }
 
-          if(app.command===p.c){ fill(getColor(CLRS.GRAY,25)); }
+          if(app.current===p.c){ fill(getColor(CLRS.GRAY,25)); }
 
           rect(d, d, p.w, p.h, p.r);
 
@@ -3921,7 +4001,7 @@ app.command=c;
           }
 
           if(p.v){ fill(CLRS.Gray10); }
-          //~ if(app.command===p.c){ fill(getColor(CLRS.GRAY,25)); }
+          //~ if(app.current===p.c){ fill(getColor(CLRS.GRAY,25)); }
 
           //~ stroke(CLRS.WHITE);
           rect(d, d, p.w, p.h, p.r);
@@ -3958,7 +4038,7 @@ app.command=c;
 
       //~ this.parent.v=!this.parent.v;
 
-      //~ app.command=this.c;
+      //~ app.current=this.c;
 
     }
   };
@@ -5724,7 +5804,7 @@ app.command=c;
 
     var drawTemp=function(){
 
-      switch(app.command){
+      switch(app.current){
 
         case COMMANDS.P_DEFAULT[0]:
 
@@ -5853,13 +5933,13 @@ app.command=c;
 
     if(p.hit && app.focus===p.i){
       //~ ARROW, CROSS, HAND, MOVE, TEXT, WAIT
-      if(app.command==COMMANDS.SELECT[0]){
+      if(app.current==COMMANDS.SELECT[0]){
         cursor(ARROW);
       }
-      else if(!app.keys[KEYCODES.CONTROL] && app.command!==COMMANDS.PAN[0]){
+      else if(!app.keys[KEYCODES.CONTROL] && app.current!==COMMANDS.PAN[0]){
         crosshair();
       }
-      else if(app.command==COMMANDS.PAN[0]){
+      else if(app.current==COMMANDS.PAN[0]){
 
         if(app.left && app.focus===p.i){
           cursor(MOVE);
@@ -5892,7 +5972,7 @@ app.command=c;
 
         pushMatrix();
 
-          switch(app.command){
+          switch(app.current){
 
             case COMMANDS.SELECT[0]:
 
@@ -5904,7 +5984,7 @@ app.command=c;
 
               this.shapes.push(
                 new Point(getGUID(), this, app.gridX, app.gridY));
-                app.stack.push(app.command);
+                app.stack.push(app.current);
                 //~ println(app.stack);
 
               break;
@@ -5993,7 +6073,7 @@ app.command=c;
 
     if(this.hit && app.focus===this.i){
 
-      if(app.command===COMMANDS.PAN[0]){
+      if(app.current===COMMANDS.PAN[0]){
 
         if(app.mouseX<this.x+this.w &&
            app.mouseX>this.x &&
@@ -6150,7 +6230,7 @@ app.command=c;
   var keyPressed=function(){
 
     if(keyCode===32){
-      app.command=COMMANDS.SELECT[0];
+      app.current=COMMANDS.SELECT[0];
       reset();
       process();
     }
@@ -6219,63 +6299,7 @@ app.command=c;
   //~ Initialize =======================================================
 
   //~ Load Controls ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-//~ ********************************************************************
-
-  //~ ***** NOTE *****
-  //~   DO NOT REMOVE!!  Implement styles when all controls have been designed
-
-//~ ********************************************************************
-
-  //~ var getStyle=function(s){
-//~
-      //~ var style;
-//~
-      //~ switch(s){
-//~
-        //~ case STYLES.BACKGROUND:
-//~
-          //~ style=new propL(CLRS.BLACK, CLRS.BLACK, CLRS.BLUE, CLRS.GRAY, 0.125, 0.25);
-          //~ break;
-//~
-        //~ case STYLES.CONTAINER:
-//~
-          //~ style=new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25);
-          //~ break;
-//~
-        //~ case STYLES.BUTTON:
-//~
-          //~ style=new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25);
-          //~ break;
-//~
-        //~ case STYLES.SPACER:
-//~
-          //~ style=new propL(getColor(CLRS.BLUE,50), CLRS.BLUE, CLRS.WHITE, CLRS.YELLOW, 0.125, 0.25);
-          //~ break;
-//~
-        //~ case STYLES.TEXT:
-//~
-          //~ style=new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11);
-          //~ break;
-//~
-        //~ case STYLES.TEXTCENTER:
-//~
-          //~ style=new propA(CLRS.WHITE, CLRS.YELLOW, CENTER, CENTER, 11, 12);
-          //~ break;
-//~
-        //~ case STYLES.TITLE:
-//~
-          //~ style=new propA(CLRS.WHITE, CLRS.YELLOW, LEFT, CENTER, 12, 14);
-          //~ break;
-//~
-        //~ default:  break;
-//~
-      //~ }
-//~
-    //~ return style;
-//~
-  //~ };
-
+  
   var getPoints=function(parent){
 
     var ctrls=[];
@@ -7120,7 +7144,7 @@ app.command=c;
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new labelP(
-                new propC(getGUID(), cn, 100, top+23*h, 10, 10, 0, HAND, false, COMMANDS.COMMAND[0], COMMANDS.COMMAND[1]),
+                new propC(getGUID(), cn, 100, top+23*h, 10, 10, 0, HAND, false, COMMANDS.CURRENT[0], COMMANDS.CURRENT[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
@@ -7792,7 +7816,7 @@ app.command=c;
             new propA(CLRS.WHITE, CLRS.YELLOW, LEFT, CENTER, 12, 14));
 
     ctrls.push(new label(
-                new propC(getGUID(), cn, 100, 3, w, w, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.COMMAND[1]+":"),
+                new propC(getGUID(), cn, 100, 3, w, w, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]+":"),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 12, 12)));
 
@@ -8189,7 +8213,7 @@ app.command=c;
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
     ctrls.push(new buttonA(
-                new propC(getGUID(), cn, 10, 10, 36, 36, 0, HAND, false, COMMANDS.COMMAND[0], COMMANDS.COMMAND[1]),
+                new propC(getGUID(), cn, 10, 10, 36, 36, 0, HAND, false, COMMANDS.CURRENT[0], COMMANDS.CURRENT[1]),
                 new propL(CLRS.BLACK, CLRS.BLACK, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
