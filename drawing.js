@@ -176,30 +176,37 @@ var zoomfactor=0;
     TOOLTIP:      [   7,  'ToolTip',          'TOOLTIP'               ],
 
     DEBUG:        [   9,  'Debug',            'DEBUG'                 ],
+
     WIDTH:        [  10,  'Width',            'WIDTH'                 ],
     HEIGHT:       [  11,  'Height',           'HEIGHT'                ],
+
     FRAMERATEA:   [  12,  'FrameRateA',       'FRAMERATE(A)'          ],
     FRAMERATE:    [  13,  'FrameRate',        'FRAMERATE'             ],
-    MOUSEX:       [  14,  'MouseX',           'MOUSEX'                ],
-    MOUSEY:       [  15,  'MouseY',           'MOUSEY'                ],
-    WORLDX:       [  16,  'WorldX',           'WORLDX'                ],
-    WORLDY:       [  17,  'WorldY',           'WORLDY'                ],
-    GRIDX:        [  18,  'GridX',            'GRIDX'                 ],
-    GRIDY:        [  19,  'GridY',            'GRIDY'                 ],
-    PRESSED:      [  20,  'Pressed',          'PRESSED'               ],
+
     VISIBLE:      [  21,  'Visible',          'VISIBLE'               ],
-
-    FOCUS:        [  22,  'Focus',            'FOCUS'                 ],
-
-    LEFT:         [  23,  'Left button',      'LEFT'                  ],
-    CENTER:       [  24,  'Center button',    'CENTER'                ],
-    RIGHT:        [  25,  'Right button',     'RIGHT'                 ],
 
     SPACER:       [  26,  'Spacer',           'SPACER'                ],
 
     CURRENT:      [  27,  'Current',          'CURRENT'               ],
     FACTOR:       [  28,  'Factor',           'FACTOR'                ],
     UTIL:         [  29,  'Util',             'UTIL'                  ],
+    
+    //~ Mouse ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    MOUSEX:       [  14,  'MouseX',           'MOUSEX'                ],
+    MOUSEY:       [  15,  'MouseY',           'MOUSEY'                ],
+    WORLDX:       [  16,  'WorldX',           'WORLDX'                ],
+    WORLDY:       [  17,  'WorldY',           'WORLDY'                ],
+    GRIDX:        [  18,  'GridX',            'GRIDX'                 ],
+    GRIDY:        [  19,  'GridY',            'GRIDY'                 ],
+
+    PRESSED:      [  20,  'Pressed',          'PRESSED'               ],
+
+    FOCUS:        [  22,  'Focus',            'FOCUS'                 ],
+
+    LEFT:         [  23,  'Left button',      'LEFT'                  ],
+    CENTER:       [  24,  'Center button',    'CENTER'                ],
+    RIGHT:        [  25,  'Right button',     'RIGHT'                 ],
 
     //~ Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     GRID:         [ 100,  'Grid',             'GRID',       KEYCODES.GRID       ],
@@ -518,7 +525,7 @@ var zoomfactor=0;
     fs:             false,  //~ full screen
 
     current:        COMMANDS.P_DEFAULT[0],
-    
+
     stack:          [],
 
     cursorSize:     0,
@@ -1229,7 +1236,7 @@ var factor=1.25;
   };
   var ShapeCommands=function(c,p){
 
-    println(c+","+p);
+    //~ println(c+","+p);
 
     //~ app.current=p;
 
@@ -3076,7 +3083,7 @@ var factor=1.25;
     };
     var drawMisc=function(){
 
-      
+
       pushMatrix();
 
         translate(0.5,0.5);
@@ -3147,9 +3154,9 @@ var factor=1.25;
     };
 
     switch(true){
-      
+
       case p.c===COMMANDS.SELECT[0]:      drawMisc();       break;
-      
+
       case (p.c===COMMANDS.CURRENT[0]):    break;
 
       case (p.c>=COMMANDS.GRID[0] &&
@@ -3274,7 +3281,7 @@ var factor=1.25;
 
     //~ misc properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     this.hit=false;             //~ mouse is over the control
-    this.hitExpand=false;       //~ mouse is over the expand/collapse area
+    
     this.visible=true;          //~ is the control currently being displayed
     this.ctrls=ctrls;           //~ array of child controls
 
@@ -3671,7 +3678,7 @@ var factor=1.25;
 
         pushStyle();
 
-          fill(getProp(p.g));
+          fill(p.fill);
           stroke(p.stroke);
           strokeWeight(p.weight);
 
@@ -3679,7 +3686,7 @@ var factor=1.25;
 
             if(app.left){ d=1; }
 
-            //~ fill(p.g);
+            fill(p.fillH);
             stroke(p.strokeH);
             strokeWeight(p.weightH);
             cursor(p.k);
@@ -3687,7 +3694,7 @@ var factor=1.25;
           }
 
           p.c=app.current;
-          
+
           rect(d, d, p.w, p.h, p.r);
 
           drawIcon(p, d);
@@ -3698,6 +3705,8 @@ var factor=1.25;
 
   };
 
+
+  
   //~ Shape
   var buttonS=function(c,l,a,ctrls){
     control.call(this,c,l,a,ctrls);
@@ -3736,7 +3745,7 @@ var factor=1.25;
             noStroke();
           }
 
-          if(app.current===p.c){ fill(getColor(CLRS.GRAY,25)); }
+          //~ if(app.current===p.c){ fill(getColor(CLRS.GRAY,25)); }
 
           rect(d, d, p.w, p.h, p.r);
 
@@ -3758,7 +3767,8 @@ var factor=1.25;
 
       this.parent.ctrls[0].c=this.c;
       this.parent.ctrls[0].g=this.g;
-
+      this.parent.v=false;
+      println(this.parent.v);
     }
   };
 
@@ -4460,11 +4470,12 @@ var factor=1.25;
   //~ Strips ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   //~ Horizontal
-  var stripH=function(c,l,a,ctrls){
+  var menuH=function(c,l,a,ctrls){
     control.call(this,c,l,a,ctrls);
+    this.hitExpand=false;       //~ mouse is over the expand/collapse area    
   };
-  stripH.prototype=Object.create(control.prototype);
-  stripH.prototype.draw=function(){
+  menuH.prototype=Object.create(control.prototype);
+  menuH.prototype.draw=function(){
 
     var p=this;
     var d=0;
@@ -4476,8 +4487,8 @@ var factor=1.25;
         pushStyle();
 
           //~ set width
-          if(p.v){ p.w=p.ctrls[0].w*p.ctrls.length+10; }
-          else   { p.w=p.ctrls[0].w+10;                }
+          if(p.v){ p.w=p.ctrls[0].w*(p.ctrls.length); }
+          else   { p.w=p.ctrls[0].w+1;                }
 
           fill(p.fill);
           stroke(p.stroke);
@@ -4496,27 +4507,32 @@ var factor=1.25;
 
           fill(color(32,32,32));
 
-          if(p.hit && p.hitExpand){
+          if(p.hitExpand){
             fill(color(48,48,48));
           }
 
-          rect(d+p.w-9, d+1, 8, p.h-2, 0);
+          //~ rect(d+p.w-9, d+1, 8, p.h-2, 0);
 
-          fill(CLRS.Gray_9);
+          if(p.v){ for(var c in p.ctrls){ p.ctrls[c].draw(); } }
+          else   { p.ctrls[0].draw();                          }
 
-          if(p.hit && p.hitExpand){
-            fill(CLRS.Gray_6);
+          fill(CLRS.Gray8);
+
+          if(p.hitExpand){
+            fill(CLRS.Gray3);
           }
 
+          var w=p.ctrls[0].w;
+          
           if(p.v){
-            triangle(d+p.w-2, d+p.h/2-3,
-                     d+p.w-7, d+p.h/2,
-                     d+p.w-2, d+p.h/2+3);
+            triangle(d+w-2, d+p.h-3-6,
+                     d+w-7, d+p.h-6,
+                     d+w-2, d+p.h+3-6);
           }
           else{
-            triangle(d+p.w-7, d+p.h/2-3,
-                     d+p.w-2, d+p.h/2,
-                     d+p.w-7, d+p.h/2+3);
+            triangle(d+w-7, d+p.h-3-6,
+                     d+w-2, d+p.h-6,
+                     d+w-7, d+p.h+3-6);
           }
 
           if(p.hit){
@@ -4529,20 +4545,237 @@ var factor=1.25;
 
         popStyle();
 
-        if(p.v){ for(var c in p.ctrls){ p.ctrls[c].draw(); } }
-        else   { p.ctrls[0].draw();                          }
+    popMatrix();
+
+  };
+  menuH.prototype.clicked=function(){
+
+    if(this.hit){
+
+      if(this.hitExpand){
+        this.v=!this.v;
+      }
+      else{ 
+        //~ for(var c in this.ctrls){ this.ctrls[c].clicked(); }
+        this.v=false;
+        //~ println(this.v);
+      }
+
+      for(var c in this.ctrls){ this.ctrls[c].clicked(); }
+
+    }
+
+  };
+  //~ menuH.prototype.clickedR=function(){
+    //~ if(this.hit){
+      //~ for(var c in this.ctrls){ this.ctrls[c].clickedR(); }
+    //~ }
+  //~ };
+  menuH.prototype.moved=function(x,y){
+
+    if(app.mouseX>x+this.x &&
+       app.mouseX<x+this.x+this.w &&
+       app.mouseY>y+this.y &&
+       app.mouseY<y+this.y+this.h){
+
+      this.hit=true;
+
+      if(app.mouseX>x+this.x+this.ctrls[0].w-10){
+        this.hitExpand=true;
+        this.v=true;
+      }
+      else{
+        this.hitExpand=false;
+        this.v=false;
+      }
+
+      app.focus=this.i;
+
+      if(this.v){
+        for(var c in this.ctrls){ this.ctrls[c].moved(x+this.x, y+this.y); }
+      }
+      else{
+        this.ctrls[0].moved(x+this.x, y+this.y);
+      }
+
+    }
+    else{
+      this.hit=false;
+      this.hitExpand=false;
+      this.v=false;
+    }
+
+  };
+
+    //~ Menu Item
+  var menuItem=function(c,l,a,ctrls){
+    control.call(this,c,l,a,ctrls);
+  };
+  menuItem.prototype=Object.create(control.prototype);
+  menuItem.prototype.draw=function(){
+
+    var p=this;
+    var d=0;
+
+    pushMatrix();
+
+      translate(p.x, p.y);
+
+        pushStyle();
+
+          fill(p.fill);
+          stroke(p.stroke);
+          strokeWeight(p.weight);
+
+          if(p.hit){
+
+            if(app.left){ d=1; }
+
+            fill(p.fillH);
+            stroke(p.strokeH);
+            strokeWeight(p.weightH);
+            cursor(p.k);
+
+          }
+
+          if(p.v){ fill(getProp(p.g)); }
+
+          if(p.fill===CLRS.TRANSPARENT){
+            noFill();
+            noStroke();
+          }
+
+          //~ if(app.current===p.c){ fill(getColor(CLRS.GRAY,25)); }
+
+          rect(d, d, p.w, p.h, p.r);
+
+          drawIcon(p, d);
+
+          fill(p.tfill);
+
+        popStyle();
+
+    popMatrix();
+
+  };
+  menuItem.prototype.moved=function(x,y){
+    
+    if(app.mouseX>x+this.x &&
+       app.mouseX<x+this.x+this.w &&
+       app.mouseY>y+this.y &&
+       app.mouseY<y+this.y+this.h){
+
+      this.hit=true;
+
+    }
+    else{
+      this.hit=false;
+    }
+
+  };  
+  menuItem.prototype.clicked=function(){
+    
+    if(this.hit){
+
+      reset();
+
+      commands(this.c, this.g);
+
+      this.parent.ctrls[0].c=this.c;
+      this.parent.ctrls[0].g=this.g;
+      this.parent.v=false;
+
+    }
+    
+  };
+  
+  //~ Horizontal
+  var stripH=function(c,l,a,ctrls){
+    control.call(this,c,l,a,ctrls);
+  };
+  stripH.prototype=Object.create(control.prototype);
+  stripH.prototype.draw=function(){
+
+    var p=this;
+    var d=0;
+
+    pushMatrix();
+
+      translate(p.x, p.y);
+
+        pushStyle();
+
+          //~ set width
+          if(p.v){ p.w=p.ctrls[0].w*(p.ctrls.length); }
+          else   { p.w=p.ctrls[0].w+1;                }
+
+          fill(p.fill);
+          stroke(p.stroke);
+          strokeWeight(p.weight);
+
+          if(p.hit){
+            fill(p.fillH);
+            stroke(p.strokeH);
+            strokeWeight(p.weightH);
+            cursor(p.k);
+          }
+
+          noStroke();
+
+          rect(d, d, p.w, p.h, p.r);
+
+          fill(color(32,32,32));
+
+          if(p.hitExpand){
+            fill(color(48,48,48));
+          }
+
+          //~ rect(d+p.w-9, d+1, 8, p.h-2, 0);
+
+          if(p.v){ for(var c in p.ctrls){ p.ctrls[c].draw(); } }
+          else   { p.ctrls[0].draw();                          }
+
+          fill(CLRS.Gray8);
+
+          if(p.hitExpand){
+            fill(CLRS.Gray3);
+          }
+
+          var w=p.ctrls[0].w;
+          
+          if(p.v){
+            triangle(d+w-2, d+p.h-3-6,
+                     d+w-7, d+p.h-6,
+                     d+w-2, d+p.h+3-6);
+          }
+          else{
+            triangle(d+w-7, d+p.h-3-6,
+                     d+w-2, d+p.h-6,
+                     d+w-7, d+p.h+3-6);
+          }
+
+          if(p.hit){
+            fill(p.tfillH);
+          }
+
+          textAlign(p.alignX,p.alignY);
+
+          //~ text(p.g, p.w/2, p.h/2);
+
+        popStyle();
 
     popMatrix();
 
   };
   stripH.prototype.clicked=function(){
-    if(this.hit){
-      //~ if(app.focus===this.i){
-      if(mouseX>this.x+this.ctrls[0].w){
-        this.v=!this.v;
-      }
+
+    if(this.hitExpand){
+      //~ this.v=!this.v;
+    }
+    else if(this.hit){
       for(var c in this.ctrls){ this.ctrls[c].clicked(); }
     }
+    
   };
   stripH.prototype.clickedR=function(){
     if(this.hit){
@@ -4558,11 +4791,13 @@ var factor=1.25;
 
         this.hit=true;
 
-        if(app.mouseX>x+this.x+this.w-10){
+        if(app.mouseX>x+this.x+this.ctrls[0].w-10){
           this.hitExpand=true;
+          this.v=true;
         }
         else{
           this.hitExpand=false;
+          this.v=false;
         }
 
         app.focus=this.i;
@@ -4573,9 +4808,12 @@ var factor=1.25;
         else{
           this.ctrls[0].moved(x+this.x, y+this.y);
         }
+
       }
       else{
         this.hit=false;
+        this.hitExpand=false;
+        this.v=false;
       }
 
     }
@@ -6299,15 +6537,15 @@ var factor=1.25;
   //~ Initialize =======================================================
 
   //~ Load Controls ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  
+
   var getPoints=function(parent){
 
     var ctrls=[];
-    var w=40;
+    var w=30;
 
-    var cn=new stripH(
-            new propC(getGUID(), parent, parent.x+50, parent.y+30, w+10, w, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
-            new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
+    var cn=new menuH(
+            new propC(getGUID(), parent, parent.x, parent.y+80, 40+10, 40, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            new propL(CLRS.Black, CLRS.Gray7, CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
     //~ vertices ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -6325,23 +6563,23 @@ var factor=1.25;
 
     //~ }
 
-    ctrls.push(new buttonS(
-                new propC(getGUID(), cn, 0*w, 0, w, w, 0, HAND, false, COMMANDS.P_DEFAULT[0], COMMANDS.P_DEFAULT[1]),
+    ctrls.push(new menuItem(
+                new propC(getGUID(), cn, 0, 0, 39, 39, 0, HAND, false, COMMANDS.P_DEFAULT[0], COMMANDS.P_DEFAULT[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
-    ctrls.push(new buttonS(
-                new propC(getGUID(), cn, 1*w, 0, w, w, 0, HAND, false, COMMANDS.P_DEFAULT[0], COMMANDS.P_DEFAULT[1]),
+    ctrls.push(new menuItem(
+                new propC(getGUID(), cn,39, 0, w, w, 0, HAND, false, COMMANDS.P_DEFAULT[0], COMMANDS.P_DEFAULT[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
-    ctrls.push(new buttonS(
-                new propC(getGUID(), cn, 2*w, 0, w, w, 0, HAND, false, COMMANDS.P_OBJECT[0], COMMANDS.P_OBJECT[1]),
+    ctrls.push(new menuItem(
+                new propC(getGUID(), cn, 39+w, 0, w, w, 0, HAND, false, COMMANDS.P_OBJECT[0], COMMANDS.P_OBJECT[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
-    ctrls.push(new buttonS(
-                new propC(getGUID(), cn, 3*w, 0, w, w, 0, HAND, false, COMMANDS.P_BOUND[0], COMMANDS.P_BOUND[1]),
+    ctrls.push(new menuItem(
+                new propC(getGUID(), cn, 39+2*w, 0, w, w, 0, HAND, false, COMMANDS.P_BOUND[0], COMMANDS.P_BOUND[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
@@ -6368,7 +6606,7 @@ var factor=1.25;
     var w=30;
 
     var cn=new stripH(
-            new propC(getGUID(), parent, parent.x+50, parent.y+75, w+10, w, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            new propC(getGUID(), parent, parent.x+50, parent.y+475, w+10, w, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
             new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
@@ -7956,7 +8194,7 @@ var factor=1.25;
     var ctrls=[];
 
     var cn=new grid(
-            new propC(getGUID(), parent, parent.x+210, parent.y+5, parent.w-215, parent.h-40, 5, ARROW, false, COMMANDS.UNDEF[0], 0),
+            new propC(getGUID(), parent, parent.x+210, parent.y+5, parent.w-215, parent.h-35, 5, ARROW, false, COMMANDS.UNDEF[0], 0),
             new propL(CLRS.GRID, getColor(CLRS.GRID,65), CLRS.WHITE, CLRS.YELLOW, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
@@ -8214,22 +8452,22 @@ var factor=1.25;
 
     ctrls.push(new buttonA(
                 new propC(getGUID(), cn, 10, 10, 36, 36, 0, HAND, false, COMMANDS.CURRENT[0], COMMANDS.CURRENT[1]),
-                new propL(CLRS.BLACK, CLRS.BLACK, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
+                new propL(CLRS.Gray8, CLRS.Gray7, CLRS.BLUE, CLRS.ORANGE, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(getPoints(cn));        //~ Points
-    ctrls.push(getLines(cn));         //~ Lines
-    ctrls.push(getTriangles(cn));     //~ Triangles
-    ctrls.push(getCircles(cn));       //~ Circles
-    ctrls.push(getQuads(cn));         //~ Quads
-    ctrls.push(getArcs(cn));          //~ Arcs
-    ctrls.push(getPolygons(cn));      //~ Polygons
-    ctrls.push(getConics(cn));        //~ Conics
-    ctrls.push(getAngles(cn));        //~ Angles
-    ctrls.push(getAnnotations(cn));   //~ Annotations
-
-    ctrls.push(getTransform(cn));     //~ Transforms
-    ctrls.push(getMeasure(cn));       //~ Measure
+    //~ ctrls.push(getLines(cn));         //~ Lines
+    //~ ctrls.push(getTriangles(cn));     //~ Triangles
+    //~ ctrls.push(getCircles(cn));       //~ Circles
+    //~ ctrls.push(getQuads(cn));         //~ Quads
+    //~ ctrls.push(getArcs(cn));          //~ Arcs
+    //~ ctrls.push(getPolygons(cn));      //~ Polygons
+    //~ ctrls.push(getConics(cn));        //~ Conics
+    //~ ctrls.push(getAngles(cn));        //~ Angles
+    //~ ctrls.push(getAnnotations(cn));   //~ Annotations
+//~ 
+    //~ ctrls.push(getTransform(cn));     //~ Transforms
+    //~ ctrls.push(getMeasure(cn));       //~ Measure
 
     cn.ctrls=ctrls;
 
