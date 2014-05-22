@@ -4487,7 +4487,7 @@ var factor=1.25;
         pushStyle();
 
           //~ set width
-          if(p.v){ p.w=p.ctrls[0].w*(p.ctrls.length); }
+          if(p.v){ p.w=p.ctrls[0].w*(p.ctrls.length)+1; }
           else   { p.w=p.ctrls[0].w+1;                }
 
           fill(p.fill);
@@ -4555,11 +4555,6 @@ var factor=1.25;
       if(this.hitExpand){
         this.v=!this.v;
       }
-      else{ 
-        //~ for(var c in this.ctrls){ this.ctrls[c].clicked(); }
-        this.v=false;
-        //~ println(this.v);
-      }
 
       for(var c in this.ctrls){ this.ctrls[c].clicked(); }
 
@@ -4580,13 +4575,16 @@ var factor=1.25;
 
       this.hit=true;
 
-      if(app.mouseX>x+this.x+this.ctrls[0].w-10){
+      if(app.mouseX>x+this.x+this.ctrls[0].w-10 &&
+         app.mouseX<x+this.x+this.ctrls[0].w &&
+         app.mouseY>y+this.y+this.ctrls[0].h-10 &&
+         app.mouseY<y+this.y+this.ctrls[0].h){
         this.hitExpand=true;
-        this.v=true;
+        //~ this.v=true;
       }
       else{
         this.hitExpand=false;
-        this.v=false;
+        //~ this.v=false;
       }
 
       app.focus=this.i;
@@ -4602,7 +4600,7 @@ var factor=1.25;
     else{
       this.hit=false;
       this.hitExpand=false;
-      this.v=false;
+      for(var c in this.ctrls){ this.ctrls[c].hit=false; }
     }
 
   };
@@ -4629,7 +4627,7 @@ var factor=1.25;
 
           if(p.hit){
 
-            if(app.left){ d=1; }
+            if(app.left && !p.parent.hitExpand){ d=1; }
 
             fill(p.fillH);
             stroke(p.strokeH);
@@ -4664,9 +4662,7 @@ var factor=1.25;
        app.mouseX<x+this.x+this.w &&
        app.mouseY>y+this.y &&
        app.mouseY<y+this.y+this.h){
-
       this.hit=true;
-
     }
     else{
       this.hit=false;
@@ -4675,7 +4671,7 @@ var factor=1.25;
   };  
   menuItem.prototype.clicked=function(){
     
-    if(this.hit){
+    if(this.hit && !this.parent.hitExpand){
 
       reset();
 
@@ -5483,6 +5479,7 @@ var factor=1.25;
       }
       else{
         this.hit=false;
+        for(var c in this.ctrls){ this.ctrls[c].moved(x+this.x, y+this.y); }
       }
 
   };
@@ -6541,11 +6538,11 @@ var factor=1.25;
   var getPoints=function(parent){
 
     var ctrls=[];
-    var w=30;
+    var w=39;
 
     var cn=new menuH(
-            new propC(getGUID(), parent, parent.x, parent.y+80, 40+10, 40, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
-            new propL(CLRS.Black, CLRS.Gray7, CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
+            new propC(getGUID(), parent, parent.x, parent.y+80, 4+10, 40, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            new propL(CLRS.TRANSPARENT, CLRS.Gray7, CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
     //~ vertices ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -6564,22 +6561,22 @@ var factor=1.25;
     //~ }
 
     ctrls.push(new menuItem(
-                new propC(getGUID(), cn, 0, 0, 39, 39, 0, HAND, false, COMMANDS.P_DEFAULT[0], COMMANDS.P_DEFAULT[1]),
+                new propC(getGUID(), cn, 0, 0, w, w, 0, HAND, false, COMMANDS.P_DEFAULT[0], COMMANDS.P_DEFAULT[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new menuItem(
-                new propC(getGUID(), cn,39, 0, w, w, 0, HAND, false, COMMANDS.P_DEFAULT[0], COMMANDS.P_DEFAULT[1]),
+                new propC(getGUID(), cn, w, 0, w, w, 0, HAND, false, COMMANDS.P_DEFAULT[0], COMMANDS.P_DEFAULT[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new menuItem(
-                new propC(getGUID(), cn, 39+w, 0, w, w, 0, HAND, false, COMMANDS.P_OBJECT[0], COMMANDS.P_OBJECT[1]),
+                new propC(getGUID(), cn, w+w, 0, w, w, 0, HAND, false, COMMANDS.P_OBJECT[0], COMMANDS.P_OBJECT[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new menuItem(
-                new propC(getGUID(), cn, 39+2*w, 0, w, w, 0, HAND, false, COMMANDS.P_BOUND[0], COMMANDS.P_BOUND[1]),
+                new propC(getGUID(), cn, w+2*w, 0, w, w, 0, HAND, false, COMMANDS.P_BOUND[0], COMMANDS.P_BOUND[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
@@ -6603,11 +6600,11 @@ var factor=1.25;
   var getLines=function(parent){
 
     var ctrls=[];
-    var w=30;
+    var w=39;
 
-    var cn=new stripH(
-            new propC(getGUID(), parent, parent.x+50, parent.y+475, w+10, w, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
-            new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
+    var cn=new menuH(
+            new propC(getGUID(), parent, parent.x, parent.y+120, w+10, w+1, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            new propL(CLRS.TRANSPARENT, CLRS.Gray7, CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
     //~ L_2P:         [-200, 'Line2P',           'LINE2P'                 ],    //~ through 2 vertices
@@ -6625,72 +6622,72 @@ var factor=1.25;
     //~ V_2P:         [-211,  'Vector2P',         'VECTOR2P'              ],    //~ Vector between 2 vertices
     //~ V_FP:         [-212,  'VectorFP',         'VECTORFP'              ],    //~ Vector from point
 
-    ctrls.push(new buttonS(
+    ctrls.push(new menuItem(
                 new propC(getGUID(), cn, 0*w, 0, w, w, 0, HAND, false, COMMANDS.L_2P[0], COMMANDS.L_2P[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
-    ctrls.push(new buttonS(
+    ctrls.push(new menuItem(
                 new propC(getGUID(), cn, 1*w, 0, w, w, 0, HAND, false, COMMANDS.L_2P[0], COMMANDS.L_2P[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
-    ctrls.push(new buttonS(
+    ctrls.push(new menuItem(
                 new propC(getGUID(), cn, 2*w, 0, w, w, 0, HAND, false, COMMANDS.L_SEGMENT2P[0], COMMANDS.L_SEGMENT2P[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
-    ctrls.push(new buttonS(
+    ctrls.push(new menuItem(
                 new propC(getGUID(), cn, 3*w, 0, w, w, 0, HAND, false, COMMANDS.L_SEGMENTLEN[0], COMMANDS.L_SEGMENTLEN[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
-    ctrls.push(new buttonS(
+    ctrls.push(new menuItem(
                 new propC(getGUID(), cn, 4*w, 0, w, w, 0, HAND, false, COMMANDS.L_PERP[0], COMMANDS.L_PERP[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
-    ctrls.push(new buttonS(
+    ctrls.push(new menuItem(
                 new propC(getGUID(), cn, 5*w, 0, w, w, 0, HAND, false, COMMANDS.L_PERPB[0], COMMANDS.L_PERPB[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
-    ctrls.push(new buttonS(
+    ctrls.push(new menuItem(
                 new propC(getGUID(), cn, 6*w, 0, w, w, 0, HAND, false, COMMANDS.L_ANGB[0], COMMANDS.L_ANGB[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
-    ctrls.push(new buttonS(
+    ctrls.push(new menuItem(
                 new propC(getGUID(), cn, 7*w, 0, w, w, 0, HAND, false, COMMANDS.L_PARR[0], COMMANDS.L_PARR[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
-    ctrls.push(new buttonS(
+    ctrls.push(new menuItem(
                 new propC(getGUID(), cn, 8*w, 0, w, w, 0, HAND, false, COMMANDS.L_TANGENT[0], COMMANDS.L_TANGENT[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
-    ctrls.push(new buttonS(
+    ctrls.push(new menuItem(
                 new propC(getGUID(), cn, 9*w, 0, w, w, 0, HAND, false, COMMANDS.L_DIAMETER[0], COMMANDS.L_DIAMETER[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
-    ctrls.push(new buttonS(
+    ctrls.push(new menuItem(
                 new propC(getGUID(), cn, 10*w, 0, w, w, 0, HAND, false, COMMANDS.L_RADIUS[0], COMMANDS.L_RADIUS[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
-    ctrls.push(new buttonS(
+    ctrls.push(new menuItem(
                 new propC(getGUID(), cn, 11*w, 0, w, w, 0, HAND, false, COMMANDS.RAY_2P[0], COMMANDS.RAY_2P[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
-    ctrls.push(new buttonS(
+    ctrls.push(new menuItem(
                 new propC(getGUID(), cn, 12*w, 0, w, w, 0, HAND, false, COMMANDS.V_2P[0], COMMANDS.V_2P[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
-    ctrls.push(new buttonS(
+    ctrls.push(new menuItem(
                 new propC(getGUID(), cn, 13*w, 0, w, w, 0, HAND, false, COMMANDS.V_FP[0], COMMANDS.V_FP[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
@@ -6703,11 +6700,11 @@ var factor=1.25;
   var getTriangles=function(parent){
 
     var ctrls=[];
-    var w=30;
+    var w=39;
 
-    var cn=new stripH(
-            new propC(getGUID(), parent, parent.x+50, parent.y+105, w+10, w, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
-            new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
+    var cn=new menuH(
+            new propC(getGUID(), parent, parent.x, parent.y+160, w+10, w+1, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            new propL(CLRS.TRANSPARENT, CLRS.Gray7, CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
     //~ Triangle (T)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -6716,22 +6713,22 @@ var factor=1.25;
     //~ T_ISOSCELES:  [-302,  'T_Isosceles',      'T_ISOSCELES'           ],
     //~ T_SCALENE:    [-303,  'T_Scalene',        'T_SCALENE'             ],
 
-    ctrls.push(new buttonS(
+    ctrls.push(new menuItem(
                 new propC(getGUID(), cn, 0*w, 0, w, w, 0, HAND, false, COMMANDS.T_EQUILATERAL[0], COMMANDS.T_EQUILATERAL[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
-    ctrls.push(new buttonS(
+    ctrls.push(new menuItem(
                 new propC(getGUID(), cn, 1*w, 0, w, w, 0, HAND, false, COMMANDS.T_EQUILATERAL[0], COMMANDS.T_EQUILATERAL[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
-    ctrls.push(new buttonS(
+    ctrls.push(new menuItem(
                 new propC(getGUID(), cn, 2*w, 0, w, w, 0, HAND, false, COMMANDS.T_ISOSCELES[0], COMMANDS.T_ISOSCELES[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
-    ctrls.push(new buttonS(
+    ctrls.push(new menuItem(
                 new propC(getGUID(), cn, 3*w, 0, w, w, 0, HAND, false, COMMANDS.T_SCALENE[0], COMMANDS.T_SCALENE[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
@@ -6744,11 +6741,11 @@ var factor=1.25;
   var getCircles=function(parent){
 
     var ctrls=[];
-    var w=30;
+    var w=39;
 
-    var cn=new stripH(
-            new propC(getGUID(), parent, parent.x+50, 140, w+10, w, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
-            new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
+    var cn=new menuH(
+            new propC(getGUID(), parent, parent.x, parent.y+200, w+10, w+1, 1, HAND, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[1]),
+            new propL(CLRS.TRANSPARENT, CLRS.Gray7, CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
     //~ Circle (C)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -6756,22 +6753,22 @@ var factor=1.25;
     //~ C_CENTERP:    [-401,  'CircleCenterP',    'CIRCLECENTERP'         ],    //~ center point
     //~ C_CENTERR:    [-402,  'CircleCenterR',    'CIRCLECENTERR'         ],    //~ center radius
     //~ C_3P:         [-403,  'Circle3P',         'CIRCL3P'               ],    //  3 vertices
-    ctrls.push(new buttonS(
+    ctrls.push(new menuItem(
                 new propC(getGUID(), cn, 0*w, 0, w, w, 0, HAND, false, COMMANDS.C_CENTERP[0], COMMANDS.C_CENTERP[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
-    ctrls.push(new buttonS(
+    ctrls.push(new menuItem(
                 new propC(getGUID(), cn, 1*w, 0, w, w, 0, HAND, false, COMMANDS.C_CENTERP[0], COMMANDS.C_CENTERP[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
-    ctrls.push(new buttonS(
+    ctrls.push(new menuItem(
                 new propC(getGUID(), cn, 2*w, 0, w, w, 0, HAND, false, COMMANDS.C_CENTERR[0], COMMANDS.C_CENTERR[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
-    ctrls.push(new buttonS(
+    ctrls.push(new menuItem(
                 new propC(getGUID(), cn, 3*w, 0, w, w, 0, HAND, false, COMMANDS.C_3P[0], COMMANDS.C_3P[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
@@ -8456,9 +8453,9 @@ var factor=1.25;
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(getPoints(cn));        //~ Points
-    //~ ctrls.push(getLines(cn));         //~ Lines
-    //~ ctrls.push(getTriangles(cn));     //~ Triangles
-    //~ ctrls.push(getCircles(cn));       //~ Circles
+    ctrls.push(getLines(cn));         //~ Lines
+    ctrls.push(getTriangles(cn));     //~ Triangles
+    ctrls.push(getCircles(cn));       //~ Circles
     //~ ctrls.push(getQuads(cn));         //~ Quads
     //~ ctrls.push(getArcs(cn));          //~ Arcs
     //~ ctrls.push(getPolygons(cn));      //~ Polygons
@@ -8508,6 +8505,8 @@ var factor=1.25;
     cn.ctrls=ctrls;
 
     app.ctrls.push(cn);
+
+    //~ println("Zach is a putz");
 
   };
 
