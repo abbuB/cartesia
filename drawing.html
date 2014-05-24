@@ -1,26 +1,196 @@
-<!DOCTYPE html><html>
+<!DOCTYPE html>
+/*
+  --disable-web-security
+*/
   <head>
-  <title>Cartesia</title>
+    <title>Cartesia</title>
+    <script>
+
+      function loadXMLDoc(filename)
+      {
+      if (window.XMLHttpRequest)
+      {
+      xhttp=new XMLHttpRequest();
+      }
+      else // code for IE5 and IE6
+      {
+        xhttp=new ActiveXObject("Microsoft.XMLHTTP");
+      }
+        xhttp.open("GET",filename,false);
+        xhttp.send();
+        return xhttp.responseXML;
+      }
+      
+    </script>
   </head>
+  
   <style>
+    
     canvas {
       outline: none;
       -webkit-tap-highlight-color: rgba(255, 255, 255, 0); /* mobile webkit */  
     }
+
+    body {
+      background: #212830;
+      margin: 0;
+      padding: 5px;
+      line-height: 1.4em;
+      font-family: tahoma, arial, sans-serif;
+      font-size: 62.5%;
+    }
+
+    table {
+      width: 100%;
+      margin: 0;
+      background: #FFFFFF;
+      border: 1px solid #333333;
+      border-collapse: collapse;
+    }
+
+    td, th {
+      border-bottom: 1px solid #333333;
+      padding: 6px 16px;
+      text-align: left;
+    }
+
+    th {
+      background: #EEEEEE;
+    }
+
+    caption {
+      background: #E0E0E0;
+      margin: 0;
+      border: 1px solid #333333;
+      border-bottom: none;
+      padding: 6px 16px;
+      font-weight: bold;
+    }
+
   </style>
+
+  <script src="loadxmldoc.js"></script>
+
+  <script>
+    xmlDoc=loadXMLDoc("catalog.xml");
+
+    document.write(xmlDoc.getElementsByTagName("title")[0].childNodes[0].nodeValue + "<br>");
+    document.write(xmlDoc.getElementsByTagName("artist")[0].childNodes[0].nodeValue + "<br>");
+    document.write(xmlDoc.getElementsByTagName("country")[0].childNodes[0].nodeValue);
+  </script>
 
   <body bgcolor="#212830">
 
-    <canvas id="dwg">
-    </canvas>
+    <table summary="a summary of recent major volcanic eruptions in the Pacific Northwest">
+
+      <caption>Recent Major Volcanic Eruptions in the Pacific Northwest</caption>
+
+      <thead>
+          <tr>
+              <th scope="col">Volcano Name</th>
+              <th scope="col">Location</th>
+              <th scope="col">Last Major Eruption</th>
+              <th scope="col">Type of Eruption</th>
+          </tr>
+      </thead>
+
+      <tfoot>
+          <tr>
+              <td colspan="4">Compiled in 2008 by Ms Jen</td>
+          </tr>
+      </tfoot>
+      
+      <tbody>
+          <tr>
+              <th scope="row">Mt. Lassen</th>
+              <td>California</td>
+              <td>1914-17</td>
+              <td>Explosive Eruption</td>
+          </tr>
+          <tr>
+              <th scope="row">Mt. Hood</th>
+              <td>Oregon</td>
+              <td>1790s</td>
+              <td>Pyroclastic flows and Mudflows</td>
+          </tr>
+          <tr>
+              <th scope="row">Mt. St. Helens</th>
+              <td>Washington</td>
+              <td>1980</td>
+              <td>Explosive Eruption</td>
+          </tr>
+      </tbody>
+      
+    </table>
+      
+    </br>
+
+    <input type="date"></br></br>
+    <input type="time"></br></br>
+    <input type="range"></br></br>
+    <input type="number" min="0" max="13"></br></br>
+    <input type="color"></br></br>
+    <input type="search"></br></br>
+    <input type="text" list="mydata" … >
+    <datalist id="mydata">
+      <option label="Mr" value="Mister">
+      <option label="Mrs" value="Mistress">
+      <option label="Ms" value="Miss">
+    </datalist></br></br>
+    <form>
+      Name: <input type="text" name="name" id="name" value="" />
+      Email: <input type="text" name="email" id="email" value="" />
+      Comments: <textarea name="comments" id="comments" cols="25" rows="3"></textarea>
+      <input type="submit" value="submit" />
+    </form></br></br>
+
+    <li>How satisfied were you with our service?
+      <ul>
+        <li><label for="vsat">Very satisfied</label> <input type="radio" name="satisfaction" id="vsat" value="vsat" checked="checked"></li>
+        <li><label for="sat">Satisfied</label> <input type="radio" name="satisfaction" id="sat" value="sat"></li>
+        <li><label for="dcare">Didn't care</label> <input type="radio" name="satisfaction" id="dcare" value="dcare"></li>
+        <li><label for="disat">Dissatisfied</label> <input type="radio" name="satisfaction" id="disat" value="disat"></li>
+        <li><label for="vdisat">Very dissatisfied</label> <input type="radio" name="satisfaction" id="vdisat" value="vdisat"></li>
+      </ul>
+    </li><br/><br/>
+
+    <li><label for="location">Location visited:</label>
+    <select name="location" id="location">
+      <option value="">Select location</option>
+      <option value="nyork">New York</option>
+      <option value="vancouver">Vancouver</option>
+      <option value="atlantis">Atlantis</option>
+      <option value="alpha">Alpha Centauri</option> 
+      <option value="blackpool">Blackpool</option>
+      <option value="bognor">Bognor Regis</option>
+    </select></li><br/><br/>
+
+    <input type="submit" value="click" /><br/><br/>
+
+
+
+<!--
+    <canvas id="dwg"></canvas>    
+-->
+<!--
+    <canvas id="dwg2"></canvas>
+-->
 
   </body>
 
+<!--
   <script src="processing.js"></script>
   <script src="drawing.js"></script>
   <script type="application/javascript">
      var canvas = document.getElementById("dwg");
      var processingInstance = new Processing(canvas, proc);
   </script>
-
+-->
+<!--
+  <script type="application/javascript">
+     var canvas = document.getElementById("dwg2");
+     var processingInstance = new Processing(canvas, proc);
+  </script>
+-->
+  
 </html>
