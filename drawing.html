@@ -1,29 +1,27 @@
 <!DOCTYPE html>
-/*
+<!--
   --disable-web-security
-*/
+/!-->
   <head>
-    <title>Cartesia</title>
-    <script>
-
-      function loadXMLDoc(filename)
-      {
-      if (window.XMLHttpRequest)
-      {
-      xhttp=new XMLHttpRequest();
-      }
-      else // code for IE5 and IE6
-      {
-        xhttp=new ActiveXObject("Microsoft.XMLHTTP");
-      }
-        xhttp.open("GET",filename,false);
-        xhttp.send();
-        return xhttp.responseXML;
-      }
-      
-    </script>
+    <title>Cartesia</title>    
   </head>
-  
+
+  <header>
+    <h1>Wake up sheeple!</h1>
+    <p><a href="catalog.xml">Catalog</a> -
+       <a href="cartesia.html">Processing</a> -
+       <a href="forums.html">Forums</a></p>
+    <p>Last Modified: <time>2009-04-01</time></p>
+    <nav>
+     <h1>Navigation</h1>
+     <ul>
+      <li><a href="articles.html">Index of all articles</a></li>
+      <li><a href="today.html">Things sheeple need to wake up for today</a></li>
+      <li><a href="successes.html">Sheeple we have managed to wake</a></li>
+     </ul>
+    </nav>
+  </header>
+
   <style>
     
     canvas {
@@ -37,12 +35,23 @@
       padding: 5px;
       line-height: 1.4em;
       font-family: tahoma, arial, sans-serif;
-      font-size: 62.5%;
+      font-size: 82.5%;
+      color: #FFFFFF;
     }
 
-    table {
-      width: 100%;
+    code {
+      background: #212830;
       margin: 0;
+      padding: 5px;
+      line-height: 1.4em;
+      font-family: tahoma, arial, sans-serif;
+      font-size: 82.5%;
+      color: #FFFFFF;
+    }
+    
+    table {
+      width: 90%;
+      margin: 1%;
       background: #FFFFFF;
       border: 1px solid #333333;
       border-collapse: collapse;
@@ -56,8 +65,21 @@
 
     th {
       background: #EEEEEE;
+      color: #000000;
     }
-
+    tr {
+      background: #EEEEEE;
+      color: #000000;
+    }
+    summary {
+      background: #171E26;
+      margin: 0;
+      padding: 5px;
+      line-height: 1.4em;
+      font-family: tahoma, arial, sans-serif;
+      font-size: 102.5%;
+      color: #FFFFFF;
+    }
     caption {
       background: #E0E0E0;
       margin: 0;
@@ -65,130 +87,523 @@
       border-bottom: none;
       padding: 6px 16px;
       font-weight: bold;
+      color: #000000;
     }
-
+    
   </style>
-
-  <script src="loadxmldoc.js"></script>
-
-  <script>
-    xmlDoc=loadXMLDoc("catalog.xml");
-
-    document.write(xmlDoc.getElementsByTagName("title")[0].childNodes[0].nodeValue + "<br>");
-    document.write(xmlDoc.getElementsByTagName("artist")[0].childNodes[0].nodeValue + "<br>");
-    document.write(xmlDoc.getElementsByTagName("country")[0].childNodes[0].nodeValue);
-  </script>
 
   <body bgcolor="#212830">
 
-    <table summary="a summary of recent major volcanic eruptions in the Pacific Northwest">
+    <details>   <!-- ***** Tables ***** -->
+      <summary><label for="fn">Tables</label></summary>
+      
+        <table summary="a summary of recent major volcanic eruptions in the Pacific Northwest">
 
-      <caption>Recent Major Volcanic Eruptions in the Pacific Northwest</caption>
+          <caption>Recent Major Volcanic Eruptions in the Pacific Northwest</caption>
 
-      <thead>
-          <tr>
-              <th scope="col">Volcano Name</th>
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
               <th scope="col">Location</th>
               <th scope="col">Last Major Eruption</th>
               <th scope="col">Type of Eruption</th>
-          </tr>
-      </thead>
+            </tr>
+          </thead>
 
-      <tfoot>
-          <tr>
+          <tfoot>
+            <tr>
               <td colspan="4">Compiled in 2008 by Ms Jen</td>
-          </tr>
-      </tfoot>
-      
-      <tbody>
-          <tr>
+            </tr>
+          </tfoot>
+
+          <tbody>
+            <tr>
               <th scope="row">Mt. Lassen</th>
               <td>California</td>
               <td>1914-17</td>
               <td>Explosive Eruption</td>
-          </tr>
-          <tr>
+            </tr>
+            <tr>
               <th scope="row">Mt. Hood</th>
-              <td>Oregon</td>
-              <td>1790s</td>
-              <td>Pyroclastic flows and Mudflows</td>
-          </tr>
-          <tr>
+                <td>Oregon</td>
+                <td>1790s</td>
+                <td>Pyroclastic flows and Mudflows</td>
+            </tr>
+            <tr>
               <th scope="row">Mt. St. Helens</th>
-              <td>Washington</td>
-              <td>1980</td>
-              <td>Explosive Eruption</td>
-          </tr>
-      </tbody>
+                <td>Washington</td>
+                <td>1980</td>
+                <td>Explosive Eruption</td>
+            </tr>
+
+          </tbody>
+
+        </table>
+
+    </details>
+
+    <details>   <!-- ***** Article ***** -->
+      <summary><label for="fn">Article</label></summary>
       
-    </table>
+        <article>
+          <header>
+            <h1>The Very First Rule of Life</h1>
+              <p><time pubdate datetime="2009-10-09T14:28-08:00"></time></p>
+          </header>
+
+          <p>If there's a microphone anywhere near you, assume it's hot and
+             sending whatever you're saying to the world. Seriously.</p>
+          <p>Radios use the electromagnetic spectrum in the meter range and longer.</p>
+
+          <hr>
+
+          <p>Signal flares use the electromagnetic spectrum in the nanometer range.</p>
+          
+          <p>...</p>
+
+          <pre>
+          Line 1.
+                     Line 2 is to the right of line 1.
+                     Line 3 aligns with line 2.
+          </pre>
+
+          <blockquote>
+            <p>The quote is input here. </p>
+          </blockquote>
+          
+        </article>
+
+    </details>
+
+    <details>   <!-- ***** Footer ***** -->
+      <summary><label for="fn">Footer</label></summary>
       
-    </br>
+        <footer>
+          <a href="?comments=1">Show comments...</a>
+          <address>
+            <p><a href="http://www.w3.org/Consortium/contact-mit">MIT</a></p>
+          </address>
+        </footer>
+      
+    </details>
 
-    <input type="date"></br></br>
-    <input type="time"></br></br>
-    <input type="range"></br></br>
-    <input type="number" min="0" max="13"></br></br>
-    <input type="color"></br></br>
-    <input type="search"></br></br>
-    <input type="text" list="mydata" … >
-    <datalist id="mydata">
-      <option label="Mr" value="Mister">
-      <option label="Mrs" value="Mistress">
-      <option label="Ms" value="Miss">
-    </datalist></br></br>
-    <form>
-      Name: <input type="text" name="name" id="name" value="" />
-      Email: <input type="text" name="email" id="email" value="" />
-      Comments: <textarea name="comments" id="comments" cols="25" rows="3"></textarea>
-      <input type="submit" value="submit" />
-    </form></br></br>
+    <details>   <!-- ***** Aside ***** -->
+      <summary><label for="fn">Aside</label></summary>
 
-    <li>How satisfied were you with our service?
-      <ul>
-        <li><label for="vsat">Very satisfied</label> <input type="radio" name="satisfaction" id="vsat" value="vsat" checked="checked"></li>
-        <li><label for="sat">Satisfied</label> <input type="radio" name="satisfaction" id="sat" value="sat"></li>
-        <li><label for="dcare">Didn't care</label> <input type="radio" name="satisfaction" id="dcare" value="dcare"></li>
-        <li><label for="disat">Dissatisfied</label> <input type="radio" name="satisfaction" id="disat" value="disat"></li>
-        <li><label for="vdisat">Very dissatisfied</label> <input type="radio" name="satisfaction" id="vdisat" value="vdisat"></li>
-      </ul>
-    </li><br/><br/>
+        <aside>
+         <h1>Switzerland</h1>
+         <p>Switzerland, a land-locked country in the middle of geographic Europe,
+            has not joined the geopolitical European Union,
+            though it is a signatory to a number of European treaties.</p>
+        </aside>
+        
+    </details>
 
-    <li><label for="location">Location visited:</label>
-    <select name="location" id="location">
-      <option value="">Select location</option>
-      <option value="nyork">New York</option>
-      <option value="vancouver">Vancouver</option>
-      <option value="atlantis">Atlantis</option>
-      <option value="alpha">Alpha Centauri</option> 
-      <option value="blackpool">Blackpool</option>
-      <option value="bognor">Bognor Regis</option>
-    </select></li><br/><br/>
+    <details>   <!-- ***** Headings ***** -->
+      <summary><label for="fn">Headings</label></summary>
 
-    <input type="submit" value="click" /><br/><br/>
+        <h1>Let's call it a draw(ing surface)</h1>
+        <h2>Diving in</h2>
+        <h2>Simple shapes</h2>
+        <h2>Canvas coordinates</h2>
+        <h3>Canvas coordinates diagram</h3>
+        <h2>Paths</h2>
 
+    </details>
 
+    <details>   <!-- ***** Form ***** -->
+      <summary><label for="fn">Form</label></summary>      
 
+        <form>
+          Name: <input type="text" name="name" id="name" value="" />
+          Email: <input type="text" name="email" id="email" value="" />
+          Comments: <textarea name="comments" id="comments" cols="25" rows="3"></textarea>
+          <input type="submit" value="submit" />
+        </form>
+
+    </details>
+
+    <details>   <!-- ***** List ***** -->
+      <summary><label for="fn">List</label></summary>         
+
+        <li>How satisfied were you with our service?
+          <ul>
+            <li><label for="vsat">Very satisfied</label> <input type="radio" name="satisfaction" id="vsat" value="vsat" checked="checked"></li>
+            <li><label for="sat">Satisfied</label> <input type="radio" name="satisfaction" id="sat" value="sat"></li>
+            <li><label for="dcare">Didn't care</label> <input type="radio" name="satisfaction" id="dcare" value="dcare"></li>
+            <li><label for="disat">Dissatisfied</label> <input type="radio" name="satisfaction" id="disat" value="disat"></li>
+            <li><label for="vdisat">Very dissatisfied</label> <input type="radio" name="satisfaction" id="vdisat" value="vdisat"></li>
+          </ul>
+        </li>
+
+    </details>
+
+    <details>   <!-- ***** Options ***** -->
+      <summary><label for="fn">Options</label></summary>      
+
+        <li><label for="location">Location visited:</label>
+        <select name="location" id="location">
+          <option value="">Select location</option>
+          <option value="nyork">New York</option>
+          <option value="vancouver">Vancouver</option>
+          <option value="atlantis">Atlantis</option>
+          <option value="alpha">Alpha Centauri</option> 
+          <option value="blackpool">Blackpool</option>
+          <option value="bognor">Bognor Regis</option>
+        </select></li><br/><br/>
+
+    </details>
+
+    <details>   <!-- ***** Submit ***** -->
+      <summary><label for="fn">Submit</label></summary>
+
+        <input type="submit" value="click" />
+        
+    </details>
+
+    <details>   <!-- ***** Unknown ***** -->
+      <summary><label for="fn">Unknown</label></summary>    
+
+        <article>
+         <hgroup>
+          <h1>Apples</h1>
+          <h2>Tasty, delicious fruit!</h2>
+         </hgroup>
+         <p>The apple is the pomaceous fruit of the apple tree.</p>
+         <section>
+          <h1>Red Delicious</h1>
+          <p>These bright red apples are the most common found in many
+          supermarkets.</p>
+         </section>
+         <section>
+          <h1>Granny Smith</h1>
+          <p>These juicy, green apples make a great filling for
+          apple pies.</p>
+         </section>
+
+          <ol>
+            <li>sample1</li>
+            <li>sample2</li>
+            <li>sample3</li>
+          </ol>
+
+          <ul>
+            <li>sample1</li>
+            <li>sample2</li>
+            <li>sample3</li>
+          </ul>
+
+          <dl>
+            <dt>term1</dt>
+            <dd>definition1</dd>
+            <dt>term2</dt>
+            <dd>definition2</dd>
+          </dl>
+
+    <!--
+          <figure>
+            <figcaption>Flat Style #7</figcaption>
+            <img src="07_Flat_Style1.jpg" alt="The Stata Center Building">
+          </figure>
+    -->
+
+          <p>The <abbr title="Hyper Text Markup Language">HTML</abbr>
+             is the publishing language of the World Wide Web.</p>
+
+          <p>My favorite movie is <cite>Star Wars</cite>.</p>
+
+          <pre>
+            <code>
+            function Panel(element, canClose, closeHandler) {
+              this.element = element;
+              this.canClose = canClose;
+              this.closeHandler = function () { if (closeHandler) closeHandler() };
+            }
+            </code>
+          </pre>
+           
+        </article>
+
+    </details>
+
+    <details>   <!-- ***** Emphasis ***** -->
+      <summary><label for="fn">Emphasis</label></summary>
+
+        <p><em>Cats</em> are cute animals.</p>
+
+    </details>
+
+    <details>   <!-- ***** Keyboard Input ***** -->
+      <summary><label for="fn">Keyboard Input</label></summary>      
+
+        <p>Please, input "<kbd>Yes</kbd>" or "<kbd>No</kbd>"</p>
+
+    </details>
+
+    <details>   <!-- ***** Block Quote ***** -->
+      <summary><label for="fn">Blockquote</label></summary>    
+
+        <p lang="en-US">Consider the following quote:</p>
+        <blockquote lang="en-GB">
+          <p>Look around and you will find, no-one's really
+          <mark>colour</mark> blind.</p>
+        </blockquote>
+        <p lang="en-US">As we can tell from the <em>spelling</em> of the word,
+        the person writing this quote is clearly not American.</p>
+
+    </details>
+
+    <details>   <!-- ***** Paragraph ***** -->
+      <summary><label for="fn">Paragraph</label></summary>      
+
+        <p>Buy our Iced Tea and Lemonade!</p>
+        <p><s>Recommended retail price: $3.99 per bottle</s></p>
+        <p><strong>Now selling for just $2.99 a bottle!</strong></p>
+
+    </details>
+
+    <details>   <!-- ***** Small ***** -->
+      <summary><label for="fn">Small</label></summary>          
+
+        <p><small>© copyright 2010 Example Corp.</small></p>
+
+    </details>
+    
+    <details>   <!-- ***** Strong ***** -->
+      <summary><label for="fn">Strong</label></summary>      
+
+        <p><strong><strong>Warning.</strong> This dungeon is dangerous.</strong></p>
+
+    </details>
+    
+    <details>   <!-- ***** Sub/Sup ***** -->
+      <summary><label for="fn">Sup/Sup Script</label></summary>      
+
+        <p>f(<var>x</var>, <var>n</var>) = log<sub>4</sub><var>x</var><sup><var>n</var></sup></p>
+
+    </details>
+
+    <details>   <!-- ***** DateTime ***** -->
+      <summary><label for="fn">DateTime</label></summary>          
+
+        <p>
+        On <time datetime="1913-03-12">12 March 1913</time>, the city of Canberra
+        was officially given its name by Lady Denman, the wife of Governor-General
+        Lord Denman.
+        </p>
+
+    </details>
+
+    <details>   <!-- ***** Var ***** -->
+      <summary><label for="fn">Var</label></summary>
+          
+      <p>If there are <var>n</var> pipes leading to the ice
+         cream factory then I expect at <em>least</em> <var>n</var>
+         flavors of ice cream to be available for purchase!</p>
+    </details>
+
+    <details>   <!-- ***** WBR ***** -->
+      <summary><label for="fn">WBR</label></summary>      
+
+      <p>
+      Emergency stairway:<wbr> 225 steps, leading from the
+      viewing platform to the entrance and/or the cellar.
+      </p>
+      
+    </details>
+
+    <details>   <!-- ***** Action ***** -->
+      <summary><label for="fn">Action</label></summary>      
+
+        </br>
+        <form action="http://www.google.com/search" method="get">
+          <label>Google: <input type="search" name="q"></label>
+          <input type="submit" value="Search...">
+        </form>
+        </br>
+
+    </details>
+
+    <details>   <!-- ***** Del ***** -->
+      <summary><label for="fn">Del</label></summary>
+      
+        <h1>To Do</h1>
+        <ul>
+         <li>Empty the dishwasher</li>
+         <li><del datetime="2009-10-11T01:25-07:00">Watch Walter Lewin's lectures</del></li>
+         <li><del datetime="2009-10-10T23:38-07:00">Download more tracks</del></li>
+         <li>Buy a printer</li>
+        </ul>
+    </details>
+
+    <details>   <!-- ***** FieldSet ***** -->
+      <summary><label for="fn">FieldSet</label></summary>
+
+        <p><fieldset name="clubfields" disabled>
+          <legend>
+            <label>
+              <input type="checkbox" name="club"
+                  onchange="form.clubfields.disabled = !checked">
+              Use Club Card
+            </label>
+          </legend>
+          <p><label>Name on card: <input name=clubname required></label></p>
+          <p><label>Card number: <input name=clubnum required pattern="[-0-9]+">
+                 </label></p>
+          <p><label>Expiry date: <input name=clubexp type=month></label></p>
+        </fieldset></p>
+
+    </details>
+    
+    <p><button type="button"
+            onclick="alert('This 15-20 minute piece was composed by George Gershwin.')">
+     Show hint
+    </button></p>
+
+    <form action="courseselector.dll" method="get">
+      <p>Which course would you like to watch today?
+      <p><label>Course:
+        <select name="c">
+          <optgroup label="8.01 Physics I: Classical Mechanics">
+            <option value="8.01.1">Lecture 01: Powers of Ten</option>
+            <option value="8.01.2">Lecture 02: 1D Kinematics</option>
+            <option value="8.01.3">Lecture 03: Vectors</option>
+          </optgroup>
+          <optgroup label="8.02 Electricity and Magnestism">
+            <option value="8.02.1">Lecture 01: What holds our world together?</option>
+            <option value="8.02.2">Lecture 02: Electric Field</option>
+            <option value="8.02.3">Lecture 03: Electric Flux</option>
+          </optgroup>
+          <optgroup label="8.03 Physics III: Vibrations and Waves">
+            <option value="8.03.1">Lecture 01: Periodic Phenomenon</option>
+            <option value="8.03.2">Lecture 02: Beats</option>
+            <option value="8.03.3">Lecture 03: Forced Oscillations with Damping</option>
+          </optgroup>
+        </select>
+      </label>
+      <p><input type=submit value="▶ Play">
+    </form>
+
+    <p>If you have any comments, please let us know: 
+      <textarea cols="80" name="comments"></textarea>
+    </p>
+
+    <keygen name="key" challenge="235ldahlae983dadfar">
+
+    <form onsubmit="return false" oninput="o.value = a.valueAsNumber + b.valueAsNumber">
+     <input name=a type=number step=any> +
+     <input name=b type=number step=any> =
+     <output name=o></output>
+    </form>
+
+    <section>
+      <h2>Task Progress</h2>
+      <p>Progress: <progress id="p" max="100"><span>0</span>%</progress></p>
+      <script>
+        var progressBar = document.getElementById('p');
+        function updateProgress(newValue) {
+          progressBar.value = newValue;
+          progressBar.getElementsByTagName('span')[0].textContent = newValue;
+        }
+      </script>
+    </section>
+
+    <dl>
+      <dt>Radius: <dd> <meter min=0 max=20 value=12 title="centimeters">12cm</meter>
+      <dt>Height: <dd> <meter min=0 max=10 value=2 title="centimeters">2cm</meter>
+    </dl>
+
+    <details>
+      <summary><label for="fn">Name & Extension:</label></summary>
+      <p><input type=text id="fn" name="fn" value="Pillar Magazine.pdf" /></p>
+      <p><label><input type="checkbox" name="ext" checked="checked" /> Hide extension</label></p>
+      <dt>Radius: <dd> <meter min=0 max=20 value=12 title="centimeters">12cm</meter>
+      <dt>Height: <dd> <meter min=0 max=10 value=2 title="centimeters">2cm</meter>
+    </details>
+
+    <menu type="toolbar">
+      <command type="radio" radiogroup="alignment" checked="checked"
+              label="Left" icon="icons/alL.png" onclick="setAlign('left')">
+      <command type="radio" radiogroup="alignment"
+              label="Center" icon="icons/alC.png" onclick="setAlign('center')">
+      <command type="radio" radiogroup="alignment"
+              label="Right" icon="icons/alR.png" onclick="setAlign('right')">
+      <hr>
+      <command type="command" disabled="disabled"
+              label="Publish" icon="icons/pub.png" onclick="publish()">
+    </menu>
+
+    <math>
+        <mrow>
+          <mi>a</mi>
+          <mo>⁢</mo>
+          <msup>
+            <mi>x</mi>
+            <mn>2</mn>
+          </msup>
+          <mo>+</mo>
+          <mi>b</mi>
+          <mo>⁢</mo>
+          <mi>x</mi>
+          <mo>+</mo>
+          <mi>c</mi>
+        </mrow>
+      </math>
+
+    <svg width="100" height="100">
+      <circle cx="50" cy="50" r="40"
+          fill="red" stroke="blue" stroke-width="5" />
+    </svg>
+
+<video controls
+  src="http://media.w3.org/2010/05/bunny/movie.ogv">
+Your user agent does not support the HTML5 Video element.
+</video>
+
+      <audio controls
+  src="http://media.w3.org/2010/07/bunny/04-Death_Becomes_Fur.oga">
+Your user agent does not support the HTML5 Audio element.
+</audio>
 <!--
-    <canvas id="dwg"></canvas>    
+    <figure>
+      <object data="enigma.html"></object>
+      <figcaption>My HTML Clock</figcaption>
+    </figure>
 -->
+
+    <details>   <!-- ***** Input ***** -->
+      <summary><label for="fn">Input</label></summary>
+      <input type="date" color="#FAFAFA"></br>
+      <input type="time"></br>
+      <input type="range"></br>
+      <input type="number" min="0" max="13"></br>
+      <input type="color"></br>
+      <input type="search"></br>
+      <input type="text" list="mydata"></br>
+      <datalist id="mydata">
+        <option label="Mr" value="Mister">
+        <option label="Mrs" value="Mistress">
+        <option label="Ms" value="Miss">
+      </datalist></br>      
+    </details>
+    
+    <canvas id="dwg"></canvas>    
 <!--
     <canvas id="dwg2"></canvas>
 -->
 
   </body>
 
-<!--
   <script src="processing.js"></script>
   <script src="drawing.js"></script>
   <script type="application/javascript">
      var canvas = document.getElementById("dwg");
      var processingInstance = new Processing(canvas, proc);
   </script>
--->
+
 <!--
   <script type="application/javascript">
-     var canvas = document.getElementById("dwg2");
+     var canvas = document.getElementById("dwg");
      var processingInstance = new Processing(canvas, proc);
   </script>
 -->
