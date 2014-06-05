@@ -1,0 +1,402 @@
+    * {
+    margin:           0px;
+    padding:          0px;
+    font-family:      "Liberation Sans";
+    background:       #2B323A;
+    color:            none;
+    border-width:     0px;
+    border-style:     dotted;
+    border-color:     darkseagreen;
+    outline:          none;
+    vertical-align:   middle;
+  }
+  *:focus{
+    border-width:     1px;
+    border-style:     solid;
+    border-color:     gray;
+  }
+  
+  .container {
+    position:         absolute;
+    top:              0px;
+    bottom:           20px;
+    right:            0px;
+    left:             0px;
+    background:       red;
+  }
+  .containerL {
+    position:         absolute;
+    top:              25px;
+    bottom:           0px;
+    left:             0px;
+    width:            80px;
+    background:       none;
+  }
+  .containerR {
+    position:         absolute;
+    top:              25px;
+    bottom:           0px;
+    right:            0px;
+    width:            120px;
+    background:       none;
+  }
+  .header {
+    position:         relative;
+    top:              0px;
+    left:             0px;
+    right:            0px;
+    height:           40px;
+    background:       #171E26;
+  }
+  .menu {
+    position:         absolute;
+    top:              60px;
+    bottom:           50px;
+    left:             10px;
+    width:            200px;
+    background:       #212830;
+    padding:          0px;
+    margin:           0px;
+  }
+  .dwg {
+    position:         absolute;
+    top:              50px;
+    bottom:           40px;
+    left:             220px;
+    right:            0px;
+    background:       #111111;
+  }
+  .dwg:hover {
+    background:       black;
+  }
+
+  .footer {
+    -webkit-box-sizing: border-box;
+    position:         absolute;
+    bottom:           0px;
+    right:            0px;
+    left:             0px;
+    height:           40px;
+    background:       #171E26;
+    font-size:        80%;
+  }
+  .credits {
+    -webkit-box-sizing: border-box;
+    position:         absolute;
+    bottom:           0px;
+    left:             0px;
+    right:            0px;
+    height:           20px;
+    background:       #555555;
+    font-size:        80%;
+  }
+  .cartesia {
+    padding:          0px 0px 0px 10px;
+    color:            #97A0A8;
+    font-size:        200%;
+  }
+  .cartesia:hover {
+    color:            white;
+  }
+  .cartesia:visited {
+    color:            blue;
+  }
+
+  .gridmenu {
+    position:         absolute;
+    top:              50px;
+    right:            10px;
+    width:            120px;
+    height:           auto;
+    background:       #212830;
+    margin:           0px;
+    padding:          10px;
+    border-top-right-radius:    1em 3em;
+    border-bottom-right-radius: 4em 0.5em;
+    border-bottom-left-radius:  1em 3em;
+    box-shadow:       5px 5px 5px #97A0A8;
+  }
+
+  .gridmenu:hover {
+    background:       #712830;
+  }
+
+  .checklabelTop {
+    margin:           0px;
+    padding:          0px;
+    font-size:        70%;
+    color:            gray;
+    background:       none;
+    vertical-align:   top;
+  }
+  .checklabelTop:hover {
+    color:            white;
+    cursor:           pointer;
+  }
+
+  .checklabelBottom {
+    margin:           0px;
+    padding:          0px;
+    font-size:        70%;
+    color:            gray;
+    background:       none;
+    vertical-align:   bottom;
+  }
+  .checklabelBottom:hover {
+    color:            white;
+    cursor:           pointer;
+  }
+
+  .checkboxBottom {
+    width:            12px;
+    height:           12px;
+    background:       white;
+    cursor:           pointer;
+    vertical-align:   bottom;
+  }
+
+  .checkboxTop {
+    width:            12px;
+    height:           12px;
+    background:       white;
+    cursor:           pointer;
+    vertical-align:   top;
+  }
+
+  .imgbutton {
+    position:         relative;
+    margin:           0px;
+    border-width:     0px;
+    background:       #2B323A;
+    width:            20px;
+    height:           20px;
+    cursor:           pointer;
+    border-style:     none;
+  }
+  .imgbutton:hover {
+    background:       gray;
+  }
+  .imgbutton:active {
+    background:       #C0C0C0;
+  }
+
+
+  /* Details **********************************************************/
+  details {
+    margin:           10px 0px 0px 10px;
+    padding:          2px;
+    background:       none;
+    width:            110px;
+  }
+  details > summary {
+    transition:       color 1s;
+    color:            gray;
+    cursor:           pointer;
+  }
+  details[open] > summary {
+    color:            #C0C0C0;
+  }
+
+
+  /* Label ************************************************************/
+  label {
+    padding:          0px 0px 0px 5px; 
+    font-size:        10px;
+    color:            gray;
+    background:       none;
+  }
+  
+  .title {
+    padding:          0px 0px 0px 5px; 
+    font-size:        14px;
+    color:            gray;
+    background:       none;
+  }
+
+
+  /* Button ***********************************************************/
+  input[type="button"] {
+    margin:           0px;
+    padding:          0px;
+    background:       #2B323A;
+    cursor:           pointer;
+    border-style:     none;
+    border-width:     0px;
+  }
+
+
+  /* Color ************************************************************/
+  input[type="color"] {
+    height:           10px;
+    cursor:           pointer;
+    height:           14px;
+    width:            110px;
+    background:       none;
+  }
+  input[type="color"]:hover {
+    background:       gray;
+    color:            black;
+  }
+  input[type="color"]:focus {
+    background:       #C0C0C0;
+    color:            black;
+  }
+
+  /* Text *************************************************************/
+  .text {
+    padding:          2px;
+    font-size:        60%;
+    background:       none;
+    color:            gray;
+    width:            110px;
+  }
+  .text:hover {
+    background:       gray;
+    color:            black;
+  }
+  .text:focus {
+    background:       #C0C0C0;
+    color:            black;
+  }
+
+
+  /* Number ***********************************************************/
+  input[type="number"] {
+    -webkit-appearance: none;
+    margin:           0px;
+    padding-left:     10px;
+    background:       none;
+    width:            40px;
+    color:            white;
+  }
+  input[type="number"]::-webkit-inner-spin-button {
+    cursor:           pointer;
+  }
+  input[type="number"]:hover {
+    background-color: #C0C0C0;
+    color:            black;
+  }
+  input[type="number"]:focus {
+    background-color: #C0C0C0;
+    color:            black;
+  }
+
+
+  /* Range ************************************************************/
+  input[type="range"] {
+    -webkit-appearance: none;
+    background-color: silver;
+    height:           6px;
+    width:            110px;
+  }
+  input[type="range"]:hover {
+    background-color: purple;
+    color:            red;
+  }
+  input[type="range"]:focus {
+    background-color: gray;
+    color:            blue;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    background-color: #666;
+    opacity:          0.75;
+    width:            10px;
+    height:           14px;
+    cursor:           pointer;
+    right:            5px;
+  }
+
+
+  /* Checkbox *********************************************************/
+  input[type="checkbox"] {
+    width:            12px;
+    height:           12px;
+    background:       white;
+    cursor:           pointer;
+  }
+
+  a {
+    text-decoration:  none;
+    font-size:        80%;
+    background:       none;
+    color:            gray;
+  }
+  a:hover {
+    color:            white;
+    cursor:           pointer;
+  }
+  a:visited {
+    color:            black;
+  }
+
+  p {
+    padding:          0px;
+    background:       none;
+    color:            gray;
+  }
+
+  div {
+    padding:          0px;
+    background:       none;
+    color:            gray;
+  }
+
+  ul {
+    list-style-type:  none;
+    margin:           0px;
+    background:       none;
+  }
+
+  li {
+    margin:           0px 0px 0px 0px;
+    color:            white;
+    background:       none;
+  }
+
+  /* horizontal rule **************************************************/
+  hr {
+    background:       yellow;
+    color:            yellow;
+    height:           0px;
+  }
+  .hr {
+    margin:           5px;
+    background:       none;
+    color:            yellow;
+    height:           1px;
+  }
+
+
+  /* tables ***********************************************************/  
+  table {
+    background:       none;
+    padding:          0px;
+    margin:           0px;
+    border:           none;
+  }
+
+  tr {
+    background:       none;
+    border:           none;
+    padding:          0px;
+    margin:           0px;
+  }
+
+  td {
+    padding:          0px;
+    margin:           0px;
+    color:            #FFFFFF;
+    border:           none;
+    font-size:        100%;
+    background:       #212830;
+    height:           auto;
+  }
+
+  caption {
+    background:       none;
+    padding:          5px 5px 5px 5px;
+    font-family:      tahoma, arial, sans-serif;
+    font-size:        100%;
+    color:            gray;
+  }
