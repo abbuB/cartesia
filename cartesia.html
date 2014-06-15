@@ -1,309 +1,352 @@
 <!DOCTYPE html>
-  <!--
-    --disable-web-security
-  /!-->
+
   <html lang="en">
 
     <head>
 
-      <title>Cartesia</title>
       <meta charset="UTF-8">
-      <link rel="stylesheet" type="text/css" href="cartesia.css">
+      <link rel="stylesheet" href="assets/stylesheets/main.css">
+      <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lato:100,300,400">
+      <title>Cartesia:  Pythagorian Triples</title>
 
     </head>
 
+    <style>
+      canvas {
+        outline: none;
+        -webkit-tap-highlight-color: rgba(255, 255, 255, 0); /* mobile webkit */
+      }
+    </style>
+    
     <body>
 
-      <div class="container">
+        <!-- Page Header -->
+        <section class="fixed header group">
 
-        <div class="header">
-          <a href="javascript:alert('Cartesia')" class="cartesia">Cartesia</a>
-        </div>
+          <h1 class="logo">
+            <a href="javascript:alert('Cartesia')">cartesia</a>
+          </h1>
 
-        <div class="menu">
+          <nav class="nav primary-nav">
 
-          <div id="dProperties">
-            <h5 for="dProperties"><strong>Properties</strong></h5>
-          </div>
+            <ul>
+              <li><a href="javascript:alert('Home')">home</a></li><!--
+              --><li><a href="javascript:alert('Speakers')">speakers</a></li><!--
+              --><li><a href="javascript:alert('Schedule')">schedule</a></li><!--
+              --><li><a href="javascript:alert('Venues')">venue</a></li><!--
+              --><li><a href="javascript:alert('Register')">register</a></li>
+            </ul>
 
-          <div class="containerL">
+          </nav>
 
-            <label for="name" >Name:</label><br>
-            <label for="caption" title="Hello World">Caption:</label><br>
-            <label for="formula">Formula:</label><br>
+        </section>
 
-            <hr class="hr">
+        <!-- Properties -->
+        <section class="fixed properties">
 
-            <label for="lineweight">LineWeight:</label>
-                        
-            <hr class="hr">
-
-            <label for="linecolor">Line Color:</label>
-
-            <hr>
-
-            <label for="linealpha">Transparency:</label>
-
-            <hr class="hr">
-
-            <label for="fillcolor">Fill Color:</label>
-
-            <hr>
-
-            <label for="fillalpha">Transparency:</label>
-
-            <hr class="hr">
-                        
-          </div>
-
-          <div class="containerR">
-
-            <input class="text" id="name"    title=" name "   ></input>
-            <input class="text" id="caption" title=" caption "></input>
-            <input class="text" id="formula" title=" formula "></input>
-
-            <hr class="hr">
-
-            <input type="number" id="lineweight" min="0" max="13" value="6"></input>
-
-            <hr class="hr">
-            
-            <input type="color" id="linecolor"  value="#FFFFFF" list="colors"/>
-
-              <datalist id="colors">
-
-                <option>#ff0000</option>    <!-- red -->
-                <option>#FF5100</option>    <!-- red orange -->
-                <option>#FF7F00</option>    <!-- orange -->
-                <option>#FFBE00</option>    <!-- yellow orange -->
-                <option>#FFFF00</option>    <!-- yellow -->
-
-                <option>#C0FF00</option>    <!-- yellow green -->
-                <option>#00FF00</option>    <!-- green -->
-                <option>#007F7F</option>    <!-- Blue Green -->
-                <option>#0000FF</option>    <!-- Blue -->
-                <option>#5C00FF</option>    <!-- Blue Violet -->
-
-                <option>#7F00FF</option>    <!-- Violet -->
-                <option>#BF007F</option>    <!-- Red Violet -->
-                <option>#FFFFFF</option>    <!-- White -->
-                <option>#DADADA</option>    <!-- Gray1 -->
-                <option>#B6B6B6</option>    <!-- Gray2 -->
-
-                <option>#929292</option>    <!-- Gray3 -->
-                <option>#6D6D6D</option>    <!-- Gray4 -->
-                <option>#494949</option>    <!-- Gray5 -->
-                <option>#242424</option>    <!-- Gray6 -->
-                <option>#000000</option>    <!-- Black -->
-
-              </datalist>
-
-            <hr>
-            
-            <input id="linealpha" type="range" min="0" max="100" value="76"></input>
-
-            <hr class="hr">
-                        
-            <input type="color" id="fillcolor" value="#FFFFFF" list="colors"/>
-
-              <datalist id="colors">
-
-                <option>#ff0000</option>    <!-- red -->
-                <option>#FF5100</option>    <!-- red orange -->
-                <option>#FF7F00</option>    <!-- orange -->
-                <option>#FFBE00</option>    <!-- yellow orange -->
-                <option>#FFFF00</option>    <!-- yellow -->
-
-                <option>#C0FF00</option>    <!-- yellow green -->
-                <option>#00FF00</option>    <!-- green -->
-                <option>#007F7F</option>    <!-- Blue Green -->
-                <option>#0000FF</option>    <!-- Blue -->
-                <option>#5C00FF</option>    <!-- Blue Violet -->
-
-                <option>#7F00FF</option>    <!-- Violet -->
-                <option>#BF007F</option>    <!-- Red Violet -->
-                <option>#FFFFFF</option>    <!-- White -->
-                <option>#DADADA</option>    <!-- Gray1 -->
-                <option>#B6B6B6</option>    <!-- Gray2 -->
-
-                <option>#929292</option>    <!-- Gray3 -->
-                <option>#6D6D6D</option>    <!-- Gray4 -->
-                <option>#494949</option>    <!-- Gray5 -->
-                <option>#242424</option>    <!-- Gray6 -->
-                <option>#000000</option>    <!-- Black -->
-
-              </datalist>
-
-            <hr>
-            
-            <input id="fillalpha" type="range" min="0" max="100" value="16"></input>
-
-            <hr class="hr">
-
-          </div>
-
-        </div>
-
-        <div class="dwg">
-
-          <details open>
-
-            <summary><label for="fn">Points</label></summary>
-            
-            <input type="button">
-            <input type="button">
-            <input type="button">
-            <input type="button">
-            
-          </details>
-          <details open>
-
-            <summary><label for="fn">Lines</label></summary>
-            
-            <input type="button" class="imgbutton">
-            <input type="button" class="imgbutton">
-            <input type="button" class="imgbutton">
-            
-          </details>          
-
-
+          <label class="title">Properties</label>
 <!--
-            <nav>
-              <ul>
-                <li><a href="home.html">Home</a></li>
-                <li>
-                      <a href="products.html">Products <span class="caret"></span></a>
-                  <div>
-                    <ul>
-                      <li>
-                        <a href="products.html#chair">Chair <span class="caret"></span></a>
-                        <div>
-                          <ul>
-                            <li><a href="#">1</a></li>
-                            <li><a href="#">2</a></li>
-                            <li><a href="#">3</a></li>
-                            <li><a href="#">4</a></li>
-                            <li><a href="#">5</a></li>
-                          </ul>
-                        </div>
-                      </li>
-                      <li><a href="products.html#table">Table</a></li>
-                      <li><a href="cooker.html">Cooker</a></li>
-                    </ul>
-                  </div>
-                </li>
-                <li><a href="about.html">About</a></li>
-                <li><a href="help.html">Help</a></li>
+            <ul>
+              <li><label class="col-1" for="name">Name:</label><input class="text col-2" id="name" title=" name "></li>
+              <li><label class="col-1" for="caption" title="Hello World">Caption:</label><input class="text col-2" id="caption" title=" caption "></li>
+              <li><label class="col-1" for="formula" title="Hello World">Formula:</label><br><input class="text col-2" id="formula" title=" formula "></li>
+              <li><hr></li>
+              <li><label class="col-1" for="lineweight">LineWeight:</label><input type="number" class="col-2" id="lineweight" min="0" max="13" value="6"></li>
+              <li><label class="col-1" for="name">Transparency:</label><input class="text col-2" id="name" title=" name "></li>
+              <li><hr></li>
+              <li><label class="col-1" for="name">Fill Color:</label><input class="text col-2" id="name" title=" name "></li>
+              <li><label class="col-1" for="name">Transparency:</label><input class="text col-2" id="name" title=" name "></li>
+            </ul>
+            -->
+
+            <!-- Name -->
+            <label class="col-1" for="name">Name:</label>
+            <input class="text col-2" id="name" title=" name ">
+            <!-- Caption -->
+            <label class="col-1" for="caption" title="Hello World">Caption:</label>
+            <input class="text col-2" id="caption" title=" caption ">
+            <!-- Formula -->
+            <label class="col-1" for="formula" title="Hello World">Formula:</label><br>
+            <input class="text col-2" id="formula" title=" formula ">
+            
+            <label class="space-vertical"></label>
+            
+            <!-- Line Weight -->
+            <label               class="col-1" for="lineweight">LineWeight:</label>
+            <input type="number" class="col-2" id="lineweight" min="0" max="13" value="6">
+
+            <label class="space-vertical"></label>
+            
+            <!-- Line Color -->
+            <label              class="col-1" for="linecolor">Line Color:</label>
+            <input type="color" class="col-2" id="linecolor"  value="#ffffff" list="colors"/>
+
+              <datalist id="colors">
+
+                <option>#ff0000</option>    <!-- red -->
+                <option>#FF5100</option>    <!-- red orange -->
+                <option>#FF7F00</option>    <!-- orange -->
+                <option>#FFBE00</option>    <!-- yellow orange -->
+                <option>#FFFF00</option>    <!-- yellow -->
+
+                <option>#C0FF00</option>    <!-- yellow green -->
+                <option>#00FF00</option>    <!-- green -->
+                <option>#007F7F</option>    <!-- Blue Green -->
+                <option>#0000FF</option>    <!-- Blue -->
+                <option>#5C00FF</option>    <!-- Blue Violet -->
+
+                <option>#7F00FF</option>    <!-- Violet -->
+                <option>#BF007F</option>    <!-- Red Violet -->
+                <option>#FFFFFF</option>    <!-- White -->
+                <option>#DADADA</option>    <!-- Gray1 -->
+                <option>#B6B6B6</option>    <!-- Gray2 -->
+
+                <option>#929292</option>    <!-- Gray3 -->
+                <option>#6D6D6D</option>    <!-- Gray4 -->
+                <option>#494949</option>    <!-- Gray5 -->
+                <option>#242424</option>    <!-- Gray6 -->
+                <option>#000000</option>    <!-- Black -->
+
+              </datalist>
+
+            <!-- Line Alpha -->
+            <label              class="col-1" for="linealpha">Transparency:</label>
+            <input type="range" class="col-2" id="linealpha" min="0" max="100" value="76">
+
+            <label class="space-vertical"></label>
+            
+            <!-- Fill Color -->
+            <label              class="col-1" for="fillcolor">Fill Color:</label>
+            <input type="color" class="col-2" id="fillcolor" value="#ffffff" list="colors"/>
+
+              <datalist id="colors">
+
+                <option>#ff0000</option>    <!-- red -->
+                <option>#FF5100</option>    <!-- red orange -->
+                <option>#FF7F00</option>    <!-- orange -->
+                <option>#FFBE00</option>    <!-- yellow orange -->
+                <option>#FFFF00</option>    <!-- yellow -->
+
+                <option>#C0FF00</option>    <!-- yellow green -->
+                <option>#00FF00</option>    <!-- green -->
+                <option>#007F7F</option>    <!-- Blue Green -->
+                <option>#0000FF</option>    <!-- Blue -->
+                <option>#5C00FF</option>    <!-- Blue Violet -->
+
+                <option>#7F00FF</option>    <!-- Violet -->
+                <option>#BF007F</option>    <!-- Red Violet -->
+                <option>#FFFFFF</option>    <!-- White -->
+                <option>#DADADA</option>    <!-- Gray1 -->
+                <option>#B6B6B6</option>    <!-- Gray2 -->
+
+                <option>#929292</option>    <!-- Gray3 -->
+                <option>#6D6D6D</option>    <!-- Gray4 -->
+                <option>#494949</option>    <!-- Gray5 -->
+                <option>#242424</option>    <!-- Gray6 -->
+                <option>#000000</option>    <!-- Black -->
+
+              </datalist>
+
+            <!-- Fill Alpha -->
+            <label class="col-1" for="fillalpha">Transparency:</label>
+            <input class="col-2" id="fillalpha" type="range" min="0" max="100" value="16">
+
+        </section>
+
+        <!-- Drawing -->
+        <section class="fixed drawing">
+
+          <div class="canvas">
+            <canvas id="dwg"></canvas>
+          </div>
+
+          <!-- Header -->
+          <div class="fixed drawing-header">
+
+            <nav class="tlb">
+            	
+            	<ul>
+            	
+            		<li><img class="shape" src="assets/images/move.png" alt="points">
+            			
+            			<ul>
+            			
+            				<li><a href="#">P1</a>
+  
+            					<ul>
+            						<li><a href="#">P4</a></li>
+            						<li><a href="#">P5</a></li>
+            					</ul>
+            					
+            				</li>
+            				
+            				<li><a href="#">P2</a></li>
+            				<li><a href="#">P3</a></li>
+            				
+            			</ul>
+            			
+            	  </li>
+            	  
+            		<li><img class="shape" src="assets/images/move.png" alt="lines">
+            			
+            			<ul>
+            			
+            				<li><a href="#">L1</a></li>
+            				<li><a href="#">L2</a></li>
+            				<li><a href="#">L3</a>
+            			
+            					<ul>
+            						<li><a href="#">L4</a></li>
+            						<li><a href="#">L5</a></li>
+            					</ul>
+            			
+            				</li>
+            			
+            			  
+            			</ul>
+            			
+            		</li>
+            	
+            		<li><img class="shape" src="assets/images/move.png" alt="triangles">
+            		
+            			<ul>
+            		
+            				<li><a href="#">T1</a></li>
+            				<li><a href="#">T2</a></li>
+            				<li><a href="#">T3</a>
+            					
+            					<ul>
+            						<li><a href="#">T4</a></li>
+            						<li><a href="#">T5</a></li>
+            					</ul>
+            					
+            				</li>
+            				
+            			</ul>
+            			
+            		</li>
+            	
+            	  <li><img class="shape" src="assets/images/move.png" alt="circles">
+            			
+            			<ul>
+            			
+            				<li><a href="#">C1</a></li>
+            				<li><a href="#">C2</a></li>
+            				<li><a href="#">C3</a>
+            					<ul>
+            						<li><a href="#">C4</a></li>
+            						<li><a href="#">C5</a></li>
+            					</ul>
+            					
+            				</li>
+            				
+            			</ul>
+            			
+            		</li>
+  
               </ul>
+              
             </nav>
+                    
+          </div>
 
-          <canvas id="dwg"></canvas>   
--->
+          <!-- Menu -->
+          <div class="fixed drawing-menu">
 
-        </div>
+            <!-- Origin -->
+            <label for="origin" class="col3">Origin</label>
+            <label              class="col4"></label>
+            <input id="origin" type="checkbox" class="col5">
+            
+            <hr>
 
-        <div class="gridmenu">
+            <!-- Axes -->
+            <label for="axes" class="col3">Axis</label>
+            <label for="axisx" class="col4">x:</label>
+            <input id="axisx" type="checkbox" class="col5">
+            
+            <label                 class="col3"></label>
+            <label for="axisy"     class="col4">y:</label>
+            <input id="axisy" type="checkbox" class="col5">
+            
+            <!-- Lines -->
+            <hr>
+            
+            <label for="lines" class="col3">Lines</label>
+            <label for="linesx" class="col4">x:</label>
+            <input id="linesx" type="checkbox" class="col5">
+            
+            <label              class="col3"></label>
+            <label for="linesy" class="col4">y:</label>
+            <input id="linesy" type="checkbox" class="col5">
+            
+            <!-- Arrows -->
+            <hr>
+            
+            <label for="arrows" class="col3">Arrows</label>
+            <label for="arrowsx" class="col4">x:</label>
+            <input id="arrowsx" type="checkbox" class="col5">
+            
+            <label              class="col3"></label>
+            <label for="arrowsy" class="col4">y:</label>
+            <input id="arrowsy" type="checkbox" class="col5">
+            
+            <!-- Ticks -->
+            <hr>
+            
+            <label for="ticks" class="col3">Ticks</label>
+            <label for="ticksx" class="col4">x:</label>
+            <input id="ticksx" type="checkbox" class="col5">
+            
+            <label              class="col3"></label>
+            <label for="ticksy" class="col4">y:</label>
+            <input id="ticksy" type="checkbox" class="col5">
+            
+            <!-- Labels -->
+            <hr>
+            
+            <label for="labels" class="col3">Labels</label>
+            <label for="labelsx" class="col4">x:</label>
+            <input id="labelsx" type="checkbox" class="col5">
+            
+            <label              class="col3"></label>
+            <label for="labelsy" class="col4">y:</label>
+            <input id="labelsy" type="checkbox" class="col5">
+            
+            <!-- Quadrants -->
+            <hr>
+            
+            <label for="qudrants" class="col3">Quadrants</label>
+            <label                class="col4"></label>
+            <input id="qudrants" type="checkbox" class="col5">
 
-          <table width="120">
+            <div class="row0"></div>
 
-            <col width="85">
-            <col width="10">
-            <col width="15">
+          </div>
 
-            <caption>Grid Options</caption>
-
-            <tr border="1px" color="red">
-              <td><label class="checklabelTop" for="origin">Origin</label></td>
-              <td></td>
-              <td><input type="checkbox" class="checkboxTop" id="origin" checked/></td>
-            </tr>
-
-            <tr>
-              <td><label class="checklabelBottom" for="axisX">Axes</label></td>
-              <td><label class="checklabelBottom" for="axisX">x</label></td>
-              <td><input type="checkbox" class="checkboxBottom" id="axisX" checked/></td>
-            </tr>
-
-            <tr>
-              <td></td>
-              <td><label class="checklabelTop" for="axisY">y</label></td>
-              <td><input type="checkbox" class="checkboxTop" id="axisY" checked/></td>
-            </tr>
-
-            <tr>
-              <td><label class="checklabelBottom" for="linesX">Lines</label></td>
-              <td><label class="checklabelBottom" for="linesX">x</label></td>
-              <td><input type="checkbox" class="checkboxBottom" id="linesX" checked/></td>
-            </tr>
-
-            <tr>
-              <td></td>
-              <td><label class="checklabelTop" for="linesY">y</label></td>
-              <td><input type="checkbox" class="checkboxTop" id="linesY" checked/></td>
-            </tr>
-
-            <tr>
-              <td><label class="checklabelBottom" for="arrowsX">Arrows</label></td>
-              <td><label class="checklabelBottom" for="arrowsX">x</label></td>
-              <td><input type="checkbox" class="checkboxBottom" id="arrowsX" checked/></td>
-            </tr>
-
-            <tr>
-              <td></td>
-              <td><label class="checklabelTop" for="arrowsY">y</label></td>
-              <td><input type="checkbox" class="checkboxTop" id="arrowsY" checked/></td>
-            </tr>
-
-            <tr>
-              <td><label class="checklabelBottom" for="ticksX">Ticks</label></td>
-              <td><label class="checklabelBottom" for="ticksX">x</label></td>
-              <td><input type="checkbox" class="checkboxBottom"  id="ticksX" checked/></td>
-            </tr>
-
-            <tr>
-              <td></td>
-              <td><label class="checklabelTop" for="ticksY">y</label></td>
-              <td><input type="checkbox" class="checkboxTop"  id="ticksY" checked/></td>
-            </tr>
-
-            <tr>
-              <td><label class="checklabelBottom" for="labelsX">Labels</label></td>
-              <td><label class="checklabelBottom" for="labelsX">x</label></td>
-              <td><input type="checkbox" class="checkboxBottom" id="labelsX" checked/></td>
-            </tr>
-
-            <tr>
-              <td></td>
-              <td><label class="checklabelTop" for="labelsY">y</label></td>
-              <td><input type="checkbox" class="checkboxTop"  id="labelsY" checked/></td>
-            </tr>
-
-            <tr>
-              <td><label class="checklabelBottom" for="quadrantsX">Quadrants</label></td>
-              <td><label class="checklabelBottom" for="quadrantsX">x</label></td>
-              <td><input type="checkbox" class="checkboxBottom" id="quadrantsX" checked/></td>
-            </tr>
-
-            <tr>
-              <td></td>
-              <td><label class="checklabelTop" for="quadrantsY">y</label></td>
-              <td><input type="checkbox" class="checkboxTop" id="quadrantsY" checked/></td>
-            </tr>
-
-          </table>
-
-        </div>
-
-      </div>
-
-      <div class="credits">
-
-          © 2014 Brad SiemensExcept where noted, all rights reserved.<a href="javascript:alert('Credits')">Credits</a> — <a href="javascript:alert('TOS')">Terms of Service</a> — <a href="javascript:alert('Blog Index')">Blog Index</a>
+          <div class="button fixed">Click</div>
           
-      </div>
+          <!-- Footer -->
+          <div class="fixed drawing-footer"></div>
+
+        </section>
+
+        <!-- Page Footer -->
+        <section class="fixed footer">
+
+            © 2014 Brad Siemens  Except where noted, all rights reserved.
+            <a href="javascript:alert('Credits')">Credits</a>
+            —
+            <a href="javascript:alert('TOS')">Terms of Service</a>
+            —
+            <a href="javascript:alert('Blog Index')">Blog Index</a>
+
+        </section>
 
 
+          
     </body>
+
 
     <script src="processing.js"></script>
     <script src="drawing.js"></script>
@@ -311,5 +354,6 @@
        var canvas = document.getElementById("dwg");
        var processingInstance = new Processing(canvas, proc);
     </script>
+
 
   </html>
