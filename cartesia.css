@@ -22,6 +22,8 @@
     font-size:      100%;
     font:           inherit;
     vertical-align: baseline;
+    -webkit-appearance: none;
+    outline:        none;
   }
   /* HTML5 display-role reset for older browsers */
   article, aside, details, figcaption, figure,
@@ -52,116 +54,159 @@
     Custom styles
     ========================================
   */
-
   body {
-    background:     #555;
+    /*background:     #262626*/
+    background:     #aaa;
     color:          #888;
     font:           100 16px/22px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
   }
 
   .fixed {
     position:       absolute;
-    background:     #212830;
+    background:     #363636;
   }
-  
-  .main {
-    right:          0px;
-    left:           0px;
-    top:            0px;
-    bottom:         0px;
+  .fixed:hover {
+    /*background:     #000;*/
   }
-  
+
+  /*
+    ========================================
+    Sections
+    ========================================
+  */
   .header {
-    padding:        0 30px;
-    left:           5px;
-    right:          5px;
+    margin:         0;
+    border-radius:  0;
+    padding:        0 30px 0 0;
+    left:           0px;
+    right:          0px;
     top:            0px;
     height:         35px;
+    background:     -webkit-gradient(linear, left top, left bottom, from(#272727), to(#1a1a1a));
   }
-
+  .header:hover {
+    /*border:         1px solid #333;*/
+  }
+  
   .properties {
-    top:            40px;
+    margin:         3px;
+    top:            35px;
     bottom:         20px;
-    left:           5px;
+    left:           0px;
     width:          200px;
     vertical-align: baseline;
+    border:         none;
+    background:     -webkit-gradient(linear, right top, right bottom, from(#4a4a4a), to(#373737));
   }
-
-  .drawing {
-    right:          5px;
-    left:           210px;
-    bottom:         20px;
-    top:            40px;
+  .properties:hover {
+    /*background:     #000;*/
   }
-
+  
   .footer {
+    padding:        4px;
+    margin:         0;
+    border-radius:  0;
+    height:         20px;
     padding-left:   10px;
     padding-bottom: 3px;
     bottom:         0;
     right:          0;
     left:           0;
     font:           200 12px/14px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color:          #fff;
+    background:     -webkit-gradient(linear, left top, left bottom, from(#1a1a1a), to(#272727));
+    border:         #000;
   }
 
-  .drawing-header {
+
+  /*
+    ========================================
+    Grid
+    ========================================
+  */
+  .grid {
+    margin:         3px;
+    top:            35px;
+    bottom:         20px;
+    left:           203px;
+    right:          0;
+    background:     #555;
+    border:         none;
+  }
+  
+  .gridheader {
     top:            5px;
-    height:         20px;
+    height:         30px;
     left:           5px;
     right:          5px;
-    background:     black;
-    border-radius:  5px;
+    box-shadow:     0px 0px 9px rgba(0,0,0,0.5);
+    background:     -webkit-gradient(linear, left top, left bottom, from(#1a1a1a), to(#272727));
+    border:         none;
   }
 
-  .drawing-footer {
+  .gridfooter {
     bottom:         5px;
     height:         30px;
     left:           5px;
     right:          5px;
-    background:     black;
-    border-radius:  5px;
+    box-shadow:     0px 0px 9px rgba(0,0,0,0.5);
+    background:     -webkit-gradient(linear, left top, left bottom, from(#1a1a1a), to(#272727));
+    border:         none;
   }
 
-  .drawing-shapes {
+  .gridshapes {
     top:            50px;
     bottom:         50px;
     width:          30px;
     left:           10px;
-    background:     black;
-    border-radius:  5px;
   }
 
-  .drawing-menu {
-    padding:        10px 0 0 0;
+  .gridmenu {
+    padding:        5px 0 0 0;
     top:            40px;
     right:          5px;
     width:          150px;
-    background:     black;
+    /*background:     #111;*/
     border-radius:  5px;
     border:         1px solid #333;
     overflow:       hidden;
+    box-shadow:     0px 0px 9px rgba(0,0,0,0.5);
+    background:     #323232;
   }
-
-  .drawing-menu:hover {
-    background:     #111;
-    border-radius:  5px;
-    border:         1px solid #444;
+  .gridmenu:hover {
+    background:     #595959;
+    background:     -webkit-gradient(linear, left top, left bottom, from(#1a1a1a), to(#272727));
+    box-shadow:     0px 0px 9px rgba(0,0,0,0.5);
   }
   
-  .canvas {
-    top:            0px;
-    bottom:         0px;
-    right:          0px;
-    left:           0px;
-    background:     #222;
+  .gridmenudisplay {
+    padding:        0;
+    top:            5px;
+    right:          5px;
   }
 
-  .space-vertical {
-    height:         5px;
-    width:          200px;
+  .canvas {
+    -webkit-appearance: none;
+    outline:        none;
+    width:          1000px;
+    height:         600px;
   }
-  .space-vertical:hover {
-    background:     none;
+  .canvas:hover {
+    background:     #ff0000;
   }
+
+  /*
+    ========================================
+    Drawing
+    ========================================
+  */
+  /*.space-vertical {*/
+  /*  height:         5px;*/
+  /*  width:          200px;*/
+  /*}*/
+  /*.space-vertical:hover {*/
+  /*  background:     none;*/
+  /*}*/
   
   .title {
     font:           600 12px/14px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -175,7 +220,8 @@
   }
 
   .shape {
-    margin:         0px;
+    padding:        0;
+    margin:         0;
     height:         24px;
     width:          24px;
     background:     none;
@@ -188,11 +234,6 @@
     background:     yellow;
   }
 
-  .canvas:hover {
-/*
-    background:     #111;
-*/
-  }
 
   .highlight {
     border:         1px solid #222;
@@ -206,11 +247,7 @@
     
   }
   
-  /*
-    ========================================
-    Grid
-    ========================================
-  */
+
 
   *,
   *:before,
@@ -219,15 +256,6 @@
        -moz-box-sizing: border-box;
             box-sizing: border-box;
   }
-  .container,
-  .grid {
-    margin:             0 auto;
-    width:              100%;
-  }
-  .container {
-    border:             1px solid #111;
-  }
-  .grid,
   .col-1,
   .col-2 {
     padding-left:       0px;
@@ -246,7 +274,7 @@
     padding:            0 5px 0 5px;
     margin:             0 5px 0 0;
     height:             16px;
-    width:              100px;
+    width:              95px;
     float:              right;
   }
 
@@ -271,38 +299,30 @@
     width:              20px;
     float:              right;
   }
-  hr {
-    padding:            0px 5px 5px 5px;
-    width:              90%;
-    border:             0;
-    height:             0;
-    border-top:         1px groove rgba(0, 0, 0, 0.1);
-    border-bottom:      1px groove rgba(255, 255, 255, 0.3);
-  }
+
   .row0 {
     margin:             5px 5px 5px 5px;
     height:             20px;
   }
 
-  /*
-    ========================================
-    Clearfix
-    ========================================
-  */
+  hr {
+    padding:            5px 5px 5px 5px;
+    width:              100%;
+    border:             0;
+    height:             0;
+    border-top:         0px groove rgba(0, 0, 0, 0.1);
+    border-bottom:      0px groove rgba(255, 255, 255, 0.3);
+  }
+  hr.line {
+    padding:            2px 5px 5px 5px;
+    width:              90%;
+    border:             0;
+    height:             0;
+    /*border-top:         1px groove rgba(0, 0, 0, 0.1);*/
+    border-bottom:      1px groove rgba(255, 255, 255, 0.3);?
+  }
 
-/*  .group:before,
-  .group:after {
-    content:            "";
-    display:            table;
-  }
-  .group:after {
-    clear:              both;
-  }
-  .group {
-    clear:              both;
-    *zoom:              1;
-  }
-*/
+
   /*
     ========================================
     Rows
@@ -324,6 +344,7 @@
     background:                 linear-gradient(to right, #a1d3b0, #f6f1d3);
     padding:            44px 0 22px 0;
   }
+
 
   /*
     ========================================
@@ -386,11 +407,13 @@
   */
 
   a {
-    color:            #648880;
+    color:            #aaa;
     text-decoration:  none;
+    padding:          0 10px;
+    font-weight:      200;
   }
   a:hover {
-    color:            #a9b2b9;
+    color:            #fff;
   }
   p a {
     border-bottom:    1px solid #dfe2e5;
@@ -412,7 +435,7 @@
   label {
     display:          inline-block;
     font:             400 10px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    padding:          0 0 0 5px;
+    padding:          0 0 0 0;
   }
 
   label:hover {
@@ -428,7 +451,7 @@
   input {
     -webkit-appearance: none;
     font:             200 10px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    cursor:           pointer;
+    shape:           pointer;
     background:       #212830;
     color:            white;
     height:           16px;
@@ -448,7 +471,7 @@
   input[type="number"] {
     -webkit-appearance: none;
     font:             200 12px/14px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    cursor:           pointer;
+    shape:           pointer;
     background:       #212830;
     color:            white;
     height:           16px;
@@ -456,14 +479,16 @@
   }
   input[type="number"]:hover {
     background:       gray;
+    color:            black;
   }
   input[type="number"]:focus {
-    background:       black;
+    background:       #C0C0C0;
+    color:            black;
   }
   
   /* Color ********************************************************************/
   input[type="color"] {
-    cursor:           pointer;
+    shape:           pointer;
   }
   input[type="color"]:hover {
     background:       gray;
@@ -477,7 +502,7 @@
   /* Range ********************************************************************/
   input[type="range"] {
     -webkit-appearance: none;
-    cursor:           pointer;
+    shape:           pointer;
     background:       none;
   }
   input[type="range"]:hover {
@@ -535,7 +560,9 @@
   }
   input[type=checkbox]:hover {
       /*box-shadow:     0px 0px 10px #1300ff;*/
+    cursor:           pointer;
   }
+
       
   /*
     ========================================
@@ -549,7 +576,7 @@
     top:                10px;
     font-size:          16px;
     outline:            none;
-    cursor:             pointer;
+    shape:             pointer;
   	color:              #d7d7d7;
   	border:             solid 1px #333;
   	background:         #333;
@@ -570,33 +597,42 @@
   	filter:             progid:DXImageTransform.Microsoft.gradient(startColorstr='#000000', endColorstr='#666666');
   }
 
+
   /*
     ========================================
-    Primary header
+    Logo
     ========================================
   */
 
   .logo {
-    border-top:       4px solid #648880;
+    border-top:       3px solid #777;
     float:            left;
-    font-size:        24px;
+    font-size:        28px;
     font-weight:      100;
     letter-spacing:   .5px;
-    line-height:      34px;
-    padding:          0px 0 0px 0;
+    line-height:      28px;
+    padding:          0 0 0 30px;
+    margin:           0;
     text-transform:   uppercase;
+    color:            white;
+    width:            205px;
+  }
+  .logo:hover {
+    border-top:       3px solid #bbb;
+    font-weight:      300;
   }
   .tagline {
     margin:           66px 0 22px 0;
     text-align:       right;
   }
   .primary-nav {
-    margin:           10px 0 0 0;
+    margin:           8px 0 0 0;
     font-size:        14px;
     font-weight:      400;
     letter-spacing:   .5px;
     text-transform:   uppercase;
   }
+
 
   /*
     ========================================
@@ -605,15 +641,16 @@
   */
 
   .primary-footer {
-    color: #648880;
-    font-size: 14px;
-    padding-bottom: 44px;
-    padding-top: 44px;
+    color:            #648880;
+    font-size:        14px;
+    padding-bottom:   44px;
+    padding-top:      44px;
   }
   .primary-footer small {
-    float: left;
-    font-weight: 400;
+    float:            left;
+    font-weight:      400;
   }
+
 
   /*
     ========================================
@@ -633,58 +670,7 @@
     margin-right:     0;
   }
 
-  /*
-    ========================================
-    Home
-    ========================================
-  */
 
-/*  .hero {
-    color: #fff;
-    line-height: 44px;
-    padding: 22px 80px 66px 80px;
-    text-align: center;
-  }
-  .hero h2 {
-    font-size: 36px;
-  }
-  .hero p {
-    font-size: 24px;
-    font-weight: 100;
-  }
-  .teaser a:hover h3 {
-    color: #a9b2b9;
-  }
-  .teaser img {
-    border-radius: 5px;
-    display: block;
-    margin-bottom: 22px;
-    max-width: 100%
-  }*/
-
-  /*
-    ========================================
-    Speakers
-    ========================================
-  */
-
-/*  .speaker {
-    margin-bottom: 44px;
-  }
-  .speaker-info {
-    border: 1px solid #dfe2e5;
-    border-radius: 5px;
-    margin-top: 88px;
-    padding-bottom: 22px;
-    text-align: center;
-  }
-  .speaker-info img {
-    border-radius: 50%;
-    height: 130px;
-    margin: -66px 0 22px 0;
-    vertical-align: top;
-  }
-*/
   /*
     ========================================
     Schedule
@@ -745,69 +731,9 @@
   table h4 {
     margin-bottom: 0;
   }
+  
   .schedule-offset {
     color: #a9b2b9;
-  }
-
-  /*
-    ========================================
-    Venue
-    ========================================
-  */
-
-  .venue-theatre {
-    margin-bottom: 66px;
-  }
-  .venue-hotel {
-    margin-bottom: 22px;
-  }
-  .venue-map {
-    height: 264px;
-  }
-
-  /*
-    ========================================
-    Register
-    ========================================
-  */
-
-  .why-attend {
-    list-style: square;
-    margin: 0 0 22px 30px;
-  }
-  form {
-    margin-bottom: 22px;
-  }
-  /*input,*/
-  /*select,*/
-  /*textarea {*/
-  /*  font: 300 16px/22px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;*/
-  /*}*/
-  /*.register-group label {*/
-/*    color: #648880;
-    cursor: pointer;
-    font-weight: 400;
-  }*/
-  .register-group input,
-  .register-group select,
-  .register-group textarea {
-    border: 1px solid #c6c9cc;
-    border-radius: 5px;
-    color: #888;
-    display: block;
-    margin: 5px 0 27px 0;
-    padding: 5px 8px;
-  }
-  .register-group input,
-  .register-group textarea {
-    width: 100%;
-  }
-  .register-group select {
-    height: 34px;
-    width: 60px;
-  }
-  .register-group textarea {
-    height: 78px;
   }
 
 
@@ -816,100 +742,246 @@
     Menus
     ============================================================================
   */
-  body, div, h1, h2, h3, h4, h5, h6, p, ul, ol, li, dl, dt, dd, img, form, fieldset, input, textarea, blockquote {
-  	margin:         0;
-  	padding:        0;
-  	border:         0;
-  }
+  /*body, div, h1, h2, h3, h4, h5, h6, p, ul, ol, li, dl, dt, dd, img, form, fieldset, input, textarea, blockquote {*/
+  /*	margin:         0;*/
+  /*	padding:        0;*/
+  	/*border:         1px solid gray;*/
+  /*}*/
   
-  body {
+  /*body {*/
   	/*background:     #909eab url(bg.png);*/
   	/*font-family:    Helvetica, sans-serif;*/
-  	font-size:      12px;
-  	line-height:    16px;
-  }
+  /*	font-size:      12px;*/
+  /*	line-height:    16px;*/
+  /*}*/
   
-
-  nav.tlb {
-  	margin:         0;
-  	padding:        0;
-  	text-align:     left;
-  }
+  /*ul {*/
+    /*height:         20px;*/
+  /*}*/
+  /*nav.tlb {*/
+  /*	margin:         0;*/
+  /*	padding:        0;*/
+  /*	text-align:     left;*/
+  /*	height:         55px;*/
+  /*}*/
   
-  nav.tlb ul ul {
-    margin:         0;
-    padding:        0;
-  	display:        none;
-  }
+  /*nav.tlb ul ul {*/
+  /*  margin:         0;*/
+  /*  padding:        0;*/
+  /*	display:        none;*/
+  /*}*/
   
-  	nav.tlb ul li:hover > ul {
-  		display:      block;
-  	}
+  /*	nav.tlb ul li:hover > ul {*/
+  /*		display:      block;*/
+  /*	}*/
   
   
-  nav.tlb ul {
-  	background:     #efefef;
-  	background:             linear-gradient(top, #efefef 0%, #bbbbbb 100%);
-  	background:        -moz-linear-gradient(top, #efefef 0%, #bbbbbb 100%);
-  	background:     -webkit-linear-gradient(top, #efefef 0%,#bbbbbb 100%);
-  	box-shadow:     0px 0px 9px rgba(0,0,0,0.5);
-  	padding:        0;
-  	border-radius:  0px;
-  	list-style:     none;
-  	position:       relative;
-  	display:        inline-table;
-  }
-  	nav.tlb ul:after {
-  		content:      "";
-  		clear:        both;
-  		display:      block;
-  	}
+  /*nav.tlb ul {*/
+  /*	background:     #efefef;*/
+  /*	background:             linear-gradient(top, #efefef 0%, #bbbbbb 100%);*/
+  /*	background:        -moz-linear-gradient(top, #efefef 0%, #bbbbbb 100%);*/
+  /*	background:     -webkit-linear-gradient(top, #efefef 0%,#bbbbbb 100%);*/
+  /*	box-shadow:     0px 0px 9px rgba(0,0,0,0.5);*/
+  /*	padding:        0;*/
+  /*	border-radius:  0px;*/
+  /*	list-style:     none;*/
+  /*	position:       relative;*/
+  /*	display:        inline-table;*/
+  /*}*/
+  /*	nav.tlb ul:after {*/
+  /*		content:      "";*/
+  /*		clear:        both;*/
+  /*		display:      block;*/
+  /*	}*/
   
-  	nav.tlb ul li {
-  		float:        left;
-  	}
-  		nav.tlb ul li:hover {
-  			background: #4b545f;
-  			background: black;
-  			background:         linear-gradient(top, #4f5964 0%, #5f6975 40%);
-  			background:    -moz-linear-gradient(top, #4f5964 0%, #5f6975 40%);
-  			background: -webkit-linear-gradient(top, #4f5964 0%,#5f6975 40%);
-  		}
-  			nav.tlb ul li:hover a {
-  				color:    #fff;
-  			}
+  /*	nav.tlb ul li {*/
+  /*		float:        left;*/
+  /*	}*/
+  /*		nav.tlb ul li:hover {*/
+  /*			background: #4b545f;*/
+  /*			background: black;*/
+  /*			background:         linear-gradient(top, #4f5964 0%, #5f6975 40%);*/
+  /*			background:    -moz-linear-gradient(top, #4f5964 0%, #5f6975 40%);*/
+  /*			background: -webkit-linear-gradient(top, #4f5964 0%,#5f6975 40%);*/
+  /*		}*/
+  /*			nav.tlb ul li:hover a {*/
+  /*				color:    #fff;*/
+  /*			}*/
   		
-  		nav.tlb ul li a {
-  			display:          block;
-  			padding:          0px 0px;
-  			color:            #757575;
-  			text-decoration:  none;
-  		}
+  /*		nav.tlb ul li a {*/
+  /*			display:          block;*/
+  /*			padding:          0px 0px;*/
+  /*			color:            #757575;*/
+  /*			text-decoration:  none;*/
+  /*		}*/
   			
   		
-  	nav.tlb ul ul {
-  		background:       #5f6975;
-  		border-radius:    0px;
-  		padding:          0;
-  		position:         absolute;
-  		top:              100%;
-  	}
-  		nav.tlb ul ul li {
-  			float:          none;
-  			border-top:     1px solid #6b727c;
-  			border-bottom:  1px solid #575f6a;
-  			position:       relative;
-  		}
-  			nav.tlb ul ul li a {
-  				padding:      15px 15px;
-  				color:        #fff;
-  			}
-  				nav.tlb ul ul li a:hover {
-  					background: #4b545f;
-  				}
+  /*	nav.tlb ul ul {*/
+  /*		background:       #5f6975;*/
+  /*		border-radius:    0px;*/
+  /*		padding:          0;*/
+  /*		position:         absolute;*/
+  /*		top:              100%;*/
+  /*	}*/
+  /*		nav.tlb ul ul li {*/
+  /*			float:          none;*/
+  /*			border-top:     1px solid #6b727c;*/
+  /*			border-bottom:  1px solid #575f6a;*/
+  /*			position:       relative;*/
+  /*		}*/
+  /*			nav.tlb ul ul li a {*/
+  /*				padding:      15px 15px;*/
+  /*				color:        #fff;*/
+  /*			}*/
+  /*				nav.tlb ul ul li a:hover {*/
+  /*					background: #4b545f;*/
+  /*				}*/
   		
-  	nav.tlb ul ul ul {
-  		position:         absolute;
-  		left:             100%;
-  		top:              0;
-  	}
+  /*	nav.tlb ul ul ul {*/
+  /*		position:         absolute;*/
+  /*		left:             100%;*/
+  /*		top:              0;*/
+  /*	}*/
+  
+/*  #container{*/
+/*    width:800px;*/
+/*    background-color:#00FF00;*/
+/*    border:1px solid black;*/
+ 
+/*    z-index:-9;*/
+/*    margin:auto;*/
+/*}*/
+
+/*#logo{*/
+
+/*    background-color:#FF0033;*/
+/*    border:#000 1px;*/
+/*    width:800px;*/
+/*    height:200px;*/
+/*    overflow:hidden;*/
+
+/*}*/
+
+/*nav {*/
+
+/*    background-color: #FFF;*/
+/*    border:           #000 1px;;*/
+/*    height:           30px;*/
+
+/*}*/
+
+/*section{*/
+
+/*    background-color:#6F3;*/
+/*    border:#000 1px;*/
+/*    width:780px;*/
+/*    height:400px;*/
+/*    margin:10px;*/
+/*}*/
+
+/*footer{*/
+
+/*    background-color:#FF0;*/
+/*    border:#000 1px;*/
+/*    width:800px;*/
+/*    height:100px;*/
+/*}*/
+
+  .navbar {
+    border-right:       0 solid #54879D;
+    margin:             0;
+    padding:            0;
+  
+  }
+  .navbar ul{
+    margin:             0;
+    padding:            0;
+  }
+  .navbar li {
+    background-color:   none;
+    float:              left;
+    font:               bold 12px/1.2em Arial, Verdana, Helvetica;
+    height:             30px;
+    list-style:         none outside none;
+    margin:             0;
+    padding:            0;
+    text-align:         center;
+  }
+  
+  .navbar a {
+    /*border-left:        1px solid #54879D;*/
+    /*border-right:       1px solid #1F5065;*/
+    color:              #FFFFFF;
+    display:            block;
+    padding:            8px 10px;
+    text-decoration:    none;
+  }
+  
+  .navbar li:hover, a:hover {
+    background-color:   #000;
+  }
+  
+  .navbar li ul {
+    display:            none;
+    height:             30px;
+    margin:             0;
+    padding:            0;
+    position:           absolute;
+  }
+  
+  .navbar li:hover ul {
+    display:            block;
+    height:             30px;
+  }
+  
+  .navbar li ul li {
+    background-color:   #222;
+    float:              none;
+  }
+  
+  .navbar li ul li a {
+    border-color:       none;
+    /*border-left:        1px solid #1F5065;*/
+    /*border-right:       1px solid #1F5065;*/
+    border-style:       solid;
+    border-width:       0px;
+  }
+  .navbar li ul li a:hover {
+    background-color:   none;
+  }
+  
+/*  .lowernav{
+    height:             20px;
+    border:             0px solid black;
+    padding:            0;
+    width:              350px;
+    margin:             auto;
+  }
+
+  .lowernav li {
+    float:              left;
+    list-style:         none;
+    margin:             0 0;
+    padding:            0;
+    width:              20%;
+  }
+  
+  .lowernav a {
+    border-right:       1px solid #ffffff;
+    padding:            0 10px;
+    text-decoration:    none;
+    display:            block;
+    text-align:         center;
+  }
+  
+  .lowernav a:hover {
+    color:              red;
+    background-color:   transparent;
+  }*/
+
+  img {
+    margin:           0;
+    padding:          0;
+    cursor:           pointer;
+    padding:          0;
+  }
