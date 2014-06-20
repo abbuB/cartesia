@@ -1,7 +1,7 @@
 /* @pjs globalKeyEvents="true"; */
 var proc = function(processingInstance){ with (processingInstance){
 
-  //~ size(screen.width-20, screen.height-215); //~ set size of canvas
+  // size(screen.width-20, screen.height-215); // set size of canvas
 
   /**
 
@@ -152,8 +152,8 @@ var zoomfactor=0;
     F4:         115,
     F5:         116,
     F6:         117,
-    STG:        118,  //~ F7: snap to grid
-    ORTHO:      119,  //~ F8:
+    STG:        118,  // F7: snap to grid
+    ORTHO:      119,  // F8:
     F9:         120,
     F10:        121,
     F11:        122,
@@ -203,7 +203,7 @@ var zoomfactor=0;
     [  24,  'Center button',    'CENTER'                ],
     [  25,  'Right button',     'RIGHT'                 ],
 
-        //~ Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     [ 100,  'Grid',             'GRID',       KEYCODES.GRID       ],
 
     [ 101,  'GridProps',        'GRIDPROPS',  KEYCODES.GRIDPROPS  ],
@@ -232,7 +232,7 @@ var zoomfactor=0;
     [ 122,  'STG',              'STG',        KEYCODES.STG        ],
     [ 123,  'Grid',             'COMMAND'                         ],
 
-        //~ Properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // Properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     [ 200,  'Properties',       'PROPERTIES'            ],
 
     [ 201,  'Match',            'MATCH'                 ],
@@ -242,9 +242,9 @@ var zoomfactor=0;
     [ 204,  'Formula',          'FORMULA'               ],
 
     [ 205,  'Stroke',           'STROKE'                ],
-    [ 206,  'Stroke Alpha',     'STROKEALPHA'           ],  //~ Stroke Alpha
+    [ 206,  'Stroke Alpha',     'STROKEALPHA'           ],  // Stroke Alpha
     [ 207,  'Fill',             'FILL'                  ],
-    [ 208,  'Fill Alpha',       'fillA'                 ],  //~ Fill Alpha
+    [ 208,  'Fill Alpha',       'fillA'                 ],  // Fill Alpha
 
     [ 209,  'ColorG',           'COLORG'                ],
 
@@ -263,7 +263,7 @@ var zoomfactor=0;
     [ 214,  'Blue',             'BLUE'                  ],
     [ 215,  'Green',            'GREEN'                 ],
 
-        //~ File ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // File ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     [ 301,  'File',             'FILE',     KEYCODES.FILE   ],
     [ 302,  'New',              'NEW',      KEYCODES.NEW    ],
     [ 303,  'Open',             'OPEN',     KEYCODES.OPEN   ],
@@ -271,17 +271,17 @@ var zoomfactor=0;
     [ 305,  'Save As',          'SAVEAS',   KEYCODES.SAVEAS ],
     [ 306,  'Close',            'CLOSE',    KEYCODES.CLOSE  ],
 
-        //~ Edit ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // Edit ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     [ 400,  'Edit',             'EDIT',     KEYCODES.EDIT   ],
     [ 401,  'Undo',             'UNDO',     KEYCODES.UNDO   ],
     [ 402,  'Redo',             'REDO',     KEYCODES.REDO   ],
     [ 403,  'Copy',             'COPY',     KEYCODES.COPY   ],
-        //~ CUT:          [ 404,  'Cut',              'CUT',      KEYCODES.CUT    ],
-        //~ PASTE:        [ 405,  'Paste',            'PASTE',    KEYCODES.PASTE  ],
+        // CUT:          [ 404,  'Cut',              'CUT',      KEYCODES.CUT    ],
+        // PASTE:        [ 405,  'Paste',            'PASTE',    KEYCODES.PASTE  ],
     [ 406,  'Delete',           'DELETE',   KEYCODES.DELETE ],
     [ 407,  'Erase',            'ERASE',    KEYCODES.DELETE ],
 
-        //~ View ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // View ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     [ 500,  'View',             'VIEW',     KEYCODES.VIEW   ],
     [ 501,  'Select',           'SELECT'                ],
     [ 502,  'Select All',       'SELECTALL'             ],
@@ -290,30 +290,30 @@ var zoomfactor=0;
     [ 505,  'Zoomout',          'ZOOMOUT',  KEYCODES.ZOOMOUT],
     [ 506,  'Pan',              'PAN',      KEYCODES.PAN    ],
 
-        //~ Modify ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // Modify ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     [ 600,  'Modify',           'MODIFY',       KEYCODES.MODIFY       ],
     [ 601,  'Translate',        'TRANSLATE',    KEYCODES.TRANSLATE    ],
     [ 602,  'Translate',        'TRANSLATE',    KEYCODES.TRANS_UP     ],
     [ 603,  'Translate',        'TRANSLATE',    KEYCODES.TRANS_DOWN   ],
     [ 604,  'Translate',        'TRANSLATE',    KEYCODES.TRANS_LEFT   ],
     [ 605,  'Translate',        'TRANSLATE',    KEYCODES.TRANS_RIGHT  ],
-    [ 606,  'Transvector',      'TRANSVECTOR',  KEYCODES.TRANS_VECTOR ],    //~ TranslateByVector
+    [ 606,  'Transvector',      'TRANSVECTOR',  KEYCODES.TRANS_VECTOR ],    // TranslateByVector
 
     [ 607,  'Reflect',          'REFLECT'               ],
-    [ 608,  'ReflectLine',      'REFLECTLINE'           ],    //~ ReflectAboutLIne
-    [ 609,  'ReflectPoint',     'REFLECTPOINT'          ],    //~ ReflectAboutPoint
-    [ 610,  'ReflectCircle',    'REFLECTCIRCLE'         ],    //~ ReflectAboutCircle
+    [ 608,  'ReflectLine',      'REFLECTLINE'           ],    // ReflectAboutLIne
+    [ 609,  'ReflectPoint',     'REFLECTPOINT'          ],    // ReflectAboutPoint
+    [ 610,  'ReflectCircle',    'REFLECTCIRCLE'         ],    // ReflectAboutCircle
 
 
     [ 611,  'Rotate',           'ROTATE'                ],
-    [ 612,  'RotatePoint',      'ROTATEPOINT'           ],    //~ RotateAroundPoint
+    [ 612,  'RotatePoint',      'ROTATEPOINT'           ],    // RotateAroundPoint
 
     [ 613,  'Scale',            'SCALE'                 ],
     [ 614,  'Shear',            'SHEAR'                 ],
 
-        //~ DILATEFROMPOINT:            [ 1,  'Dilatefrompoint',    'DILATEFROMPOINT' ]
+        // DILATEFROMPOINT:            [ 1,  'Dilatefrompoint',    'DILATEFROMPOINT' ]
 
-        //~ Measure ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // Measure ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     [ 700,  'Measure',          'MEASURE'               ],
     [ 701,  'Distance',         'DISTANCE'              ],
     [ 702,  'Perimeter',        'PERIMETER'             ],
@@ -323,96 +323,96 @@ var zoomfactor=0;
     [ 706,  'Diamter',          'DIAMETER'              ],
     [ 707,  'Slope',            'SLOPE'                 ],
 
-        //~ Layers ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // Layers ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         //LAYER:        [ 800,  'Layer',            'LAYER'                 ],
     [ 801,  'Forward',          'FORWARD'               ],
     [ 802,  'Back',             'BACK'                  ],
 
 
 
-        //~  SHAPES ========================================================
+        //  SHAPES ========================================================
 
-        //~ Point (P) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // Point (P) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     [1000,  'Point',            'POINT'                 ],
     [1001,  'P_DEFAULT',        'P_DEFAULT'             ],
     [1002,  'P_Object',         'P_OBJECT'              ],
     [1003,  'P_Bound',          'P_BOUND'               ],
     [1004,  'P_Intersect',      'P_INTERSECT'           ],
-    [1005,  'P_Midpoint',       'P_MIDPOINT'            ],    //~ Midpoint/Center
-    [1006,  'P_AttachDetach',   'P_ATTACHDETACH'        ],    //~ AttachDetachPoint
+    [1005,  'P_Midpoint',       'P_MIDPOINT'            ],    // Midpoint/Center
+    [1006,  'P_AttachDetach',   'P_ATTACHDETACH'        ],    // AttachDetachPoint
 
-        //~ Line (L) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // Line (L) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     [1100,  'Line',             'LINE'                  ],
-    [1101,  'Line2P',           'LINE2P'                ],    //~ through 2 vertices
-    [1102,  'LineSegment2P',    'LINESEGMENT2P'         ],    //~ between 2 vertices
-    [1103,  'LineSegmentLen',   'LINESEGMENTLEN'        ],    //~ from point given length
-    [1104,  'LinePerp',         'LINEPERP'              ],    //~ perpendicular
-    [1105,  'LinePerpB',        'LINEPERPB'             ],    //~  perpendicular bisector
-    [1106,  'LineAngB',         'LINEANGB'              ],    //~ angle bisector
-    [1107,  'LineParr',         'LINEPARR'              ],    //~ parallel
-    [1108,  'LineTangent',      'LINETANGENT'           ],    //~ Tangent
-    [1109,  'LineDiameter',     'LINEDIAMETER'          ],    //~ Diameter
-    [1110,  'LineRadius',       'LINERADIUS'            ],    //~ Radius
+    [1101,  'Line2P',           'LINE2P'                ],    // through 2 vertices
+    [1102,  'LineSegment2P',    'LINESEGMENT2P'         ],    // between 2 vertices
+    [1103,  'LineSegmentLen',   'LINESEGMENTLEN'        ],    // from point given length
+    [1104,  'LinePerp',         'LINEPERP'              ],    // perpendicular
+    [1105,  'LinePerpB',        'LINEPERPB'             ],    //  perpendicular bisector
+    [1106,  'LineAngB',         'LINEANGB'              ],    // angle bisector
+    [1107,  'LineParr',         'LINEPARR'              ],    // parallel
+    [1108,  'LineTangent',      'LINETANGENT'           ],    // Tangent
+    [1109,  'LineDiameter',     'LINEDIAMETER'          ],    // Diameter
+    [1110,  'LineRadius',       'LINERADIUS'            ],    // Radius
 
-    [1211,  'Ray2P',            'RAY2P'                 ],    //~ Ray between 2 vertices
-    [1212,  'Vector2P',         'VECTOR2P'              ],    //~ Vector between 2 vertices
-    [1213,  'VectorFP',         'VECTORFP'              ],    //~ Vector from point
+    [1211,  'Ray2P',            'RAY2P'                 ],    // Ray between 2 vertices
+    [1212,  'Vector2P',         'VECTOR2P'              ],    // Vector between 2 vertices
+    [1213,  'VectorFP',         'VECTORFP'              ],    // Vector from point
 
-        //~ Triangle (T)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // Triangle (T)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     [1300,  'Triangle',         'TRIANGLE'              ],
     [1301,  'T_Equilateral',    'T_EQUILATERAL'         ],
     [1302,  'T_Isosceles',      'T_ISOSCELES'           ],
     [1303,  'T_Scalene',        'T_SCALENE'             ],
 
-        //~ Circle (C)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // Circle (C)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     [1400,  'Circle',           'CIRCLE'                ],
-    [1401,  'C_CenterP',        'C_CENTERP'             ],    //~ center point
-    [1402,  'C_CenterR',        'C_CENTERR'             ],    //~ center radius
+    [1401,  'C_CenterP',        'C_CENTERP'             ],    // center point
+    [1402,  'C_CenterR',        'C_CENTERR'             ],    // center radius
 
     [1403,  'C_3P',             'C_3P'                  ],    //  3 vertices
 
-        //~ Quadrilateral (Q)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // Quadrilateral (Q)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     [1500,  'Quadrilateral',    'QUADRILATERAL'         ],
     [1501,  'Rectangle',        'RECTANGLE'             ],
     [1502,  'Square',           'SQUARE'                ],
     [1503,  'Rhombus',          'RHOMBUS'               ],
-    [1504,  'Parallelogram',    'PARALLELOGRAM'         ],    //~ Q_PARALLELOGRAM
+    [1504,  'Parallelogram',    'PARALLELOGRAM'         ],    // Q_PARALLELOGRAM
     [1505,  'Trapezoid',        'TRAPEZOID'             ],
     [1506,  'Kite',             'KITE'                  ],
 
-        //~ Arc (A)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // Arc (A)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     [1600,  'Arc',              'ARC'                   ],
-    [1601,  'Arc2vertices',     'ARC2vertices'          ],    //~ SemiCircleThrough2vertices
-    [1602,  'CircularArc',      'CIRCULARARC'           ],    //~ CircularArc
-    [1603,  'CircumCircularArc','CIRCUMCIRCULARARC'     ],    //~ CircumcircularArc
-    [1604,  'CircularSector',   'CIRCULARSECTOR'        ],    //~ CircularSector
-    [1605,  'CircumCircularSector','CIRCUMCIRCULARSECTOR'],   //~ CircumCircularSector
+    [1601,  'Arc2vertices',     'ARC2vertices'          ],    // SemiCircleThrough2vertices
+    [1602,  'CircularArc',      'CIRCULARARC'           ],    // CircularArc
+    [1603,  'CircumCircularArc','CIRCUMCIRCULARARC'     ],    // CircumcircularArc
+    [1604,  'CircularSector',   'CIRCULARSECTOR'        ],    // CircularSector
+    [1605,  'CircumCircularSector','CIRCUMCIRCULARSECTOR'],   // CircumCircularSector
 
-    [1606,  'Compass',          'COMPASS'               ],    //~ ??
+    [1606,  'Compass',          'COMPASS'               ],    // ??
 
-        //~ Polygon ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // Polygon ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     [1700,  'Polygon',          'POLYGON'               ],
-    [1701,  'PolygonR',         'POLYGONR'              ],    //~ regular
-    [1702,  'PolygonRigid',     'POLYGONRIGID'          ],    //~ Rigid
-    [1703,  'PolygonV',         'POLYGONV'              ],    //~ Vector
+    [1701,  'PolygonR',         'POLYGONR'              ],    // regular
+    [1702,  'PolygonRigid',     'POLYGONRIGID'          ],    // Rigid
+    [1703,  'PolygonV',         'POLYGONV'              ],    // Vector
 
-        //~ Conics (S) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // Conics (S) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     [1800,  'Conic',            'CONIC'                 ],
     [1800,  'Ellipse',          'ELLIPSE'               ],
     [1801,  'Hyperbola',        'HYPERBOLA'             ],
     [1802,  'Parabola',         'PARABOLA'              ],
     [1803,  'Conic 5 Vertices', 'CONIC5VERTICES'        ],
 
-        //~ Angle ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // Angle ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     [1900,  'Angle',            'ANGLE'                 ],
     [1901,  'Angle Size',       'ANGLESize'             ],
 
-        //~ Annotation ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // Annotation ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     [2000,  'Text',             'TEXT'                  ],
 
-        //~ Images ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // Images ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     [2101,  'Image',            'IMAGE'                 ],
     [2102,  'SKETCH',           'SKETCH'                ]
@@ -420,7 +420,7 @@ var zoomfactor=0;
   
   var COMMANDS={
 
-    //~ General ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // General ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     UNDEF:        [   1,  'Undefined',        'UNDEFINED'             ],
 
@@ -448,7 +448,7 @@ var zoomfactor=0;
     FACTOR:       [  28,  'Factor',           'FACTOR'                ],
     UTIL:         [  29,  'Util',             'UTIL'                  ],
 
-    //~ Mouse ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Mouse ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     MOUSEX:       [  14,  'MouseX',           'MOUSEX'                ],
     MOUSEY:       [  15,  'MouseY',           'MOUSEY'                ],
@@ -465,7 +465,7 @@ var zoomfactor=0;
     CENTER:       [  24,  'Center button',    'CENTER'                ],
     RIGHT:        [  25,  'Right button',     'RIGHT'                 ],
 
-    //~ Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     GRID:         [ 100,  'Grid',             'GRID',       KEYCODES.GRID       ],
 
     GRIDPROPS:    [ 101,  'GridProps',        'GRIDPROPS',  KEYCODES.GRIDPROPS  ],
@@ -494,7 +494,7 @@ var zoomfactor=0;
     STG:          [ 122,  'STG',              'STG',        KEYCODES.STG        ],
     FS:           [ 123,  'Grid',             'COMMAND'                         ],
 
-    //~ Properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     PROPERTIES:   [ 200,  'Properties',       'PROPERTIES'            ],
 
     MATCH:        [ 201,  'Match',            'MATCH'                 ],
@@ -504,9 +504,9 @@ var zoomfactor=0;
     FORMULA:      [ 204,  'Formula',          'FORMULA'               ],
 
     STROKE:       [ 205,  'Stroke',           'STROKE'                ],
-    STROKEA:      [ 206,  'Stroke Alpha',     'STROKEALPHA'           ],  //~ Stroke Alpha
+    STROKEA:      [ 206,  'Stroke Alpha',     'STROKEALPHA'           ],  // Stroke Alpha
     FILL:         [ 207,  'Fill',             'FILL'                  ],
-    FILLA:        [ 208,  'Fill Alpha',       'fillA'                 ],  //~ Fill Alpha
+    FILLA:        [ 208,  'Fill Alpha',       'fillA'                 ],  // Fill Alpha
 
     COLORG:       [ 209,  'ColorG',           'COLORG'                ],
 
@@ -525,7 +525,7 @@ var zoomfactor=0;
     BLUE:         [ 214,  'Blue',             'BLUE'                  ],
     GREEN:        [ 215,  'Green',            'GREEN'                 ],
 
-    //~ File ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // File ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     FILE:         [ 301,  'File',             'FILE',     KEYCODES.FILE   ],
     NEW:          [ 302,  'New',              'NEW',      KEYCODES.NEW    ],
     OPEN:         [ 303,  'Open',             'OPEN',     KEYCODES.OPEN   ],
@@ -533,17 +533,17 @@ var zoomfactor=0;
     SAVEAS:       [ 305,  'Save As',          'SAVEAS',   KEYCODES.SAVEAS ],
     CLOSE:        [ 306,  'Close',            'CLOSE',    KEYCODES.CLOSE  ],
 
-    //~ Edit ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Edit ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     EDIT:         [ 400,  'Edit',             'EDIT',     KEYCODES.EDIT   ],
     UNDO:         [ 401,  'Undo',             'UNDO',     KEYCODES.UNDO   ],
     REDO:         [ 402,  'Redo',             'REDO',     KEYCODES.REDO   ],
     COPY:         [ 403,  'Copy',             'COPY',     KEYCODES.COPY   ],
-    //~ CUT:          [ 404,  'Cut',              'CUT',      KEYCODES.CUT    ],
-    //~ PASTE:        [ 405,  'Paste',            'PASTE',    KEYCODES.PASTE  ],
+    // CUT:          [ 404,  'Cut',              'CUT',      KEYCODES.CUT    ],
+    // PASTE:        [ 405,  'Paste',            'PASTE',    KEYCODES.PASTE  ],
     DELETE:       [ 406,  'Delete',           'DELETE',   KEYCODES.DELETE ],
     ERASE:        [ 407,  'Erase',            'ERASE',    KEYCODES.DELETE ],
 
-    //~ View ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // View ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     VIEW:         [ 500,  'View',             'VIEW',     KEYCODES.VIEW   ],
     SELECT:       [ 501,  'Select',           'SELECT'                ],
     SELECTALL:    [ 502,  'Select All',       'SELECTALL'             ],
@@ -552,30 +552,30 @@ var zoomfactor=0;
     ZOOMOUT:      [ 505,  'Zoomout',          'ZOOMOUT',  KEYCODES.ZOOMOUT],
     PAN:          [ 506,  'Pan',              'PAN',      KEYCODES.PAN    ],
 
-    //~ Modify ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Modify ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     MODIFY:       [ 600,  'Modify',           'MODIFY',       KEYCODES.MODIFY       ],
     TRANSLATE:    [ 601,  'Translate',        'TRANSLATE',    KEYCODES.TRANSLATE    ],
     TRANS_UP:     [ 601,  'Translate',        'TRANSLATE',    KEYCODES.TRANS_UP     ],
     TRANS_DOWN:   [ 601,  'Translate',        'TRANSLATE',    KEYCODES.TRANS_DOWN   ],
     TRANS_LEFT:   [ 601,  'Translate',        'TRANSLATE',    KEYCODES.TRANS_LEFT   ],
     TRANS_RIGHT:  [ 601,  'Translate',        'TRANSLATE',    KEYCODES.TRANS_RIGHT  ],
-    TRANS_VECTOR: [ 602,  'Transvector',      'TRANSVECTOR',  KEYCODES.TRANS_VECTOR ],    //~ TranslateByVector
+    TRANS_VECTOR: [ 602,  'Transvector',      'TRANSVECTOR',  KEYCODES.TRANS_VECTOR ],    // TranslateByVector
 
     REFLECT:      [ 603,  'Reflect',          'REFLECT'               ],
-    REFLECTTLINE: [ 604,  'ReflectLine',      'REFLECTLINE'           ],    //~ ReflectAboutLIne
-    REFLECTPOINT: [ 605,  'ReflectPoint',     'REFLECTPOINT'          ],    //~ ReflectAboutPoint
-    REFLECTCIRCLE:[ 606,  'ReflectCircle',    'REFLECTCIRCLE'         ],    //~ ReflectAboutCircle
+    REFLECTTLINE: [ 604,  'ReflectLine',      'REFLECTLINE'           ],    // ReflectAboutLIne
+    REFLECTPOINT: [ 605,  'ReflectPoint',     'REFLECTPOINT'          ],    // ReflectAboutPoint
+    REFLECTCIRCLE:[ 606,  'ReflectCircle',    'REFLECTCIRCLE'         ],    // ReflectAboutCircle
 
 
     ROTATE:       [ 607,  'Rotate',           'ROTATE'                ],
-    ROTATEPOINT:  [ 608,  'RotatePoint',      'ROTATEPOINT'           ],    //~ RotateAroundPoint
+    ROTATEPOINT:  [ 608,  'RotatePoint',      'ROTATEPOINT'           ],    // RotateAroundPoint
 
     SCALE:        [ 609,  'Scale',            'SCALE'                 ],
     SHEAR:        [ 610,  'Shear',            'SHEAR'                 ],
 
-    //~ DILATEFROMPOINT:            [ 1,  'Dilatefrompoint',    'DILATEFROMPOINT' ]
+    // DILATEFROMPOINT:            [ 1,  'Dilatefrompoint',    'DILATEFROMPOINT' ]
 
-    //~ Measure ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Measure ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     MEASURE:      [ 700,  'Measure',          'MEASURE'               ],
     DISTANCE:     [ 701,  'Distance',         'DISTANCE'              ],
     PERIMETER:    [ 702,  'Perimeter',        'PERIMETER'             ],
@@ -585,132 +585,132 @@ var zoomfactor=0;
     DIAMETER:     [ 706,  'Diamter',          'DIAMETER'              ],
     SLOPE:        [ 707,  'Slope',            'SLOPE'                 ],
 
-    //~ Layers ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Layers ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //LAYER:        [ 800,  'Layer',            'LAYER'                 ],
     FORWARD:      [ 801,  'Forward',          'FORWARD'               ],
     BACK:         [ 802,  'Back',             'BACK'                  ],
 
 
 
-    //~  SHAPES ========================================================
+    //  SHAPES ========================================================
 
-    //~ Point (P) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Point (P) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     POINT:        [1000,  'Point',            'POINT'                 ],
     P_DEFAULT:    [1001,  'P_DEFAULT',        'P_DEFAULT'             ],
     P_OBJECT:     [1002,  'P_Object',         'P_OBJECT'              ],
     P_BOUND:      [1003,  'P_Bound',          'P_BOUND'               ],
     P_INTERSECT:  [1004,  'P_Intersect',      'P_INTERSECT'           ],
-    P_MIDPOINT:   [1005,  'P_Midpoint',       'P_MIDPOINT'            ],    //~ Midpoint/Center
-    P_ATDETACH:   [1006,  'P_AttachDetach',   'P_ATTACHDETACH'        ],    //~ AttachDetachPoint
+    P_MIDPOINT:   [1005,  'P_Midpoint',       'P_MIDPOINT'            ],    // Midpoint/Center
+    P_ATDETACH:   [1006,  'P_AttachDetach',   'P_ATTACHDETACH'        ],    // AttachDetachPoint
 
-    //~ Line (L) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Line (L) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     LINE:         [1100,  'Line',             'LINE'                  ],
-    L_2P:         [1101,  'Line2P',           'LINE2P'                ],    //~ through 2 vertices
-    L_SEGMENT2P:  [1102,  'LineSegment2P',    'LINESEGMENT2P'         ],    //~ between 2 vertices
-    L_SEGMENTLEN: [1103,  'LineSegmentLen',   'LINESEGMENTLEN'        ],    //~ from point given length
-    L_PERP:       [1104,  'LinePerp',         'LINEPERP'              ],    //~ perpendicular
-    L_PERPB:      [1105,  'LinePerpB',        'LINEPERPB'             ],    //~  perpendicular bisector
-    L_ANGB:       [1106,  'LineAngB',         'LINEANGB'              ],    //~ angle bisector
-    L_PARR:       [1107,  'LineParr',         'LINEPARR'              ],    //~ parallel
-    L_TANGENT:    [1108,  'LineTangent',      'LINETANGENT'           ],    //~ Tangent
-    L_DIAMETER:   [1109,  'LineDiameter',     'LINEDIAMETER'          ],    //~ Diameter
-    L_RADIUS:     [1110,  'LineRadius',       'LINERADIUS'            ],    //~ Radius
+    L_2P:         [1101,  'Line2P',           'LINE2P'                ],    // through 2 vertices
+    L_SEGMENT2P:  [1102,  'LineSegment2P',    'LINESEGMENT2P'         ],    // between 2 vertices
+    L_SEGMENTLEN: [1103,  'LineSegmentLen',   'LINESEGMENTLEN'        ],    // from point given length
+    L_PERP:       [1104,  'LinePerp',         'LINEPERP'              ],    // perpendicular
+    L_PERPB:      [1105,  'LinePerpB',        'LINEPERPB'             ],    //  perpendicular bisector
+    L_ANGB:       [1106,  'LineAngB',         'LINEANGB'              ],    // angle bisector
+    L_PARR:       [1107,  'LineParr',         'LINEPARR'              ],    // parallel
+    L_TANGENT:    [1108,  'LineTangent',      'LINETANGENT'           ],    // Tangent
+    L_DIAMETER:   [1109,  'LineDiameter',     'LINEDIAMETER'          ],    // Diameter
+    L_RADIUS:     [1110,  'LineRadius',       'LINERADIUS'            ],    // Radius
 
-    RAY_2P:       [1211,  'Ray2P',            'RAY2P'                 ],    //~ Ray between 2 vertices
-    V_2P:         [1212,  'Vector2P',         'VECTOR2P'              ],    //~ Vector between 2 vertices
-    V_FP:         [1213,  'VectorFP',         'VECTORFP'              ],    //~ Vector from point
+    RAY_2P:       [1211,  'Ray2P',            'RAY2P'                 ],    // Ray between 2 vertices
+    V_2P:         [1212,  'Vector2P',         'VECTOR2P'              ],    // Vector between 2 vertices
+    V_FP:         [1213,  'VectorFP',         'VECTORFP'              ],    // Vector from point
 
-    //~ Triangle (T)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Triangle (T)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     TRIANGLE:     [1300,  'Triangle',         'TRIANGLE'              ],
     T_EQUILATERAL:[1301,  'T_Equilateral',    'T_EQUILATERAL'         ],
     T_ISOSCELES:  [1302,  'T_Isosceles',      'T_ISOSCELES'           ],
     T_SCALENE:    [1303,  'T_Scalene',        'T_SCALENE'             ],
 
-    //~ Circle (C)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Circle (C)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     CIRCLE:       [1400,  'Circle',           'CIRCLE'                ],
-    C_CENTERP:    [1401,  'C_CenterP',        'C_CENTERP'             ],    //~ center point
-    C_CENTERR:    [1402,  'C_CenterR',        'C_CENTERR'             ],    //~ center radius
+    C_CENTERP:    [1401,  'C_CenterP',        'C_CENTERP'             ],    // center point
+    C_CENTERR:    [1402,  'C_CenterR',        'C_CENTERR'             ],    // center radius
 
     C_3P:         [1403,  'C_3P',             'C_3P'                  ],    //  3 vertices
 
-    //~ Quadrilateral (Q)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Quadrilateral (Q)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     QUAD:         [1500,  'Quadrilateral',    'QUADRILATERAL'         ],
     Q_RECTANGLE:  [1501,  'Rectangle',        'RECTANGLE'             ],
     Q_SQUARE:     [1502,  'Square',           'SQUARE'                ],
     Q_RHOMBUS:    [1503,  'Rhombus',          'RHOMBUS'               ],
-    Q_PGRAM:      [1504,  'Parallelogram',    'PARALLELOGRAM'         ],    //~ Q_PARALLELOGRAM
+    Q_PGRAM:      [1504,  'Parallelogram',    'PARALLELOGRAM'         ],    // Q_PARALLELOGRAM
     Q_TRAPEZOID:  [1505,  'Trapezoid',        'TRAPEZOID'             ],
     Q_KITE:       [1506,  'Kite',             'KITE'                  ],
 
-    //~ Arc (A)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Arc (A)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ARC:          [1600,  'Arc',              'ARC'                   ],
-    A_2P:         [1601,  'Arc2vertices',     'ARC2vertices'          ],    //~ SemiCircleThrough2vertices
-    A_CA:         [1602,  'CircularArc',      'CIRCULARARC'           ],    //~ CircularArc
-    A_CCA:        [1603,  'CircumCircularArc','CIRCUMCIRCULARARC'     ],    //~ CircumcircularArc
-    A_CS:         [1604,  'CircularSector',   'CIRCULARSECTOR'        ],    //~ CircularSector
-    A_CCS:        [1605,  'CircumCircularSector','CIRCUMCIRCULARSECTOR'],   //~ CircumCircularSector
+    A_2P:         [1601,  'Arc2vertices',     'ARC2vertices'          ],    // SemiCircleThrough2vertices
+    A_CA:         [1602,  'CircularArc',      'CIRCULARARC'           ],    // CircularArc
+    A_CCA:        [1603,  'CircumCircularArc','CIRCUMCIRCULARARC'     ],    // CircumcircularArc
+    A_CS:         [1604,  'CircularSector',   'CIRCULARSECTOR'        ],    // CircularSector
+    A_CCS:        [1605,  'CircumCircularSector','CIRCUMCIRCULARSECTOR'],   // CircumCircularSector
 
-    COMPASS:      [1606,  'Compass',          'COMPASS'               ],    //~ ??
+    COMPASS:      [1606,  'Compass',          'COMPASS'               ],    // ??
 
-    //~ Polygon ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Polygon ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     POLYGON:      [1700,  'Polygon',          'POLYGON'               ],
-    POLYGONR:     [1701,  'PolygonR',         'POLYGONR'              ],    //~ regular
-    POLYGONRIGID: [1702,  'PolygonRigid',     'POLYGONRIGID'          ],    //~ Rigid
-    POLYGONV:     [1703,  'PolygonV',         'POLYGONV'              ],    //~ Vector
+    POLYGONR:     [1701,  'PolygonR',         'POLYGONR'              ],    // regular
+    POLYGONRIGID: [1702,  'PolygonRigid',     'POLYGONRIGID'          ],    // Rigid
+    POLYGONV:     [1703,  'PolygonV',         'POLYGONV'              ],    // Vector
 
-    //~ Conics (S) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Conics (S) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     CONIC:        [1800,  'Conic',            'CONIC'                 ],
     S_ELLIPSE:    [1800,  'Ellipse',          'ELLIPSE'               ],
     S_HYPERBOLA:  [1801,  'Hyperbola',        'HYPERBOLA'             ],
     S_PARABOLA:   [1802,  'Parabola',         'PARABOLA'              ],
     S_5VERTICES:  [1803,  'Conic 5 Vertices', 'CONIC5VERTICES'        ],
 
-    //~ Angle ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Angle ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     ANGLE:        [1900,  'Angle',            'ANGLE'                 ],
     ANGLE_SIZE:   [1901,  'Angle Size',       'ANGLESize'             ],
 
-    //~ Annotation ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Annotation ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     TEXT:         [2000,  'Text',             'TEXT'                  ],
 
-    //~ Images ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Images ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     IMAGE:        [2101,  'Image',            'IMAGE'                 ],
     SKETCH:       [2102,  'SKETCH',           'SKETCH'                ],
 
-    //~ Footer ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    //~ ORTHO:
-    //~ STG:
-    //~ GRIDLINES:
-    //~ COORDINATES:
-    //~ DISPLAY:
+    // Footer ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // ORTHO:
+    // STG:
+    // GRIDLINES:
+    // COORDINATES:
+    // DISPLAY:
 //~
-    //~ CommandLine ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    //~ COMMANDLINE:
-    //~ HISTORY:
-    //~ DISPLAY:
+    // CommandLine ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // COMMANDLINE:
+    // HISTORY:
+    // DISPLAY:
 
-    //~ PEN:                        [ 1,  'Pen',    'PEN' ]
+    // PEN:                        [ 1,  'Pen',    'PEN' ]
 
-    //~ RELATION:                   [ 1,  'Relation',   'RELATION'  ]
-    //~ PROBABILITYCALCULATOR:      [ 1,  'Probabilitycalculator',    'PROBABILITYCALCULATOR' ]
-    //~ SLIDER:                     [ 1,  'Slider',   'SLIDER'  ]
-    //~ BUTTON:                     [ 1,  'Button',   'BUTTON'  ]
-    //~ INPUTBOX:                   [ 1,  'Inputbox',   'INPUTBOX'  ]
+    // RELATION:                   [ 1,  'Relation',   'RELATION'  ]
+    // PROBABILITYCALCULATOR:      [ 1,  'Probabilitycalculator',    'PROBABILITYCALCULATOR' ]
+    // SLIDER:                     [ 1,  'Slider',   'SLIDER'  ]
+    // BUTTON:                     [ 1,  'Button',   'BUTTON'  ]
+    // INPUTBOX:                   [ 1,  'Inputbox',   'INPUTBOX'  ]
 
-    //~ CREATELIST:                 [ 1,  'Createlist',   'CREATELIST'  ]
-    //~ COMPLEXNUMBER:              [ 1,  'Complexnumber',    'COMPLEXNUMBER' ]
-    //~ BESTFITLINE:                [ 1,  'Bestfitline',    'BESTFITLINE' ]
-    //~ LOCUS:                      [ 1,  'Locus',    'LOCUS' ]
-    //~ POLYLINE:                   [ 1,  'Polyline',   'POLYLINE'  ]
+    // CREATELIST:                 [ 1,  'Createlist',   'CREATELIST'  ]
+    // COMPLEXNUMBER:              [ 1,  'Complexnumber',    'COMPLEXNUMBER' ]
+    // BESTFITLINE:                [ 1,  'Bestfitline',    'BESTFITLINE' ]
+    // LOCUS:                      [ 1,  'Locus',    'LOCUS' ]
+    // POLYLINE:                   [ 1,  'Polyline',   'POLYLINE'  ]
 
   };
 
   var app={
 
-    width:          screen.width-110,
-    height:         screen.height-200,
+    width:          document.getElementById("dwg").clientWidth,
+    height:         document.getElementById("dwg").clientHeight,
 
     debug:          true,
     frameRate:      0,
@@ -726,7 +726,7 @@ var zoomfactor=0;
     worldX:         0,
     worldY:         0,
 
-    //~ mousePressed:   0,
+    // mousePressed:   0,
 
     left:           false,
     center:         false,
@@ -737,7 +737,7 @@ var zoomfactor=0;
 
     dwg:            undefined,
 
-    //~ Properties
+    // Properties
     red:            128,
     green:          127,
     blue:           126,
@@ -778,8 +778,8 @@ var zoomfactor=0;
 
     coordinates:    false,
     ortho:          false,
-    STG:            false,  //~ snap to grid
-    fs:             false,  //~ full screen
+    STG:            false,  // snap to grid
+    fs:             false,  // full screen
 
     current:        COMMANDS.P_DEFAULT[0],
 
@@ -794,17 +794,17 @@ var zoomfactor=0;
   };
 
 
-  //~ Methods ==========================================================
+  // Methods ==========================================================
   var getGUID=function(){
 
-    //~ return year()   + ''  +
-           //~ month()  + ''  +
-           //~ day()    + ''  +
-           //~ hour()   + ''  +
-           //~ minute() + ''  +
-           //~ second() + ''  +
-           //~ millis() + ''  +
-           //~ round(random(10e15));
+    // return year()   + ''  +
+           // month()  + ''  +
+           // day()    + ''  +
+           // hour()   + ''  +
+           // minute() + ''  +
+           // second() + ''  +
+           // millis() + ''  +
+           // round(random(10e15));
 
     return random(10e15);
 
@@ -836,7 +836,7 @@ var zoomfactor=0;
 
       case COMMANDS.PRESSED[0]:     return app.left;
 
-      //~ Shape Properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      // Shape Properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       case COMMANDS.NAME[0]:        return app.name;
       case COMMANDS.CAPTION[0]:     return app.caption;
       case COMMANDS.FORMULA[0]:     return app.formula;
@@ -854,9 +854,9 @@ var zoomfactor=0;
       case COMMANDS.GREEN[0]:       return app.green;
       case COMMANDS.BLUE[0]:        return app.blue;
 
-      //~ case COMMANDS.LAYER[0]:       return app.layer;
+      // case COMMANDS.LAYER[0]:       return app.layer;
 
-      //~ Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      // Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       case COMMANDS.GRIDPROPS[0]:   return app.gridprops;
 
       case COMMANDS.ORIGIN[0]:      return app.origin;
@@ -878,7 +878,7 @@ var zoomfactor=0;
 
       case COMMANDS.QUADRANTS[0]:   return app.quadrants;
 
-      //~ Footer ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      // Footer ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       case COMMANDS.COORDINATES[0]: return app.coordinates;
       case COMMANDS.ORTHO[0]:       return app.ortho;
       case COMMANDS.STG[0]:         return app.stg;
@@ -893,7 +893,7 @@ var zoomfactor=0;
   };
 
   var reset=function(){
-    //~ app.current=0;
+    // app.current=0;
     app.vertices=[];
   };
   var getDottedLine=function(x0, y0, x1, y1, n){
@@ -939,7 +939,7 @@ var zoomfactor=0;
 
   };
 
-  //~ Shapes ===========================================================
+  // Shapes ===========================================================
   var Shape=function(i,p){
 
     this.hitP=[];
@@ -971,7 +971,7 @@ var zoomfactor=0;
     this.selected=    false;
     this.deleted=     false;
 
-    //~ for(var p=0; p<=this.length; p++){ this.hit[p]=0; }
+    // for(var p=0; p<=this.length; p++){ this.hit[p]=0; }
 
   };
   Shape.prototype.add=function(pnt){
@@ -1007,15 +1007,15 @@ var zoomfactor=0;
 
 var factor=1.25;
 
-  //~ Point ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Point ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var Point=function(i,p,x,y){
 
     Shape.call(this, i, p);
 
-    this.xG=x;                //~ world X
-    this.yG=y;                //~ world Y
-    this.xW=x*app.factor;     //~ grid X
-    this.yW=y*app.factor;     //~ grid Y
+    this.xG=x;                // world X
+    this.yG=y;                // world Y
+    this.xW=x*app.factor;     // grid X
+    this.yW=y*app.factor;     // grid Y
 
     this.recalc=function(){
       this.xW=this.xG*app.factor;
@@ -1097,7 +1097,7 @@ var factor=1.25;
     SLOPE:      5
   };
 
-  //~ Line ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Line ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var Line=function(i,p){
 
     Shape.call(this, i, p);
@@ -1155,11 +1155,11 @@ var factor=1.25;
           text("length:   " + nf(p.length,1,2), _x+x, _y+35+y);
           text("selected: " + p.selected,       _x+x, _y+45+y);
 
-          //~ fill(p.fill);
-          //~ noStroke();
-          //~ strokeWeight(0);
+          // fill(p.fill);
+          // noStroke();
+          // strokeWeight(0);
 
-          //~ ellipse(p.midX, p.midY, sz, sz);
+          // ellipse(p.midX, p.midY, sz, sz);
 
       popMatrix();
 
@@ -1228,13 +1228,13 @@ var factor=1.25;
 
     for(var n in this.vertices){
 
-      //~ if(dist(app.mouseX, app.mouseY,
-              //~ this.vertices[n].x, this.vertices[n].y)<this.w){
+      // if(dist(app.mouseX, app.mouseY,
+              // this.vertices[n].x, this.vertices[n].y)<this.w){
 //~
-        //~ app.mouseX=this.vertices[n].x;
-        //~ app.mouseY=this.vertices[n].y;
+        // app.mouseX=this.vertices[n].x;
+        // app.mouseY=this.vertices[n].y;
 //~
-      //~ }
+      // }
 
       if(this.hitP[n] && app.left){
         this.vertices[n].x=app.mouseX;
@@ -1243,11 +1243,11 @@ var factor=1.25;
 
     }
 
-    //~ this.recalc();
+    // this.recalc();
 
   };
 
-  //~ Triangle ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Triangle ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var Triangle=function(p){
     Shape.call(this,p);
   };
@@ -1255,24 +1255,24 @@ var factor=1.25;
   Triangle.prototype.draw=function(){};
 
 
-  //~ Circle ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Circle ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var Circle=function(p){
 
     Shape.call(this,p);
 
-    //~ this.radius=dist(this.vertices[0].x, this.vertices[0].y, this.vertices[1].x, this.vertices[1].y);
-    //~ this.diameter=2*this.radius;
-    //~ this.area=PI*pow(this.radius,2);
-    //~ this.circumference=PI*this.diameter;
+    // this.radius=dist(this.vertices[0].x, this.vertices[0].y, this.vertices[1].x, this.vertices[1].y);
+    // this.diameter=2*this.radius;
+    // this.area=PI*pow(this.radius,2);
+    // this.circumference=PI*this.diameter;
 //~
-    //~ this.recalc=function(){
+    // this.recalc=function(){
 //~
-      //~ this.radius=dist(this.vertices[0].x, this.vertices[0].y, this.vertices[1].x, this.vertices[1].y);
-      //~ this.diameter=2*this.radius;
-      //~ this.area=PI*pow(this.radius,2);
-      //~ this.circumference=PI*this.diameter;
+      // this.radius=dist(this.vertices[0].x, this.vertices[0].y, this.vertices[1].x, this.vertices[1].y);
+      // this.diameter=2*this.radius;
+      // this.area=PI*pow(this.radius,2);
+      // this.circumference=PI*this.diameter;
 
-    //~ };
+    // };
 
   };
   Circle.prototype=Object.create(Shape.prototype);
@@ -1337,7 +1337,7 @@ var factor=1.25;
 
   };
 
-  //~ Ellipse ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Ellipse ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var Ellipse=function(p){
     Shape.call(this,p);
   };
@@ -1345,14 +1345,14 @@ var factor=1.25;
   Ellipse.prototype.draw=function(){};
 
 
-  //~ Arc ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Arc ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var Arc=function(p){
     Shape.call(this,p);
   };
   Arc.prototype=Object.create(Shape.prototype);
   Arc.prototype.draw=function(){};
 
-  //~ Ellipse ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Ellipse ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var Rectangle=function(p){
     Shape.call(this,p);
   };
@@ -1380,13 +1380,13 @@ var factor=1.25;
       noStroke();
       strokeWeight(0);
 
-      //~ ellipse(p.midX, p.midY, sz, sz);
+      // ellipse(p.midX, p.midY, sz, sz);
 
     };
 
     pushStyle();
 
-      //~ rectMode(CENTER);
+      // rectMode(CENTER);
 
       fill(getColor(p.fill,5));
       stroke(p.stroke);
@@ -1412,7 +1412,7 @@ var factor=1.25;
   };
 
 
-  //~ Polygon ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Polygon ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var Polygon=function(p){
     Shape.call(this,p);
   };
@@ -1420,7 +1420,7 @@ var factor=1.25;
   Polygon.prototype.draw=function(){};
 
 
-  //~ Conic ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Conic ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var Conic=function(p){
     Shape.call(this,p);
   };
@@ -1428,7 +1428,7 @@ var factor=1.25;
   Conic.prototype.draw=function(){};
 
 
-  //~ Angle ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Angle ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var Angle=function(p){
     Shape.call(this,p);
   };
@@ -1436,7 +1436,7 @@ var factor=1.25;
   Angle.prototype.draw=function(){};
 
 
-  //~ Annotation ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Annotation ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var Annotation=function(p){
     Shape.call(this,p);
   };
@@ -1481,10 +1481,10 @@ var factor=1.25;
 
       case COMMANDS.QUADRANTS[0]:   app.quadrants=!app.quadrants; break;
 
-      //~ case COMMANDS.COORDINATES[0]: app.coordinates=!app.coordinates; break;
+      // case COMMANDS.COORDINATES[0]: app.coordinates=!app.coordinates; break;
       case COMMANDS.ORTHO[0]:       app.ortho=!app.ortho;         break;
-      case COMMANDS.STG[0]:         app.stg=!app.stg;             break;  //~ Snap-to-grid
-      case COMMANDS.FS[0]:          app.fs=!app.fs;               break;  //~ Full Screen
+      case COMMANDS.STG[0]:         app.stg=!app.stg;             break;  // Snap-to-grid
+      case COMMANDS.FS[0]:          app.fs=!app.fs;               break;  // Full Screen
 
       default:      break;
 
@@ -1493,17 +1493,17 @@ var factor=1.25;
   };
   var ShapeCommands=function(c,p){
 
-    //~ println(c+","+p);
+    // println(c+","+p);
 
-    //~ app.current=p;
+    // app.current=p;
 
     switch(c){
 
       case COMMANDS.P_DEFAULT[0]:                                 break;
       case COMMANDS.LINE[0]:                                      break;
 
-      //~ case COMMANDS.POINT[0]:       break;
-      //~ case COMMANDS.P_OBJECT[0]:    break;
+      // case COMMANDS.POINT[0]:       break;
+      // case COMMANDS.P_OBJECT[0]:    break;
       case COMMANDS.P_INTERSECT[0]:     break;
       case COMMANDS.P_MIDPOINT[0]:      break;
 
@@ -1517,17 +1517,17 @@ var factor=1.25;
 
 
 
-  //~ Commands =========================================================
+  // Commands =========================================================
   var commands=function(c,p){
 
-    //~ println(c+':'+p);
+    // println(c+':'+p);
 
     switch(true){
 
       case c===COMMANDS.DEBUG[0]:         app.debug=!app.debug;
                                           break;
 
-      //~ Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      // Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       case (c>COMMANDS.GRID[0] &&
             c<=COMMANDS.FS[0]):           GridCommands(c,p);      break;
 
@@ -1974,7 +1974,7 @@ var factor=1.25;
               vertex(d+p.cX-15*cos(PI/4), d+p.cY+15*sin(PI/4));
             endShape(CLOSE);
 
-            //~ Vertices
+            // Vertices
             noStroke();
             strokeWeight(0);
             fill(CLRS.VERTEX);
@@ -1998,7 +1998,7 @@ var factor=1.25;
               vertex(d+p.cX-7, d+p.cY+10);
             endShape(CLOSE);
 
-            //~ Vertices
+            // Vertices
             noStroke();
             strokeWeight(0);
             fill(CLRS.VERTEX);
@@ -2022,7 +2022,7 @@ var factor=1.25;
               vertex(d+p.cX+10, d+p.cY+10);
             endShape(CLOSE);
 
-            //~ Vertices
+            // Vertices
             noStroke();
             strokeWeight(0);
             fill(CLRS.VERTEX);
@@ -2097,7 +2097,7 @@ var factor=1.25;
             strokeWeight(0);
             fill(CLRS.VERTEX);
 
-            //~ ellipse(d+cX, d+cY, sz, sz);
+            // ellipse(d+cX, d+cY, sz, sz);
             ellipse(d+p.cX+10*cos(PI/4),
                     d+p.cY-10*sin(PI/4),
                     sz, sz);
@@ -2363,7 +2363,7 @@ var factor=1.25;
             strokeWeight(0);
             fill(CLRS.VERTEX);
 
-            //~ ellipse(d+cX, d+cY, sz, sz);
+            // ellipse(d+cX, d+cY, sz, sz);
             ellipse(d+p.cX+10*cos(PI/4),
                     d+p.cY-10*sin(PI/4),
                     sz, sz);
@@ -2418,7 +2418,7 @@ var factor=1.25;
             strokeWeight(0);
             fill(CLRS.VERTEX);
 
-            //~ ellipse(d+cX, d+cY, sz, sz);
+            // ellipse(d+cX, d+cY, sz, sz);
             ellipse(d+p.cX+10*cos(PI/4),
                     d+p.cY-10*sin(PI/4),
                     sz, sz);
@@ -2451,7 +2451,7 @@ var factor=1.25;
             strokeWeight(0);
             fill(CLRS.VERTEX);
 
-            //~ ellipse(d+cX, d+cY, sz, sz);
+            // ellipse(d+cX, d+cY, sz, sz);
             ellipse(d+p.cX, d+p.cY, sz, sz);
 
             noFill();
@@ -2894,7 +2894,7 @@ var factor=1.25;
 
           case COMMANDS.DISTANCE[0]:
 
-            //~ Ruler
+            // Ruler
             fill(CLRS.RULER);
             strokeWeight(0.25);
             stroke(CLRS.BLACK);
@@ -2926,7 +2926,7 @@ var factor=1.25;
 
           case COMMANDS.PERIMETER[0]:
 
-            //~ Ruler
+            // Ruler
             fill(CLRS.RULER);
             strokeWeight(0.25);
             stroke(CLRS.BLACK);
@@ -2956,7 +2956,7 @@ var factor=1.25;
 
           case COMMANDS.AREA[0]:
 
-            //~ Ruler
+            // Ruler
             fill(CLRS.RULER);
             strokeWeight(0.25);
             stroke(CLRS.BLACK);
@@ -2987,7 +2987,7 @@ var factor=1.25;
 
           case COMMANDS.VOLUME[0]:
 
-            //~ Ruler
+            // Ruler
             fill(CLRS.RULER);
             strokeWeight(0.25);
             stroke(CLRS.BLACK);
@@ -3018,7 +3018,7 @@ var factor=1.25;
 
           case COMMANDS.RADIUS[0]:
 
-            //~ Ruler
+            // Ruler
             fill(CLRS.RULER);
             strokeWeight(0.25);
             stroke(CLRS.BLACK);
@@ -3059,7 +3059,7 @@ var factor=1.25;
 
           case COMMANDS.DIAMETER[0]:
 
-            //~ Ruler
+            // Ruler
             fill(CLRS.RULER);
             strokeWeight(0.25);
             stroke(CLRS.BLACK);
@@ -3143,11 +3143,11 @@ var factor=1.25;
 
     var drawLineType=function(){
 
-      //~ LT_HAIRLINE:  [ 212,  'Hairline',         'HAIRLINE'              ],
-      //~ LT_SOLID:     [ 213,  'Solid',            'SOLID'                 ],
-      //~ LT_DASHED:    [ 214,  'Dashed',           'DASHED'                ],
-      //~ LT_DOTTED:    [ 215,  'Dottted',          'DOTTED'                ],
-      //~ LT_DASHDOT:   [ 216,  'DashDot',          'DASHDOT'               ],
+      // LT_HAIRLINE:  [ 212,  'Hairline',         'HAIRLINE'              ],
+      // LT_SOLID:     [ 213,  'Solid',            'SOLID'                 ],
+      // LT_DASHED:    [ 214,  'Dashed',           'DASHED'                ],
+      // LT_DOTTED:    [ 215,  'Dottted',          'DOTTED'                ],
+      // LT_DASHDOT:   [ 216,  'DashDot',          'DASHDOT'               ],
 
       pushMatrix();
 
@@ -3230,14 +3230,14 @@ var factor=1.25;
     };
     var drawColor=function(){
 
-    //~ Colors
+    // Colors
     //~
-    //~ Red       RedOrange
-    //~ Orange    YellowOrange
-    //~ Yellow    YellowGreen
-    //~ Green     BlueGreen
-    //~ Blue      BlueViolet
-    //~ Violet    RedViolet
+    // Red       RedOrange
+    // Orange    YellowOrange
+    // Yellow    YellowGreen
+    // Green     BlueGreen
+    // Blue      BlueViolet
+    // Violet    RedViolet
 
       pushMatrix();
 
@@ -3450,97 +3450,97 @@ var factor=1.25;
   };
 
 
-  //~ Properties =======================================================
+  // Properties =======================================================
   var propC=function(i,p,x,y,w,h,r,k,v,c,g){
 
-    this.i=i;     //~ guid
-    this.p=p;     //~ parent
+    this.i=i;     // guid
+    this.p=p;     // parent
 
-    this.x=x;     //~ left
-    this.y=y;     //~ top
-    this.w=w;     //~ width
-    this.h=h;     //~ height
-    this.r=r;     //~ radius
+    this.x=x;     // left
+    this.y=y;     // top
+    this.w=w;     // width
+    this.h=h;     // height
+    this.r=r;     // radius
 
-    this.k=k;     //~ hit cursor
-    this.v=v;     //~ value
-    this.c=c;     //~ command
-    this.g=g;     //~ tag
+    this.k=k;     // hit cursor
+    this.v=v;     // value
+    this.c=c;     // command
+    this.g=g;     // tag
 
   };
   var propL=function(fill,fillH,stroke,strokeH,weight,weightH){
 
-    this.fill=fill;         //~ fill color
-    this.fillH=fillH;       //~ fill color highlight
+    this.fill=fill;         // fill color
+    this.fillH=fillH;       // fill color highlight
 
-    this.stroke=stroke;     //~ stroke color
-    this.strokeH=strokeH;   //~ stroke color highlight
+    this.stroke=stroke;     // stroke color
+    this.strokeH=strokeH;   // stroke color highlight
 
-    this.weight=weight;     //~ strokeWeight
-    this.weightH=weightH;   //~ strokeWeight highlight
+    this.weight=weight;     // strokeWeight
+    this.weightH=weightH;   // strokeWeight highlight
 
   };
   var propA=function(fill, fillH, alignX, alignY, size, sizeH){
 
-    this.fill=fill;         //~ text color
-    this.fillH=fillH;       //~ text color highlight
-    this.alignX=alignX;     //~ horizontal alignment
-    this.alignY=alignY;     //~ vertical alignment
-    this.size=size;         //~ text size
-    this.sizeH=sizeH;       //~ text size highlight
+    this.fill=fill;         // text color
+    this.fillH=fillH;       // text color highlight
+    this.alignX=alignX;     // horizontal alignment
+    this.alignY=alignY;     // vertical alignment
+    this.size=size;         // text size
+    this.sizeH=sizeH;       // text size highlight
 
   };
 
 
-  //~ Controls =========================================================
+  // Controls =========================================================
   var control=function(c,l,a,ctrls){
 
 
-    //~ controls properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    this.i=c.i;                //~ guid
-    this.parent=c.p;           //~ parent
+    // controls properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    this.i=c.i;                // guid
+    this.parent=c.p;           // parent
 
-    this.x=c.x;                //~ left
-    this.y=c.y;                //~ top
-    this.w=c.w;                //~ width
-    this.h=c.h;                //~ height
-    this.r=c.r;                //~ corner radius
+    this.x=c.x;                // left
+    this.y=c.y;                // top
+    this.w=c.w;                // width
+    this.h=c.h;                // height
+    this.r=c.r;                // corner radius
 
     this.cX=c.w/2;
     this.cY=c.h/2;
 
-    this.k=c.k;                //~ hit cursor
+    this.k=c.k;                // hit cursor
 
-    this.v=c.v;                //~ value
-    this.c=c.c;                //~ command
-    this.g=c.g;                //~ tag
-
-
-    //~ appearance properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    this.fill=l.fill;          //~ fill color
-    this.fillH=l.fillH;        //~ fill color highlight
-    this.stroke=l.stroke;      //~ stroke color
-    this.strokeH=l.strokeH;    //~ stroke color highlight
-
-    this.weight=l.weight;      //~ strokeWeight
-    this.weightH=l.weightH;    //~ strokeWeight highlight
+    this.v=c.v;                // value
+    this.c=c.c;                // command
+    this.g=c.g;                // tag
 
 
-    //~ text properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    this.text=a.text;          //~ text caption
+    // appearance properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    this.fill=l.fill;          // fill color
+    this.fillH=l.fillH;        // fill color highlight
+    this.stroke=l.stroke;      // stroke color
+    this.strokeH=l.strokeH;    // stroke color highlight
 
-    this.tfill=a.fill;         //~ text color
-    this.tfillH=a.fillH;       //~ text color highlight
-    this.alignX=a.alignX;      //~ horizontal alignment
-    this.alignY=a.alignY;      //~ vertical alignment
-    this.size=a.size;          //~ text size
-    this.sizeH=a.sizeH;        //~ text size highlight
+    this.weight=l.weight;      // strokeWeight
+    this.weightH=l.weightH;    // strokeWeight highlight
 
-    //~ misc properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    this.hit=false;             //~ mouse is over the control
 
-    this.visible=true;          //~ is the control currently being displayed
-    this.ctrls=ctrls;           //~ array of child controls
+    // text properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    this.text=a.text;          // text caption
+
+    this.tfill=a.fill;         // text color
+    this.tfillH=a.fillH;       // text color highlight
+    this.alignX=a.alignX;      // horizontal alignment
+    this.alignY=a.alignY;      // vertical alignment
+    this.size=a.size;          // text size
+    this.sizeH=a.sizeH;        // text size highlight
+
+    // misc properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    this.hit=false;             // mouse is over the control
+
+    this.visible=true;          // is the control currently being displayed
+    this.ctrls=ctrls;           // array of child controls
 
   };
   control.prototype.draw=function(){
@@ -3615,7 +3615,7 @@ var factor=1.25;
     for(var c in this.ctrls){ this.ctrls[c].pressed(); }
   };
   control.prototype.released=function(){
-    //~ this.hit=false;
+    // this.hit=false;
     for(var c in this.ctrls){ this.ctrls[c].released(); }
   };
   control.prototype.typed=function(){
@@ -3629,7 +3629,7 @@ var factor=1.25;
     for(var c in this.ctrls){ this.ctrls[c].out(); }
   };
 
-  //~ Telemetry ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Telemetry ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var telemetry=function(c,l,a,ctrls){
     control.call(this,c,l,a,ctrls);
   };
@@ -3689,7 +3689,7 @@ var factor=1.25;
   };
 
 
-  //~ Buttons ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Buttons ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var button=function(c,l,a,ctrls){
     control.call(this,c,l,a,ctrls);
   };
@@ -3742,7 +3742,7 @@ var factor=1.25;
 
   };
 
-  //~ Icon
+  // Icon
   var buttonI=function(c,l,a,ctrls){
     control.call(this,c,l,a,ctrls);
   };
@@ -3766,7 +3766,7 @@ var factor=1.25;
 
         pushStyle();
 
-          //~ rectMode(CENTER);
+          // rectMode(CENTER);
 
           fill(p.fill);
           stroke(p.stroke);
@@ -3822,7 +3822,7 @@ var factor=1.25;
     }
   };
 
-  //~ Color
+  // Color
   var buttonC=function(c,l,a,ctrls){
     control.call(this,c,l,a,ctrls);
   };
@@ -3866,22 +3866,22 @@ var factor=1.25;
   buttonC.prototype.clicked=function(){
     if(this.hit && app.focus===this.i){ commands(this.c, this.g); }
   };
-  //~ buttonC.prototype.moved=function(x,y){
+  // buttonC.prototype.moved=function(x,y){
 //~
-    //~ if(app.mouseX>x+this.x &&
-       //~ app.mouseX<x+this.x+this.w &&
-       //~ app.mouseY>y+this.y &&
-       //~ app.mouseY<y+this.y+this.h){
-      //~ this.hit=true;
-      //~ app.focus=this.i;
-    //~ }
-    //~ else{
-      //~ this.parent.hit=false;
-    //~ }
+    // if(app.mouseX>x+this.x &&
+       // app.mouseX<x+this.x+this.w &&
+       // app.mouseY>y+this.y &&
+       // app.mouseY<y+this.y+this.h){
+      // this.hit=true;
+      // app.focus=this.i;
+    // }
+    // else{
+      // this.parent.hit=false;
+    // }
 //~
-  //~ };
+  // };
 
-  //~ Return Property
+  // Return Property
   var buttonP=function(c,l,a,ctrls){
     control.call(this,c,l,a,ctrls);
   };
@@ -3905,7 +3905,7 @@ var factor=1.25;
 
             if(app.left){ d=1; }
 
-            //~ fill(p.g);
+            // fill(p.g);
             stroke(p.strokeH);
             strokeWeight(p.weightH);
             cursor(p.k);
@@ -3964,7 +3964,7 @@ var factor=1.25;
 
 
 
-  //~ Shape
+  // Shape
   var buttonS=function(c,l,a,ctrls){
     control.call(this,c,l,a,ctrls);
   };
@@ -4002,7 +4002,7 @@ var factor=1.25;
             noStroke();
           }
 
-          //~ if(app.current===p.c){ fill(getColor(CLRS.GRAY,25)); }
+          // if(app.current===p.c){ fill(getColor(CLRS.GRAY,25)); }
 
           rect(d, d, p.w, p.h, p.r);
 
@@ -4029,7 +4029,7 @@ var factor=1.25;
     }
   };
 
-  //~ Toggle
+  // Toggle
   var buttonT=function(c,l,a,ctrls){
     control.call(this,c,l,a,ctrls);
   };
@@ -4141,7 +4141,7 @@ var factor=1.25;
 
             noFill();
             stroke(CLRS.LINE);
-            //~ if(p.hit){ stroke(p.fillH); }
+            // if(p.hit){ stroke(p.fillH); }
 
             strokeWeight(2);
 
@@ -4249,7 +4249,7 @@ var factor=1.25;
 
         pushStyle();
 
-          //~ rectMode(CENTER);
+          // rectMode(CENTER);
 
           fill(p.fill);
           noFill();
@@ -4268,9 +4268,9 @@ var factor=1.25;
           }
 
           if(p.v){ fill(CLRS.Gray10); }
-          //~ if(app.current===p.c){ fill(getColor(CLRS.GRAY,25)); }
+          // if(app.current===p.c){ fill(getColor(CLRS.GRAY,25)); }
 
-          //~ stroke(CLRS.WHITE);
+          // stroke(CLRS.WHITE);
           rect(d, d, p.w, p.h, p.r);
 
           switch(true){
@@ -4281,8 +4281,8 @@ var factor=1.25;
             case (p.c>=COMMANDS.VIEW[0] &&
                   p.c<=COMMANDS.MODIFY[0]):         drawView();   break;
 
-            //~ case (p.c>=COMMANDS.SELECT[0] &&
-                  //~ p.c<=COMMANDS.SELECT_WINDOW[0]):  drawSelect(); break;
+            // case (p.c>=COMMANDS.SELECT[0] &&
+                  // p.c<=COMMANDS.SELECT_WINDOW[0]):  drawSelect(); break;
 
             default:      break;
 
@@ -4296,21 +4296,21 @@ var factor=1.25;
   buttonT.prototype.clicked=function(){
     if(this.hit){
 
-      //~ reset();
+      // reset();
 
       commands(this.c, this.g);
       this.v=!this.v;
-      //~ this.parent.ctrls[0].c=this.c;
-      //~ this.parent.ctrls[0].g=this.g;
+      // this.parent.ctrls[0].c=this.c;
+      // this.parent.ctrls[0].g=this.g;
 
-      //~ this.parent.v=!this.parent.v;
+      // this.parent.v=!this.parent.v;
 
-      //~ app.current=this.c;
+      // app.current=this.c;
 
     }
   };
 
-  //~ Labels ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Labels ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var label=function(c,l,a,ctrls){
     control.call(this,c,l,a,ctrls);
   };
@@ -4357,7 +4357,7 @@ var factor=1.25;
 
           if(p.hit){
             fill(p.tfillH);
-            //~ textSize(p.sizeH);
+            // textSize(p.sizeH);
           }
 
           text(p.g, d, d+p.h/2);
@@ -4368,7 +4368,7 @@ var factor=1.25;
 
   };
 
-  //~ Return property
+  // Return property
   var labelP=function(c,l,a,ctrls){
     control.call(this,c,l,a,ctrls);
   };
@@ -4412,7 +4412,7 @@ var factor=1.25;
 
           if(p.parent.hit && app.debug){
             fill(CLRS.YELLOW);
-            //~ textSize(p.sizeH);
+            // textSize(p.sizeH);
           }
 
           text(getProp(p.c), d, d+p.h/2);
@@ -4423,7 +4423,7 @@ var factor=1.25;
 
   };
 
-  //~ Rotate
+  // Rotate
   var labelR=function(c,l,a,ctrls){
     control.call(this,c,l,a,ctrls);
   };
@@ -4463,13 +4463,13 @@ var factor=1.25;
 
           if(p.hit){
             fill(app.color);
-            //~ textSize(200);
+            // textSize(200);
           }
 
           rotate(-PI/10);
 
           text(p.g, d+5, d);
-          //~ text(p.v(), d+100, d+p.h/2);
+          // text(p.v(), d+100, d+p.h/2);
 
         popStyle();
 
@@ -4489,7 +4489,7 @@ var factor=1.25;
 
   };
 
-  //~ TextBox ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // TextBox ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var textBox=function(c,l,a,ctrls){
     control.call(this,c,l,a,ctrls);
   };
@@ -4506,7 +4506,7 @@ var factor=1.25;
         pushStyle();
 
           textSize(p.size);
-          //~ p.w=textWidth(p.g);
+          // p.w=textWidth(p.g);
 
           fill(p.fill);
           stroke(p.stroke);
@@ -4533,10 +4533,10 @@ var factor=1.25;
 
           if(p.hit){
             fill(p.tfillH);
-            //~ textSize(p.sizeH);
+            // textSize(p.sizeH);
           }
 
-          //~ text(p.g, d+5, d+p.h/2);
+          // text(p.g, d+5, d+p.h/2);
           text(getProp(p.c), d+3, d+p.h/2);
 
         popStyle();
@@ -4546,7 +4546,7 @@ var factor=1.25;
   };
 
 
-  //~ Return property
+  // Return property
   var checkbox=function(c,l,a,ctrls){
     control.call(this,c,l,a,ctrls);
   };
@@ -4564,7 +4564,7 @@ var factor=1.25;
 
           rectMode(CENTER);
           textSize(p.size);
-          //~ p.w=textWidth(p.g);
+          // p.w=textWidth(p.g);
 
           fill(p.fill);
           stroke(p.stroke);
@@ -4601,7 +4601,7 @@ var factor=1.25;
   };
 
 
-  //~ Spacer ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Spacer ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var spacer=function(c,l,a,ctrls){
     control.call(this,c,l,a,ctrls);
   };
@@ -4642,7 +4642,7 @@ var factor=1.25;
   };
 
 
-  //~ Slider ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Slider ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var sliderH=function(c,l,a,ctrls){
     control.call(this,c,l,a,ctrls);
   };
@@ -4664,7 +4664,7 @@ var factor=1.25;
 
           if(p.hit){
 
-            //~ if(app.left){ d=1; }
+            // if(app.left){ d=1; }
 
             fill(p.fillH);
             stroke(p.strokeH);
@@ -4724,12 +4724,12 @@ var factor=1.25;
   };
 
 
-  //~ Strips ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Strips ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  //~ Horizontal
+  // Horizontal
   var menuH=function(c,l,a,ctrls){
     control.call(this,c,l,a,ctrls);
-    this.hitExpand=false;       //~ mouse is over the expand/collapse area
+    this.hitExpand=false;       // mouse is over the expand/collapse area
   };
   menuH.prototype=Object.create(control.prototype);
   menuH.prototype.draw=function(){
@@ -4743,7 +4743,7 @@ var factor=1.25;
 
         pushStyle();
 
-          //~ set width
+          // set width
           if(p.v){ p.w=p.ctrls[0].w*(p.ctrls.length)+1; }
           else   { p.w=p.ctrls[0].w+1;                }
 
@@ -4768,7 +4768,7 @@ var factor=1.25;
             fill(color(48,48,48));
           }
 
-          //~ rect(d+p.w-9, d+1, 8, p.h-2, 0);
+          // rect(d+p.w-9, d+1, 8, p.h-2, 0);
 
           if(p.v){ for(var c in p.ctrls){ p.ctrls[c].draw(); } }
           else   { p.ctrls[0].draw();                          }
@@ -4798,7 +4798,7 @@ var factor=1.25;
 
           textAlign(p.alignX,p.alignY);
 
-          //~ text(p.g, p.w/2, p.h/2);
+          // text(p.g, p.w/2, p.h/2);
 
         popStyle();
 
@@ -4818,11 +4818,11 @@ var factor=1.25;
     }
 
   };
-  //~ menuH.prototype.clickedR=function(){
-    //~ if(this.hit){
-      //~ for(var c in this.ctrls){ this.ctrls[c].clickedR(); }
-    //~ }
-  //~ };
+  // menuH.prototype.clickedR=function(){
+    // if(this.hit){
+      // for(var c in this.ctrls){ this.ctrls[c].clickedR(); }
+    // }
+  // };
   menuH.prototype.moved=function(x,y){
 
     if(app.mouseX>x+this.x &&
@@ -4837,11 +4837,11 @@ var factor=1.25;
          app.mouseY>y+this.y+this.ctrls[0].h-10 &&
          app.mouseY<y+this.y+this.ctrls[0].h){
         this.hitExpand=true;
-        //~ this.v=true;
+        // this.v=true;
       }
       else{
         this.hitExpand=false;
-        //~ this.v=false;
+        // this.v=false;
       }
 
       app.focus=this.i;
@@ -4862,7 +4862,7 @@ var factor=1.25;
 
   };
 
-    //~ Menu Item
+    // Menu Item
   var menuItem=function(c,l,a,ctrls){
     control.call(this,c,l,a,ctrls);
   };
@@ -4900,7 +4900,7 @@ var factor=1.25;
             noStroke();
           }
 
-          //~ if(app.current===p.c){ fill(getColor(CLRS.GRAY,25)); }
+          // if(app.current===p.c){ fill(getColor(CLRS.GRAY,25)); }
 
           rect(d, d, p.w, p.h, p.r);
 
@@ -4942,7 +4942,7 @@ var factor=1.25;
 
   };
 
-  //~ Horizontal
+  // Horizontal
   var stripH=function(c,l,a,ctrls){
     control.call(this,c,l,a,ctrls);
   };
@@ -4958,7 +4958,7 @@ var factor=1.25;
 
         pushStyle();
 
-          //~ set width
+          // set width
           if(p.v){ p.w=p.ctrls[0].w*(p.ctrls.length); }
           else   { p.w=p.ctrls[0].w+1;                }
 
@@ -4983,7 +4983,7 @@ var factor=1.25;
             fill(color(48,48,48));
           }
 
-          //~ rect(d+p.w-9, d+1, 8, p.h-2, 0);
+          // rect(d+p.w-9, d+1, 8, p.h-2, 0);
 
           if(p.v){ for(var c in p.ctrls){ p.ctrls[c].draw(); } }
           else   { p.ctrls[0].draw();                          }
@@ -5013,7 +5013,7 @@ var factor=1.25;
 
           textAlign(p.alignX,p.alignY);
 
-          //~ text(p.g, p.w/2, p.h/2);
+          // text(p.g, p.w/2, p.h/2);
 
         popStyle();
 
@@ -5023,7 +5023,7 @@ var factor=1.25;
   stripH.prototype.clicked=function(){
 
     if(this.hitExpand){
-      //~ this.v=!this.v;
+      // this.v=!this.v;
     }
     else if(this.hit){
       for(var c in this.ctrls){ this.ctrls[c].clicked(); }
@@ -5092,7 +5092,7 @@ var factor=1.25;
 
   };
 
-  //~ Vertical
+  // Vertical
   var stripV=function(c,l,a,ctrls){
     control.call(this,c,l,a,ctrls);
   };
@@ -5108,7 +5108,7 @@ var factor=1.25;
 
         pushStyle();
 
-          //~ set height
+          // set height
           if(p.v){ p.h=p.ctrls[0].h + p.ctrls[1].h*(p.ctrls.length-1); }
           else   { p.h=p.ctrls[0].h;                                   }
 
@@ -5133,7 +5133,7 @@ var factor=1.25;
             fill(color(48,48,48));
           }
 
-          //~ rect(d+p.w-16, d+1, 16, p.ctrls[0].h, 0);
+          // rect(d+p.w-16, d+1, 16, p.ctrls[0].h, 0);
 
           fill(CLRS.Gray_9);
 
@@ -5158,7 +5158,7 @@ var factor=1.25;
 
           textAlign(p.alignX,p.alignY);
 
-          //~ text(p.g, p.w/2, p.h/2);
+          // text(p.g, p.w/2, p.h/2);
 
         popStyle();
 
@@ -5170,10 +5170,10 @@ var factor=1.25;
   };
   stripV.prototype.clicked=function(){
     if(this.hit){
-      //~ if(app.focus===this.i){
-      //~ if(this.hitExpand){
+      // if(app.focus===this.i){
+      // if(this.hitExpand){
         this.v=!this.v;
-      //~ }
+      // }
       for(var c in this.ctrls){ this.ctrls[c].clicked(); }
     }
     process();
@@ -5236,7 +5236,7 @@ var factor=1.25;
 
   };
 
-  //~ Vertical: Color
+  // Vertical: Color
   var stripVC=function(c,l,a,ctrls){
     control.call(this,c,l,a,ctrls);
   };
@@ -5252,7 +5252,7 @@ var factor=1.25;
 
         pushStyle();
 
-          //~ set height
+          // set height
           if(p.v){ p.h=15 + p.ctrls[0].h*4; }
           else   { p.h=15;                  }
 
@@ -5277,7 +5277,7 @@ var factor=1.25;
             fill(color(48,48,48));
           }
 
-          //~ rect(d+p.w-16, d+1, 16, p.ctrls[0].h, 0);
+          // rect(d+p.w-16, d+1, 16, p.ctrls[0].h, 0);
 
           fill(CLRS.Gray_9);
 
@@ -5336,7 +5336,7 @@ var factor=1.25;
   };
 
 
-  //~ Preset ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Preset ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var preset=function(c,l,a,ctrls){
     control.call(this,c,l,a,ctrls);
   };
@@ -5348,7 +5348,7 @@ var factor=1.25;
 
     pushMatrix();
 
-      //~ translate(p.x, p.y);
+      // translate(p.x, p.y);
 
         pushStyle();
 
@@ -5367,7 +5367,7 @@ var factor=1.25;
 
           }
 
-          //~ if(p.v){ fill(getProp(p.g)); }
+          // if(p.v){ fill(getProp(p.g)); }
 
           if(p.x+p.parent.cursor>=20 &&
              p.x+p.parent.cursor<p.parent.w-20){
@@ -5380,8 +5380,8 @@ var factor=1.25;
             textSize(20);
 
             if(p.hit){
-              //~ fill(p.v);
-              //~ textSize(p.sizeH);
+              // fill(p.v);
+              // textSize(p.sizeH);
             }
 
             text(p.v, p.x+p.w/2+p.parent.cursor+d+5, d+p.h/2);
@@ -5445,7 +5445,7 @@ var factor=1.25;
 
   };
 
-  //~ Container ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Container ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var container=function(c,l,a,ctrls){
     control.call(this,c,l,a,ctrls);
   };
@@ -5500,13 +5500,13 @@ var factor=1.25;
 
   };
 
-  //~ Container Scroll ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Container Scroll ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var containerS=function(c,l,a,ctrls){
     control.call(this,c,l,a,ctrls);
 
-    this.hitLeft=   false;  //~ left button
-    this.hitRight=  false;  //~ right button
-    this.cursor=    0;      //~ position of the first item
+    this.hitLeft=   false;  // left button
+    this.hitRight=  false;  // right button
+    this.cursor=    0;      // position of the first item
     this.incr=      this.h*1.618;
 
   };
@@ -5541,12 +5541,12 @@ var factor=1.25;
 
           }
 
-          //~ border
+          // border
           rect(0, 0, p.w, p.h, p.r);
 
           noStroke();
 
-          //~ Scroll left
+          // Scroll left
           fill(CLRS.RED);
 
           if(this.hitLeft && app.left){
@@ -5574,7 +5574,7 @@ var factor=1.25;
 
           fill(CLRS.RED);
 
-          //~ Scroll right
+          // Scroll right
           if(this.hitRight && app.left){
 
             rect(p.w-d-19, 0, 20, p.h-1, p.r);
@@ -5650,7 +5650,7 @@ var factor=1.25;
 
   };
 
-  //~ Container ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Container ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var cnProps=function(c,l,a,ctrls){
     control.call(this,c,l,a,ctrls);
   };
@@ -5689,14 +5689,14 @@ var factor=1.25;
 
           textAlign(p.alignX,p.alignY);
 
-          //~ text(p.g, p.w/2, p.h/2);
+          // text(p.g, p.w/2, p.h/2);
 
         popStyle();
 
-        //~ p.ctrls[0].draw();
+        // p.ctrls[0].draw();
 
         if(getProp(p.c)){
-          //~ for(var c=1; c<p.ctrls.length; c++){ p.ctrls[c].draw(); }
+          // for(var c=1; c<p.ctrls.length; c++){ p.ctrls[c].draw(); }
           p.visible=true;
           for(var c in this.ctrls){ this.ctrls[c].draw(); }
         }
@@ -5725,11 +5725,11 @@ var factor=1.25;
 
         app.focus=this.i;
 
-        //~ if(app.mouseX<x+this.x+20){ this.hitLeft=true;  }
-        //~ else                      { this.hitLeft=false; }
+        // if(app.mouseX<x+this.x+20){ this.hitLeft=true;  }
+        // else                      { this.hitLeft=false; }
 //~
-        //~ if(app.mouseX>x+this.x+this.w-20){ this.hitRight=true; }
-        //~ else                             { this.hitRight=false; }
+        // if(app.mouseX>x+this.x+this.w-20){ this.hitRight=true; }
+        // else                             { this.hitRight=false; }
 
         for(var c in this.ctrls){ this.ctrls[c].moved(x+this.x, y+this.y); }
 
@@ -5741,12 +5741,12 @@ var factor=1.25;
 
   };
 
-  //~ Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var grid=function(c,l,a,ctrls){
 
     control.call(this,c,l,a,ctrls);
 
-    app.factor=     this.h/22;   //~ required for initial grid height
+    app.factor=     this.h/22;   // required for initial grid height
 
     this.shapes=    [];
     this.Temp=      0;
@@ -5764,7 +5764,18 @@ var factor=1.25;
 
   };
   grid.prototype=Object.create(control.prototype);
+  
+  var hexToRGB=function(hexStr){
+    // note: hexStr should be #rrggbb
+    var hex = parseInt(hexStr.substring(1), 16);
+    var r = (hex & 0xff0000) >> 16;
+    var g = (hex & 0x00ff00) >> 8;
+    var b = hex & 0x0000ff;
+    return color(r,g,b, document.getElementById("fillalpha").value/100*255);
+  }
   grid.prototype.draw=function(){
+
+    // println(document.getElementById("fillalpha").value);
 
     this.stg=app.stg;
 
@@ -5772,19 +5783,22 @@ var factor=1.25;
     var d=0;
     var incr=1/app.factor;
 
+
+
     var border=function(){
 
       pushStyle();
 
-          fill(p.fill);
+          fill(hexToRGB(document.getElementById("fillcolor").value));
           stroke(p.stroke);
           strokeWeight(p.weight);
 
-          if(p.hit){
-            fill(p.fillH);
-            stroke(p.strokeH);
-            strokeWeight(p.weightH);
-          }
+          // if(p.hit){
+            // fill(p.fillH);
+            // fill(&c);
+            // stroke(p.strokeH);
+            // strokeWeight(p.weightH);
+          // }
 
           rect(d, d, p.w, p.h, p.r);
 
@@ -5853,7 +5867,7 @@ var factor=1.25;
 
         }
 
-        //~ Left
+        // Left
         for(var n=p.originX-factor; n>-p.w/2; n-=factor){
 
           if(n< p.w/2 &&
@@ -5871,7 +5885,7 @@ var factor=1.25;
 
         }
 
-        //~ Right
+        // Right
         count=1;
         for(var n=p.originX+factor; n<p.w/2; n+=factor){
 
@@ -5900,7 +5914,7 @@ var factor=1.25;
 
         }
 
-        //~ Bottom
+        // Bottom
         count=1;
         for(var n=-p.originY-factor; n>-p.h/2; n-=factor){
 
@@ -5918,7 +5932,7 @@ var factor=1.25;
 
         }
 
-        //~ Top
+        // Top
         count=1;
         for(var n=-p.originY+factor; n<p.h/2; n+=factor){
 
@@ -5951,12 +5965,12 @@ var factor=1.25;
         if(p.originX>-p.w/2 &&
            p.originY< p.h/2 &&
            p.originY>-p.h/2){
-          triangle(-p.w/2, y, -p.w/2+7, y+3, -p.w/2+7, y-3);   //~ left
+          triangle(-p.w/2, y, -p.w/2+7, y+3, -p.w/2+7, y-3);   // left
         }
         if(p.originX<p.w/2 &&
            p.originY< p.h/2 &&
            p.originY>-p.h/2){
-          triangle( p.w/2, y,  p.w/2-7, y+3,  p.w/2-7, y-3);   //~ right
+          triangle( p.w/2, y,  p.w/2-7, y+3,  p.w/2-7, y-3);   // right
         }
 
       }
@@ -5967,12 +5981,12 @@ var factor=1.25;
         if(p.originY>-p.h/2 &&
            p.originX< p.w/2 &&
            p.originX>-p.w/2){
-          triangle( x,  p.h/2, x+3,  p.h/2-7, x-3,  p.h/2-7); //~ top
+          triangle( x,  p.h/2, x+3,  p.h/2-7, x-3,  p.h/2-7); // top
         }
         if(p.originY< p.h/2 &&
            p.originX< p.w/2 &&
            p.originX>-p.w/2){
-          triangle( x, -p.h/2, x+3, -p.h/2+7, x-3, -p.h/2+7); //~ bottom
+          triangle( x, -p.h/2, x+3, -p.h/2+7, x-3, -p.h/2+7); // bottom
         }
 
       }
@@ -5989,7 +6003,7 @@ var factor=1.25;
 
       if(document.getElementById("ticksx").checked){
 
-        //~ Left
+        // Left
         for(var n=p.originX-factor; n>-p.w/2; n-=factor){
 
           if(p.originX< p.w/2 &&
@@ -6008,7 +6022,7 @@ var factor=1.25;
 
         }
 
-        //~ Right
+        // Right
         count=1;
         for(var n=p.originX+factor; n<p.w/2; n+=factor){
 
@@ -6031,7 +6045,7 @@ var factor=1.25;
       }
       if(document.getElementById("ticksy").checked){
 
-        //~ Top
+        // Top
         count=1;
         for(var n=-p.originY-factor; n>-p.h/2; n-=factor){
 
@@ -6051,7 +6065,7 @@ var factor=1.25;
 
         }
 
-        //~ Bottom
+        // Bottom
         count=1;
         for(var n=-p.originY+factor; n<p.h/2; n+=factor){
 
@@ -6093,7 +6107,7 @@ var factor=1.25;
 
           if(document.getElementById("labelsx").checked){
 
-            //~ Top
+            // Top
             for(var n=p.originY-factor; n>-p.h/2; n-=factor){
 
               if(n< p.h/2 &&
@@ -6115,7 +6129,7 @@ var factor=1.25;
 
             }
 
-            //~ Bottom
+            // Bottom
             count=1;
 
             for(var n=p.originY+factor; n<p.h/2; n+=factor){
@@ -6143,9 +6157,9 @@ var factor=1.25;
 
           textAlign(CENTER,TOP);
 
-          if(document.getElementById("labelsx").checked){
+          if(document.getElementById("labelsy").checked){
 
-            //~ Right
+            // Right
             count=1;
 
             for(var n=-p.originX-factor; n>-p.w/2; n-=factor){
@@ -6169,7 +6183,7 @@ var factor=1.25;
 
             }
 
-            //~ Left
+            // Left
             count=1;
 
             for(var n=-p.originX+factor; n<p.w/2; n+=factor){
@@ -6211,22 +6225,22 @@ var factor=1.25;
           fill(CLRS.Gray8);
           textFont(createFont('fantasy'));
 
-          //~ Quadrant I
+          // Quadrant I
           textAlign(CENTER,CENTER);
 
           text("I", p.originX+offset, p.originY-offset);
 
-          //~ Quadrant II
+          // Quadrant II
           textAlign(CENTER,CENTER);
 
           text("II", p.originX-offset, p.originY-offset);
 
-          //~ Quadrant III
+          // Quadrant III
           textAlign(CENTER,CENTER);
 
           text("III",p.originX-offset, p.originY+offset);
 
-          //~ Quadrant IV
+          // Quadrant IV
           textAlign(CENTER,CENTER);
 
           text("IV", p.originX+offset, p.originY+offset);
@@ -6249,7 +6263,7 @@ var factor=1.25;
 
           pushMatrix();
 
-            //~ resetMatrix();
+            // resetMatrix();
             translate(0.5, 0.5);
 
               rectMode(CENTER);
@@ -6261,22 +6275,22 @@ var factor=1.25;
 
               if(sz===0){
 
-                //~ horizontal
+                // horizontal
                 line(p.x,          app.mouseY, app.mouseX-4, app.mouseY);
                 line(app.mouseX+4, app.mouseY, p.x+p.w,      app.mouseY);
 
-                //~ vertical
+                // vertical
                 line(app.mouseX, p.y,          app.mouseX, app.mouseY-4);
                 line(app.mouseX, app.mouseY+4, app.mouseX, p.y+p.h);
 
               }
               else{
 
-                //~ horizontal
+                // horizontal
                 line(app.mouseX-sz, app.mouseY, app.mouseX-4,  app.mouseY);
                 line(app.mouseX+4,  app.mouseY, app.mouseX+sz, app.mouseY);
 
-                //~ vertical
+                // vertical
                 line(app.mouseX, app.mouseY-4, app.mouseX, app.mouseY-sz);
                 line(app.mouseX, app.mouseY+4, app.mouseX, app.mouseY+sz);
 
@@ -6300,7 +6314,7 @@ var factor=1.25;
 
         case COMMANDS.P_DEFAULT[0]:
 
-          //~ Point is saved on initial click
+          // Point is saved on initial click
           break;
 
         case COMMANDS.L_SEGMENT2P[0]:
@@ -6332,57 +6346,57 @@ var factor=1.25;
 
         case COMMANDS.C_CENTERP[0]:
 
-          //~ if(p.vertices.length===1){
+          // if(p.vertices.length===1){
 //~
-            //~ noFill();
-            //~ stroke(app.stroke);
-            //~ strokeWeight(app.lineweight);
+            // noFill();
+            // stroke(app.stroke);
+            // strokeWeight(app.lineweight);
 //~
-            //~ line(app.mouseX,  app.mouseY, app.vertices[0].x, app.vertices[0].y);
+            // line(app.mouseX,  app.mouseY, app.vertices[0].x, app.vertices[0].y);
 //~
-            //~ fill(app.fill);
-            //~ noStroke();
-            //~ strokeWeight(0);
+            // fill(app.fill);
+            // noStroke();
+            // strokeWeight(0);
 //~
-            //~ ellipse(p.vertices[0].x, p.vertices[0].y, app.pSize, app.pSize);
-            //~ ellipse(app.mouseX,      app.mouseY,      app.pSize, app.pSize);
+            // ellipse(p.vertices[0].x, p.vertices[0].y, app.pSize, app.pSize);
+            // ellipse(app.mouseX,      app.mouseY,      app.pSize, app.pSize);
 //~
-            //~ noFill();
-            //~ stroke(app.stroke);
-            //~ strokeWeight(app.lineweight);
+            // noFill();
+            // stroke(app.stroke);
+            // strokeWeight(app.lineweight);
 //~
-            //~ var r=2*dist(p.vertices[0].x, p.vertices[0].y, app.mouseX, app.mouseY);
+            // var r=2*dist(p.vertices[0].x, p.vertices[0].y, app.mouseX, app.mouseY);
 //~
-            //~ ellipse(p.vertices[0].x, p.vertices[0].y, r, r);
+            // ellipse(p.vertices[0].x, p.vertices[0].y, r, r);
 //~
-          //~ }
+          // }
 
           break;
 
         case COMMANDS.Q_RECTANGLE[0]:
 
-          //~ if(p.vertices.length===1){
+          // if(p.vertices.length===1){
 //~
-            //~ noFill();
-            //~ stroke(app.stroke);
-            //~ strokeWeight(app.lineweight);
+            // noFill();
+            // stroke(app.stroke);
+            // strokeWeight(app.lineweight);
 //~
-            //~ fill(app.fill);
-            //~ noStroke();
-            //~ strokeWeight(0);
+            // fill(app.fill);
+            // noStroke();
+            // strokeWeight(0);
 //~
-            //~ ellipse(p.vertices[0].x, p.vertices[0].y, app.pSize, app.pSize);
-            //~ ellipse(app.mouseX,    app.mouseY,    app.pSize, app.pSize);
+            // ellipse(p.vertices[0].x, p.vertices[0].y, app.pSize, app.pSize);
+            // ellipse(app.mouseX,    app.mouseY,    app.pSize, app.pSize);
 //~
-            //~ noFill();
-            //~ stroke(app.stroke);
-            //~ strokeWeight(app.lineweight);
+            // noFill();
+            // stroke(app.stroke);
+            // strokeWeight(app.lineweight);
 //~
-            //~ var r=dist(p.vertices[0].x, p.vertices[0].y, app.mouseX, app.mouseY);
+            // var r=dist(p.vertices[0].x, p.vertices[0].y, app.mouseX, app.mouseY);
 //~
-            //~ rect(p.vertices[0].x, p.vertices[0].y, r, r);
+            // rect(p.vertices[0].x, p.vertices[0].y, r, r);
 //~
-          //~ }
+          // }
 
           break;
 
@@ -6394,6 +6408,9 @@ var factor=1.25;
 
     pushMatrix();
 
+      p.w=document.getElementById("dwg").clientWidth;
+      p.h=document.getElementById("dwg").clientHeight;
+    
       translate(p.x+p.w/2,
                 p.y+p.h/2);
 
@@ -6419,12 +6436,19 @@ var factor=1.25;
 
       drawTemp();
 
+      if(document.getElementById("gmenudisplay").checked){
+        document.getElementById("gridmenu").style.display="inline";
+      }
+      else{
+        document.getElementById("gridmenu").style.display="none";
+      }
+
     popMatrix();
 
     for(var c in this.ctrls){ p.ctrls[c].draw(0,0); }
 
     if(p.hit && app.focus===p.i){
-      //~ ARROW, CROSS, HAND, MOVE, TEXT, WAIT
+      // ARROW, CROSS, HAND, MOVE, TEXT, WAIT
       if(app.current==COMMANDS.SELECT[0]){
         cursor(ARROW);
       }
@@ -6449,11 +6473,11 @@ var factor=1.25;
     noStroke();
     fill(CLRS.Black);
 
-    //~ rect(0, 0, p.x,       app.height);
-    //~ rect(0, 0, app.width, p.y-1);
+    // rect(0, 0, p.x,       app.height);
+    // rect(0, 0, app.width, p.y-1);
 //~
-    //~ rect(p.x+p.w+1, 0,       app.width, app.height);
-    //~ rect(p.x,     p.y+p.h, app.width, app.height-p.y-p.h);
+    // rect(p.x+p.w+1, 0,       app.width, app.height);
+    // rect(p.x,     p.y+p.h, app.width, app.height-p.y-p.h);
 
   };
   grid.prototype.clicked=function(){
@@ -6472,16 +6496,16 @@ var factor=1.25;
 
               break;
 
-            case COMMANDS.P_DEFAULT[0]: //~ Point:  Default
+            case COMMANDS.P_DEFAULT[0]: // Point:  Default
 
               this.shapes.push(
                 new Point(getGUID(), this, app.gridX, app.gridY));
                 app.stack.push(app.current);
-                //~ println(app.stack);
+                // println(app.stack);
 
               break;
 
-            case COMMANDS.L_SEGMENT2P[0]:  //~ Line:  2 point
+            case COMMANDS.L_SEGMENT2P[0]:  // Line:  2 point
 
               if(this.Temp===0){
 
@@ -6504,11 +6528,11 @@ var factor=1.25;
 
               break;
 
-            case COMMANDS.C_CENTERP[0]:  //~ Circle:  Center-Point
+            case COMMANDS.C_CENTERP[0]:  // Circle:  Center-Point
 
               break;
 
-            case COMMANDS.Q_RECTANGLE[0]:  //~ Quad:  Rectangle
+            case COMMANDS.Q_RECTANGLE[0]:  // Quad:  Rectangle
 
 
               break;
@@ -6558,7 +6582,7 @@ var factor=1.25;
       this.hit=false;
     }
 
-    //~ for(var c in this.ctrls){ this.ctrls[c].moved(x,y); }
+    // for(var c in this.ctrls){ this.ctrls[c].moved(x,y); }
 
   };
   grid.prototype.dragged=function(x,y){
@@ -6572,7 +6596,7 @@ var factor=1.25;
            app.mouseY<this.y+this.h &&
            app.mouseY>this.y){
 
-          //~ cursor(MOVE);
+          // cursor(MOVE);
           this.originX=app.mouseX-this.x-this.w/2-this.offsetX;
           this.originY=app.mouseY-this.y-this.h/2+this.offsetY;
 
@@ -6622,28 +6646,28 @@ var factor=1.25;
 
   var main=function(){
 
-    background(CLRS.GRID);
+    // background(CLRS.ORANGE);
 
-    //~ if(n<100){ n++; }
+    // if(n<100){ n++; }
 
-    //~ app.frameRate=frameCount;
+    // app.frameRate=frameCount;
     //~
-    //~ frameRate(app.frameRate);
+    // frameRate(app.frameRate);
 
     for(var c in app.ctrls){ app.ctrls[c].draw(); }
 
-    //~ text(modelX(app.mouseX,app.mouseY,0), 100, 400);
+    // text(modelX(app.mouseX,app.mouseY,0), 100, 400);
 
   };
 
-  //~ translate(0.5,0.5);
+  // translate(0.5,0.5);
 
   var draw=function(){ process(); };
 
-  //~ Events ===========================================================
+  // Events ===========================================================
 
 
-  //~ Mouse ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Mouse ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var mouseClicked=function(){
     switch(mouseButton){
 
@@ -6659,7 +6683,7 @@ var factor=1.25;
 
       case CENTER:
 
-        //~ for(var c in app.ctrls){ app.ctrls[c].clicked() }
+        // for(var c in app.ctrls){ app.ctrls[c].clicked() }
         break;
 
       default:    break;
@@ -6674,7 +6698,7 @@ var factor=1.25;
     process();
   };
   var mouseDragged=function(){
-    //~ app.left=true;
+    // app.left=true;
     app.mouseX=mouseX;
     app.mouseY=mouseY;
     for(var c in app.ctrls) { app.ctrls[c].dragged(); }
@@ -6717,7 +6741,7 @@ var factor=1.25;
     process();
   };
 
-  //~ Keys ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Keys ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var keyPressed=function(){
 
     if(keyCode===32){
@@ -6731,15 +6755,15 @@ var factor=1.25;
       case KEYCODES.CONTROL &&
            KEYCODES.Z:
 
-           //~ commands(COMMANDS.UNDO[0]);
+           // commands(COMMANDS.UNDO[0]);
            break;
 
-      case KEYCODES.STG: //~ F7
+      case KEYCODES.STG: // F7
 
         commands(COMMANDS.STG[0]);
         break;
 
-      case KEYCODES.ORTHO:      //~ F8
+      case KEYCODES.ORTHO:      // F8
 
         commands(COMMANDS.ORTHO[0]);
         break;
@@ -6750,7 +6774,7 @@ var factor=1.25;
 
     app.keys[keyCode]=true;
 
-    //~ for(var c in app.ctrls){ app.ctrls[c].pressed(); }
+    // for(var c in app.ctrls){ app.ctrls[c].pressed(); }
 
   };
   var keyReleased=function(){
@@ -6787,9 +6811,9 @@ var factor=1.25;
   };
 
 
-  //~ Initialize =======================================================
+  // Initialize =======================================================
 
-  //~ Load Controls ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Load Controls ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   var getPoints=function(parent){
 
@@ -6801,20 +6825,20 @@ var factor=1.25;
             new propL(CLRS.TRANSPARENT, CLRS.Gray7, CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
-    //~ vertices ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    //~ POINT:            [ -100, 'Point',            'POINT'         ],
-    //~ P_OBJECT:         [ -101, 'P_Object',         'P_OBJECT'      ],
-    //~ P_INTERSECT:      [ -102, 'P_Intersect',      'P_INTERSECT'   ],
-    //~ P_MIDPOINT:       [ -103, 'P_Midpoint',       'P_MIDPOINT'    ],
+    // vertices ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // POINT:            [ -100, 'Point',            'POINT'         ],
+    // P_OBJECT:         [ -101, 'P_Object',         'P_OBJECT'      ],
+    // P_INTERSECT:      [ -102, 'P_Intersect',      'P_INTERSECT'   ],
+    // P_MIDPOINT:       [ -103, 'P_Midpoint',       'P_MIDPOINT'    ],
 
-    //~ for(var n in COMMANDS){
+    // for(var n in COMMANDS){
 
-      //~ ctrls.push(new buttonS(
-                  //~ new propC(getGUID(), cn, n*w, 0, w, w, 0, false, COMMANDS[n], COMMANDS[n]),
-                  //~ new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
-                  //~ new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
+      // ctrls.push(new buttonS(
+                  // new propC(getGUID(), cn, n*w, 0, w, w, 0, false, COMMANDS[n], COMMANDS[n]),
+                  // new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                  // new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
-    //~ }
+    // }
 
     ctrls.push(new menuItem(
                 new propC(getGUID(), cn, 0, 0, w, w, 0, HAND, false, COMMANDS.P_DEFAULT[0], COMMANDS.P_DEFAULT[1]),
@@ -6836,15 +6860,15 @@ var factor=1.25;
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
-    //~ ctrls.push(new buttonS(
-                //~ new propC(getGUID(), cn, 4*w, 0, w, w, 0, HAND, false, COMMANDS.P_INTERSECT[0], COMMANDS.P_INTERSECT[1]),
-                //~ new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
-                //~ new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
+    // ctrls.push(new buttonS(
+                // new propC(getGUID(), cn, 4*w, 0, w, w, 0, HAND, false, COMMANDS.P_INTERSECT[0], COMMANDS.P_INTERSECT[1]),
+                // new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                // new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
-    //~ ctrls.push(new buttonS(
-                //~ new propC(getGUID(), cn, 5*w, 0, w, w, 0, HAND, false, COMMANDS.P_MIDPOINT[0], COMMANDS.P_MIDPOINT[1]),
-                //~ new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
-                //~ new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
+    // ctrls.push(new buttonS(
+                // new propC(getGUID(), cn, 5*w, 0, w, w, 0, HAND, false, COMMANDS.P_MIDPOINT[0], COMMANDS.P_MIDPOINT[1]),
+                // new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                // new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
 
 
@@ -6863,20 +6887,20 @@ var factor=1.25;
             new propL(CLRS.TRANSPARENT, CLRS.Gray7, CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
-    //~ L_2P:         [-200, 'Line2P',           'LINE2P'                 ],    //~ through 2 vertices
-    //~ L_SEGMENT2P:  [-201,  'Line',             'LINE'                  ],    //~ between 2 vertices
-    //~ L_SEGMENTLEN: [-202,  'Line',             'LINE'                  ],    //~ from point given length
-    //~ L_PERP:       [-203,  'LinePerp',         'LINEPERP'              ],    //~ perpendicular
-    //~ L_PERPB:      [-204,  'LinePerpB',        'LINEPERPB'             ],    //~  perpendicular bisector
-    //~ L_ANGB:       [-205,  'LineAngB',         'LINEANGB'              ],    //~ angle bisector
-    //~ L_PARR:       [-206,  'LineParr',         'LINEPARR'              ],    //~ parallel
-    //~ L_TANGENT:    [-207,  'LineTangent',      'LINETANGENT'           ],    //~ Tangent
-    //~ L_DIAMETER:   [-208,  'LineDiameter',     'LINEDIAMETER'          ],    //~ Diameter
-    //~ L_RADIUS:     [-209,  'LineRadius',       'LINERADIUS'            ],    //~ Radius
+    // L_2P:         [-200, 'Line2P',           'LINE2P'                 ],    // through 2 vertices
+    // L_SEGMENT2P:  [-201,  'Line',             'LINE'                  ],    // between 2 vertices
+    // L_SEGMENTLEN: [-202,  'Line',             'LINE'                  ],    // from point given length
+    // L_PERP:       [-203,  'LinePerp',         'LINEPERP'              ],    // perpendicular
+    // L_PERPB:      [-204,  'LinePerpB',        'LINEPERPB'             ],    //  perpendicular bisector
+    // L_ANGB:       [-205,  'LineAngB',         'LINEANGB'              ],    // angle bisector
+    // L_PARR:       [-206,  'LineParr',         'LINEPARR'              ],    // parallel
+    // L_TANGENT:    [-207,  'LineTangent',      'LINETANGENT'           ],    // Tangent
+    // L_DIAMETER:   [-208,  'LineDiameter',     'LINEDIAMETER'          ],    // Diameter
+    // L_RADIUS:     [-209,  'LineRadius',       'LINERADIUS'            ],    // Radius
 
-    //~ RAY_2P:       [-210,  'Ray2P',            'RAY2P'                 ],    //~ Ray between 2 vertices
-    //~ V_2P:         [-211,  'Vector2P',         'VECTOR2P'              ],    //~ Vector between 2 vertices
-    //~ V_FP:         [-212,  'VectorFP',         'VECTORFP'              ],    //~ Vector from point
+    // RAY_2P:       [-210,  'Ray2P',            'RAY2P'                 ],    // Ray between 2 vertices
+    // V_2P:         [-211,  'Vector2P',         'VECTOR2P'              ],    // Vector between 2 vertices
+    // V_FP:         [-212,  'VectorFP',         'VECTORFP'              ],    // Vector from point
 
     ctrls.push(new menuItem(
                 new propC(getGUID(), cn, 0*w, 0, w, w, 0, HAND, false, COMMANDS.L_2P[0], COMMANDS.L_2P[1]),
@@ -6963,11 +6987,11 @@ var factor=1.25;
             new propL(CLRS.TRANSPARENT, CLRS.Gray7, CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
-    //~ Triangle (T)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    //~ TRIANGLE:     [-300,  'Triangle',         'TRIANGLE'              ],
-    //~ T_EQUILATERAL:[-301,  'T_Equilateral',    'T_EQUILATERAL'         ],
-    //~ T_ISOSCELES:  [-302,  'T_Isosceles',      'T_ISOSCELES'           ],
-    //~ T_SCALENE:    [-303,  'T_Scalene',        'T_SCALENE'             ],
+    // Triangle (T)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TRIANGLE:     [-300,  'Triangle',         'TRIANGLE'              ],
+    // T_EQUILATERAL:[-301,  'T_Equilateral',    'T_EQUILATERAL'         ],
+    // T_ISOSCELES:  [-302,  'T_Isosceles',      'T_ISOSCELES'           ],
+    // T_SCALENE:    [-303,  'T_Scalene',        'T_SCALENE'             ],
 
     ctrls.push(new menuItem(
                 new propC(getGUID(), cn, 0*w, 0, w, w, 0, HAND, false, COMMANDS.T_EQUILATERAL[0], COMMANDS.T_EQUILATERAL[1]),
@@ -7004,11 +7028,11 @@ var factor=1.25;
             new propL(CLRS.TRANSPARENT, CLRS.Gray7, CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
-    //~ Circle (C)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    //~ CIRCLE:       [-400,  'Circle',           'CIRCLE'                ],
-    //~ C_CENTERP:    [-401,  'CircleCenterP',    'CIRCLECENTERP'         ],    //~ center point
-    //~ C_CENTERR:    [-402,  'CircleCenterR',    'CIRCLECENTERR'         ],    //~ center radius
-    //~ C_3P:         [-403,  'Circle3P',         'CIRCL3P'               ],    //  3 vertices
+    // Circle (C)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // CIRCLE:       [-400,  'Circle',           'CIRCLE'                ],
+    // C_CENTERP:    [-401,  'CircleCenterP',    'CIRCLECENTERP'         ],    // center point
+    // C_CENTERR:    [-402,  'CircleCenterR',    'CIRCLECENTERR'         ],    // center radius
+    // C_3P:         [-403,  'Circle3P',         'CIRCL3P'               ],    //  3 vertices
     ctrls.push(new menuItem(
                 new propC(getGUID(), cn, 0*w, 0, w, w, 0, HAND, false, COMMANDS.C_CENTERP[0], COMMANDS.C_CENTERP[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
@@ -7044,14 +7068,14 @@ var factor=1.25;
             new propL(CLRS.TRANSPARENT, CLRS.Gray7, CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
-    //~ Quadrilateral (C)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    //~ QUADRILATERAL:[1500,  'Quadrilateral',    'QUADRILATERAL'         ],
-    //~ Q_RECTANGLE:  [1501,  'Rectangle',        'RECTANGLE'             ],
-    //~ Q_SQUARE:     [1502,  'Square',           'SQUARE'                ],
-    //~ Q_RHOMBUS:    [1503,  'Rhombus',          'RHOMBUS'               ],
-    //~ Q_PGRAM:      [1504,  'Parallelogram',    'PARALLELOGRAM'         ],    //~ Q_PARALLELOGRAM
-    //~ Q_TRAPEZOID:  [1505,  'Trapezoid',        'TRAPEZOID'             ],
-    //~ Q_KITE:       [1506,  'Kite',             'KITE'                  ],
+    // Quadrilateral (C)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // QUADRILATERAL:[1500,  'Quadrilateral',    'QUADRILATERAL'         ],
+    // Q_RECTANGLE:  [1501,  'Rectangle',        'RECTANGLE'             ],
+    // Q_SQUARE:     [1502,  'Square',           'SQUARE'                ],
+    // Q_RHOMBUS:    [1503,  'Rhombus',          'RHOMBUS'               ],
+    // Q_PGRAM:      [1504,  'Parallelogram',    'PARALLELOGRAM'         ],    // Q_PARALLELOGRAM
+    // Q_TRAPEZOID:  [1505,  'Trapezoid',        'TRAPEZOID'             ],
+    // Q_KITE:       [1506,  'Kite',             'KITE'                  ],
 
     ctrls.push(new menuItem(
                 new propC(getGUID(), cn, 0*w, 0, w, w, 0, HAND, false, COMMANDS.Q_RECTANGLE[0], COMMANDS.Q_RECTANGLE[1]),
@@ -7103,14 +7127,14 @@ var factor=1.25;
             new propL(CLRS.TRANSPARENT, CLRS.Gray7, CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
-    //~ Arc (A)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    //~ ARC:          [-500,  'Arc',              'ARC'                   ],
-    //~ A_2P:         [-501,  'Arc2P',            'ARC2P'                 ],    //~SEMICIRCLETHROUGH2vertices
-    //~ A_1:          [-502,  'Arc1',             'ARC1'                  ],    //~Circulararc
-    //~ A_2:          [-503,  'Arc2',             'ARC2'                  ],    //~CIRCUMCIRCULARARC
-    //~ A_3:          [-504,  'Arc3',             'ARC4'                  ],    //~ CIRCULARSECTOR
-    //~ A_4:          [-505,  'Arc4',             'ARC4'                  ],    //~ CIRCUMCIRCULARSECTOR
-    //~ COMPASS:      [-506,  'Compass',          'COMPASS'               ],    //~ ??
+    // Arc (A)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // ARC:          [-500,  'Arc',              'ARC'                   ],
+    // A_2P:         [-501,  'Arc2P',            'ARC2P'                 ],    //~SEMICIRCLETHROUGH2vertices
+    // A_1:          [-502,  'Arc1',             'ARC1'                  ],    //~Circulararc
+    // A_2:          [-503,  'Arc2',             'ARC2'                  ],    //~CIRCUMCIRCULARARC
+    // A_3:          [-504,  'Arc3',             'ARC4'                  ],    // CIRCULARSECTOR
+    // A_4:          [-505,  'Arc4',             'ARC4'                  ],    // CIRCUMCIRCULARSECTOR
+    // COMPASS:      [-506,  'Compass',          'COMPASS'               ],    // ??
     ctrls.push(new menuItem(
                 new propC(getGUID(), cn, 0*w, 0, w, w, 0, HAND, false, COMMANDS.A_2P[0], COMMANDS.A_2P[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
@@ -7161,11 +7185,11 @@ var factor=1.25;
             new propL(CLRS.TRANSPARENT, CLRS.Gray7, CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
-      //~ Polygon ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    //~ POLYGON:      [-600,  'Polygon',          'POLYGON'               ],
-    //~ POLYGONR:     [-601,  'PolygonR',         'POLYGONR'              ],    //~ regular
-    //~ POLYGONRIGID: [-602,  'PolygonRigid',     'POLYGONRIGID'          ],    //~ Rigid
-    //~ POLYGONV:     [-603,  'PolygonV',         'POLYGONV'              ],    //~ Vector
+      // Polygon ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // POLYGON:      [-600,  'Polygon',          'POLYGON'               ],
+    // POLYGONR:     [-601,  'PolygonR',         'POLYGONR'              ],    // regular
+    // POLYGONRIGID: [-602,  'PolygonRigid',     'POLYGONRIGID'          ],    // Rigid
+    // POLYGONV:     [-603,  'PolygonV',         'POLYGONV'              ],    // Vector
     ctrls.push(new menuItem(
                 new propC(getGUID(), cn, 0*w, 0, w, w, 0, HAND, false, COMMANDS.POLYGONR[0], COMMANDS.POLYGONR[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
@@ -7201,12 +7225,12 @@ var factor=1.25;
             new propL(CLRS.TRANSPARENT, CLRS.Gray7, CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
-    //~ Conics (S) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    //~ CONIC:        [-700,  'Conic',            'CONIC'                 ],
-    //~ S_ELLIPSE:    [-700,  'Ellipse',          'ELLIPSE'               ],
-    //~ S_HYPERBOLA:  [-701,  'Hyperbola',        'HYPERBOLA'             ],
-    //~ S_PARABOLA:   [-702,  'Parabola',         'PARABOLA'              ],
-    //~ S_5VERTICES:    [-703,  'Conic5VERTICES',     'CONIC5VERTICES'    ],
+    // Conics (S) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // CONIC:        [-700,  'Conic',            'CONIC'                 ],
+    // S_ELLIPSE:    [-700,  'Ellipse',          'ELLIPSE'               ],
+    // S_HYPERBOLA:  [-701,  'Hyperbola',        'HYPERBOLA'             ],
+    // S_PARABOLA:   [-702,  'Parabola',         'PARABOLA'              ],
+    // S_5VERTICES:    [-703,  'Conic5VERTICES',     'CONIC5VERTICES'    ],
     ctrls.push(new menuItem(
                 new propC(getGUID(), cn, 0*w, 0, w, w, 0, HAND, false, COMMANDS.CONIC[0], COMMANDS.CONIC[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
@@ -7247,9 +7271,9 @@ var factor=1.25;
             new propL(CLRS.TRANSPARENT, CLRS.Gray7, CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
-    //~ Angle ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    //~ ANGLE:        [-800,  'Angle',            'ANGLE'                 ],
-    //~ ANGLE_SIZE:   [-801,  'AngelSize',        'ANGELSIZE'             ],
+    // Angle ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // ANGLE:        [-800,  'Angle',            'ANGLE'                 ],
+    // ANGLE_SIZE:   [-801,  'AngelSize',        'ANGELSIZE'             ],
     ctrls.push(new menuItem(
                 new propC(getGUID(), cn, 0*w, 0, w, w, 0, HAND, false, COMMANDS.ANGLE[0], COMMANDS.ANGLE[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
@@ -7275,9 +7299,9 @@ var factor=1.25;
             new propL(CLRS.TRANSPARENT, CLRS.Gray7, CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
-    //~ Annotation ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    //~ TEXT:         [-900,  'Text',             'TEXT'                  ],
-    //~ TEXT:         [-901,  'Text',             'TEXT'                  ],
+    // Annotation ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TEXT:         [-900,  'Text',             'TEXT'                  ],
+    // TEXT:         [-901,  'Text',             'TEXT'                  ],
     ctrls.push(new menuItem(
                 new propC(getGUID(), cn, 0*w, 0, w, w, 0, HAND, false, COMMANDS.TEXT[0], COMMANDS.TEXT[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
@@ -7303,20 +7327,20 @@ var factor=1.25;
             new propL(CLRS.TRANSPARENT, CLRS.Gray7, CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
-    //~ MODIFY:       [ 600,  'Modify',           'MODIFY'                ],
-    //~ TRANSLATE:    [ 601,  'Translate',        'TRANSLATE'             ],
-    //~ TRANSVECTOR:  [ 602,  'Transvector',      'TRANSVECTOR'           ],    //~ TranslateByVector
+    // MODIFY:       [ 600,  'Modify',           'MODIFY'                ],
+    // TRANSLATE:    [ 601,  'Translate',        'TRANSLATE'             ],
+    // TRANSVECTOR:  [ 602,  'Transvector',      'TRANSVECTOR'           ],    // TranslateByVector
 
-    //~ REFLECT:      [ 603,  'Reflect',          'REFLECT'               ],
-    //~ REFLECTTLINE: [ 604,  'ReflectLine',      'REFLECTLINE'           ],    //~ ReflectAboutLIne
-    //~ REFLECTPOINT: [ 605,  'ReflectPoint',     'REFLECTPOINT'          ],    //~ ReflectAboutPoint
-    //~ REFLECTCIRCLE:[ 606,  'ReflectCircle',    'REFLECTCIRCLE'         ],    //~ ReflectAboutCircle
+    // REFLECT:      [ 603,  'Reflect',          'REFLECT'               ],
+    // REFLECTTLINE: [ 604,  'ReflectLine',      'REFLECTLINE'           ],    // ReflectAboutLIne
+    // REFLECTPOINT: [ 605,  'ReflectPoint',     'REFLECTPOINT'          ],    // ReflectAboutPoint
+    // REFLECTCIRCLE:[ 606,  'ReflectCircle',    'REFLECTCIRCLE'         ],    // ReflectAboutCircle
 
-    //~ ROTATE:       [ 607,  'Rotate',           'ROTATE'                ],
-    //~ ROTATEPOINT:  [ 608,  'RotatePoint',      'ROTATEPOINT'           ],    //~ RotateAroundPoint
+    // ROTATE:       [ 607,  'Rotate',           'ROTATE'                ],
+    // ROTATEPOINT:  [ 608,  'RotatePoint',      'ROTATEPOINT'           ],    // RotateAroundPoint
 
-    //~ SCALE:        [ 609,  'Scale',            'SCALE'                 ],
-    //~ SHEAR:        [ 610,  'Shear',            'SHEAR'                 ],
+    // SCALE:        [ 609,  'Scale',            'SCALE'                 ],
+    // SHEAR:        [ 610,  'Shear',            'SHEAR'                 ],
 
     ctrls.push(new menuItem(
                 new propC(getGUID(), cn, 0*w, 0, w, w, 0, HAND, false, COMMANDS.TRANSLATE[0], COMMANDS.TRANSLATE[1]),
@@ -7363,14 +7387,14 @@ var factor=1.25;
             new propL(CLRS.TRANSPARENT, CLRS.Gray7, CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
-    //~ MEASURE:      [ 700,  'Measure',          'MEASURE'               ],
-    //~ DISTANCE:     [ 701,  'Distance',         'DISTANCE'              ],
-    //~ PERIMETER:    [ 702,  'Perimeter',        'PERIMETER'             ],
-    //~ AREA:         [ 703,  'Area',             'AREA'                  ],
-    //~ VOLUME:       [ 704,  'Volume',           'VOLUME'                ],
-    //~ RADIUS:       [ 705,  'Radius',           'RADIUS'                ],
-    //~ DIAMETER:     [ 706,  'Diamter',          'DIAMETER'              ],
-    //~ SLOPE:        [ 707,  'Slope',            'SLOPE'                 ],
+    // MEASURE:      [ 700,  'Measure',          'MEASURE'               ],
+    // DISTANCE:     [ 701,  'Distance',         'DISTANCE'              ],
+    // PERIMETER:    [ 702,  'Perimeter',        'PERIMETER'             ],
+    // AREA:         [ 703,  'Area',             'AREA'                  ],
+    // VOLUME:       [ 704,  'Volume',           'VOLUME'                ],
+    // RADIUS:       [ 705,  'Radius',           'RADIUS'                ],
+    // DIAMETER:     [ 706,  'Diamter',          'DIAMETER'              ],
+    // SLOPE:        [ 707,  'Slope',            'SLOPE'                 ],
 
     ctrls.push(new menuItem(
                 new propC(getGUID(), cn, 0*w, 0, w, w, 0, HAND, false, COMMANDS.DISTANCE[0], COMMANDS.DISTANCE[1]),
@@ -7430,7 +7454,7 @@ var factor=1.25;
             new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
-    //~ Labels ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Labels ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ctrls.push(new label(
                 new propC(getGUID(), cn, cn.w/2, 10, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.TELEMETRY[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
@@ -7554,7 +7578,7 @@ var factor=1.25;
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
-    //~ Values ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Values ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ctrls.push(new checkbox(
                 new propC(getGUID(), cn, 105, top+0*h+5, 10, 10, 0, HAND, false, COMMANDS.DEBUG[0], COMMANDS.DEBUG[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
@@ -7670,13 +7694,13 @@ var factor=1.25;
             new propL(parent.fill, f, CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
-    //~ LineTypes ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    //~ LINETYPE:     [ 211,  'Line Type',        'LINE TYPE'             ],
-    //~ LT_HAIRLINE:  [ 212,  'Hairline',         'HAIRLINE'              ],
-    //~ LT_SOLID:     [ 213,  'Solid',            'SOLID'                 ],
-    //~ LT_DASHED:    [ 214,  'Dashed',           'DASHED'                ],
-    //~ LT_DOTTED:    [ 215,  'Dottted',          'DOTTED'                ],
-    //~ LT_DASHDOT:   [ 216,  'DashDot',          'DASHDOT'               ],
+    // LineTypes ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // LINETYPE:     [ 211,  'Line Type',        'LINE TYPE'             ],
+    // LT_HAIRLINE:  [ 212,  'Hairline',         'HAIRLINE'              ],
+    // LT_SOLID:     [ 213,  'Solid',            'SOLID'                 ],
+    // LT_DASHED:    [ 214,  'Dashed',           'DASHED'                ],
+    // LT_DOTTED:    [ 215,  'Dottted',          'DOTTED'                ],
+    // LT_DASHDOT:   [ 216,  'DashDot',          'DASHDOT'               ],
 
     ctrls.push(new buttonS(
                 new propC(getGUID(), cn, 0, 0, w-16, 15, 0, HAND, false, COMMANDS.LT_SOLID[0], COMMANDS.LT_SOLID[1]),
@@ -7721,7 +7745,7 @@ var factor=1.25;
     var l=parent.w-200;
     var ch=app.height-14;
     var w=100;
-    //~ var h=20;
+    // var h=20;
 
     var st=CLRS.Gray5;
     var stH=CLRS.Gray2;
@@ -7733,14 +7757,14 @@ var factor=1.25;
             new propL(parent.fill, f, st, stH, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
-    //~ Colors
+    // Colors
     //~
-    //~ Red       RedOrange
-    //~ Orange    YellowOrange
-    //~ Yellow    YellowGreen
-    //~ Green     BlueGreen
-    //~ Blue      BlueViolet
-    //~ Violet    RedViolet
+    // Red       RedOrange
+    // Orange    YellowOrange
+    // Yellow    YellowGreen
+    // Green     BlueGreen
+    // Blue      BlueViolet
+    // Violet    RedViolet
 
     ctrls.push(new buttonC(
                 new propC(getGUID(), cn, 0,   15, h, h, 0, HAND, false, COMMANDS.STROKE[0], CLRS.Red),
@@ -7835,8 +7859,8 @@ var factor=1.25;
     var h=25;
     var l=parent.w-200;
     var ch=app.height-14;
-    //~ var w=100;
-    //~ var h=20;
+    // var w=100;
+    // var h=20;
 
     var st=CLRS.Gray5;
     var stH=CLRS.Gray2;
@@ -7848,14 +7872,14 @@ var factor=1.25;
             new propL(parent.fill, f, CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
-    //~ Colors
+    // Colors
     //~
-    //~ Red       RedOrange
-    //~ Orange    YellowOrange
-    //~ Yellow    YellowGreen
-    //~ Green     BlueGreen
-    //~ Blue      BlueViolet
-    //~ Violet    RedViolet
+    // Red       RedOrange
+    // Orange    YellowOrange
+    // Yellow    YellowGreen
+    // Green     BlueGreen
+    // Blue      BlueViolet
+    // Violet    RedViolet
 
     ctrls.push(new buttonC(
                 new propC(getGUID(), cn, 0,   15, h, h, 2, HAND, false, COMMANDS.FILL[0], CLRS.Red),
@@ -7959,18 +7983,18 @@ var factor=1.25;
             new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
-    //~ Name
-    //~ Caption
-    //~ Formula
+    // Name
+    // Caption
+    // Formula
     //~
-    //~ Stroke
-    //~ Stroke Alpha
+    // Stroke
+    // Stroke Alpha
     //~
-    //~ Fill
-    //~ Fill Alpha
+    // Fill
+    // Fill Alpha
     //~
-    //~ LineType
-    //~ LineWeight
+    // LineType
+    // LineWeight
 
     ctrls.push(new label(
                 new propC(getGUID(), cn, cn.w/2, 10, 10, 10, 0, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.PROPERTIES[1]),
@@ -8037,10 +8061,10 @@ var factor=1.25;
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
-    //~ ctrls.push(new label(
-                //~ new propC(getGUID(), cn, l+5, top+9*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.LAYER[1]),
-                //~ new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
-                //~ new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
+    // ctrls.push(new label(
+                // new propC(getGUID(), cn, l+5, top+9*h, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.LAYER[1]),
+                // new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                // new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(new textBox(
                 new propC(getGUID(), cn, col1, top+0*h, 100, 14, 0, TEXT, false, COMMANDS.NAME[0], COMMANDS.NAME[1]),
@@ -8072,10 +8096,10 @@ var factor=1.25;
                 new propL(CLRS.BLACK, CLRS.Gray3, CLRS.BLACK, CLRS.BLACK, 0.5, 1),
                 new propA(CLRS.GRAY, CLRS.BLACK, LEFT, CENTER, 10, 11)));
 
-    //~ ctrls.push(new labelP(
-                //~ new propC(getGUID(), cn, l+100, top+9*h, 10, 10, 0, false, COMMANDS.LAYER[0], COMMANDS.LAYER[1]),
-                //~ new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
-                //~ new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
+    // ctrls.push(new labelP(
+                // new propC(getGUID(), cn, l+100, top+9*h, 10, 10, 0, false, COMMANDS.LAYER[0], COMMANDS.LAYER[1]),
+                // new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+                // new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     ctrls.push(getLineTypes(cn));
     ctrls.push(getFill(cn));
@@ -8099,7 +8123,7 @@ var factor=1.25;
             new propL(getColor(color(16,16,16),50), color(16,16,16), CLRS.BLACK, CLRS.GRAY, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
-    //~ Colors
+    // Colors
     ctrls.push(new buttonC(
                 new propC(getGUID(),cn, l+0*h, top, h, h, 0, HAND, false, COMMANDS.STROKE[1] ,CLRS.Red),
                 new propL(CLRS.Red, CLRS.Red, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
@@ -8160,7 +8184,7 @@ var factor=1.25;
                 new propL(getColor(CLRS.RedViolet,90), CLRS.RedViolet, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
-    //~ Gray Scale
+    // Gray Scale
     ctrls.push(new buttonC(
                 new propC(getGUID(),cn, l+0*h, top+2*h+10, h, h, 0, HAND, false, COMMANDS.STROKE[1] ,CLRS.White),
                 new propL(CLRS.White, CLRS.White, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
@@ -8221,7 +8245,7 @@ var factor=1.25;
                 new propL(getColor(CLRS.Black,90), CLRS.Black, CLRS.BLACK, CLRS.BLACK, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
-    //~ Current Color
+    // Current Color
     ctrls.push(new buttonP(
                 new propC(getGUID(),cn, l+5*h+25, top+5*h+15, 40, 40, 0, HAND, false, COMMANDS.COLORG[0], COMMANDS.COLORG[0]),
                 new propL(getColor(CLRS.YELLOW,90), CLRS.YELLOW, CLRS.YELLOW, CLRS.YELLOW, 0.125, 0.25),
@@ -8447,19 +8471,19 @@ var factor=1.25;
     var ctrls=[];
 
     var cn=new grid(
-            new propC(getGUID(), parent, parent.x+10, parent.y+10, parent.w-20, parent.h-20, 5, ARROW, false, COMMANDS.UNDEF[0], 0),
-            new propL(CLRS.GRID, getColor(CLRS.GRID,65), CLRS.WHITE, CLRS.YELLOW, 0.125, 0.25),
+            new propC(getGUID(), parent, parent.x, parent.y, parent.w, parent.h, 5, ARROW, false, COMMANDS.UNDEF[0], 0),
+            new propL(CLRS.GRID, getColor(CLRS.GRID,65), CLRS.WHITE, CLRS.YELLOW, 0, 0),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
-    //~ ctrls.push(new labelR(
-            //~ new propC(getGUID(), cn, cn.w/2, cn.h/2, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.CARTESIA[1]),
-            //~ new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
-            //~ new propA(CLRS.WHITE, CLRS.YELLOW, CENTER, CENTER, 11, 12)));
+    // ctrls.push(new labelR(
+            // new propC(getGUID(), cn, cn.w/2, cn.h/2, 10, 10, 0, false, COMMANDS.UNDEF[0], COMMANDS.CARTESIA[1]),
+            //  new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
+            // new propA(CLRS.WHITE, CLRS.YELLOW, CENTER, CENTER, 11, 12)));
 
-    ctrls.push(new buttonS(
-                new propC(getGUID(), cn, cn.x+cn.w-26, cn.y, 24, 24, 0, HAND, false, COMMANDS.GRIDPROPS[0], COMMANDS.GRIDPROPS[1]),
-                new propL(CLRS.TRANSPARENT, CLRS.TRANSPARENT, CLRS.Gray6, CLRS.Gray3, 0.125, 0.25),
-                new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
+    // ctrls.push(new buttonS(
+    //             new propC(getGUID(), cn, cn.x+cn.w-26, cn.y, 24, 24, 0, HAND, false, COMMANDS.GRIDPROPS[0], COMMANDS.GRIDPROPS[1]),
+    //             new propL(CLRS.TRANSPARENT, CLRS.TRANSPARENT, CLRS.Gray6, CLRS.Gray3, 0.125, 0.25),
+    //             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
     // ctrls.push(getGridProps(cn));
 
@@ -8483,14 +8507,14 @@ var factor=1.25;
             new propL(getColor(CLRS.GRID,40), CLRS.GRID, CLRS.WHITE, CLRS.YELLOW, 0.125, 0.25),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
-    //~ ctrls.push(new buttonS(
-                //~ new propC(getGUID(), cn, 98, 2, 24, 24, 0, false, COMMANDS.GRIDPROPS[0], COMMANDS.GRIDPROPS[1]),
-                //~ new propL(CLRS.TRANSPARENT, CLRS.TRANSPARENT, CLRS.Gray6, CLRS.Gray3, 0.125, 0.25),
-                //~ new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
+    // ctrls.push(new buttonS(
+                // new propC(getGUID(), cn, 98, 2, 24, 24, 0, false, COMMANDS.GRIDPROPS[0], COMMANDS.GRIDPROPS[1]),
+                // new propL(CLRS.TRANSPARENT, CLRS.TRANSPARENT, CLRS.Gray6, CLRS.Gray3, 0.125, 0.25),
+                // new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
-    //~ Labels ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Labels ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    //~ Origin
+    // Origin
     ctrls.push(new label(
                 new propC(getGUID(), cn, 10, top+0*h, 10, 10, 0, HAND, false, COMMANDS.ORIGIN[0], COMMANDS.ORIGIN[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
@@ -8504,7 +8528,7 @@ var factor=1.25;
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
 
-    //~ Axes
+    // Axes
     ctrls.push(new label(
                 new propC(getGUID(), cn, 10, top+2*h, 10, 10, 0, HAND, false, COMMANDS.AXES[0], COMMANDS.AXES[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
@@ -8528,7 +8552,7 @@ var factor=1.25;
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
 
-    //~ Lines
+    // Lines
     ctrls.push(new label(
                 new propC(getGUID(), cn, 10, top+5*h, 10, 10, 0, HAND, false, COMMANDS.LINES[0], COMMANDS.LINES[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
@@ -8551,7 +8575,7 @@ var factor=1.25;
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
 
-    //~ Arrows
+    // Arrows
     ctrls.push(new label(
                 new propC(getGUID(), cn, 10, top+8*h, 10, 10, 0, HAND, false, COMMANDS.ARROWS[0], COMMANDS.ARROWS[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
@@ -8574,7 +8598,7 @@ var factor=1.25;
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
 
-    //~ Ticks
+    // Ticks
     ctrls.push(new label(
                 new propC(getGUID(), cn, 10, top+11*h, 10, 10, 0, HAND, false, COMMANDS.TICKS[0], COMMANDS.TICKS[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
@@ -8597,7 +8621,7 @@ var factor=1.25;
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
 
-    //~ Labels
+    // Labels
     ctrls.push(new label(
                 new propC(getGUID(), cn, 10, top+14*h, 10, 10, 0, HAND, false, COMMANDS.LABELS[0], COMMANDS.LABELS[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
@@ -8620,14 +8644,14 @@ var factor=1.25;
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
 
-    //~ Quadrants
+    // Quadrants
     ctrls.push(new label(
                 new propC(getGUID(), cn, 10, top+17*h, 10, 10, 0, HAND, false, COMMANDS.QUADRANTS[0], COMMANDS.QUADRANTS[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
 
-    //~ Values ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Values ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ctrls.push(new checkbox(
                 new propC(getGUID(), cn, 105, top+0*h+5, 10, 10, 0, HAND, false, COMMANDS.ORIGIN[0], COMMANDS.ORIGIN[1]),
                 new propL(CLRS.BUTTON, CLRS.BUTTONH, CLRS.BUTTONH, CLRS.BUTTON, 0.125, 0.25),
@@ -8708,19 +8732,19 @@ var factor=1.25;
                 new propL(CLRS.Gray8, CLRS.Gray7, CLRS.BLUE, CLRS.ORANGE, 0.125, 0.25),
                 new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11)));
 
-    ctrls.push(getPoints(cn));        //~ Points
-    ctrls.push(getLines(cn));         //~ Lines
-    ctrls.push(getTriangles(cn));     //~ Triangles
-    ctrls.push(getCircles(cn));       //~ Circles
-    ctrls.push(getQuads(cn));         //~ Quads
-    ctrls.push(getArcs(cn));          //~ Arcs
-    ctrls.push(getPolygons(cn));      //~ Polygons
-    ctrls.push(getConics(cn));        //~ Conics
-    ctrls.push(getAngles(cn));        //~ Angles
-    ctrls.push(getAnnotations(cn));   //~ Annotations
+    ctrls.push(getPoints(cn));        // Points
+    ctrls.push(getLines(cn));         // Lines
+    ctrls.push(getTriangles(cn));     // Triangles
+    ctrls.push(getCircles(cn));       // Circles
+    ctrls.push(getQuads(cn));         // Quads
+    ctrls.push(getArcs(cn));          // Arcs
+    ctrls.push(getPolygons(cn));      // Polygons
+    ctrls.push(getConics(cn));        // Conics
+    ctrls.push(getAngles(cn));        // Angles
+    ctrls.push(getAnnotations(cn));   // Annotations
 
-    ctrls.push(getTransform(cn));     //~ Transforms
-    ctrls.push(getMeasure(cn));       //~ Measure
+    ctrls.push(getTransform(cn));     // Transforms
+    ctrls.push(getMeasure(cn));       // Measure
 
     cn.ctrls=ctrls;
 
@@ -8735,13 +8759,14 @@ var factor=1.25;
     var ctrls=[];
 
     var cn=new container(
-            new propC(getGUID(), 0, 0, 0, app.width-1, app.height-1, 3, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[0]),
-            new propL(CLRS.BLACK, CLRS.BLACK, CLRS.Gray9, CLRS.Gray0, 0.125, 0.25),
+            new propC(getGUID(), 0, 0, 0, document.getElementById("dwg").clientWidth,
+                                          document.getElementById("dwg").clientHeight, 3, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[0]),
+            new propL(CLRS.BLACK, CLRS.BLACK, CLRS.Gray9, CLRS.ORANGE, 0, 0),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
-    ctrls.push(getGrid(cn));          //~ Grid
+    ctrls.push(getGrid(cn));          // Grid
 
-    // ctrls.push(getShapes(cn));        //~ Shapes
+    // ctrls.push(getShapes(cn));        // Shapes
 
 
 
@@ -8753,7 +8778,7 @@ var factor=1.25;
     // ctrls.push(getView(cn));
     // ctrls.push(getProperties(cn));
 
-    //~ ctrls.push(getColors(cn));
+    // ctrls.push(getColors(cn));
 
     // ctrls.push(getSamples(cn));
     // ctrls.push(getSelect(cn));
@@ -8762,7 +8787,7 @@ var factor=1.25;
 
     app.ctrls.push(cn);
 
-    //~ println("Zach is a putz");
+    // println("Zach is a putz");
 
 
 
@@ -8770,20 +8795,20 @@ var factor=1.25;
 
   var printCommands=function(){
 
-    //~ saveStrings('Rectangle', COMMANDS.DEBUG);
+    // saveStrings('Rectangle', COMMANDS.DEBUG);
 
-    //~ <?xml version='1.0'?>
-    //~ <CATALOG>
+    // <?xml version='1.0'?>
+    // <CATALOG>
 //~
-      //~ <COMMAND>
-        //~ <NAME>Empire Burlesque</NAME>
-        //~ <KEYCODE>Bob Dylan</KEYCODE>
-        //~ <INDEX>USA</INDEX>
-        //~ <ENGLISH>Columbia</ENGLISH>
-        //~ <SPANISH>10.90</SPANISH>
-      //~ </COMMAND>
+      // <COMMAND>
+        // <NAME>Empire Burlesque</NAME>
+        // <KEYCODE>Bob Dylan</KEYCODE>
+        // <INDEX>USA</INDEX>
+        // <ENGLISH>Columbia</ENGLISH>
+        // <SPANISH>10.90</SPANISH>
+      // </COMMAND>
 //~
-    //~ </CATALOG>
+    // </CATALOG>
 
     println("<?xml version='1.0'?>");
     println("<COMMANDS>");
@@ -8805,7 +8830,7 @@ var factor=1.25;
 
     strokeJoin(ROUND);
 
-    //~ loadCommands();
+    // loadCommands();
 
     size(app.width, app.height);
 
@@ -8829,8 +8854,23 @@ var factor=1.25;
   process();
 
   var fontList = PFont.list();
-  //~ println(fontList);
+  // println(fontList);
 
-  //~ printCommands();
+  // printCommands();
+
+  document.getElementById("gmenudisplay").checked=false;
+
+  document.getElementById("origin").checked=false;
+  document.getElementById("axisx").checked=true;
+  document.getElementById("axisy").checked=true;
+  document.getElementById("linesx").checked=true;
+  document.getElementById("linesy").checked=true;
+  document.getElementById("arrowsx").checked=true;
+  document.getElementById("arrowsy").checked=true;
+  document.getElementById("ticksx").checked=true;
+  document.getElementById("ticksy").checked=true;
+  document.getElementById("labelsx").checked=true;
+  document.getElementById("labelsy").checked=true;
+  document.getElementById("arrowsx").checked=true;
 
 }};
