@@ -781,7 +781,7 @@ var zoomfactor=0;
     STG:            false,  // snap to grid
     fs:             false,  // full screen
 
-    current:        COMMANDS.P_DEFAULT[0],
+    current:        1102,
 
     stack:          [],
 
@@ -6410,7 +6410,7 @@ var factor=1.25;
 
       p.w=document.getElementById("dwg").clientWidth;
       p.h=document.getElementById("dwg").clientHeight;
-    
+      
       translate(p.x+p.w/2,
                 p.y+p.h/2);
 
@@ -6437,10 +6437,10 @@ var factor=1.25;
       drawTemp();
 
       if(document.getElementById("gmenudisplay").checked){
-        document.getElementById("gridmenu").style.display="inline";
+        // document.getElementById("gridmenu").style.display="inline";
       }
       else{
-        document.getElementById("gridmenu").style.display="none";
+        // document.getElementById("gridmenu").style.display="none";
       }
 
     popMatrix();
@@ -6576,7 +6576,9 @@ var factor=1.25;
 
       for(var s in this.shapes){ this.shapes[s].moved(x,y); }
       for(var c in this.ctrls){ this.ctrls[c].moved(x,y); }
-
+      
+      document.getElementById("coordinates").innerText=app.coordinates;
+      
     }
     else{
       this.hit=false;
@@ -6645,7 +6647,9 @@ var factor=1.25;
 
 
   var main=function(){
-
+    
+    app.command=c;
+    
     // background(CLRS.ORANGE);
 
     // if(n<100){ n++; }
