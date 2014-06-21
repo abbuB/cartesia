@@ -8,6 +8,27 @@
       <link rel="stylesheet" href="assets/stylesheets/cartesia.css">
       <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lato:100,300,400">
       <title>Cartesia:  Pythagorian Triples</title>
+      <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+      <script>
+
+        $(document).ready(function(){
+          $("#logo").click(function(){
+            // $("#gridmenu").slideToggle("fast");
+            // $("#properties").slideToggle("fast");
+            $("#properties").animate({width: 'toggle'}, 'fast');
+            // $("#gridmenu").animate({height: 'toggle'}, 'slow');
+            $("#dwg").animate({left: 'toggle'}, 'slow');
+          });
+        });
+
+        $(document).ready(function(){
+          $("#gmenudisplay").click(function(){
+            $("#gridmenu").slideToggle("fast");
+          });
+        });
+        
+      </script>
 
     </head>
 
@@ -16,10 +37,11 @@
       <!-- Page Header -->
       <section class="fixed header">
 
-        <h1 class="logo">
-          <a href="javascript:alert('Cartesia')">cartesia</a>
+        <h1 class="logo" id="logo">
+          <a>cartesia</a>
         </h1>
-
+<!--<input type="search" placeholder="Search">-->
+<!--<input type="submit" value="Search">-->
         <nav class="nav primary-nav">
 
           <ul>
@@ -40,19 +62,19 @@
       </section>
 
       <!-- Properties -->
-      <section class="fixed properties">
+      <section class="fixed properties" id="properties">
 
         <label class="title">Properties</label>
 
           <!-- Name -->
           <label class="col-1" for="name">Name:</label>
-          <input class="text col-2" id="name" title=" name ">
+          <input type="text" class="col-2" id="name" title="name">
           <!-- Caption -->
           <label class="col-1" for="caption" title="Hello World">Caption:</label>
-          <input class="text col-2" id="caption" title=" caption ">
+          <input type="text" class="col-2" id="caption" title="caption">
           <!-- Formula -->
           <label class="col-1" for="formula" title="Hello World">Formula:</label><br>
-          <input class="text col-2" id="formula" title=" formula ">
+          <input type="text" class="col-2" id="formula" title="formula">
           
           <hr class="line">
           
@@ -137,7 +159,7 @@
           <input class="col-2" id="fillalpha" type="range" min="0" max="100" value="16">
 
       </section>
-
+        
       <!-- Drawing -->
       <section id="dwg" class="grid fixed">
         
@@ -148,21 +170,30 @@
 
           <nav>
             
+            <!--<input list="browsers" name="browser">-->
+            <!--  <datalist id="browsers">-->
+            <!--    <option value="Internet Explorer"><img src="assets/images/move.png" alt="lines"></option>-->
+            <!--    <option value="Firefox">-->
+            <!--    <option value="Chrome">-->
+            <!--    <option value="Opera">-->
+            <!--    <option value="Safari">-->
+            <!--  </datalist>-->
+
             <ul class="navbar">
               
               <li>
-                <a href="javascript:alert('Point 1')">Points</a>
+                <input type="radio" class="shape" id="shape">
                 
                 <ul>
-                  <li><a href="javascript:alert('Point 1')">Point 1</a></li>
-                  <li><a href="javascript:alert('Point 2')">Point 2</a></li>
-                  <li><a href="javascript:alert('Point 3')">Point 3</a></li>
+                  <li><input type="radio" class="shape" id="shape"></li>
+                  <li><input type="radio" class="shape" id="shape"></li>
+                  <li><input type="radio" class="shape" id="shape"></li>
                 </ul>
               
               </li>
                 
               <li>
-                <img src="assets/images/move.png" alt="lines">
+                <input type="radio" class="shape" id="shape">
                   
                 <ul>
                     <li>  <a href="javascript:alert('Lines 1')">Line 1</a>  </li>
@@ -176,10 +207,10 @@
               </li>
               
               <li>
-                <a href="#">Triangles</a>
+                <input type="radio" class="shape" id="shape">
               
                 <ul>
-                    <li>  <a href="javascript:alert('Triangle 1')">Triangle 1</a> </li>
+                    <li>Triangle 1</li>
                     <li>  <a href="javascript:alert('Triangle 2')">Triangle 2</a> </li>
                     <li>  <a href="javascript:alert('Triangle 3')">Triangle 3</a> </li>
                 </ul>
@@ -187,7 +218,7 @@
               </li>
               
               <li>
-                <a href="#">Circles</a>
+                <input type="radio" class="shape" id="shape">
                 
                 <ul>
                   <li><a href="javascript:alert('Circle 1')">Circle 1</a></li>
@@ -198,7 +229,7 @@
               </li>
               
               <li>
-                <a href="#">Rectangles</a>
+                <input type="radio" class="shape" id="shape">
                   
                 <ul>
                   <li><a href="javascript:alert('Rectangle 1')">Rectangle 1</a></li>
@@ -213,7 +244,7 @@
               </li>
             
               <li>
-                <a href="#">Arcs</a>
+                <input type="radio" class="shape" id="shape">
                   
                 <ul>
                   <li><a href="javascript:alert('Arcs 1')">Arcs 1</a></li>
@@ -228,7 +259,7 @@
               </li>
 
               <li>
-                <a href="#">Polygons</a>
+                <input type="radio" class="shape" id="shape">
                   
                 <ul>
                   <li><a href="javascript:alert('Circle 1')">Polygon 1</a></li>
@@ -239,7 +270,7 @@
               </li>
               
               <li>
-                <a href="#">Conics</a>
+                <input type="radio" class="shape" id="shape">
                   
                 <ul>
                   <li><a href="javascript:alert('Circle 1')">Conic 1</a></li>
@@ -250,7 +281,7 @@
               </li>
               
               <li>
-                <a href="#">Angles</a>
+                <input type="radio" class="shape" id="shape">
                   
                 <ul>
                   <li><a href="javascript:alert('Circle 1')">Angle 1</a></li>
@@ -261,7 +292,7 @@
               </li>
               
               <li>
-                <a href="#">Annotate</a>
+                <input type="radio" class="shape" id="shape">
                   
                 <ul>
                   <li><a href="javascript:alert('Circle 1')">Annotation 1</a></li>
@@ -272,7 +303,7 @@
               </li>
               
               <li>
-                <a href="#">Transform</a>
+                <input type="radio" class="shape" id="shape">
 
                 <ul>
                   <li><a href="javascript:alert('Circle 1')">Translate</a></li>
@@ -285,7 +316,7 @@
               </li>
 
               <li>
-                <a href="#">Measure</a>
+                <input type="radio" class="shape" id="shape">
 
                 <ul>
                   <li><a href="javascript:alert('Circle 1')">Distance</a></li>
@@ -384,7 +415,9 @@
         </div>
 
         <!-- Footer -->
-        <div class="fixed gridfooter"></div>
+        <div class="fixed gridfooter">
+          <label class="coordinates" id="coordinates">0</label>
+        </div>
 
       </section>
 
