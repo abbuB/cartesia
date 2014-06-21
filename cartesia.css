@@ -56,7 +56,7 @@
   */
   body {
     /*background:     #262626*/
-    background:     #aaa;
+    background:     black;
     color:          #888;
     font:           100 16px/22px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
   }
@@ -89,10 +89,11 @@
   }
   
   .properties {
+    display:        block;
     margin:         3px;
     top:            35px;
-    bottom:         20px;
     left:           0px;
+    bottom:         20px;
     width:          200px;
     vertical-align: baseline;
     border:         none;
@@ -143,7 +144,8 @@
     background:     -webkit-gradient(linear, left top, left bottom, from(#1a1a1a), to(#272727));
     border:         none;
   }
-
+  
+  
   .gridfooter {
     bottom:         5px;
     height:         30px;
@@ -185,14 +187,28 @@
     right:          5px;
   }
 
-  .canvas {
+  .dwg {
+    margin:         20px;
+    display:          absolute;
+    top:            100px;
+    left:           20px;
+    right:          20px;
     -webkit-appearance: none;
     outline:        none;
-    width:          1000px;
-    height:         600px;
+    /*width:          1000px;*/
+    /*height:         600px;*/
+  }
+  
+  .canvas {
+    border:none;
+    margin:         20px;
+    -webkit-appearance: none;
+    /*outline:        none;*/
+    /*width:          1000px;*/
+    /*height:         600px;*/
   }
   .canvas:hover {
-    background:     #ff0000;
+    /*background:     #ff0000;*/
   }
 
   /*
@@ -220,6 +236,7 @@
   }
 
   .shape {
+    -webkit-appearance:button;
     padding:        0;
     margin:         0;
     height:         24px;
@@ -274,7 +291,7 @@
     padding:            0 5px 0 5px;
     margin:             0 5px 0 0;
     height:             16px;
-    width:              95px;
+    width:              100px;
     float:              right;
   }
 
@@ -443,38 +460,57 @@
     color:            white;
   }
 
+  #coordinates {
+    position:         absolute;
+    right:            10px;
+    font:             400 14px/16px "Courier", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    padding:          8px 0 0 0;
+  }
+  
+  
   /*
     ========================================
     Input
     ========================================
   */
   input {
-    -webkit-appearance: none;
-    font:             200 10px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    shape:           pointer;
-    background:       #212830;
-    color:            white;
+    /*-webkit-appearance: none;*/
+    font:             400 10px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background:       none;
     height:           16px;
     outline:          none;
     border:           none;
+    margin:           1px;
   }
   input:hover {
     background:       gray;
-    color:            black;
   }
-  input:focus {
+  input:fo1pxus1px{
     background:       #C0C0C0;
-    color:            black;
+  }
+  
+  input[type="text"] {
+    background:       none;
+    color:            #fff;
+    height:           14px;
+    margin:           1px 5px 1px 0;
+  }
+  input[type="text"]:hover {
+    background:       gray;
+  }
+  input[type="text"]:focus {
+    background:       #C0C0C0;
+    color:            #000;
+    /*border:           1px solid #eeeeee;*/
   }
    
   /* Number *******************************************************************/
   input[type="number"] {
-    -webkit-appearance: none;
-    font:             200 12px/14px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    shape:           pointer;
-    background:       #212830;
+    float:            left;
+    background:       none;
     color:            white;
     height:           16px;
+    width:            40px;
     text-align:       center;
   }
   input[type="number"]:hover {
@@ -485,54 +521,95 @@
     background:       #C0C0C0;
     color:            black;
   }
+  input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button {
+    /*-webkit-appearance: none;*/
+    cursor:           pointer;
+    margin:           0;
+  }
   
   /* Color ********************************************************************/
   input[type="color"] {
-    shape:           pointer;
+    cursor:           pointer;
+    padding:          0;
   }
   input[type="color"]:hover {
     background:       gray;
     color:            black;
+    cursor:           pointer;
   }
   input[type="color"]:focus {
     background:       #C0C0C0;
     color:            black;
   }
-
-  /* Range ********************************************************************/
-  input[type="range"] {
-    -webkit-appearance: none;
-    shape:           pointer;
+  input[type="color"]::-webkit-color-swatch-wrapper {
+    border:           none;
     background:       none;
   }
-  input[type="range"]:hover {
-    background:       black;
-    color:            black;
+  input[type="color"]::-webkit-color-swatch {
+    /*opacity:          0.75;*/
+    border:           none;
+    height:           10px;
+    margin:           -1px 0 0 0;
+    padding:          0;
   }
-  input[type="range"]:focus {
-    background:       black;
-    color:            yellow;
+  
+  /* Range ********************************************************************/
+  /*input[type="range"] {*/
+  /*  -webkit-appearance: none;*/
+  /*  cursor:           pointer;*/
+  /*  background:       none;*/
+  /*  height:           16px;*/
+  /*}*/
+  /*input[type="range"]:hover {*/
+  /*  background:       gray;*/
+  /*  color:            black;*/
+  /*}*/
+  /*input[type="range"]:focus {*/
+  /*  background:       #C0C0C0;*/
+  /*  color:            yellow;*/
+  /*}*/
+  /*input[type="range"]::-webkit-slider-thumb {*/
+  /*   -webkit-appearance: none;*/
+  /*  background-color: #666;*/
+  /*  opacity:          0.75;*/
+  /*  width:            10px;*/
+  /*  height:           14px;*/
+  /*}*/
+
+  input[type=range]{
+    -webkit-appearance: none;
   }
-  input[type="range"]::-webkit-slider-thumb {
-     -webkit-appearance: none;
-    background-color: #666;
-    opacity:          0.75;
-    width:            10px;
+  input[type=range]:focus {
+    outline:          none;
+  }
+  input[type=range]:hover {
+    outline:          none;
+    background:       none;
+    cursor:           pointer;
+  }
+  
+  input[type=range]::-webkit-slider-runnable-track {
+    width:            300px;
+    height:           5px;
+    background:       gray;
+    border:           none;
+    border-radius:    3px;
+  }
+  input[type=range]:focus::-webkit-slider-runnable-track {
+    background:       #ddd;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    border:           none;
     height:           12px;
+    width:            12px;
+    border-radius:    50%;
+    background:       #222;
+    margin-top:       -3px;
   }
 
-  /* Text *********************************************************************/
-  .text {
-    font:             200 12px/14px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  }
-  .text:hover {
-    background:       gray;
-    color:            black;
-  }
-  .text:focus {
-    background:       #C0C0C0;
-    color:            black;
-  }
+
 
   /* Checkbox *****************************************************************/
   input[type="checkbox"] {
@@ -917,7 +994,7 @@
     text-decoration:    none;
   }
   
-  .navbar li:hover, a:hover {
+  .navbar li:hover {
     background-color:   #000;
   }
   
@@ -940,6 +1017,7 @@
   }
   
   .navbar li ul li a {
+    /*-webkit-appearance:button;*/
     border-color:       none;
     /*border-left:        1px solid #1F5065;*/
     /*border-right:       1px solid #1F5065;*/
