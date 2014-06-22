@@ -55,15 +55,17 @@
     ========================================
   */
   body {
-    /*background:     #262626*/
-    background:     black;
+    background:     none;
+    margin:         0;
     color:          #888;
     font:           100 16px/22px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
   }
 
   .fixed {
     position:       absolute;
-    background:     #363636;
+    border:         none;
+    outline:        none;
+    /*background:     #363636;*/
   }
   .fixed:hover {
     /*background:     #000;*/
@@ -74,166 +76,163 @@
     Sections
     ========================================
   */
-  .header {
+  #pageHeader {
+    background:     -webkit-gradient(linear, left top, left bottom, from(#272727), to(#1a1a1a));
     margin:         0;
     border-radius:  0;
     padding:        0 30px 0 0;
-    left:           0px;
-    right:          0px;
-    top:            0px;
+    width:          100%;
     height:         35px;
-    background:     -webkit-gradient(linear, left top, left bottom, from(#272727), to(#1a1a1a));
+    
   }
-  .header:hover {
+  #pageHeader:hover {
     /*border:         1px solid #333;*/
   }
   
-  .properties {
-    display:        block;
-    margin:         3px;
-    top:            35px;
-    left:           0px;
-    bottom:         20px;
-    width:          200px;
-    vertical-align: baseline;
-    border:         none;
-    background:     -webkit-gradient(linear, right top, right bottom, from(#4a4a4a), to(#373737));
-  }
-  .properties:hover {
-    /*background:     #000;*/
-  }
-  
-  .footer {
-    padding:        4px;
-    margin:         0;
-    border-radius:  0;
-    height:         20px;
-    padding-left:   10px;
-    padding-bottom: 3px;
-    bottom:         0;
-    right:          0;
+  #grid {
+    margin:         0px;
     left:           0;
-    font:           200 12px/14px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    color:          #fff;
+    right:          0;
+    top:            35px;
+    bottom:         20px;
+    padding:        3px;
+    background:     blue;
+  }
+
+  #pageFooter {
     background:     -webkit-gradient(linear, left top, left bottom, from(#1a1a1a), to(#272727));
     border:         #000;
+    padding:        4px 4px 4px 10px;
+    margin:         0;
+    height:         20px;
+    padding-bottom: 3px;
+    left:           0;
+    right:          0;
+    bottom:         0;
+    font:           200 12px/14px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color:          #fff;
   }
 
 
+  /*
+    ========================================
+    Canvas
+    ========================================
+  */
+  .canvas {
+    border:         0px solid green;
+    background:     #666;
+    left:           0px;
+    right:          0px;
+    bottom:         0px;
+    top:            0px;
+  }
+  .canvas:hover {
+    /*background:     #ff0000;*/
+  }
+  
+  
   /*
     ========================================
     Grid
     ========================================
   */
-  .grid {
-    margin:         3px;
+
+  /* Grid *************************/
+  #grid {
+    left:           0px;
+    right:          0;
     top:            35px;
     bottom:         20px;
-    left:           203px;
-    right:          0;
-    background:     #555;
-    border:         none;
+    background:     #262626;
   }
   
-  .gridheader {
-    top:            5px;
+  /* Grid Header *************************/
+  #gridHeader {
+    margin:         3px;
+    left:           0px;
+    right:          0px;
+    top:            0px;
     height:         30px;
-    left:           5px;
-    right:          5px;
-    box-shadow:     0px 0px 9px rgba(0,0,0,0.5);
-    background:     -webkit-gradient(linear, left top, left bottom, from(#1a1a1a), to(#272727));
-    border:         none;
+    box-shadow:     0px 0px 9px rgba(0,0,0,0.25);
+    background:     -webkit-gradient(linear, left top, left bottom, from(#4a4a4a), to(#383838));
   }
   
-  
-  .gridfooter {
-    bottom:         5px;
+  /* Grid Footer *************************/
+  #gridFooter {
+    margin:         3px;
+    left:           0px;
+    right:          0px;
+    bottom:         0px;
     height:         30px;
-    left:           5px;
-    right:          5px;
-    box-shadow:     0px 0px 9px rgba(0,0,0,0.5);
-    background:     -webkit-gradient(linear, left top, left bottom, from(#1a1a1a), to(#272727));
-    border:         none;
+    box-shadow:     0px 0px 9px rgba(0,0,0,0.25);
+    background:     -webkit-gradient(linear, left top, left bottom, from(#4a4a4a), to(#383838));
   }
 
-  .gridshapes {
-    top:            50px;
-    bottom:         50px;
-    width:          30px;
-    left:           10px;
-  }
-
-  .gridmenu {
-    padding:        5px 0 0 0;
-    top:            40px;
-    right:          5px;
-    width:          150px;
-    /*background:     #111;*/
+  /* Grid Properties *************************/
+  #gridProperties {
+    margin:         3px;
+    left:           0px;
+    top:            33px;
+    bottom:         33px;
+    width:          200px;
+    box-shadow:     0px 0px 9px rgba(0,0,0,0.25);
+    background:     #4a4a4a;
+    border:         1px solid transparent;
     border-radius:  5px;
+    
+  }
+  #gridProperties:hover {
     border:         1px solid #333;
-    overflow:       hidden;
-    box-shadow:     0px 0px 9px rgba(0,0,0,0.5);
-    background:     #323232;
-  }
-  .gridmenu:hover {
-    background:     #595959;
-    background:     -webkit-gradient(linear, left top, left bottom, from(#1a1a1a), to(#272727));
-    box-shadow:     0px 0px 9px rgba(0,0,0,0.5);
-  }
-  
-  .gridmenudisplay {
-    padding:        0;
-    top:            5px;
-    right:          5px;
   }
 
-  .dwg {
-    margin:         20px;
-    display:          absolute;
-    top:            100px;
-    left:           20px;
-    right:          20px;
-    -webkit-appearance: none;
-    outline:        none;
-    /*width:          1000px;*/
-    /*height:         600px;*/
-  }
-  
-  .canvas {
-    border:none;
-    margin:         20px;
-    -webkit-appearance: none;
-    /*outline:        none;*/
-    /*width:          1000px;*/
-    /*height:         600px;*/
-  }
-  .canvas:hover {
-    /*background:     #ff0000;*/
-  }
-
-  /*
-    ========================================
-    Drawing
-    ========================================
-  */
-  /*.space-vertical {*/
-  /*  height:         5px;*/
-  /*  width:          200px;*/
-  /*}*/
-  /*.space-vertical:hover {*/
-  /*  background:     none;*/
-  /*}*/
-  
-  .title {
+  /* Grid Properties Title *************************/
+  #gridPropertiesTitle {
     font:           600 12px/14px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
     text-align:     center;
     height:         20px;
     width:          200px;
   }
-  .title:hover {
+  #gridPropertiesTitle:hover {
     background:     none;
-    
   }
+  
+  /* Grid Menu *************************/
+  #gridMenu {
+    margin:         3px;
+    padding:        5px 0 0 0;
+    top:            33px;
+    right:          0px;
+    width:          150px;
+    border:         1px solid transparent;
+    border-radius:  5px;
+    overflow:       hidden;
+    box-shadow:     0px 0px 9px rgba(0,0,0,0.25);
+    background:     #4a4a4a;
+    height:         500px;
+  }
+  #gridMenu:hover {
+    border:         1px solid #333;
+  }
+  
+  #gridMenuDisplay {
+    top:            10px;
+    right:          5px;
+  }
+
+  #gridPropertiesDisplay {
+    top:            10px;
+    left:           5px;
+  }
+  
+  .dwg {
+    margin:         3px;
+    border:         1px solid green;
+    background:     blue;
+    width:          100%;
+  }
+  
+
 
   .shape {
     -webkit-appearance:button;
@@ -555,28 +554,6 @@
   }
   
   /* Range ********************************************************************/
-  /*input[type="range"] {*/
-  /*  -webkit-appearance: none;*/
-  /*  cursor:           pointer;*/
-  /*  background:       none;*/
-  /*  height:           16px;*/
-  /*}*/
-  /*input[type="range"]:hover {*/
-  /*  background:       gray;*/
-  /*  color:            black;*/
-  /*}*/
-  /*input[type="range"]:focus {*/
-  /*  background:       #C0C0C0;*/
-  /*  color:            yellow;*/
-  /*}*/
-  /*input[type="range"]::-webkit-slider-thumb {*/
-  /*   -webkit-appearance: none;*/
-  /*  background-color: #666;*/
-  /*  opacity:          0.75;*/
-  /*  width:            10px;*/
-  /*  height:           14px;*/
-  /*}*/
-
   input[type=range]{
     -webkit-appearance: none;
   }
@@ -608,8 +585,6 @@
     background:       #222;
     margin-top:       -3px;
   }
-
-
 
   /* Checkbox *****************************************************************/
   input[type="checkbox"] {
@@ -693,6 +668,7 @@
     text-transform:   uppercase;
     color:            white;
     width:            205px;
+    cursor:           pointer;
   }
   .logo:hover {
     border-top:       3px solid #bbb;
@@ -812,113 +788,6 @@
   .schedule-offset {
     color: #a9b2b9;
   }
-
-
-  /*
-    ============================================================================
-    Menus
-    ============================================================================
-  */
-  /*body, div, h1, h2, h3, h4, h5, h6, p, ul, ol, li, dl, dt, dd, img, form, fieldset, input, textarea, blockquote {*/
-  /*	margin:         0;*/
-  /*	padding:        0;*/
-  	/*border:         1px solid gray;*/
-  /*}*/
-  
-  /*body {*/
-  	/*background:     #909eab url(bg.png);*/
-  	/*font-family:    Helvetica, sans-serif;*/
-  /*	font-size:      12px;*/
-  /*	line-height:    16px;*/
-  /*}*/
-  
-  /*ul {*/
-    /*height:         20px;*/
-  /*}*/
-  /*nav.tlb {*/
-  /*	margin:         0;*/
-  /*	padding:        0;*/
-  /*	text-align:     left;*/
-  /*	height:         55px;*/
-  /*}*/
-  
-  /*nav.tlb ul ul {*/
-  /*  margin:         0;*/
-  /*  padding:        0;*/
-  /*	display:        none;*/
-  /*}*/
-  
-  /*	nav.tlb ul li:hover > ul {*/
-  /*		display:      block;*/
-  /*	}*/
-  
-  
-  /*nav.tlb ul {*/
-  /*	background:     #efefef;*/
-  /*	background:             linear-gradient(top, #efefef 0%, #bbbbbb 100%);*/
-  /*	background:        -moz-linear-gradient(top, #efefef 0%, #bbbbbb 100%);*/
-  /*	background:     -webkit-linear-gradient(top, #efefef 0%,#bbbbbb 100%);*/
-  /*	box-shadow:     0px 0px 9px rgba(0,0,0,0.5);*/
-  /*	padding:        0;*/
-  /*	border-radius:  0px;*/
-  /*	list-style:     none;*/
-  /*	position:       relative;*/
-  /*	display:        inline-table;*/
-  /*}*/
-  /*	nav.tlb ul:after {*/
-  /*		content:      "";*/
-  /*		clear:        both;*/
-  /*		display:      block;*/
-  /*	}*/
-  
-  /*	nav.tlb ul li {*/
-  /*		float:        left;*/
-  /*	}*/
-  /*		nav.tlb ul li:hover {*/
-  /*			background: #4b545f;*/
-  /*			background: black;*/
-  /*			background:         linear-gradient(top, #4f5964 0%, #5f6975 40%);*/
-  /*			background:    -moz-linear-gradient(top, #4f5964 0%, #5f6975 40%);*/
-  /*			background: -webkit-linear-gradient(top, #4f5964 0%,#5f6975 40%);*/
-  /*		}*/
-  /*			nav.tlb ul li:hover a {*/
-  /*				color:    #fff;*/
-  /*			}*/
-  		
-  /*		nav.tlb ul li a {*/
-  /*			display:          block;*/
-  /*			padding:          0px 0px;*/
-  /*			color:            #757575;*/
-  /*			text-decoration:  none;*/
-  /*		}*/
-  			
-  		
-  /*	nav.tlb ul ul {*/
-  /*		background:       #5f6975;*/
-  /*		border-radius:    0px;*/
-  /*		padding:          0;*/
-  /*		position:         absolute;*/
-  /*		top:              100%;*/
-  /*	}*/
-  /*		nav.tlb ul ul li {*/
-  /*			float:          none;*/
-  /*			border-top:     1px solid #6b727c;*/
-  /*			border-bottom:  1px solid #575f6a;*/
-  /*			position:       relative;*/
-  /*		}*/
-  /*			nav.tlb ul ul li a {*/
-  /*				padding:      15px 15px;*/
-  /*				color:        #fff;*/
-  /*			}*/
-  /*				nav.tlb ul ul li a:hover {*/
-  /*					background: #4b545f;*/
-  /*				}*/
-  		
-  /*	nav.tlb ul ul ul {*/
-  /*		position:         absolute;*/
-  /*		left:             100%;*/
-  /*		top:              0;*/
-  /*	}*/
   
 /*  #container{*/
 /*    width:800px;*/
