@@ -709,8 +709,8 @@ var zoomfactor=0;
 
   var app={
 
-    width:          document.getElementById("dwg").clientWidth,
-    height:         document.getElementById("dwg").clientHeight,
+    width:          document.getElementById("grid").clientWidth-20,
+    height:         document.getElementById("grid").clientHeight-20,
 
     debug:          true,
     frameRate:      0,
@@ -6408,8 +6408,8 @@ var factor=1.25;
 
     pushMatrix();
 
-      p.w=document.getElementById("dwg").clientWidth;
-      p.h=document.getElementById("dwg").clientHeight;
+      p.w=document.getElementById("grid").clientWidth-20;
+      p.h=document.getElementById("grid").clientHeight-20;
       
       translate(p.x+p.w/2,
                 p.y+p.h/2);
@@ -6436,12 +6436,12 @@ var factor=1.25;
 
       drawTemp();
 
-      if(document.getElementById("gmenudisplay").checked){
+      // if(document.getElementById("gridMenuDisplay").checked){
         // document.getElementById("gridmenu").style.display="inline";
-      }
-      else{
+      // }
+      // else{
         // document.getElementById("gridmenu").style.display="none";
-      }
+      // }
 
     popMatrix();
 
@@ -8763,9 +8763,9 @@ var factor=1.25;
     var ctrls=[];
 
     var cn=new container(
-            new propC(getGUID(), 0, 0, 0, document.getElementById("dwg").clientWidth,
-                                          document.getElementById("dwg").clientHeight, 3, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[0]),
-            new propL(CLRS.BLACK, CLRS.BLACK, CLRS.Gray9, CLRS.ORANGE, 0, 0),
+            new propC(getGUID(), 0, 0, 0, document.getElementById("grid").clientWidth-10,
+                                          document.getElementById("grid").clientHeight-10, 3, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[0]),
+            new propL(CLRS.TRANSPARENT, CLRS.TRANSPARENT, CLRS.TRANSPARENT, CLRS.TRANSPARENT, 0, 0),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
     ctrls.push(getGrid(cn));          // Grid
@@ -8862,7 +8862,8 @@ var factor=1.25;
 
   // printCommands();
 
-  document.getElementById("gmenudisplay").checked=false;
+  // document.getElementById("gridMenuDisplay").checked=true;
+  // document.getElementById("gridPropertiesDisplay").checked=true;
 
   document.getElementById("origin").checked=false;
   document.getElementById("axisx").checked=true;
