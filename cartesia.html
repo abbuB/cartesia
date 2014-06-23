@@ -37,8 +37,8 @@
 
       <section id="pageHeader" class="fixed">
 
-        <h1 id="logo" class="logo">
-          <a>cartesia</a>
+        <h1 id="logo">
+          <a href="javascript:alert('Logo')">cartesia</a>
         </h1>
 
         <nav id="headerNav" class="nav primary-nav">
@@ -56,18 +56,344 @@
       </section>
       
       <section id="grid" class="fixed">
-        
-        <!--<div class="fixed canvas"></div>-->
-        
+
         <canvas id="canvas" class="fixed"></canvas>
 
-        <div id="gridProperties" class="fixed" >
-          <label id="gridPropertiesTitle">Properties</label>
+        <div id="gridProperties" class="fixed">
+
+           <label id="gridPropertiesTitle">Properties</label>
+
+          <!-- Name -->
+          <label for="name" class="col-1" >Name:</label>
+          <input id="name" type="text" class="col-2" title="name">
+          <!-- Caption -->
+          <label for="caption" class="col-1" title="Hello World">Caption:</label>
+          <input id="caption" type="text" class="col-2" title="caption">
+          <!-- Formula -->
+          <label for="formula" class="col-1" title="Hello World">Formula:</label><br>
+          <input id="formula" type="text" class="col-2" title="formula">
+          
+          <hr class="line">
+          
+          <!-- Line Weight -->
+          <label for="lineweight" class="col-1">LineWeight:</label>
+          <input id="lineweight" type="number" class="col-2" min="0" max="13" value="6">
+
+          <hr class="line">
+          
+          <!-- Line Color -->
+          <label for="linecolor" class="col-1">Line Color:</label>
+          <input id="linecolor" type="color" class="col-2" value="#ffffff" list="colors"/>
+
+            <datalist id="colors">
+
+              <option>#ff0000</option>    <!-- red            -->
+              <option>#FF5100</option>    <!-- red orange     -->
+              <option>#FF7F00</option>    <!-- orange         -->
+              <option>#FFBE00</option>    <!-- yellow orange  -->
+              <option>#FFFF00</option>    <!-- yellow         -->
+
+              <option>#C0FF00</option>    <!-- yellow green   -->
+              <option>#00FF00</option>    <!-- green -->
+              <option>#007F7F</option>    <!-- Blue Green     -->
+              <option>#0000FF</option>    <!-- Blue -->
+              <option>#5C00FF</option>    <!-- Blue Violet    -->
+
+              <option>#7F00FF</option>    <!-- Violet         -->
+              <option>#BF007F</option>    <!-- Red Violet     -->
+              <option>#FFFFFF</option>    <!-- White          -->
+              <option>#DADADA</option>    <!-- Gray1          -->
+              <option>#B6B6B6</option>    <!-- Gray2          -->
+
+              <option>#929292</option>    <!-- Gray3          -->
+              <option>#6D6D6D</option>    <!-- Gray4          -->
+              <option>#494949</option>    <!-- Gray5          -->
+              <option>#242424</option>    <!-- Gray6          -->
+              <option>#000000</option>    <!-- Black          -->
+
+            </datalist>
+
+          <!-- Line Alpha -->
+          <label for="linealpha" class="col-1" >Transparency:</label>
+          <input id="linealpha" type="range" class="col-2" min="0" max="100" value="76">
+
+          <hr class="line">
+          
+          <!-- Fill Color -->
+          <label for="fillcolor" class="col-1">Fill Color:</label>
+          <input  id="fillcolor" type="color" class="col-2" value="#ffffff" list="colors"/>
+
+            <datalist id="colors">
+
+              <option>#ff0000</option>    <!-- red            -->
+              <option>#FF5100</option>    <!-- red orange     -->
+              <option>#FF7F00</option>    <!-- orange         -->
+              <option>#FFBE00</option>    <!-- yellow orange  -->
+              <option>#FFFF00</option>    <!-- yellow         -->
+
+              <option>#C0FF00</option>    <!-- yellow green   -->
+              <option>#00FF00</option>    <!-- green          -->
+              <option>#007F7F</option>    <!-- Blue Green     -->
+              <option>#0000FF</option>    <!-- Blue           -->
+              <option>#5C00FF</option>    <!-- Blue Violet    -->
+
+              <option>#7F00FF</option>    <!-- Violet         -->
+              <option>#BF007F</option>    <!-- Red Violet     -->
+              <option>#FFFFFF</option>    <!-- White          -->
+              <option>#DADADA</option>    <!-- Gray1          -->
+              <option>#B6B6B6</option>    <!-- Gray2          -->
+
+              <option>#929292</option>    <!-- Gray3          -->
+              <option>#6D6D6D</option>    <!-- Gray4          -->
+              <option>#494949</option>    <!-- Gray5          -->
+              <option>#242424</option>    <!-- Gray6          -->
+              <option>#000000</option>    <!-- Black          -->
+
+            </datalist>
+
+          <!-- Fill Alpha -->
+          <label for="fillalpha" class="col-1">Transparency:</label>
+          <input id="fillalpha"  class="col-2" type="range" min="0" max="100" value="16">
         </div>
 
-        <div id="gridMenu" class="fixed"></div>
+        <div id="gridMenu" class="fixed">
+          
+                    <!-- Origin -->
+          <label for="origin" class="col3">Origin</label>
+          <label              class="col4"></label>
+          <input id="origin" type="checkbox" class="col5">
+          
+          <hr class="line">
+
+          <!-- Axes -->
+          <label for="axes" class="col3">Axis</label>
+          <label for="axisx" class="col4">x:</label>
+          <input id="axisx" type="checkbox" class="col5">
+          
+          <label                 class="col3"></label>
+          <label for="axisy"     class="col4">y:</label>
+          <input id="axisy" type="checkbox" class="col5">
+          
+          <!-- Lines -->
+          <hr class="line">
+          
+          <label for="lines" class="col3">Lines</label>
+          <label for="linesx" class="col4">x:</label>
+          <input id="linesx" type="checkbox" class="col5">
+          
+          <label              class="col3"></label>
+          <label for="linesy" class="col4">y:</label>
+          <input id="linesy" type="checkbox" class="col5">
+          
+          <!-- Arrows -->
+          <hr class="line">
+          
+          <label for="arrows" class="col3">Arrows</label>
+          <label for="arrowsx" class="col4">x:</label>
+          <input id="arrowsx" type="checkbox" class="col5">
+          
+          <label              class="col3"></label>
+          <label for="arrowsy" class="col4">y:</label>
+          <input id="arrowsy" type="checkbox" class="col5">
+          
+          <!-- Ticks -->
+          <hr class="line">
+          
+          <label for="ticks" class="col3">Ticks</label>
+          <label for="ticksx" class="col4">x:</label>
+          <input id="ticksx" type="checkbox" class="col5">
+          
+          <label              class="col3"></label>
+          <label for="ticksy" class="col4">y:</label>
+          <input id="ticksy" type="checkbox" class="col5">
+          
+          <!-- Labels -->
+          <hr class="line">
+          
+          <label for="labels" class="col3">Labels</label>
+          <label for="labelsx" class="col4">x:</label>
+          <input id="labelsx" type="checkbox" class="col5">
+          
+          <label              class="col3"></label>
+          <label for="labelsy" class="col4">y:</label>
+          <input id="labelsy" type="checkbox" class="col5">
+          
+          <!-- Quadrants -->
+          <hr class="line">
+          
+          <label for="quadrants" class="col3">Quadrants</label>
+          <label                class="col4"></label>
+          <input id="quadrants" type="checkbox" class="col5">
+
+          <div class="row0"></div>
+          
+        </div>
 
         <div id="gridHeader" class="fixed">
+
+          <nav id="shapeMenu">
+
+            <ul class="navbar">
+              
+              <li id="point0" class="menu">
+                <img for="points" class="menu">
+                
+                <ul>
+                  <li id="point0" class="menu">
+                    <img for="point0" class="menu">
+                      <label for="point0" class="menu">Point0</label>
+                  </li>
+                    
+                  <li class="sepT"></li>
+                  <li class="sepB"></li>
+                  <li><img id="point1" class="menu"><label class="menu">Point 1</label></li>
+                  <li><img id="point2" class="menu"><label class="menu">Point 2</label></li>
+                </ul>
+              
+              </li>
+                
+              <li>
+                <img id="lines" class="shape" name="shape">
+                  
+                <ul>
+                    <li><img id="line0" class="shape" name="shape"><label class="menu">Line 0</label></li>
+                    <li><img id="line1" class="shape" name="shape"><label class="menu">Line 1</label></li>
+                    <li><img id="line2" class="shape" name="shape"><label class="menu">Line 2</label></li>
+                    <li><img id="line3" class="shape" name="shape"><label class="menu">Line 3</label></li>
+                    <li><img id="line4" class="shape" name="shape"><label class="menu">Line 4</label></li>
+                    <li><img id="line5" class="shape" name="shape"><label class="menu">Line 5</label></li>
+                </ul>
+                  
+              </li>
+              
+              <li>
+                <input id="triangles" type="radio" class="shape" name="shape">
+              
+                <ul>
+                    <li><input id="triangle0" type="radio" class="shape" name="shape">Triangle 0</li>
+                    <li><input id="triangle1" type="radio" class="shape" name="shape">Triangle 1</li>
+                    <li><input id="triangle2" type="radio" class="shape" name="shape">Triangle 2</li>
+                </ul>
+                  
+              </li>
+              
+              <li>
+                <input id="circles" type="radio" class="shape" name="shape">
+                
+                <ul>
+                  <li><input id="circles0" type="radio" class="shape" name="shape">Circle 0</li>
+                  <li><input id="circles1" type="radio" class="shape" name="shape">Circle 1</li>
+                  <li><input id="circles2" type="radio" class="shape" name="shape">Circle 2</li>
+                </ul>
+                
+              </li>
+              
+              <li>
+                <input id="rectangles" type="radio" class="shape" name="shape">
+                  
+                <ul>
+                  <li><input id="rectangle0" type="radio" class="shape" name="shape">Rectangle 0</li>
+                  <li><input id="rectangle1" type="radio" class="shape" name="shape">Rectangle 1</li>
+                  <li><input id="rectangle2" type="radio" class="shape" name="shape">Rectangle 2</li>
+                  <li><input id="rectangle3" type="radio" class="shape" name="shape">Rectangle 3</li>
+                  <li><input id="rectangle4" type="radio" class="shape" name="shape">Rectangle 4</li>
+                  <li><input id="rectangle5" type="radio" class="shape" name="shape">Rectangle 5</li>
+                  
+                </ul>
+                
+              </li>
+            
+              <li>
+                <input id="arcs" type="radio" class="shape" name="shape">
+                  
+                <ul>
+                  <li><input id="arc0" type="radio" class="shape" name="shape">Arc 0</li>
+                  <li><input id="arc1" type="radio" class="shape" name="shape">Arc 1</li>
+                  <li><input id="arc2" type="radio" class="shape" name="shape">Arc 2</li>
+                  <li><input id="arc3" type="radio" class="shape" name="shape">Arc 3</li>
+                  <li><input id="arc4" type="radio" class="shape" name="shape">Arc 4</li>
+                  <li><input id="arc5" type="radio" class="shape" name="shape">Arc 5</li>
+                  
+                </ul>
+                
+              </li>
+
+              <li>
+                <input id="polygons" type="radio" class="shape" name="shape">
+                  
+                <ul>
+                  <li><input id="polygon0" type="radio" class="shape" name="shape">Polygon 0</li>
+                  <li><input id="polygon1" type="radio" class="shape" name="shape">Polygon 1</li>
+                  <li><input id="polygon2" type="radio" class="shape" name="shape">Polygon 2</li>
+                </ul>
+                
+              </li>
+              
+              <li>
+                <input id="conics" type="radio" class="shape" name="shape">
+                  
+                <ul>
+                  <li><input id="conic0" type="radio" class="shape" name="shape">Conic 0</li>
+                  <li><input id="conic1" type="radio" class="shape" name="shape">Conic 1</li>
+                  <li><input id="conic2" type="radio" class="shape" name="shape">Conic 2</li>
+                </ul>
+                
+              </li>
+              
+              <li>
+                <input id="angles" type="radio" class="shape" name="shape">
+                  
+                <ul>
+                  <li><input id="angle0" type="radio" class="shape" name="shape">Angle 0</li>
+                  <li><input id="angle1" type="radio" class="shape" name="shape">Angle 1</li>
+                  <li><input id="angle2" type="radio" class="shape" name="shape">Angle 2</li>
+                </ul>
+                
+              </li>
+              
+              <li>
+                <input id="annotations" type="radio" class="shape" name="shape">
+                  
+                <ul>
+                  <li><input id="annotation0" type="radio" class="shape" name="shape">Annotation 0</li>
+                  <li><input id="annotation1" type="radio" class="shape" name="shape">Annotation 1</li>
+                  <li><input id="annotation2" type="radio" class="shape" name="shape">Annotation 2</li>
+                </ul>
+                
+              </li>
+              
+              <li>
+                <input id="transformations" type="radio" class="shape" name="shape">
+
+                <ul>
+                  <li><input id="translate" type="radio" class="shape" name="shape">Translate</li>
+                  <li><input id="rotate" type="radio" class="shape" name="shape">Rotate</li>
+                  <li><input id="reflect" type="radio" class="shape" name="shape">Reflect</li>
+                  <li><input id="scale" type="radio" class="shape" name="shape">Scale</li>
+                  <li><input id="shear" type="radio" class="shape" name="shape">Shear</li>
+                </ul>
+                
+              </li>
+
+              <li>
+                <input id="measure" type="radio" class="shape" name="shape">
+
+                <ul>
+                  <li><input id="distance" type="radio" class="shape" name="shape">Distance</li>
+                  <li><input id="perimeter" type="radio" class="shape" name="shape">Perimeter</li>
+                  <li><input id="area" type="radio" class="shape" name="shape">Area</li>
+                  <li><input id="volume" type="radio" class="shape" name="shape">Volume</li>
+                  <li><input id="radius" type="radio" class="shape" name="shape">Radius</li>
+                  <li><input id="diameter" type="radio" class="shape" name="shape">Diameter</li>
+                  <li><input id="slope" type="radio" class="shape" name="shape">Slope</li>
+                </ul>
+                
+              </li>
+
+            </ul>
+            
+          </nav>
+          
           <input id="gridPropertiesDisplay" type="checkbox" class="fixed">
           <input id="gridMenuDisplay" type="checkbox" class="fixed">
         </div>
