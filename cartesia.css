@@ -73,35 +73,21 @@
 
   /*
     ========================================
-    Sections
+    Header/Footer
     ========================================
   */
   #pageHeader {
     background:     -webkit-gradient(linear, left top, left bottom, from(#272727), to(#1a1a1a));
-    margin:         0;
-    border-radius:  0;
     padding:        0 30px 0 0;
     width:          100%;
     height:         35px;
-    
   }
   #pageHeader:hover {
     /*border:         1px solid #333;*/
   }
-  
-  #grid {
-    margin:         0px;
-    left:           0;
-    right:          0;
-    top:            35px;
-    bottom:         20px;
-    padding:        3px;
-    background:     blue;
-  }
 
   #pageFooter {
     background:     -webkit-gradient(linear, left top, left bottom, from(#1a1a1a), to(#272727));
-    border:         #000;
     padding:        4px 4px 4px 10px;
     margin:         0;
     height:         20px;
@@ -119,15 +105,16 @@
     Canvas
     ========================================
   */
-  .canvas {
-    border:         0px solid green;
+  #canvas {
     background:     #666;
-    left:           0px;
-    right:          0px;
-    bottom:         0px;
-    top:            0px;
+    left:           10px;
+    right:          10px;
+    bottom:         10px;
+    top:            10px;
+    outline:        none;
+    border:         -webkit-tap-highlight-color: rgba(255, 255, 255, 0); /* mobile webkit */
   }
-  .canvas:hover {
+  #canvas:hover {
     /*background:     #ff0000;*/
   }
   
@@ -175,7 +162,7 @@
     left:           0px;
     top:            33px;
     bottom:         33px;
-    width:          200px;
+    width:          202px;
     box-shadow:     0px 0px 9px rgba(0,0,0,0.25);
     background:     #4a4a4a;
     border:         1px solid transparent;
@@ -235,12 +222,14 @@
 
 
   .shape {
-    -webkit-appearance:button;
-    padding:        0;
-    margin:         0;
+    outline:        none;
+    border:         none;
+    padding:        2px;
+    /*-webkit-appearance:button;*/
     height:         24px;
     width:          24px;
-    background:     none;
+    background:     black;
+    text-align:     left;
   }
   .shape:hover {
     background:     blue;
@@ -250,6 +239,17 @@
     background:     yellow;
   }
 
+  .shape1 {
+    padding:        0;
+    margin:         0;
+    height:         20px;
+    width:          100px;
+    background:     none;
+  }
+  
+  #shapeMenu {
+    margin:       3px 0 0 30px;
+  }
 
   .highlight {
     border:         1px solid #222;
@@ -335,9 +335,18 @@
     border:             0;
     height:             0;
     /*border-top:         1px groove rgba(0, 0, 0, 0.1);*/
-    border-bottom:      1px groove rgba(255, 255, 255, 0.3);?
+    border-bottom:      1px groove rgba(255, 255, 255, 0.3);
   }
-
+  hr.sep {
+    margin:             10px 0 0 0;
+    padding:            0;
+    width:              90%;
+    border:             0;
+    height:             0;
+    /*border-top:         1px groove rgba(0, 0, 0, 0.1);*/
+    border-bottom:      1px groove rgba(255, 255, 255, 0.3);
+    background:         green;
+  }
 
   /*
     ========================================
@@ -458,7 +467,14 @@
     background:       none;
     color:            white;
   }
-
+  
+  label.menu {
+    font:             400 10px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    text-align:       center;
+    padding:          0 5px;
+    cursor:           pointer;
+  }
+  
   #coordinates {
     position:         absolute;
     right:            10px;
@@ -473,7 +489,6 @@
     ========================================
   */
   input {
-    /*-webkit-appearance: none;*/
     font:             400 10px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
     background:       none;
     height:           16px;
@@ -522,7 +537,6 @@
   }
   input[type=number]::-webkit-inner-spin-button,
   input[type=number]::-webkit-outer-spin-button {
-    /*-webkit-appearance: none;*/
     cursor:           pointer;
     margin:           0;
   }
@@ -588,33 +602,56 @@
 
   /* Checkbox *****************************************************************/
   input[type="checkbox"] {
+    -webkit-appearance:button;
     padding-left:     0px;
     padding-right:    0px;
     border-radius:    2px;
     margin:           3px;
-    -webkit-appearance:button;
-
     border:           double 1px #648880;
-
     background-color: #000;
     color:            #648880;
     /*white-space:      nowrap;*/
     /*overflow:         hidden;*/
-
     width:            10px;
     height:           10px;
     float:            left;
   }
-  input[type=checkbox]:checked {
+  input[type="checkbox"]:checked {
     background-color: #648880;
     /*border-left-color:#06F;*/
     /*border-right-color:#06F;*/
   }
-  input[type=checkbox]:hover {
+  input[type="checkbox"]:hover {
       /*box-shadow:     0px 0px 10px #1300ff;*/
     cursor:           pointer;
   }
 
+  /* Checkbox *****************************************************************/
+  input[type="radio"] {
+    -webkit-appearance:button;
+    /*padding-left:     0px;*/
+    /*padding-right:    0px;*/
+    /*border-radius:    2px;*/
+    /*margin:           3px;*/
+    /*border:           double 1px #648880;*/
+    /*background-color: #000;*/
+    /*color:            #648880;*/
+    white-space:      nowrap;
+    overflow:         hidden;
+    /*width:            10px;*/
+    /*height:           10px;*/
+    /*float:            left;*/
+    /*text-align:         left;*/
+  }
+  input[type="radio"]:checked {
+    background-color: #648880;
+    border-left-color:#06F;
+    border-right-color:#06F;
+  }
+  input[type="radio"]:hover {
+    box-shadow:     0px 0px 10px #1300ff;
+    cursor:           pointer;
+  }
       
   /*
     ========================================
@@ -628,7 +665,7 @@
     top:                10px;
     font-size:          16px;
     outline:            none;
-    shape:             pointer;
+    cursor:             pointer;
   	color:              #d7d7d7;
   	border:             solid 1px #333;
   	background:         #333;
@@ -656,8 +693,8 @@
     ========================================
   */
 
-  .logo {
-    border-top:       3px solid #777;
+  #logo {
+    border-top:       3px solid #999;
     float:            left;
     font-size:        28px;
     font-weight:      100;
@@ -670,9 +707,9 @@
     width:            205px;
     cursor:           pointer;
   }
-  .logo:hover {
-    border-top:       3px solid #bbb;
-    font-weight:      300;
+  #logo:hover {
+    border-top:       3px solid #ccc;
+    font-weight:      700;
   }
   .tagline {
     margin:           66px 0 22px 0;
@@ -834,24 +871,27 @@
 /*}*/
 
   .navbar {
-    border-right:       0 solid #54879D;
-    margin:             0;
-    padding:            0;
+    font:             400 10px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    /*border-right:       0 solid #54879D;*/
+    /*margin:             0;*/
+    /*padding:            0;*/
   
   }
   .navbar ul{
-    margin:             0;
-    padding:            0;
+    /*margin:             0;*/
+    /*padding:            0;*/
   }
   .navbar li {
-    background-color:   none;
-    float:              left;
-    font:               bold 12px/1.2em Arial, Verdana, Helvetica;
-    height:             30px;
-    list-style:         none outside none;
-    margin:             0;
-    padding:            0;
-    text-align:         center;
+    /*background-color: black;*/
+    float:            left;
+    /*font:             bold 12px/1.2em Arial, Verdana, Helvetica;*/
+    font:             400 10px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    /*height:           30px;*/
+    list-style:       none outside none;
+    /*margin:           0;*/
+    padding:          0;
+    text-align:       left;
+    cursor:           pointer;
   }
   
   .navbar a {
@@ -859,7 +899,7 @@
     /*border-right:       1px solid #1F5065;*/
     color:              #FFFFFF;
     display:            block;
-    padding:            8px 10px;
+    /*padding:            8px 10px;*/
     text-decoration:    none;
   }
   
@@ -869,15 +909,19 @@
   
   .navbar li ul {
     display:            none;
-    height:             30px;
     margin:             0;
     padding:            0;
     position:           absolute;
+    /*display: block;*/
+    height:         30px;
+    line-height: 30px;
   }
-  
+  .navbar ul li img {
+    vertical-align: middle;
+  }
   .navbar li:hover ul {
     display:            block;
-    height:             30px;
+    /*height:             30px;*/
   }
   
   .navbar li ul li {
@@ -925,10 +969,52 @@
     color:              red;
     background-color:   transparent;
   }*/
+  
 
+  li.sepB {
+    padding:          0 3px;
+    background:       green;
+    height:           5px;
+  }
+  li.sepT {
+    background:       none;
+    height:           5px;
+    border-bottom:    1px solid #888;
+  }
+  
   img {
-    margin:           0;
-    padding:          0;
+    /*-webkit-appearance:button;*/
+    /*margin:           0;*/
+    /*padding:          0;*/
     cursor:           pointer;
-    padding:          0;
+  }
+  img.menu {
+    outline:        none;
+    border:         none;
+    padding:        2px;
+    /*-webkit-appearance:button;*/
+    height:         24px;
+    width:          24px;
+    background:     black;
+    text-align:     left;
+  }
+  li.menu {
+    outline:        none;
+    border:         none;
+    padding:        2px;
+    /*-webkit-appearance:button;*/
+    height:         28px;
+    /*width:          24px;*/
+    background:     none;
+    text-align:     left;
+  }
+  li.menu:hover {
+    /*outline:        none;*/
+    /*border:         none;*/
+    padding:        2px;
+    -webkit-appearance:button;
+    height:         28px;
+    /*width:          24px;*/
+    background:     black;
+    text-align:     left;
   }
