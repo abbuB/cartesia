@@ -5,10 +5,16 @@
     <head>
 
       <meta charset="UTF-8">
+      <script type="text/javascript" src="processing.js"></script>
+      <script type="text/javascript" src="drawing.js"></script>
+      <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
       <link rel="stylesheet" href="assets/stylesheets/cartesia.css">
       <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lato:100,300,400">
+      <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Ubuntu:100,300,400">
+      <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Fjalla One:100,300,400">
+      
       <title>Cartesia:  Pythagorian Triples</title>
-      <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
       <script>
 
@@ -17,7 +23,7 @@
             // $("#gridmenu").slideToggle("fast");
             // $("#properties").slideToggle("fast");
             // $("#gridProperties").animate({width: 'toggle'}, 'fast');
-            $("#gridProperties").slideToggle("fast");
+            $("#gridProperties").slideToggle(250);
             // $("#gridmenu").animate({height: 'toggle'}, 'slow');
             // $("#dwg").animate({left: 'toggle'}, 'slow');
           });
@@ -25,10 +31,22 @@
 
         $(document).ready(function(){
           $("#gridMenuDisplay").click(function(){
-            $("#gridMenu").slideToggle("fast");
+            $("#gridMenu").slideToggle(400);
           });
         });
-        
+
+        $(document).ready(function(){
+          $( "#logo" ).mouseover(function() {
+            $( this ).fadeTo( "fast", 1.0 );
+          });
+        });
+
+        $(document).ready(function(){
+          $( "#logo" ).mouseout(function() {
+            $( this ).fadeTo( "slow", 0.5 );
+          });
+        });
+
       </script>
 
     </head>
@@ -37,16 +55,14 @@
 
       <section id="pageHeader" class="fixed">
 
-        <h1 id="logo">
-          <a href="javascript:alert('Logo')">cartesia</a>
-        </h1>
+        <h1 id="logo">cartesia</h1>
 
         <nav id="headerNav" class="nav primary-nav">
 
           <ul>
-            <li><a href="javascript:alert('Home')">home</a></li>
-            <li><a href="javascript:alert('Speakers')">speakers</a></li>
-            <li><a href="javascript:alert('Schedule')">schedule</a></li>
+            <li><a href="javascript:void('Home')">home</a></li>
+            <li><a href="javascript:confirm('Speakers')">speakers</a></li>
+            <li><a href="javascript:prompt('Billy, dont be a hero')">schedule</a></li>
             <li><a href="javascript:alert('Venues')">venue</a></li>
             <li><a href="javascript:alert('Register')">register</a></li>
           </ul>
@@ -154,6 +170,10 @@
           <!-- Fill Alpha -->
           <label for="fillalpha" class="col-1">Transparency:</label>
           <input id="fillalpha"  class="col-2" type="range" min="0" max="100" value="16">
+
+          <!-- Line Type -->
+          <!-- Line Weight -->
+
         </div>
 
         <div id="gridMenu" class="fixed">
@@ -235,157 +255,179 @@
 
             <ul class="navbar">
               
-              <li id="point0" class="menu">
-                <img for="points" class="menu">
+              <li id="points" class="menu">
+                <img for="points" class="menu" src="temp.png">
                 
                 <ul>
-                  <li id="point0" class="menu">
-                    <img for="point0" class="menu">
-                      <label for="point0" class="menu">Point0</label>
-                  </li>
-                    
+                  <li id="point0" class="menu"> <img for="point0" class="menu" src="assets/images/test.png"> <label for="point0" class="menu">Point0</label> </li>
                   <li class="sepT"></li>
                   <li class="sepB"></li>
-                  <li><img id="point1" class="menu"><label class="menu">Point 1</label></li>
-                  <li><img id="point2" class="menu"><label class="menu">Point 2</label></li>
+                  <li id="point1" class="menu"> <img for="point1" class="menu" src="temp.png"> <label for="point1" class="menu">Point1</label> </li>
+                  <li id="point2" class="menu"> <img for="point2" class="menu" src="temp.png"> <label for="point2" class="menu">Point2</label> </li>
                 </ul>
               
               </li>
                 
-              <li>
-                <img id="lines" class="shape" name="shape">
+              <li id="point0" class="menu">
+                <img id="lines" class="menu" src="">
                   
                 <ul>
-                    <li><img id="line0" class="shape" name="shape"><label class="menu">Line 0</label></li>
-                    <li><img id="line1" class="shape" name="shape"><label class="menu">Line 1</label></li>
-                    <li><img id="line2" class="shape" name="shape"><label class="menu">Line 2</label></li>
-                    <li><img id="line3" class="shape" name="shape"><label class="menu">Line 3</label></li>
-                    <li><img id="line4" class="shape" name="shape"><label class="menu">Line 4</label></li>
-                    <li><img id="line5" class="shape" name="shape"><label class="menu">Line 5</label></li>
+                  <li id="line0" class="menu"> <img for="line0" class="menu" src="temp.png"> <label for="line0" class="menu">line0</label> </li>
+                  <li class="sepT"></li>
+                  <li class="sepB"></li>
+                  <li id="line1" class="menu"> <img for="line1" class="menu" src="temp.png"> <label for="line1" class="menu">line1</label> </li>
+                  <li id="line2" class="menu"> <img for="line2" class="menu" src="temp.png"> <label for="line2" class="menu">line2</label> </li>
+                  <li id="line3" class="menu"> <img for="line3" class="menu" src="temp.png"> <label for="line3" class="menu">line3</label> </li>
+                  <li class="sepT"></li>
+                  <li class="sepB"></li>
+                  <li id="line4" class="menu"> <img for="line4" class="menu" src="temp.png"> <label for="line4" class="menu">line4</label> </li>
+                  <li id="line5" class="menu"> <img for="line5" class="menu" src="temp.png"> <label for="line5" class="menu">line5</label> </li>
                 </ul>
                   
               </li>
               
-              <li>
-                <input id="triangles" type="radio" class="shape" name="shape">
-              
-                <ul>
-                    <li><input id="triangle0" type="radio" class="shape" name="shape">Triangle 0</li>
-                    <li><input id="triangle1" type="radio" class="shape" name="shape">Triangle 1</li>
-                    <li><input id="triangle2" type="radio" class="shape" name="shape">Triangle 2</li>
-                </ul>
-                  
-              </li>
-              
-              <li>
-                <input id="circles" type="radio" class="shape" name="shape">
+              <li id="triangle0" class="menu">
+                <img for="triangles" class="menu" src="">
                 
                 <ul>
-                  <li><input id="circles0" type="radio" class="shape" name="shape">Circle 0</li>
-                  <li><input id="circles1" type="radio" class="shape" name="shape">Circle 1</li>
-                  <li><input id="circles2" type="radio" class="shape" name="shape">Circle 2</li>
+                  <li id="triangle0" class="menu"> <img for="triangle0" class="menu" src="temp.png"> <label for="triangle0" class="menu">triangle0</label> </li>
+                  <li class="sepT"></li>
+                  <li class="sepB"></li>
+                  <li id="triangle1" class="menu"> <img for="triangle1" class="menu" src="temp.png"> <label for="triangle1" class="menu">triangle1</label> </li>
+                  <li id="triangle2" class="menu"> <img for="triangle2" class="menu" src="temp.png"> <label for="triangle2" class="menu">triangle2</label> </li>
+                </ul>
+              
+              </li>
+              
+              <li id="circle0" class="menu">
+                <img for="circles" class="menu" src="">
+                
+                <ul>
+                  <li id="circle0" class="menu"> <img for="circle0" class="menu" src="temp.png"> <label for="circle0" class="menu">circle0</label> </li>
+                  <li class="sepT"></li>
+                  <li class="sepB"></li>
+                  <li id="circle1" class="menu"> <img for="circle1" class="menu" src="temp.png"> <label for="circle1" class="menu">circle1</label> </li>
+                  <li id="circle2" class="menu"> <img for="circle2" class="menu" src="temp.png"> <label for="circle2" class="menu">circle2</label> </li>
                 </ul>
                 
               </li>
               
-              <li>
-                <input id="rectangles" type="radio" class="shape" name="shape">
+              <li id="rectangles" class="menu">
+                <img for="rectangles" class="menu" src="">
                   
                 <ul>
-                  <li><input id="rectangle0" type="radio" class="shape" name="shape">Rectangle 0</li>
-                  <li><input id="rectangle1" type="radio" class="shape" name="shape">Rectangle 1</li>
-                  <li><input id="rectangle2" type="radio" class="shape" name="shape">Rectangle 2</li>
-                  <li><input id="rectangle3" type="radio" class="shape" name="shape">Rectangle 3</li>
-                  <li><input id="rectangle4" type="radio" class="shape" name="shape">Rectangle 4</li>
-                  <li><input id="rectangle5" type="radio" class="shape" name="shape">Rectangle 5</li>
-                  
+                  <li id="rectangle0" class="menu"> <img for="rectangle0" class="menu" src="temp.png"> <label for="rectangle0" class="menu">rectangle0</label> </li>
+                  <li class="sepT"></li>
+                  <li class="sepB"></li>
+                  <li id="rectangle1" class="menu"> <img for="rectangle1" class="menu" src="temp.png"> <label for="rectangle1" class="menu">rectangle1</label> </li>
+                  <li id="rectangle2" class="menu"> <img for="rectangle2" class="menu" src="temp.png"> <label for="rectangle2" class="menu">rectangle2</label> </li>
+                  <li id="rectangle2" class="menu"> <img for="rectangle2" class="menu" src="temp.png"> <label for="rectangle2" class="menu">rectangle2</label> </li>
+                  <li class="sepT"></li>
+                  <li class="sepB"></li>
+                  <li id="rectangle1" class="menu"> <img for="rectangle1" class="menu" src="temp.png"> <label for="rectangle1" class="menu">rectangle1</label> </li>
+                  <li id="rectangle2" class="menu"> <img for="rectangle2" class="menu" src="temp.png"> <label for="rectangle2" class="menu">rectangle2</label> </li>
                 </ul>
                 
               </li>
             
-              <li>
-                <input id="arcs" type="radio" class="shape" name="shape">
+              <li id="arcs" class="menu">
+                <img for="arcs" class="menu" src="">
                   
                 <ul>
-                  <li><input id="arc0" type="radio" class="shape" name="shape">Arc 0</li>
-                  <li><input id="arc1" type="radio" class="shape" name="shape">Arc 1</li>
-                  <li><input id="arc2" type="radio" class="shape" name="shape">Arc 2</li>
-                  <li><input id="arc3" type="radio" class="shape" name="shape">Arc 3</li>
-                  <li><input id="arc4" type="radio" class="shape" name="shape">Arc 4</li>
-                  <li><input id="arc5" type="radio" class="shape" name="shape">Arc 5</li>
-                  
+                  <li id="arc0" class="menu"> <img for="arc0" class="menu" src="temp.png"> <label for="arc0" class="menu">arc0</label> </li>
+                  <li class="sepT"></li>
+                  <li class="sepB"></li>
+                  <li id="arc1" class="menu"> <img for="arc1" class="menu" src="temp.png"> <label for="arc1" class="menu">arc1</label> </li>
+                  <li id="arc2" class="menu"> <img for="arc2" class="menu" src="temp.png"> <label for="arc2" class="menu">arc2</label> </li>
+                  <li id="arc3" class="menu"> <img for="arc3" class="menu" src="temp.png"> <label for="arc3" class="menu">arc3</label> </li>
+                  <li class="sepT"></li>
+                  <li class="sepB"></li>
+                  <li id="arc4" class="menu"> <img for="arc4" class="menu" src="temp.png"> <label for="arc4" class="menu">arc4</label> </li>
+                  <li id="arc5" class="menu"> <img for="arc5" class="menu" src="temp.png"> <label for="arc5" class="menu">arc5</label> </li>
                 </ul>
                 
               </li>
 
-              <li>
-                <input id="polygons" type="radio" class="shape" name="shape">
+              <li id="polygons" class="menu">
+                <img for="polygons" class="menu" src="">
                   
                 <ul>
-                  <li><input id="polygon0" type="radio" class="shape" name="shape">Polygon 0</li>
-                  <li><input id="polygon1" type="radio" class="shape" name="shape">Polygon 1</li>
-                  <li><input id="polygon2" type="radio" class="shape" name="shape">Polygon 2</li>
+                  <li id="polygon0" class="menu"> <img for="polygon0" class="menu" src="temp.png"> <label for="polygon0" class="menu">polygon0</label> </li>
+                  <li class="sepT"></li>
+                  <li class="sepB"></li>
+                  <li id="polygon1" class="menu"> <img for="polygon1" class="menu" src="temp.png"> <label for="polygon1" class="menu">polygon1</label> </li>
+                  <li id="polygon2" class="menu"> <img for="polygon2" class="menu" src="temp.png"> <label for="polygon2" class="menu">polygon2</label> </li>
                 </ul>
                 
               </li>
               
-              <li>
-                <input id="conics" type="radio" class="shape" name="shape">
+              <li id="conics" class="menu">
+                <img for="conics" class="menu" src="">
                   
                 <ul>
-                  <li><input id="conic0" type="radio" class="shape" name="shape">Conic 0</li>
-                  <li><input id="conic1" type="radio" class="shape" name="shape">Conic 1</li>
-                  <li><input id="conic2" type="radio" class="shape" name="shape">Conic 2</li>
+                  <li id="conic0" class="menu"> <img for="conic0" class="menu" src="temp.png"> <label for="conic0" class="menu">conic0</label> </li>
+                  <li class="sepT"></li>
+                  <li class="sepB"></li>
+                  <li id="conic1" class="menu"> <img for="conic1" class="menu" src="temp.png"> <label for="conic1" class="menu">conic1</label> </li>
+                  <li id="conic2" class="menu"> <img for="conic2" class="menu" src="temp.png"> <label for="conic2" class="menu">conic2</label> </li>
                 </ul>
                 
               </li>
               
-              <li>
-                <input id="angles" type="radio" class="shape" name="shape">
+              <li id="angles" class="menu">
+                <img for="angles" class="menu" src="">
                   
                 <ul>
-                  <li><input id="angle0" type="radio" class="shape" name="shape">Angle 0</li>
-                  <li><input id="angle1" type="radio" class="shape" name="shape">Angle 1</li>
-                  <li><input id="angle2" type="radio" class="shape" name="shape">Angle 2</li>
+                  <li id="angle0" class="menu"> <img for="angle0" class="menu" src="temp.png"> <label for="angle0" class="menu">angle0</label> </li>
+                  <li class="sepT"></li>
+                  <li class="sepB"></li>
+                  <li id="angle1" class="menu"> <img for="angle1" class="menu" src="temp.png"> <label for="angle1" class="menu">angle1</label> </li>
+                  <li id="angle2" class="menu"> <img for="angle2" class="menu" src="temp.png"> <label for="angle2" class="menu">angle2</label> </li>
                 </ul>
                 
               </li>
               
-              <li>
-                <input id="annotations" type="radio" class="shape" name="shape">
+              <li id="annotations" class="menu">
+                <img for="annotations" class="menu" src="">
                   
                 <ul>
-                  <li><input id="annotation0" type="radio" class="shape" name="shape">Annotation 0</li>
-                  <li><input id="annotation1" type="radio" class="shape" name="shape">Annotation 1</li>
-                  <li><input id="annotation2" type="radio" class="shape" name="shape">Annotation 2</li>
+                  <li id="annotation0" class="menu"> <img for="annotation0" class="menu" src="temp.png"> <label for="annotation0" class="menu">annotation0</label> </li>
+                  <li class="sepT"></li>
+                  <li class="sepB"></li>
+                  <li id="annotation1" class="menu"> <img for="annotation1" class="menu" src="temp.png"> <label for="annotation1" class="menu">annotation1</label> </li>
+                  <li id="annotation2" class="menu"> <img for="annotation2" class="menu" src="temp.png"> <label for="annotation2" class="menu">annotation2</label> </li>
                 </ul>
                 
               </li>
               
-              <li>
-                <input id="transformations" type="radio" class="shape" name="shape">
+              <li id="transformations" class="menu">
+                <img for="transformations" class="menu" src="">
 
                 <ul>
-                  <li><input id="translate" type="radio" class="shape" name="shape">Translate</li>
-                  <li><input id="rotate" type="radio" class="shape" name="shape">Rotate</li>
-                  <li><input id="reflect" type="radio" class="shape" name="shape">Reflect</li>
-                  <li><input id="scale" type="radio" class="shape" name="shape">Scale</li>
-                  <li><input id="shear" type="radio" class="shape" name="shape">Shear</li>
+                  <li id="translate" class="menu"> <img for="translate" class="menu" src="temp.png"> <label for="translate" class="menu">translate</label> </li>
+                  <li class="sepT"></li>
+                  <li class="sepB"></li>
+                  <li id="rotate"    class="menu"> <img for="rotate" class="menu" src="temp.png"> <label for="rotate" class="menu">rotate</label> </li>
+                  <li id="reflect"   class="menu"> <img for="reflect" class="menu" src="temp.png"> <label for="reflect" class="menu">reflect</label> </li>
+                  <li id="scale"     class="menu"> <img for="scale" class="menu" src="temp.png"> <label for="scale" class="menu">scale</label> </li>
+                  <li id="shear"     class="menu"> <img for="shear" class="menu" src="temp.png"> <label for="shear" class="menu">shear</label> </li>
                 </ul>
                 
               </li>
 
-              <li>
-                <input id="measure" type="radio" class="shape" name="shape">
+              <li id="measure" class="menu">
+                <img for="measure" class="menu" src="">
 
                 <ul>
-                  <li><input id="distance" type="radio" class="shape" name="shape">Distance</li>
-                  <li><input id="perimeter" type="radio" class="shape" name="shape">Perimeter</li>
-                  <li><input id="area" type="radio" class="shape" name="shape">Area</li>
-                  <li><input id="volume" type="radio" class="shape" name="shape">Volume</li>
-                  <li><input id="radius" type="radio" class="shape" name="shape">Radius</li>
-                  <li><input id="diameter" type="radio" class="shape" name="shape">Diameter</li>
-                  <li><input id="slope" type="radio" class="shape" name="shape">Slope</li>
+                  <li id="distance" class="menu"> <img for="Distance" class="menu" src="temp.png"> <label for="distance" class="menu">distance</label> </li>
+                  <li class="sepT"></li>
+                  <li class="sepB"></li>
+                  <li id="perimeter" class="menu"> <img for="perimeter" class="menu" src="temp.png"> <label for="perimeter" class="menu">perimeter</label> </li>
+                  <li id="area"      class="menu"> <img for="area"      class="menu" src="temp.png"> <label for="area"      class="menu">area</label> </li>
+                  <li id="volume"    class="menu"> <img for="volume"    class="menu" src="temp.png"> <label for="volume"    class="menu">volume</label> </li>
+                  <li id="radius"    class="menu"> <img for="radius"    class="menu" src="temp.png"> <label for="radius"    class="menu">radius</label> </li>
+                  <li id="diameter"  class="menu"> <img for="diameter"  class="menu" src="temp.png"> <label for="diameter"  class="menu">diameter</label> </li>
+                  <li id="slope"     class="menu"> <img for="slope"     class="menu" src="temp.png"> <label for="slope"     class="menu">slope</label> </li>
                 </ul>
                 
               </li>
@@ -395,11 +437,31 @@
           </nav>
           
           <input id="gridPropertiesDisplay" type="checkbox" class="fixed">
-          <input id="gridMenuDisplay" type="checkbox" class="fixed">
+          <input id="gridMenuDisplay"       type="checkbox" class="fixed">
+
         </div>
 
         <div id="gridFooter" class="fixed">
+          
+          <div id="snaps" class="inline">
+            <img id="snapToGrid"  class="menu" src="">
+            <img id="ortho"       class="menu" src="">
+            <img id="gridDisplay" class="menu" src="">
+          </div>
+
+          <div id="commands" class="commands">
+            <label id="command-label" for="command" class="commands" >Name:</label>
+            <input id="command"                     class="commands" type="text" title="command">
+          </div>
+
+          <div id="display" class="inline">
+            <img id="pan"    class="menu" src="">
+            <img id="zoomin" class="menu" src="">
+            <img id="zomout" class="menu" src="">
+          </div>
+
           <label id="coordinates">0</label>
+          
         </div>
 
       </section>
@@ -415,12 +477,11 @@
 
     </body>
 
-    <script src="processing.js"></script>
-    <script src="drawing.js"></script>
-    <script type="application/javascript">
-       var canvas = document.getElementById("canvas");
-       var processingInstance = new Processing(canvas, proc);
-    </script>-->
-
+    <script type="text/javascript">
+    
+      var canvas = document.getElementById("canvas");
+      var processingInstance = new Processing(canvas, proc);
+      
+    </script>
 
   </html>
