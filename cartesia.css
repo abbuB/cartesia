@@ -67,9 +67,9 @@
     outline:        none;
     /*background:     #363636;*/
   }
-  .fixed:hover {
+  /*.fixed:hover {*/
     /*background:     #000;*/
-  }
+  /*}*/
 
   /*
     ========================================
@@ -148,6 +148,7 @@
   /* Grid Footer *************************/
   #gridFooter {
     margin:         3px;
+    padding:        2px 2px 2px 10px;
     left:           0px;
     right:          0px;
     bottom:         0px;
@@ -287,7 +288,7 @@
     float:              left;
   }
   .col-2 {
-    padding:            0 5px 0 5px;
+    padding:            0 5px;
     margin:             0 5px 0 0;
     height:             16px;
     width:              100px;
@@ -468,18 +469,14 @@
     color:            white;
   }
   
-  label.menu {
-    font:             400 10px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    text-align:       center;
-    padding:          0 5px;
-    cursor:           pointer;
-  }
+
   
   #coordinates {
     position:         absolute;
     right:            10px;
-    font:             400 14px/16px "Courier", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    padding:          8px 0 0 0;
+    font:             900 14px/16px "Ubuntu", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    letter-spacing:   1px;
+    line-height:      26px;
   }
   
   
@@ -499,7 +496,7 @@
   input:hover {
     background:       gray;
   }
-  input:fo1pxus1px{
+  input:focus {
     background:       #C0C0C0;
   }
   
@@ -517,7 +514,9 @@
     color:            #000;
     /*border:           1px solid #eeeeee;*/
   }
-   
+
+
+  
   /* Number *******************************************************************/
   input[type="number"] {
     float:            left;
@@ -547,24 +546,24 @@
     padding:          0;
   }
   input[type="color"]:hover {
-    background:       gray;
-    color:            black;
-    cursor:           pointer;
+    background:         gray;
+    color:              black;
+    cursor:             pointer;
   }
   input[type="color"]:focus {
-    background:       #C0C0C0;
-    color:            black;
+    background:         #C0C0C0;
+    color:              black;
   }
   input[type="color"]::-webkit-color-swatch-wrapper {
-    border:           none;
-    background:       none;
+    border:             none;
+    background:         none;
   }
   input[type="color"]::-webkit-color-swatch {
     /*opacity:          0.75;*/
-    border:           none;
-    height:           10px;
-    margin:           -1px 0 0 0;
-    padding:          0;
+    border:             none;
+    height:             10px;
+    margin:             -1px 0 0 0;
+    padding:            0;
   }
   
   /* Range ********************************************************************/
@@ -572,58 +571,58 @@
     -webkit-appearance: none;
   }
   input[type=range]:focus {
-    outline:          none;
+    outline:            none;
   }
   input[type=range]:hover {
-    outline:          none;
-    background:       none;
-    cursor:           pointer;
+    outline:            none;
+    background:         none;
+    cursor:             pointer;
   }
   
   input[type=range]::-webkit-slider-runnable-track {
-    width:            300px;
-    height:           5px;
-    background:       gray;
-    border:           none;
-    border-radius:    3px;
+    width:              300px;
+    height:             5px;
+    background:         gray;
+    border:             none;
+    border-radius:      3px;
   }
   input[type=range]:focus::-webkit-slider-runnable-track {
-    background:       #ddd;
+    background:         #ddd;
   }
   input[type=range]::-webkit-slider-thumb {
     -webkit-appearance: none;
-    border:           none;
-    height:           12px;
-    width:            12px;
-    border-radius:    50%;
-    background:       #222;
-    margin-top:       -3px;
+    border:             none;
+    height:             12px;
+    width:              12px;
+    border-radius:      50%;
+    background:         #222;
+    margin-top:         -3px;
   }
 
   /* Checkbox *****************************************************************/
   input[type="checkbox"] {
     -webkit-appearance:button;
-    padding-left:     0px;
-    padding-right:    0px;
-    border-radius:    2px;
-    margin:           3px;
-    border:           double 1px #648880;
-    background-color: #000;
-    color:            #648880;
+    padding-left:       0px;
+    padding-right:      0px;
+    border-radius:      2px;
+    margin:             3px;
+    border:             double 1px #648880;
+    background-color:   #000;
+    color:              #648880;
     /*white-space:      nowrap;*/
     /*overflow:         hidden;*/
-    width:            10px;
-    height:           10px;
-    float:            left;
+    width:              10px;
+    height:             10px;
+    float:              left;
   }
   input[type="checkbox"]:checked {
-    background-color: #648880;
+    background-color:   #648880;
     /*border-left-color:#06F;*/
     /*border-right-color:#06F;*/
   }
   input[type="checkbox"]:hover {
       /*box-shadow:     0px 0px 10px #1300ff;*/
-    cursor:           pointer;
+    cursor:             pointer;
   }
 
   /* Checkbox *****************************************************************/
@@ -644,13 +643,13 @@
     /*text-align:         left;*/
   }
   input[type="radio"]:checked {
-    background-color: #648880;
-    border-left-color:#06F;
-    border-right-color:#06F;
+    background-color:   #648880;
+    border-left-color:  #06F;
+    border-right-color: #06F;
   }
   input[type="radio"]:hover {
-    box-shadow:     0px 0px 10px #1300ff;
-    cursor:           pointer;
+    box-shadow:         0px 0px 10px #1300ff;
+    cursor:             pointer;
   }
       
   /*
@@ -697,7 +696,7 @@
     border-top:       3px solid #999;
     float:            left;
     font-size:        28px;
-    font-weight:      100;
+    font-weight:      200;
     letter-spacing:   .5px;
     line-height:      28px;
     padding:          0 0 0 30px;
@@ -708,8 +707,8 @@
     cursor:           pointer;
   }
   #logo:hover {
-    border-top:       3px solid #ccc;
-    font-weight:      700;
+    /*border-top:       3px solid #ccc;*/
+    font-weight:      200;
   }
   .tagline {
     margin:           66px 0 22px 0;
@@ -871,24 +870,22 @@
 /*}*/
 
   .navbar {
-    font:             400 10px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    /*border-right:       0 solid #54879D;*/
+    font:               400 10px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    border-right:       0 solid #54879D;
     /*margin:             0;*/
     /*padding:            0;*/
-  
+    border-radius:      10px;
   }
   .navbar ul{
-    /*margin:             0;*/
-    /*padding:            0;*/
+    padding:            10px;
+    border-radius:      10px;
+    background:         gray;
   }
   .navbar li {
     /*background-color: black;*/
     float:            left;
-    /*font:             bold 12px/1.2em Arial, Verdana, Helvetica;*/
     font:             400 10px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    /*height:           30px;*/
-    list-style:       none outside none;
-    /*margin:           0;*/
+    /*list-style:       none outside none;*/
     padding:          0;
     text-align:       left;
     cursor:           pointer;
@@ -913,11 +910,12 @@
     padding:            0;
     position:           absolute;
     /*display: block;*/
-    height:         30px;
-    line-height: 30px;
+    height:             30px;
+    line-height:        30px;
+    border-radius:      10px;
   }
   .navbar ul li img {
-    vertical-align: middle;
+    vertical-align:     middle;
   }
   .navbar li:hover ul {
     display:            block;
@@ -929,17 +927,17 @@
     float:              none;
   }
   
-  .navbar li ul li a {
+  /*.navbar li ul li a {*/
     /*-webkit-appearance:button;*/
-    border-color:       none;
+  /*  border-color:       none;*/
     /*border-left:        1px solid #1F5065;*/
     /*border-right:       1px solid #1F5065;*/
-    border-style:       solid;
-    border-width:       0px;
-  }
-  .navbar li ul li a:hover {
-    background-color:   none;
-  }
+  /*  border-style:       solid;*/
+  /*  border-width:       0px;*/
+  /*}*/
+  /*.navbar li ul li a:hover {*/
+  /*  background-color:   none;*/
+  /*}*/
   
 /*  .lowernav{
     height:             20px;
@@ -970,51 +968,129 @@
     background-color:   transparent;
   }*/
   
+  
+  ul.footer li {
+    position:           inline-block;
+    float:              none;
+    background:         blue;
+    margin:             0 10px;
+    cursor:             pointer;
+    display:            block;
+  }
 
   li.sepB {
-    padding:          0 3px;
-    background:       green;
-    height:           5px;
+    padding:            0 3px;
+    height:             5px;
   }
   li.sepT {
-    background:       none;
-    height:           5px;
-    border-bottom:    1px solid #888;
+    height:             5px;
+    border-bottom:      1px solid #888;
   }
   
-  img {
-    /*-webkit-appearance:button;*/
-    /*margin:           0;*/
-    /*padding:          0;*/
-    cursor:           pointer;
+  li.sepB:hover {
+    height:             5px;
+    background-color:   #222;
+    cursor:             initial;
   }
+
+  li.sepT:hover {
+    height:             5px;
+    border-bottom:      1px solid #888;
+    background-color:   #222;
+    cursor:             initial;
+  }
+
   img.menu {
-    outline:        none;
-    border:         none;
-    padding:        2px;
-    /*-webkit-appearance:button;*/
-    height:         24px;
-    width:          24px;
-    background:     black;
-    text-align:     left;
+    margin:             0;
+    padding:            0;
+    height:             24px;
+    width:              24px;
+    background-color:   none;
+    border:             1px solid transparent;
+    vertical-align:     middle;
+    cursor:             pointer;
   }
+  img.menu:hover {
+    border:             1px solid #fff;
+  }
+  img.menu:active {
+    background:         red;
+    /*margin:             1px 0 0 0;*/
+  }
+
+  div.inline {
+    display:            inline-block;
+    /*vertical-align:     middle;*/
+  }
+
+  div.commands {
+    margin:             0;
+    padding:            0;
+    font:               400 12px/14px "Ubuntu", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    border:             0px solid gray;
+    border-radius:      5px;
+    background:         none;
+    display:            inline-block;
+    line-height:        24px;
+  }
+
+  input[type="text"].commands {
+    font:               400 11px/12px "Ubuntu", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    padding:            0 10px;
+    background:         gray;
+    color:              #000;
+    border-radius:      5px;
+    height:             20px;
+    border:             1px solid #888;
+  }
+  input[type="text"].commands:hover {
+    background:         #fff;
+  }
+  input[type="text"].commands:focus {
+    background:         #fff;
+    border:             1px solid #666;
+  }
+  
+  label.commands {
+    font:               400 11px/12px "Ubuntu", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    padding:            0 10px;
+    color:              #888;
+  }
+  label.commands:active {
+    padding:            0 10px;
+    color:              #fff;
+  }
+  
   li.menu {
-    outline:        none;
-    border:         none;
-    padding:        2px;
-    /*-webkit-appearance:button;*/
-    height:         28px;
-    /*width:          24px;*/
-    background:     none;
-    text-align:     left;
+    outline:            none;
+    border:             red;
+    height:             24px;
+    background:         none;
+    text-align:         left;
+    color:              white;
   }
   li.menu:hover {
-    /*outline:        none;*/
-    /*border:         none;*/
-    padding:        2px;
-    -webkit-appearance:button;
-    height:         28px;
-    /*width:          24px;*/
-    background:     black;
-    text-align:     left;
+    color:              yellow;
+  }
+  li.menu:active {
+    color:              blue;
+  }
+  
+  li.menuH {
+    outline:            none;
+    border:             red;
+    /*padding:            0px;*/
+    height:             24px;
+    width:              24px;
+    background:         none;
+    text-align:         left;
+  }
+
+  
+  label.menu {
+    font:               400 10px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    text-align:         center;
+    padding:            0 5px;
+    cursor:             pointer;
+    color:              inherit;
   }
