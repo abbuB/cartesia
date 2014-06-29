@@ -28,7 +28,7 @@
   /* HTML5 display-role reset for older browsers */
   article, aside, details, figcaption, figure,
   footer, header, hgroup, menu, nav, section {
-    display:        block;
+    /*display:        block;*/
   }
   body {
     line-height:    1;
@@ -51,47 +51,63 @@
 
   /*
     ========================================
-    Custom styles
+      Body
     ========================================
   */
+  
   body {
     background:     none;
     margin:         0;
+    padding:        0;
     color:          #888;
-    font:           100 16px/22px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    /*font:           100 16px/22px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;*/
   }
 
+  /*
+    ========================================
+      Position
+    ========================================
+  */
+  
   .fixed {
     position:       absolute;
     border:         none;
     outline:        none;
-    /*background:     #363636;*/
   }
-  /*.fixed:hover {*/
-    /*background:     #000;*/
-  /*}*/
+  
+    /*
+    ========================================
+      Appearance
+    ========================================
+  */
+  .shadow {
+    box-shadow:     0px 0px 9px rgba(0,0,0,0.25);
+  }
+
+  .active {
+  }
+  .active:hover {
+    background:     #595959;
+  }
 
   /*
     ========================================
-    Header/Footer
+      Header/Footer
     ========================================
   */
-  #pageHeader {
+  .pageHeader {
+    font:           100 16px/22px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
     background:     -webkit-gradient(linear, left top, left bottom, from(#272727), to(#1a1a1a));
     padding:        0 30px 0 0;
     width:          100%;
     height:         35px;
   }
-  #pageHeader:hover {
-    /*border:         1px solid #333;*/
-  }
 
-  #pageFooter {
+  .pageFooter {
     background:     -webkit-gradient(linear, left top, left bottom, from(#1a1a1a), to(#272727));
-    padding:        4px 4px 4px 10px;
+    padding:        4px 4px 4px 3px;
     margin:         0;
     height:         20px;
-    padding-bottom: 3px;
     left:           0;
     right:          0;
     bottom:         0;
@@ -100,9 +116,10 @@
   }
 
 
+  
   /*
     ========================================
-    Canvas
+      Canvas/Grid
     ========================================
   */
   #canvas {
@@ -132,6 +149,7 @@
     top:            35px;
     bottom:         20px;
     background:     #262626;
+    /*background:     black;*/
   }
   
   /* Grid Header *************************/
@@ -141,7 +159,6 @@
     right:          0px;
     top:            0px;
     height:         30px;
-    box-shadow:     0px 0px 9px rgba(0,0,0,0.25);
     background:     -webkit-gradient(linear, left top, left bottom, from(#4a4a4a), to(#383838));
   }
   
@@ -153,40 +170,42 @@
     right:          0px;
     bottom:         0px;
     height:         30px;
-    box-shadow:     0px 0px 9px rgba(0,0,0,0.25);
     background:     -webkit-gradient(linear, left top, left bottom, from(#4a4a4a), to(#383838));
   }
 
   /* Grid Properties *************************/
-  #gridProperties {
+  #grid-settings {
+    font:           600 12px/14px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
     margin:         3px;
-    left:           0px;
+    padding:        3px;
+    left:           700px;
     top:            33px;
     bottom:         33px;
     width:          202px;
-    box-shadow:     0px 0px 9px rgba(0,0,0,0.25);
     background:     #4a4a4a;
-    border:         1px solid transparent;
-    border-radius:  5px;
+    /*border:         1px solid transparent;*/
+    /*border-radius:  5px;*/
     
   }
-  #gridProperties:hover {
-    border:         1px solid #333;
+  #grid-settings:hover {
+    /*border:         1px solid #333;*/
   }
 
   /* Grid Properties Title *************************/
-  #gridPropertiesTitle {
-    font:           600 12px/14px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  #grid-settings-title {
+    display:        block;
+    font:           600 11px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
     text-align:     center;
     height:         20px;
-    width:          200px;
+    width:          100%;
   }
-  #gridPropertiesTitle:hover {
+  #grid-settings-title:hover {
     background:     none;
   }
   
   /* Grid Menu *************************/
-  #gridMenu {
+  #grid-display {
+    font:           600 11px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
     margin:         3px;
     padding:        5px 0 0 0;
     top:            33px;
@@ -195,21 +214,20 @@
     border:         1px solid transparent;
     border-radius:  5px;
     overflow:       hidden;
-    box-shadow:     0px 0px 9px rgba(0,0,0,0.25);
     background:     #4a4a4a;
     height:         500px;
   }
-  #gridMenu:hover {
+  #grid-display:hover {
     border:         1px solid #333;
   }
   
-  #gridMenuDisplay {
+  #grid-display-visible {
     top:            10px;
     right:          5px;
   }
 
-  #gridPropertiesDisplay {
-    top:            10px;
+  #grid-settings-visible {
+    top:            0px;
     left:           5px;
   }
   
@@ -219,25 +237,41 @@
     background:     blue;
     width:          100%;
   }
-  
 
-
-  .shape {
-    outline:        none;
-    border:         none;
-    padding:        2px;
-    /*-webkit-appearance:button;*/
-    height:         24px;
-    width:          24px;
-    background:     black;
-    text-align:     left;
+  div.menu {
+    display:        inline-block;
+    position:       relative;
+    margin:         0;
+    padding:        0;
+    left:           0px;
+    right:          0px;
+    width:          30px;
+    height:         30px;
+    background:     green;
   }
-  .shape:hover {
-    background:     blue;
+
+  div.menu:hover {
+    cursor:         default;
+  }
+
+  .menuDrop {
+    display:        absolute;
+    margin:         0;
+    padding:        0;
+    left:           0;
+    top:            20px;
+    width:          100%;
+    height:         10px;
+    border:         1px solid green;
+    background:     #ff0000;
+  }
+  .menuDrop:hover {
+    background:     none;
+    border:         1px solid #000;
     cursor:         pointer;
   }
-  .shape:focus {
-    background:     yellow;
+  .menuDrop:focus {
+    background:     black;
   }
 
   .shape1 {
@@ -249,6 +283,8 @@
   }
   
   #shapeMenu {
+    display:        inline-block;
+    position:        default;
     margin:       3px 0 0 30px;
   }
 
@@ -263,8 +299,6 @@
   .select {
     
   }
-  
-
 
   *,
   *:before,
@@ -274,25 +308,23 @@
             box-sizing: border-box;
   }
   .col-1,
-  .col-2 {
-    padding-left:       0px;
-    padding-right:      0px;
-  }
-  .col-1,
-  .col-2  {
+  .col-2,
+  .col-3{
+    display:            inline-block;
+    width:              48%;
+    height:             16px;
+    border:             1px solid gray;
+    margin:             0;
+    padding:            0;
+    background:         black;
   }
   .col-1 {
-    padding:            3px 0 0 5px;
-    height:             16px;
-    width:              95px;
-    float:              left;
+    /*width:              48%;*/
+    /*padding:            3px 0 0 5px;*/
   }
   .col-2 {
-    padding:            0 5px;
-    margin:             0 5px 0 0;
-    height:             16px;
-    width:              100px;
-    float:              right;
+    /*width:              40%;*/
+    /*padding:            0 5px;*/
   }
 
   .col3 {
@@ -323,30 +355,11 @@
   }
 
   hr {
-    padding:            5px 5px 5px 5px;
-    width:              100%;
-    border:             0;
-    height:             0;
-    border-top:         0px groove rgba(0, 0, 0, 0.1);
-    border-bottom:      0px groove rgba(255, 255, 255, 0.3);
   }
   hr.line {
-    padding:            2px 5px 5px 5px;
-    width:              90%;
-    border:             0;
-    height:             0;
-    /*border-top:         1px groove rgba(0, 0, 0, 0.1);*/
-    border-bottom:      1px groove rgba(255, 255, 255, 0.3);
-  }
-  hr.sep {
-    margin:             10px 0 0 0;
-    padding:            0;
-    width:              90%;
-    border:             0;
-    height:             0;
-    /*border-top:         1px groove rgba(0, 0, 0, 0.1);*/
-    border-bottom:      1px groove rgba(255, 255, 255, 0.3);
-    background:         green;
+    border:             none;
+    margin:             10px 5px;
+    border-top:         1px groove rgba(255, 255, 255, 0.5);
   }
 
   /*
@@ -459,14 +472,12 @@
     ========================================
   */
   label {
-    display:          inline-block;
-    font:             400 10px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    padding:          0 0 0 0;
+    /*font:             400 11px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;*/
+    margin:           0;
+    padding:          0;
   }
 
   label:hover {
-    background:       none;
-    color:            white;
   }
   
 
@@ -481,43 +492,40 @@
   
   
   /*
-    ========================================
+    ============================================================================
     Input
-    ========================================
+    ============================================================================
   */
   input {
     font:             400 10px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
     background:       none;
-    height:           16px;
-    outline:          none;
     border:           none;
-    margin:           1px;
   }
   input:hover {
     background:       gray;
   }
   input:focus {
     background:       #C0C0C0;
+    outline:          none;
   }
   
+  /* TEXT *********************************************************************/
   input[type="text"] {
-    background:       none;
+    background:       transparent;
     color:            #fff;
-    height:           14px;
-    margin:           1px 5px 1px 0;
+    padding:          0 3px;
   }
   input[type="text"]:hover {
     background:       gray;
+    padding:          0 3px;
   }
   input[type="text"]:focus {
     background:       #C0C0C0;
     color:            #000;
-    /*border:           1px solid #eeeeee;*/
+    padding:          0 3px;
   }
 
-
-  
-  /* Number *******************************************************************/
+  /* NUMBER *******************************************************************/
   input[type="number"] {
     float:            left;
     background:       none;
@@ -572,6 +580,7 @@
   }
   input[type=range]:focus {
     outline:            none;
+    background:         none;
   }
   input[type=range]:hover {
     outline:            none;
@@ -601,28 +610,27 @@
 
   /* Checkbox *****************************************************************/
   input[type="checkbox"] {
-    -webkit-appearance:button;
-    padding-left:       0px;
-    padding-right:      0px;
-    border-radius:      2px;
-    margin:             3px;
-    border:             double 1px #648880;
-    background-color:   #000;
-    color:              #648880;
+    -webkit-appearance:none;
+    /*padding-left:       0px;*/
+    /*padding-right:      0px;*/
+    /*border-radius:      2px;*/
+    /*margin:             3px;*/
+    /*border:             double 1px #648880;*/
+    /*background-color:   #000;*/
+    /*color:              #648880;*/
     /*white-space:      nowrap;*/
     /*overflow:         hidden;*/
-    width:              10px;
-    height:             10px;
-    float:              left;
+    /*width:              10px;*/
+    /*height:             10px;*/
+    /*float:              left;*/
   }
   input[type="checkbox"]:checked {
-    background-color:   #648880;
+    /*background-color:   #648880;*/
     /*border-left-color:#06F;*/
     /*border-right-color:#06F;*/
   }
   input[type="checkbox"]:hover {
-      /*box-shadow:     0px 0px 10px #1300ff;*/
-    cursor:             pointer;
+    /*cursor:             pointer;*/
   }
 
   /* Checkbox *****************************************************************/
@@ -760,246 +768,6 @@
   }
 
 
-  /*
-    ========================================
-    Schedule
-    ========================================
-  */
-
-  table {
-    margin-bottom: 44px;
-    width: 100%;
-  }
-  table:last-child {
-    margin-bottom: 0;
-  }
-  th,
-  td {
-    padding-bottom: 22px;
-    vertical-align: top;
-  }
-  th {
-    padding-right: 45px;
-    text-align: right;
-    width: 20%;
-  }
-  td {
-    width: 40%;
-  }
-  thead {
-    line-height: 44px;
-  }
-  thead th {
-    color: #648880;
-    font-size: 24px;
-  }
-  tbody th {
-    color: #a9b2b9;
-    font-size: 14px;
-    font-weight: 400;
-    padding-top: 22px;
-    text-transform: uppercase;
-  }
-  tbody td {
-    border-top: 1px solid #dfe2e5;
-    padding-top: 21px;
-  }
-  tbody td:first-of-type {
-    padding-right: 15px;
-  }
-  tbody td:last-of-type {
-    padding-left: 15px;
-  }
-  tbody td:only-of-type {
-    padding-left: 0;
-    padding-right: 0;
-  }
-  table a {
-    color: #888;
-  }
-  table h4 {
-    margin-bottom: 0;
-  }
-  
-  .schedule-offset {
-    color: #a9b2b9;
-  }
-  
-/*  #container{*/
-/*    width:800px;*/
-/*    background-color:#00FF00;*/
-/*    border:1px solid black;*/
- 
-/*    z-index:-9;*/
-/*    margin:auto;*/
-/*}*/
-
-/*#logo{*/
-
-/*    background-color:#FF0033;*/
-/*    border:#000 1px;*/
-/*    width:800px;*/
-/*    height:200px;*/
-/*    overflow:hidden;*/
-
-/*}*/
-
-/*nav {*/
-
-/*    background-color: #FFF;*/
-/*    border:           #000 1px;;*/
-/*    height:           30px;*/
-
-/*}*/
-
-/*section{*/
-
-/*    background-color:#6F3;*/
-/*    border:#000 1px;*/
-/*    width:780px;*/
-/*    height:400px;*/
-/*    margin:10px;*/
-/*}*/
-
-/*footer{*/
-
-/*    background-color:#FF0;*/
-/*    border:#000 1px;*/
-/*    width:800px;*/
-/*    height:100px;*/
-/*}*/
-
-  .navbar {
-    font:               400 10px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    border-right:       0 solid #54879D;
-    /*margin:             0;*/
-    /*padding:            0;*/
-    border-radius:      10px;
-  }
-  .navbar ul{
-    padding:            10px;
-    border-radius:      10px;
-    background:         gray;
-  }
-  .navbar li {
-    /*background-color: black;*/
-    float:            left;
-    font:             400 10px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    /*list-style:       none outside none;*/
-    padding:          0;
-    text-align:       left;
-    cursor:           pointer;
-  }
-  
-  .navbar a {
-    /*border-left:        1px solid #54879D;*/
-    /*border-right:       1px solid #1F5065;*/
-    color:              #FFFFFF;
-    display:            block;
-    /*padding:            8px 10px;*/
-    text-decoration:    none;
-  }
-  
-  .navbar li:hover {
-    background-color:   #000;
-  }
-  
-  .navbar li ul {
-    display:            none;
-    margin:             0;
-    padding:            0;
-    position:           absolute;
-    /*display: block;*/
-    height:             30px;
-    line-height:        30px;
-    border-radius:      10px;
-  }
-  .navbar ul li img {
-    vertical-align:     middle;
-  }
-  .navbar li:hover ul {
-    display:            block;
-    /*height:             30px;*/
-  }
-  
-  .navbar li ul li {
-    background-color:   #222;
-    float:              none;
-  }
-  
-  /*.navbar li ul li a {*/
-    /*-webkit-appearance:button;*/
-  /*  border-color:       none;*/
-    /*border-left:        1px solid #1F5065;*/
-    /*border-right:       1px solid #1F5065;*/
-  /*  border-style:       solid;*/
-  /*  border-width:       0px;*/
-  /*}*/
-  /*.navbar li ul li a:hover {*/
-  /*  background-color:   none;*/
-  /*}*/
-  
-/*  .lowernav{
-    height:             20px;
-    border:             0px solid black;
-    padding:            0;
-    width:              350px;
-    margin:             auto;
-  }
-
-  .lowernav li {
-    float:              left;
-    list-style:         none;
-    margin:             0 0;
-    padding:            0;
-    width:              20%;
-  }
-  
-  .lowernav a {
-    border-right:       1px solid #ffffff;
-    padding:            0 10px;
-    text-decoration:    none;
-    display:            block;
-    text-align:         center;
-  }
-  
-  .lowernav a:hover {
-    color:              red;
-    background-color:   transparent;
-  }*/
-  
-  
-  ul.footer li {
-    position:           inline-block;
-    float:              none;
-    background:         blue;
-    margin:             0 10px;
-    cursor:             pointer;
-    display:            block;
-  }
-
-  li.sepB {
-    padding:            0 3px;
-    height:             5px;
-  }
-  li.sepT {
-    height:             5px;
-    border-bottom:      1px solid #888;
-  }
-  
-  li.sepB:hover {
-    height:             5px;
-    background-color:   #222;
-    cursor:             initial;
-  }
-
-  li.sepT:hover {
-    height:             5px;
-    border-bottom:      1px solid #888;
-    background-color:   #222;
-    cursor:             initial;
-  }
-
   img.menu {
     margin:             0;
     padding:            0;
@@ -1034,32 +802,32 @@
     line-height:        24px;
   }
 
-  input[type="text"].commands {
-    font:               400 11px/12px "Ubuntu", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    padding:            0 10px;
-    background:         gray;
-    color:              #000;
-    border-radius:      5px;
-    height:             20px;
-    border:             1px solid #888;
-  }
-  input[type="text"].commands:hover {
-    background:         #fff;
-  }
-  input[type="text"].commands:focus {
-    background:         #fff;
-    border:             1px solid #666;
-  }
+  /*input[type="text"].commands {*/
+  /*  font:               400 11px/12px "Ubuntu", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;*/
+  /*  padding:            0 10px;*/
+  /*  background:         gray;*/
+  /*  color:              #000;*/
+  /*  border-radius:      5px;*/
+  /*  height:             20px;*/
+  /*  border:             1px solid #888;*/
+  /*}*/
+  /*input[type="text"].commands:hover {*/
+  /*  background:         #fff;*/
+  /*}*/
+  /*input[type="text"].commands:focus {*/
+  /*  background:         #fff;*/
+  /*  border:             1px solid #666;*/
+  /*}*/
   
-  label.commands {
-    font:               400 11px/12px "Ubuntu", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    padding:            0 10px;
-    color:              #888;
-  }
-  label.commands:active {
-    padding:            0 10px;
-    color:              #fff;
-  }
+  /*label.commands {*/
+  /*  font:               400 11px/12px "Ubuntu", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;*/
+  /*  padding:            0 10px;*/
+  /*  color:              #888;*/
+  /*}*/
+  /*label.commands:active {*/
+  /*  padding:            0 10px;*/
+  /*  color:              #fff;*/
+  /*}*/
   
   li.menu {
     outline:            none;
@@ -1087,10 +855,10 @@
   }
 
   
-  label.menu {
-    font:               400 10px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    text-align:         center;
-    padding:            0 5px;
-    cursor:             pointer;
-    color:              inherit;
-  }
+  /*label.menu {*/
+  /*  font:               400 10px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;*/
+  /*  text-align:         center;*/
+  /*  padding:            0 5px;*/
+  /*  cursor:             pointer;*/
+  /*  color:              inherit;*/
+  /*}*/
