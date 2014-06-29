@@ -3609,8 +3609,8 @@ var factor=1.25;
 
   // printCommands();
 
-  // document.getElementById("gridMenuDisplay").checked=true;
-  // document.getElementById("gridPropertiesDisplay").checked=true;
+  // document.getElementById("gridMenuDisplay").checked=false;
+  // document.getElementById("gridPropertiesDisplay").checked=false;
 
   var clickMe=function(p){
     
