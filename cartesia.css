@@ -753,14 +753,94 @@
     cursor:             pointer;
   }
 
-  button.presets-toggle {
-    display:            inline-block;
-    /*-webkit-appearance: none;*/
-    /*border:             double 1px #648880;*/
-    /*width:              120px;*/
-    /*height:             20px;*/
+  button {
+    outline:            none;
+    background:         transparent;
+    
+    border:             none;
+    border-radius:      5px;
+    
+    width:              20px;
+    height:             20px;
     cursor:             pointer;
+    
+    padding:            0;
+    margin:             5px 3px;
+    
+    color:              #888;
+    text-align:         center;
+    line-height:        10px;
+
   }
+  button:hover {
+    color:              #fff;
+    box-shadow:         0 1px 2px rgba(0,0,0,.5);
+    -webkit-transition: All 0.5s ease;
+  }
+  button:active {
+    background:         -webkit-gradient(linear, left top, left bottom, from(#383838), to(#4a4a4a));
+    color:              #888;
+  }
+
+  button.menu {
+    outline:            none;
+    background:         green;
+    
+    border:             none;
+    border-radius:      1px;
+    
+    width:              auto;
+    height:             auto;
+    cursor:             pointer;
+    
+    padding:            0;
+    margin:             0;
+    
+    color:              #888;
+    text-align:         center;
+    line-height:        10px;
+
+  }
+  button.menu:hover {
+    color:              #fff;
+    box-shadow:         0 1px 2px rgba(0,0,0,.5);
+  }
+  button.menu:active {
+    background:         -webkit-gradient(linear, left top, left bottom, from(#383838), to(#4a4a4a));
+    color:              #888;
+  }
+  
+  #right {
+    /*display:            inline-block;*/
+    -webkit-appearance: none;
+    outline:            none;
+    border:             double 1px #648880;
+    border-radius:      5px;
+    width:              20px;
+    height:             20px;
+    cursor:             pointer;
+    padding:            0;
+    margin:             0;
+    font-size:          125%;
+    background:         none;
+    color:              yellow;
+  }
+  #left {
+    /*display:            inline-block;*/
+    -webkit-appearance: none;
+    outline:            none;
+    border:             double 1px #648880;
+    border-radius:      5px;
+    width:              20px;
+    height:             20px;
+    cursor:             pointer;
+    padding:            0;
+    margin:             0;
+    font-size:          125%;
+    background:         green;
+    color:              blue;
+  }
+  
   /*.button.functions:focus {*/
   /*  background-color:   #648880;*/
   /*  border-left-color:#06F;*/
