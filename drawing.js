@@ -2870,9 +2870,16 @@ var factor=1.25;
 
     pushMatrix();
 
-      p.w=document.getElementById("grid").clientWidth-20;
-      p.h=document.getElementById("grid").clientHeight-20;
       
+
+
+      // document.getElementById("canvas").width=document.getElementById("canvas-div").clientWidth;
+      // document.getElementById("canvas").height=document.getElementById("canvas-div").clientHeight;
+
+      // p.w=document.getElementById("canvas").clientWidth;
+      // p.h=document.getElementById("canvas").clientHeight;
+
+
       translate(p.x+p.w/2,
                 p.y+p.h/2);
 
@@ -3515,7 +3522,7 @@ var factor=1.25;
     var ctrls=[];
 
     var cn=new grid(
-            new propC(getGUID(), parent, parent.x, parent.y, parent.w, parent.h, 5, ARROW, false, COMMANDS.UNDEF[0], 0),
+            new propC(getGUID(), parent, parent.x, parent.y, parent.w, parent.h, 0, ARROW, false, COMMANDS.UNDEF[0], 0),
             new propL(CLRS.GRID, getColor(CLRS.GRID,65), CLRS.WHITE, CLRS.YELLOW, 0, 0),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
@@ -3615,15 +3622,21 @@ var factor=1.25;
   var clickMe=function(p){
     
     if(p===1){
-      println(1);
+      // println(1);
+      document.getElementById('menu').style.border="1px solid red";
+      // document.getElementById("origin").checked=true;
+      app.origin=false;
     }
     else{
-      println(2);
+      // println(2);
+      document.getElementById('menu').style.border="1px solid transparent";
+      // document.getElementById("origin").checked=false;
+      app.origin=true;
     }
 
-    document.getElementById("origin").checked=true;
-    println("click me");
-    document.getElementById('gridMenu').style.border="11px solid red";
+    
+    // println("click me");
+    
 
   };
 
@@ -3631,24 +3644,24 @@ var factor=1.25;
   var toggleAxisx=function()  { app.axisx=!app.axisx;   };
   var toggleAxisy=function()  { app.axisy=!app.axisy;   };
   
-  document.getElementById("origin").checked=app.origin;
-  document.getElementById("axisx").checked=true;
-  document.getElementById("axisy").checked=true;
-  document.getElementById("linesx").checked=true;
-  document.getElementById("linesy").checked=true;
-  document.getElementById("arrowsx").checked=true;
-  document.getElementById("arrowsy").checked=true;
-  document.getElementById("ticksx").checked=true;
-  document.getElementById("ticksy").checked=true;
-  document.getElementById("labelsx").checked=true;
-  document.getElementById("labelsy").checked=true;
-  document.getElementById("arrowsx").checked=true;
+  document.getElementById("origin").checked   =app.origin;
+  document.getElementById("axisx").checked    =app.axisX;
+  document.getElementById("axisy").checked    =app.axisY;
+  document.getElementById("linesx").checked   =app.linesX;
+  document.getElementById("linesy").checked   =app.linesY;
+  document.getElementById("arrowsx").checked  =app.arrowsX;
+  document.getElementById("arrowsy").checked  =app.arrowsY;
+  document.getElementById("ticksx").checked   =app.ticksX;
+  document.getElementById("ticksy").checked   =app.ticksY;
+  document.getElementById("labelsx").checked  =app.labelsX;
+  document.getElementById("labelsy").checked  =app.labelsY;
+  document.getElementById("arrowsx").checked  =app.arrowsX;
   
   document.getElementById("origin").onclick = function() { toggleOrigin();  };
   document.getElementById("axisx").onclick  = function() { toggleAxisx();   };
   document.getElementById("axisy").onclick  = function() { toggleAxisy();   };
   
-  document.getElementById('distance').onclick = function() { clickMe(1); };
-  document.getElementById('point0').onclick = function() { clickMe(2); };
+  document.getElementById('points').onclick = function() { clickMe(1); };
+  document.getElementById('lines').onclick = function()   { clickMe(2); };
   
 }};
