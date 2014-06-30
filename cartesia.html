@@ -4,7 +4,7 @@
 
     <head>
 
-      <meta charset="UTF-8">
+      <meta charset="UTF-16">
       <script type="text/javascript" src="processing.js"></script>
       <script type="text/javascript" src="drawing.js"></script>
       <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
@@ -29,24 +29,74 @@
         //   });
         // });
 
-        $(document).ready(function(){
-          $('#presets-toggle').click(function(){
-              $("#presets").animate({width:'toggle'},250);
-          });
-        });
+        // $(document).ready(function(){
+        //   $('#presets-toggle').click(function(){
+        //       $("#presets").animate({width:'toggle'},250);
+        //   });
+        // });
         
+        // $(document).ready(function(){
+        //   $("#shape-properties-toggle").click(function(){
+        //     $("#shape-properties").slideToggle(400);
+        //   });
+        // });
+
         $(document).ready(function(){
-          $("#shape-properties-toggle").click(function(){
-            $("#shape-properties").slideToggle(400);
+          $("#shape-properties-toggle").click(function () {
+
+              if ($(this).text() === "▲"){
+                $(this).text("▼")
+              }
+              else {
+                $(this).text("▲");
+              }
+           
+              $("#shape-properties").slideToggle(400);
+              
           });
         });
 
         $(document).ready(function(){
-          $("#grid-properties-toggle").click(function(){
-            $("#grid-properties").slideToggle(400);
+          $("#grid-properties-toggle").click(function () {
+
+              if ($(this).text() === "▲"){
+                $(this).text("▼")
+              }
+              else {
+                $(this).text("▲");
+              }
+           
+              $("#grid-properties").slideToggle(400);
+              
           });
         });
-        
+
+        $(document).ready(function(){
+          $("#presets-toggle").click(function () {
+
+              if ($(this).text() === "►"){
+                $(this).text("◄")
+              }
+              else {
+                $(this).text("►");
+              }
+
+              $("#presets").animate({width:'toggle'},250);
+              
+          });
+        });
+
+        $(document).ready(function(){
+          $("#menu-points").click(function(){
+              if ($(this).height() === 20){
+                $(this).height(100)
+              }
+              else {
+                $(this).height(20);
+              }
+          });
+        });
+
         // $(document).ready(function(){
         //   $('#gridPropertiesDisplay').click(function()
         //   {
@@ -271,9 +321,10 @@
           <!--Grid Toolbar-->
           <nav id="grid-header" class="fixed">
 
-            <button id="presets-toggle" class="functions">&#8592;</button>
+            <button id="presets-toggle">◄</button>
+            <button id="menu-points" class="menu"> <img id="points" class="menu" src="temp.png"> </button>
 
-            <input id="shape-properties-toggle" type="checkbox">
+            <button id="shape-properties-toggle">▲</button>
   
             <div id="menu" class="inline">
               <img id="points" class="menu" src="">
@@ -281,7 +332,7 @@
               <img id="circles" class="menu" src="">
             </div>
             
-            <input id="grid-properties-toggle"  type="checkbox">
+            <button id="grid-properties-toggle">▲</button>
   
           </nav>
           
