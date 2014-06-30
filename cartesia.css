@@ -10,290 +10,340 @@
   small, strike, strong, sub, sup, tt, var,
   b, u, i, center,
   dl, dt, dd, ol, ul, li,
-  fieldset, form, label, legend,
+  fieldset, form,   input[type="number"], legend,
   table, caption, tbody, tfoot, thead, tr, th, td,
   article, aside, canvas, details, embed,
   figure, figcaption, footer, header, hgroup,
   menu, nav, output, ruby, section, summary,
   time, mark, audio, video {
-    margin:         0;
-    padding:        0;
-    border:         0;
-    font-size:      100%;
-    font:           inherit;
-    vertical-align: baseline;
+    margin:             0;
+    padding:            0;
+    border:             0;
+    font-size:          100%;
+    font:               inherit;
+    vertical-align:     baseline;
     -webkit-appearance: none;
-    outline:        none;
+    -moz-appearance:    none;
+    outline:            none;
   }
   /* HTML5 display-role reset for older browsers */
   article, aside, details, figcaption, figure,
   footer, header, hgroup, menu, nav, section {
-    /*display:        block;*/
+    display:            block;
   }
   body {
-    line-height:    1;
+    line-height:        1;
   }
   ol, ul {
-    list-style:     none;
+    list-style:         none;
   }
   blockquote, q {
-    quotes:         none;
+    quotes:             none;
   }
   blockquote:before, blockquote:after,
   q:before, q:after {
-    content:        '';
-    content:        none;
+    content:            '';
+    content:            none;
   }
   table {
-    border-collapse:collapse;
-    border-spacing: 0;
+    border-collapse:    collapse;
+    border-spacing:     0;
   }
 
   /*
-    ========================================
+    ============================================================================
       Body
-    ========================================
+    ============================================================================
   */
   
   body {
-    background:     none;
-    margin:         0;
-    padding:        0;
-    color:          #888;
-    /*font:           100 16px/22px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;*/
+    font:               400 11px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background:         none;
+    margin:             0;
+    padding:            0;
+    color:              #888;
   }
 
   /*
-    ========================================
+    ============================================================================
       Position
-    ========================================
+    ============================================================================
   */
   
   .fixed {
-    position:       absolute;
-    border:         none;
-    outline:        none;
+    position:           absolute;
+    border:             none;
+    outline:            none;
   }
   
-    /*
-    ========================================
+  /*
+    ============================================================================
       Appearance
-    ========================================
+    ============================================================================
   */
   .shadow {
-    box-shadow:     0px 0px 9px rgba(0,0,0,0.25);
+    box-shadow:         9px 9px 9px rgba(0,0,0,0.25);
   }
 
   .active {
   }
   .active:hover {
-    background:     #595959;
+    background:         #595959;
   }
 
   /*
-    ========================================
+    ============================================================================
       Header/Footer
-    ========================================
+    ============================================================================
   */
-  .pageHeader {
-    font:           100 16px/22px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    background:     -webkit-gradient(linear, left top, left bottom, from(#272727), to(#1a1a1a));
-    padding:        0 30px 0 0;
-    width:          100%;
-    height:         35px;
+  #page-header {
+    background:         -webkit-gradient(linear, left top, left bottom, from(#272727), to(#1a1a1a));
+    padding:            0 30px 0 0;
+    width:              100%;
+    height:             35px;
   }
 
-  .pageFooter {
-    background:     -webkit-gradient(linear, left top, left bottom, from(#1a1a1a), to(#272727));
-    padding:        4px 4px 4px 3px;
-    margin:         0;
-    height:         20px;
-    left:           0;
-    right:          0;
-    bottom:         0;
-    font:           200 12px/14px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    color:          #fff;
+  #page-footer {
+
+    background:         -webkit-gradient(linear, left top, left bottom, from(#1a1a1a), to(#272727));
+    padding:            4px;
+    
+    bottom:             0;
+    height:             20px;
+    width:              100%;
+    
+    font-weight:        200;
+    font-size:          12px/14px;
+    
+    color:              #fff;
+
   }
 
 
   
   /*
-    ========================================
-      Canvas/Grid
-    ========================================
+    ============================================================================
+      Canvas
+    ============================================================================
   */
-  #canvas {
-    background:     #666;
-    left:           10px;
-    right:          10px;
-    bottom:         10px;
-    top:            10px;
-    outline:        none;
-    border:         -webkit-tap-highlight-color: rgba(255, 255, 255, 0); /* mobile webkit */
+  #canvas-div {
+    
+    background:         transparent;
+    width:              100%;
+    height:             100%;
+    /*left:               0px;*/
+    /*right:              0px;*/
+    /*bottom:             0px;*/
+    /*top:                0px;*/
+    
+    outline:            none;
+    /*border:             -webkit-tap-highlight-color: rgba(255, 255, 255, 0);*/
+
   }
-  #canvas:hover {
+  #canvas-div:hover {
     /*background:     #ff0000;*/
   }
   
   
   /*
-    ========================================
+    ============================================================================
     Grid
-    ========================================
+    ============================================================================
   */
+
+  #presets {
+    display:            inline-block;
+    height:             100%;
+    width:              200px;
+    background:         yellow;
+    border:             2px solid #666;
+  }
+  
+  #middle {
+    left:               0;
+    right:              0;
+    top:                35px;
+    bottom:             20px;
+    background:         blue;
+  }
 
   /* Grid *************************/
   #grid {
-    left:           0px;
-    right:          0;
-    top:            35px;
-    bottom:         20px;
-    background:     #262626;
-    /*background:     black;*/
+    display:            inline-block;
+    height:             100%;
+    right:              0;
+    top:                35px;
+    bottom:             20px;
+    /*background:         #262626;*/
+    background:         green;
+    border:             2px solid #333;
   }
   
   /* Grid Header *************************/
-  #gridHeader {
-    margin:         3px;
-    left:           0px;
-    right:          0px;
-    top:            0px;
-    height:         30px;
-    background:     -webkit-gradient(linear, left top, left bottom, from(#4a4a4a), to(#383838));
+  #grid-header {
+    margin:             3px;
+    left:               100px;
+    right:              100px;
+    top:                5px;
+    height:             30px;
+    background:         -webkit-gradient(linear, left top, left bottom, from(#4a4a4a), to(#383838));
   }
   
   /* Grid Footer *************************/
-  #gridFooter {
-    margin:         3px;
-    padding:        2px 2px 2px 10px;
-    left:           0px;
-    right:          0px;
-    bottom:         0px;
-    height:         30px;
-    background:     -webkit-gradient(linear, left top, left bottom, from(#4a4a4a), to(#383838));
+  #grid-footer {
+    margin:             3px;
+    padding:            2px 2px 2px 10px;
+    left:               100px;
+    right:              100px;
+    bottom:             100px;
+    height:             30px;
+    background:         -webkit-gradient(linear, left top, left bottom, from(#4a4a4a), to(#383838));
   }
 
-  /* Grid Properties *************************/
-  #grid-settings {
-    font:           600 12px/14px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    margin:         3px;
-    padding:        3px;
-    left:           700px;
-    top:            33px;
-    bottom:         33px;
-    width:          202px;
-    background:     #4a4a4a;
-    /*border:         1px solid transparent;*/
-    /*border-radius:  5px;*/
-    
+  /* Shape Properties *************************/
+  #shape-properties {
+    font-weight:        600;
+    font-size:          10px;
+    margin:             3px;
+    padding:            3px;
+    left:               100px;
+    top:                33px;
+    bottom:             33px;
+    width:              202px;
+    background:         #4a4a4a;
+    border:             1px solid #444;
+    border-radius:      5px;
+    overflow:           auto;
   }
-  #grid-settings:hover {
-    /*border:         1px solid #333;*/
+  #shape-properties:hover {
+    border:             1px solid #333;
+    background:         #3b3b3b;
   }
 
-  /* Grid Properties Title *************************/
-  #grid-settings-title {
-    display:        block;
-    font:           600 11px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    text-align:     center;
-    height:         20px;
-    width:          100%;
+  /* Shape Properties Title *************************/
+  #shape-properties-title {
+    display:            block;
+    font-weight:        400;
+    font-size:          11px;
+    text-align:         center;
+    height:             20px;
+    width:              100%;
   }
-  #grid-settings-title:hover {
-    background:     none;
+  #shape-properties-title:hover {
+    color:              #fff;
   }
   
   /* Grid Menu *************************/
-  #grid-display {
-    font:           600 11px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    margin:         3px;
-    padding:        5px 0 0 0;
-    top:            33px;
-    right:          0px;
-    width:          150px;
-    border:         1px solid transparent;
-    border-radius:  5px;
-    overflow:       hidden;
-    background:     #4a4a4a;
-    height:         500px;
+  #grid-properties {
+    font-weight:        400;
+    font-size:          10px;
+    
+    margin:             3px;
+    padding:            10px;
+
+    top:                33px;
+    right:              100px;
+    width:              150px;
+    bottom:             185px;
+    /*height:             500px;*/
+    
+    border:             1px solid #444;
+    border-radius:      5px;
+    
+    overflow:           auto;
+    background:         #4a4a4a;
+    
   }
-  #grid-display:hover {
-    border:         1px solid #333;
-  }
-  
-  #grid-display-visible {
-    top:            10px;
-    right:          5px;
+  #grid-properties:hover {
+    border:             1px solid #333;
+    background:         #3b3b3b;
   }
 
-  #grid-settings-visible {
-    top:            0px;
-    left:           5px;
+  #grid-properties-title {
+    display:            block;
+    font-weight:        400;
+    font-size:          11px;
+    text-align:         center;
+    height:             20px;
+    width:              100%;
+  }
+  #grid-properties-title:hover {
+    color:              #fff;
+  }
+  
+  #grid-properties-toggle {
+    top:                10px;
+    right:              5px;
+  }
+
+  #shape-properties-toggle {
+    top:                0px;
+    left:               5px;
   }
   
   .dwg {
-    margin:         3px;
-    border:         1px solid green;
-    background:     blue;
-    width:          100%;
+    margin:             3px;
+    border:             1px solid green;
+    background:         blue;
+    width:              100%;
   }
 
   div.menu {
-    display:        inline-block;
-    position:       relative;
-    margin:         0;
-    padding:        0;
-    left:           0px;
-    right:          0px;
-    width:          30px;
-    height:         30px;
-    background:     green;
+    display:            inline-block;
+    position:           relative;
+    margin:             0;
+    padding:            0;
+    left:               0px;
+    right:              0px;
+    width:              30px;
+    height:             30px;
+    background:         green;
   }
 
   div.menu:hover {
-    cursor:         default;
+    cursor:             default;
   }
 
   .menuDrop {
-    display:        absolute;
-    margin:         0;
-    padding:        0;
-    left:           0;
-    top:            20px;
-    width:          100%;
-    height:         10px;
-    border:         1px solid green;
-    background:     #ff0000;
+    display:            absolute;
+    margin:             0;
+    padding:            0;
+    left:               0;
+    top:                20px;
+    width:              100%;
+    height:             10px;
+    border:             1px solid green;
+    background:         #ff0000;
   }
   .menuDrop:hover {
-    background:     none;
-    border:         1px solid #000;
-    cursor:         pointer;
+    background:         none;
+    border:             1px solid #000;
+    cursor:             pointer;
   }
   .menuDrop:focus {
-    background:     black;
+    background:         black;
   }
 
   .shape1 {
-    padding:        0;
-    margin:         0;
-    height:         20px;
-    width:          100px;
-    background:     none;
+    padding:            0;
+    margin:             0;
+    height:             20px;
+    width:              100px;
+    background:         none;
   }
   
   #shapeMenu {
-    display:        inline-block;
-    position:        default;
-    margin:       3px 0 0 30px;
+    display:            inline-block;
+    position:           default;
+    margin:             3px 0 0 30px;
   }
 
   .highlight {
-    border:         1px solid #222;
+    border:             1px solid #222;
   }
 
   .highlight:hover {
-    border:         1px solid #333;
+    border:             1px solid #333;
   }
 
   .select {
@@ -309,55 +359,49 @@
   }
   .col-1,
   .col-2,
-  .col-3{
+  .col-3,
+  .col-4,
+  .col-5 {
     display:            inline-block;
-    width:              48%;
-    height:             16px;
-    border:             1px solid gray;
     margin:             0;
     padding:            0;
-    background:         black;
+    /*border:             1px dotted #fff*/
   }
+  
   .col-1 {
-    /*width:              48%;*/
-    /*padding:            3px 0 0 5px;*/
+    padding:            0 0 0 7px;
+    height:             16px;
+    width:              48%;
   }
   .col-2 {
-    /*width:              40%;*/
-    /*padding:            0 5px;*/
+    height:             16px;
+    width:              48%;
   }
 
-  .col3 {
-    padding:            2px 5px 0 5px;
-    margin:             0 0px 0 0;
-    height:             16px;
-    width:              110px;
-    float:              left;
+  .col-3 {
+    width:              75%;
+    text-align:         top;
   }
-  .col4 {
-    padding:            0 5px 0 5px;
-    margin:             0 0px 0 0;
-    height:             16px;
-    width:              20px;
-    float:              left;
+  .col-4 {
+    width:              12%;
+    text-align:         top;
   }
-  .col5 {
-    padding:            0 5px 0 5px;
-    margin:             0 0px 0 0;
-    height:             16px;
-    width:              20px;
-    float:              right;
+  .col-5 {
+    margin:             12px 0 0 0;
+    width:              12%;
   }
 
-  .row0 {
-    margin:             5px 5px 5px 5px;
-    height:             20px;
-  }
 
+  /*
+    ========================================
+      Horizontal Rule
+    ========================================
+  */
   hr {
   }
   hr.line {
-    border:             none;
+    height:             1px;
+    border:             0;
     margin:             10px 5px;
     border-top:         1px groove rgba(255, 255, 255, 0.5);
   }
@@ -392,52 +436,39 @@
   */
 
   h1, h2, h3, h4 {
-    color: #648880;
+    color:              #648880;
   }
   h1, h3, h4, h5, p {
-    margin-bottom: 22px;
+    margin-bottom:      22px;
   }
   h1 {
-    font-size: 36px;
-    line-height: 44px;
+    font-size:          36px;
+    line-height:        44px;
   }
   h2 {
-    font-size: 24px;
-    line-height: 44px;
+    font-size:          24px;
+    line-height:        44px;
   }
   h3 {
-    font-size: 21px;
+    font-size:          21px;
   }
   h4 {
-    font-size: 18px;
+    font-size:          18px;
   }
   h5 {
-    color: #a9b2b9;
-    font-size: 14px;
-    font-weight: 400;
-    text-transform: uppercase;
+    color:              #a9b2b9;
+    font-size:          14px;
+    font-weight:        400;
+    text-transform:     uppercase;
   }
   strong {
-    font-weight: 400;
+    font-weight:        400;
   }
   cite,
   em {
-    font-style: italic;
+    font-style:         italic;
   }
 
-  /*
-    ========================================
-    Leads
-    ========================================
-  */
-
-/*  .lead {
-    text-align: center;
-  }
-  .lead p {
-    font-size: 21px;
-    line-height: 33px;
-  }*/
 
   /*
     ========================================
@@ -446,196 +477,258 @@
   */
 
   a {
-    color:            #aaa;
-    text-decoration:  none;
-    padding:          0 10px;
-    font-weight:      200;
+    color:              #aaa;
+    text-decoration:    none;
+    padding:            0 10px;
+    font-weight:        200;
   }
   a:hover {
-    color:            #fff;
+    color:              #fff;
   }
   p a {
-    border-bottom:    1px solid #dfe2e5;
+    border-bottom:      1px solid #dfe2e5;
   }
   .primary-header a,
   .primary-footer a {
-    color:            #fff;
+    color:              #fff;
   }
   .primary-header a:hover,
   .primary-footer a:hover {
-    color:            #648880;
+    color:              #648880;
   }
+
 
   /*
     ========================================
-    labels
+      input[type="number"]s
     ========================================
   */
-  label {
-    /*font:             400 11px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;*/
-    margin:           0;
-    padding:          0;
+    input[type="number"] {
+    font:               300 10px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    margin:             0;
+    padding:            0;
+    border:             0px solid transparent;
+    /*outline:          none;*/
+    background:           transparent;
+    color:              #ddd;
   }
 
-  label:hover {
+    input[type="number"]:hover {
+    color:              #fff;
   }
-  
 
-  
+    input[type="number"].commands {
+    font:               400 11px/12px "Ubuntu", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    padding:            0 10px;
+    color:              #888;
+  }
+    input[type="number"].commands:active {
+    padding:            0 10px;
+    color:              #fff;
+  }
+
+    input[type="number"].menu {
+    font:               400 10px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    text-align:         center;
+    padding:            0 5px;
+    cursor:             pointer;
+    color:              inherit;
+  }
+
   #coordinates {
-    position:         absolute;
-    right:            10px;
-    font:             900 14px/16px "Ubuntu", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    letter-spacing:   1px;
-    line-height:      26px;
+    position:           absolute;
+    right:              10px;
+    font:               900 14px/16px "Ubuntu", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    letter-spacing:     1px;
+    line-height:        26px;
   }
-  
-  
+
+
+  /*
+    ============================================================================
+    Sections
+    ============================================================================
+  */
+  .settings {
+    font:               600 10px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  }
+
+
   /*
     ============================================================================
     Input
     ============================================================================
   */
   input {
-    font:             400 10px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    background:       none;
-    border:           none;
+    font:               200 10px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    border:             0px solid transparent;
+    outline:            none;
+    background:         transparent;
+    color:              #000;
+    padding-right:      5px;
+    padding-left:       5px;
   }
   input:hover {
-    background:       gray;
+    background:         gray;
   }
   input:focus {
-    background:       #C0C0C0;
-    outline:          none;
+    /*border:             1px solid #C0C0C0;*/
   }
   
   /* TEXT *********************************************************************/
-  input[type="text"] {
-    background:       transparent;
-    color:            #fff;
-    padding:          0 3px;
+  .buffer {
+    padding:            0 5px;
+    background:         transparent;
+    color:              #fff;
   }
-  input[type="text"]:hover {
-    background:       gray;
-    padding:          0 3px;
+  .buffer:hover {
+    background:         #666;
+    color:              #000;
   }
-  input[type="text"]:focus {
-    background:       #C0C0C0;
-    color:            #000;
-    padding:          0 3px;
-  }
-
-  /* NUMBER *******************************************************************/
-  input[type="number"] {
-    float:            left;
-    background:       none;
-    color:            white;
-    height:           16px;
-    width:            40px;
-    text-align:       center;
-  }
-  input[type="number"]:hover {
-    background:       gray;
-    color:            black;
-  }
-  input[type="number"]:focus {
-    background:       #C0C0C0;
-    color:            black;
-  }
-  input[type=number]::-webkit-inner-spin-button,
-  input[type=number]::-webkit-outer-spin-button {
-    cursor:           pointer;
-    margin:           0;
+  .buffer:focus {
+    background:         #fff;
+    color:              #000;
   }
   
-  /* Color ********************************************************************/
-  input[type="color"] {
-    cursor:           pointer;
-    padding:          0;
+  input[type="text"] {
   }
-  input[type="color"]:hover {
+  input[type="text"]:hover {
+  }
+  input[type="text"]:focus {
+  }
+
+  input[type="text"].commands {
+    font:               400 11px/12px "Ubuntu", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    padding:            0 10px;
+    /*color:              #000;*/
+    border-radius:      5px;
+    height:             20px;
+    /*border:             1px solid #888;*/
+    /*background:         gray;*/
+  }
+  input[type="text"].commands:hover {
+    background:         #bbb;
+  }
+  input[type="text"].commands:focus {
+    background:         #fff;
+    border:             1px solid #222;
+  }
+  
+  /* NUMBER *******************************************************************/
+  input[type="number"] {
+    font:               400 11px/12px "Ubuntu", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background:         none;
+    color:              white;
+    text-align:         center;
+  }
+  input[type="number"]:hover {
     background:         gray;
     color:              black;
-    cursor:             pointer;
   }
-  input[type="color"]:focus {
-    background:         #C0C0C0;
+  input[type="number"]:focus {
+    background:         #fff;
     color:              black;
   }
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    cursor:             pointer;
+    margin:             0;
+  }
+  
+  /* COLOR ********************************************************************/
+  input[type="color"] {
+    -webkit-appearance: square-button;
+    cursor:             pointer;
+    height:             12px;
+    border:             0px solid transparent;
+    background:         transparent;
+  }
+  input[type="color"]:hover {
+    /*color:              black;*/
+    /*cursor:             pointer;*/
+    /*border:             1px solid black;*/
+  }
+  input[type="color"]:focus {
+    background:         transparent;
+  }
   input[type="color"]::-webkit-color-swatch-wrapper {
+    margin:             0;
+    padding:            0;
     border:             none;
-    background:         none;
+    height:             8px;
+    background:         transparent;
   }
   input[type="color"]::-webkit-color-swatch {
     /*opacity:          0.75;*/
     border:             none;
-    height:             10px;
-    margin:             -1px 0 0 0;
+    height:             5px;
+    margin:             0;
     padding:            0;
+    background:         red;
+    border-radius:      3px;
   }
   
-  /* Range ********************************************************************/
-  input[type=range]{
+  /* RANGE ********************************************************************/
+  input[type="range"]{
     -webkit-appearance: none;
   }
-  input[type=range]:focus {
-    outline:            none;
-    background:         none;
-  }
-  input[type=range]:hover {
+
+  input[type="range"]:hover {
     outline:            none;
     background:         none;
     cursor:             pointer;
   }
+  input[type="range"]:focus {
+    background:         none;
+    color:              #000;
+  }
   
-  input[type=range]::-webkit-slider-runnable-track {
-    width:              300px;
+  input[type="range"]::-webkit-slider-runnable-track {
     height:             5px;
     background:         gray;
     border:             none;
     border-radius:      3px;
+    background:         -webkit-gradient(linear, left top, left bottom, from(#888), to(#666));
   }
-  input[type=range]:focus::-webkit-slider-runnable-track {
-    background:         #ddd;
+  input[type="range"]:focus::-webkit-slider-runnable-track {
+    /*background:         #ddd;*/
   }
-  input[type=range]::-webkit-slider-thumb {
+
+  input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
-    border:             none;
+    background:         -webkit-gradient(linear, left top, left bottom, from(#222), to(#333));
+    border:             1px solid #444;
     height:             12px;
     width:              12px;
     border-radius:      50%;
-    background:         #222;
+    /*background:         #222;*/
     margin-top:         -3px;
   }
 
-  /* Checkbox *****************************************************************/
+  /* CHECKBOX *****************************************************************/
   input[type="checkbox"] {
+    padding:            0;
+    margin:             0;
     -webkit-appearance:none;
-    /*padding-left:       0px;*/
-    /*padding-right:      0px;*/
-    /*border-radius:      2px;*/
-    /*margin:             3px;*/
-    /*border:             double 1px #648880;*/
-    /*background-color:   #000;*/
-    /*color:              #648880;*/
-    /*white-space:      nowrap;*/
-    /*overflow:         hidden;*/
-    /*width:              10px;*/
-    /*height:             10px;*/
-    /*float:              left;*/
+    border-radius:      2px;
+    border:             double 1px #648880;
+    width:              10px;
+    height:             10px;
+    cursor:             pointer;
+    background:         transparent;
   }
   input[type="checkbox"]:checked {
-    /*background-color:   #648880;*/
+    background-color:   #648880;
     /*border-left-color:#06F;*/
     /*border-right-color:#06F;*/
   }
   input[type="checkbox"]:hover {
-    /*cursor:             pointer;*/
+    border:             double 1px #fff;
   }
 
-  /* Checkbox *****************************************************************/
+  /* RADIO ********************************************************************/
   input[type="radio"] {
-    -webkit-appearance:button;
+    /*-webkit-appearance:button;*/
     /*padding-left:     0px;*/
     /*padding-right:    0px;*/
     /*border-radius:    2px;*/
@@ -643,8 +736,8 @@
     /*border:           double 1px #648880;*/
     /*background-color: #000;*/
     /*color:            #648880;*/
-    white-space:      nowrap;
-    overflow:         hidden;
+    /*white-space:        nowrap;*/
+    /*overflow:           hidden;*/
     /*width:            10px;*/
     /*height:           10px;*/
     /*float:            left;*/
@@ -659,39 +752,56 @@
     box-shadow:         0px 0px 10px #1300ff;
     cursor:             pointer;
   }
-      
+
+  button.presets-toggle {
+    display:            inline-block;
+    /*-webkit-appearance: none;*/
+    /*border:             double 1px #648880;*/
+    /*width:              120px;*/
+    /*height:             20px;*/
+    cursor:             pointer;
+  }
+  /*.button.functions:focus {*/
+  /*  background-color:   #648880;*/
+  /*  border-left-color:#06F;*/
+  /*  border-right-color:#06F;*/
+  /*}*/
+  /*.button.functions:hover {*/
+  /*  border:             double 1px #fff;*/
+  /*}*/
+  
   /*
     ========================================
     Buttons
     ========================================
   */
 
-  .button {
-    padding:            5px;
-    right:              10px;
-    top:                10px;
-    font-size:          16px;
-    outline:            none;
-    cursor:             pointer;
-  	color:              #d7d7d7;
-  	border:             solid 1px #333;
-  	background:         #333;
-  	background:         -webkit-gradient(linear, left top, left bottom, from(#666), to(#000));
-  	background:         -moz-linear-gradient(top,  #666,  #000);
-  	filter:             progid:DXImageTransform.Microsoft.gradient(startColorstr='#666666', endColorstr='#000000');
-  }
-  .button:hover {
-  	background:         #000;
-  	background:         -webkit-gradient(linear, left top, left bottom, from(#444), to(#000));
-  	background:         -moz-linear-gradient(top,  #444,  #000);
-  	filter:             progid:DXImageTransform.Microsoft.gradient(startColorstr='#444444', endColorstr='#000000');
-  }
-  .button:active {
-  	color:              #666;
-  	background:         -webkit-gradient(linear, left top, left bottom, from(#000), to(#444));
-  	background:         -moz-linear-gradient(top,  #000,  #444);
-  	filter:             progid:DXImageTransform.Microsoft.gradient(startColorstr='#000000', endColorstr='#666666');
-  }
+  /*.button {*/
+  /*  padding:            5px;*/
+  /*  right:              10px;*/
+  /*  top:                10px;*/
+  /*  font-size:          16px;*/
+  /*  outline:            none;*/
+  /*  cursor:             pointer;*/
+  /*	color:              #d7d7d7;*/
+  /*	border:             solid 1px #333;*/
+  /*	background:         #333;*/
+  /*	background:         -webkit-gradient(linear, left top, left bottom, from(#666), to(#000));*/
+  /*	background:         -moz-linear-gradient(top,  #666,  #000);*/
+  /*	filter:             progid:DXImageTransform.Microsoft.gradient(startColorstr='#666666', endColorstr='#000000');*/
+  /*}*/
+  /*.button:hover {*/
+  /*	background:         #000;*/
+  /*	background:         -webkit-gradient(linear, left top, left bottom, from(#444), to(#000));*/
+  /*	background:         -moz-linear-gradient(top,  #444,  #000);*/
+  /*	filter:             progid:DXImageTransform.Microsoft.gradient(startColorstr='#444444', endColorstr='#000000');*/
+  /*}*/
+  /*.button:active {*/
+  /*	color:              #666;*/
+  /*	background:         -webkit-gradient(linear, left top, left bottom, from(#000), to(#444));*/
+  /*	background:         -moz-linear-gradient(top,  #000,  #444);*/
+  /*	filter:             progid:DXImageTransform.Microsoft.gradient(startColorstr='#000000', endColorstr='#666666');*/
+  /*}*/
 
 
   /*
@@ -701,33 +811,33 @@
   */
 
   #logo {
-    border-top:       3px solid #999;
-    float:            left;
-    font-size:        28px;
-    font-weight:      200;
-    letter-spacing:   .5px;
-    line-height:      28px;
-    padding:          0 0 0 30px;
-    margin:           0;
-    text-transform:   uppercase;
-    color:            white;
-    width:            205px;
-    cursor:           pointer;
+    border-top:         3px solid #999;
+    float:              left;
+    font-size:          28px;
+    font-weight:        200;
+    letter-spacing:     .5px;
+    line-height:        28px;
+    padding:            0 0 0 30px;
+    margin:             0;
+    text-transform:     uppercase;
+    color:              white;
+    width:              205px;
+    cursor:             pointer;
   }
   #logo:hover {
     /*border-top:       3px solid #ccc;*/
-    font-weight:      200;
+    font-weight:        200;
   }
   .tagline {
-    margin:           66px 0 22px 0;
-    text-align:       right;
+    margin:             66px 0 22px 0;
+    text-align:         right;
   }
   .primary-nav {
-    margin:           8px 0 0 0;
-    font-size:        14px;
-    font-weight:      400;
-    letter-spacing:   .5px;
-    text-transform:   uppercase;
+    margin:             8px 0 0 0;
+    font-size:          14px;
+    font-weight:        400;
+    letter-spacing:     .5px;
+    text-transform:     uppercase;
   }
 
 
@@ -738,14 +848,14 @@
   */
 
   .primary-footer {
-    color:            #648880;
-    font-size:        14px;
-    padding-bottom:   44px;
-    padding-top:      44px;
+    color:              #648880;
+    font-size:          14px;
+    padding-bottom:     44px;
+    padding-top:        44px;
   }
   .primary-footer small {
-    float:            left;
-    font-weight:      400;
+    float:              left;
+    font-weight:        400;
   }
 
 
@@ -756,15 +866,15 @@
   */
 
   .nav {
-    text-align:       right;
+    text-align:         right;
   }
   .nav li {
-    display:          inline-block;
-    margin:           0 10px;
-    vertical-align:   top;
+    display:            inline-block;
+    margin:             0 10px;
+    vertical-align:     top;
   }
   .nav li:last-child {
-    margin-right:     0;
+    margin-right:       0;
   }
 
 
@@ -802,32 +912,8 @@
     line-height:        24px;
   }
 
-  /*input[type="text"].commands {*/
-  /*  font:               400 11px/12px "Ubuntu", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;*/
-  /*  padding:            0 10px;*/
-  /*  background:         gray;*/
-  /*  color:              #000;*/
-  /*  border-radius:      5px;*/
-  /*  height:             20px;*/
-  /*  border:             1px solid #888;*/
-  /*}*/
-  /*input[type="text"].commands:hover {*/
-  /*  background:         #fff;*/
-  /*}*/
-  /*input[type="text"].commands:focus {*/
-  /*  background:         #fff;*/
-  /*  border:             1px solid #666;*/
-  /*}*/
+
   
-  /*label.commands {*/
-  /*  font:               400 11px/12px "Ubuntu", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;*/
-  /*  padding:            0 10px;*/
-  /*  color:              #888;*/
-  /*}*/
-  /*label.commands:active {*/
-  /*  padding:            0 10px;*/
-  /*  color:              #fff;*/
-  /*}*/
   
   li.menu {
     outline:            none;
@@ -855,10 +941,3 @@
   }
 
   
-  /*label.menu {*/
-  /*  font:               400 10px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;*/
-  /*  text-align:         center;*/
-  /*  padding:            0 5px;*/
-  /*  cursor:             pointer;*/
-  /*  color:              inherit;*/
-  /*}*/
