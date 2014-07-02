@@ -128,7 +128,8 @@
   */
   #canvas-div {
     
-    background:         transparent;
+    padding:            0;
+    margin:             0;
     width:              100%;
     height:             100%;
     /*left:               0px;*/
@@ -136,12 +137,12 @@
     /*bottom:             0px;*/
     /*top:                0px;*/
     
-    outline:            none;
+    /*outline:            none;*/
     /*border:             -webkit-tap-highlight-color: rgba(255, 255, 255, 0);*/
 
   }
   #canvas-div:hover {
-    /*background:     #ff0000;*/
+    background:     #ff0000;
   }
   
   
@@ -151,49 +152,85 @@
     ============================================================================
   */
 
+  #middle {
+    padding:            5px;
+    left:               5px;
+    right:              5px;
+    top:                40px;
+    bottom:             25px;
+    background:         orange;
+  }
+  
   #presets {
-    display:            inline-block;
+    float:              left;
     height:             100%;
     width:              200px;
     background:         yellow;
     border:             2px solid #666;
   }
   
-  #middle {
-    left:               0;
-    right:              0;
-    top:                35px;
-    bottom:             20px;
+  div.preset {
+    display:            block;
     background:         blue;
+    border:             2px solid teal;
+    width:              100%;
+    height:             30px;
   }
 
+  label.preset {
+    display:            inline-block;
+    padding:            5px;
+    height:             30px;
+    width:              100%;
+    float:              right;
+    background:         white;
+    color:              black;
+  }
+  
+  button.preset {
+    border:             none;
+    display:            inline-block;
+    padding:            0;
+    height:             30px;
+    width:              30px;
+    float:              left;
+    background:         white;
+    color:              black;
+  }
+  
   /* Grid *************************/
   #grid {
-    display:            inline-block;
+    
+    overflow:           hidden;
+    
+    margin:             0;
+    padding:            0;
+    
     height:             100%;
-    right:              0;
-    top:                35px;
-    bottom:             20px;
-    /*background:         #262626;*/
+    
     background:         green;
+    
     border:             2px solid #333;
+    
   }
   
   /* Grid Header *************************/
   #grid-header {
     margin:             3px;
-    left:               100px;
+    padding:            0;
+    left:               250px;
     right:              100px;
     top:                5px;
     height:             30px;
     background:         -webkit-gradient(linear, left top, left bottom, from(#4a4a4a), to(#383838));
+    border:             1px solid white;
   }
   
   /* Grid Footer *************************/
   #grid-footer {
     margin:             3px;
     padding:            2px 2px 2px 10px;
-    left:               100px;
+    left:               250px;
     right:              100px;
     bottom:             100px;
     height:             30px;
@@ -204,10 +241,10 @@
   #shape-properties {
     font-weight:        600;
     font-size:          10px;
-    margin:             3px;
+    margin:             0;
     padding:            3px;
-    left:               100px;
-    top:                33px;
+    left:               220px;
+    top:                43px;
     bottom:             33px;
     width:              202px;
     background:         #4a4a4a;
@@ -238,10 +275,10 @@
     font-weight:        400;
     font-size:          10px;
     
-    margin:             3px;
+    margin:             0;
     padding:            10px;
 
-    top:                33px;
+    top:                43px;
     right:              100px;
     width:              150px;
     bottom:             185px;
@@ -754,6 +791,14 @@
   }
 
   button {
+  }
+  button:hover {
+  }
+  button:active {
+  }
+
+  button.toggle {
+    display:            inline-block;
     outline:            none;
     background:         transparent;
     
@@ -765,24 +810,25 @@
     cursor:             pointer;
     
     padding:            0;
-    margin:             5px 3px;
+    margin:             0;
     
     color:              #888;
     text-align:         center;
     line-height:        10px;
 
   }
-  button:hover {
+  button.toggle:hover {
     color:              #fff;
     box-shadow:         0 1px 2px rgba(0,0,0,.5);
     -webkit-transition: All 0.5s ease;
   }
-  button:active {
+  button.toggle:active {
     background:         -webkit-gradient(linear, left top, left bottom, from(#383838), to(#4a4a4a));
     color:              #888;
   }
 
   button.menu {
+    display:            block;
     outline:            none;
     background:         green;
     
@@ -790,7 +836,7 @@
     border-radius:      1px;
     
     width:              auto;
-    height:             auto;
+    height:             20px;
     cursor:             pointer;
     
     padding:            0;
@@ -838,7 +884,7 @@
     margin:             0;
     font-size:          125%;
     background:         green;
-    color:              blue;
+    color:              orange;
   }
   
   /*.button.functions:focus {*/
@@ -863,24 +909,24 @@
   /*  font-size:          16px;*/
   /*  outline:            none;*/
   /*  cursor:             pointer;*/
-  /*	color:              #d7d7d7;*/
-  /*	border:             solid 1px #333;*/
-  /*	background:         #333;*/
-  /*	background:         -webkit-gradient(linear, left top, left bottom, from(#666), to(#000));*/
-  /*	background:         -moz-linear-gradient(top,  #666,  #000);*/
-  /*	filter:             progid:DXImageTransform.Microsoft.gradient(startColorstr='#666666', endColorstr='#000000');*/
+  /*  color:              #d7d7d7;*/
+  /*  border:             solid 1px #333;*/
+  /*  background:         #333;*/
+  /*  background:         -webkit-gradient(linear, left top, left bottom, from(#666), to(#000));*/
+  /*  background:         -moz-linear-gradient(top,  #666,  #000);*/
+  /*  filter:             progid:DXImageTransform.Microsoft.gradient(startColorstr='#666666', endColorstr='#000000');*/
   /*}*/
   /*.button:hover {*/
-  /*	background:         #000;*/
-  /*	background:         -webkit-gradient(linear, left top, left bottom, from(#444), to(#000));*/
-  /*	background:         -moz-linear-gradient(top,  #444,  #000);*/
-  /*	filter:             progid:DXImageTransform.Microsoft.gradient(startColorstr='#444444', endColorstr='#000000');*/
+  /*  background:         #000;*/
+  /*  background:         -webkit-gradient(linear, left top, left bottom, from(#444), to(#000));*/
+  /*  background:         -moz-linear-gradient(top,  #444,  #000);*/
+  /*  filter:             progid:DXImageTransform.Microsoft.gradient(startColorstr='#444444', endColorstr='#000000');*/
   /*}*/
   /*.button:active {*/
-  /*	color:              #666;*/
-  /*	background:         -webkit-gradient(linear, left top, left bottom, from(#000), to(#444));*/
-  /*	background:         -moz-linear-gradient(top,  #000,  #444);*/
-  /*	filter:             progid:DXImageTransform.Microsoft.gradient(startColorstr='#000000', endColorstr='#666666');*/
+  /*  color:              #666;*/
+  /*  background:         -webkit-gradient(linear, left top, left bottom, from(#000), to(#444));*/
+  /*  background:         -moz-linear-gradient(top,  #000,  #444);*/
+  /*  filter:             progid:DXImageTransform.Microsoft.gradient(startColorstr='#000000', endColorstr='#666666');*/
   /*}*/
 
 
@@ -957,25 +1003,38 @@
     margin-right:       0;
   }
 
+  img {
+    color:              black;
+    display:            inline-block;
+    margin:             0;
+    padding:            0;
+  }
 
   img.menu {
     margin:             0;
     padding:            0;
-    height:             24px;
-    width:              24px;
-    background-color:   none;
+    height:             30px;
+    width:              30px;
     border:             1px solid transparent;
-    vertical-align:     middle;
+    vertical-align:     top;
     cursor:             pointer;
   }
   img.menu:hover {
     border:             1px solid #fff;
+    background-color:   yellow;
   }
   img.menu:active {
     background:         red;
     /*margin:             1px 0 0 0;*/
   }
 
+  img.middle {
+    vertical-align:     top;
+    padding:            0;
+    margin:             0;
+    cursor:             pointer;
+  }
+  
   div.inline {
     display:            inline-block;
     /*vertical-align:     middle;*/
@@ -992,9 +1051,25 @@
     line-height:        24px;
   }
 
+  div.menu {
+    margin:             0;
+    padding:            0;
+    height:             30px;
+    width:              30px;
+    background-color:   none;
+    border:             1px solid transparent;
+    vertical-align:     top;
+    cursor:             pointer;
+  }
 
+  li.top {
+    display:            inline;
+    height:             30px;
+  }
   
-  
+  li {
+    height:             50px;
+  }
   li.menu {
     outline:            none;
     border:             red;
@@ -1002,6 +1077,8 @@
     background:         none;
     text-align:         left;
     color:              white;
+    margin:             0;
+    padding:            0;
   }
   li.menu:hover {
     color:              yellow;
@@ -1019,5 +1096,128 @@
     background:         none;
     text-align:         left;
   }
-
   
+  
+  ul {
+    border:             1px solid white;
+    margin:             0;
+    padding:            0;
+  }
+  
+  /* The necessities */
+  .onclick-menu {
+    /*position:           relative;*/
+    display:            inline-block;
+    padding:            0;
+    margin:             0;
+  }
+  .onclick-menu:before {
+    /*content:            "Click me!";*/
+  }
+  .onclick-menu:focus {
+    pointer-events:     none;
+  }
+  
+  .onclick-menu:focus .onclick-menu-content {
+    opacity:            1;
+    visibility:         visible;
+  }
+  
+  .onclick-menu-content {
+    pointer-events:     auto;
+    position:           absolute;
+    z-index:            1;
+  
+    opacity:            0;
+    visibility:         hidden;
+    transition:         visibility 0.5s;
+  }
+  
+  .onclick-menu.no-pointer-events {
+    pointer-events:     auto !important;
+  }
+  
+  .onclick-menu.no-visibility .onclick-menu-content {
+    visibility:         visible !important;
+    display:            none;
+  }
+  
+  .onclick-menu.no-visibility:focus .onclick-menu-content {
+    display:            block;
+  }
+  
+  .onclick-menu.no-opacity .onclick-menu-content {
+    opacity:            1 !important;
+  }
+  
+  /*
+  Eye candy
+  ( colors courtesy of https://kuler.adobe.com/try-color-theme-3350110 )
+  */
+  .onclick-menu {
+    padding:            0;
+    margin:             0 0 1em 0;
+    outline:            0;
+  }
+  .onclick-menu:before {
+    padding:            0px 0px;
+    background-color:   #94a4a5;
+  }
+  .onclick-menu-content {
+    background-color:   #364656;
+    background-color:   none;
+    width:              200px;
+  
+    margin-top:         0px;
+    margin-left:        0;
+    padding:            0px;
+  }
+  
+  /* arrow for the expanding part */
+  .onclick-menu-content:before {
+    content:            "";
+    width:              0;
+    height:             0;
+  
+    /*border-bottom:      0px solid #364656;*/
+    /*border-left:        0px solid transparent;*/
+    /*border-right:       0px solid transparent;*/
+  
+    /*position:           absolute;*/
+    /*top:                0px;*/
+  }
+  
+  .onclick-menu-content li {
+    color:              #f2f5e9;
+    list-style-type:    none;
+    /*white-space:        nowrap;*/
+    border:             1px solid green;
+  }
+  
+  /* style the buttons */
+  .onclick-menu-content button {
+    background:         transparent;
+    border:             none;
+    color:              inherit;
+    cursor:             inherit;
+    outline:            0;
+    cursor:             pointer;
+  }
+  .onclick-menu-content button:hover {
+    color:              #ff8c31;
+  }
+  
+  /* Codepen stuff */
+  /*body {*/
+  /*  text-align: center;*/
+  /*  font-family: Arial, sans-serif;*/
+  /*}*/
+  /*.onclick-menu {*/
+  
+  /*  text-align: left;*/
+  /*}*/
+  /*h1 {*/
+  /*  color: #c0c0c0;*/
+  /*  margin-top: 5%;*/
+  /*  font-weight: 400;*/
+  /*}*/
