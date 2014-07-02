@@ -51,7 +51,7 @@
                 $(this).text("▲");
               }
            
-              $("#shape-properties").slideToggle(400);
+              $("#shape-properties").slideToggle(200);
               
           });
         });
@@ -66,33 +66,47 @@
                 $(this).text("▲");
               }
            
-              $("#grid-properties").slideToggle(400);
+              $("#grid-properties").slideToggle(200);
               
           });
         });
 
         $(document).ready(function(){
+
+          // var height = $("#presets").height() + "px";
+          // var width = $("#presets").width() + "px";
+
           $("#presets-toggle").click(function () {
 
-              if ($(this).text() === "►"){
-                $(this).text("◄")
-              }
-              else {
-                $(this).text("►");
-              }
+            if ($(this).text() === "►"){
+              $(this).text("◄")
+            }
+            else {
+              $(this).text("►");
+            }
+            
+            // $("button1").css({
+            //     'height': height,
+            //     'width': width
+            // });
 
-              $("#presets").animate({width:'toggle'},250);
+            // $("label1").css({
+            //     'height': height,
+            //     'width': width
+            // });
+            
+            $("#presets").animate({width:'toggle'},100);
               
           });
         });
 
         $(document).ready(function(){
           $("#menu-points").click(function(){
-              if ($(this).height() === 20){
-                $(this).height(100)
+              if ($(this).height() === 30){
+                $(this).height(120)
               }
               else {
-                $(this).height(20);
+                $(this).height(30);
               }
           });
         });
@@ -131,6 +145,32 @@
         //   });
         // });
 
+      $(document).ready(function(){
+
+      	// Clickable Dropdown
+      	$('.click-nav > ul').toggleClass('no-js js');
+      	$('.click-nav .js ul').hide();
+      	
+      	$('.click-nav .js').click(function(e) {
+      	  
+      		$('.click-nav .js ul').slideToggle(200);
+      		$('.clicker').toggleClass('active');
+      		
+      		e.stopPropagation();
+      		
+      	})
+      	;
+      	$(document).click(function() {
+      		if ($('.click-nav .js ul').is(':visible')) {
+      	
+      			$('.click-nav .js ul', this).slideUp();
+      			$('.clicker').removeClass('active');
+      			
+      		}
+      	});
+      	
+      });
+		
       </script>
 
 
@@ -156,18 +196,22 @@
 
       </section>
       
+      <!--Middle section-->
       <section id="middle" class="fixed">
 
-        <section id="presets" class="presets">
-          
-        </section>
+        <div id="presets" class="presets">
+          <div id="preset-#1" class="preset">
+            <button id="button1" class="preset">O</button>
+            <label id="label1" class="preset">grid #1</label>
+          </div>
+        </div>
         
         <!--Grid-->
-        <section id="grid" class="grid">
+        <div id="grid" class="grid">
   
           <!--Canvas-->
           <div id="canvas-div">
-            <!--<canvas id="canvas" class="fixed"></canvas>-->
+            <canvas id="canvas" class="fixed"></canvas>
           </div>
           
           <!-- Settings-->
@@ -319,23 +363,44 @@
           </div>
   
           <!--Grid Toolbar-->
-          <nav id="grid-header" class="fixed">
+          <div id="grid-header" class="fixed">
 
-            <button id="presets-toggle">◄</button>
-            <button id="menu-points" class="menu"> <img id="points" class="menu" src="temp.png"> </button>
+            <button id="presets-toggle" class="toggle">◄</button>
 
-            <button id="shape-properties-toggle">▲</button>
-  
-            <div id="menu" class="inline">
-              <img id="points" class="menu" src="">
-              <img id="lines"   class="menu" src="">
-              <img id="circles" class="menu" src="">
+            <button id="shape-properties-toggle" class="toggle">▲</button>
+
+            <button id="grid-properties-toggle" class="toggle">▲</button>
+
+            <div tabindex="0" class="onclick-menu">
+
+              <!--<img src="assets/images/move.png">-->
+              <img class="middle" src="assets/images/move.png">
+
+              <ul class="onclick-menu-content">
+
+                <li>
+
+                  <button onclick="alert('point 1')">
+                    <img clas="middle" src="assets/images/move.png">
+                  </button>
+
+                  <h5>The Grasslands</h5>
+
+                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                     Praesent euismod ultrices ante, ac laoreet nulla vestibulum
+                     adipiscing. Nam quis justo in augue auctor imperdiet.</p>
+
+                </li>
+
+                <li><button onclick="alert('point 2')"> <img src="assets/images/move.png"> </button></li>
+                <li><button onclick="alert('point 3')"> <img src="assets/images/move.png"> </button></li>
+
+              </ul>
+
             </div>
-            
-            <button id="grid-properties-toggle">▲</button>
-  
-          </nav>
-          
+
+          </div>
+
           <!--Grid Footer-->
           <div id="grid-footer" class="fixed">
             
@@ -359,8 +424,8 @@
             <label id="coordinates">0</label>
             
           </div>
-  
-        </section>
+
+        </div>
 
       </section>
 
