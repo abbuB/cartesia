@@ -55,7 +55,6 @@
       Body
     ============================================================================
   */
-  
   body {
     font:               400 11px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
     background:         none;
@@ -69,7 +68,6 @@
       Position
     ============================================================================
   */
-  
   .fixed {
     position:           absolute;
     border:             none;
@@ -127,7 +125,7 @@
     ============================================================================
   */
   #canvas-div {
-    
+    position:           relative;
     padding:            0;
     margin:             0;
     width:              100%;
@@ -142,7 +140,7 @@
 
   }
   #canvas-div:hover {
-    background:     #ff0000;
+    /*background:     #ff0000;*/
   }
   
   
@@ -153,12 +151,11 @@
   */
 
   #middle {
-    padding:            5px;
-    left:               5px;
-    right:              5px;
-    top:                40px;
-    bottom:             25px;
-    background:         orange;
+    padding:            0px;
+    left:               0px;
+    right:              0px;
+    top:                35px;
+    bottom:             20px;
   }
   
   #presets {
@@ -208,7 +205,7 @@
     
     height:             100%;
     
-    background:         green;
+    background:         #000;
     
     border:             2px solid #333;
     
@@ -223,7 +220,7 @@
     top:                5px;
     height:             30px;
     background:         -webkit-gradient(linear, left top, left bottom, from(#4a4a4a), to(#383838));
-    border:             1px solid white;
+    border:             1px solid gray;
   }
   
   /* Grid Footer *************************/
@@ -241,12 +238,11 @@
   #shape-properties {
     font-weight:        600;
     font-size:          10px;
-    margin:             0;
+    /*margin:             3px;*/
     padding:            3px;
-    left:               220px;
-    top:                43px;
-    bottom:             33px;
-    width:              202px;
+    left:               3px;
+    top:                3px;
+    width:              200px;
     background:         #4a4a4a;
     border:             1px solid #444;
     border-radius:      5px;
@@ -269,6 +265,13 @@
   #shape-properties-title:hover {
     color:              #fff;
   }
+
+  #shapes-toggle {
+    margin:             3px;
+    top:                0px;
+    left:               0px;
+    title:              "ooga booga";
+  }
   
   /* Grid Menu *************************/
   #grid-properties {
@@ -278,18 +281,19 @@
     margin:             0;
     padding:            10px;
 
-    top:                43px;
-    right:              100px;
     width:              150px;
-    bottom:             185px;
-    /*height:             500px;*/
+
+    top:                3px;
+    right:              3px;
     
+    
+    bottom:             185px;
     border:             1px solid #444;
     border-radius:      5px;
     
     overflow:           auto;
     background:         #4a4a4a;
-    
+    height:             auto;
   }
   #grid-properties:hover {
     border:             1px solid #333;
@@ -307,15 +311,12 @@
   #grid-properties-title:hover {
     color:              #fff;
   }
-  
-  #grid-properties-toggle {
-    top:                10px;
-    right:              5px;
-  }
 
-  #shape-properties-toggle {
+  #properties-toggle {
+    margin:             3px;
     top:                0px;
-    left:               5px;
+    right:              0px;
+    title:              "ooga booga";
   }
   
   .dwg {
@@ -790,7 +791,11 @@
     cursor:             pointer;
   }
 
+
+  /* BUTTONS ******************************************************************/
   button {
+    margin:             0;
+    padding:            0;
   }
   button:hover {
   }
@@ -798,7 +803,8 @@
   }
 
   button.toggle {
-    display:            inline-block;
+    
+    vertical-align:     top;
     outline:            none;
     background:         transparent;
     
@@ -812,23 +818,23 @@
     padding:            0;
     margin:             0;
     
-    color:              #888;
+    color:              #444;
     text-align:         center;
     line-height:        10px;
 
   }
   button.toggle:hover {
     color:              #fff;
-    box-shadow:         0 1px 2px rgba(0,0,0,.5);
+    /*box-shadow:         0 1px 2px rgba(0,0,0,.5);*/
     -webkit-transition: All 0.5s ease;
   }
   button.toggle:active {
-    background:         -webkit-gradient(linear, left top, left bottom, from(#383838), to(#4a4a4a));
+    /*background:         -webkit-gradient(linear, left top, left bottom, from(#383838), to(#4a4a4a));*/
     color:              #888;
   }
 
   button.menu {
-    display:            block;
+    display:            inline-block;
     outline:            none;
     background:         green;
     
@@ -855,9 +861,35 @@
     background:         -webkit-gradient(linear, left top, left bottom, from(#383838), to(#4a4a4a));
     color:              #888;
   }
+
+  button.shape {
+    
+    /*display:            relative;*/
+    /*border:             1px solid transparent;*/
+    /*border-radius:      1px;*/
+    
+    /*height:             auto;*/
+    /*width:              auto;*/
+    /*cursor:             pointer;*/
+    
+    /*padding:            0;*/
+    /*margin:             0;*/
+    
+    /*color:              #888;/*/
+
+  }
+  button.shape:hover {
+    /*color:              #fff;*/
+    /*box-shadow:         0 1px 2px rgba(0,0,0,.5);*/
+  }
+  button.shape:active {
+    /*background:         -webkit-gradient(linear, left top, left bottom, from(#383838), to(#4a4a4a));*/
+    /*color:              #888;*/
+  }
   
+    
   #right {
-    /*display:            inline-block;*/
+    display:            inline-block;
     -webkit-appearance: none;
     outline:            none;
     border:             double 1px #648880;
@@ -1028,8 +1060,7 @@
     /*margin:             1px 0 0 0;*/
   }
 
-  img.middle {
-    vertical-align:     top;
+  img.shape {
     padding:            0;
     margin:             0;
     cursor:             pointer;
@@ -1062,14 +1093,13 @@
     cursor:             pointer;
   }
 
-  li.top {
-    display:            inline;
-    height:             30px;
-  }
+
+  /* LIST ITEM ****************************************************************/
+  /*li.top {*/
+  /*  display:            inline;*/
+  /*  height:             30px;*/
+  /*}*/
   
-  li {
-    height:             50px;
-  }
   li.menu {
     outline:            none;
     border:             red;
@@ -1086,27 +1116,27 @@
   li.menu:active {
     color:              blue;
   }
+
+  /*li.shape {*/
+  /*  padding:            0;*/
+  /*  margin:             0;*/
+  /*  border:             none;*/
+  /*  float:              left;*/
+
+  /*}*/
   
-  li.menuH {
-    outline:            none;
-    border:             red;
-    /*padding:            0px;*/
-    height:             24px;
-    width:              24px;
-    background:         none;
-    text-align:         left;
-  }
+  /*ul.shape {*/
+  /*  border:             1px solid transparent;*/
+  /*  margin:             0;*/
+  /*  padding:            0;*/
+  /*  list-style:         none;*/
+  /*}*/
   
-  
-  ul {
-    border:             1px solid white;
-    margin:             0;
-    padding:            0;
-  }
+  /* Shape Menu ***************************************************************/
   
   /* The necessities */
   .onclick-menu {
-    /*position:           relative;*/
+    position:           relative;
     display:            inline-block;
     padding:            0;
     margin:             0;
@@ -1156,42 +1186,55 @@
   */
   .onclick-menu {
     padding:            0;
-    margin:             0 0 1em 0;
+    margin:             0;
     outline:            0;
+    background:         orange;
+    height:             30px;
+    width:              30px;
   }
   .onclick-menu:before {
     padding:            0px 0px;
     background-color:   #94a4a5;
   }
   .onclick-menu-content {
+    
     background-color:   #364656;
     background-color:   none;
-    width:              200px;
   
-    margin-top:         0px;
+    margin-top:         0;
     margin-left:        0;
-    padding:            0px;
+    padding:            0;
+    
   }
   
-  /* arrow for the expanding part */
+   arrow for the expanding part
   .onclick-menu-content:before {
     content:            "";
     width:              0;
     height:             0;
   
-    /*border-bottom:      0px solid #364656;*/
-    /*border-left:        0px solid transparent;*/
-    /*border-right:       0px solid transparent;*/
+    border-bottom:      1px solid #364656;
+    border-left:        0px solid transparent;
+    border-right:       0px solid transparent;
   
-    /*position:           absolute;*/
-    /*top:                0px;*/
+    position:           absolute;
+    top:                0px;
   }
   
   .onclick-menu-content li {
+
     color:              #f2f5e9;
     list-style-type:    none;
-    /*white-space:        nowrap;*/
-    border:             1px solid green;
+    white-space:        nowrap;
+    border:             none;
+    cursor:             pointer;
+    background:         red;
+    height:             30px;
+    width:              30px;
+
+    border-top:         1px solid red;
+    border-bottom:      1px solid red;
+
   }
   
   /* style the buttons */
@@ -1201,23 +1244,8 @@
     color:              inherit;
     cursor:             inherit;
     outline:            0;
-    cursor:             pointer;
+    cursor:             inherit;
   }
   .onclick-menu-content button:hover {
     color:              #ff8c31;
   }
-  
-  /* Codepen stuff */
-  /*body {*/
-  /*  text-align: center;*/
-  /*  font-family: Arial, sans-serif;*/
-  /*}*/
-  /*.onclick-menu {*/
-  
-  /*  text-align: left;*/
-  /*}*/
-  /*h1 {*/
-  /*  color: #c0c0c0;*/
-  /*  margin-top: 5%;*/
-  /*  font-weight: 400;*/
-  /*}*/
