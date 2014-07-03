@@ -162,8 +162,8 @@
     float:              left;
     height:             100%;
     width:              200px;
-    background:         yellow;
-    border:             2px solid #666;
+    background:         #4b4b4b;
+    /*border:             2px solid #666;*/
   }
   
   div.preset {
@@ -181,7 +181,7 @@
     width:              100%;
     float:              right;
     background:         white;
-    color:              black;
+    color:              #000;
   }
   
   button.preset {
@@ -192,7 +192,7 @@
     width:              30px;
     float:              left;
     background:         white;
-    color:              black;
+    color:              #000;
   }
   
   /* Grid *************************/
@@ -205,9 +205,9 @@
     
     height:             100%;
     
-    background:         #000;
+    background:         #262626;
     
-    border:             2px solid #333;
+    /*border:             2px solid #333;*/
     
   }
   
@@ -241,16 +241,19 @@
     /*margin:             3px;*/
     padding:            3px;
     left:               3px;
-    top:                3px;
+    top:                24px;
     width:              200px;
-    background:         #4a4a4a;
+    background:         #4b4b4b;
     border:             1px solid #444;
     border-radius:      5px;
     overflow:           auto;
+    opacity:            0.15;
   }
   #shape-properties:hover {
     border:             1px solid #333;
     background:         #3b3b3b;
+    opacity:            1;
+    -webkit-transition: All 0.25s ease;
   }
 
   /* Shape Properties Title *************************/
@@ -288,16 +291,21 @@
     
     
     bottom:             185px;
-    border:             1px solid #444;
+    border:             1px solid #666;
     border-radius:      5px;
     
     overflow:           auto;
-    background:         #4a4a4a;
+    background:         #4b4b4b;
     height:             auto;
+    
+    opacity:            0.15;
+    
   }
   #grid-properties:hover {
     border:             1px solid #333;
     background:         #3b3b3b;
+    opacity:            1;
+    -webkit-transition: All 0.25s ease;
   }
 
   #grid-properties-title {
@@ -359,7 +367,7 @@
     cursor:             pointer;
   }
   .menuDrop:focus {
-    background:         black;
+    background:         #000;
   }
 
   .shape1 {
@@ -521,7 +529,8 @@
     font-weight:        200;
   }
   a:hover {
-    color:              #fff;
+    font-weight:        200;
+    color:              #009999;
   }
   p a {
     border-bottom:      1px solid #dfe2e5;
@@ -661,11 +670,11 @@
   }
   input[type="number"]:hover {
     background:         gray;
-    color:              black;
+    color:              #000;
   }
   input[type="number"]:focus {
     background:         #fff;
-    color:              black;
+    color:              #000;
   }
   input[type="number"]::-webkit-inner-spin-button,
   input[type="number"]::-webkit-outer-spin-button {
@@ -682,9 +691,9 @@
     background:         transparent;
   }
   input[type="color"]:hover {
-    /*color:              black;*/
+    /*color:              #000;*/
     /*cursor:             pointer;*/
-    /*border:             1px solid black;*/
+    /*border:             1px solid #000;*/
   }
   input[type="color"]:focus {
     background:         transparent;
@@ -969,22 +978,28 @@
   */
 
   #logo {
-    border-top:         3px solid #999;
-    float:              left;
-    font-size:          28px;
+    border-top:         3px solid #000;
+    /*float:              left;*/
+    font-size:          32px;
     font-weight:        200;
     letter-spacing:     .5px;
     line-height:        28px;
-    padding:            0 0 0 30px;
+    top:                0;
+    left:               0;
+    padding:            0 0 0 50px;
     margin:             0;
     text-transform:     uppercase;
     color:              white;
     width:              205px;
     cursor:             pointer;
+    color:              #000;
   }
   #logo:hover {
     /*border-top:       3px solid #ccc;*/
-    font-weight:        200;
+    /*background:         #fff;*/
+    color:              teal;
+    border-top:         2px solid #002020;
+    -webkit-transition: All 0.5s ease;
   }
   .tagline {
     margin:             66px 0 22px 0;
@@ -1036,7 +1051,7 @@
   }
 
   img {
-    color:              black;
+    color:              #000;
     display:            inline-block;
     margin:             0;
     padding:            0;
