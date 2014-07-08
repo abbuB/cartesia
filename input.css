@@ -1,0 +1,275 @@
+  /*
+    ============================================================================
+    Input
+    ============================================================================
+  */
+  input {
+    font:               200 10px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    border:             0px solid transparent;
+    outline:            none;
+    background:         transparent;
+    color:              #000;
+    padding-right:      5px;
+    padding-left:       5px;
+  }
+  input:hover {
+    background:         gray;
+  }
+  input:focus {
+    /*border:             1px solid #C0C0C0;*/
+  }
+  
+  /* TEXT *********************************************************************/
+  .buffer {
+    padding:            0 5px;
+    background:         transparent;
+    color:              #fff;
+  }
+  .buffer:hover {
+    background:         #666;
+    color:              #000;
+  }
+  .buffer:focus {
+    background:         #fff;
+    color:              #000;
+  }
+  
+  input[type="text"] {
+  }
+  input[type="text"]:hover {
+  }
+  input[type="text"]:focus {
+  }
+
+  input[type="text"].commands {
+    font:               400 11px/12px "Ubuntu", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    padding:            0 10px;
+    /*color:              #000;*/
+    border-radius:      5px;
+    height:             20px;
+    /*border:             1px solid #888;*/
+    /*background:         gray;*/
+  }
+  input[type="text"].commands:hover {
+    background:         #bbb;
+  }
+  input[type="text"].commands:focus {
+    background:         #fff;
+    border:             1px solid #222;
+  }
+  
+  /* NUMBER *******************************************************************/
+  input[type="number"] {
+    font:               400 11px/12px "Ubuntu", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background:         none;
+    color:              white;
+    text-align:         center;
+  }
+  input[type="number"]:hover {
+    background:         gray;
+    color:              #000;
+  }
+  input[type="number"]:focus {
+    background:         #fff;
+    color:              #000;
+  }
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    cursor:             pointer;
+    margin:             0;
+  }
+
+  input[type="number"] {
+    font:               300 10px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    margin:             0;
+    padding:            0;
+    border:             0px solid transparent;
+    /*outline:          none;*/
+    background:           transparent;
+    color:              #ddd;
+  }
+
+    input[type="number"]:hover {
+    color:              #fff;
+  }
+
+    input[type="number"].commands {
+    font:               400 11px/12px "Ubuntu", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    padding:            0 10px;
+    color:              #888;
+  }
+    input[type="number"].commands:active {
+    padding:            0 10px;
+    color:              #fff;
+  }
+
+    input[type="number"].menu {
+    font:               400 10px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    text-align:         center;
+    padding:            0 5px;
+    cursor:             pointer;
+    color:              inherit;
+  }
+
+  #coordinates {
+    position:           absolute;
+    right:              10px;
+    font:               900 14px/16px "Ubuntu", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    letter-spacing:     1px;
+    line-height:        26px;
+  }
+  
+ /* COLOR ********************************************************************/
+  input[type="color"] {
+    -webkit-appearance: square-button;
+    cursor:             pointer;
+    height:             12px;
+    border:             0px solid transparent;
+    background:         transparent;
+  }
+  input[type="color"]:hover {
+    /*color:              #000;*/
+    /*cursor:             pointer;*/
+    /*border:             1px solid #000;*/
+  }
+  input[type="color"]:focus {
+    background:         transparent;
+  }
+  input[type="color"]::-webkit-color-swatch-wrapper {
+    margin:             0;
+    padding:            0;
+    border:             none;
+    height:             8px;
+    background:         transparent;
+  }
+  input[type="color"]::-webkit-color-swatch {
+    /*opacity:          0.75;*/
+    border:             none;
+    height:             5px;
+    margin:             0;
+    padding:            0;
+    background:         red;
+    border-radius:      3px;
+  }
+  
+  input[type="color"].grid {
+    margin:             10px 0 0 0;
+    -webkit-appearance: square-button;
+    cursor:             pointer;
+    height:             12px;
+    width:              100%;
+    border:             0px solid transparent;
+    background:         transparent;
+  }
+  input[type="color"].grid:hover {
+    /*color:              #000;*/
+    /*cursor:             pointer;*/
+    /*border:             1px solid #000;*/
+  }
+  input[type="color"].grid:focus {
+    background:         transparent;
+  }
+  input[type="color"].grid::-webkit-color-swatch-wrapper {
+    margin:             0;
+    padding:            0;
+    border:             none;
+    height:             8px;
+    background:         transparent;
+  }
+  input[type="color"].grid::-webkit-color-swatch {
+    /*opacity:          0.75;*/
+    border:             none;
+    height:             5px;
+    width:              100px;
+    margin:             0;
+    padding:            0;
+    background:         red;
+    border-radius:      3px;
+  }
+  
+  /* RANGE ********************************************************************/
+  input[type="range"]{
+    -webkit-appearance: none;
+  }
+
+  input[type="range"]:hover {
+    outline:            none;
+    background:         none;
+    cursor:             pointer;
+  }
+  input[type="range"]:focus {
+    background:         none;
+    color:              #000;
+  }
+  
+  input[type="range"]::-webkit-slider-runnable-track {
+    height:             5px;
+    background:         gray;
+    border:             none;
+    border-radius:      3px;
+    background:         -webkit-gradient(linear, left top, left bottom, from(#888), to(#666));
+  }
+  input[type="range"]:focus::-webkit-slider-runnable-track {
+    /*background:         #ddd;*/
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    background:         -webkit-gradient(linear, left top, left bottom, from(#222), to(#333));
+    border:             1px solid #444;
+    height:             12px;
+    width:              12px;
+    border-radius:      50%;
+    /*background:         #222;*/
+    margin-top:         -3px;
+  }
+
+  /* CHECKBOX *****************************************************************/
+  input[type="checkbox"] {
+    padding:            0;
+    margin:             0;
+    -webkit-appearance:none;
+    border-radius:      6px;
+    /*border:             double 1px black;*/
+    width:              12px;
+    height:             12px;
+    cursor:             pointer;
+    background:         red;
+    background:         -webkit-radial-gradient(#dd0000, #aa0000);
+  }
+  input[type="checkbox"]:checked {
+    background:         -webkit-radial-gradient(#00dd00, #00aa00);
+    border:             double 1px transparent;
+    /*border-left-color:#06F;*/
+    /*border-right-color:#06F;*/
+  }
+  input[type="checkbox"]:hover {
+    border:             double 1px #777;
+  }
+
+  /* RADIO ********************************************************************/
+  input[type="radio"] {
+    /*-webkit-appearance:button;*/
+    /*padding-left:     0px;*/
+    /*padding-right:    0px;*/
+    /*border-radius:    2px;*/
+    /*margin:           3px;*/
+    /*border:           double 1px #648880;*/
+    /*background-color: #000;*/
+    /*color:            #648880;*/
+    /*white-space:        nowrap;*/
+    /*overflow:           hidden;*/
+    /*width:            10px;*/
+    /*height:           10px;*/
+    /*float:            left;*/
+    /*text-align:         left;*/
+  }
+  input[type="radio"]:checked {
+    background-color:   #648880;
+    border-left-color:  #06F;
+    border-right-color: #06F;
+  }
+  input[type="radio"]:hover {
+    box-shadow:         0px 0px 10px #1300ff;
+    cursor:             pointer;
+  }
