@@ -1,0 +1,168 @@
+
+
+  /*  Tab Control *************************************************************/
+  /*
+    ========================================
+    Tabs
+    ========================================
+  */
+  .container {
+    
+    position:           relative;
+    /*display:            inilne-block;*/
+    
+    width:              100%;
+    height:             100%;
+    
+    margin:             0px 0;
+    
+    left:               0;
+    top:                0;
+    bottom:             100px;
+    
+    background:         #262626;
+
+    border:             0px solid #444;
+
+  }
+  
+  ul.tabs {
+
+    margin:             0;
+    padding:            0;
+    
+    float:              left;
+    
+    list-style:         none;
+    
+    height:             22px;
+    
+    border-bottom:      1px solid #444;
+    border-left:        1px solid #444;
+    
+    background:         #000;
+
+    width:              100%;
+        
+  }
+  ul.tabs li {
+       
+    float:              left;
+    
+    margin:             0;
+    
+    padding:            0;
+    
+    height:             21px;
+    width:              32.75%;
+    line-height:        21px;
+    
+    border:             1px solid #444;
+    border-left:        none;
+    
+    /*margin-bottom:      -1px;*/
+    
+    background:         #363636;
+
+    /*overflow:           hidden;*/
+    
+    /*position:           relative;*/
+    
+  }
+  ul.tabs li a {
+
+    text-decoration:    none;
+    
+    color:              #fff;
+    
+    display:            block;
+    
+    /*font-size:          1.2em;*/
+    
+    padding:            0 10px;
+    
+    width:              43px;
+    border:             1px solid #444
+    
+    outline:            none;
+    
+  }
+  ul.tabs li a:hover {
+    
+    background:         #161616;
+
+  }
+  html ul.tabs li.active, html ul.tabs li.active a:hover  {
+    
+    background:         #262626;
+    
+    border-bottom:      1px solid #262626;
+    
+  }
+  .tab_container {
+    
+    /*display:            inline-block;*/
+    position:           absolute;
+    
+    top:                23px;
+    bottom:             0px;
+    left:               0px;
+    right:              0px;
+    
+    /*width:              200px;*/
+    
+    border:             1px solid #444;
+    border-top:         none;
+    
+    clear:              both;
+    
+    /*float:              left;*/
+    /*height:             100%;*/
+    /*width:              100%;*/
+
+    background:         #4b4b4b;
+    background:         transparent;
+    /*-moz-border-radius-bottomright:     5px;*/
+    /*-khtml-border-radius-bottomright:   5px;*/
+    /*-webkit-border-bottom-right-radius: 5px;*/
+    /*-moz-border-radius-bottomleft:      5px;*/
+    /*-khtml-border-radius-bottomleft:    5px;*/
+    /*-webkit-border-bottom-left-radius:  5px;*/
+    
+  }
+  .tab_content {
+    
+    padding:            20px;
+    
+    font-size:          1.2em;
+    
+  }
+  .tab_content h2 {
+    
+    font-weight:        normal;
+    
+    padding-bottom:     10px;
+    
+    border-bottom:      1px dashed #ddd;
+    
+    font-size:          1.8em;
+    
+  }
+  .tab_content h3 a{
+    
+    color:              #254588;
+    
+  }
+  .tab_content img {
+    
+    float:              left;
+    
+    margin:             0 20px 20px 0;
+    
+    border:             1px solid #ddd;
+    
+    padding:            5px;
+    
+  }
+  
+  
