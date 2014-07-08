@@ -10,6 +10,8 @@
       <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
       <link rel="stylesheet" href="assets/stylesheets/cartesia.css">
+      <link rel="stylesheet" href="assets/stylesheets/input.css">
+      <link rel="stylesheet" href="assets/stylesheets/tabs.css">
       <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lato:100,300,400">
       <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Ubuntu:100,300,400">
       <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Fjalla One:100,300,400">
@@ -18,65 +20,8 @@
 
       <script>
 
-        // $(document).ready(function(){
-        //   $("#gridPropertiesDisplay").click(function(){
-            // $("#gridmenu").slideToggle("fast");
-            // $("#properties").slideToggle("fast");
-            // $("#gridProperties").animate({width: 'toggle'}, 'fast');
-            // $("#gridProperties").slideToggle(250);
-            // $("#gridmenu").animate({height: 'toggle'}, 'slow');
-            // $("#dwg").animate({left: 'toggle'}, 'slow');
-        //   });
-        // });
-
-        // $(document).ready(function(){
-        //   $('#presets-toggle').click(function(){
-        //       $("#presets").animate({width:'toggle'},250);
-        //   });
-        // });
-        
-        // $(document).ready(function(){
-        //   $("#shape-properties-toggle").click(function(){
-        //     $("#shape-properties").slideToggle(400);
-        //   });
-        // });
-
         $(document).ready(function(){
-          $("#shape-properties-toggle").click(function () {
-
-              if ($(this).text() === "▲"){
-                $(this).text("▼")
-              }
-              else {
-                $(this).text("▲");
-              }
-           
-              $("#shape-properties").slideToggle(200);
-              
-          });
-        });
-
-        $(document).ready(function(){
-          $("#grid-properties-toggle").click(function () {
-
-              if ($(this).text() === "▲"){
-                $(this).text("▼")
-              }
-              else {
-                $(this).text("▲");
-              }
-           
-              $("#grid-properties").slideToggle(200);
-              
-          });
-        });
-
-        $(document).ready(function(){
-
-          // var height = $("#presets").height() + "px";
-          // var width = $("#presets").width() + "px";
-
-          $("#presets-toggle").click(function () {
+          $("#menu-left-toggle").click(function () {
 
             if ($(this).text() === "►"){
               $(this).text("◄")
@@ -84,369 +29,304 @@
             else {
               $(this).text("►");
             }
-            
-            // $("button1").css({
-            //     'height': height,
-            //     'width': width
-            // });
-
-            // $("label1").css({
-            //     'height': height,
-            //     'width': width
-            // });
-            
-            $("#presets").animate({width:'toggle'},100);
+           
+              $("#menu-left").animate({width:'toggle'},400);
               
           });
         });
-
+        
         $(document).ready(function(){
-          $("#menu-points").click(function(){
-              if ($(this).height() === 30){
-                $(this).height(120)
-              }
-              else {
-                $(this).height(30);
-              }
+          $("#menu-right-toggle").click(function () {
+
+            if ($(this).text() === "►"){
+              $(this).text("◄")
+            }
+            else {
+              $(this).text("►");
+            }
+
+              $("#menu-right").animate({width:'toggle'},400);
+              
           });
         });
-
-        // $(document).ready(function(){
-        //   $('#gridPropertiesDisplay').click(function()
-        //   {
-        //       $("#gridProperties").animate({right:'toggle'},250);
-        //   });
-        // });
         
-        // $(document).ready(function(){
-        //   $('#gridMenuDisplay').click(function()
-        //   {
-        //       $("#gridMenu").animate({width:'toggle'},250);
-        //   });
-        // });
-        
-        // $(document).ready(function(){
-        //   $( "#logo" ).mouseover(function() {
-        //     $( this ).fadeTo( "fast", 1.0 );
-        //   });
-        // });
+        // Tabs
+        $(document).ready(function() {
+         
+            //Default Action
+            $(".tab_content").hide();                           //  Hide all content
+            $("ul.tabs li:first").addClass("active").show();    //  Activate first tab
+            $(".tab_content:first").show();                     //  Show first tab content
+             
+            //On Click Event
+            $("ul.tabs li").click(function() {
+                $("ul.tabs li").removeClass("active");          //  Remove any "active" class
+                $(this).addClass("active");                     //  Add "active" class to selected tab
+                $(".tab_content").hide();                       //  Hide all tab content
+                var activeTab = $(this).find("a").attr("href"); //  Find the rel attribute value to identify the active tab + content
+                $(activeTab).fadeIn();                          //  Fade in the active content
+                return false;
+            });
+         
+        });
 
-        // $(document).ready(function(){
-        //   $( "#logo" ).mouseout(function() {
-        //     $( this ).fadeTo( "slow", 0.5 );
-        //   });
-        // });
-
-        // $(document).ready(function(){
-        //   $("#shapeM").toggle(function(){
-        //     $(this).animate({height:30},500);
-        //   },function(){
-        //     $(this).animate({height:100},500);
-        //   });
-        // });
-
-      $(document).ready(function(){
-
-      	// Clickable Dropdown
-      	$('.click-nav > ul').toggleClass('no-js js');
-      	$('.click-nav .js ul').hide();
-      	
-      	$('.click-nav .js').click(function(e) {
-      	  
-      		$('.click-nav .js ul').slideToggle(200);
-      		$('.clicker').toggleClass('active');
-      		
-      		e.stopPropagation();
-      		
-      	})
-      	;
-      	$(document).click(function() {
-      		if ($('.click-nav .js ul').is(':visible')) {
-      	
-      			$('.click-nav .js ul', this).slideUp();
-      			$('.clicker').removeClass('active');
-      			
-      		}
-      	});
-      	
-      });
-		
       </script>
-
-
-            
+      
     </head>
 
-            
-            
     <body>
-      
+
       <!--Page Header-->
-      <section id="page-header" class="fixed">
-
+      <section id="header" class="header fixed">
+      
         <h1 id="logo" class="fixed">cartesia</h1>
-
-        <button id="presets-toggle" class="toggle fixed">◄</button>
+              
+        <button id="menu-left-toggle" class="toggle fixed">◄</button>
+        <button id="menu-right-toggle" class="toggle fixed">►</button>
 
         <nav id="headerNav" class="nav primary-nav">
-          <a href="javascript:void('Home')">home</a>
-          <a href="javascript:confirm('Speakers')">speakers</a>
-          <a href="javascript:prompt('Billy, dont be a hero')">schedule</a>
-          <a href="javascript:alert('Venues')">venue</a>
-          <a href="javascript:alert('Register')">register</a>
+          <a class="header" href="javascript:void('Home')">home</a>
+          <a class="header"  href="javascript:confirm('Speakers')">speakers</a>
+          <a class="header"  href="javascript:prompt('Billy, dont be a hero')">schedule</a>
+          <a class="header"  href="javascript:alert('Venues')">venue</a>
+          <a class="header"  href="javascript:alert('Register')">register</a>
         </nav>
-
+        
       </section>
-      
+
       <!--Middle section-->
       <section id="middle" class="fixed">
 
-        <div id="presets" class="presets">
-          <div id="preset-#1" class="preset">
-            <button id="button1" class="preset">O</button>
-            <label id="label1" class="preset">grid #1</label>
+                  <!--</div>-->
+                
+                  <!--<div id="properties-toggle"  class="fixed" title="ooga booga">-->
+                  <!--  <button id="grid-properties-toggle" class="toggle">▲</button>-->
+                  <!--</div>-->
+                
+                  <!--<div id="shapes-toggle" class="fixed">-->
+                  <!--  <button id="shape-properties-toggle" class="toggle">▲</button>-->
+                  <!--</div>-->
+                  
+        <!--Presets-->
+        <div id="menu-left">
+          
+          <!--Tabs***********************************************************-->
+          <div class="container">
+
+            <ul class="tabs">
+              <li><a href="#tab1">Grid</a></li>
+              <li><a href="#tab2">Shapes</a></li>
+              <li><a href="#tab3">Stuff</a></li>
+            </ul>
+
+            <div class="tab_container">
+
+              <div id="tab1" class="tab_content">
+  
+                <!-- Origin -->
+                <label for="origin" class="grid col-3">Origin</label>
+                <label              class="grid col-4"></label>
+                <input id="origin" type="checkbox" class="col-5" value="x">
+  
+                <input  id="origin-color" type="color" class="grid col-2" value="#000000" list="colors"/>
+              
+                <hr class="line">
+            
+                 <!--Axes -->
+                <label for="axes" class="grid col-3">Axis</label>
+                <label for="axisx" class="grid col-4">x:</label>
+                <input id="axisx" type="checkbox" class="col-5">
+                
+                <label                 class="grid col-3"></label>
+                <label for="axisy"     class="grid col-4">y:</label>
+                <input id="axisy" type="checkbox" class="col-5">
+                
+                <input  id="axis-color" type="color" class="grid col-2" value="#111111" list="colors"/>
+                
+                 <!--Lines -->
+                <hr class="line">
+                
+                <label for="lines" class="grid col-3">Lines</label>
+                <label for="linesx" class="grid col-4">x:</label>
+                <input id="linesx" type="checkbox" class="col-5">
+                
+                <label              class="grid col-3"></label>
+                <label for="linesy" class="grid col-4">y:</label>
+                <input id="linesy" type="checkbox" class="col-5">
+                
+                <input  id="lines-color" type="color" class="grid col-2" value="#222222" list="colors"/>
+                
+                 <!--Arrows -->
+                <hr class="line">
+                
+                <label for="arrows" class="grid col-3">Arrows</label>
+                <label for="arrowsx" class="grid col-4">x:</label>
+                <input id="arrowsx" type="checkbox" class="col-5">
+                
+                <label              class="grid col-3"></label>
+                <label for="arrowsy" class="grid col-4">y:</label>
+                <input id="arrowsy" type="checkbox" class="col-5">
+                
+                <input  id="arrows-color" type="color" class="grid col-2" value="#333333" list="colors"/>
+                
+                 <!--Ticks -->
+                <hr class="line">
+                
+                <label for="ticks" class="grid col-3">Ticks</label>
+                <label for="ticksx" class="grid col-4">x:</label>
+                <input id="ticksx" type="checkbox" class="col-5">
+                
+                <label              class="grid col-3"></label>
+                <label for="ticksy" class="grid col-4">y:</label>
+                <input id="ticksy" type="checkbox" class="col-5">
+                
+                <input  id="ticks-color" type="color" class="grid col-2" value="#444444" list="colors"/>
+                
+                 <!--Labels -->
+                <hr class="line">
+                
+                <label for="labels" class="grid col-3">Labels</label>
+                <label for="labelsx" class="grid col-4">x:</label>
+                <input id="labelsx" type="checkbox" class="col-5">
+                
+                <label              class="grid col-3"></label>
+                <label for="labelsy" class="grid col-4">y:</label>
+                <input id="labelsy" type="checkbox" class="col-5">
+                
+                <input  id="labels-color" type="color" class="grid col-2" value="#555555" list="colors"/>
+                
+                 <!--Quadrants -->
+                <hr class="line">
+                
+                <label for="quadrants" class="grid col-3">Quadrants</label>
+                <label                class="grid col-4"></label>
+                <input id="quadrants" type="checkbox" class="col-5">
+            
+                <input  id="quadrants-color" type="color" class="grid col-2" value="#666666" list="colors"/>
+
+                </div>
+          
+              </div>
+
+              <div id="tab2" class="tab_content">
+
+                <!-- Name -->
+                <label for="name" class="col-1">Name:</label>
+                <input id="name"  class="col-2 buffer" title="name">
+                <!-- Caption -->
+                <label for="caption" class="col-1" title="caption">Caption:</label>
+                <input id="caption"  class="col-2 buffer" title="caption">
+                <!-- Formula -->
+                <label for="formula" class="col-1" title="formula">Formula:</label>
+                <input id="formula"  class="col-2 buffer" title="formula">
+                
+                <hr class="line">
+                
+                 <!--Line Weight-->
+                <label for="lineweight" class="col-1">Line Weight:</label>
+                <input id="lineweight" type="number" class="col-2" min="0" max="13" value="6">
+      
+                <hr class="line">
+                
+                 <!--Line Color-->
+                <label for="linecolor" class="col-1">Line Color:</label>
+                <input id="linecolor" type="color" class="col-2" value="#0a0a0a" list="colors"/>
+      
+                  <datalist id="colors">
+                  
+                    <option value="#ff0000">  <!-- red            -->
+                    <option value="#FF5100">  <!-- red orange     -->
+                    <option value="#FF7F00">  <!-- orange         -->
+                    <option value="#FFBE00">  <!-- yellow orange  -->
+                    <option value="#FFFF00">  <!-- yellow         -->
+                  
+                    <option value="#C0FF00">  <!-- yellow green   -->
+                    <option value="#00FF00">  <!-- green -->
+                    <option value="#007F7F">  <!-- Blue Green     -->
+                    <option value="#0000FF">  <!-- Blue -->
+                    <option value="#5C00FF">  <!-- Blue Violet    -->
+                  
+                    <option value="#7F00FF">  <!-- Violet         -->
+                    <option value="#BF007F">  <!-- Red Violet     -->
+                    <option value="#FFFFFF">  <!-- White          -->
+                    <option value="#DADADA">  <!-- Gray1          -->
+                    <option value="#B6B6B6">  <!-- Gray2          -->
+                  
+                    <option value="#929292">  <!-- Gray3          -->
+                    <option value="#6D6D6D">  <!-- Gray4          -->
+                    <option value="#494949">  <!-- Gray5          -->
+                    <option value="#242424">  <!-- Gray6          -->
+                    <option value="#000000">  <!-- Black          -->
+                  
+                  </datalist>
+      
+                 <!--Line Alpha-->
+                <label for="linealpha" class="col-1" value="14">Transparency:</label>
+                <input id="linealpha" type="range" class="col-2" min="0" max="100" value="75">
+      
+                <hr class="line">
+                
+                 <!--Fill Color-->
+                <label for="fillcolor" class="col-1">Fill Color:</label>
+                <input  id="fillcolor" type="color" class="col-2" value="#007f7f" list="colors"/>
+      
+                 <!--Fill Alpha-->
+                <label for="fillalpha" class="col-1">Transparency:</label>
+                <input id="fillalpha"  class="col-2" type="range" min="0" max="100" value="25">
+      
+                <!-- Line Type -->
+                <!-- Line Weight -->
+
+              </div>
+
+              <div id="tab3" class="tab_content">
+              
+                <h2>3</h2>
+                
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis et posuere velit. Aenean vitae ante iaculis, vulputate mi ac, posuere tortor. Fusce sed justo ornare, gravida erat vitae, tempus quam. Vivamus id arcu mauris. Etiam cursus purus tellus, nec fermentum justo consectetur sollicitudin. Nullam ornare, ipsum et luctus vehicula, metus libero porttitor tellus, sit amet rhoncus neque elit ut elit. Ut sed sapien varius, gravida turpis elementum, commodo libero. Integer eget dapibus urna.</p>
+
+              </div>
+
+            </div>
+
           </div>
+          <!--Tabs***********************************************************-->
+
         </div>
         
-        <!--Grid-->
-        <div id="grid" class="grid">
+        <!-- Shape Menu-->
+        <div id="shape-menu">
+        
+          <div tabindex="0" class="onclick-menu">
 
-          <!--Canvas-->
-          <div id="canvas-div">
+            <!--<img src="assets/images/move.png">-->
+            <img class="shape" src="assets/images/move.png">
 
-            <canvas id="canvas" class="fixed"></canvas>-->
-       
-            <!-- Settings-->
-            <div id="shape-properties" class="fixed shadow">
-    
-              <label id="shape-properties-title">Settings</label>
-    
-              <!-- Name -->
-              <label for="name" class="col-1">Name:</label>
-              <input id="name"  class="col-2 buffer" title="name">
-              <!-- Caption -->
-              <label for="caption" class="col-1" title="caption">Caption:</label>
-              <input id="caption"  class="col-2 buffer" title="caption">
-              <!-- Formula -->
-              <label for="formula" class="col-1" title="formula">Formula:</label>
-              <input id="formula"  class="col-2 buffer" title="formula">
-              
-              <hr class="line">
-              
-               <!--Line Weight-->
-              <label for="lineweight" class="col-1">Line Weight:</label>
-              <input id="lineweight" type="number" class="col-2" min="0" max="13" value="6">
-    
-              <hr class="line">
-              
-               <!--Line Color-->
-              <label for="linecolor" class="col-1">Line Color:</label>
-              <input id="linecolor" type="color" class="col-2" value="#0a0a0a" list="colors"/>
-    
-                <datalist id="colors">
-                
-                  <option value="#ff0000">  <!-- red            -->
-                  <option value="#FF5100">  <!-- red orange     -->
-                  <option value="#FF7F00">  <!-- orange         -->
-                  <option value="#FFBE00">  <!-- yellow orange  -->
-                  <option value="#FFFF00">  <!-- yellow         -->
-                
-                  <option value="#C0FF00">  <!-- yellow green   -->
-                  <option value="#00FF00">  <!-- green -->
-                  <option value="#007F7F">  <!-- Blue Green     -->
-                  <option value="#0000FF">  <!-- Blue -->
-                  <option value="#5C00FF">  <!-- Blue Violet    -->
-                
-                  <option value="#7F00FF">  <!-- Violet         -->
-                  <option value="#BF007F">  <!-- Red Violet     -->
-                  <option value="#FFFFFF">  <!-- White          -->
-                  <option value="#DADADA">  <!-- Gray1          -->
-                  <option value="#B6B6B6">  <!-- Gray2          -->
-                
-                  <option value="#929292">  <!-- Gray3          -->
-                  <option value="#6D6D6D">  <!-- Gray4          -->
-                  <option value="#494949">  <!-- Gray5          -->
-                  <option value="#242424">  <!-- Gray6          -->
-                  <option value="#000000">  <!-- Black          -->
-                
-                </datalist>
-    
-               <!--Line Alpha-->
-              <label for="linealpha" class="col-1" value="14">Transparency:</label>
-              <input id="linealpha" type="range" class="col-2" min="0" max="100" value="75">
-    
-              <hr class="line">
-              
-               <!--Fill Color-->
-              <label for="fillcolor" class="col-1">Fill Color:</label>
-              <input  id="fillcolor" type="color" class="col-2" value="#007f7f" list="colors"/>
-    
-               <!--Fill Alpha-->
-              <label for="fillalpha" class="col-1">Transparency:</label>
-              <input id="fillalpha"  class="col-2" type="range" min="0" max="100" value="25">
-    
-              <!-- Line Type -->
-              <!-- Line Weight -->
-    
-            </div>
-    
-            <!--Display-->
-            <div id="grid-properties" class="fixed shadow">
-    
-              <label id="grid-properties-title">Grid</label>
-              
-              <!-- Origin -->
-              <label for="origin" class="col-3">Origin</label>
-              <label              class="col-4"></label>
-              <input id="origin" type="checkbox" class="col-5">
-              
-              <hr class="line">
-    
-               <!--Axes -->
-              <label for="axes" class="col-3">Axis</label>
-              <label for="axisx" class="col-4">x:</label>
-              <input id="axisx" type="checkbox" class="col-5">
-              
-              <label                 class="col-3"></label>
-              <label for="axisy"     class="col-4">y:</label>
-              <input id="axisy" type="checkbox" class="col-5">
-              
-               <!--Lines -->
-              <hr class="line">
-              
-              <label for="lines" class="col-3">Lines</label>
-              <label for="linesx" class="col-4">x:</label>
-              <input id="linesx" type="checkbox" class="col-5">
-              
-              <label              class="col-3"></label>
-              <label for="linesy" class="col-4">y:</label>
-              <input id="linesy" type="checkbox" class="col-5">
-              
-               <!--Arrows -->
-              <hr class="line">
-              
-              <label for="arrows" class="col-3">Arrows</label>
-              <label for="arrowsx" class="col-4">x:</label>
-              <input id="arrowsx" type="checkbox" class="col-5">
-              
-              <label              class="col-3"></label>
-              <label for="arrowsy" class="col-4">y:</label>
-              <input id="arrowsy" type="checkbox" class="col-5">
-              
-               <!--Ticks -->
-              <hr class="line">
-              
-              <label for="ticks" class="col-3">Ticks</label>
-              <label for="ticksx" class="col-4">x:</label>
-              <input id="ticksx" type="checkbox" class="col-5">
-              
-              <label              class="col-3"></label>
-              <label for="ticksy" class="col-4">y:</label>
-              <input id="ticksy" type="checkbox" class="col-5">
-              
-               <!--Labels -->
-              <hr class="line">
-              
-              <label for="labels" class="col-3">Labels</label>
-              <label for="labelsx" class="col-4">x:</label>
-              <input id="labelsx" type="checkbox" class="col-5">
-              
-              <label              class="col-3"></label>
-              <label for="labelsy" class="col-4">y:</label>
-              <input id="labelsy" type="checkbox" class="col-5">
-              
-               <!--Quadrants -->
-              <hr class="line">
-              
-              <label for="quadrants" class="col-3">Quadrants</label>
-              <label                class="col-4"></label>
-              <input id="quadrants" type="checkbox" class="col-5">
-    
-            </div>
+            <ul id="ul-points" class="onclick-menu-content">
 
-            <div id="properties-toggle"  class="fixed" title="ooga booga">
-              <button id="grid-properties-toggle" class="toggle">▲</button>
-            </div>
+              <li id="li-point0"> <button id="btn-point0"> <img id="img-point0" src="assets/images/move.png"> </button> </li>
+              <li id="li-point1"> <button id="btn-point1"> <img id="img-point1" src="assets/images/move.png"> </button> </li>
+              <li id="li-point2"> <button id="btn-point2"> <img id="img-point2" src="assets/images/move.png"> </button> </li>
 
-            <div id="shapes-toggle" class="fixed">
-              <button id="shape-properties-toggle" class="toggle">▲</button>
-            </div>
-            
-          </div>
-
-         
-  
-          <!--Grid Toolbar-->
-          <div id="grid-header" class="fixed">
-
-            
-
-            <div tabindex="0" class="onclick-menu">
-
-              <!--<img src="assets/images/move.png">-->
-              <img class="shape" src="assets/images/move.png">
-
-              <ul id="ul-points" class="onclick-menu-content">
-
-                <li id="li-point0"> <button id="btn-point0"> <img id="img-point0" src="assets/images/move.png"> </button> </li>
-                <li id="li-point1"> <button id="btn-point1"> <img  id="img-point1" src="assets/images/move.png"> </button> </li>
-                <li id="li-point2"> <button id="btn-point2"> <img  id="img-point2" src="assets/images/move.png"> </button> </li>
-
-              </ul>
-
-            </div>
+            </ul>
 
           </div>
-
-          
-
-          <!--Grid Footer-->
-          <div id="grid-footer" class="fixed">
             
-            <div id="snaps" class="inline">
-              <img id="snapToGrid"  class="menu" src="">
-              <img id="ortho"       class="menu" src="">
-              <img id="gridDisplay" class="menu" src="">
-            </div>
-  
-            <div id="commands" class="commands">
-              <label id="command-label" for="command" class="commands" >Name:</label>
-              <input id="command"                     class="commands" type="text" title="command">
-            </div>
-  
-            <div id="display" class="inline">
-              <img id="pan"    class="menu" src="">
-              <img id="zoomin" class="menu" src="">
-              <img id="zomout" class="menu" src="">
-            </div>
-  
-            <label id="coordinates">0</label>
-            
-          </div>
-
-
-          
         </div>
+        
+        <!-- Canvas-->
+        <div id="canvas">Canvas</div>
 
+         <!--Presets-->
+        <div id="menu-right">Grid</div>
+        
       </section>
 
       <!--Page Footer-->
-      <section id="page-footer" class="fixed">
-
-          © 2014 Brad Siemens  Except where noted, all rights reserved.
-          <a href="javascript:alert('Credits')"> Credits </a> —
-          <a href="javascript:alert('TOS')"> Terms of Service </a> —
-          <a href="javascript:alert('Blog Index')"> Blog Index </a>
-
+      <!--<section id="footer" class="footer">-->
+        
       </section>
-
-    </body>
-
-    <script type="text/javascript">
-    
-      var canvas = document.getElementById("canvas");
-      var processingInstance = new Processing(canvas, proc);
       
-    </script>
+    </body>
 
   </html>
