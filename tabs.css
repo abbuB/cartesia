@@ -1,15 +1,13 @@
 
-
-  /*  Tab Control *************************************************************/
   /*
-    ========================================
-    Tabs
-    ========================================
+  ========================================
+    tabs.css
+  ========================================
   */
+
   .container {
     
     position:           relative;
-    /*display:            inilne-block;*/
     
     width:              100%;
     height:             100%;
@@ -42,8 +40,8 @@
     
     background:         #000;
 
-    width:              100%;
-        
+    width:              99%;
+
   }
   ul.tabs li {
        
@@ -59,15 +57,9 @@
     
     border:             1px solid #444;
     border-left:        none;
-    
-    /*margin-bottom:      -1px;*/
-    
+
     background:         #363636;
 
-    /*overflow:           hidden;*/
-    
-    /*position:           relative;*/
-    
   }
   ul.tabs li a {
 
@@ -77,27 +69,30 @@
     
     display:            block;
     
-    /*font-size:          1.2em;*/
-    
     padding:            0 10px;
     
-    width:              43px;
-    border:             1px solid #444
     
-    outline:            none;
-    
+    border:             1px solid #444;
+    border-bottom:      1px solid #262626;
+
+    color:              #888;
+
   }
   ul.tabs li a:hover {
     
     background:         #161616;
-
+    
+    color:              #fff;
+    
   }
   html ul.tabs li.active, html ul.tabs li.active a:hover  {
     
     background:         #262626;
     
     border-bottom:      1px solid #262626;
-    
+
+    color:              #fff;
+
   }
   .tab_container {
     
@@ -116,12 +111,8 @@
     
     clear:              both;
     
-    /*float:              left;*/
-    /*height:             100%;*/
-    /*width:              100%;*/
+    background:         #262626;
 
-    background:         #4b4b4b;
-    background:         transparent;
     /*-moz-border-radius-bottomright:     5px;*/
     /*-khtml-border-radius-bottomright:   5px;*/
     /*-webkit-border-bottom-right-radius: 5px;*/
@@ -131,10 +122,14 @@
     
   }
   .tab_content {
+
+    padding:            20px 10px 10px 10px;
     
-    padding:            20px;
+    height:             94%;
     
-    font-size:          1.2em;
+    /*background:         green;*/
+    
+    /*font-size:          1.2em;*/
     
   }
   .tab_content h2 {
