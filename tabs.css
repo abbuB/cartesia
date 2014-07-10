@@ -44,7 +44,7 @@
 
   }
   ul.tabs li {
-       
+
     float:              left;
     
     margin:             0;
@@ -94,6 +94,7 @@
     color:              #fff;
 
   }
+  
   .tab_container {
     
     /*display:            inline-block;*/
