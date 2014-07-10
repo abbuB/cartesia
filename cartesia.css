@@ -67,8 +67,24 @@
     
   }
 
-  /* Pane Configuration ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
+  /*
+    ============================================================================
+      General
+    ============================================================================
+  */
+  .fixed {
+    
+    position:           fixed;
+    
+  }
+
+  
+  /*
+    ============================================================================
+      Panes
+    ============================================================================
+  */
   #header {
 
     position:           fixed;
@@ -109,43 +125,41 @@
     right:              0;
     
     background:         #000;
-    /*border:             5px solid orange;*/
 
   }
+  
   #menu-left {
 
     display:            inline-block;
-    
-    /*margin-left:        -1px;*/
+
     
     height:             100%;
     width:              200px;
 
     vertical-align:     top;
 
-    background:         red;
     overflow:           auto;
-    /*border:             1px solid black;*/
-    
+
   }
 
   #shape-menu {
     
     display:            inline-block;
 
-    /*margin-left:        2px;*/
-
     height:             100%;
     width:              30px;
     
     vertical-align:     top;
     
-    background:         yellow;
+    background:         green;
 
-    /*border:             1px solid black;*/
-    
   }
+  #shape-menu:hover {
+    
+    /*background:         blue;*/
 
+  }
+  
   #menu-right {
 
     display:            inline-block;
@@ -159,15 +173,10 @@
 
     background:         green;
 
-    /*border:             1px solid black;*/
+    overflow:           auto;
     
   }
 
-  #shape-menu:hover {
-    
-    /*background:         blue;*/
-
-  }
 
   /*
     ============================================================================
@@ -178,35 +187,30 @@
 
     display:            inline-block;
     
-    /*margin-left:        -2px;*/
-    
     height:             100%;
     width:              50%;
-    
-    /*padding:            1px;*/
     
     vertical-align:     top;
     
     background:         blue;
-    
-    /*border:             1px solid black;*/
-    
+
   }
-  #canvas1:hover {
+  #canvas:hover {
+    /*background:         orange;*/
   }
 
-  .fixed {
-    
-    position:           fixed;
-    
-  }
-  
+
+  /*
+    ============================================================================
+      ?????
+    ============================================================================
+  */
   #menu-left-toggle {
     
     position:           fixed;
     
-    top:                5px;
-    left:               5px;
+    top:                8px;
+    left:               3px;
 
   }
   
@@ -214,17 +218,17 @@
     
     position:           fixed;
     
-    top:                5px;
-    right:              5px;
+    top:                8px;
+    right:              3px;
 
   }
+
   
   /*
     ========================================
     Logo
     ========================================
   */
-
   #logo {
     
     width:              155px;
@@ -260,14 +264,7 @@
     
   }
 
-  /*
-    ============================================================================
-      Canvas
-    ============================================================================
-  */
-  
-  
-  
+
   /*
     ========================================
     Navigation
@@ -280,11 +277,12 @@
   
   .primary-nav {
     
-    /*height:             35px;*/
+    height:             35px;
     margin:             0 80px 0 0;
     
     font-size:          14px;
     font-weight:        400;
+    
     letter-spacing:     .5px;
     text-transform:     uppercase;
     
@@ -312,154 +310,6 @@
     color:              teal;
     
   }
-  
-  /*
-    ========================================
-    Shape Menu
-    ========================================
-  */
-  
-  /* The necessities */
-  .onclick-menu {
-    
-    position:           static;
-
-    padding:            0;
-    margin:             0;
-    
-  }
-  .onclick-menu:before {
-    /*content:            "Click me!";*/
-  }
-  .onclick-menu:focus {
-    
-    pointer-events:     none;
-    
-  }
-  
-  .onclick-menu:focus .onclick-menu-content {
-
-    opacity:            1;
-    visibility:         visible;
-    
-  }
-  
-  .onclick-menu-content {
-
-    pointer-events:     auto;
-    position:           absolute;
-    z-index:            1;
-  
-    opacity:            0;
-    visibility:         hidden;
-    transition:         visibility 0.5s;
-    
-  }
-  
-  .onclick-menu.no-pointer-events {
-    
-    pointer-events:     auto !important;
-    
-  }
-  
-  .onclick-menu.no-visibility .onclick-menu-content {
-
-    visibility:         visible !important;
-    display:            none;
-    
-  }
-  
-  .onclick-menu.no-visibility:focus .onclick-menu-content {
-
-    display:            block;
-    
-  }
-  
-  .onclick-menu.no-opacity .onclick-menu-content {
-
-    opacity:            1 !important;
-    
-  }
-  
-  /*
-  Eye candy
-  ( colors courtesy of https://kuler.adobe.com/try-color-theme-3350110 )
-  */
-  .onclick-menu {
-
-    padding:            0;
-    margin:             0;
-    outline:            0;
-    background:         orange;
-    height:             30px;
-    width:              30px;
-    
-  }
-  .onclick-menu:before {
-
-    padding:            0px 0px;
-    background-color:   #94a4a5;
-    
-  }
-  .onclick-menu-content {
-
-    background-color:   #364656;
-    background-color:   none;
-  
-    margin-top:         0;
-    margin-left:        0;
-    padding:            0;
-    
-  }
-  
-   /*arrow for the expanding part*/
-  .onclick-menu-content:before {
-
-    content:            "";
-    width:              0;
-    height:             0;
-  
-    border-bottom:      0px solid #364656;
-    border-left:        0px solid transparent;
-    border-right:       0px solid transparent;
-  
-    position:           absolute;
-    top:                0px;
-    
-  }
-  
-  .onclick-menu-content li {
-
-    color:              #f2f5e9;
-    list-style-type:    none;
-    white-space:        nowrap;
-    border:             none;
-    cursor:             pointer;
-    background:         red;
-    height:             30px;
-    width:              30px;
-
-    border-top:         0px solid red;
-    /*border-bottom:      11px solid red;*/
-
-  }
-  
-  /* style the buttons */
-  .onclick-menu-content button {
-
-    background:         transparent;
-    border:             none;
-    color:              inherit;
-    cursor:             inherit;
-    outline:            0;
-    cursor:             inherit;
-    
-  }
-  .onclick-menu-content button:hover {
-
-    color:              #ff8c31;
-    
-  }
 
   /*
     ============================================================================
@@ -467,28 +317,41 @@
     ============================================================================
   */
   .fixed {
+    
     position:           absolute;
+    
     border:             none;
+    
     outline:            none;
+    
   }
 
-  /*
-    ============================================================================
-    Sections
-    ============================================================================
-  */
-  .settings {
-    font:               600 10px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  img.menu {
+    
+    display:            inline-block;
+    position:           relative;
+    
+    /*margin:             12px 0;*/
+    padding:            0;
+    border:             none;
+    
   }
 
   /* BUTTONS ******************************************************************/
-  button {
-    margin:             0;
+  button.menu {
+    
+    border:             none;
+    
+    margin:             0 2px;
     padding:            0;
+    width:              30px;
+    height:             30px;
+    
   }
-  button:hover {
+  button.menu:hover {
   }
-  button:active {
+  button.menu:active {
   }
 
   button.toggle {
@@ -513,69 +376,21 @@
 
   }
   button.toggle:hover {
+    
     color:              #fff;
+    
     /*box-shadow:         0 1px 2px rgba(0,0,0,.5);*/
+    
     -webkit-transition: All 0.5s ease;
+    
   }
   button.toggle:active {
+    
     /*background:         -webkit-gradient(linear, left top, left bottom, from(#383838), to(#4a4a4a));*/
-    color:              #888;
-  }
-
-  button.menu {
-    display:            inline-block;
-    outline:            none;
-    background:         green;
-    
-    border:             none;
-    border-radius:      1px;
-    
-    width:              auto;
-    height:             20px;
-    cursor:             pointer;
-    
-    padding:            0;
-    margin:             0;
     
     color:              #888;
-    text-align:         center;
-    line-height:        10px;
-
-  }
-  button.menu:hover {
-    color:              #fff;
-    box-shadow:         0 1px 2px rgba(0,0,0,.5);
-  }
-  button.menu:active {
-    background:         -webkit-gradient(linear, left top, left bottom, from(#383838), to(#4a4a4a));
-    color:              #888;
-  }
-
-  button.shape {
     
-    /*display:            relative;*/
-    /*border:             1px solid transparent;*/
-    /*border-radius:      1px;*/
-    
-    /*height:             auto;*/
-    /*width:              auto;*/
-    /*cursor:             pointer;*/
-    
-    /*padding:            0;*/
-    /*margin:             0;*/
-    
-    /*color:              #888;/*/
-
   }
-  button.shape:hover {
-    /*color:              #fff;*/
-    /*box-shadow:         0 1px 2px rgba(0,0,0,.5);*/
-  }
-  button.shape:active {
-    /*background:         -webkit-gradient(linear, left top, left bottom, from(#383838), to(#4a4a4a));*/
-    /*color:              #888;*/
-  }
-  
 
   .col-1,
   .col-2,
@@ -584,7 +399,6 @@
   .col-5 {
 
     display:            inline-block;
-    /*position:           relative;*/
 
     margin:             0;
     padding:            0;
@@ -592,10 +406,6 @@
     width:              65px;
     height:             18px;
     line-height:        20px;
-    
-    /*background:             #444;*/
-    
-    /*border:             1px dotted #888;*/
 
   }
   
@@ -620,133 +430,28 @@
   }
   .col-4 {
 
-    width:              10%;
-    float:              left;
+    width:              12px;
+    float:              right;
 
   }
   .col-5 {
 
-    width:              10%;
+    width:              12px;
     float:              right;
 
   }
   .col-6 {
 
-    width:              10%;
+    width:              12px;
     float:              right;
 
   }
-  
-  /* Shape Properties *************************/
-  #shape-properties {
-    font-weight:        600;
-    font-size:          10px;
-    /*margin:             3px;*/
-    padding:            3px;
-    left:               3px;
-    top:                24px;
-    width:              200px;
-    background:         #4b4b4b;
-    border:             1px solid #444;
-    border-radius:      5px;
-    /*overflow:           auto;*/
-    /*opacity:            0.15;*/
-  }
-  #shape-properties:hover {
-    border:             1px solid #333;
-    background:         #3b3b3b;
-    /*opacity:            1;*/
-    /*-webkit-transition: All 0.25s ease;*/
-  }
-
-  /* Shape Properties Title *************************/
-  #shape-properties-title {
-    display:            block;
-    font-weight:        400;
-    font-size:          11px;
-    text-align:         center;
-    height:             20px;
-    width:              100%;
-  }
-  #shape-properties-title:hover {
-    color:              #fff;
-  }
-
-  #shapes-toggle {
-    margin:             3px;
-    top:                0px;
-    left:               0px;
-    title:              "ooga booga";
-  }
-  
-  /* Grid Menu *************************/
-  #grid-properties {
-    
-    font-weight:        400;
-    font-size:          10px;
-    
-    margin:             0;
-    padding:            10px;
-
-    width:              150px;
-
-    top:                3px;
-    right:              3px;
-    
-    
-    bottom:             185px;
-    border:             1px solid #666;
-    border-radius:      5px;
-    
-    overflow:           auto;
-    background:         #4b4b4b;
-    height:             auto;
-    
-    /*opacity:            0.15;*/
-    
-  }
-  #grid-properties:hover {
-    border:             1px solid #333;
-    background:         #3b3b3b;
-    /*opacity:            1;*/
-    /*-webkit-transition: All 0.25s ease;*/
-  }
-
-  #grid-properties-title {
-    display:            block;
-    font-weight:        400;
-    font-size:          11px;
-    text-align:         center;
-    height:             20px;
-    width:              100%;
-  }
-  #grid-properties-title:hover {
-    color:              #fff;
-  }
-
-  #properties-toggle {
-    margin:             3px;
-    top:                0px;
-    right:              0px;
-    title:              "ooga booga";
-  }
-  
-
-  #coordinates {
-    position:           absolute;
-    right:              10px;
-    font:               900 14px/16px "Ubuntu", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    letter-spacing:     1px;
-    line-height:        26px;
-  }
-
 
   /*
     ========================================
       Horizontal Line
     ========================================
   */
-
   div.line {
     
     display:            inline-block;
@@ -769,43 +474,22 @@
     ========================================
   */
   label.property {
-    
-    /*display:            inline-block;*/
-    /*position:           relative;*/
-
-    /*margin:             1px;*/
-    /*padding:            0;*/
 
     font:               400 11px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
     color:              #ccc;
 
-    /*border:             1px solid transparent;*/
-
     line-height:        16px;
-    
-    /*width:              65px;*/
 
-    /*border:             1px dotted #888;*/
+  }
+
+  #coordinates {
+    
+    position:           absolute;
+    
+    right:              10px;
+    
+    font:               900 14px/16px "Ubuntu", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    letter-spacing:     1px;
+    line-height:        26px;
     
   }
-  
-  /*label.property {*/
-    
-  /*  display:            inline-block;*/
-  /*  position:           relative;*/
-
-  /*  margin:             1px;*/
-  /*  padding:            0;*/
-
-  /*  font:               400 11px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;*/
-  /*  color:              #ccc;*/
-
-  /*  border:             1px solid transparent;*/
-
-  /*  line-height:        16px;*/
-    
-  /*  width:              65px;*/
-
-  /*  border:             1px dotted #888;*/
-    
-  /*}*/
