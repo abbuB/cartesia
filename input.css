@@ -137,7 +137,9 @@
   
   input[type="color"].grid {
     /*width:              80%;*/
-    float:              left;
+    height:             12px;
+    width:              12px;
+    margin:             3px 0 0 0;
   }
   input[type="color"].grid::-webkit-color-swatch {
     border:             none;
