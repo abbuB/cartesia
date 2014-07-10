@@ -12,6 +12,7 @@
       <link rel="stylesheet" href="assets/stylesheets/cartesia.css">
       <link rel="stylesheet" href="assets/stylesheets/input.css">
       <link rel="stylesheet" href="assets/stylesheets/tabs.css">
+      <link rel="stylesheet" href="assets/stylesheets/menus.css">
       <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lato:100,300,400">
       <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Ubuntu:100,300,400">
       <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Fjalla One:100,300,400">
@@ -195,17 +196,17 @@
               <div id="grid" class="tab_content">
 
                 <!-- Origin -->
-                <input id="origin" class="property col-5" type="checkbox" value="x">
                 <label for="origin" class="property col-3">Origin</label>
                 <input  id="origin-color" type="color" class="grid property col-4" value="#111111" list="colors"/>
-                <!--<label              class="property col-4"></label>-->
+                <input id="origin" class="property col-6" type="checkbox">
+                
 
                   <div class="line"></div>
             
-                 <!--Axes -->
+                <!--Axes -->
                 <label for="axes"   class="property col-3">Axis</label>
-                <input  id="axisx-color" type="color" class="property grid col-4" value="#111111" list="colors"/>
                 
+                <input  id="axisx-color" type="color" class="property grid col-4" value="#111111" list="colors"/>
                 <input id="axisx"   class="property col-6" type="checkbox">
                 <label for="axisx"  class="property col-5">x:</label>
 
@@ -230,11 +231,9 @@
                 <input id="linesy"  class="property col-6" type="checkbox">
                 <label for="linesy" class="property col-5">y:</label>
 
-                <div class="line"></div>
+                  <div class="line"></div>
 
-                 <!--Arrows -->
-                
-                
+                <!--Arrows -->
                 <label for="arrows" class="property col-3">Arrows</label>
                 <input  id="arrowsx-color" type="color" class="grid property col-4" value="#111111" list="colors"/>
                 
@@ -248,9 +247,9 @@
                 <label for="arrowsy" class="property col-5">y:</label>
                 
 
-                <div class="line"></div>
+                  <div class="line"></div>
 
-                 <!--Ticks -->
+                <!--Ticks -->
                 <label for="ticks" class="property col-3">Ticks</label>
                 <input  id="ticksx-color" type="color" class="grid property col-4" value="#111111" list="colors"/>
                 
@@ -264,9 +263,9 @@
                 <label for="ticksy" class="property col-5">y:</label>
                 
 
-                <div class="line"></div>
+                  <div class="line"></div>
 
-                 <!--Labels -->
+                <!--Labels -->
                 <label for="labels" class="property col-3">Labels</label>
                 <input  id="labelsx-color" type="color" class="grid property col-4" value="#111111" list="colors"/>
                 
@@ -279,14 +278,12 @@
                 <input id="labelsy"  class="property col-6" type="checkbox">
                 <label for="labelsy" class="property col-5">y:</label>
                 
-                <div class="line"></div>
+                  <div class="line"></div>
 
-                 <!--Quadrants -->
-                <input id="quadrants" class="property col-5" type="checkbox" value="x">
+                <!--Quadrants -->
                 <label for="quadrants" class="property col-3">Quadrants</label>
                 <input  id="quadrants-color" type="color" class="grid property col-4" value="#111111" list="colors"/>
-                <label              class="property col-4"></label>
-
+                <input id="quadrants" class="property col-5" type="checkbox">
 
               </div>
 
@@ -312,18 +309,35 @@
           <div tabindex="0" class="onclick-menu">
 
             <!--<img src="assets/images/move.png">-->
-            <img class="shape" src="assets/images/move.png">
+            <img class="menu" src="assets/images/move.png">
 
             <ul id="ul-points" class="onclick-menu-content">
 
-              <li id="li-point0"> <button id="btn-point0"> <img id="img-point0" src="assets/images/move.png"> </button> </li>
-              <li id="li-point1"> <button id="btn-point1"> <img id="img-point1" src="assets/images/move.png"> </button> </li>
-              <li id="li-point2"> <button id="btn-point2"> <img id="img-point2" src="assets/images/move.png"> </button> </li>
+              <li id="li-point0"> <button id="btn-point0" class="menu"> <img id="img-point0"  class="menu" src="assets/images/move.png"> </button> </li>
+              <li id="li-point1"> <button id="btn-point1" class="menu"> <img id="img-point1"  class="menu" src="assets/images/move.png"> </button> </li>
+              <li id="li-point2"> <button id="btn-point2" class="menu"> <img id="img-point2"  class="menu" src="assets/images/move.png"> </button> </li>
 
             </ul>
 
           </div>
-            
+
+          <div tabindex="0" class="onclick-menu">
+
+            <!--<img src="assets/images/move.png">-->
+            <img class="menu" src="assets/images/move.png">
+
+            <ul id="ul-lines" class="onclick-menu-content">
+              
+              <li id="li-line0"> <button id="btn-line0" class="menu"> <img id="img-line0" src="assets/images/move.png"> </button> </li>
+              <li id="li-line1"> <button id="btn-line1" class="menu"> <img id="img-line1" src="assets/images/move.png"> </button> </li>
+              <li id="li-line2"> <button id="btn-line2" class="menu"> <img id="img-line2" src="assets/images/move.png"> </button> </li>
+              <li id="li-line3"> <button id="btn-line3" class="menu"> <img id="img-line3" src="assets/images/move.png"> </button> </li>
+              <li id="li-line4"> <button id="btn-line4" class="menu"> <img id="img-line4" src="assets/images/move.png"> </button> </li>
+
+            </ul>
+
+          </div>
+          
         </div>
         
         <!-- Canvas-->
