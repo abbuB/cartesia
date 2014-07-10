@@ -1,105 +1,168 @@
-<!DOCTYPE html>
-<!--
-  --disable-web-security
-/!-->
-<html lang="en">
-
-  <head>
-    <title>menu</title>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" type="text/css" href="commands.css">
-  </head>
+  /* The necessities */
+  .onclick-menu {
     
-  <body>
+    /*display:            inline;*/
+    /*position:           absolute;*/
 
-    <table>
 
-      <col width="20">
-      <col width="40">
-      <col width="40">
-      <col width="40">
-      <col width="40">
+    border:             none;
+    
+    padding:            0;
+    margin:             0;
+    
+  }
+  .onclick-menu:before {
+    /*content:            "Click me!";*/
+  }
+  .onclick-menu:focus {
+    
+    pointer-events:     none;
+    
+  }
+  
+  .onclick-menu:focus .onclick-menu-content {
 
-      <tr>
-        <td id="header">Header</td>
-        <td id="header">2</td>
-        <td id="header">3</td>
-        <td id="header">4</td>
-        <td id="header">5</td>
-      </tr>
+    opacity:            1;
+    visibility:         visible;
+    
+  }
+  
+  .onclick-menu-content {
 
-    </table>
+    border:             none;
+    
+    display:            inline;
+    position:           relative;
+    
+    top:                -32px;
+    left:               30px;
+    
+    white-space:        nowrap;
 
-    <table>
+    pointer-events:     auto;
+    
+    z-index:            1;
+  
+    opacity:            0;
+    visibility:         hidden;
+    transition:         visibility 0.5s;
+    
+  }
+  
+  .onclick-menu.no-pointer-events {
+    
+    pointer-events:     auto !important;
+    
+  }
+  
+  .onclick-menu.no-visibility .onclick-menu-content {
 
-      <col width="40">
-      <col width="40">
-      <col width="40">
-      <col width="40">
-      <col width="40">
+    visibility:         visible !important;
+    /*display:            none;*/
+    
+  }
+  
+  .onclick-menu.no-visibility:focus .onclick-menu-content {
 
-      <caption>Cartesia</caption>
+    /*display:            inline;*/
+    
+  }
+  
+  .onclick-menu.no-opacity .onclick-menu-content {
 
-      <thead>
-          <th>Name</th>
-          <th>Index</th>
-          <th>Key Code</th>
-          <th>English</th>
-          <th>Spanish</th>
-      </thead>
+    opacity:            1 !important;
+    
+  }
+  
+  /*
+  Eye candy
+  ( colors courtesy of https://kuler.adobe.com/try-color-theme-3350110 )
+  */
+  .onclick-menu {
 
-      <tbody>
+    padding:            0;
+    margin:             0;
+    outline:            0;
+    
+    background:         orange;
+    
+    height:             30px;
+    width:              30px;
+    
+  }
+  .onclick-menu:before {
 
-        <tr>
-          <td id="shape"><link>Points</link></td>
-          <td colspan="4" rowspan="9">
-            <canvas id="dwg"></canvas>
-          </td>
-        </tr>
+    padding:            0px 0px;
+    /*background-color:   #94a4a5;*/
+    
+  }
+  .onclick-menu-content {
 
-        <tr>
-          <td id="shape"><a href="http://en.wikipedia.org/wiki/Cambera">Lines</a></td>
-        </tr>
+    /*background-color:   #364656;*/
+    background-color:   none;
+  
+    margin-top:         0;
+    margin-left:        0;
+    padding:            0;
+    
+  }
+  
+   /*arrow for the expanding part*/
+  .onclick-menu-content:before {
 
-        <tr>
-          <td id="shape">Triangles</td>
-        </tr>
+    content:            "";
+    width:              0;
+    height:             0;
+  
+    /*border-bottom:      0px solid #364656;*/
+    /*border-left:        0px solid transparent;*/
+    /*border-right:       0px solid transparent;*/
+  
+    /*position:           absolute;*/
+    top:                0px;
+    
+  }
+  
+  .onclick-menu-content li {
+    
+    display:            inline;
+    
+    color:              #f2f5e9;
+    
+    list-style-type:    none;
+    
+    white-space:        nowrap;
+    
+    border:             none;
+    
+    cursor:             pointer;
+    
+    background:         red;
+    
+    height:             30px;
+    width:              30px;
 
-        <tr>
-          <td id="shape">Circles</td>
-        </tr>
+    /*border-top:         0px solid red;*/
+    /*border-bottom:      11px solid ared;*/
 
-        <tr>
-          <td id="shape"><</td>
-        </tr>
+  }
+  
+  /* style the buttons */
+  .onclick-menu-content button {
+    
+    margin:             0;
+    padding:            0;
+    
+    background:         transparent;
+    border:             none;
+    
+    /*color:              inherit;*/
+    cursor:             inherit;
+    outline:            0;
 
-        <tr>
-          <td id="shape"></td>
-        </tr>
+  }
+  .onclick-menu-content button:hover {
 
-        <tr>
-          <td id="shape"></td>
-        </tr>
-
-        <tr>
-          <td id="shape"></td>
-        </tr>
-
-        <tr>
-          <td id="shape"></td>
-        </tr>
-
-      </tbody>
-
-    </table>
-
-  </body>
-
-  <script src="processing.js"></script>
-  <script src="drawing.js"></script>
-  <script type="application/javascript">
-     var canvas = document.getElementById("dwg");
-     var processingInstance = new Processing(canvas, proc);
-  </script>
-
-</html>
+    /*color:              #ff8c31;*/
+    
+  }
