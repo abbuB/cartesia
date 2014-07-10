@@ -582,35 +582,61 @@
   .col-3,
   .col-4,
   .col-5 {
+
     display:            inline-block;
+    /*position:           relative;*/
+
     margin:             0;
     padding:            0;
-    /*border:             1px dotted #fff*/
+    
+    width:              65px;
+    height:             18px;
+    line-height:        20px;
+    
+    /*background:             #444;*/
+    
+    /*border:             1px dotted #888;*/
+
   }
   
   .col-1 {
-    padding:            0 0 0 7px;
-    height:             16px;
-    width:              48%;
+
+    width:              50%;
+    float:              left;
+    
   }
   .col-2 {
-    height:             16px;
-    width:              48%;
+
+    width:              50%;
+    float:              right;
+    
   }
 
   .col-3 {
-    width:              75%;
-    text-align:         top;
+
+    width:              70%;
+    float:              left;
+    
   }
   .col-4 {
-    width:              12%;
-    text-align:         top;
+
+    width:              10%;
+    float:              left;
+
   }
   .col-5 {
-    margin:             12px 0 0 0;
-    width:              12%;
-  }
 
+    width:              10%;
+    float:              right;
+
+  }
+  .col-6 {
+
+    width:              10%;
+    float:              right;
+
+  }
+  
   /* Shape Properties *************************/
   #shape-properties {
     font-weight:        600;
@@ -623,7 +649,7 @@
     background:         #4b4b4b;
     border:             1px solid #444;
     border-radius:      5px;
-    overflow:           auto;
+    /*overflow:           auto;*/
     /*opacity:            0.15;*/
   }
   #shape-properties:hover {
@@ -655,6 +681,7 @@
   
   /* Grid Menu *************************/
   #grid-properties {
+    
     font-weight:        400;
     font-size:          10px;
     
@@ -705,21 +732,80 @@
   }
   
 
+  #coordinates {
+    position:           absolute;
+    right:              10px;
+    font:               900 14px/16px "Ubuntu", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    letter-spacing:     1px;
+    line-height:        26px;
+  }
+
+
   /*
     ========================================
-      Horizontal Rule
+      Horizontal Line
     ========================================
   */
-  hr {
-  }
-  hr.line {
-    height:             1px;
-    border:             0;
-    margin:             10px 5px;
-    border-top:         1px groove rgba(255, 255, 255, 0.5);
-  }
+
+  div.line {
     
-  label.grid {
-    color:              #ccc;
-    font:               400 11px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    display:            inline-block;
+    height:             0;
+
+    margin:             10px 5%;
+    
+    width:              90%;
+
+    border:             none;
+    border-top:         1px groove rgba(255, 255, 255, 0.125);
+    
+    background:         transparent;
+    
   }
+  
+  /*
+    ========================================
+      LABEL
+    ========================================
+  */
+  label.property {
+    
+    /*display:            inline-block;*/
+    /*position:           relative;*/
+
+    /*margin:             1px;*/
+    /*padding:            0;*/
+
+    font:               400 11px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color:              #ccc;
+
+    /*border:             1px solid transparent;*/
+
+    line-height:        16px;
+    
+    /*width:              65px;*/
+
+    /*border:             1px dotted #888;*/
+    
+  }
+  
+  /*label.property {*/
+    
+  /*  display:            inline-block;*/
+  /*  position:           relative;*/
+
+  /*  margin:             1px;*/
+  /*  padding:            0;*/
+
+  /*  font:               400 11px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;*/
+  /*  color:              #ccc;*/
+
+  /*  border:             1px solid transparent;*/
+
+  /*  line-height:        16px;*/
+    
+  /*  width:              65px;*/
+
+  /*  border:             1px dotted #888;*/
+    
+  /*}*/
