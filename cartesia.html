@@ -114,123 +114,36 @@
           <div class="container">
 
             <ul class="tabs">
-              <li><a href="#tab1">Grid</a></li>
-              <li><a href="#tab2">Shapes</a></li>
+              <li><a href="#shapes">Shapes</a></li>
+              <li><a href="#grid">Grid</a></li>
               <li><a href="#tab3">Stuff</a></li>
             </ul>
 
             <div class="tab_container">
 
-              <div id="tab1" class="tab_content">
-  
-                <!-- Origin -->
-                <label for="origin" class="grid col-3">Origin</label>
-                <label              class="grid col-4"></label>
-                <input id="origin" type="checkbox" class="col-5" value="x">
-  
-                <input  id="origin-color" type="color" class="grid col-2" value="#000000" list="colors"/>
-              
-                <hr class="line">
-            
-                 <!--Axes -->
-                <label for="axes" class="grid col-3">Axis</label>
-                <label for="axisx" class="grid col-4">x:</label>
-                <input id="axisx" type="checkbox" class="col-5">
-                
-                <label                 class="grid col-3"></label>
-                <label for="axisy"     class="grid col-4">y:</label>
-                <input id="axisy" type="checkbox" class="col-5">
-                
-                <input  id="axis-color" type="color" class="grid col-2" value="#111111" list="colors"/>
-                
-                 <!--Lines -->
-                <hr class="line">
-                
-                <label for="lines" class="grid col-3">Lines</label>
-                <label for="linesx" class="grid col-4">x:</label>
-                <input id="linesx" type="checkbox" class="col-5">
-                
-                <label              class="grid col-3"></label>
-                <label for="linesy" class="grid col-4">y:</label>
-                <input id="linesy" type="checkbox" class="col-5">
-                
-                <input  id="lines-color" type="color" class="grid col-2" value="#222222" list="colors"/>
-                
-                 <!--Arrows -->
-                <hr class="line">
-                
-                <label for="arrows" class="grid col-3">Arrows</label>
-                <label for="arrowsx" class="grid col-4">x:</label>
-                <input id="arrowsx" type="checkbox" class="col-5">
-                
-                <label              class="grid col-3"></label>
-                <label for="arrowsy" class="grid col-4">y:</label>
-                <input id="arrowsy" type="checkbox" class="col-5">
-                
-                <input  id="arrows-color" type="color" class="grid col-2" value="#333333" list="colors"/>
-                
-                 <!--Ticks -->
-                <hr class="line">
-                
-                <label for="ticks" class="grid col-3">Ticks</label>
-                <label for="ticksx" class="grid col-4">x:</label>
-                <input id="ticksx" type="checkbox" class="col-5">
-                
-                <label              class="grid col-3"></label>
-                <label for="ticksy" class="grid col-4">y:</label>
-                <input id="ticksy" type="checkbox" class="col-5">
-                
-                <input  id="ticks-color" type="color" class="grid col-2" value="#444444" list="colors"/>
-                
-                 <!--Labels -->
-                <hr class="line">
-                
-                <label for="labels" class="grid col-3">Labels</label>
-                <label for="labelsx" class="grid col-4">x:</label>
-                <input id="labelsx" type="checkbox" class="col-5">
-                
-                <label              class="grid col-3"></label>
-                <label for="labelsy" class="grid col-4">y:</label>
-                <input id="labelsy" type="checkbox" class="col-5">
-                
-                <input  id="labels-color" type="color" class="grid col-2" value="#555555" list="colors"/>
-                
-                 <!--Quadrants -->
-                <hr class="line">
-                
-                <label for="quadrants" class="grid col-3">Quadrants</label>
-                <label                class="grid col-4"></label>
-                <input id="quadrants" type="checkbox" class="col-5">
-            
-                <input  id="quadrants-color" type="color" class="grid col-2" value="#666666" list="colors"/>
-
-                </div>
-          
-              </div>
-
-              <div id="tab2" class="tab_content">
+              <div id="shapes" class="tab_content">
 
                 <!-- Name -->
-                <label for="name" class="col-1">Name:</label>
-                <input id="name"  class="col-2 buffer" title="name">
+                <label for="name" class="property col-1" title="name">Name:</label>
+                <input id="name"  class="property col-2" type="text" title="name">
                 <!-- Caption -->
-                <label for="caption" class="col-1" title="caption">Caption:</label>
-                <input id="caption"  class="col-2 buffer" title="caption">
+                <label for="caption" class="property col-1" title="caption">Caption:</label>
+                <input id="caption"  class="property col-2" type="text" title="caption">
                 <!-- Formula -->
-                <label for="formula" class="col-1" title="formula">Formula:</label>
-                <input id="formula"  class="col-2 buffer" title="formula">
+                <label for="formula" class="property col-1" title="formula">Formula:</label>
+                <input id="formula"  class="property col-2" type="text" title="formula">
                 
-                <hr class="line">
+                  <div class="line"></div>
                 
                  <!--Line Weight-->
-                <label for="lineweight" class="col-1">Line Weight:</label>
-                <input id="lineweight" type="number" class="col-2" min="0" max="13" value="6">
+                <label for="lineweight" class="property col-1">Line Weight:</label>
+                <input id="lineweight" class="property col-2" type="number" min="0" max="13" value="6">
       
-                <hr class="line">
+                  <div class="line"></div>
                 
                  <!--Line Color-->
-                <label for="linecolor" class="col-1">Line Color:</label>
-                <input id="linecolor" type="color" class="col-2" value="#0a0a0a" list="colors"/>
+                <label for="linecolor" class="property col-1">Line Color:</label>
+                <input id="linecolor" class="property col-2" type="color" value="#0a0a0a" list="colors"/>
       
                   <datalist id="colors">
                   
@@ -259,23 +172,121 @@
                     <option value="#000000">  <!-- Black          -->
                   
                   </datalist>
-      
+
                  <!--Line Alpha-->
-                <label for="linealpha" class="col-1" value="14">Transparency:</label>
-                <input id="linealpha" type="range" class="col-2" min="0" max="100" value="75">
+                <label for="linealpha" class="property col-1" value="14">Transparency:</label>
+                <input id="linealpha" class="property col-2" type="range" min="0" max="100" value="75">
       
-                <hr class="line">
+                  <div class="line"></div>
                 
                  <!--Fill Color-->
-                <label for="fillcolor" class="col-1">Fill Color:</label>
-                <input  id="fillcolor" type="color" class="col-2" value="#007f7f" list="colors"/>
+                <label for="fillcolor" class="property col-1">Fill Color:</label>
+                <input  id="fillcolor" class="property col-2" type="color" value="#007f7f" list="colors"/>
       
                  <!--Fill Alpha-->
-                <label for="fillalpha" class="col-1">Transparency:</label>
-                <input id="fillalpha"  class="col-2" type="range" min="0" max="100" value="25">
+                <label for="fillalpha" class="property col-1">Transparency:</label>
+                <input id="fillalpha"  class="property col-2" type="range" min="0" max="100" value="25">
       
                 <!-- Line Type -->
                 <!-- Line Weight -->
+
+              </div>
+
+              <div id="grid" class="tab_content">
+
+                <!-- Origin -->
+                <input id="origin" class="property col-5" type="checkbox" value="x">
+                <label for="origin" class="property col-3">Origin</label>
+                <input  id="origin-color" type="color" class="grid property col-4" value="#111111" list="colors"/>
+                <!--<label              class="property col-4"></label>-->
+
+                  <div class="line"></div>
+            
+                 <!--Axes -->
+                <label for="axes"   class="property col-3">Axis</label>
+                <input  id="axisx-color" type="color" class="property grid col-4" value="#111111" list="colors"/>
+                
+                <input id="axisx"   class="property col-6" type="checkbox">
+                <label for="axisx"  class="property col-5">x:</label>
+
+                <label              class="property col-3"></label>
+                <input  id="axisy-color" type="color" class="grid property col-4" value="#111111" list="colors"/>
+                
+                <input id="axisy"   class="property col-6" type="checkbox">
+                <label for="axisy"  class="property col-5">y:</label>
+
+                  <div class="line"></div>
+                
+                <!--Lines -->
+                <label for="lines"  class="property col-3">Lines</label>
+                <input  id="linesx-color" type="color" class="grid property col-4" value="#111111" list="colors"/>
+                
+                <input id="linesx"  class="property col-6" type="checkbox">
+                <label for="linesx" class="property col-5">x:</label>
+
+                <label              class="property col-3"></label>
+                <input  id="linesy-color" type="color" class="grid property col-4" value="#111111" list="colors"/>
+
+                <input id="linesy"  class="property col-6" type="checkbox">
+                <label for="linesy" class="property col-5">y:</label>
+
+                <div class="line"></div>
+
+                 <!--Arrows -->
+                
+                
+                <label for="arrows" class="property col-3">Arrows</label>
+                <input  id="arrowsx-color" type="color" class="grid property col-4" value="#111111" list="colors"/>
+                
+                <input id="arrowsx" class="property col-6" type="checkbox">
+                <label for="arrowsx" class="col-5 property">x:</label>
+                
+                <label              class="property col-3"></label>
+                <input  id="arrowsy-color" type="color" class="grid property col-4" value="#111111" list="colors"/>
+
+                <input id="arrowsy"  class="property col-6" type="checkbox">
+                <label for="arrowsy" class="property col-5">y:</label>
+                
+
+                <div class="line"></div>
+
+                 <!--Ticks -->
+                <label for="ticks" class="property col-3">Ticks</label>
+                <input  id="ticksx-color" type="color" class="grid property col-4" value="#111111" list="colors"/>
+                
+                <input id="ticksx" class="property col-6" type="checkbox">
+                <label for="ticksx" class="col-5 property">x:</label>
+                
+                <label              class="property col-3"></label>
+                <input  id="ticksy-color" type="color" class="grid property col-4" value="#111111" list="colors"/>
+
+                <input id="ticksy"  class="property col-6" type="checkbox">
+                <label for="ticksy" class="property col-5">y:</label>
+                
+
+                <div class="line"></div>
+
+                 <!--Labels -->
+                <label for="labels" class="property col-3">Labels</label>
+                <input  id="labelsx-color" type="color" class="grid property col-4" value="#111111" list="colors"/>
+                
+                <input id="labelsx" class="property col-6" type="checkbox">
+                <label for="labelsx" class="col-5 property">x:</label>
+                
+                <label              class="property col-3"></label>
+                <input  id="labelsy-color" type="color" class="grid property col-4" value="#111111" list="colors"/>
+
+                <input id="labelsy"  class="property col-6" type="checkbox">
+                <label for="labelsy" class="property col-5">y:</label>
+                
+                <div class="line"></div>
+
+                 <!--Quadrants -->
+                <input id="quadrants" class="property col-5" type="checkbox" value="x">
+                <label for="quadrants" class="property col-3">Quadrants</label>
+                <input  id="quadrants-color" type="color" class="grid property col-4" value="#111111" list="colors"/>
+                <label              class="property col-4"></label>
+
 
               </div>
 
@@ -290,6 +301,7 @@
             </div>
 
           </div>
+          
           <!--Tabs***********************************************************-->
 
         </div>
