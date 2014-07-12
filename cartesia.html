@@ -78,26 +78,28 @@
     <body>
 
       <!--Page Header-->
-      <section id="header" class="header fixed">
+      <div id="header" class="header fixed">
       
         <h1 id="logo" class="fixed">cartesia</h1>
-              
-        <button id="menu-left-toggle" class="toggle fixed">◄</button>
-        <button id="menu-right-toggle" class="toggle fixed">►</button>
+
+        <button id="menu-left-toggle" class="toggle">◄</button>
+        <button id="menu-right-toggle" class="toggle">►</button>
 
         <nav id="headerNav" class="nav primary-nav">
-          <a class="header" href="javascript:void('Home')">home</a>
-          <a class="header"  href="javascript:confirm('Speakers')">speakers</a>
-          <a class="header"  href="javascript:prompt('Billy, dont be a hero')">schedule</a>
-          <a class="header"  href="javascript:alert('Venues')">venue</a>
-          <a class="header"  href="javascript:alert('Register')">register</a>
+          <a class="header" href="javascript:void('Home')">home</a><!--
+       --><a class="header"  href="javascript:confirm('Speakers')">speakers</a><!--
+       --><a class="header"  href="javascript:prompt('Billy, dont be a hero')">schedule</a><!--
+       --><a class="header"  href="javascript:alert('Venues')">venue</a><!--
+       --><a class="header"  href="javascript:alert('Register')">register</a>
         </nav>
         
-      </section>
+      </div>
 
       <!--Middle section-->
-      <section id="middle" class="fixed">
-
+      <div id="middle" class="fixed">
+        
+        <label id="coordinates" class="header"></label>
+        
                   <!--</div>-->
                 
                   <!--<div id="properties-toggle"  class="fixed" title="ooga booga">-->
@@ -306,53 +308,60 @@
         <!-- Shape Menu-->
         <div id="shape-menu">
         
-          <div tabindex="0" class="onclick-menu">
+          <!--<div tabindex="0" class="onclick-menu">-->
 
             <!--<img src="assets/images/move.png">-->
-            <img class="menu" src="assets/images/move.png">
+          <!--  <img class="menu" src="assets/images/move.png">-->
 
-            <ul id="ul-points" class="onclick-menu-content">
+          <!--  <ul id="ul-points" class="onclick-menu-content">-->
 
-              <li id="li-point0"> <button id="btn-point0" class="menu"> <img id="img-point0"  class="menu" src="assets/images/move.png"> </button> </li>
-              <li id="li-point1"> <button id="btn-point1" class="menu"> <img id="img-point1"  class="menu" src="assets/images/move.png"> </button> </li>
-              <li id="li-point2"> <button id="btn-point2" class="menu"> <img id="img-point2"  class="menu" src="assets/images/move.png"> </button> </li>
+          <!--    <li id="li-point0"> <button id="btn-point0" class="menu"> <img id="img-point0"  class="menu" src="assets/images/move.png"> </button> </li>-->
+          <!--    <li id="li-point1"> <button id="btn-point1" class="menu"> <img id="img-point1"  class="menu" src="assets/images/move.png"> </button> </li>-->
+          <!--    <li id="li-point2"> <button id="btn-point2" class="menu"> <img id="img-point2"  class="menu" src="assets/images/move.png"> </button> </li>-->
 
-            </ul>
+          <!--  </ul>-->
 
-          </div>
+          <!--</div>-->
 
-          <div tabindex="0" class="onclick-menu">
+          <!--<div tabindex="0" class="onclick-menu">-->
 
             <!--<img src="assets/images/move.png">-->
-            <img class="menu" src="assets/images/move.png">
+          <!--  <img class="menu" src="assets/images/move.png">-->
 
-            <ul id="ul-lines" class="onclick-menu-content">
+          <!--  <ul id="ul-lines" class="onclick-menu-content">-->
               
-              <li id="li-line0"> <button id="btn-line0" class="menu"> <img id="img-line0" src="assets/images/move.png"> </button> </li>
-              <li id="li-line1"> <button id="btn-line1" class="menu"> <img id="img-line1" src="assets/images/move.png"> </button> </li>
-              <li id="li-line2"> <button id="btn-line2" class="menu"> <img id="img-line2" src="assets/images/move.png"> </button> </li>
-              <li id="li-line3"> <button id="btn-line3" class="menu"> <img id="img-line3" src="assets/images/move.png"> </button> </li>
-              <li id="li-line4"> <button id="btn-line4" class="menu"> <img id="img-line4" src="assets/images/move.png"> </button> </li>
+          <!--    <li id="li-line0"> <button id="btn-line0" class="menu"> <img id="img-line0" src="assets/images/move.png"> </button> </li>-->
+          <!--    <li id="li-line1"> <button id="btn-line1" class="menu"> <img id="img-line1" src="assets/images/move.png"> </button> </li>-->
+          <!--    <li id="li-line2"> <button id="btn-line2" class="menu"> <img id="img-line2" src=""> </button> </li>-->
+          <!--    <li id="li-line3"> <button id="btn-line3" class="menu"> <img id="img-line3" src="assets/images/move.png"> </button> </li>-->
+          <!--    <li id="li-line4"> <button id="btn-line4" class="menu"> <img id="img-line4" src="assets/images/move.png"> </button> </li>-->
 
-            </ul>
+          <!--  </ul>-->
 
-          </div>
+          <!--</div>-->
           
         </div>
-        
-        <!-- Canvas-->
-        <div id="canvas">Canvas</div>
 
-         <!--Presets-->
+        <!--Presets-->
         <div id="menu-right">Grid</div>
         
-      </section>
+        <!--Presets-->
+        <canvas id="canvas"></canvas>
+        
+      </div>
 
       <!--Page Footer-->
       <!--<section id="footer" class="footer">-->
         
-      </section>
+      <!--</section>-->
       
     </body>
 
+    <script type="text/javascript">
+    
+       var canvas = document.getElementById("canvas");
+       var processingInstance = new Processing(canvas, proc);
+      
+     </script>
+  
   </html>
