@@ -20,7 +20,25 @@ var zoomfactor=0;
     return color(red(clr), green(clr), blue(clr), alpha/100*255);
 
   };
-
+  
+  var hexToRGB=function(hexStr){
+    // note: hexStr should be #rrggbb
+    var hex = parseInt(hexStr.substring(1), 16);
+    var r = (hex & 0xff0000) >> 16;
+    var g = (hex & 0x00ff00) >> 8;
+    var b = hex & 0x0000ff;
+    return color(r,g,b);
+  }
+  
+  var hexToRGBA=function(hexStr){
+    // note: hexStr should be #rrggbb
+    var hex = parseInt(hexStr.substring(1), 16);
+    var r = (hex & 0xff0000) >> 16;
+    var g = (hex & 0x00ff00) >> 8;
+    var b = hex & 0x0000ff;
+    return color(r,g,b, document.getElementById("grid-alpha").value/100*255);
+  }
+  
   var CLRS={
 
     TRANSPARENT:  color(-1,-1,-1),
@@ -759,23 +777,52 @@ var zoomfactor=0;
     linetype:       LINETYPES.DASHDOT,
     lineweight:     0.75,
 
-    border:         true,
-    origin:         true,
-
     gridprops:      true,
 
-    axisX:          true,
-    axisY:          true,
-    linesX:         true,
-    linesY:         true,
-    arrowsX:        true,
-    arrowsY:        true,
-    ticksX:         true,
-    ticksY:         true,
-    labelsX:        true,
-    labelsY:        true,
-    quadrants:      true,
+    border:         true,
+    
+    gridColor:      hexToRGBA(document.getElementById("grid-color").value),
+    gridAlpha:      hexToRGBA(document.getElementById("grid-alpha").value),
+    
+    origin:         true,
+    originColor:    hexToRGBA(document.getElementById("origin-color").value),
 
+    axisX:          true,
+    axisXColor:     hexToRGBA(document.getElementById("axisx-color").value),
+    
+    axisY:          true,
+    axisYColor:     hexToRGBA(document.getElementById("axisy-color").value),
+    
+    linesX:         true,
+    linesXColor:    hexToRGBA(document.getElementById("linesx-color").value),
+    
+    linesY:         true,
+    linesYColor:    hexToRGBA(document.getElementById("linesy-color").value),
+    
+    arrowsX:        true,
+    arrowsXColor:    hexToRGBA(document.getElementById("arrowsx-color").value),
+    
+    arrowsY:        true,
+    arrowsYColor:    hexToRGBA(document.getElementById("arrowsy-color").value),
+    
+    ticksX:         true,
+    ticksXColor:    hexToRGBA(document.getElementById("ticksx-color").value),
+    
+    ticksY:         true,
+    ticksYColor:    hexToRGBA(document.getElementById("ticksy-color").value),
+    
+    labelsX:        true,
+    labeslXColor:    hexToRGBA(document.getElementById("labelsx-color").value),
+    
+    labelsY:        true,
+    labelsYColor:    hexToRGBA(document.getElementById("origin-color").value),
+    
+    quadrants:      true,
+    quadrantsColor: hexToRGBA(document.getElementById("quadrants-color").value),
+
+    crosshair:      true,
+    crosshairColor: hexToRGBA(document.getElementById("crosshair-color").value),
+    
     coordinates:    false,
     ortho:          false,
     STG:            false,  // snap to grid
@@ -2225,15 +2272,7 @@ var factor=1.25;
 
   };
   grid.prototype=Object.create(control.prototype);
-  
-  var hexToRGB=function(hexStr){
-    // note: hexStr should be #rrggbb
-    var hex = parseInt(hexStr.substring(1), 16);
-    var r = (hex & 0xff0000) >> 16;
-    var g = (hex & 0x00ff00) >> 8;
-    var b = hex & 0x0000ff;
-    return color(r,g,b, document.getElementById("fillalpha").value/100*255);
-  }
+
   grid.prototype.draw=function(){
 
     // println(document.getElementById("fillalpha").value);
@@ -2248,7 +2287,7 @@ var factor=1.25;
 
       pushStyle();
 
-          fill(hexToRGB(document.getElementById("fillcolor").value));
+          fill(app.gridColor);
           stroke(p.stroke);
           strokeWeight(p.weight);
 
@@ -2268,8 +2307,6 @@ var factor=1.25;
 
     var origin=function(){
 
-// document.getElementById("origin").checked
-
       if(app.origin){
 
         if(p.originX< p.w/2 &&
@@ -2282,7 +2319,9 @@ var factor=1.25;
           if(this.hit){ fill(CLRS.RED); }
           else        { fill(CLRS.RED); }
 
-          fill(getColor(CLRS.Gray6,40));
+          // fill(getColor(CLRS.Gray6,40));
+
+          fill(app.originColor);
 
           ellipse(p.originX, -p.originY, 4, 4);
 
@@ -2294,33 +2333,43 @@ var factor=1.25;
     var axis=function(){
 
       noFill();
-      stroke(getColor(CLRS.Gray6,40));
-      strokeWeight(0.75);
+      noStroke();
+      strokeWeight(1.75);
 
-      if(app.axisx &&
+      if(app.axisX &&
          p.h/2>p.y &&
          p.originY<p.h/2 &&
-         p.originY>-p.h/2){ line(-p.w/2,-p.originY,
-                                  p.w/2,-p.originY); }
+         p.originY>-p.h/2){
+           
+        stroke(app.axisXColor);
+           
+        line(-p.w/2+5,-p.originY, p.w/2-5,-p.originY);
+      
+      }
 
-      if(app.axisy &&
+      if(app.axisY &&
          p.w/2>p.x &&
          p.originX< p.w/2 &&
-         p.originX>-p.w/2){ line(p.originX, -p.h/2,
-                                 p.originX,  p.h/2); }
+         p.originX>-p.w/2){
+
+        stroke(app.axisYColor);
+
+        line(p.originX, -p.h/2+5, p.originX,  p.h/2-5);
+
+      }
 
     };
     var lines=function(){
 
       noFill();
-      stroke(getColor(CLRS.WHITE,20));
-
 
       var factor=app.factor;
       var count=1;
 
-      if(document.getElementById("linesx").checked){
+      if(app.linesX){
 
+        stroke(app.linesXColor);
+        
         if(p.originX<p.w/2 &&
            p.originX>-p.w/2){
 
@@ -2344,7 +2393,6 @@ var factor=1.25;
 
           }
 
-
         }
 
         // Right
@@ -2366,7 +2414,9 @@ var factor=1.25;
         }
 
       }
-      if(document.getElementById("linesy").checked){
+      if(app.linesY){
+
+        stroke(app.linesYColor);
 
         if(-p.originY< p.h/2 &&
            -p.originY>-p.h/2){
@@ -2418,9 +2468,10 @@ var factor=1.25;
     var arrows=function(){
 
       noStroke();
-      fill(getColor(CLRS.WHITE,50));
+      
+      if(app.arrowsX){
 
-      if(document.getElementById("arrowsx").checked){
+        fill(app.arrowsXColor);
 
         var y=-p.originY;
 
@@ -2436,7 +2487,9 @@ var factor=1.25;
         }
 
       }
-      if(document.getElementById("arrowsy").checked){
+      if(app.arrowsY){
+
+        fill(app.arrowsYColor);
 
         var x=p.originX;
 
@@ -2457,13 +2510,14 @@ var factor=1.25;
     var ticks=function(){
 
       noFill();
-      stroke(getColor(CLRS.WHITE,20));
       strokeWeight(0.25);
 
       var factor=app.factor;
       var count=1;
 
-      if(document.getElementById("ticksx").checked){
+      if(app.ticksX){
+
+        stroke(app.ticksXColor);
 
         // Left
         for(var n=p.originX-factor; n>-p.w/2; n-=factor){
@@ -2505,7 +2559,9 @@ var factor=1.25;
         }
 
       }
-      if(document.getElementById("ticksy").checked){
+      if(app.ticksY){
+
+        stroke(app.ticksYColor);
 
         // Top
         count=1;
@@ -2557,7 +2613,7 @@ var factor=1.25;
         scale(1,-1);
 
           noFill();
-          fill(getColor(CLRS.WHITE,20));
+          
           strokeWeight(0.25);
 
           textSize(9);
@@ -2567,7 +2623,9 @@ var factor=1.25;
 
           textAlign(RIGHT, CENTER);
 
-          if(document.getElementById("labelsx").checked){
+          if(app.labelsY){
+
+            fill(app.labelsYColor);
 
             // Top
             for(var n=p.originY-factor; n>-p.h/2; n-=factor){
@@ -2619,7 +2677,9 @@ var factor=1.25;
 
           textAlign(CENTER,TOP);
 
-          if(document.getElementById("labelsy").checked){
+          if(app.labelsX){
+
+            fill(app.labelsXColor);
 
             // Right
             count=1;
@@ -2676,7 +2736,7 @@ var factor=1.25;
     };
     var quadrants=function(){
 
-      if(document.getElementById("quadrants").checked){
+      if(app.quadrants){
 
         pushMatrix();
 
@@ -2684,7 +2744,7 @@ var factor=1.25;
           var offset=50;
 
           textSize(30);
-          fill(CLRS.Gray8);
+          fill(app.quadrantsColor);
           textFont(createFont('fantasy'));
 
           // Quadrant I
@@ -2730,7 +2790,7 @@ var factor=1.25;
 
               rectMode(CENTER);
 
-              stroke(CLRS.WHITE);
+              stroke(app.crosshairColor);
               strokeWeight(0.25);
 
               sz=50;
@@ -3640,26 +3700,113 @@ var factor=1.25;
 
   };
 
-  var toggleOrigin=function() { app.origin=!app.origin; };
-  var toggleAxisx=function()  { app.axisx=!app.axisx;   };
-  var toggleAxisy=function()  { app.axisy=!app.axisy;   };
+  document.getElementById("origin").checked     =app.origin;
   
-  document.getElementById("origin").checked   =app.origin;
-  document.getElementById("axisx").checked    =app.axisX;
-  document.getElementById("axisy").checked    =app.axisY;
-  document.getElementById("linesx").checked   =app.linesX;
-  document.getElementById("linesy").checked   =app.linesY;
-  document.getElementById("arrowsx").checked  =app.arrowsX;
-  document.getElementById("arrowsy").checked  =app.arrowsY;
-  document.getElementById("ticksx").checked   =app.ticksX;
-  document.getElementById("ticksy").checked   =app.ticksY;
-  document.getElementById("labelsx").checked  =app.labelsX;
-  document.getElementById("labelsy").checked  =app.labelsY;
-  document.getElementById("arrowsx").checked  =app.arrowsX;
+  document.getElementById("axisx").checked      =app.axisX;
+  document.getElementById("axisy").checked      =app.axisY;
   
-  document.getElementById("origin").onclick = function() { toggleOrigin();  };
-  document.getElementById("axisx").onclick  = function() { toggleAxisx();   };
-  document.getElementById("axisy").onclick  = function() { toggleAxisy();   };
+  document.getElementById("linesx").checked     =app.linesX;
+  document.getElementById("linesy").checked     =app.linesY;
+  
+  document.getElementById("arrowsx").checked    =app.arrowsX;
+  document.getElementById("arrowsy").checked    =app.arrowsY;
+  
+  document.getElementById("ticksx").checked     =app.ticksX;
+  document.getElementById("ticksy").checked     =app.ticksY;
+  
+  document.getElementById("labelsx").checked    =app.labelsX;
+  document.getElementById("labelsy").checked    =app.labelsY;
+  
+  document.getElementById("quadrants").checked  =app.quadrants;
+  
+  
+  document.getElementById("origin").onclick     = function() { app.origin=!app.origin;        };
+  
+  document.getElementById("axisx").onclick      = function() { app.axisX=!app.axisX;          };
+  document.getElementById("axisy").onclick      = function() { app.axisY=!app.axisY;          };
+  
+  document.getElementById("linesx").onclick     = function() { app.linesX=!app.linesX;        };
+  document.getElementById("linesy").onclick     = function() { app.linesY=!app.linesY;        };
+  
+  document.getElementById("arrowsx").onclick    = function() { app.arrowsX=!app.arrowsX;      };
+  document.getElementById("arrowsy").onclick    = function() { app.arrowsY=!app.arrowsY;      };
+  
+  document.getElementById("ticksx").onclick     = function() { app.ticksX=!app.ticksX;        };
+  document.getElementById("ticksy").onclick     = function() { app.ticksY=!app.ticksY;        };
+  
+  document.getElementById("labelsx").onclick    = function() { app.labelsX=!app.labelsX;      };
+  document.getElementById("labelsy").onclick    = function() { app.labelsY=!app.labelsY;      };
+  
+  document.getElementById("quadrants").onclick  = function() { app.quadrants=!app.quadrants;  };
+
+
+  document.getElementById("grid-color").onchange   = function() {
+    app.gridColor=hexToRGBA(document.getElementById("grid-color").value)
+  }
+  document.getElementById("grid-alpha").onchange   = function() {
+    app.gridAlpha=hexToRGBA(document.getElementById("grid-alpha").value)
+  }
+  
+  document.getElementById("origin-color").onchange   = function() {
+    app.originColor=hexToRGBA(document.getElementById("origin-color").value)
+  }
+  
+  document.getElementById("origin-color").onchange   = function() {
+    app.originColor=hexToRGBA(document.getElementById("origin-color").value)
+  }
+  
+  
+  document.getElementById("axisx-color").onchange   = function() {
+    app.axisXColor=hexToRGBA(document.getElementById("axisx-color").value)
+  }
+  
+  document.getElementById("axisy-color").onchange   = function() {
+    app.axisYColor=hexToRGBA(document.getElementById("axisy-color").value)
+  }
+  
+  
+  document.getElementById("linesx-color").onchange   = function() {
+    app.linesXColor=hexToRGBA(document.getElementById("linesx-color").value)
+  }
+
+  document.getElementById("linesy-color").onchange   = function() {
+    app.linesYColor=hexToRGBA(document.getElementById("linesy-color").value)
+  }
+  
+  
+  document.getElementById("arrowsx-color").onchange   = function() {
+    app.arrowsXColor=hexToRGBA(document.getElementById("arrowsx-color").value)
+  }
+  
+  document.getElementById("arrowsy-color").onchange   = function() {
+    app.arrowsYColor=hexToRGBA(document.getElementById("arrowsy-color").value)
+  }
+  
+  
+  document.getElementById("ticksx-color").onchange   = function() {
+    app.ticksXColor=hexToRGBA(document.getElementById("ticksx-color").value)
+  }
+
+  document.getElementById("ticksy-color").onchange   = function() {
+    app.ticksYColor=hexToRGBA(document.getElementById("ticksy-color").value)
+  }
+  
+  
+  document.getElementById("labelsy-color").onchange   = function() {
+    app.labelsYColor=hexToRGBA(document.getElementById("labelsy-color").value)
+  }
+  
+  document.getElementById("labelsx-color").onchange   = function() {
+    app.labelsXColor=hexToRGBA(document.getElementById("labelsx-color").value)
+  }
+  
+  document.getElementById("quadrants-color").onchange = function() {
+    app.quadrantsColor=hexToRGBA(document.getElementById("quadrants-color").value)
+  };
+
+  document.getElementById("crosshair-color").onchange = function() {
+    app.crosshairColor=hexToRGBA(document.getElementById("crosshair-color").value)
+  };
   
   // document.getElementById('points').onclick = function() { clickMe(1); };
   // document.getElementById('lines').onclick = function()   { clickMe(2); };
