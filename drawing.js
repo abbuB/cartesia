@@ -1,7 +1,7 @@
 /* @pjs globalKeyEvents="true"; */
 var proc = function(processingInstance){ with (processingInstance){
 
-  // size(screen.width-20, screen.height-215); // set size of canvas
+  // size(900, 500); // set size of canvas
 
   /**
 
@@ -709,8 +709,8 @@ var zoomfactor=0;
 
   var app={
 
-    width:          document.getElementById("grid").clientWidth-20,
-    height:         document.getElementById("grid").clientHeight-20,
+    width:          document.getElementById("canvas").clientWidth,
+    height:         document.getElementById("canvas").clientHeight,
 
     debug:          true,
     frameRate:      0,
@@ -3538,8 +3538,8 @@ var factor=1.25;
     var ctrls=[];
 
     var cn=new container(
-            new propC(getGUID(), 0, 0, 0, document.getElementById("grid").clientWidth-10,
-                                          document.getElementById("grid").clientHeight-10, 3, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[0]),
+            new propC(getGUID(), 0, 0, 0, document.getElementById("canvas").clientWidth,
+                                          document.getElementById("canvas").clientHeight, 3, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[0]),
             new propL(CLRS.TRANSPARENT, CLRS.TRANSPARENT, CLRS.TRANSPARENT, CLRS.TRANSPARENT, 0, 0),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
@@ -3661,7 +3661,13 @@ var factor=1.25;
   document.getElementById("axisx").onclick  = function() { toggleAxisx();   };
   document.getElementById("axisy").onclick  = function() { toggleAxisy();   };
   
-  document.getElementById('points').onclick = function() { clickMe(1); };
-  document.getElementById('lines').onclick = function()   { clickMe(2); };
+  // document.getElementById('points').onclick = function() { clickMe(1); };
+  // document.getElementById('lines').onclick = function()   { clickMe(2); };
   
 }};
+    // <script type="text/javascript">
+    
+    //   var canvas = document.getElementById("canvas");
+    //   var processingInstance = new Processing(canvas, proc);
+      
+    // </script>
