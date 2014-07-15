@@ -24,6 +24,7 @@
     -webkit-appearance: none;
     -moz-appearance:    none;
     outline:            none;
+    /*border:             1px dotted #444;*/
   }
   /* HTML5 display-role reset for older browsers */
   article, aside, details, figcaption, figure,
@@ -98,8 +99,6 @@
     
     background:         -webkit-gradient(linear, left top, left bottom, from(#272727), to(#1a1a1a));
     
-    border:             1px dotted #444;
-    
   }
   
   #footer {
@@ -112,8 +111,6 @@
     right:              0;
 
     background:         -webkit-gradient(linear, left top, left bottom, from(#1a1a1a), to(#272727));
-
-border:             1px dotted #444;
 
   }
 
@@ -128,16 +125,14 @@ border:             1px dotted #444;
     left:               0;
     right:              0;
     
-    background:         pink;
-
-border:             1px dotted #444;
+    background:         #000;
 
   }
   
   #menu-left {
 
     display:            inline-block;
-
+    
     height:             100%;
     width:              200px;
 
@@ -145,25 +140,22 @@ border:             1px dotted #444;
 
     overflow:           auto;
 
-border:             1px dotted #444;
-
   }
 
-  #shape-menu {
+  #menu-shapes {
     
     display:            inline-block;
+
     /*left:200px;*/
     height:             100%;
-    width:              30px;
+    width:              34px;
     
-    /*vertical-align:     top;*/
+    vertical-align:     top;
     
     background:         #000;
 
-border:             1px dotted #444;
-
   }
-  #shape-menu:hover {
+  #menu-shapes:hover {
     
     /*background:         blue;*/
 
@@ -184,8 +176,6 @@ border:             1px dotted #444;
 
     overflow:           auto;
 
-border:             1px dotted #444;
-
   }
 
 
@@ -194,20 +184,48 @@ border:             1px dotted #444;
       Canvas
     ============================================================================
   */
-  #canvas {
-
-    /*display:            list-item;*/
-    float:              right;
-    width:              65%;
+  #canvas-container {
+    
+    -webkit-appearance: none;
+    
+    display:            inline-block;
+    position:           relative;
+    
+    margin:             0;
+    padding:            0;
+    
+    outline:            none;
+    
+    width:              700px;
     height:             100%;
+
+    vertical-align:     top;
     
-    /*vertical-align:     top;*/
-    
-    background:         blue;
+    background:         #00ff00;
 
   }
-  #canvas:hover {
-    /*background:         orange;*/
+  
+  #canvas {
+
+    -webkit-appearance: none;
+
+    display:            inline-block;
+    
+    margin:             0;
+    padding:            0;
+    
+    outline:            none;
+    
+    width:              100%;
+    height:             100%;
+
+    /*vertical-align:     top;*/
+    
+    background:         transparent;
+
+  }
+  canvas:hover {
+    background:         #111;
   }
 
 
@@ -257,17 +275,13 @@ border:             1px dotted #444;
     text-transform:     uppercase;
     
     color:              #000;
-    
-    /*border-top:         3px solid #000;*/
-    
+
     cursor:             pointer;
 
   }
   #logo:hover {
 
     color:              #008282;
-
-    /*border-top:         3px solid #008282;*/
 
     -webkit-transition: All 0.5s ease;
     
@@ -311,7 +325,7 @@ border:             1px dotted #444;
     line-height:        35px;
     
     background:         transparent;
-    border:             1px dotted #444;
+    /*border:             1px dotted #444;*/
     color:              #000;
     
   }
@@ -343,29 +357,68 @@ border:             1px dotted #444;
     display:            inline-block;
     position:           relative;
 
-    /*margin:             12px 0;*/
+    margin:             0;
     padding:            0;
     border:             none;
 
     cursor:             pointer;
-
-  }
-
-  /* BUTTONS ******************************************************************/
-  button.menu {
     
-    border:             none;
-    
-    margin:             0 2px;
-    padding:            0;
     width:              30px;
     height:             30px;
     
   }
-  button.menu:hover {
-  }
-  button.menu:active {
-  }
+
+  /*li {*/
+    
+  /*  display:            inline-block;*/
+    
+    /*margin:             10px;*/
+    /*padding:            10px;*/
+    
+  /*  background:         red;*/
+    
+  /*  height:             30px;*/
+  /*  width:              30px;*/
+
+  /*}*/
+
+  /*li:hover {*/
+
+  /*  background:         red;*/
+
+  /*}*/
+  
+  /* BUTTONS ******************************************************************/
+  /*button.menu {*/
+    
+  /*  border:             1px solid red;*/
+    
+  /*  margin:             0;*/
+  /*  padding:            0;*/
+    
+  /*  width:              30px;*/
+  /*  height:             30px;*/
+    
+  /*  background:         #000;*/
+    
+  /*  color:              #333;*/
+    
+  /*  vertical-align:     top;*/
+
+  /*  cursor:             pointer;*/
+
+  /*}*/
+  /*button.menu:hover {*/
+
+  /*  background:         #555;*/
+
+  /*}*/
+  
+  /*button.menu:active {*/
+    
+  /*  background:         #777;*/
+    
+  /*}*/
 
   button.toggle {
 
@@ -401,6 +454,55 @@ border:             1px dotted #444;
     
   }
 
+  button.grid {
+    
+    -webkit-appearance: none;
+    font:               900 14px/16px "Ubuntu", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    
+    display:            inline;
+    position:           relative;
+
+    width:              30px;
+    height:             30px;
+    
+    outline:            none;
+    border:             1px solid transparent;
+    
+    background:         transparent;
+    
+    cursor:             pointer;
+
+    color:              #777;
+
+    border-radius:      15px;
+
+  }
+  button.grid:hover {
+    
+    border:             1px solid #888;
+    color:              #aaa;
+    
+  }
+  button.grid:active {
+    
+    border:             1px solid yellow;
+    
+  }
+  
+  div.display {
+
+    display:          inline-block;
+    position:         absolute;
+
+    left:             5px;
+    bottom:           5px;
+    
+    width:            auto;
+
+    background:       transparent;
+
+  }
+  
   .col-1,
   .col-2,
   .col-3,
@@ -492,13 +594,40 @@ border:             1px dotted #444;
   }
 
   #coordinates {
-    
+
     position:           absolute;
     
+    bottom:             10px;
     right:              10px;
     
     font:               900 14px/16px "Ubuntu", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
     letter-spacing:     1px;
     line-height:        26px;
+    
+    color:              #aaa;
+    
+  }
+
+  select {
+    
+    /*-webkit-appearance: none;*/
+
+    display:            inline-block;
+
+    height:             16px;
+
+    border:             1px solid transparent;
+    outline:            none;
+    border-top:         1px groove rgba(255, 255, 255, 0.125);
+    border-left:         1px groove rgba(255, 255, 255, 0.125);
+
+    font:               400 11px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color:              #ccc;
+    
+    background:         #222;
+    
+    size:               10;
+    line-height:        16px;
+    cursor:             pointer;
     
   }
