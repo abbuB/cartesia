@@ -30,13 +30,13 @@ var zoomfactor=0;
     return color(r,g,b);
   }
   
-  var hexToRGBA=function(hexStr){
+  var hexToRGBA=function(hexStr,a){
     // note: hexStr should be #rrggbb
     var hex = parseInt(hexStr.substring(1), 16);
     var r = (hex & 0xff0000) >> 16;
     var g = (hex & 0x00ff00) >> 8;
     var b = hex & 0x0000ff;
-    return color(r,g,b, document.getElementById("grid-alpha").value/100*255);
+    return color(r,g,b,a);
   }
   
   var CLRS={
@@ -822,7 +822,8 @@ var zoomfactor=0;
 
     crosshair:      true,
     crosshairColor: hexToRGBA(document.getElementById("crosshair-color").value),
-    
+    crosshairSize:  10,
+
     coordinates:    false,
     ortho:          false,
     STG:            false,  // snap to grid
@@ -831,8 +832,6 @@ var zoomfactor=0;
     current:        1102,
 
     stack:          [],
-
-    cursorSize:     0,
 
     ctrls:          [],
 
@@ -2287,19 +2286,22 @@ var factor=1.25;
 
       pushStyle();
 
-          fill(app.gridColor);
-          stroke(p.stroke);
-          strokeWeight(p.weight);
+        fill( hexToRGBA(document.getElementById("grid-color").value,
+                        document.getElementById("grid-alpha").value/100*255));
 
-          if(p.hit){
-            // fill(p.fillH);
-            stroke(p.strokeH);
-            strokeWeight(p.weightH);
-          }
-          
-          stroke(p.stroke);
-          strokeWeight(0);
-          rect(d, d, p.w, p.h, p.r);
+        stroke(p.stroke);
+        strokeWeight(p.weight);
+
+        if(p.hit){
+          // fill(p.fillH);
+          stroke(p.strokeH);
+          strokeWeight(p.weightH);
+        }
+
+        stroke(p.stroke);
+        strokeWeight(0);
+        noStroke();
+        rect(d, d, p.w, p.h, p.r);
 
       popStyle();
 
@@ -2777,7 +2779,7 @@ var factor=1.25;
 
       if(app.focus===p.i){
 
-        var sz=app.cursorSize;
+        var sz=app.crosshairSize/100*p.w;
 
         pushStyle();
 
@@ -2793,20 +2795,7 @@ var factor=1.25;
               stroke(app.crosshairColor);
               strokeWeight(0.25);
 
-              sz=50;
-
-              if(sz===0){
-
-                // horizontal
-                line(p.x,          app.mouseY, app.mouseX-4, app.mouseY);
-                line(app.mouseX+4, app.mouseY, p.x+p.w,      app.mouseY);
-
-                // vertical
-                line(app.mouseX, p.y,          app.mouseX, app.mouseY-4);
-                line(app.mouseX, app.mouseY+4, app.mouseX, p.y+p.h);
-
-              }
-              else{
+              if(sz!==0){
 
                 // horizontal
                 line(app.mouseX-sz, app.mouseY, app.mouseX-4,  app.mouseY);
@@ -2930,15 +2919,11 @@ var factor=1.25;
 
     pushMatrix();
 
-      
-
-
       // document.getElementById("canvas").width=document.getElementById("canvas-div").clientWidth;
       // document.getElementById("canvas").height=document.getElementById("canvas-div").clientHeight;
 
       // p.w=document.getElementById("canvas").clientWidth;
       // p.h=document.getElementById("canvas").clientHeight;
-
 
       translate(p.x+p.w/2,
                 p.y+p.h/2);
@@ -3271,7 +3256,9 @@ var factor=1.25;
     for(var c in app.ctrls){ app.ctrls[c].over(); }
     process();
   };
-
+  var mouseWheel=function(){
+    println("scroll");
+  }
   // Keys ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var keyPressed=function(){
 
@@ -3644,6 +3631,48 @@ var factor=1.25;
 
   };
 
+  var htmlInit=function(){
+
+    app.lineweight=document.getElementById("line-weight").value;
+    
+    app.stroke=document.getElementById("line-color").value;
+    app.strokeA=document.getElementById("line-alpha").value;
+    
+    app.fill=document.getElementById("fill-color").value;
+    app.fillA=document.getElementById("fill-alpha").value;
+  
+    document.getElementById("origin").checked     =app.origin;
+    
+    document.getElementById("axisx").checked      =app.axisX;
+    document.getElementById("axisy").checked      =app.axisY;
+    
+    document.getElementById("linesx").checked     =app.linesX;
+    document.getElementById("linesy").checked     =app.linesY;
+    
+    document.getElementById("arrowsx").checked    =app.arrowsX;
+    document.getElementById("arrowsy").checked    =app.arrowsY;
+    
+    document.getElementById("ticksx").checked     =app.ticksX;
+    document.getElementById("ticksy").checked     =app.ticksY;
+    
+    document.getElementById("labelsx").checked    =app.labelsX;
+    document.getElementById("labelsy").checked    =app.labelsY;
+    
+    document.getElementById("quadrants").checked  =app.quadrants;
+    
+    app.crosshairColor=document.getElementById("crosshair-color").value;
+    app.crosshairSize=document.getElementById("crosshair-size").value;
+    
+    // document.getElementById("canvas").style.width=
+    //   document.getElementById("middle").style.width-
+    //   document.getElementById("menu-left").style.width-
+    //   document.getElementById("menu-right").style.width-
+    //   document.getElementById("menu-shapes").style.width;
+
+    // println(document.getElementById("middle").style.width);
+    
+  }
+  
   var initialize=function(){
 
     strokeJoin(ROUND);
@@ -3664,7 +3693,9 @@ var factor=1.25;
     addControls();
 
     process=main;
-
+    
+    htmlInit();
+    
   };
 
   initialize();
@@ -3700,24 +3731,8 @@ var factor=1.25;
 
   };
 
-  document.getElementById("origin").checked     =app.origin;
-  
-  document.getElementById("axisx").checked      =app.axisX;
-  document.getElementById("axisy").checked      =app.axisY;
-  
-  document.getElementById("linesx").checked     =app.linesX;
-  document.getElementById("linesy").checked     =app.linesY;
-  
-  document.getElementById("arrowsx").checked    =app.arrowsX;
-  document.getElementById("arrowsy").checked    =app.arrowsY;
-  
-  document.getElementById("ticksx").checked     =app.ticksX;
-  document.getElementById("ticksy").checked     =app.ticksY;
-  
-  document.getElementById("labelsx").checked    =app.labelsX;
-  document.getElementById("labelsy").checked    =app.labelsY;
-  
-  document.getElementById("quadrants").checked  =app.quadrants;
+
+
   
   
   document.getElementById("origin").onclick     = function() { app.origin=!app.origin;        };
@@ -3739,82 +3754,138 @@ var factor=1.25;
   
   document.getElementById("quadrants").onclick  = function() { app.quadrants=!app.quadrants;  };
 
+  
+  
 
+  
   document.getElementById("grid-color").onchange   = function() {
-    app.gridColor=hexToRGBA(document.getElementById("grid-color").value)
+    app.gridColor=hexToRGBA(document.getElementById("grid-color").value);
   }
   document.getElementById("grid-alpha").onchange   = function() {
-    app.gridAlpha=hexToRGBA(document.getElementById("grid-alpha").value)
+    app.gridAlpha=document.getElementById("grid-alpha").value;
   }
   
   document.getElementById("origin-color").onchange   = function() {
-    app.originColor=hexToRGBA(document.getElementById("origin-color").value)
+    app.originColor=hexToRGBA(document.getElementById("origin-color").value);
   }
   
   document.getElementById("origin-color").onchange   = function() {
-    app.originColor=hexToRGBA(document.getElementById("origin-color").value)
+    app.originColor=hexToRGBA(document.getElementById("origin-color").value);
   }
   
   
   document.getElementById("axisx-color").onchange   = function() {
-    app.axisXColor=hexToRGBA(document.getElementById("axisx-color").value)
+    app.axisXColor=hexToRGBA(document.getElementById("axisx-color").value);
   }
   
   document.getElementById("axisy-color").onchange   = function() {
-    app.axisYColor=hexToRGBA(document.getElementById("axisy-color").value)
+    app.axisYColor=hexToRGBA(document.getElementById("axisy-color").value);
   }
   
   
   document.getElementById("linesx-color").onchange   = function() {
-    app.linesXColor=hexToRGBA(document.getElementById("linesx-color").value)
+    app.linesXColor=hexToRGBA(document.getElementById("linesx-color").value);
   }
 
   document.getElementById("linesy-color").onchange   = function() {
-    app.linesYColor=hexToRGBA(document.getElementById("linesy-color").value)
+    app.linesYColor=hexToRGBA(document.getElementById("linesy-color").value);
   }
   
   
   document.getElementById("arrowsx-color").onchange   = function() {
-    app.arrowsXColor=hexToRGBA(document.getElementById("arrowsx-color").value)
+    app.arrowsXColor=hexToRGBA(document.getElementById("arrowsx-color").value);
   }
   
   document.getElementById("arrowsy-color").onchange   = function() {
-    app.arrowsYColor=hexToRGBA(document.getElementById("arrowsy-color").value)
+    app.arrowsYColor=hexToRGBA(document.getElementById("arrowsy-color").value);
   }
   
   
   document.getElementById("ticksx-color").onchange   = function() {
-    app.ticksXColor=hexToRGBA(document.getElementById("ticksx-color").value)
+    app.ticksXColor=hexToRGBA(document.getElementById("ticksx-color").value);
   }
 
   document.getElementById("ticksy-color").onchange   = function() {
-    app.ticksYColor=hexToRGBA(document.getElementById("ticksy-color").value)
+    app.ticksYColor=hexToRGBA(document.getElementById("ticksy-color").value);
   }
   
   
   document.getElementById("labelsy-color").onchange   = function() {
-    app.labelsYColor=hexToRGBA(document.getElementById("labelsy-color").value)
+    app.labelsYColor=hexToRGBA(document.getElementById("labelsy-color").value);
   }
   
   document.getElementById("labelsx-color").onchange   = function() {
-    app.labelsXColor=hexToRGBA(document.getElementById("labelsx-color").value)
+    app.labelsXColor=hexToRGBA(document.getElementById("labelsx-color").value);
   }
   
   document.getElementById("quadrants-color").onchange = function() {
-    app.quadrantsColor=hexToRGBA(document.getElementById("quadrants-color").value)
+    app.quadrantsColor=hexToRGBA(document.getElementById("quadrants-color").value);
   };
 
   document.getElementById("crosshair-color").onchange = function() {
-    app.crosshairColor=hexToRGBA(document.getElementById("crosshair-color").value)
+    app.crosshairColor=hexToRGBA(document.getElementById("crosshair-color").value);
   };
+  
+  
+  document.getElementById("crosshair-size").onchange = function() {
+    app.crosshairSize=document.getElementById("crosshair-size").value;
+  };
+  
   
   // document.getElementById('points').onclick = function() { clickMe(1); };
   // document.getElementById('lines').onclick = function()   { clickMe(2); };
+
+  document.getElementById("line-weight").onchange   = function() {
+    app.lineweight=document.getElementById("line-weight").value;
+    // println(app.lineweight);
+  }
+  
+  document.getElementById("line-color").onchange   = function() {
+    app.stroke=hexToRGBA(document.getElementById("line-color").value);
+    // println(app.stroke);
+  }
+  
+  document.getElementById("line-alpha").onchange   = function() {
+    app.strokeA=document.getElementById("line-alpha").value;
+    // println(app.strokeA);
+  }
+  
+  document.getElementById("fill-color").onchange   = function() {
+    app.fill=hexToRGBA(document.getElementById("fill-color").value);
+    // println(app.fill);
+  }
+  
+  document.getElementById("fill-alpha").onchange   = function() {
+    app.fillA=document.getElementById("fill-alpha").value;
+    // println(app.fillA);
+  }
+
+
+  document.getElementById('btn-line0').onclick = function()   {
+    // println("line 0");
+    document.getElementById('img-lines').value="LA LA LA LA";
+    document.getElementById('img-lines').src="assets/images/test.png";
+    
+    println(document.getElementById('canvas-container').width);
+    
+  };
+
+  // document.getElementById('btn-point').onclick = function()   {
+
+  //   println(document.getElementById('btn-point').style.tabindex);
+    
+  // };
+  
+  this.scommand=function(c,p){
+    
+    println(c+":"+p);
+    
+  }
+
+  var scommand=function(c,p){
+    
+    println(c+":"+p);
+    
+  }
   
 }};
-    // <script type="text/javascript">
-    
-    //   var canvas = document.getElementById("canvas");
-    //   var processingInstance = new Processing(canvas, proc);
-      
-    // </script>
