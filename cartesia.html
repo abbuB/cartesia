@@ -5,9 +5,10 @@
     <head>
 
       <meta charset="UTF-16">
+
+      <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
       <script type="text/javascript" src="processing.js"></script>
       <script type="text/javascript" src="drawing.js"></script>
-      <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
       <link rel="stylesheet" href="assets/stylesheets/cartesia.css">
       <link rel="stylesheet" href="assets/stylesheets/input.css">
@@ -19,60 +20,6 @@
       
       <title>Cartesia:  Pythagorian Triples</title>
 
-      <script>
-
-        $(document).ready(function(){
-          $("#menu-left-toggle").click(function () {
-
-            if ($(this).text() === "►"){
-              $(this).text("◄")
-            }
-            else {
-              $(this).text("►");
-            }
-           
-              $("#menu-left").animate({width:'toggle'},400);
-              
-          });
-        });
-        
-        $(document).ready(function(){
-          $("#menu-right-toggle").click(function () {
-
-            if ($(this).text() === "►"){
-              $(this).text("◄")
-            }
-            else {
-              $(this).text("►");
-            }
-
-              $("#menu-right").animate({width:'toggle'},400);
-              
-          });
-        });
-        
-        // Tabs
-        $(document).ready(function() {
-         
-            //Default Action
-            $(".tab_content").hide();                           //  Hide all content
-            $("ul.tabs li:first").addClass("active").show();    //  Activate first tab
-            $(".tab_content:first").show();                     //  Show first tab content
-             
-            //On Click Event
-            $("ul.tabs li").click(function() {
-                $("ul.tabs li").removeClass("active");          //  Remove any "active" class
-                $(this).addClass("active");                     //  Add "active" class to selected tab
-                $(".tab_content").hide();                       //  Hide all tab content
-                var activeTab = $(this).find("a").attr("href"); //  Find the rel attribute value to identify the active tab + content
-                $(activeTab).fadeIn();                          //  Fade in the active content
-                return false;
-            });
-         
-        });
-
-      </script>
-      
     </head>
 
     <body>
@@ -98,7 +45,7 @@
       <!--Middle section-->
       <div id="middle" class="fixed">
         
-        <label id="coordinates" class="header"></label>
+        
         
                   <!--</div>-->
                 
@@ -109,9 +56,10 @@
                   <!--<div id="shapes-toggle" class="fixed">-->
                   <!--  <button id="shape-properties-toggle" class="toggle">▲</button>-->
                   <!--</div>-->
-                  
-        <!--Presets-->
-        <div id="menu-left">
+
+        <!--Right Menu -->
+        <div id="menu-right">Grid</div><!--
+Presets--><div id="menu-left">
           
           <!--Tabs***********************************************************-->
           <div class="container">
@@ -136,18 +84,12 @@
                 <!-- Formula -->
                 <label for="formula" class="property col-1" title="formula">Formula:</label>
                 <input id="formula"  class="property col-2" type="text" title="formula">
-                
-                  <div class="line"></div>
-                
-                 <!--Line Weight-->
-                <label for="lineweight" class="property col-1">Line Weight:</label>
-                <input id="lineweight" class="property col-2" type="number" min="0" max="13" value="6">
-      
+
                   <div class="line"></div>
                 
                  <!--Line Color-->
-                <label for="linecolor" class="property col-1">Line Color:</label>
-                <input id="linecolor" class="property col-2" type="color" value="#0a0a0a" list="colors"/>
+                <label for="line-color" class="property col-1">Line Color:</label>
+                <input id="line-color" class="property col-2" type="color" value="#0a0a0a" list="colors"/>
       
                   <datalist id="colors">
                   
@@ -178,22 +120,36 @@
                   </datalist>
 
                  <!--Line Alpha-->
-                <label for="linealpha" class="property col-1" value="14">Transparency:</label>
-                <input id="linealpha" class="property col-2" type="range" min="0" max="100" value="75">
+                <label for="line-alpha" class="property col-1" value="14">Transparency:</label>
+                <input id="line-alpha" class="property col-2" type="range" min="0" max="100" value="75">
       
                   <div class="line"></div>
                 
                  <!--Fill Color-->
-                <label for="fillcolor" class="property col-1">Fill Color:</label>
-                <input id="fillcolor" class="property col-2" type="color" value="#093A34" list="colors"/>
+                <label for="fill-color" class="property col-1">Fill Color:</label>
+                <input id="fill-color" class="property col-2" type="color" value="#093A34" list="colors"/>
       
                  <!--Fill Alpha-->
-                <label for="fillalpha" class="property col-1">Transparency:</label>
-                <input id="fillalpha"  class="property col-2" type="range" min="0" max="100" value="95">
+                <label for="fill-alpha" class="property col-1">Transparency:</label>
+                <input id="fill-alpha"  class="property col-2" type="range" min="0" max="100" value="95">
       
-                <!-- Line Type -->
-                <!-- Line Weight -->
+                  <div class="line"></div>
+                
+                <!--Line Weight-->
+                <label for="line-weight" class="property col-1">Line Weight:</label>
+                <input id="line-weight" class="property col-2" type="number" min="0" max="100" value="7">
 
+                  <div class="line"></div>
+                  
+                <!-- Line Type -->
+                <label for="line-type" class="property col-1">Line Type:</label>
+                <select id="line-type" class="property col-2">
+                  <option>Solid</option>
+                  <option selected>Dotted</option>
+                  <option>Dashed</option>
+                  <option>Dot-Dash</option>
+                </select>
+                
               </div>
 
               <!-- Grid -->
@@ -219,8 +175,8 @@
             
                 <!--Axes -->
                 <label for="axes"   class="property col-3">Axis</label>
-                
                 <input id="axisx-color" type="color" class="property grid col-4" value="#111111" list="colors"/>
+                
                 <input id="axisx"   class="property col-6" type="checkbox">
                 <label for="axisx"  class="property col-5">x:</label>
 
@@ -306,6 +262,10 @@
                 <input id="crosshair-color" type="color" class="grid property col-4" value="#cccccc" list="colors"/>
                 <input id="crosshair" class="property col-5" type="checkbox">
 
+                 <!--Size-->
+                <label for="crosshair-size" class="property col-1">Size:</label>
+                <input id="crosshair-size"  class="property col-2" type="range" min="0" max="100" value="95">
+                
               </div>
               
               <!--Tab 3-->
@@ -320,68 +280,183 @@
             </div>
 
           </div>
-          
           <!--Tabs***********************************************************-->
 
-        </div>
+        </div><!--
+        Shape Menu
+        --><div id="menu-shapes">
         
-        <!-- Shape Menu-->
-        <div id="shape-menu">
-        
-          <!--<div tabindex="0" class="onclick-menu">-->
+          <!-- Points -->
+          <div id="points" tabindex="0" class="onclick-menu">
 
-            <!--<img src="assets/images/move.png">-->
-          <!--  <img class="menu" src="assets/images/move.png">-->
+            <img id="img-points" class="menu" src="assets/images/move.png">
 
-          <!--  <ul id="ul-points" class="onclick-menu-content">-->
-
-          <!--    <li id="li-point0"> <button id="btn-point0" class="menu"> <img id="img-point0"  class="menu" src="assets/images/move.png"> </button> </li>-->
-          <!--    <li id="li-point1"> <button id="btn-point1" class="menu"> <img id="img-point1"  class="menu" src="assets/images/move.png"> </button> </li>-->
-          <!--    <li id="li-point2"> <button id="btn-point2" class="menu"> <img id="img-point2"  class="menu" src="assets/images/move.png"> </button> </li>-->
-
-          <!--  </ul>-->
-
-          <!--</div>-->
-
-          <!--<div tabindex="0" class="onclick-menu">-->
-
-            <!--<img src="assets/images/move.png">-->
-          <!--  <img class="menu" src="assets/images/move.png">-->
-
-          <!--  <ul id="ul-lines" class="onclick-menu-content">-->
+            <ul id="ul-points" class="onclick-menu-content">
               
-          <!--    <li id="li-line0"> <button id="btn-line0" class="menu"> <img id="img-line0" src="assets/images/move.png"> </button> </li>-->
-          <!--    <li id="li-line1"> <button id="btn-line1" class="menu"> <img id="img-line1" src="assets/images/move.png"> </button> </li>-->
-          <!--    <li id="li-line2"> <button id="btn-line2" class="menu"> <img id="img-line2" src=""> </button> </li>-->
-          <!--    <li id="li-line3"> <button id="btn-line3" class="menu"> <img id="img-line3" src="assets/images/move.png"> </button> </li>-->
-          <!--    <li id="li-line4"> <button id="btn-line4" class="menu"> <img id="img-line4" src="assets/images/move.png"> </button> </li>-->
+              <button id="btn-point0" class="menu" onclick="command(this, '1');"> P 0 </button>
+              <button id="btn-point1" class="menu" onclick="command(this, '2');"> P 1 </button>
+              <button id="btn-point2" class="menu" onclick="command(this, '3');"> P 2 </button>
 
-          <!--  </ul>-->
+            </ul>
 
-          <!--</div>-->
+          </div>
+          
+          <!-- Lines -->
+          <div id="lines" tabindex="0" class="onclick-menu">
+
+            <img id="img-lines" class="menu" src="assets/images/move.png">
+
+            <ul id="ul-lines" class="onclick-menu-content">
+              
+              <button id="btn-line0" class="menu"> L 0 </button>
+              <button id="btn-line1" class="menu"> L 1 </button>
+              <button id="btn-line2" class="menu"> L 2 </button>
+              <button id="btn-line3" class="menu"> L 3 </button>
+              <button id="btn-line4" class="menu"> L 4 </button>
+              
+            </ul>
+
+          </div>
+
+          <!-- Triangles -->
+          <div id="triangles" tabindex="0" class="onclick-menu">
+
+            <img id="img-triangles" class="menu" src="assets/images/move.png">
+
+            <ul id="ul-triangle" class="onclick-menu-content">
+              
+              <button id="btn-triangle0" class="menu"> T 0 </button>
+              <button id="btn-triangle1" class="menu"> T 1 </button>
+              <button id="btn-triangle2" class="menu"> T 2 </button>
+              <button id="btn-triangle3" class="menu"> T 3 </button>
+              <button id="btn-triangle4" class="menu"> T 4 </button>
+              
+            </ul>
+
+          </div>
+          
+          <!-- Circles -->
+          <div id="circles" tabindex="0" class="onclick-menu">
+
+            <img id="img-circles" class="menu" src="assets/images/move.png">
+
+            <ul id="ul-circles" class="onclick-menu-content">
+              
+              <button id="btn-circle0" class="menu"> C 0 </button>
+              <button id="btn-circle1" class="menu"> C 1 </button>
+              <button id="btn-circle2" class="menu"> C 2 </button>
+              <button id="btn-circle3" class="menu"> C 3 </button>
+              <button id="btn-circle4" class="menu"> C 4 </button>
+              
+            </ul>
+
+          </div>
+          
+          <!-- Rectangles -->
+          <div id="rectangles" tabindex="0" class="onclick-menu">
+
+            <img id="img-rectangles" class="menu" src="assets/images/move.png">
+
+            <ul id="ul-rectangles" class="onclick-menu-content">
+              
+              <button id="btn-rectangle0" class="menu"> R 0 </button>
+              <button id="btn-rectangle1" class="menu"> R 1 </button>
+              <button id="btn-rectangle2" class="menu"> R 2 </button>
+              <button id="btn-rectangle3" class="menu"> R 3 </button>
+              <button id="btn-rectangle4" class="menu"> R 4 </button>
+              
+            </ul>
+
+          </div>
+          
+        </div><!--
+        Canvas
+     --><div id="canvas-container">
+     
+          <canvas id="canvas"></canvas>
+     
+          <label id="coordinates"></label>
+          
+          <div id="display" class="display">
+            <button id="zoom-in"  class="grid">p</button>
+            <button id="zoom-out" class="grid">z+</button>
+            <button id="pan"      class="grid">z-</button>
+          </div>
           
         </div>
-
-        <!--Presets-->
-        <div id="menu-right">Grid</div>
-        
-        <!--Presets-->
-        <canvas id="canvas"></canvas>
         
       </div>
 
-      <!--Page Footer-->
-      <!--<section id="footer" class="footer">-->
+      <script>
+
+        $(document).ready(function(){
+          $("#menu-left-toggle").click(function () {
+
+            if ($(this).text() === "►"){
+              $(this).text("◄");
+            }
+            else {
+              $(this).text("►");
+            }
+           
+              $("#menu-left").animate({width:'toggle'},400);
+              
+          });
+        });
         
-      <!--</section>-->
+        $(document).ready(function(){
+          $("#menu-right-toggle").click(function () {
+
+            if ($(this).text() === "►"){
+              $(this).text("◄");
+            }
+            else {
+              $(this).text("►");
+            }
+
+              $("#menu-right").animate({width:'toggle'},400);
+              
+          });
+        });
+        
+        // Tabs
+        $(document).ready(function() {
+         
+            //Default Action
+            $(".tab_content").hide();                           //  Hide all content
+            $("ul.tabs li:first").addClass("active").show();    //  Activate first tab
+            $(".tab_content:first").show();                     //  Show first tab content
+             
+            //On Click Event
+            $("ul.tabs li").click(function() {
+                $("ul.tabs li").removeClass("active");          //  Remove any "active" class
+                $(this).addClass("active");                     //  Add "active" class to selected tab
+                $(".tab_content").hide();                       //  Hide all tab content
+                var activeTab = $(this).find("a").attr("href"); //  Find the rel attribute value to identify the active tab + content
+                $(activeTab).fadeIn();                          //  Fade in the active content
+                return false;
+            });
+         
+        });
+
+// $(function() {
+//     $('.report_table').on('click', '.btn-icon', function() {
+//         $(this).css('background-color', 'yellow');
+//         $('.btn-icon').not(this).css('background-color', 'transparent');
+//     });
+// });
+
+        var c = document.getElementById("canvas");
+        var processingInstance = new Processing(c, proc);
+        
+        function command(btn,id){
+          
+          alert(btn.id+": " + id);
+          
+        };
+        
+      </script>
       
     </body>
-
-    <script type="text/javascript">
-    
-       var canvas = document.getElementById("canvas");
-       var processingInstance = new Processing(canvas, proc);
-      
-     </script>
   
   </html>
