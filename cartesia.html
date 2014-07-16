@@ -6,9 +6,7 @@
 
       <meta charset="UTF-16">
 
-      <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-      <script type="text/javascript" src="processing.js"></script>
-      <script type="text/javascript" src="drawing.js"></script>
+
 
       <link rel="stylesheet" href="assets/stylesheets/cartesia.css">
       <link rel="stylesheet" href="assets/stylesheets/input.css">
@@ -17,6 +15,10 @@
       <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lato:100,300,400">
       <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Ubuntu:100,300,400">
       <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Fjalla One:100,300,400">
+
+      <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+      <script type="text/javascript" src="processing.js"></script>
+      <script type="text/javascript" src="drawing.js"></script>
       
       <title>Cartesia:  Pythagorian Triples</title>
 
@@ -44,18 +46,8 @@
 
       <!--Middle section-->
       <div id="middle" class="fixed">
-        
-        
-        
-                  <!--</div>-->
-                
-                  <!--<div id="properties-toggle"  class="fixed" title="ooga booga">-->
-                  <!--  <button id="grid-properties-toggle" class="toggle">▲</button>-->
-                  <!--</div>-->
-                
-                  <!--<div id="shapes-toggle" class="fixed">-->
-                  <!--  <button id="shape-properties-toggle" class="toggle">▲</button>-->
-                  <!--</div>-->
+
+  <!-- ▲ -->
 
         <!--Right Menu -->
         <div id="menu-right">Grid</div><!--
@@ -149,7 +141,13 @@ Presets--><div id="menu-left">
                   <option>Dashed</option>
                   <option>Dot-Dash</option>
                 </select>
-                
+
+                  <div class="line"></div>
+
+                <!-- Line Scale -->
+                <label for="line-scale" class="property col-1">Line Scale:</label>
+                <input id="line-scale" class="property col-2" type="number" min="0" max="100" value="7">
+
               </div>
 
               <!-- Grid -->
@@ -176,7 +174,7 @@ Presets--><div id="menu-left">
                 <!--Axes -->
                 <label for="axes"   class="property col-3">Axis</label>
                 <input id="axisx-color" type="color" class="property grid col-4" value="#111111" list="colors"/>
-                
+
                 <input id="axisx"   class="property col-6" type="checkbox">
                 <label for="axisx"  class="property col-5">x:</label>
 
@@ -376,11 +374,18 @@ Presets--><div id="menu-left">
           <canvas id="canvas"></canvas>
      
           <label id="coordinates"></label>
-          
+
+          <!-- Zoom/Pan-->
           <div id="display" class="display">
             <button id="zoom-in"  class="grid">p</button>
             <button id="zoom-out" class="grid">z+</button>
             <button id="pan"      class="grid">z-</button>
+          </div>
+
+          <!-- Ortho/STG/Grid -->
+          <div id="grid-display"      class="grid-display">
+            <button id="ortho"        class="grid">o</button>
+            <button id="snap-to-grid" class="grid">stg</button>
           </div>
           
         </div>
@@ -449,9 +454,15 @@ Presets--><div id="menu-left">
         var c = document.getElementById("canvas");
         var processingInstance = new Processing(c, proc);
         
+        var currentCommand=-1;
+        
         function command(btn,id){
           
-          alert(btn.id+": " + id);
+          currentCommand=id;
+          
+          processingInstance.scommand(1,currentCommand);
+          
+          alert(btn.id+": " + currentCommand);
           
         };
         
