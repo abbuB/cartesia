@@ -24,7 +24,7 @@
     -webkit-appearance: none;
     -moz-appearance:    none;
     outline:            none;
-    /*border:             1px dotted #444;*/
+    border:             1px dotted #444;
   }
   /* HTML5 display-role reset for older browsers */
   article, aside, details, figcaption, figure,
@@ -503,6 +503,20 @@
 
   }
   
+    div.grid-display {
+
+    display:          inline-block;
+    position:         absolute;
+
+    left:             150px;
+    bottom:           5px;
+    
+    width:            auto;
+
+    background:       transparent;
+
+  }
+
   .col-1,
   .col-2,
   .col-3,
@@ -535,13 +549,13 @@
 
   .col-3 {
 
-    width:              70%;
+    width:              35%;
     float:              left;
     
   }
   .col-4 {
 
-    width:              12px;
+    width:              20px;
     float:              right;
 
   }
@@ -578,6 +592,12 @@
     background:         transparent;
     
   }
+  div.property {
+  
+    /*display:            inline-block;*/
+    background:         orange;
+    height:             16px;
+  }
   
   /*
     ============================================================================
@@ -585,11 +605,16 @@
     ============================================================================
   */
   label.property {
-
+    
+    /*display:            absolute;*/
+    /*position:            relative;*/
+    
     font:               400 11px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
     color:              #ccc;
 
     line-height:        16px;
+
+    /*text-align:         center;*/
 
   }
 
@@ -630,4 +655,65 @@
     line-height:        16px;
     cursor:             pointer;
     
+  }
+  
+  input[type=checkbox] {
+    
+    display:            none;
+  		
+  }
+  
+  input[type=checkbox] + label {
+  
+    /*display:            inline-block;*/
+    
+    margin:             0;
+    padding:            0;
+    
+    font-size:          12px;
+    line-height:        16px;
+    
+    height:             16px;
+    width:              16px;
+
+    color:              #333;
+
+    text-align:         center;
+    text-shadow:        0 1px 1px rgba(255,255,255,0.75);
+  	vertical-align:     middle;
+    
+    cursor:             pointer;
+    
+    /*background-color:   #f5f5f5;*/
+    /*background-image:   -moz-linear-gradient(top,#fff,#e6e6e6);*/
+    /*background-image:   -webkit-gradient(linear,0 0,0 100%,from(#fff),to(#e6e6e6));*/
+    /*background-image:   -webkit-linear-gradient(top,#fff,#e6e6e6);*/
+    /*background-image:   -o-linear-gradient(top,#fff,#e6e6e6);*/
+    /*background-image:   linear-gradient(to bottom,#fff,#e6e6e6);*/
+    /*background-repeat:  repeat-x;*/
+    
+    border:             1px solid #ccc;
+    /*border-color:       #e6e6e6 #e6e6e6 #bfbfbf;*/
+  	/*border-color:       rgba(0,0,0,0.1) rgba(0,0,0,0.1) rgba(0,0,0,0.25);*/
+  	/*border-bottom-color:#b3b3b3;*/
+  	
+  	filter:             progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff',endColorstr='#ffe6e6e6',GradientType=0);
+  	filter:             progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  	-webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,0.2),0 1px 2px rgba(0,0,0,0.05);
+  	/*-moz-box-shadow:    inset 0 1px 0 rgba(255,255,255,0.2),0 1px 2px rgba(0,0,0,0.05);*/
+  	/*box-shadow:         inset 0 1px 0 rgba(255,255,255,0.2),0 1px 2px rgba(0,0,0,0.05);*/
+  	
+  }
+
+  input[type=checkbox]:checked + label{
+    
+    background-image:   none;
+    outline:            0;
+    
+    /*-webkit-box-shadow: inset 0 2px 4px rgba(0,0,0,0.15),0 1px 2px rgba(0,0,0,0.05);*/
+    /*-moz-box-shadow: inset 0 2px 4px rgba(0,0,0,0.15),0 1px 2px rgba(0,0,0,0.05);*/
+    /*box-shadow: inset 0 2px 4px rgba(0,0,0,0.15),0 1px 2px rgba(0,0,0,0.05);*/
+    
+    background-color:#e0e0e0;
+
   }
