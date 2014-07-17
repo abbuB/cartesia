@@ -613,62 +613,62 @@ var zoomfactor=0;
     //  SHAPES ========================================================
 
     // Point (P) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    POINT:        [1000,  'Point',            'POINT'                 ],
-    P_DEFAULT:    [1001,  'P_DEFAULT',        'P_DEFAULT'             ],
-    P_OBJECT:     [1002,  'P_Object',         'P_OBJECT'              ],
-    P_BOUND:      [1003,  'P_Bound',          'P_BOUND'               ],
-    P_INTERSECT:  [1004,  'P_Intersect',      'P_INTERSECT'           ],
-    P_MIDPOINT:   [1005,  'P_Midpoint',       'P_MIDPOINT'            ],    // Midpoint/Center
-    P_ATDETACH:   [1006,  'P_AttachDetach',   'P_ATTACHDETACH'        ],    // AttachDetachPoint
+    POINT:            [1000,  'Point',                'POINT'                 ],
+    POINT_DEFAULT:    [1001,  'Point_Default',        'POINT_DEFAULT'         ],
+    POINT_OBJECT:     [1002,  'Point_Object',         'POINT_OBJECT'          ],
+    POINT_BOUND:      [1003,  'Point_Bound',          'POINT_BOUND'           ],
+    POINT_INTERSECT:  [1004,  'Point_Intersect',      'POINT_INTERSECT'       ],
+    POINT_MIDPOINT:   [1005,  'Point_Midpoint',       'POINT_MIDPOINT'        ],    // Midpoint/Center
+    POINT_ATDETACH:   [1006,  'Point_AttachDetach',   'POINT_ATTACHDETACH'    ],    // AttachDetachPoint
 
     // Line (L) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    LINE:         [1100,  'Line',             'LINE'                  ],
-    L_2P:         [1101,  'Line2P',           'LINE2P'                ],    // through 2 vertices
-    L_SEGMENT2P:  [1102,  'LineSegment2P',    'LINESEGMENT2P'         ],    // between 2 vertices
-    L_SEGMENTLEN: [1103,  'LineSegmentLen',   'LINESEGMENTLEN'        ],    // from point given length
-    L_PERP:       [1104,  'LinePerp',         'LINEPERP'              ],    // perpendicular
-    L_PERPB:      [1105,  'LinePerpB',        'LINEPERPB'             ],    //  perpendicular bisector
-    L_ANGB:       [1106,  'LineAngB',         'LINEANGB'              ],    // angle bisector
-    L_PARR:       [1107,  'LineParr',         'LINEPARR'              ],    // parallel
-    L_TANGENT:    [1108,  'LineTangent',      'LINETANGENT'           ],    // Tangent
-    L_DIAMETER:   [1109,  'LineDiameter',     'LINEDIAMETER'          ],    // Diameter
-    L_RADIUS:     [1110,  'LineRadius',       'LINERADIUS'            ],    // Radius
+    LINE:                       [1100,  'Line',                       'LINE'                        ],
+    LINE_2POINT:                [1101,  'Line_2Point',                'LINE_2POINT'                 ],    // through 2 vertices
+    LINE_SEGMENT2POINT:         [1102,  'Line_Segment2Point',         'LINE_SEGMENT2POINT'          ],    // between 2 vertices
+    LINE_SEGMENTLENGTH:         [1103,  'Line_SegmentLength',         'LINE_SEGMENTLENGTH'          ],    // from point given length
+    LINE_PERPENDICULAR:         [1104,  'Line_Perpendicular',         'LINE_PERPENDICULAR'          ],    // perpendicular
+    LINE_PERPENDICULARBISECTOR: [1105,  'Line_PerpendicularBisector', 'LINE_PERPENDICULARBISECTOR' ],    //  perpendicular bisector
+    LINE_ANGLEBISECTOR:         [1106,  'Line_AngleBisector',         'LINE_ANGLEBISECTOR'          ],    // angle bisector
+    LINE_PARALLEL:              [1107,  'Line_Parallel',              'LINE_PARALLEL'               ],    // parallel
+    LINE_TANGENT:               [1108,  'Line_Tangent',               'LINE_TANGENT'                ],    // Tangent
+    LINE_DIAMETER:              [1109,  'Line_Diameter',              'LINE_DIAMETER'               ],    // Diameter
+    LINE_RADIUS:                [1110,  'Line_Radius',                'LINE_RADIUS'                 ],    // Radius
 
-    RAY_2P:       [1211,  'Ray2P',            'RAY2P'                 ],    // Ray between 2 vertices
-    V_2P:         [1212,  'Vector2P',         'VECTOR2P'              ],    // Vector between 2 vertices
-    V_FP:         [1213,  'VectorFP',         'VECTORFP'              ],    // Vector from point
+    RAY_2POINT:       [1211,  'Ray_2Point',       'RAY_2POINT'                ],    // Ray between 2 vertices
+    VECTOR_2POINT:    [1212,  'Vector_2Point',    'VECTOR_2POINT'             ],    // Vector between 2 vertices
+    VECTOR_FROMPOINT: [1213,  'Vector_FromPoint', 'VECTOR_FROMPOINT'          ],    // Vector from point
 
     // Triangle (T)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    TRIANGLE:     [1300,  'Triangle',         'TRIANGLE'              ],
-    T_EQUILATERAL:[1301,  'T_Equilateral',    'T_EQUILATERAL'         ],
-    T_ISOSCELES:  [1302,  'T_Isosceles',      'T_ISOSCELES'           ],
-    T_SCALENE:    [1303,  'T_Scalene',        'T_SCALENE'             ],
+    TRIANGLE:             [1300,  'Triangle',             'TRIANGLE'          ],
+    TRIANGLE_EQUILATERAL: [1301,  'Triangle_Equilateral', 'TRIANGLE_EQUILATERAL'],
+    TRIANGLE_ISOSCELES:   [1302,  'Triangle_Isosceles',   'TRIANGLE_ISOSCELES'],
+    TRIANGLE_SCALENE:     [1303,  'Triangle_Scalene',     'TRIANGLE_SCALENE'  ],
 
     // Circle (C)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    CIRCLE:       [1400,  'Circle',           'CIRCLE'                ],
-    C_CENTERP:    [1401,  'C_CenterP',        'C_CENTERP'             ],    // center point
-    C_CENTERR:    [1402,  'C_CenterR',        'C_CENTERR'             ],    // center radius
+    CIRCLE:               [1400,  'Circle',               'CIRCLE'            ],
+    CIRCLE_CENTERPOINT:   [1401,  'Circle_CenterPoint',   'CIRCLE_CENTERPOINT'],    // center point
+    CIRCLE_CENTERRADIUS:  [1402,  'Circle_CenterRadius',  'CIRCLE_CENTERRADIUS'],    // center radius
 
-    C_3P:         [1403,  'C_3P',             'C_3P'                  ],    //  3 vertices
+    CIRCLE_3POINT:        [1403,  'Circle_3Point',        'CIRCLE_3POINT'     ],    //  3 vertices
 
     // Quadrilateral (Q)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    QUAD:         [1500,  'Quadrilateral',    'QUADRILATERAL'         ],
-    Q_RECTANGLE:  [1501,  'Rectangle',        'RECTANGLE'             ],
-    Q_SQUARE:     [1502,  'Square',           'SQUARE'                ],
-    Q_RHOMBUS:    [1503,  'Rhombus',          'RHOMBUS'               ],
-    Q_PGRAM:      [1504,  'Parallelogram',    'PARALLELOGRAM'         ],    // Q_PARALLELOGRAM
-    Q_TRAPEZOID:  [1505,  'Trapezoid',        'TRAPEZOID'             ],
-    Q_KITE:       [1506,  'Kite',             'KITE'                  ],
+    QUAD:           [1500,  'Quadrilateral',    'QUADRILATERAL'         ],
+    QUAD_RECTANGLE: [1501,  'Rectangle',        'RECTANGLE'             ],
+    QUAD_SQUARE:    [1502,  'Square',           'SQUARE'                ],
+    QUAD_RHOMBUS:   [1503,  'Rhombus',          'RHOMBUS'               ],
+    QUAD_PGRAM:     [1504,  'Parallelogram',    'PARALLELOGRAM'         ],    // Q_PARALLELOGRAM
+    QUAD_TRAPEZOID: [1505,  'Trapezoid',        'TRAPEZOID'             ],
+    QUAD_KITE:      [1506,  'Kite',             'KITE'                  ],
 
     // Arc (A)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    ARC:          [1600,  'Arc',              'ARC'                   ],
-    A_2P:         [1601,  'Arc2vertices',     'ARC2vertices'          ],    // SemiCircleThrough2vertices
-    A_CA:         [1602,  'CircularArc',      'CIRCULARARC'           ],    // CircularArc
-    A_CCA:        [1603,  'CircumCircularArc','CIRCUMCIRCULARARC'     ],    // CircumcircularArc
-    A_CS:         [1604,  'CircularSector',   'CIRCULARSECTOR'        ],    // CircularSector
-    A_CCS:        [1605,  'CircumCircularSector','CIRCUMCIRCULARSECTOR'],   // CircumCircularSector
+    ARC:      [1600,  'Arc',                      'ARC'                       ],
+    ARC_2P:   [1601,  'Arc2vertices',             'ARC_2VERTICES'             ],    // SemiCircleThrough2vertices
+    ARC_CA:   [1602,  'Arc_Circular',             'ARC_CIRCULAR'              ],    // CircularArc
+    ARC_CCA:  [1603,  'Arc_CircumCircular',       'ARC_CIRCUMCIRCULAR'        ],    // CircumcircularArc
+    ARC_CS:   [1604,  'Arc_CircularSector',       'ARC_CIRCULARSECTOR'        ],    // CircularSector
+    ARC_CCS:  [1605,  'Arc_CircumCircularSector', 'ARC_CIRCUMCIRCULARSECTOR'  ],   // CircumCircularSector
 
-    COMPASS:      [1606,  'Compass',          'COMPASS'               ],    // ??
+    COMPASS:  [1606,  'Compass',          'COMPASS'                           ],    // ??
 
     // Polygon ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     POLYGON:      [1700,  'Polygon',          'POLYGON'               ],
@@ -677,11 +677,11 @@ var zoomfactor=0;
     POLYGONV:     [1703,  'PolygonV',         'POLYGONV'              ],    // Vector
 
     // Conics (S) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    CONIC:        [1800,  'Conic',            'CONIC'                 ],
-    S_ELLIPSE:    [1800,  'Ellipse',          'ELLIPSE'               ],
-    S_HYPERBOLA:  [1801,  'Hyperbola',        'HYPERBOLA'             ],
-    S_PARABOLA:   [1802,  'Parabola',         'PARABOLA'              ],
-    S_5VERTICES:  [1803,  'Conic 5 Vertices', 'CONIC5VERTICES'        ],
+    CONIC:            [1800,  'Conic',            'CONIC'                 ],
+    CONIC_ELLIPSE:    [1800,  'Ellipse',          'ELLIPSE'               ],
+    CONIC_HYPERBOLA:  [1801,  'Hyperbola',        'HYPERBOLA'             ],
+    CONIC_PARABOLA:   [1802,  'Parabola',         'PARABOLA'              ],
+    CONIC_5VERTICES:  [1803,  'Conic_5Vertices', 'CONIC5VERTICES'        ],
 
     // Angle ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1062,7 +1062,8 @@ var factor=1.25;
     this.yG=y;                // world Y
     this.xW=x*app.factor;     // grid X
     this.yW=y*app.factor;     // grid Y
-
+    this.w=app.pSize;
+    
     this.recalc=function(){
       this.xW=this.xG*app.factor;
       this.yW=this.yG*app.factor;
@@ -2823,12 +2824,12 @@ var factor=1.25;
 
       switch(app.current){
 
-        case COMMANDS.P_DEFAULT[0]:
+        case COMMANDS.POINT_DEFAULT[0]:
 
           // Point is saved on initial click
           break;
 
-        case COMMANDS.L_SEGMENT2P[0]:
+        case COMMANDS.LINE_SEGMENT2POINT[0]:
 
           if(p.Temp!==0){
 
@@ -2855,7 +2856,7 @@ var factor=1.25;
 
           break;
 
-        case COMMANDS.C_CENTERP[0]:
+        case COMMANDS.CIRCLE_CENTERPOINT[0]:
 
           // if(p.vertices.length===1){
 //~
@@ -2884,7 +2885,7 @@ var factor=1.25;
 
           break;
 
-        case COMMANDS.Q_RECTANGLE[0]:
+        case COMMANDS.QUAD_RECTANGLE[0]:
 
           // if(p.vertices.length===1){
 //~
@@ -3010,7 +3011,7 @@ var factor=1.25;
 
               break;
 
-            case COMMANDS.P_DEFAULT[0]: // Point:  Default
+            case COMMANDS.POINT_DEFAULT[0]: // Point:  Default
 
               this.shapes.push(
                 new Point(getGUID(), this, app.gridX, app.gridY));
@@ -3019,7 +3020,7 @@ var factor=1.25;
 
               break;
 
-            case COMMANDS.L_SEGMENT2P[0]:  // Line:  2 point
+            case COMMANDS.LINE_SEGMENT2POINT[0]:  // Line:  2 point
 
               if(this.Temp===0){
 
@@ -3042,11 +3043,11 @@ var factor=1.25;
 
               break;
 
-            case COMMANDS.C_CENTERP[0]:  // Circle:  Center-Point
+            case COMMANDS.CIRCLE_CENTERPOINT[0]:  // Circle:  Center-Point
 
               break;
 
-            case COMMANDS.Q_RECTANGLE[0]:  // Quad:  Rectangle
+            case COMMANDS.QUAD_RECTANGLE[0]:  // Quad:  Rectangle
 
 
               break;
@@ -3754,8 +3755,9 @@ var factor=1.25;
   
   document.getElementById("quadrants").onclick  = function() { app.quadrants=!app.quadrants;  };
 
+
   
-  
+
 
   
   document.getElementById("grid-color").onchange   = function() {
@@ -3836,7 +3838,12 @@ var factor=1.25;
   // document.getElementById('lines').onclick = function()   { clickMe(2); };
 
   document.getElementById("line-weight").onchange   = function() {
+
     app.lineweight=document.getElementById("line-weight").value;
+    app.pSize=app.lineweight;
+
+    // println(app.pSize);
+
     // println(app.lineweight);
   }
   
@@ -3861,21 +3868,134 @@ var factor=1.25;
   }
 
 
-  document.getElementById('btn-line0').onclick = function()   {
-    // println("line 0");
-    document.getElementById('img-lines').value="LA LA LA LA";
-    document.getElementById('img-lines').src="assets/images/test.png";
+  document.getElementById('POINT_DEFAULT').onclick = function()   {
     
-    println(document.getElementById('canvas-container').width);
+    app.current=COMMANDS.POINT_DEFAULT[0];
+    document.getElementById('current-command').innerText=COMMANDS.POINT_DEFAULT[1];
     
-  };
+  }
+  document.getElementById('POINT_OBJECT').onclick = function()   {
+    
+    app.current=COMMANDS.POINT_OBJECT[0];
+    document.getElementById('current-command').innerText=COMMANDS.POINT_OBJECT[1];
+    
+  }
+  document.getElementById('POINT_BOUND').onclick = function()   {
+    
+    app.current=COMMANDS.POINT_BOUND[0];
+    document.getElementById('current-command').innerText=COMMANDS.POINT_BOUND[1];
+    
+  }
 
-  // document.getElementById('btn-point').onclick = function()   {
-
-  //   println(document.getElementById('btn-point').style.tabindex);
+    // document.getElementById('img-lines').value="LA LA LA LA";
+    // document.getElementById('img-lines').src="assets/images/test.png";
     
-  // };
+    // document.getElementById('btn-line0').title="yabba dabba doo";
+    
+    // println(document.getElementById('canvas-container').width);
+    
+  //   app.current=COMMANDS.L_2P[0];
+    
+  //   document.getElementById('current-command').innerText=app.current=COMMANDS.L_2P[1];
+
+  document.getElementById('LINE_2POINT').onclick = function()   {
+    
+    app.current=COMMANDS.LINE_2POINT[0];
+    document.getElementById('current-command').innerText=COMMANDS.LINE_2POINT[1];
+    
+  }
+  document.getElementById('LINE_SEGMENT2POINT').onclick = function()   {
+    
+    app.current=COMMANDS.LINE_SEGMENT2POINT[0];
+    document.getElementById('current-command').innerText=COMMANDS.LINE_SEGMENT2POINT[1];
+    
+  }
+  document.getElementById('LINE_SEGMENTLENGTH').onclick = function()   {
+    
+    app.current=COMMANDS.LINE_SEGMENTLENGTH[0];
+    document.getElementById('current-command').innerText=COMMANDS.LINE_SEGMENTLENGTH[1];
+    
+  }
+  document.getElementById('LINE_PERPENDICULAR').onclick = function()   {
+    
+    app.current=COMMANDS.LINE_PERPENDICULAR[0];
+    document.getElementById('current-command').innerText=COMMANDS.LINE_PERPENDICULAR[1];
+    
+  }
+  document.getElementById('LINE_PERPENDICULARBISECTOR').onclick = function()   {
+    
+    app.current=COMMANDS.LINE_PERPENDICULARBISECTOR[0];
+    document.getElementById('current-command').innerText=COMMANDS.LINE_PERPENDICULARBISECTOR[1];
+    
+  }
+  document.getElementById('LINE_ANGLEBISECTOR').onclick = function()   {
+    
+    app.current=COMMANDS.LINE_ANGLEBISECTOR[0];
+    document.getElementById('current-command').innerText=COMMANDS.LINE_ANGLEBISECTOR[1];
+    
+  }
+  document.getElementById('LINE_PARALLEL').onclick = function()   {
+    
+    app.current=COMMANDS.LINE_PARALLEL[0];
+    document.getElementById('current-command').innerText=COMMANDS.LINE_PARALLEL[1];
+    
+  }
+  document.getElementById('LINE_TANGENT').onclick = function()   {
+    
+    app.current=COMMANDS.LINE_TANGENT[0];
+    document.getElementById('current-command').innerText=COMMANDS.LINE_TANGENT[1];
+    
+  }
+  document.getElementById('LINE_DIAMETER').onclick = function()   {
+    
+    app.current=COMMANDS.LINE_DIAMETER[0];
+    document.getElementById('current-command').innerText=COMMANDS.LINE_DIAMETER[1];
+    
+  }
+  document.getElementById('LINE_RADIUS').onclick = function()   {
+    
+    app.current=COMMANDS.LINE_RADIUS[0];
+    document.getElementById('current-command').innerText=COMMANDS.LINE_RADIUS[1];
+    
+  }
   
+  document.getElementById('RAY_2POINT').onclick = function()   {
+    
+    app.current=COMMANDS.RAY_2POINT[0];
+    document.getElementById('current-command').innerText=COMMANDS.RAY_2POINT[1];
+    
+  }
+  document.getElementById('VECTOR_2POINT').onclick = function()   {
+    
+    app.current=COMMANDS.VECTOR_2POINT[0];
+    document.getElementById('current-command').innerText=COMMANDS.VECTOR_2POINT[1];
+    
+  }
+  document.getElementById('VECTOR_FROMPOINT').onclick = function()   {
+    
+    app.current=COMMANDS.VECTOR_FROMPOINT[0];
+    document.getElementById('current-command').innerText=COMMANDS.VECTOR_FROMPOINT[1];
+    
+  }
+  
+  document.getElementById('TRIANGLE_EQUILATERAL').onclick = function()   {
+    
+    app.current=COMMANDS.TRIANGLE_EQUILATERAL[0];
+    document.getElementById('current-command').innerText=COMMANDS.TRIANGLE_EQUILATERAL[1];
+    
+  }
+  document.getElementById('TRIANGLE_ISOSCELES').onclick = function()   {
+    
+    app.current=COMMANDS.TRIANGLE_ISOSCELES[0];
+    document.getElementById('current-command').innerText=COMMANDS.TRIANGLE_ISOSCELES[1];
+    
+  }
+  document.getElementById('TRIANGLE_SCALENE').onclick = function()   {
+    
+    app.current=COMMANDS.TRIANGLE_SCALENE[0];
+    document.getElementById('current-command').innerText=COMMANDS.TRIANGLE_SCALENE[1];
+    
+  }
   this.scommand=function(c,p){
     
     println(c+":"+p);
@@ -3887,5 +4007,5 @@ var factor=1.25;
     println(c+":"+p);
     
   }
-  
+
 }};
