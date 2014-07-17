@@ -31,15 +31,19 @@
       
         <h1 id="logo" class="fixed">cartesia</h1>
 
+<!--<a href="http://stackoverflow.com/users/79974/brad">-->
+<!--<img src="http://stackoverflow.com/users/flair/79974.png?theme=dark" height="35" alt="profile for Brad at Stack Overflow, Q&amp;A for professional and enthusiast programmers" title="profile for Brad at Stack Overflow, Q&amp;A for professional and enthusiast programmers">-->
+<!--</a>-->
+
         <button id="menu-left-toggle" class="toggle">◄</button>
         <button id="menu-right-toggle" class="toggle">►</button>
 
         <nav id="headerNav" class="nav primary-nav">
           <a class="header" href="javascript:void('Home')">home</a><!--
-       --><a class="header"  href="javascript:confirm('Speakers')">speakers</a><!--
-       --><a class="header"  href="javascript:prompt('Billy, dont be a hero')">schedule</a><!--
-       --><a class="header"  href="javascript:alert('Venues')">venue</a><!--
-       --><a class="header"  href="javascript:alert('Register')">register</a>
+       --><a class="header" href="javascript:confirm('Speakers')">speakers</a><!--
+       --><a class="header" href="javascript:prompt('Billy, dont be a hero')">schedule</a><!--
+       --><a class="header" href="javascript:alert('Venues')">venue</a><!--
+       --><a class="header" href="javascript:alert('Register')">register</a>
         </nav>
         
       </div>
@@ -165,9 +169,9 @@ Presets--><div id="menu-left">
 
                 <!-- Origin -->
                 <label for="origin" class="property col-3">Origin</label>
-                <input id="origin-color" type="color" class="grid property col-4" value="#000000" list="colors"/>
-                <input id="origin" class="property col-6" type="checkbox">
-                
+                <input id="origin-color" type="color" class="property col-4" value="#000000" list="colors"/>
+                <input id="origin" class="prop property col-5" type="checkbox" checked>
+                <label for="origin"  class="property col-5"></label>
 
                   <div class="line"></div>
             
@@ -175,28 +179,28 @@ Presets--><div id="menu-left">
                 <label for="axes"   class="property col-3">Axis</label>
                 <input id="axisx-color" type="color" class="property grid col-4" value="#111111" list="colors"/>
 
-                <input id="axisx"   class="property col-6" type="checkbox">
+                <input id="axisx"   class="property col-6" type="checkbox" checked>
                 <label for="axisx"  class="property col-5">x:</label>
 
                 <label class="property col-3"></label>
                 <input id="axisy-color" type="color" class="grid property col-4" value="#222222" list="colors"/>
                 
-                <input id="axisy"   class="property col-6" type="checkbox">
+                <input id="axisy"   class="property col-6" type="checkbox" checked>
                 <label for="axisy"  class="property col-5">y:</label>
 
                   <div class="line"></div>
                 
                 <!--Lines -->
                 <label for="lines"  class="property col-3">Lines</label>
-                <input id="linesx-color" type="color" class="grid property col-4" value="#333333" list="colors"/>
+                <input id="linesx-color" type="color" class="grid property col-4" value="#555555" list="colors"/>
                 
-                <input id="linesx"  class="property col-6" type="checkbox">
+                <input id="linesx"  class="property col-6" type="checkbox" checked>
                 <label for="linesx" class="property col-5">x:</label>
 
                 <label class="property col-3"></label>
-                <input id="linesy-color" type="color" class="grid property col-4" value="#444444" list="colors"/>
+                <input id="linesy-color" type="color" class="grid property col-4" value="#555555" list="colors"/>
 
-                <input id="linesy"  class="property col-6" type="checkbox">
+                <input id="linesy"  class="property col-6" type="checkbox" checked>
                 <label for="linesy" class="property col-5">y:</label>
 
                   <div class="line"></div>
@@ -205,13 +209,13 @@ Presets--><div id="menu-left">
                 <label for="arrows" class="property col-3">Arrows</label>
                 <input id="arrowsx-color" type="color" class="grid property col-4" value="#555555" list="colors"/>
                 
-                <input id="arrowsx" class="property col-6" type="checkbox">
+                <input id="arrowsx" class="property col-6" type="checkbox" checked>
                 <label for="arrowsx" class="col-5 property">x:</label>
                 
                 <label class="property col-3"></label>
                 <input id="arrowsy-color" type="color" class="grid property col-4" value="#666666" list="colors"/>
 
-                <input id="arrowsy"  class="property col-6" type="checkbox">
+                <input id="arrowsy"  class="property col-6" type="checkbox" checked>
                 <label for="arrowsy" class="property col-5">y:</label>
                 
 
@@ -221,13 +225,13 @@ Presets--><div id="menu-left">
                 <label for="ticks" class="property col-3">Ticks</label>
                 <input id="ticksx-color" type="color" class="grid property col-4" value="#777777" list="colors"/>
                 
-                <input id="ticksx" class="property col-6" type="checkbox">
+                <input id="ticksx" class="property col-6" type="checkbox" checked>
                 <label for="ticksx" class="col-5 property">x:</label>
                 
                 <label class="property col-3"></label>
                 <input id="ticksy-color" type="color" class="grid property col-4" value="#888888" list="colors"/>
 
-                <input id="ticksy"  class="property col-6" type="checkbox">
+                <input id="ticksy"  class="property col-6" type="checkbox" checked>
                 <label for="ticksy" class="property col-5">y:</label>
                 
 
@@ -237,13 +241,13 @@ Presets--><div id="menu-left">
                 <label for="labels" class="property col-3">Labels</label>
                 <input id="labelsx-color" type="color" class="grid property col-4" value="#999999" list="colors"/>
                 
-                <input id="labelsx" class="property col-6" type="checkbox">
+                <input id="labelsx" class="property col-6" type="checkbox" checked>
                 <label for="labelsx" class="col-5 property">x:</label>
                 
                 <label class="property col-3"></label>
                 <input id="labelsy-color" type="color" class="grid property col-4" value="#aaaaaa" list="colors"/>
 
-                <input id="labelsy"  class="property col-6" type="checkbox">
+                <input id="labelsy"  class="property col-6" type="checkbox" checked>
                 <label for="labelsy" class="property col-5">y:</label>
                 
                   <div class="line"></div>
@@ -251,17 +255,17 @@ Presets--><div id="menu-left">
                 <!--Quadrants -->
                 <label for="quadrants" class="property col-3">Quadrants</label>
                 <input id="quadrants-color" type="color" class="grid property col-4" value="#bbbbbb" list="colors"/>
-                <input id="quadrants" class="property col-5" type="checkbox">
+                <input id="quadrants" class="property col-5" type="checkbox" checked>
+                <label for="quadrants"  class="property col-5"></label>
 
                   <div class="line"></div>
 
                 <!--Crosshair -->
                 <label for="crosshair" class="property col-3">Crosshair</label>
                 <input id="crosshair-color" type="color" class="grid property col-4" value="#cccccc" list="colors"/>
-                <input id="crosshair" class="property col-5" type="checkbox">
-
+                  
                  <!--Size-->
-                <label for="crosshair-size" class="property col-1">Size:</label>
+                <label class="property col-1">Size:</label>
                 <input id="crosshair-size"  class="property col-2" type="range" min="0" max="100" value="95">
                 
               </div>
@@ -287,13 +291,16 @@ Presets--><div id="menu-left">
           <!-- Points -->
           <div id="points" tabindex="0" class="onclick-menu">
 
-            <img id="img-points" class="menu" src="assets/images/move.png">
+            <img id="img-points" class="menu" src="assets/images/point.svg">
 
             <ul id="ul-points" class="onclick-menu-content">
-              
-              <button id="btn-point0" class="menu" onclick="command(this, '1');"> P 0 </button>
-              <button id="btn-point1" class="menu" onclick="command(this, '2');"> P 1 </button>
-              <button id="btn-point2" class="menu" onclick="command(this, '3');"> P 2 </button>
+
+              <button id="POINT_DEFAULT" class="menu" onclick="command(this, '1');">
+                <img id="img-points" class="menu" src="assets/images/point.svg">
+              </button>
+
+              <button id="POINT_OBJECT" class="menu" onclick="command(this, '2');"> P 1 </button>
+              <button id="POINT_BOUND" class="menu" onclick="command(this, '3');"> P 2 </button>
 
             </ul>
 
@@ -302,32 +309,50 @@ Presets--><div id="menu-left">
           <!-- Lines -->
           <div id="lines" tabindex="0" class="onclick-menu">
 
-            <img id="img-lines" class="menu" src="assets/images/move.png">
+            <img id="img-lines" class="menu" src="assets/images/point.svg">
 
             <ul id="ul-lines" class="onclick-menu-content">
-              
-              <button id="btn-line0" class="menu"> L 0 </button>
-              <button id="btn-line1" class="menu"> L 1 </button>
-              <button id="btn-line2" class="menu"> L 2 </button>
-              <button id="btn-line3" class="menu"> L 3 </button>
-              <button id="btn-line4" class="menu"> L 4 </button>
+    
+              <button id="LINE_2POINT" class="menu"> L 0 </button>
+              <button id="LINE_SEGMENT2POINT" class="menu"> L 1 </button>
+              <button id="LINE_SEGMENTLENGTH" class="menu"> L 2 </button>
+              <button id="LINE_PERPENDICULAR" class="menu"> L 3 </button>
+              <button id="LINE_PERPENDICULARBISECTOR" class="menu"> L 4 </button>
+              <button id="LINE_ANGLEBISECTOR" class="menu"> L 0 </button>
+              <button id="LINE_PARALLEL" class="menu"> L 0 </button>
+              <button id="LINE_TANGENT" class="menu"> L 0 </button>
+              <button id="LINE_DIAMETER" class="menu"> L 0 </button>
+              <button id="LINE_RADIUS" class="menu"> L 0 </button>
               
             </ul>
 
           </div>
+          
+          <!-- Rays/Vectors -->
+          <div id="rays-vectors" tabindex="0" class="onclick-menu">
 
-          <!-- Triangles -->
-          <div id="triangles" tabindex="0" class="onclick-menu">
-
-            <img id="img-triangles" class="menu" src="assets/images/move.png">
+            <img id="img-rays-vectors" class="menu" src="assets/images/point.png">
 
             <ul id="ul-triangle" class="onclick-menu-content">
               
-              <button id="btn-triangle0" class="menu"> T 0 </button>
-              <button id="btn-triangle1" class="menu"> T 1 </button>
-              <button id="btn-triangle2" class="menu"> T 2 </button>
-              <button id="btn-triangle3" class="menu"> T 3 </button>
-              <button id="btn-triangle4" class="menu"> T 4 </button>
+              <button id="RAY_2POINT" class="menu"> T 0 </button>
+              <button id="VECTOR_2POINT" class="menu"> T 1 </button>
+              <button id="VECTOR_FROMPOINT" class="menu"> T 2 </button>
+              
+            </ul>
+
+          </div>
+          
+          <!-- Triangles -->
+          <div id="triangles" tabindex="0" class="onclick-menu">
+
+            <img id="img-triangles" class="menu" src="assets/images/point.png">
+
+            <ul id="ul-triangle" class="onclick-menu-content">
+              
+              <button id="TRIANGLE_EQUILATERAL" class="menu"> T 0 </button>
+              <button id="TRIANGLE_ISOSCELES" class="menu"> T 1 </button>
+              <button id="TRIANGLE_SCALENE" class="menu"> T 2 </button>
               
             </ul>
 
@@ -375,6 +400,8 @@ Presets--><div id="menu-left">
      
           <label id="coordinates"></label>
 
+          <label id="current-command"></label>
+
           <!-- Zoom/Pan-->
           <div id="display" class="display">
             <button id="zoom-in"  class="grid">p</button>
@@ -387,6 +414,7 @@ Presets--><div id="menu-left">
             <button id="ortho"        class="grid">o</button>
             <button id="snap-to-grid" class="grid">stg</button>
           </div>
+          
           
         </div>
         
@@ -460,7 +488,7 @@ Presets--><div id="menu-left">
           
           currentCommand=id;
           
-          processingInstance.scommand(1,currentCommand);
+          // processingInstance.scommand(1,currentCommand);
           
           alert(btn.id+": " + currentCommand);
           
