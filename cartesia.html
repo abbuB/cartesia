@@ -6,8 +6,6 @@
 
       <meta charset="UTF-16">
 
-
-
       <link rel="stylesheet" href="assets/stylesheets/cartesia.css">
       <link rel="stylesheet" href="assets/stylesheets/input.css">
       <link rel="stylesheet" href="assets/stylesheets/tabs.css">
@@ -24,38 +22,57 @@
 
     </head>
 
-    <body>
+    <body id="body">
 
       <!--Page Header-->
-      <div id="header" class="header fixed">
+      <div id="header" class="header">
       
-        <h1 id="logo" class="fixed">cartesia</h1>
-
-<!--<a href="http://stackoverflow.com/users/79974/brad">-->
-<!--<img src="http://stackoverflow.com/users/flair/79974.png?theme=dark" height="35" alt="profile for Brad at Stack Overflow, Q&amp;A for professional and enthusiast programmers" title="profile for Brad at Stack Overflow, Q&amp;A for professional and enthusiast programmers">-->
-<!--</a>-->
-
         <button id="menu-left-toggle" class="toggle">◄</button>
-        <button id="menu-right-toggle" class="toggle">►</button>
+      
+        <label id="logo">cartesia</label>
 
-        <nav id="headerNav" class="nav primary-nav">
-          <a class="header" href="javascript:void('Home')">home</a><!--
-       --><a class="header" href="javascript:confirm('Speakers')">speakers</a><!--
-       --><a class="header" href="javascript:prompt('Billy, dont be a hero')">schedule</a><!--
-       --><a class="header" href="javascript:alert('Venues')">venue</a><!--
-       --><a class="header" href="javascript:alert('Register')">register</a>
-        </nav>
+        <!--<nav id="headerNav" class="nav primary-nav">-->
+        <!--  <a class="header" href="javascript:void('Home')">home</a>-->
+        <!-- <a class="header" href="javascript:confirm('Speakers')">speakers</a>-->
+        <!-- <a class="header" href="javascript:prompt('Billy, dont be a hero')">schedule</a>-->
+        <!-- <a class="header" href="javascript:alert('Venues')">venue</a>-->
+        <!-- <a class="header" href="javascript:alert('Register')">register</a>-->
+        <!--</nav>-->
+        
+        <button id="menu-right-toggle" class="toggle">►</button>
         
       </div>
 
       <!--Middle section-->
-      <div id="middle" class="fixed">
+      <div id="middle">
 
   <!-- ▲ -->
 
-        <!--Right Menu -->
-        <div id="menu-right">Grid</div><!--
-Presets--><div id="menu-left">
+        <!-- Canvas -->
+        <div id="canvas-container">
+
+          <canvas id="canvas"></canvas>
+     
+          <!--<label id="coordinates"></label>-->
+
+          <!--<label id="current-command"></label>-->
+
+          <!-- Zoom/Pan-->
+          <!--<div id="display" class="display">-->
+          <!--  <button id="zoom-in"  class="grid">p</button>-->
+          <!--  <button id="zoom-out" class="grid">z+</button>-->
+          <!--  <button id="pan"      class="grid">z-</button>-->
+          <!--</div>-->
+
+          <!-- Ortho/STG/Grid -->
+          <!--<div id="grid-display"      class="grid-display">-->
+          <!--  <button id="ortho"        class="grid">o</button>-->
+          <!--  <button id="snap-to-grid" class="grid">stg</button>-->
+          <!--</div>-->
+
+        </div>
+        
+        <div id="menu-left">
           
           <!--Tabs***********************************************************-->
           <div class="container">
@@ -159,7 +176,7 @@ Presets--><div id="menu-left">
 
                 <!--Background Color-->
                 <label for="grid-color" class="property col-1">Background:</label>
-                <input id="grid-color" class="property col-2" type="color" value="#093A34" list="colors"/>
+                <input id="grid-color" class="property col-2" type="color" value="#222222" list="colors"/>
       
                 <!--Fill Alpha-->
                 <label for="grid-alpha" class="property col-1">Transparency:</label>
@@ -262,7 +279,7 @@ Presets--><div id="menu-left">
 
                 <!--Crosshair -->
                 <label for="crosshair" class="property col-3">Crosshair</label>
-                <input id="crosshair-color" type="color" class="grid property col-4" value="#cccccc" list="colors"/>
+                <input id="crosshair-color" type="color" class="grid property col-4" value="#ffffff" list="colors"/>
                   
                  <!--Size-->
                 <label class="property col-1">Size:</label>
@@ -278,25 +295,25 @@ Presets--><div id="menu-left">
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis et posuere velit. Aenean vitae ante iaculis, vulputate mi ac, posuere tortor. Fusce sed justo ornare, gravida erat vitae, tempus quam. Vivamus id arcu mauris. Etiam cursus purus tellus, nec fermentum justo consectetur sollicitudin. Nullam ornare, ipsum et luctus vehicula, metus libero porttitor tellus, sit amet rhoncus neque elit ut elit. Ut sed sapien varius, gravida turpis elementum, commodo libero. Integer eget dapibus urna.</p>
 
               </div>
-
+            
             </div>
-
+            
           </div>
           <!--Tabs***********************************************************-->
 
-        </div><!--
-        Shape Menu
-        --><div id="menu-shapes">
+        </div>
         
+        <div id="menu-shapes">
+
           <!-- Points -->
           <div id="points" tabindex="0" class="onclick-menu">
 
-            <img id="img-points" class="menu" src="assets/images/point.svg">
+            <img id="img-points" class="menu" src="assets/images/dot_line.svg">
 
             <ul id="ul-points" class="onclick-menu-content">
 
               <button id="POINT_DEFAULT" class="menu" onclick="command(this, '1');">
-                <img id="img-points" class="menu" src="assets/images/point.svg">
+                <img id="img-points" class="menu" src="assets/images/dot_line.svg">
               </button>
 
               <button id="POINT_OBJECT" class="menu" onclick="command(this, '2');"> P 1 </button>
@@ -331,7 +348,7 @@ Presets--><div id="menu-left">
           <!-- Rays/Vectors -->
           <div id="rays-vectors" tabindex="0" class="onclick-menu">
 
-            <img id="img-rays-vectors" class="menu" src="assets/images/point.png">
+            <img id="img-rays-vectors" class="menu" src="assets/images/circle_red_line.svg">
 
             <ul id="ul-triangle" class="onclick-menu-content">
               
@@ -346,7 +363,7 @@ Presets--><div id="menu-left">
           <!-- Triangles -->
           <div id="triangles" tabindex="0" class="onclick-menu">
 
-            <img id="img-triangles" class="menu" src="assets/images/point.png">
+            <img id="img-triangles" class="menu" src="assets/images/point.svg">
 
             <ul id="ul-triangle" class="onclick-menu-content">
               
@@ -359,62 +376,43 @@ Presets--><div id="menu-left">
           </div>
           
           <!-- Circles -->
-          <div id="circles" tabindex="0" class="onclick-menu">
+          <!--<div id="circles" tabindex="0" class="onclick-menu">-->
 
-            <img id="img-circles" class="menu" src="assets/images/move.png">
+          <!--  <img id="img-circles" class="menu" src="assets/images/point.svg">-->
 
-            <ul id="ul-circles" class="onclick-menu-content">
+          <!--  <ul id="ul-circles" class="onclick-menu-content">-->
               
-              <button id="btn-circle0" class="menu"> C 0 </button>
-              <button id="btn-circle1" class="menu"> C 1 </button>
-              <button id="btn-circle2" class="menu"> C 2 </button>
-              <button id="btn-circle3" class="menu"> C 3 </button>
-              <button id="btn-circle4" class="menu"> C 4 </button>
+          <!--    <button id="btn-circle0" class="menu"> C 0 </button>-->
+          <!--    <button id="btn-circle1" class="menu"> C 1 </button>-->
+          <!--    <button id="btn-circle2" class="menu"> C 2 </button>-->
+          <!--    <button id="btn-circle3" class="menu"> C 3 </button>-->
+          <!--    <button id="btn-circle4" class="menu"> C 4 </button>-->
               
-            </ul>
+          <!--  </ul>-->
 
-          </div>
+          <!--</div>-->
           
           <!-- Rectangles -->
-          <div id="rectangles" tabindex="0" class="onclick-menu">
+          <!--<div id="rectangles" tabindex="0" class="onclick-menu">-->
 
-            <img id="img-rectangles" class="menu" src="assets/images/move.png">
+          <!--  <img id="img-rectangles" class="menu" src="assets/images/point.svg">-->
 
-            <ul id="ul-rectangles" class="onclick-menu-content">
+          <!--  <ul id="ul-rectangles" class="onclick-menu-content">-->
               
-              <button id="btn-rectangle0" class="menu"> R 0 </button>
-              <button id="btn-rectangle1" class="menu"> R 1 </button>
-              <button id="btn-rectangle2" class="menu"> R 2 </button>
-              <button id="btn-rectangle3" class="menu"> R 3 </button>
-              <button id="btn-rectangle4" class="menu"> R 4 </button>
+          <!--    <button id="btn-rectangle0" class="menu"> R 0 </button>-->
+          <!--    <button id="btn-rectangle1" class="menu"> R 1 </button>-->
+          <!--    <button id="btn-rectangle2" class="menu"> R 2 </button>-->
+          <!--    <button id="btn-rectangle3" class="menu"> R 3 </button>-->
+          <!--    <button id="btn-rectangle4" class="menu"> R 4 </button>-->
               
-            </ul>
+          <!--  </ul>-->
 
-          </div>
+          <!--</div>-->
           
-        </div><!--
-        Canvas
-     --><div id="canvas-container">
-     
-          <canvas id="canvas"></canvas>
-     
-          <label id="coordinates"></label>
+        </div>
 
-          <label id="current-command"></label>
-
-          <!-- Zoom/Pan-->
-          <div id="display" class="display">
-            <button id="zoom-in"  class="grid">p</button>
-            <button id="zoom-out" class="grid">z+</button>
-            <button id="pan"      class="grid">z-</button>
-          </div>
-
-          <!-- Ortho/STG/Grid -->
-          <div id="grid-display"      class="grid-display">
-            <button id="ortho"        class="grid">o</button>
-            <button id="snap-to-grid" class="grid">stg</button>
-          </div>
-          
+        <!--Right Menu -->
+        <div id="menu-right">
           
         </div>
         
@@ -422,35 +420,73 @@ Presets--><div id="menu-left">
 
       <script>
 
-        $(document).ready(function(){
-          $("#menu-left-toggle").click(function () {
 
+        $(document).ready(function() {
+          
+          $('#menu-left-toggle').click(function() {
+            
             if ($(this).text() === "►"){
               $(this).text("◄");
             }
             else {
               $(this).text("►");
             }
-           
-              $("#menu-left").animate({width:'toggle'},400);
-              
+            
+            var $lefty = $('#menu-left');
+            var $leftCanvas = $('#canvas-container');
+            var $leftShapes = $('#menu-shapes');
+            
+            $lefty.animate({
+              left: parseInt($lefty.css('left'),10) == 0 ? -$lefty.outerWidth() : 0
+            });
+            $leftCanvas.animate({
+              left: parseInt($leftCanvas.css('left'),10) == 230 ? 30 :230
+            });
+            $leftShapes.animate({
+              left: parseInt($leftShapes.css('left'),10) == 200 ? 0 :200
+            });
+
+          });
+        });
+
+        $(document).ready(function() {
+          
+          $('#menu-right-toggle').click(function() {
+            
+            if ($(this).text() === "►"){
+              $(this).text("◄");
+            }
+            else {
+              $(this).text("►");
+            }
+            
+            var $left = $('#menu-right');
+            var $canvas = $('#canvas-container');
+            
+            $left.animate({
+              width: parseInt($left.css('width'),10) == 0 ? 200 : 0
+            });
+            $canvas.animate({
+              right: parseInt($canvas.css('right'),10) == 200 ? 0 :200
+            });
+
           });
         });
         
-        $(document).ready(function(){
-          $("#menu-right-toggle").click(function () {
+        // $(document).ready(function(){
+        //   $("#menu-right-toggle").click(function () {
 
-            if ($(this).text() === "►"){
-              $(this).text("◄");
-            }
-            else {
-              $(this).text("►");
-            }
+        //     if ($(this).text() === "►"){
+        //       $(this).text("◄");
+        //     }
+        //     else {
+        //       $(this).text("►");
+        //     }
 
-              $("#menu-right").animate({width:'toggle'},400);
+        //     $("#menu-right").animate({width:'toggle'},400);
               
-          });
-        });
+        //   });
+        // });
         
         // Tabs
         $(document).ready(function() {
