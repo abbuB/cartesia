@@ -648,40 +648,39 @@ var zoomfactor=0;
     CIRCLE:               [1400,  'Circle',               'CIRCLE'            ],
     CIRCLE_CENTERPOINT:   [1401,  'Circle_CenterPoint',   'CIRCLE_CENTERPOINT'],    // center point
     CIRCLE_CENTERRADIUS:  [1402,  'Circle_CenterRadius',  'CIRCLE_CENTERRADIUS'],    // center radius
-
     CIRCLE_3POINT:        [1403,  'Circle_3Point',        'CIRCLE_3POINT'     ],    //  3 vertices
 
     // Quadrilateral (Q)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    QUAD:           [1500,  'Quadrilateral',    'QUADRILATERAL'         ],
-    QUAD_RECTANGLE: [1501,  'Rectangle',        'RECTANGLE'             ],
-    QUAD_SQUARE:    [1502,  'Square',           'SQUARE'                ],
-    QUAD_RHOMBUS:   [1503,  'Rhombus',          'RHOMBUS'               ],
-    QUAD_PGRAM:     [1504,  'Parallelogram',    'PARALLELOGRAM'         ],    // Q_PARALLELOGRAM
-    QUAD_TRAPEZOID: [1505,  'Trapezoid',        'TRAPEZOID'             ],
-    QUAD_KITE:      [1506,  'Kite',             'KITE'                  ],
+    QUAD:               [1500,  'Quadrilateral',    'QUADRILATERAL'           ],
+    QUAD_RECTANGLE:     [1501,  'Rectangle',        'RECTANGLE'               ],
+    QUAD_SQUARE:        [1502,  'Square',           'SQUARE'                  ],
+    QUAD_RHOMBUS:       [1503,  'Rhombus',          'RHOMBUS'                 ],
+    QUAD_PARALLELOGRAM: [1504,  'Parallelogram',    'PARALLELOGRAM'           ],    // Q_PARALLELOGRAM
+    QUAD_TRAPEZOID:     [1505,  'Trapezoid',        'TRAPEZOID'               ],
+    QUAD_KITE:          [1506,  'Kite',             'KITE'                    ],
 
     // Arc (A)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    ARC:      [1600,  'Arc',                      'ARC'                       ],
-    ARC_2P:   [1601,  'Arc2vertices',             'ARC_2VERTICES'             ],    // SemiCircleThrough2vertices
-    ARC_CA:   [1602,  'Arc_Circular',             'ARC_CIRCULAR'              ],    // CircularArc
-    ARC_CCA:  [1603,  'Arc_CircumCircular',       'ARC_CIRCUMCIRCULAR'        ],    // CircumcircularArc
-    ARC_CS:   [1604,  'Arc_CircularSector',       'ARC_CIRCULARSECTOR'        ],    // CircularSector
-    ARC_CCS:  [1605,  'Arc_CircumCircularSector', 'ARC_CIRCUMCIRCULARSECTOR'  ],   // CircumCircularSector
+    ARC:                      [1600,  'Arc',                      'ARC'                       ],
+    ARC_2VERTICES:            [1601,  'Arc2vertices',             'ARC_2VERTICES'             ],    // SemiCircleThrough2vertices
+    ARC_CIRCULAR:             [1602,  'Arc_Circular',             'ARC_CIRCULAR'              ],    // CircularArc
+    ARC_CIRCUMCIRCULAR:       [1603,  'Arc_CircumCircular',       'ARC_CIRCUMCIRCULAR'        ],    // CircumcircularArc
+    ARC_CIRCULARSECTOR:       [1604,  'Arc_CircularSector',       'ARC_CIRCULARSECTOR'        ],    // CircularSector
+    ARC_CIRCUMCIRCULARSECTOR: [1605,  'Arc_CircumCircularSector', 'ARC_CIRCUMCIRCULARSECTOR'  ],   // CircumCircularSector
 
     COMPASS:  [1606,  'Compass',          'COMPASS'                           ],    // ??
 
     // Polygon ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    POLYGON:      [1700,  'Polygon',          'POLYGON'               ],
-    POLYGONR:     [1701,  'PolygonR',         'POLYGONR'              ],    // regular
-    POLYGONRIGID: [1702,  'PolygonRigid',     'POLYGONRIGID'          ],    // Rigid
-    POLYGONV:     [1703,  'PolygonV',         'POLYGONV'              ],    // Vector
+    POLYGON:          [1700,  'Polygon',          'POLYGON'                   ],
+    POLYGON_REGULAR:  [1701,  'PolygonR',         'POLYGONR'                  ],    // regular
+    POLYGON_RIGID:    [1702,  'PolygonRigid',     'POLYGONRIGID'              ],    // Rigid
+    POLYGON_VECTOR:   [1703,  'PolygonV',         'POLYGONV'                  ],    // Vector
 
     // Conics (S) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    CONIC:            [1800,  'Conic',            'CONIC'                 ],
-    CONIC_ELLIPSE:    [1800,  'Ellipse',          'ELLIPSE'               ],
-    CONIC_HYPERBOLA:  [1801,  'Hyperbola',        'HYPERBOLA'             ],
-    CONIC_PARABOLA:   [1802,  'Parabola',         'PARABOLA'              ],
-    CONIC_5VERTICES:  [1803,  'Conic_5Vertices', 'CONIC5VERTICES'        ],
+    CONIC:            [1800,  'Conic',            'CONIC'                     ],
+    CONIC_ELLIPSE:    [1800,  'Ellipse',          'ELLIPSE'                   ],
+    CONIC_HYPERBOLA:  [1801,  'Hyperbola',        'HYPERBOLA'                 ],
+    CONIC_PARABOLA:   [1802,  'Parabola',         'PARABOLA'                  ],
+    CONIC_5VERTICES:  [1803,  'Conic_5Vertices', 'CONIC5VERTICES'             ],
 
     // Angle ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -727,8 +726,8 @@ var zoomfactor=0;
 
   var app={
 
-    width:          document.getElementById("canvas").clientWidth,
-    height:         document.getElementById("canvas").clientHeight,
+    width:          document.getElementById("canvas-container").offsetWidth,
+    height:         document.getElementById("canvas-container").offsetHeight,
 
     debug:          true,
     frameRate:      0,
@@ -2277,6 +2276,9 @@ var factor=1.25;
 
     // println(document.getElementById("fillalpha").value);
 
+    size(document.getElementById("canvas-container").clientWidth,
+        document.getElementById("canvas-container").clientHeight);
+         
     this.stg=app.stg;
 
     var p=this;
@@ -2794,7 +2796,7 @@ var factor=1.25;
               rectMode(CENTER);
 
               stroke(app.crosshairColor);
-              strokeWeight(0.25);
+              strokeWeight(0.5);
 
               if(sz!==0){
 
@@ -2918,13 +2920,10 @@ var factor=1.25;
 
     };
 
+    this.w=document.getElementById("canvas-container").clientWidth;
+    this.h=document.getElementById("canvas-container").clientHeight;
+
     pushMatrix();
-
-      // document.getElementById("canvas").width=document.getElementById("canvas-div").clientWidth;
-      // document.getElementById("canvas").height=document.getElementById("canvas-div").clientHeight;
-
-      // p.w=document.getElementById("canvas").clientWidth;
-      // p.h=document.getElementById("canvas").clientHeight;
 
       translate(p.x+p.w/2,
                 p.y+p.h/2);
@@ -2950,13 +2949,6 @@ var factor=1.25;
       for(var s in this.shapes){ this.shapes[s].draw(p.originX,p.originY); }
 
       drawTemp();
-
-      // if(document.getElementById("gridMenuDisplay").checked){
-        // document.getElementById("gridmenu").style.display="inline";
-      // }
-      // else{
-        // document.getElementById("gridmenu").style.display="none";
-      // }
 
     popMatrix();
 
@@ -2985,14 +2977,6 @@ var factor=1.25;
       }
 
     }
-    noStroke();
-    fill(CLRS.Black);
-
-    // rect(0, 0, p.x,       app.height);
-    // rect(0, 0, app.width, p.y-1);
-//~
-    // rect(p.x+p.w+1, 0,       app.width, app.height);
-    // rect(p.x,     p.y+p.h, app.width, app.height-p.y-p.h);
 
   };
   grid.prototype.clicked=function(){
@@ -3092,7 +3076,7 @@ var factor=1.25;
       for(var s in this.shapes){ this.shapes[s].moved(x,y); }
       for(var c in this.ctrls){ this.ctrls[c].moved(x,y); }
       
-      document.getElementById("coordinates").innerText=app.coordinates;
+      // document.getElementById("coordinates").innerText=app.coordinates;
       
     }
     else{
@@ -3260,6 +3244,7 @@ var factor=1.25;
   var mouseWheel=function(){
     println("scroll");
   }
+
   // Keys ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var keyPressed=function(){
 
@@ -3585,9 +3570,10 @@ var factor=1.25;
 
     var ctrls=[];
 
+// document.getElementById("canvas-container").clientHeight
+
     var cn=new container(
-            new propC(getGUID(), 0, 0, 0, document.getElementById("canvas").clientWidth,
-                                          document.getElementById("canvas").clientHeight, 3, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[0]),
+            new propC(getGUID(), 0, 0, 0, app.width, app.height, 3, ARROW, false, COMMANDS.UNDEF[0], COMMANDS.UNDEF[0]),
             new propL(CLRS.TRANSPARENT, CLRS.TRANSPARENT, CLRS.TRANSPARENT, CLRS.TRANSPARENT, 0, 0),
             new propA(CLRS.GRAY, CLRS.WHITE, LEFT, CENTER, 10, 11));
 
@@ -3834,8 +3820,8 @@ var factor=1.25;
   };
   
   
-  // document.getElementById('points').onclick = function() { clickMe(1); };
-  // document.getElementById('lines').onclick = function()   { clickMe(2); };
+  document.getElementById('points').onclick = function() { clickMe(1); };
+  document.getElementById('lines').onclick = function()   { clickMe(2); };
 
   document.getElementById("line-weight").onchange   = function() {
 
@@ -3868,13 +3854,24 @@ var factor=1.25;
   }
 
 
-  document.getElementById('POINT_DEFAULT').onclick = function()   {
+    // document.getElementById('img-lines').value="LA LA LA LA";
+    // document.getElementById('img-lines').src="assets/images/test.png";
+    
+    // document.getElementById('btn-line0').title="yabba dabba doo";
+    
+    // println(document.getElementById('canvas-container').width);
+    
+    // app.current=COMMANDS.L_2P[0];
+    
+    // document.getElementById('current-command').innerText=app.current=COMMANDS.L_2P[1];
+  
+  document.getElementById('POINT_DEFAULT').onclick = function() {
     
     app.current=COMMANDS.POINT_DEFAULT[0];
     document.getElementById('current-command').innerText=COMMANDS.POINT_DEFAULT[1];
     
   }
-  document.getElementById('POINT_OBJECT').onclick = function()   {
+  document.getElementById('POINT_OBJECT').onclick = function()  {
     
     app.current=COMMANDS.POINT_OBJECT[0];
     document.getElementById('current-command').innerText=COMMANDS.POINT_OBJECT[1];
@@ -3887,125 +3884,254 @@ var factor=1.25;
     
   }
 
-    // document.getElementById('img-lines').value="LA LA LA LA";
-    // document.getElementById('img-lines').src="assets/images/test.png";
-    
-    // document.getElementById('btn-line0').title="yabba dabba doo";
-    
-    // println(document.getElementById('canvas-container').width);
-    
-  //   app.current=COMMANDS.L_2P[0];
-    
-  //   document.getElementById('current-command').innerText=app.current=COMMANDS.L_2P[1];
-
-  document.getElementById('LINE_2POINT').onclick = function()   {
+  document.getElementById('LINE_2POINT').onclick = function()               {
     
     app.current=COMMANDS.LINE_2POINT[0];
     document.getElementById('current-command').innerText=COMMANDS.LINE_2POINT[1];
     
   }
-  document.getElementById('LINE_SEGMENT2POINT').onclick = function()   {
+  document.getElementById('LINE_SEGMENT2POINT').onclick = function()        {
     
     app.current=COMMANDS.LINE_SEGMENT2POINT[0];
     document.getElementById('current-command').innerText=COMMANDS.LINE_SEGMENT2POINT[1];
     
   }
-  document.getElementById('LINE_SEGMENTLENGTH').onclick = function()   {
+  document.getElementById('LINE_SEGMENTLENGTH').onclick = function()        {
     
     app.current=COMMANDS.LINE_SEGMENTLENGTH[0];
     document.getElementById('current-command').innerText=COMMANDS.LINE_SEGMENTLENGTH[1];
     
   }
-  document.getElementById('LINE_PERPENDICULAR').onclick = function()   {
+  document.getElementById('LINE_PERPENDICULAR').onclick = function()        {
     
     app.current=COMMANDS.LINE_PERPENDICULAR[0];
     document.getElementById('current-command').innerText=COMMANDS.LINE_PERPENDICULAR[1];
     
   }
-  document.getElementById('LINE_PERPENDICULARBISECTOR').onclick = function()   {
+  document.getElementById('LINE_PERPENDICULARBISECTOR').onclick = function(){
     
     app.current=COMMANDS.LINE_PERPENDICULARBISECTOR[0];
     document.getElementById('current-command').innerText=COMMANDS.LINE_PERPENDICULARBISECTOR[1];
     
   }
-  document.getElementById('LINE_ANGLEBISECTOR').onclick = function()   {
+  document.getElementById('LINE_ANGLEBISECTOR').onclick = function()        {
     
     app.current=COMMANDS.LINE_ANGLEBISECTOR[0];
     document.getElementById('current-command').innerText=COMMANDS.LINE_ANGLEBISECTOR[1];
     
   }
-  document.getElementById('LINE_PARALLEL').onclick = function()   {
+  document.getElementById('LINE_PARALLEL').onclick = function()             {
     
     app.current=COMMANDS.LINE_PARALLEL[0];
     document.getElementById('current-command').innerText=COMMANDS.LINE_PARALLEL[1];
     
   }
-  document.getElementById('LINE_TANGENT').onclick = function()   {
+  document.getElementById('LINE_TANGENT').onclick = function()              {
     
     app.current=COMMANDS.LINE_TANGENT[0];
     document.getElementById('current-command').innerText=COMMANDS.LINE_TANGENT[1];
     
   }
-  document.getElementById('LINE_DIAMETER').onclick = function()   {
+  document.getElementById('LINE_DIAMETER').onclick = function()             {
     
     app.current=COMMANDS.LINE_DIAMETER[0];
     document.getElementById('current-command').innerText=COMMANDS.LINE_DIAMETER[1];
     
   }
-  document.getElementById('LINE_RADIUS').onclick = function()   {
+  document.getElementById('LINE_RADIUS').onclick = function()               {
     
     app.current=COMMANDS.LINE_RADIUS[0];
     document.getElementById('current-command').innerText=COMMANDS.LINE_RADIUS[1];
     
   }
   
-  document.getElementById('RAY_2POINT').onclick = function()   {
+  document.getElementById('RAY_2POINT').onclick = function()          {
     
     app.current=COMMANDS.RAY_2POINT[0];
     document.getElementById('current-command').innerText=COMMANDS.RAY_2POINT[1];
     
   }
-  document.getElementById('VECTOR_2POINT').onclick = function()   {
+  document.getElementById('VECTOR_2POINT').onclick = function()       {
     
     app.current=COMMANDS.VECTOR_2POINT[0];
     document.getElementById('current-command').innerText=COMMANDS.VECTOR_2POINT[1];
     
   }
-  document.getElementById('VECTOR_FROMPOINT').onclick = function()   {
+  document.getElementById('VECTOR_FROMPOINT').onclick = function()    {
     
     app.current=COMMANDS.VECTOR_FROMPOINT[0];
     document.getElementById('current-command').innerText=COMMANDS.VECTOR_FROMPOINT[1];
     
   }
   
-  document.getElementById('TRIANGLE_EQUILATERAL').onclick = function()   {
+  document.getElementById('TRIANGLE_EQUILATERAL').onclick = function(){
     
     app.current=COMMANDS.TRIANGLE_EQUILATERAL[0];
     document.getElementById('current-command').innerText=COMMANDS.TRIANGLE_EQUILATERAL[1];
     
   }
-  document.getElementById('TRIANGLE_ISOSCELES').onclick = function()   {
+  document.getElementById('TRIANGLE_ISOSCELES').onclick = function()  {
     
     app.current=COMMANDS.TRIANGLE_ISOSCELES[0];
     document.getElementById('current-command').innerText=COMMANDS.TRIANGLE_ISOSCELES[1];
     
   }
-  document.getElementById('TRIANGLE_SCALENE').onclick = function()   {
+  document.getElementById('TRIANGLE_SCALENE').onclick = function()    {
     
     app.current=COMMANDS.TRIANGLE_SCALENE[0];
     document.getElementById('current-command').innerText=COMMANDS.TRIANGLE_SCALENE[1];
     
   }
-  this.scommand=function(c,p){
+  
+  // document.getElementById('CIRCLE_CENTERPOINT').onclick = function()  {
     
-    println(c+":"+p);
+  //   app.current=COMMANDS.CIRCLE_CENTERPOINT[0];
+  //   document.getElementById('current-command').innerText=COMMANDS.CIRCLE_CENTERPOINT[1];
     
-  }
+  // }
+  // document.getElementById('CIRCLE_CENTERRADIUS').onclick = function() {
+    
+  //   app.current=COMMANDS.CIRCLE_CENTERRADIUS[0];
+  //   document.getElementById('current-command').innerText=COMMANDS.CIRCLE_CENTERRADIUS[1];
+    
+  // }
+  // document.getElementById('CIRCLE_3POINT').onclick = function()       {
+    
+  //   app.current=COMMANDS.CIRCLE_3POINT[0];
+  //   document.getElementById('current-command').innerText=COMMANDS.CIRCLE_3POINT[1];
+    
+  // }
+  
+  // document.getElementById('QUAD_RECTANGLE').onclick = function()    {
+    
+  //   app.current=COMMANDS.QUAD_RECTANGLE[0];
+  //   document.getElementById('current-command').innerText=COMMANDS.QUAD_RECTANGLE[1];
+    
+  // }
+  // document.getElementById('QUAD_SQUARE').onclick = function()       {
+    
+  //   app.current=COMMANDS.QUAD_SQUARE[0];
+  //   document.getElementById('current-command').innerText=COMMANDS.QUAD_SQUARE[1];
+    
+  // }
+  // document.getElementById('QUAD_RHOMBUS').onclick = function()      {
+    
+  //   app.current=COMMANDS.QUAD_RHOMBUS[0];
+  //   document.getElementById('current-command').innerText=COMMANDS.QUAD_RHOMBUS[1];
+    
+  // }
+  // document.getElementById('QUAD_PARALLELOGRAM').onclick = function(){
+    
+  //   app.current=COMMANDS.QUAD_PARALLELOGRAM[0];
+  //   document.getElementById('current-command').innerText=COMMANDS.QUAD_PARALLELOGRAM[1];
+    
+  // }
+  // document.getElementById('QUAD_TRAPEZOID').onclick = function()    {
+    
+  //   app.current=COMMANDS.QUAD_TRAPEZOID[0];
+  //   document.getElementById('current-command').innerText=COMMANDS.QUAD_TRAPEZOID[1];
+    
+  // }
+  // document.getElementById('QUAD_KITE').onclick = function()         {
+    
+  //   app.current=COMMANDS.QUAD_KITE[0];
+  //   document.getElementById('current-command').innerText=COMMANDS.QUAD_KITE[1];
+    
+  // }
 
-  var scommand=function(c,p){
+  // document.getElementById('ARC_2VERTICES').onclick = function()             {
     
-    println(c+":"+p);
+  //   app.current=COMMANDS.ARC_2VERTICES[0];
+  //   document.getElementById('current-command').innerText=COMMANDS.ARC_2VERTICES[1];
     
-  }
+  // }
+  // document.getElementById('ARC_CIRCULAR').onclick = function()              {
+    
+  //   app.current=COMMANDS.ARC_CIRCULAR[0];
+  //   document.getElementById('current-command').innerText=COMMANDS.ARC_CIRCULAR[1];
+    
+  // }
+  // document.getElementById('ARC_CIRCUMCIRCULAR').onclick = function()        {
+    
+  //   app.current=COMMANDS.ARC_CIRCUMCIRCULAR[0];
+  //   document.getElementById('current-command').innerText=COMMANDS.ARC_CIRCUMCIRCULAR[1];
+    
+  // }
+  // document.getElementById('ARC_CIRCULARSECTOR').onclick = function()        {
+    
+  //   app.current=COMMANDS.ARC_CIRCULARSECTOR[0];
+  //   document.getElementById('current-command').innerText=COMMANDS.ARC_CIRCULARSECTOR[1];
+    
+  // }
+  // document.getElementById('ARC_CIRCUMCIRCULARSECTOR').onclick = function()  {
+    
+  //   app.current=COMMANDS.ARC_CIRCUMCIRCULARSECTOR[0];
+  //   document.getElementById('current-command').innerText=COMMANDS.ARC_CIRCUMCIRCULARSECTOR[1];
+    
+  // }
+  // document.getElementById('QUAD_KITE').onclick = function()                 {
+    
+  //   app.current=COMMANDS.QUAD_KITE[0];
+  //   document.getElementById('current-command').innerText=COMMANDS.QUAD_KITE[1];
+    
+  // }
+
+  // document.getElementById('POLYGON_REGULAR').onclick = function()   {
+    
+  //   app.current=COMMANDS.POLYGON_REGULAR[0];
+  //   document.getElementById('current-command').innerText=COMMANDS.POLYGON_REGULAR[1];
+    
+  // }
+  // document.getElementById('POLYGON_RIGID').onclick = function()     {
+    
+  //   app.current=COMMANDS.POLYGON_RIGID[0];
+  //   document.getElementById('current-command').innerText=COMMANDS.POLYGON_RIGID[1];
+    
+  // }
+  // document.getElementById('POLYGON_VECTOR').onclick = function()    {
+    
+  //   app.current=COMMANDS.POLYGON_VECTOR[0];
+  //   document.getElementById('current-command').innerText=COMMANDS.POLYGON_VECTOR[1];
+    
+  // }
+  
+  // document.getElementById('CONIC_ELLIPSE').onclick = function()     {
+    
+  //   app.current=COMMANDS.CONIC_ELLIPSE[0];
+  //   document.getElementById('current-command').innerText=COMMANDS.CONIC_ELLIPSE[1];
+    
+  // }
+  // document.getElementById('CONIC_HYPERBOLA').onclick = function()   {
+    
+  //   app.current=COMMANDS.CONIC_HYPERBOLA[0];
+  //   document.getElementById('current-command').innerText=COMMANDS.CONIC_HYPERBOLA[1];
+    
+  // }
+  // document.getElementById('CONIC_PARABOLA').onclick = function()    {
+    
+  //   app.current=COMMANDS.CONIC_PARABOLA[0];
+  //   document.getElementById('current-command').innerText=COMMANDS.CONIC_PARABOLA[1];
+    
+  // }
+  // document.getElementById('CONIC_5VERTICES').onclick = function()   {
+    
+  //   app.current=COMMANDS.CONIC_5VERTICES[0];
+  //   document.getElementById('current-command').innerText=COMMANDS.CONIC_5VERTICES[1];
+    
+  // }
+    
+  // this.scommand=function(c,p){
+    
+  //   println(c+":"+p);
+    
+  // }
+
+  // var scommand=function(c,p){
+    
+  //   println(c+":"+p);
+    
+  // }
+
+
 
 }};
