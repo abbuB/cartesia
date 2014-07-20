@@ -24,7 +24,7 @@
     -webkit-appearance: none;
     -moz-appearance:    none;
     outline:            none;
-    border:             1px dotted #444;
+    /*border:             1px dotted #444;*/
   }
   /* HTML5 display-role reset for older browsers */
   article, aside, details, figcaption, figure,
@@ -50,21 +50,24 @@
     border-spacing:     0;
   }
 
+  $menuWidth:           200px;
+  $fullWidth:           100%;
+  $fullHeight:          100%;
+  
   /*
     ============================================================================
       Body
     ============================================================================
   */
   body {
-    
+
     font:               400 11px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 
     background:         #262626;
 
-    margin:             0;
-    padding:            0;
-    
     /*overflow:           none;*/
+    
+    background:         none;
     
   }
 
@@ -87,90 +90,100 @@
     ============================================================================
   */
   #header {
-
+    
+    /*display:            table;*/
     position:           fixed;
-    
+
+    width:              100%;
     height:             35px;
-    
-    top:                0;
-    
-    left:               0;
-    right:              0;
-    
+
     background:         -webkit-gradient(linear, left top, left bottom, from(#272727), to(#1a1a1a));
+
+    /*background:         orange;*/
+
+  }
+  #header:hover {
+
+    color:              #008282;
+
+    -webkit-transition: All 0.5s ease;
+    
+    /*border-top:         1px solid #008282;*/
     
   }
   
-  #footer {
-    
-    height:             20px;
-    
-    bottom:             0;
-    
-    left:               0;
-    right:              0;
-
-    background:         -webkit-gradient(linear, left top, left bottom, from(#1a1a1a), to(#272727));
-
-  }
-
   #middle {
   
-    margin:             5px;
-    padding:            0;
-  
-    top:                35px;
-    bottom:             1px;
-    
-    left:               0;
-    right:              0;
-    
-    background:         #000;
+    display:            table-row;
+    position:           fixed;
 
+    margin:             0;
+    padding:            0;
+
+    table-layout:       auto;
+    
+    width:              100%;
+    /*height:             100%;*/
+    
+    top:                35px;
+    bottom:             20px;
+    right:              0;
+    left:               0;
+    
+    background:         blue;
+    /*border:             5px solid green;*/
+    overflow:           auto;
+    
   }
   
   #menu-left {
 
-    display:            inline-block;
+    /*display:            relative;*/
+    position:           absolute;
     
-    height:             100%;
+    left:               0;
+    
     width:              200px;
-
+    height:             100%;
+    
+    /*bottom:             10px;*/
+    /*overflow:           auto;*/
+    
+    background:         #f0f0ff;
+    
     /*vertical-align:     top;*/
-
-    overflow:           auto;
-
+    
   }
 
   #menu-shapes {
-    
-    display:            inline-block;
 
-    /*left:200px;*/
-    height:             100%;
+    position:           absolute;
+    
+    left:               200px;
+    
     width:              34px;
+    height:             100%;
     
-    vertical-align:     top;
+    background:         #111;
     
-    background:         #000;
-
+    /*vertical-align:     top;*/
+    
   }
   #menu-shapes:hover {
     
-    /*background:         blue;*/
+    background:         blue;
 
   }
   
   #menu-right {
 
-    display:            inline-block;
+    position:           absolute;
     
-    float:              right;
-
-    height:             100%;
     width:              200px;
-
-    /*vertical-align:     top;*/
+    
+    right:              0;
+    top:                0;
+    bottom:             0;
 
     background:         #222;
 
@@ -185,47 +198,42 @@
     ============================================================================
   */
   #canvas-container {
-    
-    -webkit-appearance: none;
-    
-    display:            inline-block;
-    position:           relative;
-    
-    margin:             0;
-    padding:            0;
-    
-    outline:            none;
-    
-    width:              700px;
-    height:             100%;
 
-    vertical-align:     top;
-    
-    background:         #00ff00;
+    -webkit-appearance: none;
+
+    display:            inline-block;
+    position:           absolute;
+
+    padding:            0;
+
+    left:               230px;
+    right:              200px;
+    top:                0;
+    bottom:             0;
+
+    outline:            none;
+
+    background:         #00fff0;
 
   }
   
   #canvas {
-
-    -webkit-appearance: none;
-
-    display:            inline-block;
     
-    margin:             0;
-    padding:            0;
-    
+    /*display:            inline-block;*/
+    /*position:           relative;*/
+
     outline:            none;
     
     width:              100%;
     height:             100%;
 
-    /*vertical-align:     top;*/
-    
-    background:         transparent;
+    background:         purple;
 
   }
-  canvas:hover {
-    background:         #111;
+  #canvas:hover {
+    
+    /*border:             1px dotted #fff;*/
+    
   }
 
 
@@ -234,25 +242,24 @@
       ?????
     ============================================================================
   */
-  #menu-left-toggle {
-    
-    position:           fixed;
-    
-    top:                0px;
-    left:               0px;
-
-  }
-  
+  #menu-left-toggle,
   #menu-right-toggle {
-    
+
     position:           fixed;
     
-    top:                0px;
-    right:              0px;
+    width:              35px;
 
   }
-
-  
+  #menu-left-toggle {
+   
+   left:                0;
+   
+  }
+  #menu-right-toggle {
+   
+   right:               0;
+   
+  }
   /*
     ============================================================================
     Logo
@@ -260,23 +267,25 @@
   */
   #logo {
     
-    width:              155px;
+    /*display:            fixed;*/
+    position:           fixed;
     
-    top:                0;
-    left:               0;
+    padding:            0;
 
-    margin:             0 0 0 50px;
-    
-    font-size:          32px;
+    left:               100px;
+
+    font:               400 32px/34px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
     font-weight:        200;
-    letter-spacing:     10px;
-    line-height:        35px;
+    letter-spacing:     20px;
     
     text-transform:     uppercase;
-    
+
     color:              #000;
 
     cursor:             pointer;
+    
+    background:         none;
 
   }
   #logo:hover {
@@ -284,6 +293,8 @@
     color:              #008282;
 
     -webkit-transition: All 0.5s ease;
+    
+    /*border-top:         1px solid #008282;*/
     
   }
 
@@ -366,7 +377,7 @@
     /*width:              30px;*/
     /*height:             30px;*/
     
-    /*background:         #000;*/
+    background:         #000;
     
   }
 
@@ -423,7 +434,12 @@
   /*}*/
 
   button.toggle {
-
+    
+    display:            table-cell;
+    
+    margin:             0;
+    padding:            0;
+    
     outline:            none;
     background:         transparent;
     
@@ -432,6 +448,7 @@
     
     width:              35px;
     height:             35px;
+    
     cursor:             pointer;
 
     color:              #444;
@@ -440,8 +457,6 @@
   button.toggle:hover {
     
     color:              #fff;
-    height:             35px;
-    width:              35px;
     
     box-shadow:         0 1px 2px rgba(0,0,0,.5);
     
@@ -494,7 +509,7 @@
   div.display {
 
     display:          inline-block;
-    position:         absolute;
+    position:         relative;
 
     left:             5px;
     bottom:           5px;
@@ -505,10 +520,10 @@
 
   }
   
-    div.grid-display {
+  div.grid-display {
 
-    display:          inline-block;
-    position:         absolute;
+    /*display:          inline-block;*/
+    /*position:         relative;*/
 
     left:             150px;
     bottom:           5px;
@@ -523,28 +538,29 @@
   .col-2,
   .col-3,
   .col-4,
-  .col-5 {
+  .col-5.
+  .col-6 {
 
-    display:            inline-block;
-
+    /*display:            inline;*/
+    /*position:           relative;*/
+    
     margin:             0;
     padding:            0;
     
-    width:              65px;
-    height:             18px;
-    line-height:        20px;
+    width:              40%;
+    height:             20px;
+    
+    line-height:        16px;
 
   }
   
   .col-1 {
 
-    width:              50%;
     float:              left;
     
   }
   .col-2 {
 
-    width:              50%;
     float:              right;
     
   }
@@ -557,7 +573,6 @@
   }
   .col-4 {
 
-    width:              50%;
     float:              right;
 
   }
@@ -569,7 +584,6 @@
   }
   .col-6 {
 
-    width:              50%;
     float:              right;
 
   }
@@ -597,8 +611,8 @@
   div.property {
   
     /*display:            inline-block;*/
-    background:         orange;
-    height:             16px;
+    background:         green;
+    height:             18px;
   }
   
   /*
@@ -608,7 +622,7 @@
   */
   label.property {
     
-    /*display:            absolute;*/
+    display:            absolute;
     /*position:            relative;*/
     
     font:               400 11px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -618,11 +632,14 @@
 
     /*text-align:         center;*/
 
+    /*background:         yellow;*/
+    
   }
 
   #coordinates {
-
-    position:           absolute;
+    
+    /*display:            inline-block;*/
+    /*position:           relative;*/
     
     bottom:             10px;
     right:              10px;
@@ -637,7 +654,7 @@
 
   #current-command {
 
-    position:           absolute;
+    /*position:           relative;*/
       
     padding:            1px 5px;
     
@@ -746,5 +763,23 @@
     background:         -webkit-gradient(linear, left top, left bottom, from(#f7f7f7), to(#ababab));
     
     color:              #000;
+    
+  }
+  
+  div.item {
+    
+    /*display:            absolute;*/
+    
+    /*padding:            12px;*/
+    
+    border:             1px solid transparent;
+    
+  }
+  
+  div.item:hover {
+    
+    background:         #666;
+    
+    border:             1px solid #333;
     
   }
