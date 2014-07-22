@@ -627,37 +627,37 @@ var zoomfactor=0;
     LINE_SEGMENT2POINT:         [1102,  'Line_Segment2Point',         'LINE_SEGMENT2POINT'          ],    // between 2 vertices
     LINE_SEGMENTLENGTH:         [1103,  'Line_SegmentLength',         'LINE_SEGMENTLENGTH'          ],    // from point given length
     LINE_PERPENDICULAR:         [1104,  'Line_Perpendicular',         'LINE_PERPENDICULAR'          ],    // perpendicular
-    LINE_PERPENDICULARBISECTOR: [1105,  'Line_PerpendicularBisector', 'LINE_PERPENDICULARBISECTOR' ],    //  perpendicular bisector
+    LINE_PERPENDICULARBISECTOR: [1105,  'Line_PerpendicularBisector', 'LINE_PERPENDICULARBISECTOR'  ],    //  perpendicular bisector
     LINE_ANGLEBISECTOR:         [1106,  'Line_AngleBisector',         'LINE_ANGLEBISECTOR'          ],    // angle bisector
     LINE_PARALLEL:              [1107,  'Line_Parallel',              'LINE_PARALLEL'               ],    // parallel
     LINE_TANGENT:               [1108,  'Line_Tangent',               'LINE_TANGENT'                ],    // Tangent
     LINE_DIAMETER:              [1109,  'Line_Diameter',              'LINE_DIAMETER'               ],    // Diameter
     LINE_RADIUS:                [1110,  'Line_Radius',                'LINE_RADIUS'                 ],    // Radius
 
-    RAY_2POINT:       [1211,  'Ray_2Point',       'RAY_2POINT'                ],    // Ray between 2 vertices
-    VECTOR_2POINT:    [1212,  'Vector_2Point',    'VECTOR_2POINT'             ],    // Vector between 2 vertices
-    VECTOR_FROMPOINT: [1213,  'Vector_FromPoint', 'VECTOR_FROMPOINT'          ],    // Vector from point
+    RAY_2POINT:       [1201,  'Ray_2Point',       'RAY_2POINT'                ],    // Ray between 2 vertices
+    VECTOR_2POINT:    [1202,  'Vector_2Point',    'VECTOR_2POINT'             ],    // Vector between 2 vertices
+    VECTOR_FROMPOINT: [1203,  'Vector_FromPoint', 'VECTOR_FROMPOINT'          ],    // Vector from point
 
     // Triangle (T)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    TRIANGLE:             [1300,  'Triangle',             'TRIANGLE'          ],
-    TRIANGLE_EQUILATERAL: [1301,  'Triangle_Equilateral', 'TRIANGLE_EQUILATERAL'],
-    TRIANGLE_ISOSCELES:   [1302,  'Triangle_Isosceles',   'TRIANGLE_ISOSCELES'],
-    TRIANGLE_SCALENE:     [1303,  'Triangle_Scalene',     'TRIANGLE_SCALENE'  ],
+    TRIANGLE:             [1300,  'Triangle',             'TRIANGLE'              ],
+    TRIANGLE_EQUILATERAL: [1301,  'Triangle_Equilateral', 'TRIANGLE_EQUILATERAL'  ],
+    TRIANGLE_ISOSCELES:   [1302,  'Triangle_Isosceles',   'TRIANGLE_ISOSCELES'    ],
+    TRIANGLE_SCALENE:     [1303,  'Triangle_Scalene',     'TRIANGLE_SCALENE'      ],
 
     // Circle (C)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    CIRCLE:               [1400,  'Circle',               'CIRCLE'            ],
-    CIRCLE_CENTERPOINT:   [1401,  'Circle_CenterPoint',   'CIRCLE_CENTERPOINT'],    // center point
-    CIRCLE_CENTERRADIUS:  [1402,  'Circle_CenterRadius',  'CIRCLE_CENTERRADIUS'],    // center radius
-    CIRCLE_3POINT:        [1403,  'Circle_3Point',        'CIRCLE_3POINT'     ],    //  3 vertices
+    CIRCLE:               [1400,  'Circle',               'CIRCLE'              ],
+    CIRCLE_CENTERPOINT:   [1401,  'Circle_CenterPoint',   'CIRCLE_CENTERPOINT'  ],    // center point
+    CIRCLE_CENTERRADIUS:  [1402,  'Circle_CenterRadius',  'CIRCLE_CENTERRADIUS' ],    // center radius
+    CIRCLE_3POINT:        [1403,  'Circle_3Point',        'CIRCLE_3POINT'       ],    //  3 vertices
 
     // Quadrilateral (Q)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    QUAD:               [1500,  'Quadrilateral',    'QUADRILATERAL'           ],
-    QUAD_RECTANGLE:     [1501,  'Rectangle',        'RECTANGLE'               ],
-    QUAD_SQUARE:        [1502,  'Square',           'SQUARE'                  ],
-    QUAD_RHOMBUS:       [1503,  'Rhombus',          'RHOMBUS'                 ],
-    QUAD_PARALLELOGRAM: [1504,  'Parallelogram',    'PARALLELOGRAM'           ],    // Q_PARALLELOGRAM
-    QUAD_TRAPEZOID:     [1505,  'Trapezoid',        'TRAPEZOID'               ],
-    QUAD_KITE:          [1506,  'Kite',             'KITE'                    ],
+    QUAD:                 [1500,  'Quadrilateral',    'QUADRILATERAL'           ],
+    QUAD_RECTANGLE:       [1501,  'Rectangle',        'RECTANGLE'               ],
+    QUAD_SQUARE:          [1502,  'Square',           'SQUARE'                  ],
+    QUAD_RHOMBUS:         [1503,  'Rhombus',          'RHOMBUS'                 ],
+    QUAD_PARALLELOGRAM:   [1504,  'Parallelogram',    'PARALLELOGRAM'           ],    // Q_PARALLELOGRAM
+    QUAD_TRAPEZOID:       [1505,  'Trapezoid',        'TRAPEZOID'               ],
+    QUAD_KITE:            [1506,  'Kite',             'KITE'                    ],
 
     // Arc (A)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ARC:                      [1600,  'Arc',                      'ARC'                       ],
@@ -2276,9 +2276,13 @@ var factor=1.25;
 
     // println(document.getElementById("fillalpha").value);
 
-    size(document.getElementById("canvas-container").clientWidth,
-        document.getElementById("canvas-container").clientHeight);
-         
+    this.w=document.getElementById("canvas-container").offsetWidth;
+    this.h=document.getElementById("canvas-container").offsetHeight;
+    
+    // println(2*document.getElementById("canvas-container").offsetWidth);
+    
+    size(this.w, this.h);
+
     this.stg=app.stg;
 
     var p=this;
@@ -2920,9 +2924,6 @@ var factor=1.25;
 
     };
 
-    this.w=document.getElementById("canvas-container").clientWidth;
-    this.h=document.getElementById("canvas-container").clientHeight;
-
     pushMatrix();
 
       translate(p.x+p.w/2,
@@ -3159,11 +3160,17 @@ var factor=1.25;
 
     // text(modelX(app.mouseX,app.mouseY,0), 100, 400);
 
+    app.currentCommand=currentCommand;
+    
+    // println(currentCommand);
+    
+    document.getElementById('current-command').innerText=currentCommand;
+    
   };
 
   // translate(0.5,0.5);
 
-  var draw=function(){ process(); };
+  // var draw=function(){ process(); };
 
   // Events ===========================================================
 
@@ -3646,8 +3653,8 @@ var factor=1.25;
     document.getElementById("labelsy").checked    =app.labelsY;
     
     document.getElementById("quadrants").checked  =app.quadrants;
-    
-    app.crosshairColor=document.getElementById("crosshair-color").value;
+
+    app.crosshairColor=hexToRGBA(document.getElementById("crosshair-color").value);
     app.crosshairSize=document.getElementById("crosshair-size").value;
     
     // document.getElementById("canvas").style.width=
@@ -3701,13 +3708,13 @@ var factor=1.25;
     
     if(p===1){
       // println(1);
-      document.getElementById('menu').style.border="1px solid red";
+      // document.getElementById('menu').style.border="1px solid red";
       // document.getElementById("origin").checked=true;
       app.origin=false;
     }
     else{
       // println(2);
-      document.getElementById('menu').style.border="1px solid transparent";
+      // document.getElementById('menu').style.border="1px solid transparent";
       // document.getElementById("origin").checked=false;
       app.origin=true;
     }
@@ -3813,8 +3820,7 @@ var factor=1.25;
   document.getElementById("crosshair-color").onchange = function() {
     app.crosshairColor=hexToRGBA(document.getElementById("crosshair-color").value);
   };
-  
-  
+    
   document.getElementById("crosshair-size").onchange = function() {
     app.crosshairSize=document.getElementById("crosshair-size").value;
   };
@@ -3852,286 +3858,5 @@ var factor=1.25;
     app.fillA=document.getElementById("fill-alpha").value;
     // println(app.fillA);
   }
-
-
-    // document.getElementById('img-lines').value="LA LA LA LA";
-    // document.getElementById('img-lines').src="assets/images/test.png";
-    
-    // document.getElementById('btn-line0').title="yabba dabba doo";
-    
-    // println(document.getElementById('canvas-container').width);
-    
-    // app.current=COMMANDS.L_2P[0];
-    
-    // document.getElementById('current-command').innerText=app.current=COMMANDS.L_2P[1];
-  
-  document.getElementById('POINT_DEFAULT').onclick = function() {
-    
-    app.current=COMMANDS.POINT_DEFAULT[0];
-    document.getElementById('current-command').innerText=COMMANDS.POINT_DEFAULT[1];
-    
-  }
-  document.getElementById('POINT_OBJECT').onclick = function()  {
-    
-    app.current=COMMANDS.POINT_OBJECT[0];
-    document.getElementById('current-command').innerText=COMMANDS.POINT_OBJECT[1];
-    
-  }
-  document.getElementById('POINT_BOUND').onclick = function()   {
-    
-    app.current=COMMANDS.POINT_BOUND[0];
-    document.getElementById('current-command').innerText=COMMANDS.POINT_BOUND[1];
-    
-  }
-
-  document.getElementById('LINE_2POINT').onclick = function()               {
-    
-    app.current=COMMANDS.LINE_2POINT[0];
-    document.getElementById('current-command').innerText=COMMANDS.LINE_2POINT[1];
-    
-  }
-  document.getElementById('LINE_SEGMENT2POINT').onclick = function()        {
-    
-    app.current=COMMANDS.LINE_SEGMENT2POINT[0];
-    document.getElementById('current-command').innerText=COMMANDS.LINE_SEGMENT2POINT[1];
-    
-  }
-  document.getElementById('LINE_SEGMENTLENGTH').onclick = function()        {
-    
-    app.current=COMMANDS.LINE_SEGMENTLENGTH[0];
-    document.getElementById('current-command').innerText=COMMANDS.LINE_SEGMENTLENGTH[1];
-    
-  }
-  document.getElementById('LINE_PERPENDICULAR').onclick = function()        {
-    
-    app.current=COMMANDS.LINE_PERPENDICULAR[0];
-    document.getElementById('current-command').innerText=COMMANDS.LINE_PERPENDICULAR[1];
-    
-  }
-  document.getElementById('LINE_PERPENDICULARBISECTOR').onclick = function(){
-    
-    app.current=COMMANDS.LINE_PERPENDICULARBISECTOR[0];
-    document.getElementById('current-command').innerText=COMMANDS.LINE_PERPENDICULARBISECTOR[1];
-    
-  }
-  document.getElementById('LINE_ANGLEBISECTOR').onclick = function()        {
-    
-    app.current=COMMANDS.LINE_ANGLEBISECTOR[0];
-    document.getElementById('current-command').innerText=COMMANDS.LINE_ANGLEBISECTOR[1];
-    
-  }
-  document.getElementById('LINE_PARALLEL').onclick = function()             {
-    
-    app.current=COMMANDS.LINE_PARALLEL[0];
-    document.getElementById('current-command').innerText=COMMANDS.LINE_PARALLEL[1];
-    
-  }
-  document.getElementById('LINE_TANGENT').onclick = function()              {
-    
-    app.current=COMMANDS.LINE_TANGENT[0];
-    document.getElementById('current-command').innerText=COMMANDS.LINE_TANGENT[1];
-    
-  }
-  document.getElementById('LINE_DIAMETER').onclick = function()             {
-    
-    app.current=COMMANDS.LINE_DIAMETER[0];
-    document.getElementById('current-command').innerText=COMMANDS.LINE_DIAMETER[1];
-    
-  }
-  document.getElementById('LINE_RADIUS').onclick = function()               {
-    
-    app.current=COMMANDS.LINE_RADIUS[0];
-    document.getElementById('current-command').innerText=COMMANDS.LINE_RADIUS[1];
-    
-  }
-  
-  document.getElementById('RAY_2POINT').onclick = function()          {
-    
-    app.current=COMMANDS.RAY_2POINT[0];
-    document.getElementById('current-command').innerText=COMMANDS.RAY_2POINT[1];
-    
-  }
-  document.getElementById('VECTOR_2POINT').onclick = function()       {
-    
-    app.current=COMMANDS.VECTOR_2POINT[0];
-    document.getElementById('current-command').innerText=COMMANDS.VECTOR_2POINT[1];
-    
-  }
-  document.getElementById('VECTOR_FROMPOINT').onclick = function()    {
-    
-    app.current=COMMANDS.VECTOR_FROMPOINT[0];
-    document.getElementById('current-command').innerText=COMMANDS.VECTOR_FROMPOINT[1];
-    
-  }
-  
-  document.getElementById('TRIANGLE_EQUILATERAL').onclick = function(){
-    
-    app.current=COMMANDS.TRIANGLE_EQUILATERAL[0];
-    document.getElementById('current-command').innerText=COMMANDS.TRIANGLE_EQUILATERAL[1];
-    
-  }
-  document.getElementById('TRIANGLE_ISOSCELES').onclick = function()  {
-    
-    app.current=COMMANDS.TRIANGLE_ISOSCELES[0];
-    document.getElementById('current-command').innerText=COMMANDS.TRIANGLE_ISOSCELES[1];
-    
-  }
-  document.getElementById('TRIANGLE_SCALENE').onclick = function()    {
-    
-    app.current=COMMANDS.TRIANGLE_SCALENE[0];
-    document.getElementById('current-command').innerText=COMMANDS.TRIANGLE_SCALENE[1];
-    
-  }
-  
-  // document.getElementById('CIRCLE_CENTERPOINT').onclick = function()  {
-    
-  //   app.current=COMMANDS.CIRCLE_CENTERPOINT[0];
-  //   document.getElementById('current-command').innerText=COMMANDS.CIRCLE_CENTERPOINT[1];
-    
-  // }
-  // document.getElementById('CIRCLE_CENTERRADIUS').onclick = function() {
-    
-  //   app.current=COMMANDS.CIRCLE_CENTERRADIUS[0];
-  //   document.getElementById('current-command').innerText=COMMANDS.CIRCLE_CENTERRADIUS[1];
-    
-  // }
-  // document.getElementById('CIRCLE_3POINT').onclick = function()       {
-    
-  //   app.current=COMMANDS.CIRCLE_3POINT[0];
-  //   document.getElementById('current-command').innerText=COMMANDS.CIRCLE_3POINT[1];
-    
-  // }
-  
-  // document.getElementById('QUAD_RECTANGLE').onclick = function()    {
-    
-  //   app.current=COMMANDS.QUAD_RECTANGLE[0];
-  //   document.getElementById('current-command').innerText=COMMANDS.QUAD_RECTANGLE[1];
-    
-  // }
-  // document.getElementById('QUAD_SQUARE').onclick = function()       {
-    
-  //   app.current=COMMANDS.QUAD_SQUARE[0];
-  //   document.getElementById('current-command').innerText=COMMANDS.QUAD_SQUARE[1];
-    
-  // }
-  // document.getElementById('QUAD_RHOMBUS').onclick = function()      {
-    
-  //   app.current=COMMANDS.QUAD_RHOMBUS[0];
-  //   document.getElementById('current-command').innerText=COMMANDS.QUAD_RHOMBUS[1];
-    
-  // }
-  // document.getElementById('QUAD_PARALLELOGRAM').onclick = function(){
-    
-  //   app.current=COMMANDS.QUAD_PARALLELOGRAM[0];
-  //   document.getElementById('current-command').innerText=COMMANDS.QUAD_PARALLELOGRAM[1];
-    
-  // }
-  // document.getElementById('QUAD_TRAPEZOID').onclick = function()    {
-    
-  //   app.current=COMMANDS.QUAD_TRAPEZOID[0];
-  //   document.getElementById('current-command').innerText=COMMANDS.QUAD_TRAPEZOID[1];
-    
-  // }
-  // document.getElementById('QUAD_KITE').onclick = function()         {
-    
-  //   app.current=COMMANDS.QUAD_KITE[0];
-  //   document.getElementById('current-command').innerText=COMMANDS.QUAD_KITE[1];
-    
-  // }
-
-  // document.getElementById('ARC_2VERTICES').onclick = function()             {
-    
-  //   app.current=COMMANDS.ARC_2VERTICES[0];
-  //   document.getElementById('current-command').innerText=COMMANDS.ARC_2VERTICES[1];
-    
-  // }
-  // document.getElementById('ARC_CIRCULAR').onclick = function()              {
-    
-  //   app.current=COMMANDS.ARC_CIRCULAR[0];
-  //   document.getElementById('current-command').innerText=COMMANDS.ARC_CIRCULAR[1];
-    
-  // }
-  // document.getElementById('ARC_CIRCUMCIRCULAR').onclick = function()        {
-    
-  //   app.current=COMMANDS.ARC_CIRCUMCIRCULAR[0];
-  //   document.getElementById('current-command').innerText=COMMANDS.ARC_CIRCUMCIRCULAR[1];
-    
-  // }
-  // document.getElementById('ARC_CIRCULARSECTOR').onclick = function()        {
-    
-  //   app.current=COMMANDS.ARC_CIRCULARSECTOR[0];
-  //   document.getElementById('current-command').innerText=COMMANDS.ARC_CIRCULARSECTOR[1];
-    
-  // }
-  // document.getElementById('ARC_CIRCUMCIRCULARSECTOR').onclick = function()  {
-    
-  //   app.current=COMMANDS.ARC_CIRCUMCIRCULARSECTOR[0];
-  //   document.getElementById('current-command').innerText=COMMANDS.ARC_CIRCUMCIRCULARSECTOR[1];
-    
-  // }
-  // document.getElementById('QUAD_KITE').onclick = function()                 {
-    
-  //   app.current=COMMANDS.QUAD_KITE[0];
-  //   document.getElementById('current-command').innerText=COMMANDS.QUAD_KITE[1];
-    
-  // }
-
-  // document.getElementById('POLYGON_REGULAR').onclick = function()   {
-    
-  //   app.current=COMMANDS.POLYGON_REGULAR[0];
-  //   document.getElementById('current-command').innerText=COMMANDS.POLYGON_REGULAR[1];
-    
-  // }
-  // document.getElementById('POLYGON_RIGID').onclick = function()     {
-    
-  //   app.current=COMMANDS.POLYGON_RIGID[0];
-  //   document.getElementById('current-command').innerText=COMMANDS.POLYGON_RIGID[1];
-    
-  // }
-  // document.getElementById('POLYGON_VECTOR').onclick = function()    {
-    
-  //   app.current=COMMANDS.POLYGON_VECTOR[0];
-  //   document.getElementById('current-command').innerText=COMMANDS.POLYGON_VECTOR[1];
-    
-  // }
-  
-  // document.getElementById('CONIC_ELLIPSE').onclick = function()     {
-    
-  //   app.current=COMMANDS.CONIC_ELLIPSE[0];
-  //   document.getElementById('current-command').innerText=COMMANDS.CONIC_ELLIPSE[1];
-    
-  // }
-  // document.getElementById('CONIC_HYPERBOLA').onclick = function()   {
-    
-  //   app.current=COMMANDS.CONIC_HYPERBOLA[0];
-  //   document.getElementById('current-command').innerText=COMMANDS.CONIC_HYPERBOLA[1];
-    
-  // }
-  // document.getElementById('CONIC_PARABOLA').onclick = function()    {
-    
-  //   app.current=COMMANDS.CONIC_PARABOLA[0];
-  //   document.getElementById('current-command').innerText=COMMANDS.CONIC_PARABOLA[1];
-    
-  // }
-  // document.getElementById('CONIC_5VERTICES').onclick = function()   {
-    
-  //   app.current=COMMANDS.CONIC_5VERTICES[0];
-  //   document.getElementById('current-command').innerText=COMMANDS.CONIC_5VERTICES[1];
-    
-  // }
-    
-  // this.scommand=function(c,p){
-    
-  //   println(c+":"+p);
-    
-  // }
-
-  // var scommand=function(c,p){
-    
-  //   println(c+":"+p);
-    
-  // }
-
-
 
 }};
