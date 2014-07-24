@@ -1,3 +1,8 @@
+  /*
+    ============================================================================
+      drawing.js
+    ============================================================================
+  */
 /* @pjs globalKeyEvents="true"; */
 var proc = function(processingInstance){ with (processingInstance){
 
@@ -3077,7 +3082,7 @@ var factor=1.25;
       for(var s in this.shapes){ this.shapes[s].moved(x,y); }
       for(var c in this.ctrls){ this.ctrls[c].moved(x,y); }
       
-      // document.getElementById("coordinates").innerText=app.coordinates;
+      document.getElementById("coordinates").innerText=app.coordinates;
       
     }
     else{
@@ -3144,6 +3149,250 @@ var factor=1.25;
 
   var n=100;
 
+  setCurrentCommand=function(){
+
+    app.currentCommand=currentCommand;
+
+    document.getElementById('current-command').innerText=app.currentCommand;
+
+    var src;
+    var title;
+
+    switch(app.currentCommand){
+
+      // Points ----------------------------------------------------------------
+      case COMMANDS.POINT_DEFAULT[0]:       src="assets/images/POINT_DEFAULT.svg";
+                                            title="default";
+                                            break;
+        
+      case COMMANDS.POINT_OBJECT[0]:        src="assets/images/POINT_OBJECT.svg";
+                                            title="object";
+                                            break;
+        
+      case COMMANDS.POINT_BOUND[0]:         src="assets/images/POINT_BOUND.svg";
+                                            title="bound";
+                                            break;
+
+      // Lines -----------------------------------------------------------------
+      case COMMANDS.LINE[0]:                src="assets/images/POINT_DEFAULT.svg";
+                                            title="default";
+                                            break;
+        
+      case COMMANDS.LINE_2POINT[0]:         src="assets/images/POINT_DEFAULT.svg";
+                                            title="default";
+                                            break;
+        
+      case COMMANDS.LINE_SEGMENT2POINT[0]:  src="assets/images/POINT_DEFAULT.svg";
+                                            title="default";
+                                            break;
+        
+      case COMMANDS.LINE_SEGMENTLENGTH[0]:  src="assets/images/POINT_DEFAULT.svg";
+                                            title="default";
+                                            break;
+        
+      case COMMANDS.LINE_PERPENDICULAR[0]:  src="assets/images/POINT_DEFAULT.svg";
+                                            title="default";
+                                            break;
+        
+      case COMMANDS.LINE_PERPENDICULARBISECTOR[0]:  src="assets/images/POINT_DEFAULT.svg";
+                                                    title="default";
+                                                    break;
+        
+      case COMMANDS.LINE_ANGLEBISECTOR[0]:  src="assets/images/POINT_DEFAULT.svg";
+                                            title="default";
+                                            break;
+        
+      case COMMANDS.LINE_PARALLEL[0]:       src="assets/images/POINT_DEFAULT.svg";
+                                            title="default";
+                                            break;
+        
+      case COMMANDS.LINE_TANGENT[0]:        src="assets/images/POINT_DEFAULT.svg";
+                                            title="default";
+                                            break;
+        
+      case COMMANDS.LINE_DIAMETER[0]:       src="assets/images/POINT_DEFAULT.svg";
+                                            title="default";
+                                            break;
+        
+      case COMMANDS.LINE_RADIUS[0]:         src="assets/images/POINT_DEFAULT.svg";
+                                            title="default";
+                                            break;
+        
+      // Ray/Vector ------------------------------------------------------------
+      case COMMANDS.RAY_2POINT[0]:          src="assets/images/POINT_DEFAULT.svg";
+                                            title="default";
+                                            break;
+                                            
+      case COMMANDS.VECTOR_2POINT[0]:       src="assets/images/POINT_DEFAULT.svg";
+                                            title="default";
+                                            break;
+                                            
+      case COMMANDS.VECTOR_FROMPOINT[0]:    src="assets/images/POINT_DEFAULT.svg";
+                                            title="default";
+                                            break;
+
+      // Triangles -------------------------------------------------------------
+      case COMMANDS.TRIANGLE[0]:            src="assets/images/POINT_DEFAULT.svg";
+                                            title="default";
+                                            break;
+                                      
+      case COMMANDS.TRIANGLE_EQUILATERAL[0]:src="assets/images/POINT_DEFAULT.svg";
+                                            title="default";
+                                            break;
+                                      
+      case COMMANDS.TRIANGLE_ISOSCELES[0]:  src="assets/images/POINT_DEFAULT.svg";
+                                            title="default";
+                                            break;
+        
+      case COMMANDS.TRIANGLE_SCALENE[0]:    src="assets/images/POINT_DEFAULT.svg";
+                                            title="default";
+                                            break;
+                                      
+      // Circles ---------------------------------------------------------------
+      case COMMANDS.CIRCLE[0]:              src="assets/images/POINT_DEFAULT.svg";
+                                            title="default";
+                                            break;
+                                            
+      case COMMANDS.CIRCLE_CENTERPOINT[0]:  src="assets/images/POINT_DEFAULT.svg";
+                                            title="default";
+                                            break;
+                                            
+      case COMMANDS.CIRCLE_CENTERRADIUS[0]: src="assets/images/POINT_DEFAULT.svg";
+                                            title="default";
+                                            break;
+                                            
+      case COMMANDS.CIRCLE_3POINT[0]:       src="assets/images/POINT_DEFAULT.svg";
+                                            title="default";
+                                            break;
+
+      // Quads -----------------------------------------------------------------
+      case COMMANDS.QUAD[0]:                src="assets/images/POINT_DEFAULT.svg";
+                                            title="default";
+                                            break;
+                                            
+      case COMMANDS.QUAD_RECTANGLE[0]:      src="assets/images/POINT_DEFAULT.svg";
+                                            title="default";
+                                            break;
+                                            
+      case COMMANDS.QUAD_SQUARE[0]:         src="assets/images/POINT_DEFAULT.svg";
+                                            title="default";
+                                            break;
+                                            
+      case COMMANDS.QUAD_RHOMBUS[0]:        src="assets/images/POINT_DEFAULT.svg";
+                                            title="default";
+                                            break;
+                                            
+      case COMMANDS.QUAD_PARALLELOGRAM[0]:  src="assets/images/POINT_DEFAULT.svg";
+                                            title="default";
+                                            break;
+                                            
+      case COMMANDS.QUAD_TRAPEZOID[0]:      src="assets/images/POINT_DEFAULT.svg";
+                                            title="default";
+                                            break;
+      case COMMANDS.QUAD_KITE[0]:           src="assets/images/POINT_DEFAULT.svg";
+                                            title="default";
+                                            break;
+
+      // Arcs ------------------------------------------------------------------
+      case COMMANDS.ARC[0]:                 src="assets/images/POINT_DEFAULT.svg";
+                                            title="default";
+                                            break;
+                                            
+      case COMMANDS.ARC_2VERTICES[0]:       src="assets/images/POINT_DEFAULT.svg";
+                                            title="default";
+                                            break;
+                                            
+      case COMMANDS.ARC_CIRCULAR[0]:        src="assets/images/POINT_DEFAULT.svg";
+                                            title="default";
+                                            break;
+                                            
+      case COMMANDS.ARC_CIRCUMCIRCULAR[0]:  src="assets/images/POINT_DEFAULT.svg";
+                                            title="default";
+                                            break;
+                                            
+      case COMMANDS.ARC_CIRCULARSECTOR[0]:  src="assets/images/POINT_DEFAULT.svg";
+                                            title="default";
+                                            break;
+      case COMMANDS.ARC_CIRCUMCIRCULARSECTOR[0]:  src="assets/images/POINT_DEFAULT.svg";
+                                                  title="default";
+                                                  break;
+
+      // Misc ------------------------------------------------------------------
+      case COMMANDS.COMPASS[0]:             src="assets/images/POINT_DEFAULT.svg";
+                                            title="default";
+                                            break;
+
+      // Polygons --------------------------------------------------------------
+      case COMMANDS.POLYGON[0]:           src="assets/images/POINT_DEFAULT.svg";
+                                          title="default";
+                                          break;
+                                          
+      case COMMANDS.POLYGON_REGULAR[0]:   src="assets/images/POINT_DEFAULT.svg";
+                                          title="default";
+                                          break;
+                                          
+      case COMMANDS.POLYGON_RIGID[0]:     src="assets/images/POINT_DEFAULT.svg";
+                                          title="default";
+                                          break;
+                                          
+      case COMMANDS.POLYGON_VECTOR[0]:    src="assets/images/POINT_DEFAULT.svg";
+                                          title="default";
+                                          break;
+
+      // Conics ----------------------------------------------------------------
+      case COMMANDS.CONIC[0]:             src="assets/images/POINT_DEFAULT.svg";
+                                          title="default";
+                                          break;
+                                          
+      case COMMANDS.CONIC_ELLIPSE[0]:     src="assets/images/POINT_DEFAULT.svg";
+                                          title="default";
+                                          break;
+                                          
+      case COMMANDS.CONIC_HYPERBOLA[0]:   src="assets/images/POINT_DEFAULT.svg";
+                                          title="default";
+                                          break;
+                                          
+      case COMMANDS.CONIC_PARABOLA[0]:    src="assets/images/POINT_DEFAULT.svg";
+                                          title="default";
+                                          break;
+                                          
+      case COMMANDS.CONIC_5VERTICES[0]:   src="assets/images/POINT_DEFAULT.svg";
+                                          title="default";
+                                          break;
+
+      // Angles ----------------------------------------------------------------
+      case COMMANDS.ANGLE[0]:             src="assets/images/POINT_DEFAULT.svg";
+                                          title="default";
+                                          break;
+                                          
+      case COMMANDS.ANGLE_SIZE[0]:        src="assets/images/POINT_DEFAULT.svg";
+                                          title="default";
+                                          break;
+
+      // Annotations -----------------------------------------------------------
+      case COMMANDS.TEXT[0]:              src="assets/images/POINT_DEFAULT.svg";
+                                          title="default";
+                                          break;
+
+      // Images ----------------------------------------------------------------
+      case COMMANDS.IMAGE[0]:             src="assets/images/POINT_DEFAULT.svg";
+                                          title="default";
+                                          break;
+                                          
+      case COMMANDS.SKETCH[0]:            src="assets/images/POINT_DEFAULT.svg";
+                                          title="default";
+                                          break;
+
+      default:
+
+    }
+
+    document.getElementById("img-points").src=src;
+    document.getElementById("img-points").title=title;
+
+
+  };
+  
   var main=function(){
     
     app.command=c;
@@ -3160,17 +3409,17 @@ var factor=1.25;
 
     // text(modelX(app.mouseX,app.mouseY,0), 100, 400);
 
-    app.currentCommand=currentCommand;
+    if(app.currentCommand!==currentCommand){
+      setCurrentCommand();
+    }
     
     // println(currentCommand);
-    
-    document.getElementById('current-command').innerText=currentCommand;
-    
+
   };
 
   // translate(0.5,0.5);
 
-  // var draw=function(){ process(); };
+  var draw=function(){ process(); };
 
   // Events ===========================================================
 
@@ -3203,7 +3452,7 @@ var factor=1.25;
     app.mouseX=mouseX;
     app.mouseY=mouseY;
     for(var c in app.ctrls){ app.ctrls[c].moved(0,0); }
-    process();
+    // process();
   };
   var mouseDragged=function(){
     // app.left=true;
@@ -3572,7 +3821,6 @@ var factor=1.25;
 
   };
 
-
   var addControls=function(){
 
     var ctrls=[];
@@ -3725,104 +3973,112 @@ var factor=1.25;
 
   };
 
+  document.getElementById("origin").onclick     = function() { app.origin=!app.origin;        process();  };
+  
+  document.getElementById("axisx").onclick      = function() { app.axisX=!app.axisX;          process();  };
+  document.getElementById("axisy").onclick      = function() { app.axisY=!app.axisY;          process();  };
+  
+  document.getElementById("linesx").onclick     = function() { app.linesX=!app.linesX;        process();  };
+  document.getElementById("linesy").onclick     = function() { app.linesY=!app.linesY;        process();  };
+  
+  document.getElementById("arrowsx").onclick    = function() { app.arrowsX=!app.arrowsX;      process();  };
+  document.getElementById("arrowsy").onclick    = function() { app.arrowsY=!app.arrowsY;      process();  };
+  
+  document.getElementById("ticksx").onclick     = function() { app.ticksX=!app.ticksX;        process();  };
+  document.getElementById("ticksy").onclick     = function() { app.ticksY=!app.ticksY;        process();  };
+  
+  document.getElementById("labelsx").onclick    = function() { app.labelsX=!app.labelsX;      process();  };
+  document.getElementById("labelsy").onclick    = function() { app.labelsY=!app.labelsY;      process();  };
+  
+  document.getElementById("quadrants").onclick  = function() { app.quadrants=!app.quadrants;  process();  };
 
-
-  
-  
-  document.getElementById("origin").onclick     = function() { app.origin=!app.origin;        };
-  
-  document.getElementById("axisx").onclick      = function() { app.axisX=!app.axisX;          };
-  document.getElementById("axisy").onclick      = function() { app.axisY=!app.axisY;          };
-  
-  document.getElementById("linesx").onclick     = function() { app.linesX=!app.linesX;        };
-  document.getElementById("linesy").onclick     = function() { app.linesY=!app.linesY;        };
-  
-  document.getElementById("arrowsx").onclick    = function() { app.arrowsX=!app.arrowsX;      };
-  document.getElementById("arrowsy").onclick    = function() { app.arrowsY=!app.arrowsY;      };
-  
-  document.getElementById("ticksx").onclick     = function() { app.ticksX=!app.ticksX;        };
-  document.getElementById("ticksy").onclick     = function() { app.ticksY=!app.ticksY;        };
-  
-  document.getElementById("labelsx").onclick    = function() { app.labelsX=!app.labelsX;      };
-  document.getElementById("labelsy").onclick    = function() { app.labelsY=!app.labelsY;      };
-  
-  document.getElementById("quadrants").onclick  = function() { app.quadrants=!app.quadrants;  };
-
-
-  
-
-
-  
   document.getElementById("grid-color").onchange   = function() {
     app.gridColor=hexToRGBA(document.getElementById("grid-color").value);
+    process();
   }
   document.getElementById("grid-alpha").onchange   = function() {
     app.gridAlpha=document.getElementById("grid-alpha").value;
+    process();
   }
   
   document.getElementById("origin-color").onchange   = function() {
     app.originColor=hexToRGBA(document.getElementById("origin-color").value);
+    process();
   }
   
   document.getElementById("origin-color").onchange   = function() {
     app.originColor=hexToRGBA(document.getElementById("origin-color").value);
+    process();
   }
   
   
   document.getElementById("axisx-color").onchange   = function() {
     app.axisXColor=hexToRGBA(document.getElementById("axisx-color").value);
+    process();
   }
   
   document.getElementById("axisy-color").onchange   = function() {
     app.axisYColor=hexToRGBA(document.getElementById("axisy-color").value);
+    process();
   }
   
   
   document.getElementById("linesx-color").onchange   = function() {
     app.linesXColor=hexToRGBA(document.getElementById("linesx-color").value);
+    process();
   }
 
   document.getElementById("linesy-color").onchange   = function() {
     app.linesYColor=hexToRGBA(document.getElementById("linesy-color").value);
+    process();
   }
   
   
   document.getElementById("arrowsx-color").onchange   = function() {
     app.arrowsXColor=hexToRGBA(document.getElementById("arrowsx-color").value);
+    process();
   }
   
   document.getElementById("arrowsy-color").onchange   = function() {
     app.arrowsYColor=hexToRGBA(document.getElementById("arrowsy-color").value);
+    process();
   }
   
   
   document.getElementById("ticksx-color").onchange   = function() {
     app.ticksXColor=hexToRGBA(document.getElementById("ticksx-color").value);
+    process();
   }
 
   document.getElementById("ticksy-color").onchange   = function() {
     app.ticksYColor=hexToRGBA(document.getElementById("ticksy-color").value);
+    process();
   }
   
   
   document.getElementById("labelsy-color").onchange   = function() {
     app.labelsYColor=hexToRGBA(document.getElementById("labelsy-color").value);
+    process();
   }
   
   document.getElementById("labelsx-color").onchange   = function() {
     app.labelsXColor=hexToRGBA(document.getElementById("labelsx-color").value);
+    process();
   }
   
   document.getElementById("quadrants-color").onchange = function() {
     app.quadrantsColor=hexToRGBA(document.getElementById("quadrants-color").value);
+    process();
   };
 
   document.getElementById("crosshair-color").onchange = function() {
     app.crosshairColor=hexToRGBA(document.getElementById("crosshair-color").value);
+    process();
   };
     
   document.getElementById("crosshair-size").onchange = function() {
     app.crosshairSize=document.getElementById("crosshair-size").value;
+    process();
   };
   
   
