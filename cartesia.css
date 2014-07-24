@@ -1,592 +1,737 @@
-  <!--
+  /*
     ============================================================================
-      input.css
+      cartesia.css
     ============================================================================
-  -->
+  */
+  /* http://meyerweb.com/eric/tools/css/reset/
+     v2.0 | 20110126
+     License: none (public domain)
+  */
+  html, body, div, span, applet, object, iframe,
+  h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+  a, abbr, acronym, address, big, cite, code,
+  del, dfn, em, img, ins, kbd, q, s, samp,
+  small, strike, strong, sub, sup, tt, var,
+  b, u, i, center,
+  dl, dt, dd, ol, ul, li,
+  fieldset, form,   input[type="number"], legend,
+  table, caption, tbody, tfoot, thead, tr, th, td,
+  article, aside, canvas, details, embed,
+  figure, figcaption, footer, header, hgroup,
+  menu, nav, output, ruby, section, summary,
+  time, mark, audio, video {
+    margin:             0;
+    padding:            0;
+    border:             0;
+    font-size:          100%;
+    font:               inherit;
+    vertical-align:     baseline;
+    -webkit-appearance: none;
+    -moz-appearance:    none;
+    outline:            none;
+    /*border:             1px dotted #444;*/
+  }
+  /* HTML5 display-role reset for older browsers */
+  article, aside, details, figcaption, figure,
+  footer, header, hgroup, menu, nav, section {
+    /*display:            block;*/
+  }
+  body {
+    line-height:        1;
+  }
+  ol, ul {
+    list-style:         none;
+  }
+  blockquote, q {
+    quotes:             none;
+  }
+  blockquote:before, blockquote:after,
+  q:before, q:after {
+    content:            '';
+    content:            none;
+  }
+  table {
+    border-collapse:    collapse;
+    border-spacing:     0;
+  }
+
+  $menuWidth:           200px;
+  $fullWidth:           100%;
+  $fullHeight:          100%;
   
-  <!DOCTYPE html>
+  /*
+    ============================================================================
+      Body
+    ============================================================================
+  */
+  body {
 
-  <html lang="en">
+    font:               400 11px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 
-    <head>
+    background:         #262626;
 
-      <meta charset="UTF-16">
-
-      <link rel="stylesheet" href="assets/stylesheets/cartesia.css">
-      <link rel="stylesheet" href="assets/stylesheets/input.css">
-      <link rel="stylesheet" href="assets/stylesheets/tabs.css">
-      <link rel="stylesheet" href="assets/stylesheets/menus.css">
-      <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lato:100,300,400">
-      <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Ubuntu:100,300,400">
-      <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Fjalla One:100,300,400">
-
-      <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-      <script type="text/javascript" src="processing.js"></script>
-      <script type="text/javascript" src="drawing.js"></script>
-      <script type="text/javascript" src="jq.js"></script>
-      
-      <title>Cartesia:  Pythagorian Triples</title>
-
-    </head>
-
-    <body id="body">
-
-      <!--Page Header-->
-      <div id="header" class="header">
-      
-        <button id="menu-left-toggle" class="toggle">◄</button>
-      
-        <label id="logo">cartesia</label>
-
-        <!--<nav id="headerNav" class="nav primary-nav">-->
-        <!--  <a class="header" href="javascript:void('Home')">home</a>-->
-        <!-- <a class="header" href="javascript:confirm('Speakers')">speakers</a>-->
-        <!-- <a class="header" href="javascript:prompt('Billy, dont be a hero')">schedule</a>-->
-        <!-- <a class="header" href="javascript:alert('Venues')">venue</a>-->
-        <!-- <a class="header" href="javascript:alert('Register')">register</a>-->
-        <!--</nav>-->
-        
-        <button id="menu-right-toggle" class="toggle">►</button>
-        
-      </div>
-
-      <!--Middle section-->
-      <div id="middle">
-
-  <!-- ▲ -->
-
-        <!-- Canvas -->
-        <div id="canvas-container">
-
-          <canvas id="canvas"></canvas>
-     
-          <label id="coordinates"></label>
-
-          <label id="current-command"></label>
-
-           <!--Zoom/Pan-->
-          <div id="display" class="display">
-            <button id="zoom-in"  class="grid">p</button>
-            <button id="zoom-out" class="grid">z+</button>
-            <button id="pan"      class="grid">z-</button>
-          </div>
-
-           <!--Ortho/STG/Grid-->
-          <div id="grid-display"      class="grid-display">
-            <button id="ortho"        class="grid">o</button>
-            <button id="snap-to-grid" class="grid">stg</button>
-          </div>
-
-        </div>
-        
-        <!--Left Menu -->
-        <div id="menu-left">
-          
-          <!--Tabs***********************************************************-->
-          <div class="container">
-
-            <ul class="tabs">
-              <li><a href="#shapes">Shapes</a></li>
-              <li><a href="#grid">Grid</a></li>
-              <li><a href="#tab3">Stuff</a></li>
-            </ul>
-
-            <div class="tab_container">
-
-              <!-- Shape properties -->
-              <div id="shapes" class="tab_content">
-
-                <!-- Name -->
-                <label for="name" class="property col-1" title="name">Name:</label>
-                <input id="name"  class="property col-2" type="text" title="name">
-                <!-- Caption -->
-                <label for="caption" class="property col-1" title="caption">Caption:</label>
-                <input id="caption"  class="property col-2" type="text" title="caption">
-                <!-- Formula -->
-                <label for="formula" class="property col-1" title="formula">Formula:</label>
-                <input id="formula"  class="property col-2" type="text" title="formula">
-
-                  <div class="line"></div>
-                
-                 <!--Line Color-->
-                <label for="line-color" class="property col-1">Line Color:</label>
-                <input id="line-color" class="property col-2" type="color" value="#0a0a0a" list="colors"/>
-      
-                  <datalist id="colors">
-                  
-                    <option value="#ff0000">  <!-- red            -->
-                    <option value="#FF5100">  <!-- red orange     -->
-                    <option value="#FF7F00">  <!-- orange         -->
-                    <option value="#FFBE00">  <!-- yellow orange  -->
-                    <option value="#FFFF00">  <!-- yellow         -->
-                  
-                    <option value="#C0FF00">  <!-- yellow green   -->
-                    <option value="#00FF00">  <!-- green -->
-                    <option value="#007F7F">  <!-- Blue Green     -->
-                    <option value="#0000FF">  <!-- Blue -->
-                    <option value="#5C00FF">  <!-- Blue Violet    -->
-                  
-                    <option value="#7F00FF">  <!-- Violet         -->
-                    <option value="#BF007F">  <!-- Red Violet     -->
-                    <option value="#FFFFFF">  <!-- White          -->
-                    <option value="#DADADA">  <!-- Gray1          -->
-                    <option value="#B6B6B6">  <!-- Gray2          -->
-                  
-                    <option value="#929292">  <!-- Gray3          -->
-                    <option value="#6D6D6D">  <!-- Gray4          -->
-                    <option value="#494949">  <!-- Gray5          -->
-                    <option value="#242424">  <!-- Gray6          -->
-                    <option value="#000000">  <!-- Black          -->
-                  
-                  </datalist>
-
-                 <!--Line Alpha-->
-                <label for="line-alpha" class="property col-1" value="14">Transparency:</label>
-                <input id="line-alpha" class="property col-2" type="range" min="0" max="100" value="75">
-      
-                  <div class="line"></div>
-                
-                 <!--Fill Color-->
-                <label for="fill-color" class="property col-1">Fill Color:</label>
-                <input id="fill-color" class="property col-2" type="color" value="#093A34" list="colors"/>
-      
-                 <!--Fill Alpha-->
-                <label for="fill-alpha" class="property col-1">Transparency:</label>
-                <input id="fill-alpha"  class="property col-2" type="range" min="0" max="100" value="95">
-      
-                  <div class="line"></div>
-                
-                <!--Line Weight-->
-                <label for="line-weight" class="property col-1">Line Weight:</label>
-                <input id="line-weight" class="property col-2" type="number" min="0" max="100" value="7">
-
-                  <div class="line"></div>
-                  
-                <!-- Line Type -->
-                <label for="line-type" class="property col-1">Line Type:</label>
-                <select id="line-type" class="property col-2">
-                  <option>Solid</option>
-                  <option selected>Dotted</option>
-                  <option>Dashed</option>
-                  <option>Dot-Dash</option>
-                </select>
-
-                  <div class="line"></div>
-
-                <!-- Line Scale -->
-                <label for="line-scale" class="property col-1">Line Scale:</label>
-                <input id="line-scale" class="property col-2" type="number" min="0" max="100" value="7">
-
-              </div>
-
-              <!-- Grid -->
-              <div id="grid" class="tab_content">
-
-                <!--Background Color-->
-                <label for="grid-color" class="property col-1">Background:</label>
-                <input id="grid-color" class="property col-2" type="color" value="#bbbbbb" list="colors"/>
-      
-                <!--Fill Alpha-->
-                <label for="grid-alpha" class="property col-1">Transparency:</label>
-                <input id="grid-alpha"  class="property col-2" type="range" min="0" max="100" value="95">
-
-                  <div class="line"></div>
-
-                <!-- Origin -->
-                <label for="origin" class="property col-3">Origin</label>
-                <input id="origin-color" type="color" class="property col-4" value="#000000" list="colors"/>
-                <input id="origin" class="prop property col-5" type="checkbox" checked>
-                <label for="origin"  class="property col-5"></label>
-
-                  <div class="line"></div>
-            
-                <!--Axes -->
-                <label for="axes"   class="property col-3">Axis</label>
-                <input id="axisx-color" type="color" class="property grid col-4" value="#111111" list="colors"/>
-
-                <input id="axisx"   class="property col-6" type="checkbox" checked>
-                <label for="axisx"  class="property col-5">x:</label>
-
-                <label class="property col-3"></label>
-                <input id="axisy-color" type="color" class="grid property col-4" value="#222222" list="colors"/>
-                
-                <input id="axisy"   class="property col-6" type="checkbox" checked>
-                <label for="axisy"  class="property col-5">y:</label>
-
-                  <div class="line"></div>
-                
-                <!--Lines -->
-                <label for="lines"  class="property col-3">Lines</label>
-                <input id="linesx-color" type="color" class="grid property col-4" value="#555555" list="colors"/>
-                
-                <input id="linesx"  class="property col-6" type="checkbox" checked>
-                <label for="linesx" class="property col-5">x:</label>
-
-                <label class="property col-3"></label>
-                <input id="linesy-color" type="color" class="grid property col-4" value="#555555" list="colors"/>
-
-                <input id="linesy"  class="property col-6" type="checkbox" checked>
-                <label for="linesy" class="property col-5">y:</label>
-
-                  <div class="line"></div>
-
-                <!--Arrows -->
-                <label for="arrows" class="property col-3">Arrows</label>
-                <input id="arrowsx-color" type="color" class="grid property col-4" value="#555555" list="colors"/>
-                
-                <input id="arrowsx" class="property col-6" type="checkbox" checked>
-                <label for="arrowsx" class="col-5 property">x:</label>
-                
-                <label class="property col-3"></label>
-                <input id="arrowsy-color" type="color" class="grid property col-4" value="#666666" list="colors"/>
-
-                <input id="arrowsy"  class="property col-6" type="checkbox" checked>
-                <label for="arrowsy" class="property col-5">y:</label>
-                
-
-                  <div class="line"></div>
-
-                <!--Ticks -->
-                <label for="ticks" class="property col-3">Ticks</label>
-                <input id="ticksx-color" type="color" class="grid property col-4" value="#777777" list="colors"/>
-                
-                <input id="ticksx" class="property col-6" type="checkbox" checked>
-                <label for="ticksx" class="col-5 property">x:</label>
-                
-                <label class="property col-3"></label>
-                <input id="ticksy-color" type="color" class="grid property col-4" value="#888888" list="colors"/>
-
-                <input id="ticksy"  class="property col-6" type="checkbox" checked>
-                <label for="ticksy" class="property col-5">y:</label>
-                
-
-                  <div class="line"></div>
-
-                <!--Labels -->
-                <label for="labels" class="property col-3">Labels</label>
-                <input id="labelsx-color" type="color" class="grid property col-4" value="#999999" list="colors"/>
-                
-                <input id="labelsx" class="property col-6" type="checkbox" checked>
-                <label for="labelsx" class="col-5 property">x:</label>
-                
-                <label class="property col-3"></label>
-                <input id="labelsy-color" type="color" class="grid property col-4" value="#aaaaaa" list="colors"/>
-
-                <input id="labelsy"  class="property col-6" type="checkbox" checked>
-                <label for="labelsy" class="property col-5">y:</label>
-                
-                  <div class="line"></div>
-
-                <!--Quadrants -->
-                <label for="quadrants" class="property col-3">Quadrants</label>
-                <input id="quadrants-color" type="color" class="grid property col-4" value="#000000" list="colors"/>
-                <input id="quadrants" class="property col-5" type="checkbox" checked>
-                <label for="quadrants"  class="property col-5"></label>
-
-                  <div class="line"></div>
-
-                <!--Crosshair -->
-                <label for="crosshair" class="property col-3">Crosshair</label>
-                <input id="crosshair-color" type="color" class="grid property col-4" value="#000000" list="colors"/>
-                  
-                 <!--Size-->
-                <label class="property col-3">Size:</label>
-                <input id="crosshair-size"  class="property col-2" type="range" min="0" max="100" value="95">
-                
-              </div>
-              
-              <!--Tab 3-->
-              <div id="tab3" class="tab_content">
-              
-                <h2>3</h2>
-                
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-
-              </div>
-            
-            </div>
-            
-          </div>
-          <!--Tabs***********************************************************-->
-
-        </div>
-
-        <!--Shapes Menu -->
-        <div id="menu-shapes">
-
-          <!-- Points -->
-          <div id="points" tabindex="0" class="onclick-menu">
-
-            <img id="img-points" class="menu" src="assets/images/POINT_DEFAULT.svg">
-
-            <ul id="ul-points" class="onclick-menu-content">
-
-              <button id="POINT_DEFAULT" class="menu" onclick="shapeCommand(1001)">
-                <img id="img-POINT_DEFAULT" class="menu" src="assets/images/POINT_DEFAULT.svg">
-              </button>
-
-              <button id="POINT_OBJECT" class="menu" onclick="shapeCommand(1002)">
-                <img id="img-POINT_OBJECT" class="menu" src="assets/images/POINT_OBJECT.svg">
-              </button>
-
-              <button id="POINT_BOUND" class="menu" onclick="shapeCommand(1003)">
-                <img id="img-POINT_BOUND" class="menu" src="assets/images/POINT_BOUND.svg">
-              </button>
-
-            </ul>
-
-          </div>
-          
-          <!-- Lines -->
-          <div id="lines" tabindex="0" class="onclick-menu">
-
-            <img id="img-lines" class="menu" src="assets/images/LINE_SEGMENT2POINT.svg" onclick="shapeCommand(1100)">
-
-            <ul id="ul-lines" class="onclick-menu-content">
+    /*overflow:           none;*/
     
-              <button id="LINE_2POINT" class="menu" onclick="shapeCommand(1101)">
-                <img id="img-LINE_2POINT" class="menu" src="assets/images/LINE_2POINT.svg">
-              </button>
-              <button id="LINE_SEGMENT2POINT" class="menu" onclick="shapeCommand(1102)">
-                <img id="img-LINE_SEGMENT2POINT" class="menu" src="assets/images/LINE_SEGMENT2POINT.svg">
-              </button>
-              <button id="LINE_SEGMENTLENGTH" class="menu" onclick="shapeCommand(1103)">
-                <img id="img-LINE_SEGMENTLENGTH" class="menu" src="assets/images/LINE_SEGMENTLENGTH.svg">
-              </button>
-              <button id="LINE_PERPENDICULAR" class="menu" onclick="shapeCommand(1104)">
-                <img id="img-LINE_PERPENDICULAR" class="menu" src="assets/images/LINE_PERPENDICULAR.svg">
-              </button>
-              <button id="LINE_PERPENDICULARBISECTOR" class="menu" onclick="shapeCommand(1005)">
-                <img id="img-LINE_PERPENDICULARBISECTOR" class="menu" src="assets/images/LINE_PERPENDICULARBISECTOR.svg">
-              </button>
-              <button id="LINE_ANGLEBISECTOR" class="menu" onclick="shapeCommand(1106)">
-                <img id="img-LINE_ANGLEBISECTOR" class="menu" src="assets/images/LINE_ANGLEBISECTOR.svg">
-              </button>
-              <button id="LINE_PARALLEL" class="menu" onclick="shapeCommand(1107)">
-                <img id="img-LINE_PARALLEL" class="menu" src="assets/images/LINE_PARALLEL.svg">
-              </button>
-              <button id="LINE_TANGENT" class="menu" onclick="shapeCommand(1108)">
-                <img id="img-LINE_TANGENT" class="menu" src="assets/images/LINE_TANGENT.svg">
-              </button>
-              <button id="LINE_DIAMETER" class="menu" onclick="shapeCommand(1109)">
-                <img id="img-LINE_DIAMETER" class="menu" src="assets/images/LINE_DIAMETER.svg">
-              </button>
-              <button id="LINE_RADIUS" class="menu" onclick="shapeCommand(1110)">
-                <img id="img-LINE_RADIUS" class="menu" src="assets/images/LINE_RADIUS.svg">
-              </button>
-              
-            </ul>
+    background:         none;
+    
+  }
 
-          </div>
-          
-          <!-- Rays/Vectors -->
-          <div id="rays-vectors" tabindex="0" class="onclick-menu">
 
-            <!--<img id="img-rays-vectors" class="menu" src="assets/images/circle_red_line.svg" onclick="shapeCommand(1200)">-->
+  /*
+    ============================================================================
+      General
+    ============================================================================
+  */
+  .fixed {
+    
+    position:           fixed;
+    
+  }
 
-            <!--<ul id="ul-RAYS_VECTORS" class="onclick-menu-content">-->
-              
-              <!--<button id="RAY_2POINT" class="menu" onclick="shapeCommand(1201)">-->
-              <!--  <img id="img-RAY_2POINT" class="menu" src="assets/images/RAY_2PIONT.svg">-->
-              <!--</button>-->
-              <!--<button id="VECTOR_2POINT" class="menu" onclick="shapeCommand(1202)">-->
-              <!--  <img id="img-VECTOR_2POINT" class="menu" src="assets/images/VECTOR_2POINT.svg">-->
-              <!--</button>-->
-              <!--<button id="VECTOR_FROMPOINT" class="menu" onclick="shapeCommand(1203)">-->
-              <!--  <img id="img-VECTOR_FROMPOINT" class="menu" src="assets/images/VECTOR_FROMPOINT.svg">-->
-              <!--</button>-->
-              
-            </ul>
-
-          </div>
-          
-          <!-- Triangles -->
-          <div id="triangles" tabindex="0" class="onclick-menu">
-
-            <!--<img id="img-triangles" class="menu" src="assets/images/TRIANGLE_EQUILATERAL.svg" onclick="shapeCommand(1300)">-->
-
-            <!--<ul id="ul-triangles" class="onclick-menu-content">-->
-              
-              <!--<button id="TRIANGLE_EQUILATERAL" class="menu" onclick="shapeCommand(1301)">-->
-              <!--  <img id="img-TRIANGLE_EQUILATERAL" class="menu" src="assets/images/TRIANGLE_EQUILATERAL.svg">-->
-              <!--</button>-->
-              <!--<button id="TRIANGLE_ISOSCELES" class="menu" onclick="shapeCommand(1302)">-->
-              <!--  <img id="img-TRIANGLE_ISOSCELES" class="menu" src="assets/images/TRIANGLE_ISOSCELES.svg">-->
-              <!--</button>-->
-              <!--<button id="TRIANGLE_SCALENE" class="menu" onclick="shapeCommand(1303)">-->
-              <!--  <img id="img-TRIANGLE_SCALENE" class="menu" src="assets/images/TRIANGLE_SCALENE.svg">-->
-              <!--</button>-->
-              
-            </ul>
-
-          </div>
-          
-          <!-- Circles -->
-          <div id="circles" tabindex="0" class="onclick-menu">
-
-            <!--<img id="img-circles" class="menu" src="assets/images/CIRCLE.svg" onclick="shapeCommand(1400)">-->
-
-            <!--<ul id="ul-circles" class="onclick-menu-content">-->
-              
-              <!--<button id="CIRCLE_CENTERPOINT" class="menu" onclick="shapeCommand(1401)">-->
-              <!--  <img id="img-CIRCLE_CENTERRADIUS" class="menu" src="assets/images/CIRCLE_CENTERPOINT.svg">-->
-              <!--</button>-->
-              <!--<button id="CIRCLE_CENTERRADIUS" class="menu" onclick="shapeCommand(1402)">-->
-              <!--  <img id="img-CIRCLE_CENTERRADIUS" class="menu" src="assets/images/CIRCLE_CENTERRADIUS.svg">-->
-              <!--</button>-->
-              <!--<button id="CIRCLE_3POINT" class="menu" onclick="shapeCommand(1403)">-->
-              <!--  <img id="img-CIRCLE_CENTERRADIUS" class="menu" src="assets/images/CIRCLE_3POINT.svg">-->
-              <!--</button>-->
-              
-            </ul>
-
-          </div>
-
-          <!-- Quadrilaterals -->
-          <div id="quads" tabindex="0" class="onclick-menu">
-
-            <!--<img id="img-quad" class="menu" src="assets/images/QUAD.svg" onclick="shapeCommand(1501)">-->
-
-            <!--<ul id="ul-quads" class="onclick-menu-content">-->
-              
-              <!--<button id="QUAD_RECTANGLE" class="menu" onclick="shapeCommand(1501)">-->
-              <!--  <img id="img-QUAD_RECTANGLE" class="menu" src="assets/images/QUAD_RECTANGLE.svg">-->
-              <!--</button>-->
-              <!--<button id="QUAD_SQUARE" class="menu" onclick="shapeCommand(1502)">-->
-              <!--  <img id="img-QUAD_SQUARE" class="menu" src="assets/images/QUAD_SQUARE.svg">-->
-              <!--</button>-->
-              <!--<button id="QUAD_RHOMBUS" class="menu" onclick="shapeCommand(1503)">-->
-              <!--  <img id="img-QUAD_RHOMBUS" class="menu" src="assets/images/QUAD_RHOMBUS.svg">-->
-              <!--</button>-->
-              <!--<button id="QUAD_PARALLELOGRAM" class="menu" onclick="shapeCommand(1504)">-->
-              <!--  <img id="img-QUAD_PARALLELOGRAM" class="menu" src="assets/images/QUAD_PARALLELOGRAM.svg">-->
-              <!--</button>-->
-              <!--<button id="QUAD_TRAPEZOID" class="menu" onclick="shapeCommand(1505)">-->
-              <!--  <img id="img-QUAD_TRAPEZOID" class="menu" src="assets/images/QUAD_TRAPEZOID.svg">-->
-              <!--</button>-->
-              <!--<button id="QUAD_KITE" class="menu" onclick="shapeCommand(1506)">-->
-              <!--  <img id="img-QUAD_KITE" class="menu" src="assets/images/QUAD_KITE.svg">-->
-              <!--</button>-->
-
-            </ul>
-
-          </div>
-
-          <!-- Arcs -->
-          <div id="arcs" tabindex="0" class="onclick-menu">
-
-            <!--<img id="img-arc" class="menu" src="assets/images/QUAD.svg" onclick="shapeCommand(1600)">-->
-
-            <!--<ul id="ul-arcs" class="onclick-menu-content">-->
-              
-              <!--<button id="ARC_2VERTICES" class="menu" onclick="shapeCommand(1601)">-->
-              <!--  <img id="img-ARC_2VERTICES" class="menu" src="assets/images/ARC_2VERTICES.svg">-->
-              <!--</button>-->
-              <!--<button id="ARC_CIRCULAR" class="menu" onclick="shapeCommand(1602)">-->
-              <!--  <img id="img-ARC_CIRCULAR" class="menu" src="assets/images/ARC_CIRCULAR.svg">-->
-              <!--</button>-->
-              <!--<button id="ARC_CIRCUMCIRCULAR" class="menu" onclick="shapeCommand(1603)">-->
-              <!--  <img id="img-ARC_CIRCUMCIRCULAR" class="menu" src="assets/images/ARC_CIRCUMCIRCULAR.svg">-->
-              <!--</button>-->
-              <!--<button id="ARC_CIRCULARSECTOR" class="menu" onclick="shapeCommand(1604)">-->
-              <!--  <img id="img-ARC_CIRCULARSECTOR" class="menu" src="assets/images/ARC_CIRCULARSECTOR.svg">-->
-              <!--</button>-->
-              <!--<button id="ARC_CIRCUMCIRCULARSECTOR" class="menu" onclick="shapeCommand(1605)">-->
-              <!--  <img id="img-ARC_CIRCUMCIRCULARSECTOR" class="menu" src="assets/images/ARC_CIRCUMCIRCULARSECTOR.svg">-->
-              <!--</button>-->
-
-            </ul>
-
-          </div>
-
-          <!-- Polygons -->
-          <div id="arcs" tabindex="0" class="onclick-menu">
-
-            <!--<img id="img-polygon" class="menu" src="assets/images/POLYGON.svg" onclick="shapeCommand(1700)">-->
-
-            <!--<ul id="ul-polygons" class="onclick-menu-content">-->
-              
-              <!--<button id="POLYGON_REGULAR" class="menu" onclick="shapeCommand(1701)">-->
-              <!--  <img id="img-POLYGON_REGULAR" class="menu" src="assets/images/POLYGON_REGULAR.svg">-->
-              <!--</button>-->
-              <!--<button id="POLYGON_RIGID" class="menu" onclick="shapeCommand(1702)">-->
-              <!--  <img id="img-POLYGON_RIGID" class="menu" src="assets/images/POLYGON_RIGID.svg">-->
-              <!--</button>-->
-              <!--<button id="POLYGON_VECTOR" class="menu" onclick="shapeCommand(1703)">-->
-              <!--  <img id="img-POLYGON_VECTOR" class="menu" src="assets/images/POLYGON_VECTOR.svg">-->
-              <!--</button>-->
-
-            </ul>
-
-          </div>
-          
-          <!-- Conics -->
-          <div id="conics" tabindex="0" class="onclick-menu">
-
-            <!--<img id="img-conic" class="menu" src="assets/images/CONIC.svg" onclick="shapeCommand(1800)">-->
-
-            <!--<ul id="ul-conics" class="onclick-menu-content">-->
-              
-              <!--<button id="CONIC_ELLIPSE" class="menu" onclick="shapeCommand(1801)">-->
-              <!--  <img id="img-CONIC_ELLIPSE" class="menu" src="assets/images/CONIC_ELLIPSE.svg">-->
-              <!--</button>-->
-              <!--<button id="CONIC_HYPERBOLA" class="menu" onclick="shapeCommand(1802)">-->
-              <!--  <img id="img-CONIC_HYPERBOLA" class="menu" src="assets/images/CONIC_HYPERBOLA.svg">-->
-              <!--</button>-->
-              <!--<button id="CONIC_PARABOLA" class="menu" onclick="shapeCommand(1803)">-->
-              <!--  <img id="img-CONIC_PARABOLA" class="menu" src="assets/images/CONIC_PARABOLA.svg">-->
-              <!--</button>-->
-              <!--<button id="CONIC_5VERTICES" class="menu" onclick="shapeCommand(1804)">-->
-              <!--  <img id="img-CONIC_5VERTICES" class="menu" src="assets/images/CONIC_CONIC_5VERTICES.svg">-->
-              <!--</button>-->
-              
-            </ul>
-
-          </div>
-          
-          <!-- Angles -->
-          <div id="angles" tabindex="0" class="onclick-menu">
-
-            <!--<img id="img-angle" class="menu" src="assets/images/ANGLE.svg" onclick="shapeCommand(1900)">-->
-
-            <!--<ul id="ul-angles" class="onclick-menu-content">-->
-
-              <!--<button id="ANGLE" class="menu" onclick="shapeCommand(1901)">-->
-              <!--  <img id="img-ANGLE_SIZE" class="menu" src="assets/images/ANGLE_SIZE.svg">-->
-              <!--</button>-->
-              
-            </ul>
-
-          </div>
-          
-    <!--COMPASS:  [1606,  'Compass',          'COMPASS'                           ],    // ??-->
-
-        </div>
-
-        <!--Right Menu -->
-        <div id="menu-right">
-          
-        </div>
-        
-      </div>
-
-      <script>
-
-        // onclick="myFunction()"
-
-        var c = document.getElementById("canvas");
-        var processingInstance = new Processing(c, proc);
-        
-        var currentCommand=-1;
-        
-        function shapeCommand(id){
-
-          currentCommand=id;
-
-        };
-        
-      </script>
-      
-    </body>
   
-  </html>
+  /*
+    ============================================================================
+      Panes
+    ============================================================================
+  */
+  #header {
+    
+    /*display:            table;*/
+    position:           fixed;
+
+    width:              100%;
+    height:             35px;
+
+    background:         -webkit-gradient(linear, left top, left bottom, from(#272727), to(#1a1a1a));
+
+    /*background:         orange;*/
+
+  }
+  #header:hover {
+
+    color:              #008282;
+
+    -webkit-transition: All 0.5s ease;
+    
+    /*border-top:         1px solid #008282;*/
+    
+  }
+  
+  #middle {
+  
+    display:            table-row;
+    position:           fixed;
+
+    margin:             0;
+    padding:            0;
+
+    /*table-layout:       auto;*/
+
+    top:                35px;
+    bottom:             0;
+    right:              0;
+    left:               0;
+    
+    background:         #000;
+    border:             none;
+    overflow:           auto;
+    
+  }
+  
+  #menu-left {
+
+    /*display:            relative;*/
+    position:           absolute;
+    
+    left:               0;
+    
+    width:              200px;
+    height:             100%;
+    
+    /*bottom:             10px;*/
+    /*overflow:           auto;*/
+    
+    background:         #f0f0ff;
+    
+    /*vertical-align:     top;*/
+    
+  }
+
+  #menu-shapes {
+
+    position:           absolute;
+    
+    left:               200px;
+    
+    width:              30px;
+    /*height:             100%;*/
+    
+    /*padding:            2px;*/
+    
+    background:         #333;
+    
+    /*vertical-align:     top;*/
+
+  }
+  #menu-shapes:hover {
+    
+    background:         #222;
+
+  }
+  
+  #menu-right {
+
+    position:           absolute;
+    
+    width:              200px;
+    
+    right:              0;
+    top:                0;
+    bottom:             0;
+
+    background:         #222;
+
+    overflow:           auto;
+
+  }
+
+
+  /*
+    ============================================================================
+      Canvas
+    ============================================================================
+  */
+  #canvas-container {
+
+    -webkit-appearance: none;
+
+    position:           absolute;
+
+    /*padding:            2px;*/
+
+    left:               230px;
+    right:              200px;
+    top:                0;
+    bottom:             0;
+
+    outline:            none;
+
+    background:         #444;
+    
+    border:             none;
+  }
+  #canvas-container:hover {
+    
+    background:         #660000;
+    
+  }
+  
+  canvas {
+
+    position:           absolute;
+
+    outline:            none;
+    
+    width:              100%;
+    height:             100%;
+
+    background:         none;
+
+  }
+  canvas:hover {
+    
+    /*border:             5px solid #880000;*/
+    
+  }
+
+
+  /*
+    ============================================================================
+      ?????
+    ============================================================================
+  */
+  #menu-left-toggle,
+  #menu-right-toggle {
+
+    position:           fixed;
+    
+    width:              35px;
+
+  }
+  #menu-left-toggle {
+   
+   left:                0;
+   
+  }
+  #menu-right-toggle {
+   
+   right:               0;
+   
+  }
+  /*
+    ============================================================================
+    Logo
+    ============================================================================
+  */
+  #logo {
+    
+    /*display:            fixed;*/
+    position:           fixed;
+    
+    padding:            0;
+
+    left:               100px;
+
+    font:               400 32px/34px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+    font-weight:        200;
+    letter-spacing:     20px;
+    
+    text-transform:     uppercase;
+
+    color:              #000;
+
+    cursor:             pointer;
+    
+    background:         none;
+
+  }
+  #logo:hover {
+
+    color:              #008282;
+
+    -webkit-transition: All 0.5s ease;
+    
+    /*border-top:         1px solid #008282;*/
+    
+  }
+
+
+  /*
+    ============================================================================
+    Navigation
+    ============================================================================
+  */
+
+  .nav {
+    text-align:         right;
+  }
+  
+  .primary-nav {
+    
+    height:             35px;
+    margin:             0 30px 0 0;
+    
+    font-size:          14px;
+    font-weight:        400;
+    
+    letter-spacing:     2px;
+    text-transform:     uppercase;
+
+  }
+  
+  a.header {
+    
+    display:            inline-block;
+    height:             35px;
+    
+    color:              #fff;
+    text-decoration:    none;
+    padding:            0 10px;
+    margin:             0;
+    font-weight:        300;
+
+    line-height:        35px;
+    
+    background:         transparent;
+    /*border:             1px dotted #444;*/
+    color:              #000;
+    
+  }
+  a.header:hover {
+  
+    font-weight:        300;
+    
+    color:              #008282;
+    
+  }
+
+  /*
+    ============================================================================
+      Position
+    ============================================================================
+  */
+  .fixed {
+
+    position:           absolute;
+
+    border:             none;
+
+    outline:            none;
+
+  }
+
+
+
+  button.toggle {
+    
+    display:            table-cell;
+    
+    margin:             0;
+    padding:            0;
+    
+    outline:            none;
+    background:         transparent;
+    
+    border:             none;
+    border-radius:      5px;
+    
+    width:              35px;
+    height:             35px;
+    
+    cursor:             pointer;
+
+    color:              #444;
+
+  }
+  button.toggle:hover {
+    
+    color:              #fff;
+    
+    box-shadow:         0 1px 2px rgba(0,0,0,.5);
+    
+    -webkit-transition: All 0.5s ease;
+    
+  }
+  button.toggle:active {
+    
+    /*background:         -webkit-gradient(linear, left top, left bottom, from(#383838), to(#4a4a4a));*/
+    
+    color:              #888;
+    
+  }
+
+  button.grid {
+    
+    -webkit-appearance: none;
+    font:               900 14px/16px "Ubuntu", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    
+    display:            inline;
+    position:           relative;
+
+    width:              30px;
+    height:             30px;
+    
+    outline:            none;
+    border:             1px solid transparent;
+    
+    background:         transparent;
+    
+    cursor:             pointer;
+
+    color:              #777;
+
+    border-radius:      15px;
+
+  }
+  button.grid:hover {
+    
+    border:             1px solid #888;
+    color:              #aaa;
+    
+  }
+  button.grid:active {
+    
+    border:             1px solid yellow;
+    
+  }
+  
+  div.display {
+
+    position:         absolute;
+
+    left:             10px;
+    bottom:           10px;
+    
+    /*width:            auto;*/
+
+    background:       transparent;
+    
+    border:           1px solid #ff0000;
+    
+  }
+  
+  div.grid-display {
+
+    position:         absolute;
+
+    left:             150px;
+    bottom:           10px;
+    
+    /*width:            auto;*/
+
+    background:       transparent;
+
+    border:           1px solid #ff0000;
+
+  }
+
+  .col-1,
+  .col-2,
+  .col-3,
+  .col-4,
+  .col-5.
+  .col-6 {
+
+    /*display:            inline;*/
+    /*position:           relative;*/
+    
+    margin:             0;
+    padding:            0;
+    
+    width:              40%;
+    height:             20px;
+    
+    line-height:        16px;
+
+  }
+  
+  .col-1 {
+
+    float:              left;
+    
+  }
+  .col-2 {
+
+    float:              right;
+    
+  }
+
+  .col-3 {
+
+    width:              35%;
+    float:              left;
+    
+  }
+  .col-4 {
+
+    float:              right;
+
+  }
+  .col-5 {
+
+    width:              12px;
+    float:              right;
+
+  }
+  .col-6 {
+
+    float:              right;
+
+  }
+
+  /*
+    ============================================================================
+      Horizontal Line
+    ============================================================================
+  */
+  div.line {
+    
+    display:            inline-block;
+    height:             0;
+
+    margin:             10px 5%;
+    
+    width:              90%;
+
+    border:             none;
+    border-top:         1px groove rgba(255, 255, 255, 0.125);
+    
+    background:         transparent;
+    
+  }
+  div.property {
+  
+    /*display:            inline-block;*/
+    background:         green;
+    height:             18px;
+  }
+  
+  /*
+    ============================================================================
+      LABEL
+    ============================================================================
+  */
+  label.property {
+    
+    display:            absolute;
+    /*position:            relative;*/
+    
+    font:               400 11px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color:              #ccc;
+
+    line-height:        16px;
+
+    /*text-align:         center;*/
+
+    /*background:         yellow;*/
+    
+  }
+
+  #coordinates {
+
+    position:           absolute;
+    
+    bottom:             10px;
+    right:              10px;
+    
+    font:               900 14px/16px "Ubuntu", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    letter-spacing:     1px;
+    line-height:        26px;
+    
+    color:              #222;
+    
+    border:             1px solid #ff0000;
+    
+  }
+
+  #current-command {
+
+    position:           absolute;
+      
+    padding:            0;
+    /*margin:             5px;*/
+    
+    bottom:             50px;
+    left:               0;
+    /*width:              100%;*/
+    
+    text-align:         center;
+    
+    font:               900 14px/16px "Ubuntu", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    letter-spacing:     1px;
+    line-height:        26px;
+    
+    color:              #444;
+    
+    /*background:         #222;*/
+    border:             1px solid #666;
+    
+    border-radius:      5px;
+
+  }
+  
+  select {
+    
+    /*-webkit-appearance: none;*/
+
+    display:            inline-block;
+
+    height:             16px;
+
+    border:             1px solid transparent;
+    outline:            none;
+    border-top:         1px groove rgba(255, 255, 255, 0.125);
+    border-left:         1px groove rgba(255, 255, 255, 0.125);
+
+    font:               400 11px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color:              #ccc;
+    
+    background:         #222;
+    
+    size:               10;
+    line-height:        16px;
+    cursor:             pointer;
+    
+  }
+  
+  input[type=checkbox] {
+    
+    display:            none;
+  		
+  }
+  
+  input[type=checkbox] + label {
+  
+    /*display:            inline-block;*/
+    
+    margin:             1px 5px 1px 0;
+    padding:            0;
+    
+    font-size:          11px;
+    line-height:        14px;
+    
+    height:             16px;
+    width:              16px;
+
+    color:              #fff;
+
+    text-align:         center;
+    /*text-shadow:        0 1px 1px rgba(255,255,255,0.75);*/
+    
+  	vertical-align:     middle;
+    
+    cursor:             pointer;
+    
+    background:         -webkit-gradient(linear, left top, left bottom, from(#272727), to(#1a1a1a));
+    
+    /*background-image:   -moz-linear-gradient(top,#fff,#e6e6e6);*/
+    /*background-image:   -webkit-gradient(linear,0 0,0 100%,from(#fff),to(#e6e6e6));*/
+    /*background-image:   -webkit-linear-gradient(top,#fff,#e6e6e6);*/
+    /*background-image:   -o-linear-gradient(top,#fff,#e6e6e6);*/
+    /*background-image:   linear-gradient(to bottom,#fff,#e6e6e6);*/
+    /*background-repeat:  repeat-x;*/
+    
+    border:             1px solid #222;
+    border-radius:      8px;
+    /*border-color:       #e6e6e6 #e6e6e6 #bfbfbf;*/
+  	/*border-color:       rgba(0,0,0,0.1) rgba(0,0,0,0.1) rgba(0,0,0,0.25);*/
+  	/*border-bottom-color:#b3b3b3;*/
+  	
+  	/*filter:             progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff',endColorstr='#ffe6e6e6',GradientType=0);*/
+  	/*filter:             progid:DXImageTransform.Microsoft.gradient(enabled=false);*/
+  	/*-webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,0.2),0 1px 2px rgba(0,0,0,0.05);*/
+  	/*-moz-box-shadow:    inset 0 1px 0 rgba(255,255,255,0.2),0 1px 2px rgba(0,0,0,0.05);*/
+  	/*box-shadow:         inset 0 1px 0 rgba(255,255,255,0.2),0 1px 2px rgba(0,0,0,0.05);*/
+  	
+  }
+
+  input[type=checkbox]:checked + label{
+    
+    /*background-image:   none;*/
+    /*outline:            0;*/
+    
+    /*-webkit-box-shadow: inset 0 2px 4px rgba(0,0,0,0.15),0 1px 2px rgba(0,0,0,0.05);*/
+    /*-moz-box-shadow: inset 0 2px 4px rgba(0,0,0,0.15),0 1px 2px rgba(0,0,0,0.05);*/
+    /*box-shadow: inset 0 2px 4px rgba(0,0,0,0.15),0 1px 2px rgba(0,0,0,0.05);*/
+    
+    border:             1px solid #222;
+    
+    background:         -webkit-gradient(linear, left top, left bottom, from(#f7f7f7), to(#ababab));
+    
+    color:              #000;
+    
+  }
+  
+  div.item {
+    
+    /*display:            absolute;*/
+    
+    /*padding:            12px;*/
+    
+    border:             1px solid transparent;
+    
+  }
+  
+  div.item:hover {
+    
+    background:         #666;
+    
+    border:             1px solid #333;
+    
+  }
+  
+  #toolbar {
+    padding: 4px;
+    display: inline-block;
+  }
