@@ -1,6 +1,6 @@
   /*
     ============================================================================
-    input.css
+      input.css
     ============================================================================
   */
   input {
@@ -17,6 +17,8 @@
 
     margin:             0;
     padding:            0;
+
+    height:             16px;
 
     border:             none;
     
@@ -44,7 +46,7 @@
   input[type="text"].property {
     
     color:              #eee;
-    
+
   }
   input[type="text"].property:hover {
     
@@ -112,52 +114,77 @@
 
  /* COLOR *********************************************************************/
   input[type="color"].property {
+    
     margin:             0;
     padding:            0;
     cursor:             pointer;
+    
     /*background:         green;*/
+    
   }
   input[type="color"].property:hover {
+    
     background:         transparent;
+    
   }
   input[type="color"].property:focus {
+    
     background:         transparent;
+    
   }
   input[type="color"].property::-webkit-color-swatch-wrapper {
+    
     margin:             0;
     padding:            0;
+    
     border:             none;
+    
   }
   input[type="color"].property::-webkit-color-swatch {
-    border:             none;
+    
     height:             5px;
-    margin:             8px 0 0 0;
+    margin:             6px 0 0 0;
+    
+    border:             none;
     border-radius:      3px;
+    
   }
   
-  input[type="color"].grid {
-    /*width:              80%;*/
-    height:             12px;
-    width:              12px;
-    margin:             3px 0 0 0;
-  }
-  input[type="color"].grid::-webkit-color-swatch {
-    border:             none;
-    height:             90%;
-    margin:             0;
-    border-radius:      3px;
-  }
+  /*input[type="color"].grid {*/
+
+  /*  height:             12px;*/
+  /*  width:              90px;*/
+
+  /*  margin:             3px 0 0 0;*/
+    
+  /*}*/
+  /*input[type="color"].grid::-webkit-color-swatch {*/
+    
+  /*  height:             5px;*/
+  /*  margin:             8px 0 0 0;*/
+    
+  /*  border:             none;*/
+  /*  border-radius:      3px;*/
+    
+  /*}*/
   
   /* RANGE ********************************************************************/
   input[type="range"]{
+    
+    width:              50%;
 
   }
 
   input[type="range"]:hover {
-    outline:            none;
-    background:         none;
+    
     cursor:             pointer;
-    /*height:             16px;*/
+    height:             16px;
+    
+    outline:            none;
+    
+    background:         none;
+    
+    
   }
   input[type="range"]:focus {
     background:         none;
@@ -193,29 +220,31 @@
   
   /* CHECKBOX *****************************************************************/
   input[type="checkbox"].property {
-
+    
+    display:            relative;
     -webkit-appearance:none;
 
     padding:            0;
-    margin:             3px 0;
+    margin:             0;
 
     /*border:             double 1px black;*/
     border-radius:      50%;
     outline:            none;
     
-    width:              12px;
-    height:             12px;
+    width:              16px;
+    height:             16px;
 
     cursor:             pointer;
 
-    background:         red;
+    /*background:         red;*/
     background:         -webkit-radial-gradient(#dd0000, #aa0000);
+    /*background:         transparent;*/
     
   }
   input[type="checkbox"].property:checked {
     
     -webkit-appearance:none;
-    background:         -webkit-radial-gradient(#00dd00, #00aa00);
+    /*background:         -webkit-radial-gradient(#00dd00, #00aa00);*/
     border:             double 1px transparent;
     /*border-left-color:#06F;*/
     /*border-right-color:#06F;*/
