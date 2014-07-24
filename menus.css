@@ -1,15 +1,23 @@
+  /*
+    ============================================================================
+      menus.css
+    ============================================================================
+  */
+  
   /* The necessities */
   .onclick-menu {
 
-    margin:             2px;
+    margin:             0;
     padding:            0;
     
-    outline:            0;
-    background:         orange;
+    outline:            none;
     
     height:             30px;
     width:              30px;
   
+    visiblity:          none;
+    
+    background:         #222;
     
   }
   .onclick-menu:focus {
@@ -30,15 +38,15 @@
   .onclick-menu-content {
     
     padding:            0;
-    margin:             0;
+    margin:             2px 0;
     
     display:            inline-block;
     position:           relative;
     
-    top:                -32px;
+    top:                -33px;
     left:               30px;
     
-    height:             auto;
+    height:             30px;
     width:              auto;
     
     white-space:        nowrap;
@@ -48,12 +56,12 @@
     z-index:            1;
   
     opacity:            0;
-    visibility:         hidden;
+    visibility:         none;
     transition:         visibility 0.5s;
     
     background:         #000;
     
-    /*border:             1px dotted red;*/
+    border:             1px solid #000;
     
     -webkit-transition: All 0.25s ease;
     
@@ -65,10 +73,10 @@
     
     display:            inline-block;
     
-    margin:             0 1px;
+    margin:             0;
     padding:            0;
 
-    border:             1px solid #000;
+    border:             none;
     outline:            none;
 
     cursor:             pointer;
@@ -76,29 +84,47 @@
     background:         #000;
 
 
-    height:             50px;
-    width:              50px;
+    height:             30px;
+    width:              30px;
     
     color:              #fff;
 
   }
   button.menu:hover {
 
-    color:              #ff8c31;
-    
-    border:             1px solid #777;
+    /*color:              #ff8c31;*/
+
+    /*-webkit-transition: All 0.5s ease;*/
+
+    /*border:             1px solid #aaa;*/
+
+    /*background:         #333;*/
     
   }
-  
+
   img.menu {
     
     -webkit-appearance: none;
-    
+
     margin:             0;
     padding:            0;
+    
+    width:              28px;
+    height:             28px;
 
-    border:             0px solid transparent;
+    background:         #000;
 
     cursor:             pointer;
+
+    border:             1px solid transparent;
+
+  }
+  img.menu:hover {
+
+    -webkit-transition: All 0.25s ease;
+
+    border:             1px solid #444;
+
+    background:         #111;
 
   }
