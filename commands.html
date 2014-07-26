@@ -1,544 +1,195 @@
-<!DOCTYPE html>
-<!--
-  --disable-web-security
-/!-->
-  <head>
-    <title>Commands</title>
-    <meta charset="UTF-8">
-  </head>
+  <!--
+    ============================================================================
+      input.css
+    ============================================================================
+  -->
+  
+  <!DOCTYPE html>
 
-  <header>
-  </header>
+  <html lang="en">
 
-  <style>
+    <head>
 
-    canvas {
-      outline: none;
-      -webkit-tap-highlight-color: rgba(255, 255, 255, 0); /* mobile webkit */
-    }
+      <meta charset="UTF-16">
 
-    body {
-      color: #212830;
-      background: #FFFFFF;
-      margin: 0px;
-      padding: 0px 0px 0px 0px;
-      font-family: tahoma, arial, sans-serif;
-      font-size: 82.5%;
-    }
+      <link rel="stylesheet" href="assets/stylesheets/cartesia.css">
+      <link rel="stylesheet" href="assets/stylesheets/commands.css">
+      <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lato:100,300,400">
+      <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Ubuntu:100,300,400">
+      <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Fjalla One:100,300,400">
 
-    code {
-    }
+      <title>Cartesia:  Commands</title>
 
-    table {
-      background: #000000;
-      width: 70%;
-      margin: 5px;
-      border: 3px solid #A0A0A0;
-      border-collapse: collapse;
-    }
+    </head>
 
-    caption {
-      background: #000000;
-      padding: 5px  5px 5px 5px;
-      font-family: tahoma, arial, sans-serif;
-      font-size: 125%;
-      color: yellow;     
-    }    
+    <body id="body">
 
-    thead {
-      text-align: left;
-      padding: 15px  15px 15px 15px;
-      background: #A0A0A0;
-      font-size: 110%;
-    }
+      <!--Page Header-->
+      <div id="header" class="header">
 
-    tbody {
-      background: #FFFFFF;
-    }
+        <label id="logo">cartesia</label>
 
-    th {
-      padding: 2px  0px 2px 5px;
-      color: #222222;
-      font-size: 100%;
-      background: #ABABAB;
-    }
-    
-    td {
-      padding: 3px  0px 3px 10px;
-      color: #555555;
-      border-bottom: 0px solid #333333;
-      border-right: 0px solid #333333;
-      font-size: 82.5%;
-      background: #FFFFFF;
-    }
+        <!--<nav id="headerNav" class="nav primary-nav">-->
+        <!--  <a class="header" href="javascript:void('Home')">home</a>-->
+        <!-- <a class="header" href="javascript:confirm('Speakers')">speakers</a>-->
+        <!-- <a class="header" href="javascript:prompt('Billy, dont be a hero')">schedule</a>-->
+        <!-- <a class="header" href="javascript:alert('Venues')">venue</a>-->
+        <!-- <a class="header" href="javascript:alert('Register')">register</a>-->
+        <!--</nav>-->
 
-    #name {
-      color: #000000;
-      background: #E0E0E0;
-    }
-
-    #group {
-      color: #444444;
-      background: #E0E0E0;  
-      font-size: 100%;
-      font-weight: bold;
-      border-bottom: 1px solid #D0D0D0;
-      border-top: 1px solid #D0D0D0;
-      margin: 0px;
-      padding: 3px  0px 3px 5px;
-    }
-    #spacer {
-      background: #FFFFFF;
-      border-bottom: 1px solid #D0D0D0;
-      margin: 0px;
-      padding: 0px;
-    }    
-    summary {
-      color #00FF00;
-    }
-
-
-  </style>
-
-  <table>
-
-    <col width="100">
-    <col width="40">
-    <col width="100">
-    <col width="100">
-    <col width="100">
-
-    <caption>Cartesia Commands</caption>
-
-    <thead>
-      <tr>
-        <th>Command</th>
-        <th>Index</th>
-        <th>Key Code</th>
-        <th>English</th>
-        <th>Spanish</th>
-      </tr>
-    </thead>
-
-    <tbody>
-
-      <tr>
-        <td id="group" height="1" colspan=5>General</td>
-      </tr>
-      <tr>
-        <td id="name">SELECT</td>
-        <td>0</td>
-        <td></td>
-        <td>Select</td>
-        <td>SELECT</td>
-      </tr>
+      </div>
       
-      <tr>
-        <td id="name">UNDEF</td>
-        <td>1</td>
-        <td></td>
-        <td>Undefined</td>
-        <td>UNDEFINED</td>
-      </tr>
+      <div id="commands">
+        
+        <dl>
+        
+          Points
+        
+          <dt>
+            <img id="img-POINT_DEFAULT" class="command" src="assets/images/POINT_DEFAULT.svg">
+            Default
+          <dt>
+          
+          <dd>
+            default point:  now is the time for all good men to come to the aid of hte party
+          </dd>
 
-      <tr>
-        <td  id="spacer" colspan=5></td>
-      </tr>
+          <dt>
+            <img id="img-POINT_OBJECT" class="command" src="assets/images/POINT_OBJECT.svg">
+            Object
+          </dt>
+          
+          <dd>
+            default point
+          </dd>
+          
+          <dt>
+            
+          <dt>
+            <img id="img-POINT_BOUND" class="command" src="assets/images/POINT_BOUND.svg">
+            Bound
+          </dt>
+            
+          <dd>
+            default point
+          </dd>
 
-      <tr>
-        <td id="name">CARTESIA</td>
-        <td>2</td>
-        <td></td>
-        <td>Cartesia</td>
-        <td>CARTESIA</td>
-      </tr>
+        </dl>
 
-      <tr>
-        <td  id="spacer" colspan=5></td>
-      </tr>
+        <dl>
+        
+          Lines
+        
+          <dt>
+            <img id="img-LINE_2POINT" class="command" src="assets/images/LINE_2POINT.svg">
+            Default
+          <dt>
+          
+          <dd>
+            default point:  now is the time for all good men to come to the aid of hte party
+          </dd>
 
-      <tr>
-        <td id="name">CONTAINER</td>
-        <td>3</td>
-        <td></td>
-        <td>Container</td>
-        <td>CONTAINER</td>
-      </tr>
+          <dt>
+            <img id="img-LINE_SEGMENT2POINT" class="command" src="assets/images/LINE_SEGMENT2POINT.svg">
+            Object
+          </dt>
+          
+          <dd>
+            default point
+          </dd>
 
-      <tr>
-        <td id="name">HEADER</td>
-        <td>4</td>
-        <td></td>
-        <td>Header</td>
-        <td>HEADER</td>
-      </tr>
+          <dt>
+            <img id="img-LINE_SEGMENTLENGTH" class="command" src="assets/images/LINE_SEGMENTLENGTH.svg">
+            Bound
+          </dt>
+            
+          <dd>
+            default point
+          </dd>
 
-      <tr>
-        <td id="name">FOOTER</td>
-        <td>5</td>
-        <td></td>
-        <td>Footer</td>
-        <td>FOOTER</td>
-      </tr>
+          <dt>
+            <img id="img-LINE_SEGMENTLENGTH" class="command" src="assets/images/LINE_SEGMENTLENGTH.svg">
+            Bound
+          </dt>
 
-      <tr>
-        <td id="name">TELEMETRY</td>
-        <td>6</td>
-        <td></td>
-        <td>Telemetry</td>
-        <td>TELEMETRY</td>
-      </tr>
+          <dd>
+            default point
+          </dd>
 
-      <tr>
-        <td id="name">TOOLTIP</td>
-        <td>7</td>
-        <td></td>
-        <td>ToolTip</td>
-        <td>TOOLTIP</td>
-      </tr>
-      <tr>
-        <td id="name">FORMULA</td>
-        <td>8</td>
-        <td></td>
-        <td>Formula</td>
-        <td>FORMULA</td>
-      </tr>
-      <tr>
-        <td  id="spacer" colspan="5"></td>
-      </tr>
-      <tr>
-        <td id="name">DEBUG</td>
-        <td>9</td>
-        <td></td>
-        <td>Debug</td>
-        <td>DEBUG</td>
-      </tr>
-      <tr>
-        <td id="name">WIDTH</td>
-        <td>10</td>
-        <td></td>
-        <td>Width</td>
-        <td>WIDTH</td>
-      </tr>
-      <tr>
-        <td id="name">HEIGHT</td>
-        <td>11</td>
-        <td></td>
-        <td>Height</td>
-        <td>HEIGHT</td>
-      </tr>
-      <tr>
-        <td id="name">FRAMERATEA</td>
-        <td>12</td>
-        <td></td>
-        <td>FrameRateA</td>
-        <td>FRAMERATE(A)</td>
-      </tr>
-      <tr>
-        <td id="name">FRAMERATE</td>
-        <td>13</td>
-        <td></td>
-        <td>FrameRate</td>
-        <td>FRAMERATE</td>
-      </tr>
-      <tr>
-        <td id="name">MOUSEX</td>
-        <td>14</td>
-        <td></td>
-        <td>MouseX</td>
-        <td>MOUSEX</td>
-      </tr>
-      <tr>
-        <td id="name">MOUSEY</td>
-        <td>15</td>
-        <td></td>
-        <td>MouseY</td>
-        <td>MOUSEY</td>
-      </tr>
-      <tr>
-        <td id="name">WORLDX</td>
-        <td>12</td>
-        <td></td>
-        <td>WorldX</td>
-        <td>WORLDX</td>
-      </tr>
-      <tr>
-        <td id="name">WORLDY</td>
-        <td>17</td>
-        <td></td>
-        <td>WorldY</td>
-        <td>WORLDY</td>
-      </tr>
-      <tr>
-        <td id="name">GRIDX</td>
-        <td>18</td>
-        <td></td>
-        <td>GridX</td>
-        <td>GRIDX</td>
-      </tr>
-      <tr>
-        <td id="name">GRIDY</td>
-        <td>19</td>
-        <td></td>
-        <td>GridY</td>
-        <td>GRIDY</td>
-      </tr>
-      <tr>
-        <td id="name">PRESSED</td>
-        <td>20</td>
-        <td></td>
-        <td>Pressed</td>
-        <td>PRESSED</td>
-      </tr>
-      <tr>
-        <td id="name">VISIBLE</td>
-        <td>21</td>
-        <td></td>
-        <td>Visible</td>
-        <td>VISIBLE</td>
-      </tr>
-      <tr>
-        <td  id="spacer" colspan="5"></td>
-      </tr>
-      <tr>
-        <td id="name">FOCUS</td>
-        <td>22</td>
-        <td></td>
-        <td>Focus</td>
-        <td>FOCUS</td>
-      </tr>
-      <tr>
-        <td  id="spacer" colspan="5"></td>
-      </tr>
-      <tr>
-        <td id="name">left</td>
-        <td>23</td>
-        <td></td>
-        <td>leftbutton</td>
-        <td>left</td>
-      </tr>
-      <tr>
-        <td id="name">CENTER</td>
-        <td>24</td>
-        <td></td>
-        <td>Centerbutton</td>
-        <td>CENTER</td>
-      </tr>
-      <tr>
-        <td id="name">RIGHT</td>
-        <td>25</td>
-        <td></td>
-        <td>Rightbutton</td>
-        <td>RIGHT</td>
-      </tr>
-      <tr>
-        <td  id="spacer" colspan="5"></td>
-      </tr>
-      <tr>
-        <td id="name">SPACER</td>
-        <td>26</td>
-        <td></td>
-        <td>Spacer</td>
-        <td>SPACER</td>
-      </tr>
-      <tr>
-        <td  id="spacer" colspan="5"></td>
-      </tr>
-      <tr>
-        <td id="name">COMMAND</td>
-        <td>27</td>
-        <td></td>
-        <td>Command</td>
-        <td>COMMAND</td>
-      </tr>
-      <tr>
-        <td id="name">FACTOR</td>
-        <td>28</td>
-        <td></td>
-        <td>Factor</td>
-        <td>FACTOR</td>
-      </tr>
-      <tr>
-        <td id="name">UTIL</td>
-        <td>29</td>
-        <td></td>
-        <td>Util</td>
-        <td>UTIL</td>
-      </tr>
-      <tr>
-        <td  id="group" colspan="5">Grid</td>
-      </tr>
-      <tr>
-        <td id="name">GRID</td>
-        <td>100</td>
-        <td>KEYCODES.GRID</td>
-        <td>Grid</td>
-        <td>GRID</td>
-      </tr>
-      <tr>
-        <td id="name">GRIDPROPS</td>
-        <td>101</td>
-        <td>KEYCODES.GRIDPROPS</td>
-        <td>GridProps</td>
-        <td>GRIDPROPS</td>
-      </tr>
-      <tr>
-        <td id="name">ORIGIN</td>
-        <td>102</td>
-        <td>KEYCODES.ORIGIN</td>
-        <td>Origin</td>
-        <td>ORIGIN</td>
-      </tr>
-      <tr>
-        <td id="name">border</td>
-        <td>103</td>
-        <td>KEYCODES.border</td>
-        <td>border</td>
-        <td>border</td>
-      </tr>
-      <tr>
-        <td id="name">AXES</td>
-        <td>104</td>
-        <td>KEYCODES.AXES</td>
-        <td>Axes</td>
-        <td>AXES</td>
-      </tr>
-      <tr>
-        <td id="name">AXISX</td>
-        <td>105</td>
-        <td>KEYCODES.AXISX</td>
-        <td>x</td>
-        <td>X</td>
-      </tr>
-      <tr>
-        <td id="name">AXISY</td>
-        <td>106</td>
-        <td>KEYCODES.AXISY</td>
-        <td>y</td>
-        <td>Y</td>
-      </tr>
-      <tr>
-        <td id="name">LINES</td>
-        <td>107</td>
-        <td>KEYCODES.LINES</td>
-        <td>Lines</td>
-        <td>LINES</td>
-      </tr>
-      <tr>
-        <td id="name">LINESX</td>
-        <td>108</td>
-        <td>KEYCODES.LINESX</td>
-        <td>x</td>
-        <td>X</td>
-      </tr>
-      <tr>
-        <td id="name">LINESY</td>
-        <td>109</td>
-        <td>KEYCODES.LINESY</td>
-        <td>y</td>
-        <td>Y</td>
-      </tr>
-      <tr>
-        <td id="name">ARROWS</td>
-        <td>110</td>
-        <td>KEYCODES.ARROWS</td>
-        <td>Arrows</td>
-        <td>ARROWS</td>
-      </tr>
-      <tr>
-        <td id="name">ARROWSX</td>
-        <td>111</td>
-        <td>KEYCODES.ARROWSX</td>
-        <td>x</td>
-        <td>X</td>
-      </tr>
-      <tr>
-        <td id="name">ARROWSY</td>
-        <td>112</td>
-        <td>KEYCODES.ARROWSY</td>
-        <td>y</td>
-        <td>Y</td>
-      </tr>
-      <tr>
-        <td id="name">TICKS</td>
-        <td>113</td>
-        <td>KEYCODES.TICKS</td>
-        <td>Ticks</td>
-        <td>TICKS</td>
-      </tr>
-      <tr>
-        <td id="name">TICKSX</td>
-        <td>114</td>
-        <td>KEYCODES.TICKSX</td>
-        <td>x</td>
-        <td>X</td>
-      </tr>
-      <tr>
-        <td id="name">TICKSY</td>
-        <td>115</td>
-        <td>KEYCODES.TICKSY</td>
-        <td>y</td>
-        <td>Y</td>
-      </tr>
-      <tr>
-        <td id="name">LABELS</td>
-        <td>116</td>
-        <td>KEYCODES.LABELS</td>
-        <td>Labels</td>
-        <td>LABELS</td>
-      </tr>
-      <tr>
-        <td id="name">LABELSX</td>
-        <td>117</td>
-        <td>KEYCODES.LABELSX</td>
-        <td>x</td>
-        <td>X</td>
-      </tr>
-      <tr>
-        <td id="name">LABELSY</td>
-        <td>118</td>
-        <td>KEYCODES.LABELSY</td>
-        <td>y</td>
-        <td>Y</td>
-      </tr>
-      <tr>
-        <td id="name">QUADRANTS</td>
-        <td>119</td>
-        <td>KEYCODES.QUADRANTS</td>
-        <td>Quadrants</td>
-        <td>QUADRANTS</td>
-      </tr>
-      <tr>
-        <td id="name">COORDINATES</td>
-        <td>120</td>
-        <td>KEYCODES.COORDINATES</td>
-        <td>Coordinates</td>
-        <td>COORDINATES</td>
-      </tr>
-      <tr>
-        <td id="name">ORTHO</td>
-        <td>121</td>
-        <td>KEYCODES.ORTHO</td>
-        <td>Ortho</td>
-        <td>ORTHO</td>
-      </tr>
-      <tr>
-        <td id="name">STG</td>
-        <td>122</td>
-        <td>KEYCODES.STG</td>
-        <td>stg</td>
-        <td>STG</td>
-      </tr>
-      <tr>
-        <td id="name">FS</td>
-        <td>123</td>
-        <td>KEYCODES.FULLSCREEN</td>
-        <td>Grid</td>
-        <td>COMMAND</td>
-      </tr>
+          <dt>
+            <img id="img-LINE_PERPENDICULAR" class="command" src="assets/images/LINE_PERPENDICULAR.svg">
+            Bound
+          </dt>
 
-    </table>
+          <dd>
+            default point
+          </dd>
 
-  </tbody>
+          <dt>
+            <img id="img-LINE_PERPENDICULARBISECTOR" class="command" src="assets/images/LINE_PERPENDICULARBISECTOR.svg">
+            Bound
+          </dt>
 
-</html>
+          <dd>
+            default point
+          </dd>
+
+          <dt>
+            <img id="img-LINE_ANGLEBISECTOR" class="command" src="assets/images/LINE_ANGLEBISECTOR.svg">
+            Bound
+          </dt>
+
+          <dd>
+            default point
+          </dd>
+          
+          <dt>
+            <img id="img-LINE_PARALLEL" class="command" src="assets/images/LINE_PARALLEL.svg">
+            Bound
+          </dt>
+
+          <dd>
+            default point
+          </dd>
+          
+          <dt>
+            <img id="img-LINE_TANGENT" class="command" src="assets/images/LINE_TANGENT.svg">
+            Bound
+          </dt>
+
+          <dd>
+            default point
+          </dd>
+          
+          <dt>
+            <img id="img-LINE_DIAMETER" class="command" src="assets/images/LINE_DIAMETER.svg">
+            Bound
+          </dt>
+
+          <dd>
+            default point
+          </dd>
+          
+          <dt>
+            <img id="img-LINE_RADIUS" class="command" src="assets/images/LINE_RADIUS.svg">
+            Bound
+          </dt>
+
+          <dd>
+            default point
+          </dd>
+          
+        </dl>
+
+      </div>
+      
+      
+      <script>
+
+
+        
+      </script>
+      
+    </body>
+  
+  </html>
