@@ -14,6 +14,7 @@
 
       <link rel="stylesheet" href="assets/stylesheets/cartesia.css">
       <link rel="stylesheet" href="assets/stylesheets/commands.css">
+
       <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lato:100,300,400">
       <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Ubuntu:100,300,400">
       <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Fjalla One:100,300,400">
@@ -27,167 +28,438 @@
       <!--Page Header-->
       <div id="header" class="header">
 
-        <label id="logo">cartesia</label>
+        <a id="logo" class="header" href="cartesia.html">cartesia</a>
 
-        <!--<nav id="headerNav" class="nav primary-nav">-->
-        <!--  <a class="header" href="javascript:void('Home')">home</a>-->
-        <!-- <a class="header" href="javascript:confirm('Speakers')">speakers</a>-->
-        <!-- <a class="header" href="javascript:prompt('Billy, dont be a hero')">schedule</a>-->
-        <!-- <a class="header" href="javascript:alert('Venues')">venue</a>-->
-        <!-- <a class="header" href="javascript:alert('Register')">register</a>-->
-        <!--</nav>-->
+        <nav id="headerNav" class="nav primary-nav">
+          <a id="cmds" class="header" href="commands.html">Commands</a>
+          <a id="speakers" class="header" href="javascript:confirm('Speakers')">speakers</a>
+          <a id="schedule" class="header" href="javascript:prompt('Billy, dont be a hero')">schedule</a>
+          <a id="venue" class="header" href="javascript:alert('Venues')">venue</a>
+          <a id="register" class="header" href="javascript:alert('Register')">register</a>
+        </nav>
 
       </div>
-      
+
       <div id="commands">
-        
+
+        <h1>Cartesia Shape Commands</h1>
+
+        <h2>Points</h2>
+
         <dl>
-        
-          Points
-        
+
           <dt>
-            <img id="img-POINT_DEFAULT" class="command" src="assets/images/POINT_DEFAULT.svg">
-            Default
-          <dt>
-          
+            <img id="img-POINT_DEFAULT" class="command" src="assets/images/shapes/POINT_DEFAULT.svg">
+            <label class="command">Default</label>
+          </dt>
           <dd>
             default point:  now is the time for all good men to come to the aid of hte party
           </dd>
 
           <dt>
-            <img id="img-POINT_OBJECT" class="command" src="assets/images/POINT_OBJECT.svg">
-            Object
+            <img id="img-POINT_OBJECT" class="command" src="assets/images/shapes/POINT_OBJECT.svg">
+            <label class="command">Object</label>
           </dt>
-          
           <dd>
             default point
           </dd>
-          
+
           <dt>
-            
-          <dt>
-            <img id="img-POINT_BOUND" class="command" src="assets/images/POINT_BOUND.svg">
-            Bound
+            <img id="img-POINT_BOUND" class="command" src="assets/images/shapes/POINT_BOUND.svg">
+            <label class="command">Bound</label>
           </dt>
-            
           <dd>
             default point
           </dd>
 
         </dl>
 
+        <h2>Lines</h2>
+
         <dl>
-        
-          Lines
-        
+
           <dt>
-            <img id="img-LINE_2POINT" class="command" src="assets/images/LINE_2POINT.svg">
-            Default
-          <dt>
+            <img id="img-LINE_2POINT" class="command" src="assets/images/shapes/LINE_2POINT.svg">
+            <label class="command">2 point</label>
+          </dt>
           
           <dd>
-            default point:  now is the time for all good men to come to the aid of hte party
+            2 point:  now is the time for all good men to come to the aid of hte party
           </dd>
 
           <dt>
             <img id="img-LINE_SEGMENT2POINT" class="command" src="assets/images/LINE_SEGMENT2POINT.svg">
-            Object
+            <label class="command">Segment</label>
           </dt>
           
           <dd>
-            default point
+            segment 2 point
           </dd>
 
           <dt>
             <img id="img-LINE_SEGMENTLENGTH" class="command" src="assets/images/LINE_SEGMENTLENGTH.svg">
-            Bound
+            <label class="command">segment length</label>
           </dt>
             
           <dd>
-            default point
-          </dd>
-
-          <dt>
-            <img id="img-LINE_SEGMENTLENGTH" class="command" src="assets/images/LINE_SEGMENTLENGTH.svg">
-            Bound
-          </dt>
-
-          <dd>
-            default point
+            segment length
           </dd>
 
           <dt>
             <img id="img-LINE_PERPENDICULAR" class="command" src="assets/images/LINE_PERPENDICULAR.svg">
-            Bound
+            <label class="command">Perpendicular</label>
           </dt>
 
           <dd>
-            default point
+            perpendicular
           </dd>
 
           <dt>
             <img id="img-LINE_PERPENDICULARBISECTOR" class="command" src="assets/images/LINE_PERPENDICULARBISECTOR.svg">
-            Bound
+            <label class="command">perpendicular bisector</label>
           </dt>
 
           <dd>
-            default point
+            perpendicular bisector
           </dd>
 
           <dt>
             <img id="img-LINE_ANGLEBISECTOR" class="command" src="assets/images/LINE_ANGLEBISECTOR.svg">
-            Bound
+            <label class="command">Angle Bisector</label>
           </dt>
 
           <dd>
-            default point
+            Angle Bisector
           </dd>
           
           <dt>
             <img id="img-LINE_PARALLEL" class="command" src="assets/images/LINE_PARALLEL.svg">
-            Bound
+            <label class="command">Parallel</label>
           </dt>
 
           <dd>
-            default point
+            Parallel
           </dd>
           
           <dt>
             <img id="img-LINE_TANGENT" class="command" src="assets/images/LINE_TANGENT.svg">
-            Bound
+            <label class="command">Tangent</label>
           </dt>
-
           <dd>
-            default point
+            Tangent
           </dd>
           
           <dt>
             <img id="img-LINE_DIAMETER" class="command" src="assets/images/LINE_DIAMETER.svg">
-            Bound
+            <label class="command">Diameter</label>
           </dt>
-
           <dd>
-            default point
+            Diameter
           </dd>
           
           <dt>
             <img id="img-LINE_RADIUS" class="command" src="assets/images/LINE_RADIUS.svg">
-            Bound
+            <label class="command">Radius</label>
           </dt>
 
           <dd>
-            default point
+            Radius
           </dd>
           
         </dl>
 
+        <h2>Rays/Vectors</h2>
+
+        <dl>
+
+          <dt>
+            <img id="img-RAY_2POINT" class="command" src="assets/images/shapes/RAY_2POINT.svg">
+            <label class="command">Ray:  2 Point</label>
+          </dt>
+          <dd>
+            Ray:  2 Point
+          </dd>
+
+          <dt>
+            <img id="img-VECTOR_2POINT" class="command" src="assets/images/shapes/VECTOR_2POINT.svg">
+            <label class="command">Vector: 2 Point</label>
+          </dt>
+          <dd>
+            Vector:  2 Point
+          </dd>
+
+          <dt>
+            <img id="img-VECTOR_FROMPOINT" class="command" src="assets/images/shapes/VECTOR_FROMPOINT.svg">
+            <label class="command">Vector:  From Point</label>
+          </dt>
+          <dd>
+            Vector:  From Point
+          </dd>
+
+        </dl>
+
+        <h2>Triangles</h2>
+
+        <dl>
+
+          <dt>
+            <img id="img-TRIANGLE_EQUILATERAL" class="command" src="assets/images/shapes/TRIANGLE_EQUILATERAL.svg">
+            <label class="command">Triangle:  Equilateral</label>
+          </dt>
+          <dd>
+            Triangle:  equilateral
+          </dd>
+
+          <dt>
+            <img id="img-TRIANGLE_ISOSCELES" class="command" src="assets/images/shapes/TRIANGLE_ISOSCELES.svg">
+            <label class="command">Triangle:  Isosceles</label>
+          </dt>
+          <dd>
+            Triangle:  isosceles
+          </dd>
+
+          <dt>
+            <img id="img-TRIANGLE_SCALENE" class="command" src="assets/images/shapes/TRIANGLE_SCALENE.svg">
+            <label class="command">Triangle:  Scalene</label>
+          </dt>
+          <dd>
+            Triangle:  scalene
+          </dd>
+
+        </dl>
+        
+        <h2>Circles</h2>
+
+        <dl>
+
+          <dt>
+            <img id="img-CIRCLE_CENTERPOINT" class="command" src="assets/images/shapes/CIRCLE_CENTERPOINT.svg">
+            <label class="command">Circle:  Center/Point</label>
+          </dt>
+          <dd>
+            Circle:  center-point
+          </dd>
+
+          <dt>
+            <img id="img-CIRCLE_CENTERRADIUS" class="command" src="assets/images/shapes/CIRCLE_CENTERRADIUS.svg">
+            <label class="command">Circle:  Center/Radius</label>
+          </dt>
+          <dd>
+            Circle:  center-radius
+          </dd>
+
+          <dt>
+            <img id="img-CIRCLE_3POINT" class="command" src="assets/images/shapes/CIRCLE_3POINT.svg">
+            <label class="command">Circle:  3 point</label>
+          </dt>
+          <dd>
+            Circle:  3 point
+          </dd>
+
+        </dl>
+
+        <h2>Quadrilaterals</h2>
+
+        <dl>
+
+          <dt>
+            <img id="img-QUADRILATERAL_RECTANGLE" class="command" src="assets/images/shapes/QUADRILATERAL_RECTANGLE.svg">
+            <label class="command">Quadrilateral:  rectangle</label>
+          </dt>
+          <dd>
+            Quadrilateral:  rectangle
+          </dd>
+
+          <dt>
+            <img id="img-QUADRILATERAL_SQUARE" class="command" src="assets/images/shapes/QUADRILATERAL_SQUARE.svg">
+            <label class="command">Quadrilateral:  square</label>
+          </dt>
+          <dd>
+            Quadrilateral:  square
+          </dd>
+
+          <dt>
+            <img id="img-QUADRILATERAL_RHOMBUS" class="command" src="assets/images/shapes/QUADRILATERAL_RHOMBUS.svg">
+            <label class="command">Quadrilateral:  Rhombus</label>
+          </dt>
+          <dd>
+            Quadrilateral:  rhombus
+          </dd>
+          
+          <dt>
+            <img id="img-QUADRILATERAL_PARALLELOGRAM" class="command" src="assets/images/shapes/QUADRILATERAL_PARALLELOGRAM.svg">
+            <label class="command">Quadrilateral:  parallelogram</label>
+          </dt>
+          <dd>
+            Quadrilateral:  parallelogram
+          </dd>
+
+          <dt>
+            <img id="img-QUADRILATERAL_TRAPEZOID" class="command" src="assets/images/shapes/QUADRILATERAL_TRAPEZOID.svg">
+            <label class="command">Quadrilateral:  trapezoid</label>
+          </dt>
+          <dd>
+            Quadrilateral:  trapezoid
+          </dd>
+
+          <dt>
+            <img id="img-QUADRILATERAL_KITE" class="command" src="assets/images/shapes/QUADRILATERAL_KITE.svg">
+            <label class="command">Quadrilateral:  kite</label>
+          </dt>
+          <dd>
+            Quadrilateral:  kite
+          </dd>
+          
+        </dl>
+
+        <h2>Arcs</h2>
+
+        <dl>
+
+          <dt>
+            <img id="img-ARC_2VERTICES" class="command" src="assets/images/shapes/ARC_2VERTICES.svg">
+            <label class="command">Arc:  2 vertices</label>
+          </dt>
+          <dd>
+            Arc:  2 vertices
+          </dd>
+
+          <dt>
+            <img id="img-ARC_CIRCULAR" class="command" src="assets/images/shapes/ARC_CIRCULAR.svg">
+            <label class="command">Arc:  circular</label>
+          </dt>
+          <dd>
+            Arc:  circular
+          </dd>
+
+          <dt>
+            <img id="img-ARC_CIRCUMCIRCULAR" class="command" src="assets/images/shapes/ARC_CIRCUMCIRCULAR.svg">
+            <label class="command">Arc:  circum-circular</label>
+          </dt>
+          <dd>
+            Arc:  circum-circular
+          </dd>
+          
+          <dt>
+            <img id="img-ARC_CIRCULARSECTOR" class="command" src="assets/images/shapes/ARC_CIRCULARSECTOR.svg">
+            <label class="command">Arc:  Circular-sector</label>
+          </dt>
+          <dd>
+            Arc:  Circular-sector
+          </dd>
+
+          <dt>
+            <img id="img-ARC_CIRCUMCIRCULARSECTOR" class="command" src="assets/images/shapes/ARC_CIRCUMCIRCULARSECTOR.svg">
+            <label class="command">Arc:  circum-circular-sector</label>
+          </dt>
+          <dd>
+            Arc:  circum-circular-sector
+          </dd>
+
+        </dl>
+
+        <h2>Polygons</h2>
+
+        <dl>
+
+          <dt>
+            <img id="img-POLYGON_REGULAR" class="command" src="assets/images/shapes/POLYGON_REGULAR.svg">
+            <label class="command">Polygon:  Regular</label>
+          </dt>
+          <dd>
+            Polygon:  Regular
+          </dd>
+
+          <dt>
+            <img id="img-POLYGON_RIGID" class="command" src="assets/images/shapes/POLYGON_RIGID.svg">
+            <label class="command">Polygon:  rigid</label>
+          </dt>
+          <dd>
+            Polygon:  rigid
+          </dd>
+
+          <dt>
+            <img id="img-POLYGON_VECTOR" class="command" src="assets/images/shapes/POLYGON_VECTOR.svg">
+            <label class="command">Polygon:  vector</label>
+          </dt>
+          <dd>
+            Polygon:  vector
+          </dd>
+          
+          <dt>
+            <img id="img-POLYGON_INSCRIBED" class="command" src="assets/images/shapes/POLYGON_INSCRIBED.svg">
+            <label class="command">Polygon:  inscribed</label>
+          </dt>
+          <dd>
+            Polygon:  inscribed
+          </dd>
+
+          <dt>
+            <img id="img-POLYGON_CIRCUMSCRIBED" class="command" src="assets/images/shapes/POLYGON_CIRCUMSCRIBED.svg">
+            <label class="command">Polygon:  circumscribed</label>
+          </dt>
+          <dd>
+            Polygon:  circumscribed
+          </dd>
+
+        </dl>
+        
+        <h2>Conics</h2>
+
+        <dl>
+
+          <dt>
+            <img id="img-CONIC_ELLIPSE" class="command" src="assets/images/shapes/CONIC_ELLIPSE.svg">
+            <label class="command">Conic:  ellipse</label>
+          </dt>
+          <dd>
+            Conic:  ellipse
+          </dd>
+
+          <dt>
+            <img id="img-CONIC_HYPERBOLA" class="command" src="assets/images/shapes/CONIC_HYPERBOLA.svg">
+            <label class="command">Conic:  hyperbola</label>
+          </dt>
+          <dd>
+            Conic:  hyperbola
+          </dd>
+
+          <dt>
+            <img id="img-CONIC_PARABOLA" class="command" src="assets/images/shapes/CONIC_PARABOLA.svg">
+            <label class="command">Conic:  parabola</label>
+          </dt>
+          <dd>
+            Conic:  parabola
+          </dd>
+          
+          <dt>
+            <img id="img-CONIC_5VERTICES" class="command" src="assets/images/shapes/CONIC_5VERTICES.svg">
+            <label class="command">Conic:  5 vertices</label>
+          </dt>
+          <dd>
+            Conic:  5 vertices
+          </dd>
+
+        </dl>
+        
+        <h2>Angles</h2>
+
+        <dl>
+
+          <dt>
+            <img id="img-ANGLE_SIZE" class="command" src="assets/images/shapes/ANGLE_SIZE.svg">
+            <label class="command">Angle:  size</label>
+          </dt>
+          <dd>
+            Angle:  size
+          </dd>
+
+        </dl>
+        
       </div>
-      
-      
+
       <script>
 
-
-        
       </script>
       
     </body>
