@@ -72,11 +72,11 @@
 
     /*overflow:           none;*/
     
-    background:         none;
+    /*background:         none;*/
     
   }
 
-
+  
   /*
     ============================================================================
       General
@@ -114,6 +114,18 @@
     -webkit-transition: All 0.5s ease;
     
     /*border-top:         1px solid #008282;*/
+    
+  }
+  
+  #commands {
+    
+    position:           relative;
+    
+    top:                35px;
+    
+    font:               400 11px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+    background:         #262626;
     
   }
   
@@ -331,6 +343,8 @@
   }
   
   a.header {
+
+    font:               400 14px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
     
     display:            inline-block;
     height:             35px;
