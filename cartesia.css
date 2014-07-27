@@ -195,6 +195,9 @@
 
     position:           absolute;
     
+    margin:             0;
+    padding:            0;
+    
     width:              200px;
     
     right:              0;
@@ -326,13 +329,25 @@
   */
 
   .nav {
+    
     text-align:         right;
+    
+    /*background:         red;*/
+    
+    width:              auto;
+
   }
   
   .primary-nav {
-    
+
+    display:            inline;
+    position:           absolute;
+
+    width:              auto;
     height:             35px;
-    margin:             0 30px 0 0;
+    /*margin:             0 30px 0 0;*/
+    
+    right:              40px;
     
     font-size:          14px;
     font-weight:        400;
@@ -363,7 +378,7 @@
     
   }
   a.header:hover {
-  
+/*cursor: url(assets/images/shapes/POINT_DEFAULT.svg);*/
     font-weight:        300;
     
     color:              #008282;
@@ -746,6 +761,52 @@
   }
   
   #toolbar {
-    padding: 4px;
-    display: inline-block;
+    
+    padding:            4px;
+
+    display:            inline-block;
+  }
+  
+  #telemetry {
+    
+    margin:             10px;
+    
+    background:         transparent;
+    
+    /*border:             1px solid #777;*/
+    
+  }
+  .telemetry-left {
+
+    font:               400 11px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    
+    width:              50%;
+    height:             16px;
+    
+    line-height:        16px;
+
+    color:              #999;
+    
+    float:              left;
+
+    background:         transparent;
+    
+  }
+  .telemetry-right {
+
+    font:               400 11px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    
+    left:               100px;
+
+    width:              50%;
+    height:             16px;
+
+    line-height:        16px;
+
+    color:              #ffff00;
+
+    float:              right;
+
+    background:         transparent;
+
   }
