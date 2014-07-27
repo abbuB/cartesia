@@ -36,15 +36,15 @@
       
         <button id="menu-left-toggle" class="toggle">◄</button>
       
-        <label id="logo">cartesia</label>
+        <a id="logo" class="header" href="cartesia.html">cartesia</a>
 
-        <!--<nav id="headerNav" class="nav primary-nav">-->
-        <!--  <a class="header" href="javascript:void('Home')">home</a>-->
-        <!-- <a class="header" href="javascript:confirm('Speakers')">speakers</a>-->
-        <!-- <a class="header" href="javascript:prompt('Billy, dont be a hero')">schedule</a>-->
-        <!-- <a class="header" href="javascript:alert('Venues')">venue</a>-->
-        <!-- <a class="header" href="javascript:alert('Register')">register</a>-->
-        <!--</nav>-->
+        <nav id="headerNav" class="nav primary-nav">
+          <a id="cmds" class="header" href="commands.html" target="_blank">Commands</a>
+          <a id="cmds" class="header" href="javascript:confirm('Speakers')">speakers</a>
+          <a id="cmds" class="header" href="javascript:prompt('Billy, dont be a hero')">schedule</a>
+          <a id="cmds" class="header" href="javascript:alert('Venues')">venue</a>
+          <a id="cmds" class="header" href="javascript:alert('Register')">register</a>
+        </nav>
         
         <button id="menu-right-toggle" class="toggle">►</button>
         
@@ -317,20 +317,20 @@
           <!-- Points -->
           <div id="points" tabindex="0" class="onclick-menu">
 
-            <img id="img-points" class="menu" src="assets/images/POINT_DEFAULT.svg">
+            <img id="img-points" class="menu" src="assets/images/shapes/POINT_DEFAULT.svg">
 
             <ul id="ul-points" class="onclick-menu-content">
 
               <button id="POINT_DEFAULT" class="menu" onclick="shapeCommand(1001)">
-                <img id="img-POINT_DEFAULT" class="menu" src="assets/images/POINT_DEFAULT.svg">
+                <img id="img-POINT_DEFAULT" class="menu" src="assets/images/shapes/POINT_DEFAULT.svg">
               </button>
 
               <button id="POINT_OBJECT" class="menu" onclick="shapeCommand(1002)">
-                <img id="img-POINT_OBJECT" class="menu" src="assets/images/POINT_OBJECT.svg">
+                <img id="img-POINT_OBJECT" class="menu" src="assets/images/shapes/POINT_OBJECT.svg">
               </button>
 
               <button id="POINT_BOUND" class="menu" onclick="shapeCommand(1003)">
-                <img id="img-POINT_BOUND" class="menu" src="assets/images/POINT_BOUND.svg">
+                <img id="img-POINT_BOUND" class="menu" src="assets/images/shapes/POINT_BOUND.svg">
               </button>
 
             </ul>
@@ -340,39 +340,39 @@
           <!-- Lines -->
           <div id="lines" tabindex="0" class="onclick-menu">
 
-            <img id="img-lines" class="menu" src="assets/images/LINE_SEGMENT2POINT.svg" onclick="shapeCommand(1100)">
+            <img id="img-lines" class="menu" src="assets/images/shapes/LINE_SEGMENT2POINT.svg" onclick="shapeCommand(1100)">
 
             <ul id="ul-lines" class="onclick-menu-content">
     
               <button id="LINE_2POINT" class="menu" onclick="shapeCommand(1101)">
-                <img id="img-LINE_2POINT" class="menu" src="assets/images/LINE_2POINT.svg">
+                <img id="img-LINE_2POINT" class="menu" src="assets/images/shapes/LINE_2POINT.svg">
               </button>
               <button id="LINE_SEGMENT2POINT" class="menu" onclick="shapeCommand(1102)">
-                <img id="img-LINE_SEGMENT2POINT" class="menu" src="assets/images/LINE_SEGMENT2POINT.svg">
+                <img id="img-LINE_SEGMENT2POINT" class="menu" src="assets/images/shapes/LINE_SEGMENT2POINT.svg">
               </button>
               <button id="LINE_SEGMENTLENGTH" class="menu" onclick="shapeCommand(1103)">
-                <img id="img-LINE_SEGMENTLENGTH" class="menu" src="assets/images/LINE_SEGMENTLENGTH.svg">
+                <img id="img-LINE_SEGMENTLENGTH" class="menu" src="assets/images/shapes/LINE_SEGMENTLENGTH.svg">
               </button>
               <button id="LINE_PERPENDICULAR" class="menu" onclick="shapeCommand(1104)">
-                <img id="img-LINE_PERPENDICULAR" class="menu" src="assets/images/LINE_PERPENDICULAR.svg">
+                <img id="img-LINE_PERPENDICULAR" class="menu" src="assets/images/shapes/LINE_PERPENDICULAR.svg">
               </button>
               <button id="LINE_PERPENDICULARBISECTOR" class="menu" onclick="shapeCommand(1005)">
-                <img id="img-LINE_PERPENDICULARBISECTOR" class="menu" src="assets/images/LINE_PERPENDICULARBISECTOR.svg">
+                <img id="img-LINE_PERPENDICULARBISECTOR" class="menu" src="assets/images/shapes/LINE_PERPENDICULARBISECTOR.svg">
               </button>
               <button id="LINE_ANGLEBISECTOR" class="menu" onclick="shapeCommand(1106)">
-                <img id="img-LINE_ANGLEBISECTOR" class="menu" src="assets/images/LINE_ANGLEBISECTOR.svg">
+                <img id="img-LINE_ANGLEBISECTOR" class="menu" src="assets/images/shapes/LINE_ANGLEBISECTOR.svg">
               </button>
               <button id="LINE_PARALLEL" class="menu" onclick="shapeCommand(1107)">
-                <img id="img-LINE_PARALLEL" class="menu" src="assets/images/LINE_PARALLEL.svg">
+                <img id="img-LINE_PARALLEL" class="menu" src="assets/images/shapes/LINE_PARALLEL.svg">
               </button>
               <button id="LINE_TANGENT" class="menu" onclick="shapeCommand(1108)">
-                <img id="img-LINE_TANGENT" class="menu" src="assets/images/LINE_TANGENT.svg">
+                <img id="img-LINE_TANGENT" class="menu" src="assets/images/shapes/LINE_TANGENT.svg">
               </button>
               <button id="LINE_DIAMETER" class="menu" onclick="shapeCommand(1109)">
-                <img id="img-LINE_DIAMETER" class="menu" src="assets/images/LINE_DIAMETER.svg">
+                <img id="img-LINE_DIAMETER" class="menu" src="assets/images/shapes/LINE_DIAMETER.svg">
               </button>
               <button id="LINE_RADIUS" class="menu" onclick="shapeCommand(1110)">
-                <img id="img-LINE_RADIUS" class="menu" src="assets/images/LINE_RADIUS.svg">
+                <img id="img-LINE_RADIUS" class="menu" src="assets/images/shapes/LINE_RADIUS.svg">
               </button>
               
             </ul>
@@ -403,19 +403,19 @@
           <!-- Triangles -->
           <div id="triangles" tabindex="0" class="onclick-menu">
 
-            <!--<img id="img-triangles" class="menu" src="assets/images/TRIANGLE_EQUILATERAL.svg" onclick="shapeCommand(1300)">-->
+            <img id="img-triangles" class="menu" src="assets/images/shapes/TRIANGLE_EQUILATERAL.svg" onclick="shapeCommand(1300)">
 
-            <!--<ul id="ul-triangles" class="onclick-menu-content">-->
+            <ul id="ul-triangles" class="onclick-menu-content">
               
-              <!--<button id="TRIANGLE_EQUILATERAL" class="menu" onclick="shapeCommand(1301)">-->
-              <!--  <img id="img-TRIANGLE_EQUILATERAL" class="menu" src="assets/images/TRIANGLE_EQUILATERAL.svg">-->
-              <!--</button>-->
-              <!--<button id="TRIANGLE_ISOSCELES" class="menu" onclick="shapeCommand(1302)">-->
-              <!--  <img id="img-TRIANGLE_ISOSCELES" class="menu" src="assets/images/TRIANGLE_ISOSCELES.svg">-->
-              <!--</button>-->
-              <!--<button id="TRIANGLE_SCALENE" class="menu" onclick="shapeCommand(1303)">-->
-              <!--  <img id="img-TRIANGLE_SCALENE" class="menu" src="assets/images/TRIANGLE_SCALENE.svg">-->
-              <!--</button>-->
+              <button id="TRIANGLE_EQUILATERAL" class="menu" onclick="shapeCommand(1301)">
+                <img id="img-TRIANGLE_EQUILATERAL" class="menu" src="assets/images/shapes/TRIANGLE_EQUILATERAL.svg">
+              </button>
+              <button id="TRIANGLE_ISOSCELES" class="menu" onclick="shapeCommand(1302)">
+                <img id="img-TRIANGLE_ISOSCELES" class="menu" src="assets/images/shapes/TRIANGLE_ISOSCELES.svg">
+              </button>
+              <button id="TRIANGLE_SCALENE" class="menu" onclick="shapeCommand(1303)">
+                <img id="img-TRIANGLE_SCALENE" class="menu" src="assets/images/shapes/TRIANGLE_SCALENE.svg">
+              </button>
               
             </ul>
 
@@ -424,19 +424,19 @@
           <!-- Circles -->
           <div id="circles" tabindex="0" class="onclick-menu">
 
-            <!--<img id="img-circles" class="menu" src="assets/images/CIRCLE.svg" onclick="shapeCommand(1400)">-->
+            <img id="img-circles" class="menu" src="assets/images/shapes/CIRCLE.svg" onclick="shapeCommand(1400)">
 
-            <!--<ul id="ul-circles" class="onclick-menu-content">-->
+            <ul id="ul-circles" class="onclick-menu-content">
               
-              <!--<button id="CIRCLE_CENTERPOINT" class="menu" onclick="shapeCommand(1401)">-->
-              <!--  <img id="img-CIRCLE_CENTERRADIUS" class="menu" src="assets/images/CIRCLE_CENTERPOINT.svg">-->
-              <!--</button>-->
-              <!--<button id="CIRCLE_CENTERRADIUS" class="menu" onclick="shapeCommand(1402)">-->
-              <!--  <img id="img-CIRCLE_CENTERRADIUS" class="menu" src="assets/images/CIRCLE_CENTERRADIUS.svg">-->
-              <!--</button>-->
-              <!--<button id="CIRCLE_3POINT" class="menu" onclick="shapeCommand(1403)">-->
-              <!--  <img id="img-CIRCLE_CENTERRADIUS" class="menu" src="assets/images/CIRCLE_3POINT.svg">-->
-              <!--</button>-->
+              <button id="CIRCLE_CENTERPOINT" class="menu" onclick="shapeCommand(1401)">
+                <img id="img-CIRCLE_CENTERRADIUS" class="menu" src="assets/images/shapes/CIRCLE_CENTERPOINT.svg">
+              </button>
+              <button id="CIRCLE_CENTERRADIUS" class="menu" onclick="shapeCommand(1402)">
+                <img id="img-CIRCLE_CENTERRADIUS" class="menu" src="assets/images/shapes/CIRCLE_CENTERRADIUS.svg">
+              </button>
+              <button id="CIRCLE_3POINT" class="menu" onclick="shapeCommand(1403)">
+                <img id="img-CIRCLE_CENTERRADIUS" class="menu" src="assets/images/shapes/CIRCLE_3POINT.svg">
+              </button>
               
             </ul>
 
