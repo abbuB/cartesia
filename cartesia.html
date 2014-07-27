@@ -66,15 +66,15 @@
 
            <!--Zoom/Pan-->
           <div id="display" class="display">
-            <button id="zoom-in"  class="grid">p</button>
-            <button id="zoom-out" class="grid">z+</button>
-            <button id="pan"      class="grid">z-</button>
+            <button id="pan"      class="grid" onclick="shapeCommand(506)">p</button>
+            <button id="zoom-in"  class="grid" onclick="shapeCommand(504)">z+</button>
+            <button id="zoom-out" class="grid" onclick="shapeCommand(505)">z-</button>
           </div>
 
            <!--Ortho/STG/Grid-->
           <div id="grid-display"      class="grid-display">
-            <button id="ortho"        class="grid">o</button>
-            <button id="snap-to-grid" class="grid">stg</button>
+            <button id="ortho"        class="grid" onclick="shapeCommand(121)">o</button>
+            <button id="snap-to-grid" class="grid" onclick="shapeCommand(122)">stg</button>
           </div>
 
         </div>
@@ -340,7 +340,7 @@
           <!-- Lines -->
           <div id="lines" tabindex="0" class="onclick-menu">
 
-            <img id="img-lines" class="menu" src="assets/images/shapes/LINE_SEGMENT2POINT.svg" onclick="shapeCommand(1100)">
+            <img id="img-lines" class="menu" src="assets/images/shapes/LINE_2POINT.svg" onclick="shapeCommand(1100)">
 
             <ul id="ul-lines" class="onclick-menu-content">
     
@@ -363,16 +363,16 @@
                 <img id="img-LINE_ANGLEBISECTOR" class="menu" src="assets/images/shapes/LINE_ANGLEBISECTOR.svg">
               </button>
               <button id="LINE_PARALLEL" class="menu" onclick="shapeCommand(1107)">
-                <img id="img-LINE_PARALLEL" class="menu" src="assets/images/shapes/LINE_PARALLEL.svg">
+                <img id="img-LINE_PARALLEL" class="menu" src="assets/images/shapes/POINT_DEFAULT.svg">
               </button>
               <button id="LINE_TANGENT" class="menu" onclick="shapeCommand(1108)">
-                <img id="img-LINE_TANGENT" class="menu" src="assets/images/shapes/LINE_TANGENT.svg">
+                <img id="img-LINE_TANGENT" class="menu" src="assets/images/shapes/POINT_DEFAULT.svg">
               </button>
               <button id="LINE_DIAMETER" class="menu" onclick="shapeCommand(1109)">
-                <img id="img-LINE_DIAMETER" class="menu" src="assets/images/shapes/LINE_DIAMETER.svg">
+                <img id="img-LINE_DIAMETER" class="menu" src="assets/images/shapes/POINT_DEFAULT.svg">
               </button>
               <button id="LINE_RADIUS" class="menu" onclick="shapeCommand(1110)">
-                <img id="img-LINE_RADIUS" class="menu" src="assets/images/shapes/LINE_RADIUS.svg">
+                <img id="img-LINE_RADIUS" class="menu" src="assets/images/shapes/POINT_DEFAULT.svg">
               </button>
               
             </ul>
@@ -382,19 +382,19 @@
           <!-- Rays/Vectors -->
           <div id="rays-vectors" tabindex="0" class="onclick-menu">
 
-            <!--<img id="img-rays-vectors" class="menu" src="assets/images/circle_red_line.svg" onclick="shapeCommand(1200)">-->
+            <img id="img-rays-vectors" class="menu" src="assets/images/shapes/POINT_DEFAULT.svg" onclick="shapeCommand(1200)">
 
-            <!--<ul id="ul-RAYS_VECTORS" class="onclick-menu-content">-->
+            <ul id="ul-RAYS_VECTORS" class="onclick-menu-content">
               
-              <!--<button id="RAY_2POINT" class="menu" onclick="shapeCommand(1201)">-->
-              <!--  <img id="img-RAY_2POINT" class="menu" src="assets/images/RAY_2PIONT.svg">-->
-              <!--</button>-->
-              <!--<button id="VECTOR_2POINT" class="menu" onclick="shapeCommand(1202)">-->
-              <!--  <img id="img-VECTOR_2POINT" class="menu" src="assets/images/VECTOR_2POINT.svg">-->
-              <!--</button>-->
-              <!--<button id="VECTOR_FROMPOINT" class="menu" onclick="shapeCommand(1203)">-->
-              <!--  <img id="img-VECTOR_FROMPOINT" class="menu" src="assets/images/VECTOR_FROMPOINT.svg">-->
-              <!--</button>-->
+              <button id="RAY_2POINT" class="menu" onclick="shapeCommand(1201)">
+                <img id="img-RAY_2POINT" class="menu" src="assets/images/shapes/POINT_DEFAULT.svg">
+              </button>
+              <button id="VECTOR_2POINT" class="menu" onclick="shapeCommand(1202)">
+                <img id="img-VECTOR_2POINT" class="menu" src="assets/images/shapes/POINT_DEFAULT.svg">
+              </button>
+              <button id="VECTOR_FROMPOINT" class="menu" onclick="shapeCommand(1203)">
+                <img id="img-VECTOR_FROMPOINT" class="menu" src="assets/images/shapes/POINT_DEFAULT.svg">
+              </button>
               
             </ul>
 
@@ -424,7 +424,7 @@
           <!-- Circles -->
           <div id="circles" tabindex="0" class="onclick-menu">
 
-            <img id="img-circles" class="menu" src="assets/images/shapes/CIRCLE.svg" onclick="shapeCommand(1400)">
+            <img id="img-circles" class="menu" src="assets/images/shapes/CIRCLE_CENTERPOINT.svg" onclick="shapeCommand(1400)">
 
             <ul id="ul-circles" class="onclick-menu-content">
               
@@ -445,28 +445,28 @@
           <!-- Quadrilaterals -->
           <div id="quads" tabindex="0" class="onclick-menu">
 
-            <!--<img id="img-quad" class="menu" src="assets/images/QUAD.svg" onclick="shapeCommand(1501)">-->
+            <img id="img-quad" class="menu" src="assets/images/shapes/POINT_DEFAULT.svg" onclick="shapeCommand(1501)">
 
-            <!--<ul id="ul-quads" class="onclick-menu-content">-->
+            <ul id="ul-quads" class="onclick-menu-content">
               
-              <!--<button id="QUAD_RECTANGLE" class="menu" onclick="shapeCommand(1501)">-->
-              <!--  <img id="img-QUAD_RECTANGLE" class="menu" src="assets/images/QUAD_RECTANGLE.svg">-->
-              <!--</button>-->
-              <!--<button id="QUAD_SQUARE" class="menu" onclick="shapeCommand(1502)">-->
-              <!--  <img id="img-QUAD_SQUARE" class="menu" src="assets/images/QUAD_SQUARE.svg">-->
-              <!--</button>-->
-              <!--<button id="QUAD_RHOMBUS" class="menu" onclick="shapeCommand(1503)">-->
-              <!--  <img id="img-QUAD_RHOMBUS" class="menu" src="assets/images/QUAD_RHOMBUS.svg">-->
-              <!--</button>-->
-              <!--<button id="QUAD_PARALLELOGRAM" class="menu" onclick="shapeCommand(1504)">-->
-              <!--  <img id="img-QUAD_PARALLELOGRAM" class="menu" src="assets/images/QUAD_PARALLELOGRAM.svg">-->
-              <!--</button>-->
-              <!--<button id="QUAD_TRAPEZOID" class="menu" onclick="shapeCommand(1505)">-->
-              <!--  <img id="img-QUAD_TRAPEZOID" class="menu" src="assets/images/QUAD_TRAPEZOID.svg">-->
-              <!--</button>-->
-              <!--<button id="QUAD_KITE" class="menu" onclick="shapeCommand(1506)">-->
-              <!--  <img id="img-QUAD_KITE" class="menu" src="assets/images/QUAD_KITE.svg">-->
-              <!--</button>-->
+              <button id="QUAD_RECTANGLE" class="menu" onclick="shapeCommand(1501)">
+                <img id="img-QUAD_RECTANGLE" class="menu" src="assets/images/shapes/POINT_DEFAULT.svg">
+              </button>
+              <button id="QUAD_SQUARE" class="menu" onclick="shapeCommand(1502)">
+                <img id="img-QUAD_SQUARE" class="menu" src="assets/images/shapes/POINT_DEFAULT.svg">
+              </button>
+              <button id="QUAD_RHOMBUS" class="menu" onclick="shapeCommand(1503)">
+                <img id="img-QUAD_RHOMBUS" class="menu" src="assets/images/shapes/POINT_DEFAULT.svg">
+              </button>
+              <button id="QUAD_PARALLELOGRAM" class="menu" onclick="shapeCommand(1504)">
+                <img id="img-QUAD_PARALLELOGRAM" class="menu" src="assets/images/shapes/POINT_DEFAULT.svg">
+              </button>
+              <button id="QUAD_TRAPEZOID" class="menu" onclick="shapeCommand(1505)">
+                <img id="img-QUAD_TRAPEZOID" class="menu" src="assets/images/shapes/POINT_DEFAULT.svg">
+              </button>
+              <button id="QUAD_KITE" class="menu" onclick="shapeCommand(1506)">
+                <img id="img-QUAD_KITE" class="menu" src="assets/images/shapes/POINT_DEFAULT.svg">
+              </button>
 
             </ul>
 
@@ -475,25 +475,25 @@
           <!-- Arcs -->
           <div id="arcs" tabindex="0" class="onclick-menu">
 
-            <!--<img id="img-arc" class="menu" src="assets/images/QUAD.svg" onclick="shapeCommand(1600)">-->
+            <img id="img-arc" class="menu" src="assets/images/shapes/POINT_DEFAULT.svg" onclick="shapeCommand(1600)">
 
-            <!--<ul id="ul-arcs" class="onclick-menu-content">-->
+            <ul id="ul-arcs" class="onclick-menu-content">
               
-              <!--<button id="ARC_2VERTICES" class="menu" onclick="shapeCommand(1601)">-->
-              <!--  <img id="img-ARC_2VERTICES" class="menu" src="assets/images/ARC_2VERTICES.svg">-->
-              <!--</button>-->
-              <!--<button id="ARC_CIRCULAR" class="menu" onclick="shapeCommand(1602)">-->
-              <!--  <img id="img-ARC_CIRCULAR" class="menu" src="assets/images/ARC_CIRCULAR.svg">-->
-              <!--</button>-->
-              <!--<button id="ARC_CIRCUMCIRCULAR" class="menu" onclick="shapeCommand(1603)">-->
-              <!--  <img id="img-ARC_CIRCUMCIRCULAR" class="menu" src="assets/images/ARC_CIRCUMCIRCULAR.svg">-->
-              <!--</button>-->
-              <!--<button id="ARC_CIRCULARSECTOR" class="menu" onclick="shapeCommand(1604)">-->
-              <!--  <img id="img-ARC_CIRCULARSECTOR" class="menu" src="assets/images/ARC_CIRCULARSECTOR.svg">-->
-              <!--</button>-->
-              <!--<button id="ARC_CIRCUMCIRCULARSECTOR" class="menu" onclick="shapeCommand(1605)">-->
-              <!--  <img id="img-ARC_CIRCUMCIRCULARSECTOR" class="menu" src="assets/images/ARC_CIRCUMCIRCULARSECTOR.svg">-->
-              <!--</button>-->
+              <button id="ARC_2VERTICES" class="menu" onclick="shapeCommand(1601)">
+                <img id="img-ARC_2VERTICES" class="menu" src="assets/images/shapes/POINT_DEFAULT.svg">
+              </button>
+              <button id="ARC_CIRCULAR" class="menu" onclick="shapeCommand(1602)">
+                <img id="img-ARC_CIRCULAR" class="menu" src="assets/images/shapes/POINT_DEFAULT.svg">
+              </button>
+              <button id="ARC_CIRCUMCIRCULAR" class="menu" onclick="shapeCommand(1603)">
+                <img id="img-ARC_CIRCUMCIRCULAR" class="menu" src="assets/images/shapes/POINT_DEFAULT.svg">
+              </button>
+              <button id="ARC_CIRCULARSECTOR" class="menu" onclick="shapeCommand(1604)">
+                <img id="img-ARC_CIRCULARSECTOR" class="menu" src="assets/images/shapes/POINT_DEFAULT.svg">
+              </button>
+              <button id="ARC_CIRCUMCIRCULARSECTOR" class="menu" onclick="shapeCommand(1605)">
+                <img id="img-ARC_CIRCUMCIRCULARSECTOR" class="menu" src="assets/images/shapes/POINT_DEFAULT.svg">
+              </button>
 
             </ul>
 
@@ -502,19 +502,19 @@
           <!-- Polygons -->
           <div id="arcs" tabindex="0" class="onclick-menu">
 
-            <!--<img id="img-polygon" class="menu" src="assets/images/POLYGON.svg" onclick="shapeCommand(1700)">-->
+            <img id="img-polygon" class="menu" src="assets/images/shapes/POINT_DEFAULT.svg" onclick="shapeCommand(1700)">
 
-            <!--<ul id="ul-polygons" class="onclick-menu-content">-->
+            <ul id="ul-polygons" class="onclick-menu-content">
               
-              <!--<button id="POLYGON_REGULAR" class="menu" onclick="shapeCommand(1701)">-->
-              <!--  <img id="img-POLYGON_REGULAR" class="menu" src="assets/images/POLYGON_REGULAR.svg">-->
-              <!--</button>-->
-              <!--<button id="POLYGON_RIGID" class="menu" onclick="shapeCommand(1702)">-->
-              <!--  <img id="img-POLYGON_RIGID" class="menu" src="assets/images/POLYGON_RIGID.svg">-->
-              <!--</button>-->
-              <!--<button id="POLYGON_VECTOR" class="menu" onclick="shapeCommand(1703)">-->
-              <!--  <img id="img-POLYGON_VECTOR" class="menu" src="assets/images/POLYGON_VECTOR.svg">-->
-              <!--</button>-->
+              <button id="POLYGON_REGULAR" class="menu" onclick="shapeCommand(1701)">
+                <img id="img-POLYGON_REGULAR" class="menu" src="assets/images/shapes/POINT_DEFAULT.svg">
+              </button>
+              <button id="POLYGON_RIGID" class="menu" onclick="shapeCommand(1702)">
+                <img id="img-POLYGON_RIGID" class="menu" src="assets/images/shapes/POINT_DEFAULT.svg">
+              </button>
+              <button id="POLYGON_VECTOR" class="menu" onclick="shapeCommand(1703)">
+                <img id="img-POLYGON_VECTOR" class="menu" src="assets/images/shapes/POINT_DEFAULT.svg">
+              </button>
 
             </ul>
 
@@ -523,22 +523,22 @@
           <!-- Conics -->
           <div id="conics" tabindex="0" class="onclick-menu">
 
-            <!--<img id="img-conic" class="menu" src="assets/images/CONIC.svg" onclick="shapeCommand(1800)">-->
+            <img id="img-conic" class="menu" src="assets/images/shapes/POINT_DEFAULT.svg" onclick="shapeCommand(1800)">
 
-            <!--<ul id="ul-conics" class="onclick-menu-content">-->
+            <ul id="ul-conics" class="onclick-menu-content">
               
-              <!--<button id="CONIC_ELLIPSE" class="menu" onclick="shapeCommand(1801)">-->
-              <!--  <img id="img-CONIC_ELLIPSE" class="menu" src="assets/images/CONIC_ELLIPSE.svg">-->
-              <!--</button>-->
-              <!--<button id="CONIC_HYPERBOLA" class="menu" onclick="shapeCommand(1802)">-->
-              <!--  <img id="img-CONIC_HYPERBOLA" class="menu" src="assets/images/CONIC_HYPERBOLA.svg">-->
-              <!--</button>-->
-              <!--<button id="CONIC_PARABOLA" class="menu" onclick="shapeCommand(1803)">-->
-              <!--  <img id="img-CONIC_PARABOLA" class="menu" src="assets/images/CONIC_PARABOLA.svg">-->
-              <!--</button>-->
-              <!--<button id="CONIC_5VERTICES" class="menu" onclick="shapeCommand(1804)">-->
-              <!--  <img id="img-CONIC_5VERTICES" class="menu" src="assets/images/CONIC_CONIC_5VERTICES.svg">-->
-              <!--</button>-->
+              <button id="CONIC_ELLIPSE" class="menu" onclick="shapeCommand(1801)">
+                <img id="img-CONIC_ELLIPSE" class="menu" src="assets/images/shapes/POINT_DEFAULT.svg">
+              </button>
+              <button id="CONIC_HYPERBOLA" class="menu" onclick="shapeCommand(1802)">
+                <img id="img-CONIC_HYPERBOLA" class="menu" src="assets/images/shapes/POINT_DEFAULT.svg">
+              </button>
+              <button id="CONIC_PARABOLA" class="menu" onclick="shapeCommand(1803)">
+                <img id="img-CONIC_PARABOLA" class="menu" src="assets/images/shapes/POINT_DEFAULT.svg">
+              </button>
+              <button id="CONIC_5VERTICES" class="menu" onclick="shapeCommand(1804)">
+                <img id="img-CONIC_5VERTICES" class="menu" src="assets/images/shapes/POINT_DEFAULT.svg">
+              </button>
               
             </ul>
 
@@ -547,13 +547,13 @@
           <!-- Angles -->
           <div id="angles" tabindex="0" class="onclick-menu">
 
-            <!--<img id="img-angle" class="menu" src="assets/images/ANGLE.svg" onclick="shapeCommand(1900)">-->
+            <img id="img-angle" class="menu" src="assets/images/shapes/POINT_DEFAULT.svg" onclick="shapeCommand(1900)">
 
-            <!--<ul id="ul-angles" class="onclick-menu-content">-->
+            <ul id="ul-angles" class="onclick-menu-content">
 
-              <!--<button id="ANGLE" class="menu" onclick="shapeCommand(1901)">-->
-              <!--  <img id="img-ANGLE_SIZE" class="menu" src="assets/images/ANGLE_SIZE.svg">-->
-              <!--</button>-->
+              <button id="ANGLE" class="menu" onclick="shapeCommand(1901)">
+                <img id="img-ANGLE_SIZE" class="menu" src="assets/images/shapes/POINT_DEFAULT.svg">
+              </button>
               
             </ul>
 
@@ -565,6 +565,100 @@
 
         <!--Right Menu -->
         <div id="menu-right">
+
+          <div id="telemetry">
+
+            <!-- Debug -->
+            <!--<label for="debug" class="telemetry" title="name">Debug:</label>-->
+            <!--<input id="debug"  class="telemetry" type="checkbox" title="debug">-->
+            
+            <!-- Caption -->
+            <!--<label class="telemetry" title="Width">Width:</label>-->
+            <!--<label class="telemetry" type="text" title="Width"></label>-->
+  
+            <!-- width -->
+            <label id="width-label" class="telemetry-left"  title="width label">Width:</label>
+            <label id="width-value" class="telemetry-right" title="width value">value</label>
+
+            <!-- height -->
+            <label id="height-label" class="telemetry-left"  title="height label">Height:</label>
+            <label id="height-value" class="telemetry-right" title="height value">value</label>
+
+            <div class="line"></div>
+
+            <!-- frameRate -->
+            <label id="frameRate-label" class="telemetry-left"  title="frameRateA label">FrameRate:</label>
+            <label id="frameRate-value" class="telemetry-right" title="frameRate value">value</label>
+
+            <!-- frameRateA -->
+            <label id="frameRateA-label" class="telemetry-left"  title="frameRateA label">FrameRateA:</label>
+            <label id="frameRateA-value" class="telemetry-right" title="frameRateA value">value</label>
+
+            <div class="line"></div>
+
+            <!-- mouseY -->
+            <label id="mouseX-label" class="telemetry-left"  title="mouseX label">MouseX:</label>
+            <label id="mouseX-value" class="telemetry-right" title="mouseX value">value</label>
+
+            <!-- mouseY -->
+            <label id="mouseY-label" class="telemetry-left"  title="mouseY label">MouseY:</label>
+            <label id="mouseY-value" class="telemetry-right" title="mouseY value">value</label>
+
+            <div class="line"></div>
+            
+            <!-- worldY -->
+            <label id="worldX-label" class="telemetry-left"  title="worldX label">WorldX:</label>
+            <label id="worldX-value" class="telemetry-right" title="worldX value">value</label>
+
+            <!-- worldY -->
+            <label id="worldY-label" class="telemetry-left"  title="worldY label">WorldY:</label>
+            <label id="worldY-value" class="telemetry-right" title="worldY value">value</label>
+
+            <div class="line"></div>
+            
+            <!-- gridY -->
+            <label id="gridX-label" class="telemetry-left"  title="gridX label">GridX:</label>
+            <label id="gridX-value" class="telemetry-right" title="gridX value">value</label>
+
+            <!-- gridY -->
+            <label id="gridY-label" class="telemetry-left"  title="gridY label">GridY:</label>
+            <label id="gridY-value" class="telemetry-right" title="gridY value">value</label>
+
+            <div class="line"></div>
+            
+            <!-- leftButton -->
+            <label id="leftButton-label" class="telemetry-left"  title="leftButton label">Left Button:</label>
+            <label id="leftButton-value" class="telemetry-right" title="leftButton value">value</label>
+
+            <!-- centerButton -->
+            <label id="centerButton-label" class="telemetry-left"  title="gridY label">Center Button:</label>
+            <label id="centerButton-value" class="telemetry-right" title="gridY value">value</label>
+
+            <!-- rightButton -->
+            <label id="rightButton-label" class="telemetry-left"  title="gridY label">Right Button:</label>
+            <label id="rightButton-value" class="telemetry-right" title="gridY value">value</label>
+            
+            <div class="line"></div>
+            
+            <!-- Focus -->
+            <!--<label id="focus-label" class="telemetry-left"  title="gridY label">Focus:</label>-->
+            <!--<label id="focus-value" class="telemetry-right" title="gridY value">value</label>-->
+            
+            <!--<div class="line"></div>-->
+            
+            <!-- Current Command -->
+            <label id="currentCommand-label" class="telemetry-left"  title="gridY label">Command:</label>
+            <label id="currentCommand-value" class="telemetry-right" title="gridY value">value</label>
+            
+            <div class="line"></div>
+            
+            <!-- Factor -->
+            <label id="factor-label" class="telemetry-left"  title="gridY label">Factor:</label>
+            <label id="factor-value" class="telemetry-right" title="gridY value">value</label>
+            
+            <div class="line"></div>
+            
+          </div>
           
         </div>
         
