@@ -71,44 +71,43 @@
     background:         #262626;
 
     /*overflow:           none;*/
-    
+
     /*background:         none;*/
-    
+
   }
 
   
-  /*
-    ============================================================================
-      General
-    ============================================================================
-  */
-  .fixed {
+  #commands {
     
-    position:           fixed;
+    /*position:           relative;*/
+    
+    top:                35px;
+    
+    /*font:               400 11px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;*/
+
+    background:         #262626;
     
   }
+  
   dl {
     
-    font:               400 16px/14px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font:               400 14px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
     
-    margin:             5px;
-    padding:            5px;
+    margin:             10px 20px;
+    padding:            1px;
     
-    background:         red;
-    
-    line-height:        30px;
+    background:         #000;
+
     
   }
   dt {
 
-    font:               400 14px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-
     margin:             0;
-    padding:            0;
+    padding:            5px;
 
-    background:         green;
+    background:         #aaa;
 
-    /*line-height:        30px;*/
+    color:              #111;
 
   }
   dd {
@@ -116,10 +115,53 @@
     font:               400 12px/11px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
     
     margin:             0;
-    padding:            0 0 0 20px;
+    padding:            20px 5px 20px 20px;
     
-    background:         blue;
+    background:         #ccc;
+
+    color:              #111;
+
+  }
+  
+  img.command {
     
-    line-height:        30px;
+    display:            inline;
     
+    margin:             0;
+    padding:            0;
+
+    height:             60px;
+    width:              60px;
+
+    background:         #000;
+    
+  }
+  
+  h1 {
+    
+    font:               400 20px/18px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+    margin:             0;
+    padding:            20px 10px;
+    
+    color:              #ccc;
+    
+  }
+  h2 {
+    
+    font:               400 16px/14px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+    margin:             0;
+    padding:            5px 15px;
+
+    color:              #bbb;
+
+  }
+  
+  label.command {
+
+    position:           relative;
+
+    top:                -10px;
+
   }
