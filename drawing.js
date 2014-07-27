@@ -3151,8 +3151,9 @@ var factor=1.25;
 
   setCurrentCommand=function(){
 
+    app.current=currentCommand;
     app.currentCommand=currentCommand;
-
+    
     document.getElementById('current-command').innerText=app.currentCommand;
 
     var src;
@@ -3387,16 +3388,43 @@ var factor=1.25;
 
     }
 
-    document.getElementById("img-points").src=src;
-    document.getElementById("img-points").title=title;
+    // document.getElementById("img-points").src=src;
+    // document.getElementById("img-POINT_DEFAULT").title=title;
 
 
   };
   
+  var telemetry=function(){
+  
+    document.getElementById('height-value').innerText=app.height;
+    document.getElementById('width-value').innerText=app.width;
+    
+    document.getElementById('mouseX-value').innerText=app.mouseX;
+    document.getElementById('mouseY-value').innerText=app.mouseY;
+    
+    document.getElementById('gridX-value').innerText=nf(app.gridX,1,2);
+    document.getElementById('gridY-value').innerText=nf(app.gridY,1,2);
+
+    document.getElementById('worldX-value').innerText=app.worldX;
+    document.getElementById('worldY-value').innerText=app.worldY;
+
+    document.getElementById('leftButton-value').innerText=app.left;
+    document.getElementById('centerButton-value').innerText=app.center;
+    document.getElementById('rightButton-value').innerText=app.right;
+
+    // document.getElementById('focus-value').innerText=app.focus;
+    
+    document.getElementById('currentCommand-value').innerText=app.current;
+    
+    document.getElementById('factor-value').innerText=nf(app.factor,1,2);
+    
+
+  };
+
   var main=function(){
-    
+
     app.command=c;
-    
+
     // background(CLRS.ORANGE);
 
     // if(n<100){ n++; }
@@ -3412,7 +3440,9 @@ var factor=1.25;
     if(app.currentCommand!==currentCommand){
       setCurrentCommand();
     }
-    
+
+    telemetry();
+
     // println(currentCommand);
 
   };
@@ -3972,6 +4002,10 @@ var factor=1.25;
     
 
   };
+
+  document.getElementById("zoom-in").onclick    = function() { commands(COMMANDS.ZOOMIN[0]);  process();  };
+  document.getElementById("zoom-out").onclick   = function() { commands(COMMANDS.ZOOMOUT[0]); process();  };
+  document.getElementById("pan").onclick        = function() { commands(COMMANDS.PAN[0]);     process();  };
 
   document.getElementById("origin").onclick     = function() { app.origin=!app.origin;        process();  };
   
