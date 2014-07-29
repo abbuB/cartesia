@@ -443,7 +443,7 @@ var zoomfactor=0;
   
   var COMMANDS={
 
-    // General ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // General ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     UNDEF:        [   1,  'Undefined',        'UNDEFINED'             ],
 
@@ -471,7 +471,7 @@ var zoomfactor=0;
     FACTOR:       [  28,  'Factor',           'FACTOR'                ],
     UTIL:         [  29,  'Util',             'UTIL'                  ],
 
-    // Mouse ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Mouse ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     MOUSEX:       [  14,  'MouseX',           'MOUSEX'                ],
     MOUSEY:       [  15,  'MouseY',           'MOUSEY'                ],
@@ -488,7 +488,7 @@ var zoomfactor=0;
     CENTER:       [  24,  'Center button',    'CENTER'                ],
     RIGHT:        [  25,  'Right button',     'RIGHT'                 ],
 
-    // Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     GRID:         [ 100,  'Grid',             'GRID',       KEYCODES.GRID       ],
 
     GRIDPROPS:    [ 101,  'GridProps',        'GRIDPROPS',  KEYCODES.GRIDPROPS  ],
@@ -517,7 +517,7 @@ var zoomfactor=0;
     STG:          [ 122,  'STG',              'STG',        KEYCODES.STG        ],
     FS:           [ 123,  'Grid',             'COMMAND'                         ],
 
-    // Properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     PROPERTIES:   [ 200,  'Properties',       'PROPERTIES'            ],
 
     MATCH:        [ 201,  'Match',            'MATCH'                 ],
@@ -548,7 +548,7 @@ var zoomfactor=0;
     BLUE:         [ 214,  'Blue',             'BLUE'                  ],
     GREEN:        [ 215,  'Green',            'GREEN'                 ],
 
-    // File ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // File ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     FILE:         [ 301,  'File',             'FILE',     KEYCODES.FILE   ],
     NEW:          [ 302,  'New',              'NEW',      KEYCODES.NEW    ],
     OPEN:         [ 303,  'Open',             'OPEN',     KEYCODES.OPEN   ],
@@ -556,7 +556,7 @@ var zoomfactor=0;
     SAVEAS:       [ 305,  'Save As',          'SAVEAS',   KEYCODES.SAVEAS ],
     CLOSE:        [ 306,  'Close',            'CLOSE',    KEYCODES.CLOSE  ],
 
-    // Edit ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Edit ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     EDIT:         [ 400,  'Edit',             'EDIT',     KEYCODES.EDIT   ],
     UNDO:         [ 401,  'Undo',             'UNDO',     KEYCODES.UNDO   ],
     REDO:         [ 402,  'Redo',             'REDO',     KEYCODES.REDO   ],
@@ -566,7 +566,7 @@ var zoomfactor=0;
     DELETE:       [ 406,  'Delete',           'DELETE',   KEYCODES.DELETE ],
     ERASE:        [ 407,  'Erase',            'ERASE',    KEYCODES.DELETE ],
 
-    // View ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // View ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     VIEW:         [ 500,  'View',             'VIEW',     KEYCODES.VIEW   ],
     SELECT:       [ 501,  'Select',           'SELECT'                ],
     SELECTALL:    [ 502,  'Select All',       'SELECTALL'             ],
@@ -575,7 +575,7 @@ var zoomfactor=0;
     ZOOMOUT:      [ 505,  'Zoomout',          'ZOOMOUT',  KEYCODES.ZOOMOUT],
     PAN:          [ 506,  'Pan',              'PAN',      KEYCODES.PAN    ],
 
-    // Modify ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Modify ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     MODIFY:       [ 600,  'Modify',           'MODIFY',       KEYCODES.MODIFY       ],
     TRANSLATE:    [ 601,  'Translate',        'TRANSLATE',    KEYCODES.TRANSLATE    ],
     TRANS_UP:     [ 601,  'Translate',        'TRANSLATE',    KEYCODES.TRANS_UP     ],
@@ -598,7 +598,7 @@ var zoomfactor=0;
 
     // DILATEFROMPOINT:            [ 1,  'Dilatefrompoint',    'DILATEFROMPOINT' ]
 
-    // Measure ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Measure ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     MEASURE:      [ 700,  'Measure',          'MEASURE'               ],
     DISTANCE:     [ 701,  'Distance',         'DISTANCE'              ],
     PERIMETER:    [ 702,  'Perimeter',        'PERIMETER'             ],
@@ -608,107 +608,107 @@ var zoomfactor=0;
     DIAMETER:     [ 706,  'Diamter',          'DIAMETER'              ],
     SLOPE:        [ 707,  'Slope',            'SLOPE'                 ],
 
-    // Layers ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Layers ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //LAYER:        [ 800,  'Layer',            'LAYER'                 ],
     FORWARD:      [ 801,  'Forward',          'FORWARD'               ],
     BACK:         [ 802,  'Back',             'BACK'                  ],
 
 
 
-    //  SHAPES ========================================================
+    //  SHAPES =================================================================
 
-    // Point (P) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    POINT:            [1000,  'Point',                'POINT'                 ],
-    POINT_DEFAULT:    [1001,  'Point_Default',        'POINT_DEFAULT'         ],
-    POINT_OBJECT:     [1002,  'Point_Object',         'POINT_OBJECT'          ],
-    POINT_BOUND:      [1003,  'Point_Bound',          'POINT_BOUND'           ],
-    POINT_INTERSECT:  [1004,  'Point_Intersect',      'POINT_INTERSECT'       ],
-    POINT_MIDPOINT:   [1005,  'Point_Midpoint',       'POINT_MIDPOINT'        ],    // Midpoint/Center
-    POINT_ATDETACH:   [1006,  'Point_AttachDetach',   'POINT_ATTACHDETACH'    ],    // AttachDetachPoint
+    // Point (P) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    POINT:            [1000,  'Point',                'POINT',              "assets/images/shapes/POINT_DEFAULT.svg" ],
+    POINT_DEFAULT:    [1001,  'Point_Default',        'POINT_DEFAULT',      "assets/images/shapes/POINT_DEFAULT.svg" ],
+    POINT_OBJECT:     [1002,  'Point_Object',         'POINT_OBJECT',       "assets/images/shapes/POINT_OBJECT.svg" ],
+    POINT_BOUND:      [1003,  'Point_Bound',          'POINT_BOUND',        "assets/images/shapes/POINT_BOUND.svg" ],
+    POINT_INTERSECT:  [1004,  'Point_Intersect',      'POINT_INTERSECT',    "assets/images/shapes/POINT_DEFAULT.svg" ],
+    POINT_MIDPOINT:   [1005,  'Point_Midpoint',       'POINT_MIDPOINT',     "assets/images/shapes/POINT_DEFAULT.svg" ],
+    POINT_ATDETACH:   [1006,  'Point_AttachDetach',   'POINT_ATTACHDETACH', "assets/images/shapes/POINT_DEFAULT.svg" ],
 
-    // Line (L) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    LINE:                       [1100,  'Line',                       'LINE'                        ],
-    LINE_2POINT:                [1101,  'Line_2Point',                'LINE_2POINT'                 ],    // through 2 vertices
-    LINE_SEGMENT2POINT:         [1102,  'Line_Segment2Point',         'LINE_SEGMENT2POINT'          ],    // between 2 vertices
-    LINE_SEGMENTLENGTH:         [1103,  'Line_SegmentLength',         'LINE_SEGMENTLENGTH'          ],    // from point given length
-    LINE_PERPENDICULAR:         [1104,  'Line_Perpendicular',         'LINE_PERPENDICULAR'          ],    // perpendicular
-    LINE_PERPENDICULARBISECTOR: [1105,  'Line_PerpendicularBisector', 'LINE_PERPENDICULARBISECTOR'  ],    //  perpendicular bisector
-    LINE_ANGLEBISECTOR:         [1106,  'Line_AngleBisector',         'LINE_ANGLEBISECTOR'          ],    // angle bisector
-    LINE_PARALLEL:              [1107,  'Line_Parallel',              'LINE_PARALLEL'               ],    // parallel
-    LINE_TANGENT:               [1108,  'Line_Tangent',               'LINE_TANGENT'                ],    // Tangent
-    LINE_DIAMETER:              [1109,  'Line_Diameter',              'LINE_DIAMETER'               ],    // Diameter
-    LINE_RADIUS:                [1110,  'Line_Radius',                'LINE_RADIUS'                 ],    // Radius
+    // Line (L) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    LINE:                       [1100,  'Line',                       'LINE',                       "assets/images/shapes/LINE.svg" ],
+    LINE_2POINT:                [1101,  'Line_2Point',                'LINE_2POINT',                "assets/images/shapes/LINE_2POINT.svg" ],
+    LINE_SEGMENT2POINT:         [1102,  'Line_Segment2Point',         'LINE_SEGMENT2POINT',         "assets/images/shapes/LINE_SEGMENT2POINT.svg" ],
+    LINE_SEGMENTLENGTH:         [1103,  'Line_SegmentLength',         'LINE_SEGMENTLENGTH',         "assets/images/shapes/LINE_SEGMENTLENGTH.svg" ],
+    LINE_PERPENDICULAR:         [1104,  'Line_Perpendicular',         'LINE_PERPENDICULAR',         "assets/images/shapes/LINE_PERPENDICULARBISECTOR.svg" ],
+    LINE_PERPENDICULARBISECTOR: [1105,  'Line_PerpendicularBisector', 'LINE_PERPENDICULARBISECTOR', "assets/images/shapes/LINE_PERPENDICULAR.svg" ],
+    LINE_ANGLEBISECTOR:         [1106,  'Line_AngleBisector',         'LINE_ANGLEBISECTOR',         "assets/images/shapes/LINE_ANGLEBISECTOR.svg" ],
+    LINE_PARALLEL:              [1107,  'Line_Parallel',              'LINE_PARALLEL',              "assets/images/shapes/LINE_PARALLEL.svg" ],
+    LINE_TANGENT:               [1108,  'Line_Tangent',               'LINE_TANGENT',               "assets/images/shapes/LINE_TANGENT.svg" ],
+    LINE_DIAMETER:              [1109,  'Line_Diameter',              'LINE_DIAMETER',              "assets/images/shapes/LINE_DIAMETER.svg" ],
+    LINE_RADIUS:                [1110,  'Line_Radius',                'LINE_RADIUS',                "assets/images/shapes/LINE_RADIUS.svg" ],
 
-    RAY_2POINT:       [1201,  'Ray_2Point',       'RAY_2POINT'                ],    // Ray between 2 vertices
-    VECTOR_2POINT:    [1202,  'Vector_2Point',    'VECTOR_2POINT'             ],    // Vector between 2 vertices
-    VECTOR_FROMPOINT: [1203,  'Vector_FromPoint', 'VECTOR_FROMPOINT'          ],    // Vector from point
+    RAY_2POINT:       [1201,  'Ray_2Point',       'RAY_2POINT',       "assets/images/shapes/RAY_2POINT.svg" ],
+    VECTOR_2POINT:    [1202,  'Vector_2Point',    'VECTOR_2POINT',    "assets/images/shapes/VECTOR_2POINT.svg" ],
+    VECTOR_FROMPOINT: [1203,  'Vector_FromPoint', 'VECTOR_FROMPOINT', "assets/images/shapes/VECTOR_FROMPOINT.svg" ],
 
-    // Triangle (T)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    TRIANGLE:             [1300,  'Triangle',             'TRIANGLE'              ],
-    TRIANGLE_EQUILATERAL: [1301,  'Triangle_Equilateral', 'TRIANGLE_EQUILATERAL'  ],
-    TRIANGLE_ISOSCELES:   [1302,  'Triangle_Isosceles',   'TRIANGLE_ISOSCELES'    ],
-    TRIANGLE_SCALENE:     [1303,  'Triangle_Scalene',     'TRIANGLE_SCALENE'      ],
+    // Triangle (T)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    TRIANGLE:             [1300,  'Triangle',             'TRIANGLE',             "assets/images/shapes/TRIANGLE.svg" ],
+    TRIANGLE_EQUILATERAL: [1301,  'Triangle_Equilateral', 'TRIANGLE_EQUILATERAL', "assets/images/shapes/TRIANGLE_EQUILATERAL.svg" ],
+    TRIANGLE_ISOSCELES:   [1302,  'Triangle_Isosceles',   'TRIANGLE_ISOSCELES',   "assets/images/shapes/TRIANGLE_ISOSCELES.svg" ],
+    TRIANGLE_SCALENE:     [1303,  'Triangle_Scalene',     'TRIANGLE_SCALENE',     "assets/images/shapes/TRIANGLE_SCALENE.svg" ],
 
-    // Circle (C)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    CIRCLE:               [1400,  'Circle',               'CIRCLE'              ],
-    CIRCLE_CENTERPOINT:   [1401,  'Circle_CenterPoint',   'CIRCLE_CENTERPOINT'  ],    // center point
-    CIRCLE_CENTERRADIUS:  [1402,  'Circle_CenterRadius',  'CIRCLE_CENTERRADIUS' ],    // center radius
-    CIRCLE_3POINT:        [1403,  'Circle_3Point',        'CIRCLE_3POINT'       ],    //  3 vertices
+    // Circle (C)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    CIRCLE:               [1400,  'Circle',               'CIRCLE',               "assets/images/shapes/CIRCLE.svg" ],
+    CIRCLE_CENTERPOINT:   [1401,  'Circle_CenterPoint',   'CIRCLE_CENTERPOINT',   "assets/images/shapes/CIRCLE_CENTERPOINT.svg" ],
+    CIRCLE_CENTERRADIUS:  [1402,  'Circle_CenterRadius',  'CIRCLE_CENTERRADIUS',  "assets/images/shapes/CIRCLE_CENTERRADIUS.svg" ],
+    CIRCLE_3POINT:        [1403,  'Circle_3Point',        'CIRCLE_3POINT',        "assets/images/shapes/CIRCLE_3POINT.svg" ],
 
-    // Quadrilateral (Q)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    QUAD:                 [1500,  'Quadrilateral',    'QUADRILATERAL'           ],
-    QUAD_RECTANGLE:       [1501,  'Rectangle',        'RECTANGLE'               ],
-    QUAD_SQUARE:          [1502,  'Square',           'SQUARE'                  ],
-    QUAD_RHOMBUS:         [1503,  'Rhombus',          'RHOMBUS'                 ],
-    QUAD_PARALLELOGRAM:   [1504,  'Parallelogram',    'PARALLELOGRAM'           ],    // Q_PARALLELOGRAM
-    QUAD_TRAPEZOID:       [1505,  'Trapezoid',        'TRAPEZOID'               ],
-    QUAD_KITE:            [1506,  'Kite',             'KITE'                    ],
+    // Quadrilateral (Q)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    QUAD:                 [1500,  'Quadrilateral',    'QUADRILATERAL',            "assets/images/shapes/CIRCLE_3POINT.svg" ],
+    QUAD_RECTANGLE:       [1501,  'Rectangle',        'RECTANGLE',                "assets/images/shapes/CIRCLE_3POINT.svg" ],
+    QUAD_SQUARE:          [1502,  'Square',           'SQUARE',                   "assets/images/shapes/CIRCLE_3POINT.svg" ],
+    QUAD_RHOMBUS:         [1503,  'Rhombus',          'RHOMBUS',                  "assets/images/shapes/CIRCLE_3POINT.svg" ],
+    QUAD_PARALLELOGRAM:   [1504,  'Parallelogram',    'PARALLELOGRAM',            "assets/images/shapes/CIRCLE_3POINT.svg" ],
+    QUAD_TRAPEZOID:       [1505,  'Trapezoid',        'TRAPEZOID',                "assets/images/shapes/CIRCLE_3POINT.svg" ],
+    QUAD_KITE:            [1506,  'Kite',             'KITE',                     "assets/images/shapes/CIRCLE_3POINT.svg" ],
 
-    // Arc (A)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    ARC:                      [1600,  'Arc',                      'ARC'                       ],
-    ARC_2VERTICES:            [1601,  'Arc2vertices',             'ARC_2VERTICES'             ],    // SemiCircleThrough2vertices
-    ARC_CIRCULAR:             [1602,  'Arc_Circular',             'ARC_CIRCULAR'              ],    // CircularArc
-    ARC_CIRCUMCIRCULAR:       [1603,  'Arc_CircumCircular',       'ARC_CIRCUMCIRCULAR'        ],    // CircumcircularArc
-    ARC_CIRCULARSECTOR:       [1604,  'Arc_CircularSector',       'ARC_CIRCULARSECTOR'        ],    // CircularSector
-    ARC_CIRCUMCIRCULARSECTOR: [1605,  'Arc_CircumCircularSector', 'ARC_CIRCUMCIRCULARSECTOR'  ],   // CircumCircularSector
+    // Arc (A)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ARC:                      [1600,  'Arc',                      'ARC',                      "assets/images/shapes/CIRCLE_3POINT.svg" ],
+    ARC_2VERTICES:            [1601,  'Arc2vertices',             'ARC_2VERTICES',            "assets/images/shapes/CIRCLE_3POINT.svg" ],
+    ARC_CIRCULAR:             [1602,  'Arc_Circular',             'ARC_CIRCULAR',             "assets/images/shapes/CIRCLE_3POINT.svg" ],
+    ARC_CIRCUMCIRCULAR:       [1603,  'Arc_CircumCircular',       'ARC_CIRCUMCIRCULAR',       "assets/images/shapes/CIRCLE_3POINT.svg" ],
+    ARC_CIRCULARSECTOR:       [1604,  'Arc_CircularSector',       'ARC_CIRCULARSECTOR',       "assets/images/shapes/CIRCLE_3POINT.svg" ],
+    ARC_CIRCUMCIRCULARSECTOR: [1605,  'Arc_CircumCircularSector', 'ARC_CIRCUMCIRCULARSECTOR', "assets/images/shapes/CIRCLE_3POINT.svg" ],
 
-    COMPASS:  [1606,  'Compass',          'COMPASS'                           ],    // ??
+    COMPASS:  [1606,  'Compass',          'COMPASS',        "assets/images/shapes/CIRCLE_3POINT.svg" ],
 
-    // Polygon ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    POLYGON:          [1700,  'Polygon',          'POLYGON'                   ],
-    POLYGON_REGULAR:  [1701,  'PolygonR',         'POLYGONR'                  ],    // regular
-    POLYGON_RIGID:    [1702,  'PolygonRigid',     'POLYGONRIGID'              ],    // Rigid
-    POLYGON_VECTOR:   [1703,  'PolygonV',         'POLYGONV'                  ],    // Vector
+    // Polygon ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    POLYGON:          [1700,  'Polygon',          'POLYGON',          "assets/images/shapes/CIRCLE_3POINT.svg" ],
+    POLYGON_REGULAR:  [1701,  'Polygon_Regular',  'POLYGON_REGULAR',  "assets/images/shapes/CIRCLE_3POINT.svg" ],
+    POLYGON_RIGID:    [1702,  'Polygon_Rigid',    'POLYGON_RIGID',    "assets/images/shapes/CIRCLE_3POINT.svg" ],
+    POLYGON_VECTOR:   [1703,  'Polygon_Vector',   'POLYGON_VECTOR',   "assets/images/shapes/CIRCLE_3POINT.svg" ],
 
-    // Conics (S) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    CONIC:            [1800,  'Conic',            'CONIC'                     ],
-    CONIC_ELLIPSE:    [1800,  'Ellipse',          'ELLIPSE'                   ],
-    CONIC_HYPERBOLA:  [1801,  'Hyperbola',        'HYPERBOLA'                 ],
-    CONIC_PARABOLA:   [1802,  'Parabola',         'PARABOLA'                  ],
-    CONIC_5VERTICES:  [1803,  'Conic_5Vertices', 'CONIC5VERTICES'             ],
+    // Conics (S) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    CONIC:            [1800,  'Conic',            'CONIC',            "assets/images/shapes/CIRCLE_3POINT.svg" ],
+    CONIC_ELLIPSE:    [1800,  'Ellipse',          'ELLIPSE',          "assets/images/shapes/CIRCLE_3POINT.svg" ],
+    CONIC_HYPERBOLA:  [1801,  'Hyperbola',        'HYPERBOLA',        "assets/images/shapes/CIRCLE_3POINT.svg" ],
+    CONIC_PARABOLA:   [1802,  'Parabola',         'PARABOLA',         "assets/images/shapes/CIRCLE_3POINT.svg" ],
+    CONIC_5VERTICES:  [1803,  'Conic_5Vertices',  'CONIC_5VERTICES',  "assets/images/shapes/CIRCLE_3POINT.svg" ],
 
-    // Angle ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Angle ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    ANGLE:        [1900,  'Angle',            'ANGLE'                 ],
-    ANGLE_SIZE:   [1901,  'Angle Size',       'ANGLESize'             ],
+    ANGLE:        [1900,  'Angle',            'ANGLE',      "assets/images/shapes/CIRCLE_3POINT.svg" ],
+    ANGLE_SIZE:   [1901,  'Angle Size',       'ANGLESize',  "assets/images/shapes/CIRCLE_3POINT.svg" ],
 
-    // Annotation ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Annotation ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    TEXT:         [2000,  'Text',             'TEXT'                  ],
+    TEXT:         [2000,  'Text',             'TEXT',       "assets/images/shapes/CIRCLE_3POINT.svg" ],
 
-    // Images ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Images ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    IMAGE:        [2101,  'Image',            'IMAGE'                 ],
-    SKETCH:       [2102,  'SKETCH',           'SKETCH'                ],
+    IMAGE:        [2101,  'Image',            'IMAGE',      "assets/images/shapes/CIRCLE_3POINT.svg" ],
+    SKETCH:       [2102,  'SKETCH',           'SKETCH',     "assets/images/shapes/CIRCLE_3POINT.svg" ],
 
-    // Footer ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Footer ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // ORTHO:
     // STG:
     // GRIDLINES:
     // COORDINATES:
     // DISPLAY:
 //~
-    // CommandLine ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // CommandLine ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // COMMANDLINE:
     // HISTORY:
     // DISPLAY:
@@ -3153,7 +3153,7 @@ var factor=1.25;
 
     app.current=currentCommand;
     app.currentCommand=currentCommand;
-    
+
     document.getElementById('current-command').innerText=app.currentCommand;
 
     var src;
@@ -3162,234 +3162,90 @@ var factor=1.25;
     switch(app.currentCommand){
 
       // Points ----------------------------------------------------------------
-      case COMMANDS.POINT_DEFAULT[0]:       src="assets/images/POINT_DEFAULT.svg";
-                                            title="default";
-                                            break;
-        
-      case COMMANDS.POINT_OBJECT[0]:        src="assets/images/POINT_OBJECT.svg";
-                                            title="object";
-                                            break;
-        
-      case COMMANDS.POINT_BOUND[0]:         src="assets/images/POINT_BOUND.svg";
-                                            title="bound";
-                                            break;
+      case COMMANDS.POINT_DEFAULT[0]:             src=COMMANDS.POINT_DEFAULT[3];              title="default";  break;
+      case COMMANDS.POINT_OBJECT[0]:              src=COMMANDS.POINT_OBJECT[3];               title="object";   break;
+      case COMMANDS.POINT_BOUND[0]:               src=COMMANDS.POINT_BOUND[3];                title="bound";    break;
 
       // Lines -----------------------------------------------------------------
-      case COMMANDS.LINE[0]:                src="assets/images/POINT_DEFAULT.svg";
-                                            title="default";
-                                            break;
-        
-      case COMMANDS.LINE_2POINT[0]:         src="assets/images/POINT_DEFAULT.svg";
-                                            title="default";
-                                            break;
-        
-      case COMMANDS.LINE_SEGMENT2POINT[0]:  src="assets/images/POINT_DEFAULT.svg";
-                                            title="default";
-                                            break;
-        
-      case COMMANDS.LINE_SEGMENTLENGTH[0]:  src="assets/images/POINT_DEFAULT.svg";
-                                            title="default";
-                                            break;
-        
-      case COMMANDS.LINE_PERPENDICULAR[0]:  src="assets/images/POINT_DEFAULT.svg";
-                                            title="default";
-                                            break;
-        
-      case COMMANDS.LINE_PERPENDICULARBISECTOR[0]:  src="assets/images/POINT_DEFAULT.svg";
-                                                    title="default";
-                                                    break;
-        
-      case COMMANDS.LINE_ANGLEBISECTOR[0]:  src="assets/images/POINT_DEFAULT.svg";
-                                            title="default";
-                                            break;
-        
-      case COMMANDS.LINE_PARALLEL[0]:       src="assets/images/POINT_DEFAULT.svg";
-                                            title="default";
-                                            break;
-        
-      case COMMANDS.LINE_TANGENT[0]:        src="assets/images/POINT_DEFAULT.svg";
-                                            title="default";
-                                            break;
-        
-      case COMMANDS.LINE_DIAMETER[0]:       src="assets/images/POINT_DEFAULT.svg";
-                                            title="default";
-                                            break;
-        
-      case COMMANDS.LINE_RADIUS[0]:         src="assets/images/POINT_DEFAULT.svg";
-                                            title="default";
-                                            break;
-        
+      case COMMANDS.LINE[0]:                      src=COMMANDS.LINE_2POINT[3];                title="default";  break;
+      case COMMANDS.LINE_2POINT[0]:               src=COMMANDS.LINE_2POINT[3];                title="default";  break;
+      case COMMANDS.LINE_SEGMENT2POINT[0]:        src=COMMANDS.LINE_SEGMENT2POINT[3];         title="default";  break;
+      case COMMANDS.LINE_SEGMENTLENGTH[0]:        src=COMMANDS.LINE_SEGMENTLENGTH[3];         title="default";  break;
+      case COMMANDS.LINE_PERPENDICULAR[0]:        src=COMMANDS.LINE_PERPENDICULAR[3];         title="default";  break;
+      case COMMANDS.LINE_PERPENDICULARBISECTOR[0]:src=COMMANDS.LINE_PERPENDICULARBISECTOR[3]; title="default";  break;
+      case COMMANDS.LINE_ANGLEBISECTOR[0]:        src=COMMANDS.LINE_ANGLEBISECTOR[3];         title="default";  break;
+      case COMMANDS.LINE_PARALLEL[0]:             src=COMMANDS.LINE_PARALLEL[3];              title="default";  break;
+      case COMMANDS.LINE_TANGENT[0]:              src=COMMANDS.LINE_TANGENT[3];               title="default";  break;
+      case COMMANDS.LINE_DIAMETER[0]:             src=COMMANDS.LINE_DIAMETER[3];              title="default";  break;
+      case COMMANDS.LINE_RADIUS[0]:               src=COMMANDS.LINE_RADIUS[3];                title="default";  break;
+
       // Ray/Vector ------------------------------------------------------------
-      case COMMANDS.RAY_2POINT[0]:          src="assets/images/POINT_DEFAULT.svg";
-                                            title="default";
-                                            break;
-                                            
-      case COMMANDS.VECTOR_2POINT[0]:       src="assets/images/POINT_DEFAULT.svg";
-                                            title="default";
-                                            break;
-                                            
-      case COMMANDS.VECTOR_FROMPOINT[0]:    src="assets/images/POINT_DEFAULT.svg";
-                                            title="default";
-                                            break;
+      case COMMANDS.RAY_2POINT[0]:                src=COMMANDS.RAY_2POINT[3];                 title="default";  break;
+      case COMMANDS.VECTOR_2POINT[0]:             src=COMMANDS.VECTOR_2POINT[3];              title="default";  break;
+      case COMMANDS.VECTOR_FROMPOINT[0]:          src=COMMANDS.VECTOR_FROMPOINT[3];           title="default";  break;
 
       // Triangles -------------------------------------------------------------
-      case COMMANDS.TRIANGLE[0]:            src="assets/images/POINT_DEFAULT.svg";
-                                            title="default";
-                                            break;
-                                      
-      case COMMANDS.TRIANGLE_EQUILATERAL[0]:src="assets/images/POINT_DEFAULT.svg";
-                                            title="default";
-                                            break;
-                                      
-      case COMMANDS.TRIANGLE_ISOSCELES[0]:  src="assets/images/POINT_DEFAULT.svg";
-                                            title="default";
-                                            break;
-        
-      case COMMANDS.TRIANGLE_SCALENE[0]:    src="assets/images/POINT_DEFAULT.svg";
-                                            title="default";
-                                            break;
+      case COMMANDS.TRIANGLE[0]:                  src=COMMANDS.TRIANGLE[3];                   title="default";  break;
+      case COMMANDS.TRIANGLE_EQUILATERAL[0]:      src=COMMANDS.TRIANGLE_EQUILATERAL[3];       title="default";  break;
+      case COMMANDS.TRIANGLE_ISOSCELES[0]:        src=COMMANDS.TRIANGLE_ISOSCELES[3];         title="default";  break;
+      case COMMANDS.TRIANGLE_SCALENE[0]:          src=COMMANDS.TRIANGLE_SCALENE[3];           title="default";  break;
                                       
       // Circles ---------------------------------------------------------------
-      case COMMANDS.CIRCLE[0]:              src="assets/images/POINT_DEFAULT.svg";
-                                            title="default";
-                                            break;
-                                            
-      case COMMANDS.CIRCLE_CENTERPOINT[0]:  src="assets/images/POINT_DEFAULT.svg";
-                                            title="default";
-                                            break;
-                                            
-      case COMMANDS.CIRCLE_CENTERRADIUS[0]: src="assets/images/POINT_DEFAULT.svg";
-                                            title="default";
-                                            break;
-                                            
-      case COMMANDS.CIRCLE_3POINT[0]:       src="assets/images/POINT_DEFAULT.svg";
-                                            title="default";
-                                            break;
+      case COMMANDS.CIRCLE[0]:                    src=COMMANDS.CIRCLE[3];                     title="default";  break;
+      case COMMANDS.CIRCLE_CENTERPOINT[0]:        src=COMMANDS.CIRCLE_CENTERPOINT[3];         title="default";  break;
+      case COMMANDS.CIRCLE_CENTERRADIUS[0]:       src=COMMANDS.CIRCLE_CENTERRADIUS[3];        title="default";  break;
+      case COMMANDS.CIRCLE_3POINT[0]:             src=COMMANDS.CIRCLE_3POINT[3];              title="default";  break;
 
       // Quads -----------------------------------------------------------------
-      case COMMANDS.QUAD[0]:                src="assets/images/POINT_DEFAULT.svg";
-                                            title="default";
-                                            break;
-                                            
-      case COMMANDS.QUAD_RECTANGLE[0]:      src="assets/images/POINT_DEFAULT.svg";
-                                            title="default";
-                                            break;
-                                            
-      case COMMANDS.QUAD_SQUARE[0]:         src="assets/images/POINT_DEFAULT.svg";
-                                            title="default";
-                                            break;
-                                            
-      case COMMANDS.QUAD_RHOMBUS[0]:        src="assets/images/POINT_DEFAULT.svg";
-                                            title="default";
-                                            break;
-                                            
-      case COMMANDS.QUAD_PARALLELOGRAM[0]:  src="assets/images/POINT_DEFAULT.svg";
-                                            title="default";
-                                            break;
-                                            
-      case COMMANDS.QUAD_TRAPEZOID[0]:      src="assets/images/POINT_DEFAULT.svg";
-                                            title="default";
-                                            break;
-      case COMMANDS.QUAD_KITE[0]:           src="assets/images/POINT_DEFAULT.svg";
-                                            title="default";
-                                            break;
+      case COMMANDS.QUAD[0]:                      src=COMMANDS.QUAD[3];                       title="default";  break;
+      case COMMANDS.QUAD_RECTANGLE[0]:            src=COMMANDS.QUAD_RECTANGLE[3];             title="default";  break;
+      case COMMANDS.QUAD_SQUARE[0]:               src=COMMANDS.QUAD_SQUARE[3];                title="default";  break;
+      case COMMANDS.QUAD_RHOMBUS[0]:              src=COMMANDS.QUAD_RHOMBUS[3];               title="default";  break;
+      case COMMANDS.QUAD_PARALLELOGRAM[0]:        src=COMMANDS.QUAD_PARALLELOGRAM[3];         title="default";  break;
+      case COMMANDS.QUAD_TRAPEZOID[0]:            src=COMMANDS.QUAD_TRAPEZOID[3];             title="default";  break;
+      case COMMANDS.QUAD_KITE[0]:                 src=COMMANDS.QUAD_KITE[3];                  title="default";  break;
 
       // Arcs ------------------------------------------------------------------
-      case COMMANDS.ARC[0]:                 src="assets/images/POINT_DEFAULT.svg";
-                                            title="default";
-                                            break;
-                                            
-      case COMMANDS.ARC_2VERTICES[0]:       src="assets/images/POINT_DEFAULT.svg";
-                                            title="default";
-                                            break;
-                                            
-      case COMMANDS.ARC_CIRCULAR[0]:        src="assets/images/POINT_DEFAULT.svg";
-                                            title="default";
-                                            break;
-                                            
-      case COMMANDS.ARC_CIRCUMCIRCULAR[0]:  src="assets/images/POINT_DEFAULT.svg";
-                                            title="default";
-                                            break;
-                                            
-      case COMMANDS.ARC_CIRCULARSECTOR[0]:  src="assets/images/POINT_DEFAULT.svg";
-                                            title="default";
-                                            break;
-      case COMMANDS.ARC_CIRCUMCIRCULARSECTOR[0]:  src="assets/images/POINT_DEFAULT.svg";
-                                                  title="default";
-                                                  break;
+      case COMMANDS.ARC[0]:                       src=COMMANDS.ARC[3];                        title="default";  break;
+      case COMMANDS.ARC_2VERTICES[0]:             src=COMMANDS.ARC_2VERTICES[3];              title="default";  break;
+      case COMMANDS.ARC_CIRCULAR[0]:              src=COMMANDS.ARC_CIRCULAR[3];               title="default";  break;
+      case COMMANDS.ARC_CIRCUMCIRCULAR[0]:        src=COMMANDS.ARC_CIRCUMCIRCULAR[3];         title="default";  break;
+      case COMMANDS.ARC_CIRCULARSECTOR[0]:        src=COMMANDS.ARC_CIRCULARSECTOR[3];         title="default";  break;
+      case COMMANDS.ARC_CIRCUMCIRCULARSECTOR[0]:  src=COMMANDS.ARC_CURCUMCIRCULARSECTOR[3];   title="default";  break;
 
       // Misc ------------------------------------------------------------------
-      case COMMANDS.COMPASS[0]:             src="assets/images/POINT_DEFAULT.svg";
-                                            title="default";
-                                            break;
+      case COMMANDS.COMPASS[0]:                   src=COMMANDS.COMPASS[3];                    title="default";  break;
 
       // Polygons --------------------------------------------------------------
-      case COMMANDS.POLYGON[0]:           src="assets/images/POINT_DEFAULT.svg";
-                                          title="default";
-                                          break;
-                                          
-      case COMMANDS.POLYGON_REGULAR[0]:   src="assets/images/POINT_DEFAULT.svg";
-                                          title="default";
-                                          break;
-                                          
-      case COMMANDS.POLYGON_RIGID[0]:     src="assets/images/POINT_DEFAULT.svg";
-                                          title="default";
-                                          break;
-                                          
-      case COMMANDS.POLYGON_VECTOR[0]:    src="assets/images/POINT_DEFAULT.svg";
-                                          title="default";
-                                          break;
+      case COMMANDS.POLYGON[0]:                   src=COMMANDS.POLYGON[3];                    title="default";  break;
+      case COMMANDS.POLYGON_REGULAR[0]:           src=COMMANDS.POLYGON_REGULAR[3];            title="default";  break;
+      case COMMANDS.POLYGON_RIGID[0]:             src=COMMANDS.POLYGON_RIGID[3];              title="default";  break;
+      case COMMANDS.POLYGON_VECTOR[0]:            src=COMMANDS.POLYGON_VECTOR[3];             title="default";  break;
 
       // Conics ----------------------------------------------------------------
-      case COMMANDS.CONIC[0]:             src="assets/images/POINT_DEFAULT.svg";
-                                          title="default";
-                                          break;
-                                          
-      case COMMANDS.CONIC_ELLIPSE[0]:     src="assets/images/POINT_DEFAULT.svg";
-                                          title="default";
-                                          break;
-                                          
-      case COMMANDS.CONIC_HYPERBOLA[0]:   src="assets/images/POINT_DEFAULT.svg";
-                                          title="default";
-                                          break;
-                                          
-      case COMMANDS.CONIC_PARABOLA[0]:    src="assets/images/POINT_DEFAULT.svg";
-                                          title="default";
-                                          break;
-                                          
-      case COMMANDS.CONIC_5VERTICES[0]:   src="assets/images/POINT_DEFAULT.svg";
-                                          title="default";
-                                          break;
+      case COMMANDS.CONIC[0]:                     src=COMMANDS.CONIC[3];                      title="default";  break;
+      case COMMANDS.CONIC_ELLIPSE[0]:             src=COMMANDS.CONIC_ELLIPSE[3];              title="default";  break;
+      case COMMANDS.CONIC_HYPERBOLA[0]:           src=COMMANDS.CONIC_HYPERBOLA[3];            title="default";  break;
+      case COMMANDS.CONIC_PARABOLA[0]:            src=COMMANDS.CONIC_PARABOLA[3];             title="default";  break;
+      case COMMANDS.CONIC_5VERTICES[0]:           src=COMMANDS.CONIC_5VERTICES[3];            title="default";  break;
 
       // Angles ----------------------------------------------------------------
-      case COMMANDS.ANGLE[0]:             src="assets/images/POINT_DEFAULT.svg";
-                                          title="default";
-                                          break;
-                                          
-      case COMMANDS.ANGLE_SIZE[0]:        src="assets/images/POINT_DEFAULT.svg";
-                                          title="default";
-                                          break;
+      case COMMANDS.ANGLE[0]:                     src=COMMANDS.ANGLE[3];                      title="default";  break;
+      case COMMANDS.ANGLE_SIZE[0]:                src=COMMANDS.ANGLE_SIZE[3];                 title="default";  break;
 
       // Annotations -----------------------------------------------------------
-      case COMMANDS.TEXT[0]:              src="assets/images/POINT_DEFAULT.svg";
-                                          title="default";
-                                          break;
+      case COMMANDS.TEXT[0]:                      src=COMMANDS.TEXT[3];                       title="default";  break;
 
       // Images ----------------------------------------------------------------
-      case COMMANDS.IMAGE[0]:             src="assets/images/POINT_DEFAULT.svg";
-                                          title="default";
-                                          break;
-                                          
-      case COMMANDS.SKETCH[0]:            src="assets/images/POINT_DEFAULT.svg";
-                                          title="default";
-                                          break;
+      case COMMANDS.IMAGE[0]:                     src=COMMANDS.IMAGE[3];                      title="default";  break;
+      case COMMANDS.SKETCH[0]:                    src=COMMANDS.SKETCH[3];                     title="default";  break;
 
-      default:
+      default: break;
 
     }
-
-    // document.getElementById("img-points").src=src;
-    // document.getElementById("img-POINT_DEFAULT").title=title;
+// println(src);
+    document.getElementById("img-points").src=src;
+    document.getElementById("img-POINT_DEFAULT").title=title;
 
 
   };
