@@ -1,8 +1,8 @@
-  /*
+/*
     ============================================================================
-      drawing.js
-    ============================================================================
-  */
+        drawing.js
+    ===========================================================================
+*/
 /* @pjs globalKeyEvents="true"; */
 var proc = function(processingInstance){ with (processingInstance){
 
@@ -20,28 +20,34 @@ var process;
 
 var zoomfactor=0;
 
-  var getColor=function(clr,alpha){
+  var getColor=function(clr, alpha){
 
     return color(red(clr), green(clr), blue(clr), alpha/100*255);
 
   };
   
   var hexToRGB=function(hexStr){
+    
     // note: hexStr should be #rrggbb
     var hex = parseInt(hexStr.substring(1), 16);
     var r = (hex & 0xff0000) >> 16;
     var g = (hex & 0x00ff00) >> 8;
     var b = hex & 0x0000ff;
+    
     return color(r,g,b);
+
   }
   
   var hexToRGBA=function(hexStr,a){
+
     // note: hexStr should be #rrggbb
     var hex = parseInt(hexStr.substring(1), 16);
     var r = (hex & 0xff0000) >> 16;
     var g = (hex & 0x00ff00) >> 8;
     var b = hex & 0x0000ff;
+    
     return color(r,g,b,a);
+
   }
   
   var CLRS={
@@ -226,7 +232,7 @@ var zoomfactor=0;
     [  24,  'Center button',    'CENTER'                ],
     [  25,  'Right button',     'RIGHT'                 ],
 
-        // Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     [ 100,  'Grid',             'GRID',       KEYCODES.GRID       ],
 
     [ 101,  'GridProps',        'GRIDPROPS',  KEYCODES.GRIDPROPS  ],
@@ -255,7 +261,7 @@ var zoomfactor=0;
     [ 122,  'STG',              'STG',        KEYCODES.STG        ],
     [ 123,  'Grid',             'COMMAND'                         ],
 
-        // Properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     [ 200,  'Properties',       'PROPERTIES'            ],
 
     [ 201,  'Match',            'MATCH'                 ],
@@ -286,7 +292,7 @@ var zoomfactor=0;
     [ 214,  'Blue',             'BLUE'                  ],
     [ 215,  'Green',            'GREEN'                 ],
 
-        // File ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // File ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     [ 301,  'File',             'FILE',     KEYCODES.FILE   ],
     [ 302,  'New',              'NEW',      KEYCODES.NEW    ],
     [ 303,  'Open',             'OPEN',     KEYCODES.OPEN   ],
@@ -294,7 +300,7 @@ var zoomfactor=0;
     [ 305,  'Save As',          'SAVEAS',   KEYCODES.SAVEAS ],
     [ 306,  'Close',            'CLOSE',    KEYCODES.CLOSE  ],
 
-        // Edit ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Edit ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     [ 400,  'Edit',             'EDIT',     KEYCODES.EDIT   ],
     [ 401,  'Undo',             'UNDO',     KEYCODES.UNDO   ],
     [ 402,  'Redo',             'REDO',     KEYCODES.REDO   ],
@@ -304,7 +310,7 @@ var zoomfactor=0;
     [ 406,  'Delete',           'DELETE',   KEYCODES.DELETE ],
     [ 407,  'Erase',            'ERASE',    KEYCODES.DELETE ],
 
-        // View ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // View ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     [ 500,  'View',             'VIEW',     KEYCODES.VIEW   ],
     [ 501,  'Select',           'SELECT'                ],
     [ 502,  'Select All',       'SELECTALL'             ],
@@ -313,7 +319,7 @@ var zoomfactor=0;
     [ 505,  'Zoomout',          'ZOOMOUT',  KEYCODES.ZOOMOUT],
     [ 506,  'Pan',              'PAN',      KEYCODES.PAN    ],
 
-        // Modify ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Modify ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     [ 600,  'Modify',           'MODIFY',       KEYCODES.MODIFY       ],
     [ 601,  'Translate',        'TRANSLATE',    KEYCODES.TRANSLATE    ],
     [ 602,  'Translate',        'TRANSLATE',    KEYCODES.TRANS_UP     ],
@@ -334,9 +340,9 @@ var zoomfactor=0;
     [ 613,  'Scale',            'SCALE'                 ],
     [ 614,  'Shear',            'SHEAR'                 ],
 
-        // DILATEFROMPOINT:            [ 1,  'Dilatefrompoint',    'DILATEFROMPOINT' ]
+    // DILATEFROMPOINT:            [ 1,  'Dilatefrompoint',    'DILATEFROMPOINT' ]
 
-        // Measure ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Measure ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     [ 700,  'Measure',          'MEASURE'               ],
     [ 701,  'Distance',         'DISTANCE'              ],
     [ 702,  'Perimeter',        'PERIMETER'             ],
@@ -346,16 +352,16 @@ var zoomfactor=0;
     [ 706,  'Diamter',          'DIAMETER'              ],
     [ 707,  'Slope',            'SLOPE'                 ],
 
-        // Layers ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        //LAYER:        [ 800,  'Layer',            'LAYER'                 ],
+    // Layers ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //LAYER:        [ 800,  'Layer',            'LAYER'                 ],
     [ 801,  'Forward',          'FORWARD'               ],
     [ 802,  'Back',             'BACK'                  ],
 
 
 
-        //  SHAPES ========================================================
+    //  SHAPES ========================================================
 
-        // Point (P) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Point (P) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     [1000,  'Point',            'POINT'                 ],
     [1001,  'P_DEFAULT',        'P_DEFAULT'             ],
     [1002,  'P_Object',         'P_OBJECT'              ],
@@ -364,7 +370,7 @@ var zoomfactor=0;
     [1005,  'P_Midpoint',       'P_MIDPOINT'            ],    // Midpoint/Center
     [1006,  'P_AttachDetach',   'P_ATTACHDETACH'        ],    // AttachDetachPoint
 
-        // Line (L) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Line (L) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     [1100,  'Line',             'LINE'                  ],
     [1101,  'Line2P',           'LINE2P'                ],    // through 2 vertices
     [1102,  'LineSegment2P',    'LINESEGMENT2P'         ],    // between 2 vertices
@@ -381,20 +387,20 @@ var zoomfactor=0;
     [1212,  'Vector2P',         'VECTOR2P'              ],    // Vector between 2 vertices
     [1213,  'VectorFP',         'VECTORFP'              ],    // Vector from point
 
-        // Triangle (T)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Triangle (T)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     [1300,  'Triangle',         'TRIANGLE'              ],
     [1301,  'T_Equilateral',    'T_EQUILATERAL'         ],
     [1302,  'T_Isosceles',      'T_ISOSCELES'           ],
     [1303,  'T_Scalene',        'T_SCALENE'             ],
 
-        // Circle (C)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Circle (C)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     [1400,  'Circle',           'CIRCLE'                ],
     [1401,  'C_CenterP',        'C_CENTERP'             ],    // center point
     [1402,  'C_CenterR',        'C_CENTERR'             ],    // center radius
 
     [1403,  'C_3P',             'C_3P'                  ],    //  3 vertices
 
-        // Quadrilateral (Q)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Quadrilateral (Q)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     [1500,  'Quadrilateral',    'QUADRILATERAL'         ],
     [1501,  'Rectangle',        'RECTANGLE'             ],
     [1502,  'Square',           'SQUARE'                ],
@@ -403,7 +409,7 @@ var zoomfactor=0;
     [1505,  'Trapezoid',        'TRAPEZOID'             ],
     [1506,  'Kite',             'KITE'                  ],
 
-        // Arc (A)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Arc (A)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     [1600,  'Arc',              'ARC'                   ],
     [1601,  'Arc2vertices',     'ARC2vertices'          ],    // SemiCircleThrough2vertices
     [1602,  'CircularArc',      'CIRCULARARC'           ],    // CircularArc
@@ -413,32 +419,33 @@ var zoomfactor=0;
 
     [1606,  'Compass',          'COMPASS'               ],    // ??
 
-        // Polygon ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Polygon ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     [1700,  'Polygon',          'POLYGON'               ],
     [1701,  'PolygonR',         'POLYGONR'              ],    // regular
     [1702,  'PolygonRigid',     'POLYGONRIGID'          ],    // Rigid
     [1703,  'PolygonV',         'POLYGONV'              ],    // Vector
 
-        // Conics (S) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Conics (S) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     [1800,  'Conic',            'CONIC'                 ],
     [1800,  'Ellipse',          'ELLIPSE'               ],
     [1801,  'Hyperbola',        'HYPERBOLA'             ],
     [1802,  'Parabola',         'PARABOLA'              ],
     [1803,  'Conic 5 Vertices', 'CONIC5VERTICES'        ],
 
-        // Angle ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Angle ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     [1900,  'Angle',            'ANGLE'                 ],
     [1901,  'Angle Size',       'ANGLESize'             ],
 
-        // Annotation ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Annotation ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     [2000,  'Text',             'TEXT'                  ],
 
-        // Images ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Images ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     [2101,  'Image',            'IMAGE'                 ],
     [2102,  'SKETCH',           'SKETCH'                ]
+
   ];
   
   var COMMANDS={
@@ -571,9 +578,9 @@ var zoomfactor=0;
     SELECT:       [ 501,  'Select',           'SELECT'                ],
     SELECTALL:    [ 502,  'Select All',       'SELECTALL'             ],
     SELECT_WINDOW:[ 503,  'Window',           'WINDOW'                ],
-    ZOOMIN:       [ 504,  'Zoomin',           'ZOOMIN',   KEYCODES.ZOOMIN ],
-    ZOOMOUT:      [ 505,  'Zoomout',          'ZOOMOUT',  KEYCODES.ZOOMOUT],
-    PAN:          [ 506,  'Pan',              'PAN',      KEYCODES.PAN    ],
+    ZOOMIN:       [ 504,  'Zoomin',           'ZOOMIN',   KEYCODES.ZOOMIN ,       "assets/images/shapes/TRIANGLE_EQUILATERAL.svg" ],
+    ZOOMOUT:      [ 505,  'Zoomout',          'ZOOMOUT',  KEYCODES.ZOOMOUT,       "assets/images/shapes/TRIANGLE_EQUILATERAL.svg" ],
+    PAN:          [ 506,  'Pan',              'PAN',      KEYCODES.PAN,       "assets/images/shapes/TRIANGLE_EQUILATERAL.svg"     ],
 
     // Modify ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     MODIFY:       [ 600,  'Modify',           'MODIFY',       KEYCODES.MODIFY       ],
@@ -707,7 +714,7 @@ var zoomfactor=0;
     // GRIDLINES:
     // COORDINATES:
     // DISPLAY:
-//~
+
     // CommandLine ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // COMMANDLINE:
     // HISTORY:
@@ -1011,6 +1018,7 @@ var zoomfactor=0;
     this.strokeH=     app.strokeH;
 
     this.layer=       app.layer;
+    
     this.linetype=    app.linetype;
 
     this.lineweight=  app.lineweight;
@@ -1281,10 +1289,10 @@ var factor=1.25;
 
       // if(dist(app.mouseX, app.mouseY,
               // this.vertices[n].x, this.vertices[n].y)<this.w){
-//~
+
         // app.mouseX=this.vertices[n].x;
         // app.mouseY=this.vertices[n].y;
-//~
+
       // }
 
       if(this.hitP[n] && app.left){
@@ -1315,9 +1323,9 @@ var factor=1.25;
     // this.diameter=2*this.radius;
     // this.area=PI*pow(this.radius,2);
     // this.circumference=PI*this.diameter;
-//~
+
     // this.recalc=function(){
-//~
+
       // this.radius=dist(this.vertices[0].x, this.vertices[0].y, this.vertices[1].x, this.vertices[1].y);
       // this.diameter=2*this.radius;
       // this.area=PI*pow(this.radius,2);
@@ -1642,12 +1650,12 @@ var factor=1.25;
   };
   var propA=function(fill, fillH, alignX, alignY, size, sizeH){
 
-    this.fill=fill;         // text color
-    this.fillH=fillH;       // text color highlight
-    this.alignX=alignX;     // horizontal alignment
-    this.alignY=alignY;     // vertical alignment
-    this.size=size;         // text size
-    this.sizeH=sizeH;       // text size highlight
+    this.fill=    fill;     // text color
+    this.fillH=   fillH;    // text color highlight
+    this.alignX=  alignX;   // horizontal alignment
+    this.alignY=  alignY;   // vertical alignment
+    this.size=    size;     // text size
+    this.sizeH=   sizeH;    // text size highlight
 
   };
 
@@ -1704,7 +1712,9 @@ var factor=1.25;
 
   };
   control.prototype.draw=function(){
+
     for(var c in this.ctrls){ this.ctrls[c].draw(); }
+
   };
   control.prototype.clicked=function(){
 
@@ -1714,11 +1724,13 @@ var factor=1.25;
     }
 
   };
+
   control.prototype.clickedR=function(){
     if(this.hit){
       for(var c in this.ctrls){ this.ctrls[c].clickedR(); }
     }
   };
+
   control.prototype.moved=function(x,y){
 
     if(this.alignX===LEFT){
@@ -1769,29 +1781,43 @@ var factor=1.25;
 
   };
   control.prototype.dragged=function(){
+
     for(var c in this.ctrls){ this.ctrls[c].dragged(); }
+
   };
   control.prototype.pressed=function(){
+
     for(var c in this.ctrls){ this.ctrls[c].pressed(); }
+
   };
   control.prototype.released=function(){
     // this.hit=false;
+
     for(var c in this.ctrls){ this.ctrls[c].released(); }
+
   };
   control.prototype.typed=function(){
+
     for(var c in this.ctrls){ this.ctrls[c].typed(); }
+
   };
   control.prototype.over=function(){
+
     for(var c in this.ctrls){ this.ctrls[c].over(); }
+
   };
   control.prototype.out=function(){
+
     this.hit=false;
     for(var c in this.ctrls){ this.ctrls[c].out(); }
+
   };
 
   // Telemetry ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var telemetry=function(c,l,a,ctrls){
+
     control.call(this,c,l,a,ctrls);
+
   };
   telemetry.prototype=Object.create(control.prototype);
   telemetry.prototype.draw=function(){
@@ -1850,7 +1876,9 @@ var factor=1.25;
 
   // Preset ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var preset=function(c,l,a,ctrls){
+
     control.call(this,c,l,a,ctrls);
+
   };
   preset.prototype=Object.create(control.prototype);
   preset.prototype.draw=function(){
@@ -1959,7 +1987,9 @@ var factor=1.25;
 
   // Container ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var container=function(c,l,a,ctrls){
+
     control.call(this,c,l,a,ctrls);
+
   };
   container.prototype=Object.create(control.prototype);
   container.prototype.draw=function(){
@@ -2014,6 +2044,7 @@ var factor=1.25;
 
   // Container Scroll ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var containerS=function(c,l,a,ctrls){
+
     control.call(this,c,l,a,ctrls);
 
     this.hitLeft=   false;  // left button
@@ -2164,7 +2195,9 @@ var factor=1.25;
 
   // Container ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var cnProps=function(c,l,a,ctrls){
+
     control.call(this,c,l,a,ctrls);
+
   };
   cnProps.prototype=Object.create(control.prototype);
   cnProps.prototype.draw=function(){
@@ -2239,7 +2272,7 @@ var factor=1.25;
 
         // if(app.mouseX<x+this.x+20){ this.hitLeft=true;  }
         // else                      { this.hitLeft=false; }
-//~
+
         // if(app.mouseX>x+this.x+this.w-20){ this.hitRight=true; }
         // else                             { this.hitRight=false; }
 
@@ -2279,12 +2312,8 @@ var factor=1.25;
 
   grid.prototype.draw=function(){
 
-    // println(document.getElementById("fillalpha").value);
-
     this.w=document.getElementById("canvas-container").offsetWidth;
     this.h=document.getElementById("canvas-container").offsetHeight;
-    
-    // println(2*document.getElementById("canvas-container").offsetWidth);
     
     size(this.w, this.h);
 
@@ -2311,9 +2340,11 @@ var factor=1.25;
         }
 
         stroke(p.stroke);
+        stroke(128,0,0);
+        
         strokeWeight(0);
         noStroke();
-        rect(d, d, p.w, p.h, p.r);
+        rect(-p.w/2, -p.h/2, p.w, p.h, p.r);
 
       popStyle();
 
@@ -2831,6 +2862,20 @@ var factor=1.25;
 
     };
 
+    var drawGUI=function(){
+
+      border();
+      
+      axis();
+      origin();
+      lines();
+      arrows();
+      ticks();
+      labels();
+      quadrants();
+          
+    };
+    
     var drawTemp=function(){
 
       switch(app.current){
@@ -2869,56 +2914,56 @@ var factor=1.25;
 
         case COMMANDS.CIRCLE_CENTERPOINT[0]:
 
-          // if(p.vertices.length===1){
-//~
-            // noFill();
-            // stroke(app.stroke);
-            // strokeWeight(app.lineweight);
-//~
-            // line(app.mouseX,  app.mouseY, app.vertices[0].x, app.vertices[0].y);
-//~
-            // fill(app.fill);
-            // noStroke();
-            // strokeWeight(0);
-//~
-            // ellipse(p.vertices[0].x, p.vertices[0].y, app.pSize, app.pSize);
-            // ellipse(app.mouseX,      app.mouseY,      app.pSize, app.pSize);
-//~
-            // noFill();
-            // stroke(app.stroke);
-            // strokeWeight(app.lineweight);
-//~
-            // var r=2*dist(p.vertices[0].x, p.vertices[0].y, app.mouseX, app.mouseY);
-//~
-            // ellipse(p.vertices[0].x, p.vertices[0].y, r, r);
-//~
-          // }
+          if(p.Temp!==0){
+
+            noFill();
+            stroke(app.stroke);
+            strokeWeight(app.lineweight);
+
+            line(app.mouseX,  app.mouseY, app.vertices[0].x, app.vertices[0].y);
+
+            fill(app.fill);
+            noStroke();
+            strokeWeight(0);
+
+            ellipse(p.vertices[0].x, p.vertices[0].y, app.pSize, app.pSize);
+            ellipse(app.mouseX,      app.mouseY,      app.pSize, app.pSize);
+
+            noFill();
+            stroke(app.stroke);
+            strokeWeight(app.lineweight);
+
+            var r=2*dist(p.vertices[0].x, p.vertices[0].y, app.mouseX, app.mouseY);
+
+            ellipse(p.vertices[0].x, p.vertices[0].y, r, r);
+
+          }
 
           break;
 
         case COMMANDS.QUAD_RECTANGLE[0]:
 
           // if(p.vertices.length===1){
-//~
+
             // noFill();
             // stroke(app.stroke);
             // strokeWeight(app.lineweight);
-//~
+
             // fill(app.fill);
             // noStroke();
             // strokeWeight(0);
-//~
+
             // ellipse(p.vertices[0].x, p.vertices[0].y, app.pSize, app.pSize);
             // ellipse(app.mouseX,    app.mouseY,    app.pSize, app.pSize);
-//~
+
             // noFill();
             // stroke(app.stroke);
             // strokeWeight(app.lineweight);
-//~
+
             // var r=dist(p.vertices[0].x, p.vertices[0].y, app.mouseX, app.mouseY);
-//~
+
             // rect(p.vertices[0].x, p.vertices[0].y, r, r);
-//~
+
           // }
 
           break;
@@ -2928,7 +2973,12 @@ var factor=1.25;
       }
 
     };
-
+    var drawShapes=function(){
+      
+      for(var s in p.shapes){ p.shapes[s].draw(p.originX, p.originY); }
+      
+    };
+    
     pushMatrix();
 
       translate(p.x+p.w/2,
@@ -2936,41 +2986,28 @@ var factor=1.25;
 
       scale(1,-1);
 
-        pushStyle();
-
-          rectMode(CENTER);
-
-          border();
-
-          axis();
-          origin();
-          lines();
-          arrows();
-          ticks();
-          labels();
-          quadrants();
-
-        popStyle();
-
-      for(var s in this.shapes){ this.shapes[s].draw(p.originX,p.originY); }
-
+      drawGUI();
+      drawShapes();
       drawTemp();
 
     popMatrix();
 
-    for(var c in this.ctrls){ p.ctrls[c].draw(0,0); }
+    // for(var c in this.ctrls){ p.ctrls[c].draw(0,0); }
 
     if(p.hit && app.focus===p.i){
+      
       // ARROW, CROSS, HAND, MOVE, TEXT, WAIT
       if(app.current==COMMANDS.SELECT[0]){
         cursor(ARROW);
       }
-      else if(!app.keys[KEYCODES.CONTROL] && app.current!==COMMANDS.PAN[0]){
+      else if(!app.keys[KEYCODES.CONTROL] &&
+               app.current!==COMMANDS.PAN[0]){
         crosshair();
       }
       else if(app.current==COMMANDS.PAN[0]){
 
-        if(app.left && app.focus===p.i){
+        if(app.left &&
+           app.focus===p.i){
           cursor(MOVE);
         }
         else{
@@ -3039,7 +3076,6 @@ var factor=1.25;
 
             case COMMANDS.QUAD_RECTANGLE[0]:  // Quad:  Rectangle
 
-
               break;
 
             default:  break;
@@ -3049,9 +3085,10 @@ var factor=1.25;
         popMatrix();
 
       }
+      
     }
 
-    for(var c in this.ctrls){ this.ctrls[c].clicked(0,0); }
+    // for(var c in this.ctrls){ this.ctrls[c].clicked(0,0); }
 
   };
   grid.prototype.moved=function(x,y){
@@ -3094,7 +3131,8 @@ var factor=1.25;
   };
   grid.prototype.dragged=function(x,y){
 
-    if(this.hit && app.focus===this.i){
+    if(this.hit &&
+       app.focus===this.i){
 
       if(app.current===COMMANDS.PAN[0]){
 
@@ -3162,91 +3200,95 @@ var factor=1.25;
     switch(app.currentCommand){
 
       // Points ----------------------------------------------------------------
-      case COMMANDS.POINT_DEFAULT[0]:             src=COMMANDS.POINT_DEFAULT[3];              title="default";  break;
-      case COMMANDS.POINT_OBJECT[0]:              src=COMMANDS.POINT_OBJECT[3];               title="object";   break;
-      case COMMANDS.POINT_BOUND[0]:               src=COMMANDS.POINT_BOUND[3];                title="bound";    break;
+      case COMMANDS.POINT_DEFAULT[0]:             src=COMMANDS.POINT_DEFAULT[3];              title=COMMANDS.POINT_DEFAULT[1];              break;
+      case COMMANDS.POINT_OBJECT[0]:              src=COMMANDS.POINT_OBJECT[3];               title=COMMANDS.POINT_OBJECT[1];               break;
+      case COMMANDS.POINT_BOUND[0]:               src=COMMANDS.POINT_BOUND[3];                title=COMMANDS.POINT_BOUND[1];                break;
 
       // Lines -----------------------------------------------------------------
-      case COMMANDS.LINE[0]:                      src=COMMANDS.LINE_2POINT[3];                title="default";  break;
-      case COMMANDS.LINE_2POINT[0]:               src=COMMANDS.LINE_2POINT[3];                title="default";  break;
-      case COMMANDS.LINE_SEGMENT2POINT[0]:        src=COMMANDS.LINE_SEGMENT2POINT[3];         title="default";  break;
-      case COMMANDS.LINE_SEGMENTLENGTH[0]:        src=COMMANDS.LINE_SEGMENTLENGTH[3];         title="default";  break;
-      case COMMANDS.LINE_PERPENDICULAR[0]:        src=COMMANDS.LINE_PERPENDICULAR[3];         title="default";  break;
-      case COMMANDS.LINE_PERPENDICULARBISECTOR[0]:src=COMMANDS.LINE_PERPENDICULARBISECTOR[3]; title="default";  break;
-      case COMMANDS.LINE_ANGLEBISECTOR[0]:        src=COMMANDS.LINE_ANGLEBISECTOR[3];         title="default";  break;
-      case COMMANDS.LINE_PARALLEL[0]:             src=COMMANDS.LINE_PARALLEL[3];              title="default";  break;
-      case COMMANDS.LINE_TANGENT[0]:              src=COMMANDS.LINE_TANGENT[3];               title="default";  break;
-      case COMMANDS.LINE_DIAMETER[0]:             src=COMMANDS.LINE_DIAMETER[3];              title="default";  break;
-      case COMMANDS.LINE_RADIUS[0]:               src=COMMANDS.LINE_RADIUS[3];                title="default";  break;
+      case COMMANDS.LINE[0]:                      src=COMMANDS.LINE_2POINT[3];                title=COMMANDS.LINE_2POINT[1];                break;
+      case COMMANDS.LINE_2POINT[0]:               src=COMMANDS.LINE_2POINT[3];                title=COMMANDS.LINE_2POINT[1];                break;
+      case COMMANDS.LINE_SEGMENT2POINT[0]:        src=COMMANDS.LINE_SEGMENT2POINT[3];         title=COMMANDS.LINE_SEGMENT2POINT[1];         break;
+      case COMMANDS.LINE_SEGMENTLENGTH[0]:        src=COMMANDS.LINE_SEGMENTLENGTH[3];         title=COMMANDS.LINE_SEGMENTLENGTH[1];         break;
+      case COMMANDS.LINE_PERPENDICULAR[0]:        src=COMMANDS.LINE_PERPENDICULAR[3];         title=COMMANDS.LINE_PERPENDICULAR[1];         break;
+      case COMMANDS.LINE_PERPENDICULARBISECTOR[0]:src=COMMANDS.LINE_PERPENDICULARBISECTOR[3]; title=COMMANDS.LINE_PERPENDICULARBISECTOR[1]; break;
+      case COMMANDS.LINE_ANGLEBISECTOR[0]:        src=COMMANDS.LINE_ANGLEBISECTOR[3];         title=COMMANDS.LINE_ANGLEBISECTOR[1];         break;
+      case COMMANDS.LINE_PARALLEL[0]:             src=COMMANDS.LINE_PARALLEL[3];              title=COMMANDS.LINE_PARALLEL[1];              break;
+      case COMMANDS.LINE_TANGENT[0]:              src=COMMANDS.LINE_TANGENT[3];               title=COMMANDS.LINE_TANGENT[1];               break;
+      case COMMANDS.LINE_DIAMETER[0]:             src=COMMANDS.LINE_DIAMETER[3];              title=COMMANDS.LINE_DIAMETER[1];              break;
+      case COMMANDS.LINE_RADIUS[0]:               src=COMMANDS.LINE_RADIUS[3];                title=COMMANDS.LINE_RADIUS[1];                break;
 
       // Ray/Vector ------------------------------------------------------------
-      case COMMANDS.RAY_2POINT[0]:                src=COMMANDS.RAY_2POINT[3];                 title="default";  break;
-      case COMMANDS.VECTOR_2POINT[0]:             src=COMMANDS.VECTOR_2POINT[3];              title="default";  break;
-      case COMMANDS.VECTOR_FROMPOINT[0]:          src=COMMANDS.VECTOR_FROMPOINT[3];           title="default";  break;
+      case COMMANDS.RAY_2POINT[0]:                src=COMMANDS.RAY_2POINT[3];                 title=COMMANDS.RAY_2POINT[1];                 break;
+      case COMMANDS.VECTOR_2POINT[0]:             src=COMMANDS.VECTOR_2POINT[3];              title=COMMANDS.VECTOR_2POINT[1];              break;
+      case COMMANDS.VECTOR_FROMPOINT[0]:          src=COMMANDS.VECTOR_FROMPOINT[3];           title=COMMANDS.VECTOR_FROMPOINT[1];           break;
 
       // Triangles -------------------------------------------------------------
-      case COMMANDS.TRIANGLE[0]:                  src=COMMANDS.TRIANGLE[3];                   title="default";  break;
-      case COMMANDS.TRIANGLE_EQUILATERAL[0]:      src=COMMANDS.TRIANGLE_EQUILATERAL[3];       title="default";  break;
-      case COMMANDS.TRIANGLE_ISOSCELES[0]:        src=COMMANDS.TRIANGLE_ISOSCELES[3];         title="default";  break;
-      case COMMANDS.TRIANGLE_SCALENE[0]:          src=COMMANDS.TRIANGLE_SCALENE[3];           title="default";  break;
+      case COMMANDS.TRIANGLE[0]:                  src=COMMANDS.TRIANGLE[3];                   title=COMMANDS.TRIANGLE[1];                   break;
+      case COMMANDS.TRIANGLE_EQUILATERAL[0]:      src=COMMANDS.TRIANGLE_EQUILATERAL[3];       title=COMMANDS.TRIANGLE_EQUILATERAL[1];       break;
+      case COMMANDS.TRIANGLE_ISOSCELES[0]:        src=COMMANDS.TRIANGLE_ISOSCELES[3];         title=COMMANDS.TRIANGLE_ISOSCELES[1];         break;
+      case COMMANDS.TRIANGLE_SCALENE[0]:          src=COMMANDS.TRIANGLE_SCALENE[3];           title=COMMANDS.TRIANGLE_SCALENE[1];           break;
                                       
       // Circles ---------------------------------------------------------------
-      case COMMANDS.CIRCLE[0]:                    src=COMMANDS.CIRCLE[3];                     title="default";  break;
-      case COMMANDS.CIRCLE_CENTERPOINT[0]:        src=COMMANDS.CIRCLE_CENTERPOINT[3];         title="default";  break;
-      case COMMANDS.CIRCLE_CENTERRADIUS[0]:       src=COMMANDS.CIRCLE_CENTERRADIUS[3];        title="default";  break;
-      case COMMANDS.CIRCLE_3POINT[0]:             src=COMMANDS.CIRCLE_3POINT[3];              title="default";  break;
+      case COMMANDS.CIRCLE[0]:                    src=COMMANDS.CIRCLE[3];                     title=COMMANDS.CIRCLE[1];                     break;
+      case COMMANDS.CIRCLE_CENTERPOINT[0]:        src=COMMANDS.CIRCLE_CENTERPOINT[3];         title=COMMANDS.CIRCLE_CENTERPOINT[1];         break;
+      case COMMANDS.CIRCLE_CENTERRADIUS[0]:       src=COMMANDS.CIRCLE_CENTERRADIUS[3];        title=COMMANDS.CIRCLE_CENTERRADIUS[1];        break;
+      case COMMANDS.CIRCLE_3POINT[0]:             src=COMMANDS.CIRCLE_3POINT[3];              title=COMMANDS.CIRCLE_3POINT[1];              break;
 
       // Quads -----------------------------------------------------------------
-      case COMMANDS.QUAD[0]:                      src=COMMANDS.QUAD[3];                       title="default";  break;
-      case COMMANDS.QUAD_RECTANGLE[0]:            src=COMMANDS.QUAD_RECTANGLE[3];             title="default";  break;
-      case COMMANDS.QUAD_SQUARE[0]:               src=COMMANDS.QUAD_SQUARE[3];                title="default";  break;
-      case COMMANDS.QUAD_RHOMBUS[0]:              src=COMMANDS.QUAD_RHOMBUS[3];               title="default";  break;
-      case COMMANDS.QUAD_PARALLELOGRAM[0]:        src=COMMANDS.QUAD_PARALLELOGRAM[3];         title="default";  break;
-      case COMMANDS.QUAD_TRAPEZOID[0]:            src=COMMANDS.QUAD_TRAPEZOID[3];             title="default";  break;
-      case COMMANDS.QUAD_KITE[0]:                 src=COMMANDS.QUAD_KITE[3];                  title="default";  break;
+      case COMMANDS.QUAD[0]:                      src=COMMANDS.QUAD[3];                       title=COMMANDS.QUAD[1];                       break;
+      case COMMANDS.QUAD_RECTANGLE[0]:            src=COMMANDS.QUAD_RECTANGLE[3];             title=COMMANDS.QUAD_RECTANGLE[1];             break;
+      case COMMANDS.QUAD_SQUARE[0]:               src=COMMANDS.QUAD_SQUARE[3];                title=COMMANDS.QUAD_SQUARE[1];                break;
+      case COMMANDS.QUAD_RHOMBUS[0]:              src=COMMANDS.QUAD_RHOMBUS[3];               title=COMMANDS.QUAD_RHOMBUS[1];               break;
+      case COMMANDS.QUAD_PARALLELOGRAM[0]:        src=COMMANDS.QUAD_PARALLELOGRAM[3];         title=COMMANDS.QUAD_PARALLELOGRAM[1];         break;
+      case COMMANDS.QUAD_TRAPEZOID[0]:            src=COMMANDS.QUAD_TRAPEZOID[3];             title=COMMANDS.QUAD_TRAPEZOID[1];             break;
+      case COMMANDS.QUAD_KITE[0]:                 src=COMMANDS.QUAD_KITE[3];                  title=COMMANDS.QUAD_KITE[1];                  break;
 
       // Arcs ------------------------------------------------------------------
-      case COMMANDS.ARC[0]:                       src=COMMANDS.ARC[3];                        title="default";  break;
-      case COMMANDS.ARC_2VERTICES[0]:             src=COMMANDS.ARC_2VERTICES[3];              title="default";  break;
-      case COMMANDS.ARC_CIRCULAR[0]:              src=COMMANDS.ARC_CIRCULAR[3];               title="default";  break;
-      case COMMANDS.ARC_CIRCUMCIRCULAR[0]:        src=COMMANDS.ARC_CIRCUMCIRCULAR[3];         title="default";  break;
-      case COMMANDS.ARC_CIRCULARSECTOR[0]:        src=COMMANDS.ARC_CIRCULARSECTOR[3];         title="default";  break;
-      case COMMANDS.ARC_CIRCUMCIRCULARSECTOR[0]:  src=COMMANDS.ARC_CURCUMCIRCULARSECTOR[3];   title="default";  break;
+      case COMMANDS.ARC[0]:                       src=COMMANDS.ARC[3];                        title=COMMANDS.ARC[1];                        break;
+      case COMMANDS.ARC_2VERTICES[0]:             src=COMMANDS.ARC_2VERTICES[3];              title=COMMANDS.ARC_2VERTICES[1];              break;
+      case COMMANDS.ARC_CIRCULAR[0]:              src=COMMANDS.ARC_CIRCULAR[3];               title=COMMANDS.ARC_CIRCULAR[1];               break;
+      case COMMANDS.ARC_CIRCUMCIRCULAR[0]:        src=COMMANDS.ARC_CIRCUMCIRCULAR[3];         title=COMMANDS.ARC_CIRCUMCIRCULAR[1];         break;
+      case COMMANDS.ARC_CIRCULARSECTOR[0]:        src=COMMANDS.ARC_CIRCULARSECTOR[3];         title=COMMANDS.ARC_CIRCULARSECTOR[1];         break;
+      case COMMANDS.ARC_CIRCUMCIRCULARSECTOR[0]:  src=COMMANDS.ARC_CURCUMCIRCULARSECTOR[3];   title=COMMANDS.ARC_CURCUMCIRCULARSECTOR[1];   break;
 
       // Misc ------------------------------------------------------------------
-      case COMMANDS.COMPASS[0]:                   src=COMMANDS.COMPASS[3];                    title="default";  break;
+      case COMMANDS.COMPASS[0]:                   src=COMMANDS.COMPASS[3];                    title=COMMANDS.COMPASS[1];                    break;
 
       // Polygons --------------------------------------------------------------
-      case COMMANDS.POLYGON[0]:                   src=COMMANDS.POLYGON[3];                    title="default";  break;
-      case COMMANDS.POLYGON_REGULAR[0]:           src=COMMANDS.POLYGON_REGULAR[3];            title="default";  break;
-      case COMMANDS.POLYGON_RIGID[0]:             src=COMMANDS.POLYGON_RIGID[3];              title="default";  break;
-      case COMMANDS.POLYGON_VECTOR[0]:            src=COMMANDS.POLYGON_VECTOR[3];             title="default";  break;
+      case COMMANDS.POLYGON[0]:                   src=COMMANDS.POLYGON[3];                    title=COMMANDS.POLYGON[1];                    break;
+      case COMMANDS.POLYGON_REGULAR[0]:           src=COMMANDS.POLYGON_REGULAR[3];            title=COMMANDS.POLYGON_REGULAR[1];            break;
+      case COMMANDS.POLYGON_RIGID[0]:             src=COMMANDS.POLYGON_RIGID[3];              title=COMMANDS.POLYGON_RIGID[1];              break;
+      case COMMANDS.POLYGON_VECTOR[0]:            src=COMMANDS.POLYGON_VECTOR[3];             title=COMMANDS.POLYGON_VECTOR[1];             break;
 
       // Conics ----------------------------------------------------------------
-      case COMMANDS.CONIC[0]:                     src=COMMANDS.CONIC[3];                      title="default";  break;
-      case COMMANDS.CONIC_ELLIPSE[0]:             src=COMMANDS.CONIC_ELLIPSE[3];              title="default";  break;
-      case COMMANDS.CONIC_HYPERBOLA[0]:           src=COMMANDS.CONIC_HYPERBOLA[3];            title="default";  break;
-      case COMMANDS.CONIC_PARABOLA[0]:            src=COMMANDS.CONIC_PARABOLA[3];             title="default";  break;
-      case COMMANDS.CONIC_5VERTICES[0]:           src=COMMANDS.CONIC_5VERTICES[3];            title="default";  break;
+      case COMMANDS.CONIC[0]:                     src=COMMANDS.CONIC[3];                      title=COMMANDS.CONIC[1];                      break;
+      case COMMANDS.CONIC_ELLIPSE[0]:             src=COMMANDS.CONIC_ELLIPSE[3];              title=COMMANDS.CONIC_ELLIPSE[1];              break;
+      case COMMANDS.CONIC_HYPERBOLA[0]:           src=COMMANDS.CONIC_HYPERBOLA[3];            title=COMMANDS.CONIC_HYPERBOLA[1];            break;
+      case COMMANDS.CONIC_PARABOLA[0]:            src=COMMANDS.CONIC_PARABOLA[3];             title=COMMANDS.CONIC_PARABOLA[1];             break;
+      case COMMANDS.CONIC_5VERTICES[0]:           src=COMMANDS.CONIC_5VERTICES[3];            title=COMMANDS.CONIC_5VERTICES[1];            break;
 
       // Angles ----------------------------------------------------------------
-      case COMMANDS.ANGLE[0]:                     src=COMMANDS.ANGLE[3];                      title="default";  break;
-      case COMMANDS.ANGLE_SIZE[0]:                src=COMMANDS.ANGLE_SIZE[3];                 title="default";  break;
+      case COMMANDS.ANGLE[0]:                     src=COMMANDS.ANGLE[3];                      title=COMMANDS.ANGLE[1];                      break;
+      case COMMANDS.ANGLE_SIZE[0]:                src=COMMANDS.ANGLE_SIZE[3];                 title=COMMANDS.ANGLE_SIZE[1];                 break;
 
       // Annotations -----------------------------------------------------------
-      case COMMANDS.TEXT[0]:                      src=COMMANDS.TEXT[3];                       title="default";  break;
+      case COMMANDS.TEXT[0]:                      src=COMMANDS.TEXT[3];                       title=COMMANDS.TEXT[1];                       break;
 
       // Images ----------------------------------------------------------------
-      case COMMANDS.IMAGE[0]:                     src=COMMANDS.IMAGE[3];                      title="default";  break;
-      case COMMANDS.SKETCH[0]:                    src=COMMANDS.SKETCH[3];                     title="default";  break;
+      case COMMANDS.IMAGE[0]:                     src=COMMANDS.IMAGE[3];                      title=COMMANDS.IMAGE[1];                      break;
+      case COMMANDS.SKETCH[0]:                    src=COMMANDS.SKETCH[3];                     title=COMMANDS.SKETCH[1];                     break;
+
+      // Display ----------------------------------------------------------------
+      case COMMANDS.PAN[0]:                       src=COMMANDS.PAN[4];                        title=COMMANDS.PAN[1];                        break;
 
       default: break;
 
-    }
-// println(src);
-    document.getElementById("img-points").src=src;
-    document.getElementById("img-POINT_DEFAULT").title=title;
+    };
 
+println(app.currentCommand);
+
+    document.getElementById("img-command").src=src;
+    document.getElementById("img-command").title=title;
 
   };
   
@@ -3286,7 +3328,7 @@ var factor=1.25;
     // if(n<100){ n++; }
 
     // app.frameRate=frameCount;
-    //~
+
     // frameRate(app.frameRate);
 
     for(var c in app.ctrls){ app.ctrls[c].draw(); }
@@ -3312,6 +3354,7 @@ var factor=1.25;
 
   // Mouse ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var mouseClicked=function(){
+
     switch(mouseButton){
 
       case LEFT:
@@ -3332,23 +3375,30 @@ var factor=1.25;
       default:    break;
 
     }
+
     process();
+
   };
   var mouseMoved=function(){
+
     app.mouseX=mouseX;
     app.mouseY=mouseY;
     for(var c in app.ctrls){ app.ctrls[c].moved(0,0); }
     // process();
+
   };
   var mouseDragged=function(){
+
     // app.left=true;
     app.mouseX=mouseX;
     app.mouseY=mouseY;
     for(var c in app.ctrls) { app.ctrls[c].dragged(); }
 
     process();
+
   };
   var mousePressed=function(){
+
     mStartX=mouseX;
     mStartY=mouseY;
     switch(mouseButton){
@@ -3363,8 +3413,10 @@ var factor=1.25;
 
     for(var c in app.ctrls){ app.ctrls[c].pressed(); }
     process();
+
   };
   var mouseReleased=function(){
+
     mStartX=0;
     mStartY=0;
 
@@ -3374,17 +3426,24 @@ var factor=1.25;
 
     for(var c in app.ctrls){ app.ctrls[c].released(); }
     process();
+
   };
   var mouseOut=function(){
+
     for(var c in app.ctrls){ app.ctrls[c].out(); }
     process();
+
   };
   var mouseOver=function(){
+
     for(var c in app.ctrls){ app.ctrls[c].over(); }
     process();
+
   };
   var mouseWheel=function(){
+
     println("scroll");
+
   }
 
   // Keys ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -3732,7 +3791,7 @@ var factor=1.25;
 
     // <?xml version='1.0'?>
     // <CATALOG>
-//~
+
       // <COMMAND>
         // <NAME>Empire Burlesque</NAME>
         // <KEYCODE>Bob Dylan</KEYCODE>
@@ -3740,7 +3799,7 @@ var factor=1.25;
         // <ENGLISH>Columbia</ENGLISH>
         // <SPANISH>10.90</SPANISH>
       // </COMMAND>
-//~
+
     // </CATALOG>
 
     println("<?xml version='1.0'?>");
@@ -3853,15 +3912,16 @@ var factor=1.25;
       app.origin=true;
     }
 
-    
-    // println("click me");
-    
-
   };
 
   document.getElementById("zoom-in").onclick    = function() { commands(COMMANDS.ZOOMIN[0]);  process();  };
   document.getElementById("zoom-out").onclick   = function() { commands(COMMANDS.ZOOMOUT[0]); process();  };
-  document.getElementById("pan").onclick        = function() { commands(COMMANDS.PAN[0]);     process();  };
+  document.getElementById("pan").onclick        = function() {
+    
+    commands(COMMANDS.PAN[0]);     process();
+    // println("pan");
+    
+  };
 
   document.getElementById("origin").onclick     = function() { app.origin=!app.origin;        process();  };
   
@@ -3972,37 +4032,28 @@ var factor=1.25;
   };
   
   
-  document.getElementById('points').onclick = function() { clickMe(1); };
+  document.getElementById('points').onclick = function()  { clickMe(1); };
   document.getElementById('lines').onclick = function()   { clickMe(2); };
 
   document.getElementById("line-weight").onchange   = function() {
-
     app.lineweight=document.getElementById("line-weight").value;
     app.pSize=app.lineweight;
-
-    // println(app.pSize);
-
-    // println(app.lineweight);
   }
   
   document.getElementById("line-color").onchange   = function() {
     app.stroke=hexToRGBA(document.getElementById("line-color").value);
-    // println(app.stroke);
   }
   
   document.getElementById("line-alpha").onchange   = function() {
     app.strokeA=document.getElementById("line-alpha").value;
-    // println(app.strokeA);
   }
   
   document.getElementById("fill-color").onchange   = function() {
     app.fill=hexToRGBA(document.getElementById("fill-color").value);
-    // println(app.fill);
   }
   
   document.getElementById("fill-alpha").onchange   = function() {
     app.fillA=document.getElementById("fill-alpha").value;
-    // println(app.fillA);
   }
 
 }};
