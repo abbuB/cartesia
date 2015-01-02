@@ -1,0 +1,229 @@
+  /*
+    ============================================================================
+      commands.css
+    ============================================================================
+  */
+  /* http://meyerweb.com/eric/tools/css/reset/
+     v2.0 | 20110126
+     License: none (public domain)
+  */
+  html, body, div, span, applet, object, iframe,
+  h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+  a, abbr, acronym, address, big, cite, code,
+  del, dfn, em, img, ins, kbd, q, s, samp,
+  small, strike, strong, sub, sup, tt, var,
+  b, u, i, center,
+  dl, dt, dd, ol, ul, li,
+  fieldset, form,   input[type="number"], legend,
+  table, caption, tbody, tfoot, thead, tr, th, td,
+  article, aside, canvas, details, embed,
+  figure, figcaption, footer, header, hgroup,
+  menu, nav, output, ruby, section, summary,
+  time, mark, audio, video {
+    margin:             0;
+    padding:            0;
+    border:             0;
+    font-size:          100%;
+    font:               inherit;
+    vertical-align:     baseline;
+    -webkit-appearance: none;
+    -moz-appearance:    none;
+    outline:            none;
+    /*border:             1px dotted #444;*/
+  }
+  /* HTML5 display-role reset for older browsers */
+  article, aside, details, figcaption, figure,
+  footer, header, hgroup, menu, nav, section {
+    /*display:            block;*/
+  }
+  body {
+    
+    line-height:        1;
+    background:         #000;
+    
+  }
+  ol, ul {
+    list-style:         none;
+  }
+  blockquote, q {
+    quotes:             none;
+  }
+  blockquote:before, blockquote:after,
+  q:before, q:after {
+    content:            '';
+    content:            none;
+  }
+  table {
+    border-collapse:    collapse;
+    border-spacing:     0;
+  }
+
+  $menuWidth:           200px;
+  $fullWidth:           100%;
+  $fullHeight:          100%;
+
+  /*
+    ============================================================================
+      Body
+    ============================================================================
+  */
+  body {
+
+    font:               400 11px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+    background:         #FFFFFF;
+
+    /*overflow:           none;*/
+
+    /*background:         none;*/
+
+  }
+
+  p {
+
+    margin:             0 0 0 10px;
+    padding:            2px;
+    
+  }
+
+  #commands {
+    
+    /*position:           relative;*/
+    
+    top:                35px;
+    
+    /*font:               400 11px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;*/
+
+    background:         #262626;
+    
+  }
+  
+  dl {
+    
+    font:               400 14px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    
+    margin:             10px 20px;
+    padding:            1px;
+    
+    background:         #000;
+
+    
+  }
+  dt {
+
+    margin:             0;
+    padding:            5px;
+
+    background:         #aaa;
+
+    color:              #111;
+
+  }
+  dd {
+
+    font:               400 12px/11px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    
+    margin:             0;
+    padding:            20px 5px 20px 20px;
+    
+    background:         #ccc;
+
+    color:              #111;
+
+  }
+  
+  img {
+    
+    /*display:            inline;*/
+    
+    margin:             5px;
+    padding:            5px;
+
+    border:             1px dotted #111;
+    
+    vertical-align:     middle;
+    
+    /*height:             40px;*/
+    /*width:              40px;*/
+
+    /*background:         #000;*/
+    
+  }
+  
+  h1 {
+    
+    font:               400 20px/18px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+    margin:             0;
+    padding:            20px 10px;
+    
+    color:              #ccc;
+    
+  }
+  h2 {
+    
+    font:               400 16px/14px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+    margin:             0;
+    padding:            5px 15px;
+
+    color:              #bbb;
+
+  }
+  
+  label {
+
+    font:               400 11px/10px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+    /*position:           relative;*/
+    
+    /*top:                100px;*/
+    width:              100px;
+    
+    color:              #666;
+
+    display:            inline-block;
+    
+    margin:             2px 0px;
+    
+  }
+  
+  label.bs {
+
+    font:               400 11px/10px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+    position:           relative;
+    
+    /*top:                100px;*/
+
+    color:              #FFFF00;
+
+    display:            inline-block;
+    
+    margin:             5px 5px 5px 0px;
+    
+  }
+  
+  canvas {
+    
+    position:           absolute;
+    
+    top:                10px;
+    left:               10px;
+
+  }
+  
+  
+  /*input[type="button"].bs {*/
+
+  /*  background-color:   #000;*/
+
+  /*}*/
+
+  /*input[type="button"].bs:hover {*/
+
+  /*  background-color:   #648880;*/
+  /*  border-left-color:  #06F;*/
+  /*  border-right-color: #06F;*/
+    
+  /*}*/
