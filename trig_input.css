@@ -1,0 +1,376 @@
+  /*
+    ============================================================================
+      input.css
+    ============================================================================
+  */
+  input {
+
+    -webkit-appearance: none;
+
+
+
+  }
+  
+  input.bs {
+
+    -webkit-appearance: none;
+
+    margin:             0;
+    padding:            0;
+
+    height:             16px;
+
+    border:             none;
+    
+    outline:            none; /* focus highlight */
+    
+    background:         transparent;
+
+    font:               400 11px/12px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+    color:              #000;
+    
+  }
+  input.bs:hover {
+    
+    background:         #555;
+    
+  }
+  input.bs:focus {
+    
+    /*background:         #eee;*/
+    
+  }
+
+  /* TEXT *********************************************************************/
+  input[type="text"].bs {
+    
+    color:              #eee;
+    
+    margin:             0;
+    
+    padding:            2px;
+
+  }
+  input[type="text"].bs:hover {
+    
+    background:         #bbb;
+    color:              #222;
+    
+  }
+  input[type="text"].bs:focus {
+    
+    background:         #fff;
+    color:              #000;
+    
+  }
+  
+  input[type="text"].commands {
+    
+    /*font:               400 11px/12px "Ubuntu", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;*/
+    /*padding:            0 10px;*/
+    /*color:              #000;*/
+    /*border-radius:      5px;*/
+    /*height:             20px;*/
+    /*border:             1px solid #888;*/
+    /*background:         gray;*/
+    
+  }
+  input[type="text"].commands:hover {
+    
+    /*background:         #bbb;*/
+    
+  }
+  input[type="text"].commands:focus {
+    
+    /*background:         #fff;*/
+    /*border:             1px solid #222;*/
+    /*color:              #111;*/
+    
+  }
+  
+  /* NUMBER *******************************************************************/
+  input[type="number"].bs {
+
+    color:              #ffff00;
+    background:         transparent;
+    
+  }
+  input[type="number"].bs:hover {
+
+    color:              #fff;
+    background:         #123456;
+    
+  }
+  input[type="number"].bs:focus {
+    
+    background:         #eee;
+    color:              #111;
+    
+  }
+  input[type="number"].bs::-webkit-inner-spin-button,
+  input[type="number"].bs::-webkit-outer-spin-button {
+    
+    cursor:             pointer;
+    /*margin:             0;*/
+    display:            block;
+    
+  }
+
+ /* COLOR *********************************************************************/
+  input[type="color"].bs {
+    
+    margin:             0;
+    padding:            0;
+    cursor:             pointer;
+    
+    /*background:         green;*/
+    
+  }
+  input[type="color"].bs:hover {
+    
+    background:         transparent;
+    
+  }
+  input[type="color"].bs:focus {
+    
+    background:         transparent;
+    
+  }
+  input[type="color"].bs::-webkit-color-swatch-wrapper {
+    
+    margin:             0;
+    padding:            0;
+    
+    border:             none;
+    
+  }
+  input[type="color"].bs::-webkit-color-swatch {
+    
+    height:             5px;
+    margin:             6px 0 0 0;
+    
+    border:             none;
+    border-radius:      3px;
+    
+  }
+  
+  /*input[type="color"].grid {*/
+
+  /*  height:             12px;*/
+  /*  width:              90px;*/
+
+  /*  margin:             3px 0 0 0;*/
+    
+  /*}*/
+  /*input[type="color"].grid::-webkit-color-swatch {*/
+    
+  /*  height:             5px;*/
+  /*  margin:             8px 0 0 0;*/
+    
+  /*  border:             none;*/
+  /*  border-radius:      3px;*/
+    
+  /*}*/
+  
+  /* RANGE ********************************************************************/
+  input[type="range"]{
+    
+    width:              90px;
+
+  }
+
+  input[type="range"]:hover {
+    
+    cursor:             pointer;
+    height:             16px;
+    
+    outline:            none;
+    
+    background:         none;
+    
+    
+  }
+  input[type="range"]:focus {
+    background:         none;
+    color:              #000;
+  }
+  
+  input[type="range"]::-webkit-slider-runnable-track {
+    height:             5px;
+    background:         gray;
+    border:             none;
+    border-radius:      3px;
+    background:         -webkit-gradient(linear, left top, left bottom, from(#888), to(#666));
+  }
+  input[type="range"]:focus::-webkit-slider-runnable-track {
+    background:         #ddd;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    
+    -webkit-appearance: none;
+    
+    height:             12px;
+    width:              12px;
+    
+    background:         -webkit-gradient(linear, left top, left bottom, from(#222), to(#333));
+    background:         -webkit-radial-gradient(#333, #444);
+    
+    border:             1px solid #444;
+    
+    cursor:             ew-resize;
+    
+    border-radius:      50%;
+    /*background:         #222;*/
+    
+    margin-top:         -3px;
+    
+  }
+  input[type="range"]::-webkit-slider-thumb:hover {
+    
+    -webkit-appearance: none;
+    
+    background:         -webkit-radial-gradient(#444, #333);
+    
+  }
+  
+  /* CHECKBOX *****************************************************************/
+  input[type="checkbox"].bs {
+    
+    display:            relative;
+    -webkit-appearance:none;
+
+    padding:            0;
+    margin:             0;
+
+    /*border:             double 1px black;*/
+    border-radius:      50%;
+    outline:            none;
+    
+    width:              16px;
+    height:             16px;
+
+    cursor:             pointer;
+
+    /*background:         red;*/
+    background:         -webkit-radial-gradient(#dd0000, #aa0000);
+    /*background:         transparent;*/
+    
+  }
+  input[type="checkbox"].bs:checked {
+    
+    -webkit-appearance:none;
+    /*background:         -webkit-radial-gradient(#00dd00, #00aa00);*/
+    border:             double 1px transparent;
+    /*border-left-color:#06F;*/
+    /*border-right-color:#06F;*/
+    
+  }
+  input[type="checkbox"].bs:hover {
+    
+    border:             double 1px #777;
+    
+  }
+
+  /* RADIO ********************************************************************/
+  input[type="radio"] {
+    
+    -webkit-appearance:button;
+    
+    padding-left:     0px;
+    padding-right:    0px;
+    
+    border-radius:    2px;
+    
+    margin:           3px;
+    
+    border:           double 1px #648880;
+    
+    background-color: #000;
+    
+    color:            #648880;
+    
+    white-space:        nowrap;
+    overflow:           hidden;
+    
+    width:            10px;
+    height:           10px;
+    
+    /*float:            left;*/
+    text-align:         left;
+    
+  }
+  input[type="radio"]:checked {
+    
+    background-color:   #648880;
+    border-left-color:  #06F;
+    border-right-color: #06F;
+    
+  }
+  input[type="radio"]:hover {
+    
+    box-shadow:         0px 0px 10px #1300ff;
+    
+    cursor:             pointer;
+    
+  }
+
+  input[type="button"].bs {
+
+    -webkit-appearance: none;
+
+    position:           absolute;
+
+    left:               220px;
+    top:                0px;
+
+    margin:             5px;
+    padding:            5px;
+    
+    background-color:   #111;
+
+    color:              #444;
+
+    border:             1px solid transparent;
+    border-bottom:      1px solid #222;
+    
+    height:             24px;
+    
+  }
+
+  input[type="button"].bottom {
+
+    left:                270px;
+
+  }
+
+  input[type="button"].bs:hover {
+
+    margin:             5px;
+    /*padding:            5px;*/
+
+    background-color:   #222;
+
+    color:              #666;
+
+    cursor:             pointer;
+
+    border-bottom:      1px solid #888;
+
+  }
+  
+  input[type="button"].bs:active {
+
+    /*margin:             5px;*/
+    /*padding:            5px;*/
+
+    background-color:   #444;
+
+    color:              #888;
+
+    cursor:             pointer;
+
+    border-bottom:      1px solid #ccc;
+
+  }
