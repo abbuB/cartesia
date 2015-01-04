@@ -84,7 +84,15 @@ var diagrams = function(processingInstance){
     RULER:        color(231,189,33),
 
     SELECTED:     color(0,0,255),
-    HIT:          color(255,0,0)
+    HIT:          color(255,0,0),
+
+    SIN:          color(170,29,29,255),   SIN_LT:       color(170,29,29,128),
+    COS:          color(29,86,170,255),   COS_LT:       color(29,86,170,128),
+    TAN:          color(238,214,15,255),  TAN_LT:       color(238,214,15,128),
+
+    CSC:          color(238,136,15,255),  CSC_LT:       color(238,136,15,128),
+    SEC:          color(158,182,58,255),  SEC_LT:       color(158,182,58,128),
+    COT:          color(128,128,128,255), COT_LT:       color(128,128,128,128)
 
   };
   var COMMANDS={
@@ -1361,7 +1369,7 @@ var diagrams = function(processingInstance){
     textSize(14);
     textAlign(RIGHT,CENTER);
   
-    var deg=floor(degrees(app.theta));
+    var deg=floor(degrees(app.thetaR));
   
     if(deg<0){ deg+=360; }
   
@@ -1565,6 +1573,17 @@ var diagrams = function(processingInstance){
 
   var drawCurves=function(){
 
+    //  each end of a discontiguous curve requires 2 terminating points at each end
+
+    noFill();
+    strokeWeight(0.75);
+
+    var w=16*app.unit*4;
+    var incr=18;
+    
+    var min=0;
+    var max=360;
+    
     // Shape Options
     // POINTS, LINES, TRIANGLES, TRIANGLE_FAN, TRIANGLE_STRIP, QUADS, QUAD_STRIP
     // Example: shape(TRIANGLE_FAN);
@@ -1573,107 +1592,293 @@ var diagrams = function(processingInstance){
 
       var m=55;
 
-      stroke(CLRS.RED);
+      stroke(CLRS.SIN);
 
-      beginShape(m);
-      
-        curveVertex(0,0);
+      // beginShape(m);
+      beginShape();
 
-        for(var n=app.min; n<app.max; n+=incr){
-          curveVertex(n/app.max*w, -app.data[n].sin);
+        var x=0;
+        var y=0;
+
+        curveVertex(x,y);
+        
+        for(var n=min; n<=max; n+=incr){
+
+          x=n/app.max*w;
+          y=-app.data[n].sin;
+
+          curveVertex(x, y);
+
         }
 
+        curveVertex(x,y);
+
       endShape();
+
+
 
     };
     var cosineCurve=function(){
       
-      stroke(CLRS.BLUE);
+      stroke(CLRS.COS);
 
       beginShape();
       
-        curveVertex(0,-app.data[0].cos);
+        var x=0;
+        var y=-app.data[0].cos;
+        
+        curveVertex(x,y);
+        
+        for(var n=min; n<=max; n+=incr){
 
-        for(var n=app.min; n<app.max; n+=incr){
-          curveVertex(n/app.max*w, -app.data[n].cos);
+          x=n/app.max*w;
+          y=-app.data[n].cos;
+
+          curveVertex(x, y);
+
         }
+
+        curveVertex(x,y);
 
       endShape();
       
     };
     var tangentCurve=function(){
       
-      stroke(CLRS.YELLOW);
+      stroke(CLRS.TAN);
+
+      var x=0;
+      var y=0;
+        
+      beginShape();
+
+        curveVertex(x, y);
+
+        for(var n=min; n<90; n++){
+
+          x=n/app.max*w;
+          y=-app.data[n].tan;
+
+          if(y>-height || y<height){ curveVertex(x, y); }
+
+        }
+
+      endShape();
 
       beginShape();
 
-        curveVertex(0,0);
+        for(var n=91; n<270; n++){
 
-        for(var n=app.min; n<90; n++){
-          curveVertex(n/app.max*w, -app.data[n].tan);
+          x=n/app.max*w;
+          y=-app.data[n].tan;
+
+          if(y>-height || y<height){ curveVertex(x, y); }
+
+        }
+
+      endShape();
+      
+      beginShape();
+
+        for(var n=271; n<=max; n++){
+
+          x=n/app.max*w;
+          y=-app.data[n].tan;
+
+          if(y>-height || y<height){ curveVertex(x, y); }
+
+        }
+
+        curveVertex(x,y);
+
+      endShape();
+      
+    };
+    var cosecantCurve=function(){
+      
+      stroke(CLRS.ORANGE);
+
+      var x=0;
+      var y=0;
+        
+      beginShape();
+
+        for(var n=min; n<180; n++){
+
+          x=n/app.max*w;
+          y=-app.data[n].csc;
+
+          if(y>-height && y<height){ curveVertex(x, y); }
+
+        }
+
+      endShape();
+
+      beginShape();
+
+        for(var n=181; n<360; n++){
+
+          x=n/app.max*w;
+          y=-app.data[n].csc;
+
+          if(y>-height && y<height){ curveVertex(x, y); }
+
         }
 
       endShape();
 
     };
-    var cosecantCurve=function(){};
-    var secantCurve=function(){};
-    var cotangentCurve=function(){};
+    var secantCurve=function(){
+      
+      stroke(CLRS.GREEN);
 
-    noFill();
-    strokeWeight(0.75);
+      var x=0;
+      var y=-app.data[0].sec;
+        
+      beginShape();
 
-    var w=16*app.unit*4;
-    var incr=18;
+        curveVertex(x, y);
 
+        for(var n=min; n<90; n++){
+
+          x=n/app.max*w;
+          y=-app.data[n].sec;
+
+          if(y>-height && y<height){ curveVertex(x, y); }
+
+        }
+
+      endShape();
+
+      beginShape();
+
+        for(var n=91; n<270; n++){
+
+          x=n/app.max*w;
+          y=-app.data[n].sec;
+
+          if(y>-height && y<height){ curveVertex(x, y); }
+
+        }
+
+      endShape();
+      
+      beginShape();
+
+        for(var n=271; n<=max; n++){
+
+          x=n/app.max*w;
+          y=-app.data[n].sec;
+
+          if(y>-height && y<height){ curveVertex(x, y); }
+
+        }
+
+        curveVertex(x, y);
+
+      endShape();
+
+    };
+    var cotangentCurve=function(){
+      
+      stroke(CLRS.GRAY);
+
+      var x=0;
+      var y=0;
+        
+      beginShape();
+
+        for(var n=min; n<180; n++){
+
+          x=n/app.max*w;
+          y=-app.data[n].cot;
+
+          if(y>-height && y<height){ curveVertex(x, y); }
+
+        }
+
+      endShape();
+
+      beginShape();
+
+        for(var n=181; n<=max; n++){
+
+          x=n/app.max*w;
+          y=-app.data[n].cot;
+
+          if(y>-height && y<height){ curveVertex(x, y); }
+
+        }
+
+      endShape();
+      
+    };
+    
+    var current=function(){
+      
+      var x, y, sz=10;
+
+      // Current location
+      x=mouseX-app.border-20*app.unit;
+
+      var index=round(x/w*720);
+
+      if(x>=0 && x<=w){
+        
+        noStroke();
+        
+        // Sine
+        fill(CLRS.SIN);
+
+        y=-app.data[index].sin;
+        ellipse(x,y,sz,sz);
+        
+        // Cosecant
+        y=-app.data[index].csc;
+        ellipse(x,y,sz,sz);
+        
+        // Cosine
+        fill(CLRS.COS);
+        y=-app.data[index].cos;
+        ellipse(x,y,sz,sz);
+
+        // Secent
+        fill(CLRS.SEC);
+        y=-app.data[index].sec;
+        ellipse(x,y,sz,sz);
+        
+        // Tangent
+        fill(CLRS.TAN);
+        y=-app.data[index].tan;
+        ellipse(x,y,sz,sz);
+
+        // Cotangent
+        fill(CLRS.COT);
+        y=-app.data[index].cot;
+        ellipse(x,y,sz,sz);
+        
+      }
+
+      noFill();
+
+    };
+    
     pushMatrix();
 
       translate(app.border+20*app.unit, height/2);
       
       
         if(app.sineOn)      { sineCurve();      }
-        if(app.cosineOn)    { cosineCurve();    }
-        if(app.tangentOn)   { tangentCurve();   }
         if(app.cosecantOn)  { cosecantCurve();  }
+        
+        if(app.cosineOn)    { cosineCurve();    }
         if(app.secantOn)    { secantCurve();    }
+        
+        if(app.tangentOn)   { tangentCurve();   }
         if(app.cotangentOn) { cotangentCurve(); }
 
-    
-      // var n=0;
+        current();
 
-
-
-      // // Cosine
-      // stroke(CLRS.GREEN);
-
-      // beginShape();
-      
-      //   curveVertex(0,0);
-
-      //   for(n=app.min; n<app.max; n+=incr){
-      //     curveVertex(n/app.max*w, -app.data[n].cos);
-      //     // ellipse(n, app.data[n].sin,5,5);
-      //   }
-
-      // endShape();
-      
-      // // Tangent
-      // stroke(CLRS.RED);
-
-      // beginShape();
-      
-      //   // curveVertex(0,0);
-
-      //   for(n=app.min; n<90; n++){
-      //     curveVertex(n/app.max*w, -app.data[n].tan);
-      //     // ellipse(n, app.data[n].sin,5,5);
-      //   }
-
-      // endShape();
-    
-    // Sine
-    
-    
     popMatrix();
 
   };
@@ -1689,22 +1894,22 @@ var diagrams = function(processingInstance){
 
   };
 
-  var COSECANT=function(θ){
+  var COSECANT=function(θ,d){
     
     if(sin(θ)===0){ return CONSTANTS.INFINITY; }
-    else          { return nf(1/sin(θ),1,4);   }
+    else          { return nf(1/sin(θ),1,d);   }
 
   };
-  var SECANT=function(θ){
+  var SECANT=function(θ,d){
 
     if(cos(θ)===0){ return CONSTANTS.INFINITY;  }
-    else          { return nf(1/cos(θ),1,4);    }
+    else          { return nf(1/cos(θ),1,d);    }
 
   };
-  var COTANGENT=function(θ){
+  var COTANGENT=function(θ,d){
 
     if(tan(θ)===0){ return CONSTANTS.INFINITY;  }
-    else          { return nf(1/tan(θ),1,4);    }
+    else          { return nf(1/tan(θ),1,d);    }
 
   };
 
@@ -1818,25 +2023,30 @@ background(CLRS.BLACK);
 
   var loadData=function(){
 
-    var sinN, cosN, tanN;
+    var sinN, cosN, tanN, cscN, secN, cotN;
 
     for (var n=app.min; n<=app.max; n++){
 
-      sinN=sin(n*PI/180)*app.unit*8;
+      sinN=  sin(n*PI/180)*app.unit*8;
+      cscN=1/sin(n*PI/180)*app.unit*8;
+      
       cosN=cos(n*PI/180)*app.unit*8;
+      secN=1/cos(n*PI/180)*app.unit*8;
+      
       tanN=tan(n*PI/180)*app.unit*8;
-
+      cotN=1/tan(n*PI/180)*app.unit*8;
+      
       app.data.push({ sin:  sinN,
-                      csc:  1/sinN,
+                      csc:  cscN,
                       cos:  cosN,
-                      sec:  1/cosN,
+                      sec:  secN,
                       tan:  tanN,
-                      cot:  1/tanN });
+                      cot:  cotN });
 
     }
 
   };
-  
+
   var setDisplay=function(){
     
     // Set grid width
@@ -1857,7 +2067,7 @@ background(CLRS.BLACK);
     app.paneRightH=app.height;
 
   };
-  
+
   var initialize=function(){
 
     frameRate(30);
