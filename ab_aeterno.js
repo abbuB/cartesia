@@ -128,55 +128,60 @@ var diagrams = function(processingInstance){
   }
   var COMMANDS={
 
-    SHIFT:      16,
-    CONTROL:    17,
-    ALT:        18,
+    SHIFT:        16,
+    CONTROL:      17,
+    ALT:          18,
     
-    CAPSLK:     20,
+    CAPSLK:       20,
 
-    PGUP:       33,
-    PGDN:       34,
-    END:        35,
-    HOME:       36,
+    PGUP:         33,
+    PGDN:         34,
+    END:          35,
+    HOME:         36,
     
-    LEFT:       37,
-    UP:         38,
-    RIGHT:      39,
-    DOWN:       40,
+    LEFT:         37,
+    UP:           38,
+    RIGHT:        39,
+    DOWN:         40,
 
-    SWAPLEFT:   1037,
-    SWAPUP:     1038,
-    SWAPRIGHT:  1039,
-    SWAPDOWN:   1040,
+    SWAP_LEFT:    1037,
+    SWAP_UP:      1038,
+    SWAP_RIGHT:   1039,
+    SWAP_DOWN:    1040,
+
+    ROW_LEFT:     2037,
+    ROW_RIGHT:    2039,
+    COLUMN_UP:    2038,
+    COLUMN_DOWN:  2040,
     
     // UPLEFT:     3837,
     // UPRIGHT:    3839,
     // DOWNLEFT:   4037,
     // DOWNRIGHT:  4039,
 
-    F1:         112,
-    F2:         113,
-    F3:         114,
-    F4:         115,
-    F5:         116,
-    F6:         117,
-    F7:         118,
-    F8:         119,
-    F9:         120,
-    F10:        121,
-    F11:        122,
-    F12:        123,
-    NUMLK:      144,
-    META:       157,
-    INSERT:     155,
+    F1:           112,
+    F2:           113,
+    F3:           114,
+    F4:           115,
+    F5:           116,
+    F6:           117,
+    F7:           118,
+    F8:           119,
+    F9:           120,
+    F10:          121,
+    F11:          122,
+    F12:          123,
+    NUMLK:        144,
+    META:         157,
+    INSERT:       155,
     
-    PLAY:       4,
-    INCREMENT:  5,
-    DECREMENT:  6,
-    RESET:      7,
-    MENU:       8,
+    PLAY:         4,
+    INCREMENT:    5,
+    DECREMENT:    6,
+    RESET:        7,
+    MENU:         8,
 
-    CTRL:       17
+    CTRL:         17
 
   };
 
@@ -847,6 +852,8 @@ var diagrams = function(processingInstance){
                      this.vertices[1],
                      this.vertices[2]));
     
+    this.active=false;
+
     // var fill=function(){  return this.fill; };
 
 // println(this.col + ", " + this.row);
@@ -873,24 +880,20 @@ var diagrams = function(processingInstance){
   cell.prototype.draw=function(){
     
     var t=this;
-
+    
+    t.active=this.row===app.activeRow && this.col===app.activeCol;
+    
     fill(this.fill);
     stroke(CLRS.GRAY);
-    strokeWeight(0.5);
-    
-    if(this.row===app.activeRow &&
-       this.col===app.activeCol){
-      strokeWeight(5);
-      stroke(CLRS.BLACK);
-      // fill(CLRS.GRAY);
-    }
-       
+    strokeWeight(0.25);
+
     var v=0;
     
-    if(t.hit){
+    // active cell or mouseover hit
+    if(t.hit || this.active){
       fill(getColor(this.fill,90));
       stroke(0);
-      // strokeWeight(5);
+      strokeWeight(0.75);
     }
 
     beginShape();
@@ -912,9 +915,9 @@ var diagrams = function(processingInstance){
     //     this.vertices[index].x,
     //     this.vertices[index].y);
 
-    text(this.index,
-         this.vertices[index].x,
-         this.vertices[index].y);
+    // text(this.index,
+    //     this.vertices[index].x,
+    //     this.vertices[index].y);
          
     fill(color(255,255,255,32));
     stroke(CLRS.GRAY);
@@ -1274,16 +1277,83 @@ println(ang + " : " + degrees(ang));
 
   var swap=function(c){
 
-    // SWAPLEFT:   1037,
-    // SWAPUP:     1038,
-    // SWAPRIGHT:  1039,
-    // SWAPDOWN:   1040,
-    
+    // SWAP_LEFT:   1037,
+    // SWAP_UP:     1038,
+    // SWAP_RIGHT:  1039,
+    // SWAP_DOWN:   1040,
+
+// println(c);
+
     var tempColor;
+    var n, len;
     
     switch(c){
+      
+      case COMMANDS.ROW_RIGHT:
+        
+        len=app.grid[app.activeRow].length;
+        
+        var tempColor=app.grid[app.activeRow][len-1].fill;
 
-      case COMMANDS.SWAPRIGHT:
+        for(n=len-1; n>0; n--){
+          app.grid[app.activeRow][n].fill=app.grid[app.activeRow][n-1].fill;
+        }
+
+        app.grid[app.activeRow][0].fill=tempColor;
+
+    println("row right");
+
+        break;
+        
+      case COMMANDS.ROW_LEFT:
+
+        len=app.grid[app.activeRow].length;
+        
+        var tempColor=app.grid[app.activeRow][0].fill;
+
+        for(n=0; n<len-1; n++){
+          app.grid[app.activeRow][n].fill=app.grid[app.activeRow][n+1].fill;
+        }
+
+        app.grid[app.activeRow][len-1].fill=tempColor;
+
+    println("row left");
+
+        break;
+                
+      case COMMANDS.COLUMN_UP:
+
+    println("column up");
+
+        len=app.grid.length;
+        
+        var tempColor=app.grid[0][app.activeCol].fill;
+
+        for(n=0; n<len-1; n++){
+          app.grid[n][app.activeCol].fill=app.grid[n+1][app.activeCol].fill;
+        }
+
+        app.grid[len-1][app.activeCol].fill=tempColor;
+
+        break;
+
+      case COMMANDS.COLUMN_DOWN:
+
+    println("column down");
+
+        len=app.grid.length;
+        
+        var tempColor=app.grid[len-1][app.activeCol].fill;
+
+        for(n=len-1; n>0; n--){
+          app.grid[n][app.activeCol].fill=app.grid[n-1][app.activeCol].fill;
+        }
+
+        app.grid[0][app.activeCol].fill=tempColor;
+
+        break;
+
+      case COMMANDS.SWAP_RIGHT:
 
         var tempColor=app.grid[app.activeRow][app.activeCol+1].fill;
         app.grid[app.activeRow][app.activeCol+1].fill=app.grid[app.activeRow][app.activeCol].fill;
@@ -1291,11 +1361,11 @@ println(ang + " : " + degrees(ang));
         
         app.activeCol++;
         
-        println("swap right");
+    println("swap right");
 
         break;
       
-      case COMMANDS.SWAPLEFT:
+      case COMMANDS.SWAP_LEFT:
 
         tempColor=app.grid[app.activeRow][app.activeCol-1].fill;
         app.grid[app.activeRow][app.activeCol-1].fill=app.grid[app.activeRow][app.activeCol].fill;
@@ -1303,10 +1373,10 @@ println(ang + " : " + degrees(ang));
         
         app.activeCol--;
           
-        println("swap left");
+    println("swap left");
         break;
 
-      case COMMANDS.SWAPUP:
+      case COMMANDS.SWAP_UP:
 
         tempColor=app.grid[app.activeRow-1][app.activeCol].fill;
         app.grid[app.activeRow-1][app.activeCol].fill=app.grid[app.activeRow][app.activeCol].fill;
@@ -1314,10 +1384,10 @@ println(ang + " : " + degrees(ang));
         
         app.activeRow--;
           
-        println("swap up");
+    println("swap up");
         break;
 
-      case COMMANDS.SWAPDOWN:
+      case COMMANDS.SWAP_DOWN:
 
         tempColor=app.grid[app.activeRow+1][app.activeCol].fill;
         app.grid[app.activeRow+1][app.activeCol].fill=app.grid[app.activeRow][app.activeCol].fill;
@@ -1325,7 +1395,7 @@ println(ang + " : " + degrees(ang));
         
         app.activeRow++;
           
-        println("swap down");
+    println("swap down");
         break;
 
       default:  break;
@@ -1338,19 +1408,36 @@ println(ang + " : " + degrees(ang));
 
     app.keys[keyCode]=true;
 
-    if(app.keys[KEYCODES.RIGHT] && !app.keys[KEYCODES.CONTROL]) { app.activeCol++;  }
-    if(app.keys[KEYCODES.LEFT]  && !app.keys[KEYCODES.CONTROL]) { app.activeCol--;  }
-    if(app.keys[KEYCODES.UP]    && !app.keys[KEYCODES.CONTROL]) { app.activeRow--;  }
-    if(app.keys[KEYCODES.DOWN]  && !app.keys[KEYCODES.CONTROL]) { app.activeRow++;  }
+    if(app.keys[KEYCODES.RIGHT]    &&
+       !app.keys[KEYCODES.CONTROL] &&
+       !app.keys[KEYCODES.SHIFT])          { app.activeCol++;        }
+    if(app.keys[KEYCODES.LEFT]     &&
+       !app.keys[KEYCODES.CONTROL] &&
+       !app.keys[KEYCODES.SHIFT])          { app.activeCol--;        }
+    if(app.keys[KEYCODES.UP]       &&
+       !app.keys[KEYCODES.CONTROL] &&
+       !app.keys[KEYCODES.SHIFT])          { app.activeRow--;        }
+    if(app.keys[KEYCODES.DOWN]     &&
+       !app.keys[KEYCODES.CONTROL] &&
+       !app.keys[KEYCODES.SHIFT])          { app.activeRow++;        }
     
     if(app.keys[KEYCODES.RIGHT] &&
-       app.keys[KEYCODES.CONTROL]){ swap(COMMANDS.SWAPRIGHT); }
+       app.keys[KEYCODES.CONTROL])  { swap(COMMANDS.SWAP_RIGHT);  }
     if(app.keys[KEYCODES.LEFT] &&
-       app.keys[KEYCODES.CONTROL]){ swap(COMMANDS.SWAPLEFT); }
+       app.keys[KEYCODES.CONTROL])  { swap(COMMANDS.SWAP_LEFT);   }
     if(app.keys[KEYCODES.UP] &&
-       app.keys[KEYCODES.CONTROL]){ swap(COMMANDS.SWAPUP); }
+       app.keys[KEYCODES.CONTROL])  { swap(COMMANDS.SWAP_UP);     }
     if(app.keys[KEYCODES.DOWN] &&
-       app.keys[KEYCODES.CONTROL]){ swap(COMMANDS.SWAPDOWN); }
+       app.keys[KEYCODES.CONTROL])  { swap(COMMANDS.SWAP_DOWN);   }
+
+    if(app.keys[KEYCODES.RIGHT] &&
+       app.keys[KEYCODES.SHIFT])    { swap(COMMANDS.ROW_RIGHT);   }
+    if(app.keys[KEYCODES.LEFT] &&
+       app.keys[KEYCODES.SHIFT])    { swap(COMMANDS.ROW_LEFT);    }
+    if(app.keys[KEYCODES.UP] &&
+       app.keys[KEYCODES.SHIFT])    { swap(COMMANDS.COLUMN_UP);   }
+    if(app.keys[KEYCODES.DOWN] &&
+       app.keys[KEYCODES.SHIFT])    { swap(COMMANDS.COLUMN_DOWN); }
 
 // println(keyCode);
 
