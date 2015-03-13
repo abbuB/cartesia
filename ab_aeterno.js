@@ -144,6 +144,11 @@ var diagrams = function(processingInstance){
     RIGHT:      39,
     DOWN:       40,
 
+    SWAPLEFT:   1037,
+    SWAPUP:     1038,
+    SWAPRIGHT:  1039,
+    SWAPDOWN:   1040,
+    
     // UPLEFT:     3837,
     // UPRIGHT:    3839,
     // DOWNLEFT:   4037,
@@ -173,6 +178,47 @@ var diagrams = function(processingInstance){
 
     CTRL:       17
 
+  };
+
+  var KEYCODES={
+    BACKSPACE:  8,
+    TAB:        9,
+    ENTER:      10,
+    RETURN:     13,
+    ESC:        27,
+    DELETE:     127,
+    CODED:      0xffff,
+    SHIFT:      16,
+    CONTROL:    17,
+    ALT:        18,
+    CAPSLK:     20,
+    SPACE:      32,
+    PGUP:       33,
+    PGDN:       34,
+    END:        35,
+    HOME:       36,
+    
+    LEFT:       37,
+    UP:         38,
+    RIGHT:      39,
+    DOWN:       40,
+    
+    F1:         112,
+    F2:         113,  //  Rename
+    F3:         114,
+    F4:         115,
+    F5:         116,
+    F6:         117,
+    stg:        118,  // F7: snap to grid
+    ORTHO:      119,  // F8:
+    F9:         120,
+    F10:        121,
+    F11:        122,
+    F12:        123,
+    NUMLK:      144,
+    META:       157,
+    INSERT:     155,
+    Z:          90
   };
   
   // Utility =======================================================
@@ -227,12 +273,12 @@ var diagrams = function(processingInstance){
 
     switch (retval){
       
-      case 1:   return CLRS.Red;
-      case 2:   return CLRS.Orange;
-      case 3:   return CLRS.Yellow;
-      case 4:   return CLRS.Green;
-      case 5:   return CLRS.Blue;
-      case 6:   return CLRS.Violet;
+      case 1:   return getColor(CLRS.Red,50);
+      case 2:   return getColor(CLRS.Orange,50);
+      case 3:   return getColor(CLRS.Yellow,50);
+      case 4:   return getColor(CLRS.Green,50);
+      case 5:   return getColor(CLRS.Blue,50);
+      case 6:   return getColor(CLRS.Violet,50);
 
       // default:  return CLRS.BLUEGREEN;
 
@@ -257,11 +303,13 @@ var diagrams = function(processingInstance){
     left:         false,    right:        false,    center:       false,
     
     cellSize:     0,
-    
+
     cellH:        0,        cellW:        0,
-    
+
+    activeRow:    0,        activeCol:    0,
+
     rows:         0,
-    COLS:         0,
+    cols:         0,
 
     jumping:      0,
 
@@ -279,7 +327,7 @@ var diagrams = function(processingInstance){
     size:         40,
     offset:        0,
     
-    active:       0,
+    active:        0,
 
     players:      [],
     obstacles:    [],
@@ -750,26 +798,58 @@ var diagrams = function(processingInstance){
   
   var displacement=5;
   
+  var area=function(p1,p2,p3){
+    
+    var a,b,c,s;
+    
+    a=dist(p1.x,p1.y,p2.x,p2.y);
+    b=dist(p2.x,p2.y,p3.x,p3.y);
+    c=dist(p3.x,p3.y,p1.x,p1.y);
+    
+    s=(a+b+c)/2;
 
-  var cell=function(index, row, col, points){
+    return floor(pow(s*(s-a)*(s-b)*(s-c),0.5));
+
+  };
+  
+  var cell=function(index, col, row, points){
 
     // this.x=x;                 //  left
     // this.y=y;                 //  top
 
-    // this.r=radius;            //  distance from center to a vertex
-    
-    this.index=index;
-    
-    this.row=row;             //  vertical coordinate
-    this.col=col;             //  horizontal coordinate
-    
-    this.fill=getFill();
-    
-    // this.quadrant=0;
 
+
+    this.index=index;                 //  Unique identifier
+
+    this.col=col;                     //  horizontal coordinate
+    this.row=row;                     //  vertical coordinate
+    
     this.vertices=points;
 
-println(this.col + ", " + this.row);
+    var indx=this.vertices.length-1;
+    
+    this.cRadius=dist(this.vertices[indx-1].x,
+                      this.vertices[indx-1].y,
+                      this.vertices[indx].x,
+                      this.vertices[indx].y);     //  distance from center to a vertex
+    
+    this.iRadius=dist(this.vertices[indx-1].x,
+                      this.vertices[indx-1].y,
+                      this.vertices[indx].x,
+                      this.vertices[indx].y);     //  distance from center to a vertex
+    
+    this.iRadius=this.cRadius/2;
+    
+    this.fill=getFill();
+
+    this.area=floor(
+                area(this.vertices[0],
+                     this.vertices[1],
+                     this.vertices[2]));
+    
+    // var fill=function(){  return this.fill; };
+
+// println(this.col + ", " + this.row);
     
     // var theta;
     
@@ -794,108 +874,97 @@ println(this.col + ", " + this.row);
     
     var t=this;
 
-    var Outline=function(){
-
-      fill(255,0,0,5);
-      stroke(128,0,0);
-      strokeWeight(0.5);
-      
-      var v=0;
-      
-      if(t.hit){
-        fill(128,0,0,20);
-        stroke(255,0,0);
-        strokeWeight(1);
-      }
-      
-      //  Border --------------------------------------------------
-      fill(t.fill);
-      noStroke();
-
-      beginShape();
-      
-        for(v=0; v<t.vertices.length; v++){
-          
-          
-          vertex(t.vertices[v].x,
-                 t.vertices[v].y);
-  
-        }
-  
-      endShape(CLOSE);
-
-      // beginShape();
-      
-      //   for(v=t.vertices.length/2; v<t.vertices.length; v++){
-          
-          
-      //     vertex(t.vertices[v].x,
-      //           t.vertices[v].y);
-  
-      //   }
-  
-      // endShape(CLOSE);
-
-    };
+    fill(this.fill);
+    stroke(CLRS.GRAY);
+    strokeWeight(0.5);
     
-    var Vertices=function(){
-
-      for(var v=0; v<t.vertices.length; v++){
-  
-        ellipse(t.vertices[v].x,
-                t.vertices[v].y,
-                3, 3);
-  
-        if(t.hit){
-          line(t.x,             t.y,
-               t.vertices[v].x, t.vertices[v].y);
-        }
-  
-      }
-      
-    };
+    if(this.row===app.activeRow &&
+       this.col===app.activeCol){
+      strokeWeight(5);
+      stroke(CLRS.BLACK);
+      // fill(CLRS.GRAY);
+    }
+       
+    var v=0;
     
-    var Origin=function(){
-      
-      fill(128);
-      
-      // Center --------------------------------------------------
-      if(t.hit){
-  
-        ellipse(t.x, t.y, 3, 3);
+    if(t.hit){
+      fill(getColor(this.fill,90));
+      stroke(0);
+      // strokeWeight(5);
+    }
 
+    beginShape();
+    
+      for(v=0; v<t.vertices.length-1; v++){
+        vertex(t.vertices[v].x,
+               t.vertices[v].y);
       }
 
-    };
+    endShape(CLOSE);
 
-    Outline();
-    Vertices();
-    // Quadrants();
-    // Origin();
-    
     fill(255);
     textAlign(CENTER,CENTER);
-    textSize(app.size/4);
-    // text(this.col + ", " + this.row, this.x, this.y);
+    textSize(10);
+
+    var index=this.vertices.length-1;
+    
+    // text(this.col + ", " + this.row,
+    //     this.vertices[index].x,
+    //     this.vertices[index].y);
+
+    text(this.index,
+         this.vertices[index].x,
+         this.vertices[index].y);
+         
+    fill(color(255,255,255,32));
+    stroke(CLRS.GRAY);
+    
+    // if(this.hit){   ellipse(this.vertices[index].x,
+    //                         this.vertices[index].y,
+    //                         this.cRadius*2,
+    //                         this.cRadius*2);
+    // }
+    // else{           ellipse(this.vertices[index].x,
+    //                         this.vertices[index].y,
+    //                         this.iRadius*2,
+    //                         this.iRadius*2);
+    // }
 
   };
 
   cell.prototype.clicked  =function()   {
-    for(var c in this.ctrls){ this.ctrls[c].clicked(0,0); }
+    
+    if(this.hit){
+      app.activeRow=this.row;
+      app.activeCol=this.col;
+    }
+    
   };
   cell.prototype.moved    =function(x,y){
+    
+    if(dist(x, y, this.vertices[0].x, this.vertices[0].y)<50){
 
-    if(dist(mouseX,mouseY,this.x,this.y)<0.875*app.size){
-      this.hit=true;
-    }
-    else if(dist(mouseX,mouseY,this.x,this.y)<app.size){
-      this.hit=false;
+      var mp=new pt(x,y);
+      
+      var a=area( this.vertices[0], this.vertices[1], mp);
+      var b=area( this.vertices[1], this.vertices[2], mp);
+      var c=area( this.vertices[2], this.vertices[0], mp);
+  
+      if(abs(floor(a+b+c)-this.area)<5) {
+  
+        this.hit=true;
+      
+        // println(a+b+c);
+        
+      }
+      else{
+        this.hit=false;
+      }
+    
     }
     else{
       this.hit=false;
     }
-
-    // for(var c in this.ctrls){ this.ctrls[c].moved(x,y); }
 
   };
   cell.prototype.dragged  =function(x,y){
@@ -957,11 +1026,11 @@ println(this.col + ", " + this.row);
 
       // Labels
       text("mouseX:",    50+offset,   50);
-      text("mouseY:",    50+offset,   70);
+      text("mouseY:",    50+offset,   65);
 
-      text("Left:",      50+offset,  110);
-      text("Right:",     50+offset,  130);
-      text("Center:",    50+offset,  150);
+      text("Left:",      50+offset,  85);
+      text("Right:",     50+offset,  100);
+      text("Center:",    50+offset,  115);
 
       text("CTRL:",      50+offset,  190);
       text("ALT:",       50+offset,  210);
@@ -971,20 +1040,23 @@ println(this.col + ", " + this.row);
       text("x:",         50+offset,  290);
       text("y:",         50+offset,  310);
 
-      text("jump:",      50+offset,  350);
+      // text("jump:",      50+offset,  350);
 
       text("row Height:",50+offset,  370);
-      text("col Widht:", 50+offset,  390);
+      text("col Width:", 50+offset,  390);
+
+      text("cols:",      50+offset,  410);
+      text("rows:",      50+offset,  430);
       
       // Values
       fill(CLRS.YELLOW);
 
       text(mouseX,      150+offset,   50);
-      text(mouseY,      150+offset,   70);
+      text(mouseY,      150+offset,   65);
       
-      text(app.left,    150+offset,  110);
-      text(app.right,   150+offset,  130);
-      text(app.center,  150+offset,  150);
+      text(app.left,    150+offset,  85);
+      text(app.right,   150+offset,  100);
+      text(app.center,  150+offset,  115);
       
       text(app.ctrl,    150+offset,  190);
       text(app.alt,     150+offset,  210);
@@ -993,17 +1065,20 @@ println(this.col + ", " + this.row);
       // text(app.players[app.active].x,        150+offset,  290);
       // text(app.players[app.active].y,        150+offset,  310);
 
-      text(app.jumping, 150+offset,  350);
+      // text(app.jumping, 150+offset,  350);
       
-      text(app.cellH,    150+offset,  370);
-      text(app.cellW,    150+offset,  390);
+      text(app.cellH,   150+offset,  370);
+      text(app.cellW,   150+offset,  390);
+
+      text(app.cols,    150+offset,  410);
+      text(app.rows,    150+offset,  430);
 
     }
 
   };
   
-  var r=0;
-  var ang=0;
+  // var r=0;
+  // var ang=0;
   
   var drawCursor=function(){
 
@@ -1038,50 +1113,62 @@ println(ang + " : " + degrees(ang));
     
   };
   
-  app.cellSize=floor(app.height/24);
+  // app.cellSize=floor(app.height/24);
 
   var loadGrid=function(){
 
     var w=app.cellW;
     var h=app.cellH;
-    var offset=5;
+    
+    var centreY=tan(radians(30))*w/2;
+    var centerX=w/2;
 
-    var p1, p2,p3;
+// println(centreY);
+
+    var offset=0;
+
+    var p1, p2, p3, c;
+
     var rowCells=[];
     var points=[];
     
     var index=0;
     
     for(var row=offset; row<app.rows; row++){
-
+      
       for(var col=offset; col<app.cols; col++){
 
         if(row%2===0){
 
-          if(col%2===0) {   p1=new pt(col*w/2,     row*h);
-                            p2=new pt(col*w/2+w/2, row*h+h);
-                            p3=new pt(col*w/2-w/2, row*h+h);
+          if(col%2===0) { p1=new pt(col*w/2,     row*h);
+                          p2=new pt(col*w/2+w/2, row*h+h);
+                          p3=new pt(col*w/2-w/2, row*h+h);
+                          c =new pt(col*w/2,     row*h+h-centreY);
           }
-          else          {   p1=new pt(col*w/2+w/2, row*h);
-                            p2=new pt(col*w/2-w/2, row*h);
-                            p3=new pt(col*w/2,     row*h+h);
+          else          { p1=new pt(col*w/2+w/2, row*h);
+                          p2=new pt(col*w/2-w/2, row*h);
+                          p3=new pt(col*w/2,     row*h+h);
+                          c =new pt(col*w/2,     row*h+centreY);
           }
         }
         else{
 
-          if(col%2===0) {   p1=new pt(col*w/2+w/2, row*h);
-                            p2=new pt(col*w/2-w/2, row*h);
-                            p3=new pt(col*w/2,     row*h+h);
-            
+          if(col%2===0) { p1=new pt(col*w/2+w/2, row*h);
+                          p2=new pt(col*w/2-w/2, row*h);
+                          p3=new pt(col*w/2,     row*h+h);
+                          c =new pt(col*w/2,     row*h+centreY);
           }
-          else          {   p1=new pt(col*w/2,     row*h);
-                            p2=new pt(col*w/2+w/2, row*h+h);
-                            p3=new pt(col*w/2-w/2, row*h+h);  }
+          else          { p1=new pt(col*w/2,     row*h);
+                          p2=new pt(col*w/2+w/2, row*h+h);
+                          p3=new pt(col*w/2-w/2, row*h+h);
+                          c =new pt(col*w/2,     row*h+h-centreY);
+          }
         }
 
         points.push(p1);
         points.push(p2);
         points.push(p3);
+        points.push(c);
 
         rowCells.push(new cell(index, col, row, points));
         
@@ -1099,29 +1186,45 @@ println(ang + " : " + degrees(ang));
 
   };
   
-  var main=function(){
+  var drawGrid=function(){
 
-    // noFill();
-
-// background(color(127,0,255));
-
-    if(app.running){ background(CLRS.BLACK);  }
-    else           { background(16);          }
-
-    for(var row in app.grid){
-      for(var col in app.grid){
+    for(var col in app.grid){
+      for(var row in app.grid[col]){
         app.grid[col][row].draw(mouseX,mouseY);
       }
     }
 
-    telemetry();
-
   };
 
-  
-  
+  // var processKeys=function(){
+    
+  //   if(app.keys[KEYCODES.RIGHT]){ app.activeRow++; }
+  //   if(app.keys[KEYCODES.LEFT]) { app.activeCol--; }
+  //   if(app.keys[KEYCODES.UP])   { app.activeRow++; }
+  //   if(app.keys[KEYCODES.DOWN]) { app.activeRow--; }
+    
+  // };
+  var main=function(){
+
+    if(app.running){ background(CLRS.BLACK);  }
+    else           { background(16);          }
+
+    // processKeys();
+
+    pushMatrix();
+      
+      // translate(20,20);
+      
+      drawGrid();
+      
+    popMatrix();
+
+    telemetry();
+    
+  };
+
   var process;
-  var draw=function(){ process(); };
+  var draw=function(){  process();  };
 
   // Events ===============================================================
 
@@ -1141,17 +1244,24 @@ println(ang + " : " + degrees(ang));
   };
   var mouseMoved=     function(){
 
-    for(var row in app.grid){
-      for(var col in app.grid){
+    for(var col in app.grid){
+      for(var row in app.grid[col]){
         app.grid[col][row].moved(mouseX,mouseY);
       }
     }
 
 
+// process();
+
   };
   var mouseClicked=   function(){
-    // for(var c in app.ctrls){ app.ctrls[c].clicked(mouseX,mouseY); };
-    // app.running=!app.running;
+
+    for(var col in app.grid){
+      for(var row in app.grid[col]){
+        app.grid[col][row].clicked(mouseX,mouseY);
+      }
+    }
+    
   };
   var mouseOver=      function(){
     app.running=true;
@@ -1162,11 +1272,85 @@ println(ang + " : " + degrees(ang));
     app.telemetry=false;
   };
 
+  var swap=function(c){
+
+    // SWAPLEFT:   1037,
+    // SWAPUP:     1038,
+    // SWAPRIGHT:  1039,
+    // SWAPDOWN:   1040,
+    
+    var tempColor;
+    
+    switch(c){
+
+      case COMMANDS.SWAPRIGHT:
+
+        var tempColor=app.grid[app.activeRow][app.activeCol+1].fill;
+        app.grid[app.activeRow][app.activeCol+1].fill=app.grid[app.activeRow][app.activeCol].fill;
+        app.grid[app.activeRow][app.activeCol].fill=tempColor;
+        
+        app.activeCol++;
+        
+        println("swap right");
+
+        break;
+      
+      case COMMANDS.SWAPLEFT:
+
+        tempColor=app.grid[app.activeRow][app.activeCol-1].fill;
+        app.grid[app.activeRow][app.activeCol-1].fill=app.grid[app.activeRow][app.activeCol].fill;
+        app.grid[app.activeRow][app.activeCol].fill=tempColor;
+        
+        app.activeCol--;
+          
+        println("swap left");
+        break;
+
+      case COMMANDS.SWAPUP:
+
+        tempColor=app.grid[app.activeRow-1][app.activeCol].fill;
+        app.grid[app.activeRow-1][app.activeCol].fill=app.grid[app.activeRow][app.activeCol].fill;
+        app.grid[app.activeRow][app.activeCol].fill=tempColor;
+        
+        app.activeRow--;
+          
+        println("swap up");
+        break;
+
+      case COMMANDS.SWAPDOWN:
+
+        tempColor=app.grid[app.activeRow+1][app.activeCol].fill;
+        app.grid[app.activeRow+1][app.activeCol].fill=app.grid[app.activeRow][app.activeCol].fill;
+        app.grid[app.activeRow][app.activeCol].fill=tempColor;
+        
+        app.activeRow++;
+          
+        println("swap down");
+        break;
+
+      default:  break;
+
+    }
+
+  };
+
   var keyPressed=function(){
 
-    for(var p in app.players){ app.players[p].keyPressed(keyCode); }
-
     app.keys[keyCode]=true;
+
+    if(app.keys[KEYCODES.RIGHT] && !app.keys[KEYCODES.CONTROL]) { app.activeCol++;  }
+    if(app.keys[KEYCODES.LEFT]  && !app.keys[KEYCODES.CONTROL]) { app.activeCol--;  }
+    if(app.keys[KEYCODES.UP]    && !app.keys[KEYCODES.CONTROL]) { app.activeRow--;  }
+    if(app.keys[KEYCODES.DOWN]  && !app.keys[KEYCODES.CONTROL]) { app.activeRow++;  }
+    
+    if(app.keys[KEYCODES.RIGHT] &&
+       app.keys[KEYCODES.CONTROL]){ swap(COMMANDS.SWAPRIGHT); }
+    if(app.keys[KEYCODES.LEFT] &&
+       app.keys[KEYCODES.CONTROL]){ swap(COMMANDS.SWAPLEFT); }
+    if(app.keys[KEYCODES.UP] &&
+       app.keys[KEYCODES.CONTROL]){ swap(COMMANDS.SWAPUP); }
+    if(app.keys[KEYCODES.DOWN] &&
+       app.keys[KEYCODES.CONTROL]){ swap(COMMANDS.SWAPDOWN); }
 
 // println(keyCode);
 
@@ -1219,58 +1403,24 @@ println(ang + " : " + degrees(ang));
 
   var initialize=function(){
 
-    frameRate(60);
-
-    // app.width=window.innerWidth-20;
-    // app.height=window.innerHeight-20;
-    
+    // frameRate(0);
+  
     app.originX=app.width/2;
     app.originY=app.height/2;
-
-    // app.width=width;
-    // app.height=height;
-    
-    
-    // println(app.data[350][INDEX.COT]);
 
     size(app.width, app.height);
 
     setDisplay();
 
-    // loadData();
-
-    // addControls();
-
     app.ctrl  =app.keys[COMMANDS.CTRL]  =false;
     app.alt   =app.keys[COMMANDS.ALT]   =false;
     app.shift =app.keys[COMMANDS.SHIFT] =false;
 
-    app.cellH=floor(height/24);
+    app.cellH=floor(app.height/12);
     app.cellW=floor((2*app.cellH)/tan(radians(60)));
-
-    app.offset=pow( pow(app.size,2)-pow(app.size/2,2), 0.5);
 
     app.rows=floor(app.height/app.cellH);
     app.cols=floor(app.width/app.cellW);
-  
-    // var obs,x,y,w,h;
-
-    // for(var n=0; n<20; n++){
-
-    //   x=round(random(app.width));
-    //   y=round(random(app.height));
-    //   w=round(random(100));
-    //   h=round(random(200));
-
-    //   obs=new obstacle(x,y,w,h);
-
-    //   // app.obstacles.push(obs);
-
-    // }
-
-    //   obs=new obstacle(100,300,200,300);
-
-      // app.obstacles.push(obs);
 
     loadGrid();
 
@@ -1279,6 +1429,8 @@ println(ang + " : " + degrees(ang));
   initialize();
 
   process=main;
+
+// process();
 
   // noCursor();
 // println("Hello")
