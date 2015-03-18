@@ -39,7 +39,8 @@ var diagrams = function(processingInstance){
 // +redblobgames.com
 // +dailymotion.com
 // +pistolslut.com
-// +latin-phrases.co.uk/quotes/beginning-end/
+// +latin-phrases.co.uk/quotes/beginning-end
+// +shockwave.com/gamelanding/hexlines.jsp
 
   angleMode="radians";
 
@@ -153,7 +154,12 @@ var diagrams = function(processingInstance){
     ROW_RIGHT:    2039,
     COLUMN_UP:    2038,
     COLUMN_DOWN:  2040,
-    
+
+    UP_LEFT:      3037,
+    UP_RIGHT:     3039,
+    DOWN_LEFT:    3038,
+    DOWN_RIGHT:   3040,
+
     // UPLEFT:     3837,
     // UPRIGHT:    3839,
     // DOWNLEFT:   4037,
@@ -181,11 +187,12 @@ var diagrams = function(processingInstance){
     RESET:        7,
     MENU:         8,
 
-    CTRL:         17
+    CTRL:         17      //  Mode toggle:  Hexagon/Triangle
 
   };
 
   var KEYCODES={
+    
     BACKSPACE:  8,
     TAB:        9,
     ENTER:      10,
@@ -208,7 +215,7 @@ var diagrams = function(processingInstance){
     RIGHT:      39,
     DOWN:       40,
     
-    F1:         112,
+    F1:         112,  //  Info
     F2:         113,  //  Rename
     F3:         114,
     F4:         115,
@@ -218,12 +225,18 @@ var diagrams = function(processingInstance){
     ORTHO:      119,  // F8:
     F9:         120,
     F10:        121,
-    F11:        122,
+    F11:        122,  //  Full Screen
     F12:        123,
+
     NUMLK:      144,
     META:       157,
     INSERT:     155,
+
+    A:          65,
+    S:          83,
+
     Z:          90
+    
   };
   
   // Utility =======================================================
@@ -342,9 +355,110 @@ var diagrams = function(processingInstance){
     keys:         [],
 
     data:         [],
-    
-    grid:         []
 
+    level:        0,
+
+    levels:       [
+                    [
+                      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+                    ],
+                    [
+                      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+                    ],
+                    [
+                      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+                    ],
+                    [
+                      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+                    ],
+                    [
+                      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0],
+                      [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0],
+                      [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0],
+                      [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0],
+                      [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0],
+                      [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0],
+                      [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0],
+                      [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0],
+                      [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0],
+                      [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0],
+                      [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0],
+                      [0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+                    ],
+                    [
+                      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0],
+                      [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0],
+                      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                      [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0],
+                      [0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+                    ]
+                  ],
+
+    grid:         []
+    
   };
 
   var levels=[
@@ -1028,6 +1142,8 @@ var diagrams = function(processingInstance){
       textAlign(LEFT);
 
       // Labels
+      text("Level:",     50+offset,   20);
+      
       text("mouseX:",    50+offset,   50);
       text("mouseY:",    50+offset,   65);
 
@@ -1054,6 +1170,8 @@ var diagrams = function(processingInstance){
       // Values
       fill(CLRS.YELLOW);
 
+      text(app.level,   150+offset,   20);
+
       text(mouseX,      150+offset,   50);
       text(mouseY,      150+offset,   65);
       
@@ -1077,6 +1195,17 @@ var diagrams = function(processingInstance){
       text(app.rows,    150+offset,  430);
 
     }
+
+    // To do list:
+    textSize(12);
+    textAlign(LEFT,CENTER);
+    fill(128);
+
+    text("To Do:", 50,100);
+
+    text(" - Diagonals",        50,120);
+    text(" - Death blossom",    50,140);
+    text(" - boundary limits",  50,160);
 
   };
   
@@ -1118,15 +1247,84 @@ println(ang + " : " + degrees(ang));
   
   // app.cellSize=floor(app.height/24);
 
+//   var loadGrid=function(){
+
+//     var w=app.cellW;
+//     var h=app.cellH;
+    
+//     var centreY=tan(radians(30))*w/2;
+//     var centerX=w/2;
+
+// // println(centreY);
+
+//     var offset=0;
+
+//     var p1, p2, p3, c;
+
+//     var rowCells=[];
+//     var points=[];
+    
+//     var index=0;
+    
+//     for(var row=offset; row<app.rows; row++){
+      
+//       for(var col=offset; col<app.cols; col++){
+
+//         if(row%2===0){
+
+//           if(col%2===0) { p1=new pt(col*w/2,     row*h);
+//                           p2=new pt(col*w/2+w/2, row*h+h);
+//                           p3=new pt(col*w/2-w/2, row*h+h);
+//                           c =new pt(col*w/2,     row*h+h-centreY);
+//           }
+//           else          { p1=new pt(col*w/2+w/2, row*h);
+//                           p2=new pt(col*w/2-w/2, row*h);
+//                           p3=new pt(col*w/2,     row*h+h);
+//                           c =new pt(col*w/2,     row*h+centreY);
+//           }
+//         }
+//         else{
+
+//           if(col%2===0) { p1=new pt(col*w/2+w/2, row*h);
+//                           p2=new pt(col*w/2-w/2, row*h);
+//                           p3=new pt(col*w/2,     row*h+h);
+//                           c =new pt(col*w/2,     row*h+centreY);
+//           }
+//           else          { p1=new pt(col*w/2,     row*h);
+//                           p2=new pt(col*w/2+w/2, row*h+h);
+//                           p3=new pt(col*w/2-w/2, row*h+h);
+//                           c =new pt(col*w/2,     row*h+h-centreY);
+//           }
+//         }
+
+//         points.push(p1);
+//         points.push(p2);
+//         points.push(p3);
+//         points.push(c);
+
+//         rowCells.push(new cell(index, col, row, points));
+        
+//         points=[];
+        
+//         index++;
+
+//       }
+
+//       app.grid.push(rowCells);
+
+//       rowCells=[];
+
+//     }
+
+//   };
   var loadGrid=function(){
 
     var w=app.cellW;
     var h=app.cellH;
+    var offsetX=500;
     
     var centreY=tan(radians(30))*w/2;
     var centerX=w/2;
-
-// println(centreY);
 
     var offset=0;
 
@@ -1135,60 +1333,80 @@ println(ang + " : " + degrees(ang));
     var rowCells=[];
     var points=[];
     
-    var index=0;
+    var temp=app.levels[app.level];
     
-    for(var row=offset; row<app.rows; row++){
-      
-      for(var col=offset; col<app.cols; col++){
+    var index=0;
 
-        if(row%2===0){
+    // Clear app.grid
+    app.grid=[];
 
-          if(col%2===0) { p1=new pt(col*w/2,     row*h);
-                          p2=new pt(col*w/2+w/2, row*h+h);
-                          p3=new pt(col*w/2-w/2, row*h+h);
-                          c =new pt(col*w/2,     row*h+h-centreY);
+    // for(var level=0; level<app.grid.length; level++){
+
+    // println("Level: " + level + " --------------------------------------------------");
+
+    println("Level: " + app.level + " --------------------------------------------------");
+    
+      for(var row=offset; row<temp.length; row++){
+
+    println("Row: " + row);
+
+        for(var col=offset; col<temp[row].length; col++){
+          
+          if(temp[row][col]===1){
+
+          println("Col: " + col);
+
+            if(row%2===0){
+    
+              if(col%2===0) { p1=new pt(offsetX+col*w/2,     row*h);
+                              p2=new pt(offsetX+col*w/2+w/2, row*h+h);
+                              p3=new pt(offsetX+col*w/2-w/2, row*h+h);
+                              c =new pt(offsetX+col*w/2,     row*h+h-centreY);
+              }
+              else          { p1=new pt(offsetX+col*w/2+w/2, row*h);
+                              p2=new pt(offsetX+col*w/2-w/2, row*h);
+                              p3=new pt(offsetX+col*w/2,     row*h+h);
+                              c =new pt(offsetX+col*w/2,     row*h+centreY);
+              }
+            }
+            else{
+    
+              if(col%2===0) { p1=new pt(offsetX+col*w/2+w/2, row*h);
+                              p2=new pt(offsetX+col*w/2-w/2, row*h);
+                              p3=new pt(offsetX+col*w/2,     row*h+h);
+                              c =new pt(offsetX+col*w/2,     row*h+centreY);
+              }
+              else          { p1=new pt(offsetX+col*w/2,     row*h);
+                              p2=new pt(offsetX+col*w/2+w/2, row*h+h);
+                              p3=new pt(offsetX+col*w/2-w/2, row*h+h);
+                              c =new pt(offsetX+col*w/2,     row*h+h-centreY);
+              }
+            }
+    
+            points.push(p1);
+            points.push(p2);
+            points.push(p3);
+            points.push(c);
+    
+            rowCells.push(new cell(index, col, row, points));
+            
+            points=[];
+            
+            index++;
+
           }
-          else          { p1=new pt(col*w/2+w/2, row*h);
-                          p2=new pt(col*w/2-w/2, row*h);
-                          p3=new pt(col*w/2,     row*h+h);
-                          c =new pt(col*w/2,     row*h+centreY);
-          }
+
         }
-        else{
 
-          if(col%2===0) { p1=new pt(col*w/2+w/2, row*h);
-                          p2=new pt(col*w/2-w/2, row*h);
-                          p3=new pt(col*w/2,     row*h+h);
-                          c =new pt(col*w/2,     row*h+centreY);
-          }
-          else          { p1=new pt(col*w/2,     row*h);
-                          p2=new pt(col*w/2+w/2, row*h+h);
-                          p3=new pt(col*w/2-w/2, row*h+h);
-                          c =new pt(col*w/2,     row*h+h-centreY);
-          }
-        }
+        app.grid.push(rowCells);
 
-        points.push(p1);
-        points.push(p2);
-        points.push(p3);
-        points.push(c);
-
-        rowCells.push(new cell(index, col, row, points));
-        
-        points=[];
-        
-        index++;
+        rowCells=[];
 
       }
 
-      app.grid.push(rowCells);
-
-      rowCells=[];
-
-    }
-
+    // }
+    
   };
-  
   var drawGrid=function(){
 
     for(var col in app.grid){
@@ -1247,21 +1465,20 @@ println(ang + " : " + degrees(ang));
   };
   var mouseMoved=     function(){
 
-    for(var col in app.grid){
-      for(var row in app.grid[col]){
-        app.grid[col][row].moved(mouseX,mouseY);
+    for(var row in app.grid){
+      for(var col in app.grid[row]){
+        app.grid[row][col].moved(mouseX,mouseY);
       }
     }
-
 
 // process();
 
   };
   var mouseClicked=   function(){
 
-    for(var col in app.grid){
-      for(var row in app.grid[col]){
-        app.grid[col][row].clicked(mouseX,mouseY);
+    for(var row in app.grid){
+      for(var col in app.grid[row]){
+        app.grid[row][col].clicked(mouseX,mouseY);
       }
     }
     
@@ -1277,23 +1494,55 @@ println(ang + " : " + degrees(ang));
 
   var swap=function(c){
 
-    // SWAP_LEFT:   1037,
-    // SWAP_UP:     1038,
-    // SWAP_RIGHT:  1039,
-    // SWAP_DOWN:   1040,
-
-// println(c);
-
-    var tempColor;
-    var n, len;
+    var tempColor, n, len;
     
     switch(c){
-      
+
+      case COMMANDS.UP_RIGHT:
+        
+        if(app.activeCol%0===0){
+
+          len=app.grid[app.activeRow].length;
+          tempColor=app.grid[app.activeRow][0].fill;
+
+          for(n=len-1; n>0; n--){
+            app.grid[app.activeRow][n].fill=app.grid[app.activeRow][n-1].fill;
+          }
+
+          app.grid[app.activeRow][0].fill=tempColor;
+
+        }
+        else{
+          
+          
+        }
+
+        println("up right");
+
+        break;
+
+      case COMMANDS.UP_LEFT:
+        
+        println("up left");
+
+        break;
+
+      case COMMANDS.DOWN_RIGHT:
+        
+        println("down right");
+
+        break;
+
+      case COMMANDS.DOWN_LEFT:
+        
+        println("down left");
+
+        break;
+        
       case COMMANDS.ROW_RIGHT:
         
         len=app.grid[app.activeRow].length;
-        
-        var tempColor=app.grid[app.activeRow][len-1].fill;
+        tempColor=app.grid[app.activeRow][len-1].fill;
 
         for(n=len-1; n>0; n--){
           app.grid[app.activeRow][n].fill=app.grid[app.activeRow][n-1].fill;
@@ -1301,15 +1550,12 @@ println(ang + " : " + degrees(ang));
 
         app.grid[app.activeRow][0].fill=tempColor;
 
-    println("row right");
-
         break;
         
       case COMMANDS.ROW_LEFT:
 
         len=app.grid[app.activeRow].length;
-        
-        var tempColor=app.grid[app.activeRow][0].fill;
+        tempColor=app.grid[app.activeRow][0].fill;
 
         for(n=0; n<len-1; n++){
           app.grid[app.activeRow][n].fill=app.grid[app.activeRow][n+1].fill;
@@ -1317,17 +1563,12 @@ println(ang + " : " + degrees(ang));
 
         app.grid[app.activeRow][len-1].fill=tempColor;
 
-    println("row left");
-
         break;
                 
       case COMMANDS.COLUMN_UP:
 
-    println("column up");
-
         len=app.grid.length;
-        
-        var tempColor=app.grid[0][app.activeCol].fill;
+        tempColor=app.grid[0][app.activeCol].fill;
 
         for(n=0; n<len-1; n++){
           app.grid[n][app.activeCol].fill=app.grid[n+1][app.activeCol].fill;
@@ -1339,11 +1580,8 @@ println(ang + " : " + degrees(ang));
 
       case COMMANDS.COLUMN_DOWN:
 
-    println("column down");
-
         len=app.grid.length;
-        
-        var tempColor=app.grid[len-1][app.activeCol].fill;
+        tempColor=app.grid[len-1][app.activeCol].fill;
 
         for(n=len-1; n>0; n--){
           app.grid[n][app.activeCol].fill=app.grid[n-1][app.activeCol].fill;
@@ -1355,13 +1593,11 @@ println(ang + " : " + degrees(ang));
 
       case COMMANDS.SWAP_RIGHT:
 
-        var tempColor=app.grid[app.activeRow][app.activeCol+1].fill;
+        tempColor=app.grid[app.activeRow][app.activeCol+1].fill;
         app.grid[app.activeRow][app.activeCol+1].fill=app.grid[app.activeRow][app.activeCol].fill;
         app.grid[app.activeRow][app.activeCol].fill=tempColor;
         
         app.activeCol++;
-        
-    println("swap right");
 
         break;
       
@@ -1372,8 +1608,7 @@ println(ang + " : " + degrees(ang));
         app.grid[app.activeRow][app.activeCol].fill=tempColor;
         
         app.activeCol--;
-          
-    println("swap left");
+
         break;
 
       case COMMANDS.SWAP_UP:
@@ -1383,8 +1618,7 @@ println(ang + " : " + degrees(ang));
         app.grid[app.activeRow][app.activeCol].fill=tempColor;
         
         app.activeRow--;
-          
-    println("swap up");
+
         break;
 
       case COMMANDS.SWAP_DOWN:
@@ -1394,8 +1628,7 @@ println(ang + " : " + degrees(ang));
         app.grid[app.activeRow][app.activeCol].fill=tempColor;
         
         app.activeRow++;
-          
-    println("swap down");
+
         break;
 
       default:  break;
@@ -1407,20 +1640,44 @@ println(ang + " : " + degrees(ang));
   var keyPressed=function(){
 
     app.keys[keyCode]=true;
-
+// println(keyCode);
     if(app.keys[KEYCODES.RIGHT]    &&
        !app.keys[KEYCODES.CONTROL] &&
-       !app.keys[KEYCODES.SHIFT])          { app.activeCol++;        }
+       !app.keys[KEYCODES.SHIFT] &&
+       !app.keys[KEYCODES.A] &&
+       !app.keys[KEYCODES.S])   {
+         
+      if(app.activeCol<app.grid[0].length-1){ app.activeCol++;  }
+         
+    }
     if(app.keys[KEYCODES.LEFT]     &&
        !app.keys[KEYCODES.CONTROL] &&
-       !app.keys[KEYCODES.SHIFT])          { app.activeCol--;        }
+       !app.keys[KEYCODES.SHIFT] &&
+       !app.keys[KEYCODES.A] &&
+       !app.keys[KEYCODES.S])   {
+
+      if(app.activeCol>0){ app.activeCol--;  }
+
+    }
     if(app.keys[KEYCODES.UP]       &&
        !app.keys[KEYCODES.CONTROL] &&
-       !app.keys[KEYCODES.SHIFT])          { app.activeRow--;        }
+       !app.keys[KEYCODES.SHIFT] &&
+       !app.keys[KEYCODES.A] &&
+       !app.keys[KEYCODES.S])   {
+
+      if(app.activeRow>0){ app.activeRow--;  }
+
+    }
     if(app.keys[KEYCODES.DOWN]     &&
        !app.keys[KEYCODES.CONTROL] &&
-       !app.keys[KEYCODES.SHIFT])          { app.activeRow++;        }
-    
+       !app.keys[KEYCODES.SHIFT] &&
+       !app.keys[KEYCODES.A] &&
+       !app.keys[KEYCODES.S])   {
+
+      if(app.activeRow<app.grid.length-1){ app.activeRow++;  }
+
+    }
+
     if(app.keys[KEYCODES.RIGHT] &&
        app.keys[KEYCODES.CONTROL])  { swap(COMMANDS.SWAP_RIGHT);  }
     if(app.keys[KEYCODES.LEFT] &&
@@ -1438,6 +1695,15 @@ println(ang + " : " + degrees(ang));
        app.keys[KEYCODES.SHIFT])    { swap(COMMANDS.COLUMN_UP);   }
     if(app.keys[KEYCODES.DOWN] &&
        app.keys[KEYCODES.SHIFT])    { swap(COMMANDS.COLUMN_DOWN); }
+
+    if(app.keys[KEYCODES.UP] &&
+       app.keys[KEYCODES.A])        { swap(COMMANDS.UP_LEFT);     }
+    if(app.keys[KEYCODES.UP] &&
+       app.keys[KEYCODES.S])        { swap(COMMANDS.UP_RIGHT);    }
+    if(app.keys[KEYCODES.DOWN] &&
+       app.keys[KEYCODES.A])        { swap(COMMANDS.DOWN_LEFT);   }
+    if(app.keys[KEYCODES.DOWN] &&
+       app.keys[KEYCODES.S])        { swap(COMMANDS.DOWN_RIGHT);  }
 
 // println(keyCode);
 
@@ -1503,7 +1769,7 @@ println(ang + " : " + degrees(ang));
     app.alt   =app.keys[COMMANDS.ALT]   =false;
     app.shift =app.keys[COMMANDS.SHIFT] =false;
 
-    app.cellH=floor(app.height/12);
+    app.cellH=floor(app.height/24);
     app.cellW=floor((2*app.cellH)/tan(radians(60)));
 
     app.rows=floor(app.height/app.cellH);
