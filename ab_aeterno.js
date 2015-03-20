@@ -41,6 +41,7 @@ var diagrams = function(processingInstance){
 // +pistolslut.com
 // +latin-phrases.co.uk/quotes/beginning-end
 // +shockwave.com/gamelanding/hexlines.jsp
+// +projecteuler.net
 
   angleMode="radians";
 
@@ -356,41 +357,34 @@ var diagrams = function(processingInstance){
 
     data:         [],
 
-    level:        4,
+    level:        3,
 
     levels:       [
                     [
-                      [0,0,0,0,0],
-                      [0,1,1,1,0],
-                      [0,1,1,1,0],
-                      [0,0,0,0,0]
+                      [1,1,1],
+                      [1,1,1]
                     ],
                     [
-                      [0,0,0,0,0,0,0,0,0],
                       [0,0,0,1,1,1,0,0,0],
                       [1,1,1,1,1,1,1,1,1],
                       [1,1,1,1,1,1,1,1,1],
                       [1,1,1,1,1,1,1,1,1],
                       [1,1,1,1,1,1,1,1,1],
-                      [0,0,0,1,1,1,0,0,0],
-                      [0,0,0,0,0,0,0,0,0]
+                      [0,0,0,1,1,1,0,0,0]
                     ],
                     [
-                      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                      [0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0],
-                      [0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0],
-                      [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                      [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                      [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                      [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                      [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                      [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                      [0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0],
-                      [0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0],
-                      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+                      [0,0,0,0,0,0,1,1,1,0,0,0,0,0,0],
+                      [0,0,0,1,1,1,1,1,1,1,1,1,0,0,0],
+                      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                      [0,0,0,1,1,1,1,1,1,1,1,1,0,0,0],
+                      [0,0,0,0,0,0,1,1,1,0,0,0,0,0,0]
                     ],
                     [
-                      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
                       [0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0],
                       [0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0],
                       [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0],
@@ -404,33 +398,29 @@ var diagrams = function(processingInstance){
                       [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
                       [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0],
                       [0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0],
-                      [0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0],
-                      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+                      [0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0]
                     ],
                     [
-                      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                      [0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0],
-                      [0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0],
-                      [0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0],
-                      [0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0],
-                      [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                      [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                      [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                      [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                      [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                      [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                      [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                      [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                      [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                      [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                      [0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0],
-                      [0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0],
-                      [0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0],
-                      [0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0],
-                      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+                      [0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0],
+                      [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0],
+                      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                      [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0],
+                      [0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0],
+                      [0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0]
                     ],
                     [
-                      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
                       [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
                       [0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0],
                       [0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0],
@@ -452,8 +442,7 @@ var diagrams = function(processingInstance){
                       [0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0],
                       [0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0],
                       [0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0],
-                      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+                      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
                     ]
                   ],
 
@@ -931,7 +920,7 @@ var diagrams = function(processingInstance){
 
   };
   
-  var cell=function(index, col, row, points){
+  var cell=function(index, col, row, points, filled){
 
     // this.x=x;                 //  left
     // this.y=y;                 //  top
@@ -946,6 +935,8 @@ var diagrams = function(processingInstance){
     this.vertices=points;
 
     var indx=this.vertices.length-1;
+
+    this.filled=filled;
     
     this.cRadius=dist(this.vertices[indx-1].x,
                       this.vertices[indx-1].y,
@@ -959,7 +950,9 @@ var diagrams = function(processingInstance){
     
     this.iRadius=this.cRadius/2;
     
-    this.fill=getFill();
+    if(this.filled===1){
+      this.fill=getFill();
+    }
 
     this.area=floor(
                 area(this.vertices[0],
@@ -1129,12 +1122,13 @@ var diagrams = function(processingInstance){
 
     if(app.telemetry){
 
-      var offset=width-200;  // mouseX;
-
+      var left=width-200;  // mouseX;
+      var top=10;
+      
       fill(0,0,0,128);
       stroke(32);
 
-      rect(offset+40, 10, 150, 380, 10);
+      rect(left+40, 10, 150, 380, 10);
 
       fill(192);
       textSize(12);
@@ -1142,58 +1136,55 @@ var diagrams = function(processingInstance){
       textAlign(LEFT);
 
       // Labels
-      text("Level:",     50+offset,   20);
+      text("Level:",           50+left,   top+20);
+      text("Active Col:",      50+left,   top+40);
+      text("Active Row:",      50+left,   top+55);
       
-      text("mouseX:",    50+offset,   50);
-      text("mouseY:",    50+offset,   65);
+      text("mouseX:",          50+left,   top+80);
+      text("mouseY:",          50+left,   top+95);
 
-      text("Left:",      50+offset,  85);
-      text("Right:",     50+offset,  100);
-      text("Center:",    50+offset,  115);
+      text("Left:",            50+left,   top+120);
+      text("Right:",           50+left,   top+135);
+      text("Center:",          50+left,   top+150);
 
-      text("CTRL:",      50+offset,  190);
-      text("ALT:",       50+offset,  210);
-      text("SHIFT:",     50+offset,  230);
+      text("CTRL:",            50+left,   top+175);
+      text("ALT:",             50+left,   top+190);
+      text("SHIFT:",           50+left,   top+205);
 
-      text("Skungus",    50+offset,  270);
-      text("x:",         50+offset,  290);
-      text("y:",         50+offset,  310);
+      text("row Height:",      50+left,   top+230);
+      text("col Width:",       50+left,   top+245);
 
-      // text("jump:",      50+offset,  350);
-
-      text("row Height:",50+offset,  370);
-      text("col Width:", 50+offset,  390);
-
-      text("cols:",      50+offset,  410);
-      text("rows:",      50+offset,  430);
+      text("cols:",            50+left,   top+270);
+      text("rows:",            50+left,   top+285);
+  
+      text("cells:",           50+left,   top+310);
       
       // Values
       fill(CLRS.YELLOW);
 
-      text(app.level,   150+offset,   20);
+      text(app.level,         150+left,   top+20);
+      text(app.activeCol,     150+left,   top+40);
+      text(app.activeRow,     150+left,   top+55);
 
-      text(mouseX,      150+offset,   50);
-      text(mouseY,      150+offset,   65);
+      text(mouseX,            150+left,   top+80);
+      text(mouseY,            150+left,   top+95);
       
-      text(app.left,    150+offset,  85);
-      text(app.right,   150+offset,  100);
-      text(app.center,  150+offset,  115);
+      text(app.left,          150+left,   top+120);
+      text(app.right,         150+left,   top+135);
+      text(app.center,        150+left,   top+150);
       
-      text(app.ctrl,    150+offset,  190);
-      text(app.alt,     150+offset,  210);
-      text(app.shift,   150+offset,  230);
+      text(app.ctrl,          150+left,   top+175);
+      text(app.alt,           150+left,   top+190);
+      text(app.shift,         150+left,   top+205);
       
-      // text(app.players[app.active].x,        150+offset,  290);
-      // text(app.players[app.active].y,        150+offset,  310);
+      text(app.cellH,         150+left,   top+230);
+      text(app.cellW,         150+left,   top+245);
 
-      // text(app.jumping, 150+offset,  350);
+      text(app.cols,          150+left,   top+270);
+      text(app.rows,          150+left,   top+285);
+
+      text(app.rows*app.cols, 150+left,   top+310);
       
-      text(app.cellH,   150+offset,  370);
-      text(app.cellW,   150+offset,  390);
-
-      text(app.cols,    150+offset,  410);
-      text(app.rows,    150+offset,  430);
-
     }
 
     // To do list:
@@ -1319,12 +1310,18 @@ println(ang + " : " + degrees(ang));
 //   };
   var loadGrid=function(){
 
+    // var temp=app.levels[app.level];
+
     var w=app.cellW;
     var h=app.cellH;
-    var offsetX=500;
     
-    var centreY=tan(radians(30))*w/2;
-    var centerX=w/2;
+    // println(temp.length/4);
+    
+    var offsetX=-app.cols/2*w;
+    var offsetY=-app.rows*h/1.5/2;
+    
+    var centreY=app.rows/2*app.cellH;
+    var centerX=app.cols/2*app.cellW;
 
     var offset=0;
 
@@ -1332,80 +1329,66 @@ println(ang + " : " + degrees(ang));
 
     var rowCells=[];
     var points=[];
-    
-    var temp=app.levels[app.level];
-    
+
     var index=0;
 
-    // Clear app.grid
+    // Clear current grid
     app.grid=[];
 
-    // for(var level=0; level<app.grid.length; level++){
+    for(var row=offset; row<app.rows; row++){
 
-    // println("Level: " + level + " --------------------------------------------------");
+      for(var col=offset; col<app.cols; col++){
+        
+        // if(temp[row][col]===1){
 
-    println("Level: " + app.level + " --------------------------------------------------");
-    
-      for(var row=offset; row<temp.length; row++){
+          if(row%2===1){
 
-    println("Row: " + row);
-
-        for(var col=offset; col<temp[row].length; col++){
-          
-          if(temp[row][col]===1){
-
-          println("Col: " + col);
-
-            if(row%2===0){
-    
-              if(col%2===0) { p1=new pt(offsetX+col*w/2,     row*h);
-                              p2=new pt(offsetX+col*w/2+w/2, row*h+h);
-                              p3=new pt(offsetX+col*w/2-w/2, row*h+h);
-                              c =new pt(offsetX+col*w/2,     row*h+h-centreY);
-              }
-              else          { p1=new pt(offsetX+col*w/2+w/2, row*h);
-                              p2=new pt(offsetX+col*w/2-w/2, row*h);
-                              p3=new pt(offsetX+col*w/2,     row*h+h);
-                              c =new pt(offsetX+col*w/2,     row*h+centreY);
-              }
+            if(col%2===0) { p1=new pt(offsetX+col*w,    offsetY+row*h/2+h/2);
+                            p2=new pt(offsetX+col*w+w,  offsetY+row*h/2);
+                            p3=new pt(offsetX+col*w+w,  offsetY+row*h/2+h);
+                            c =new pt(offsetX+col*w/2,  offsetY+row*h/2+h-centreY);
             }
-            else{
-    
-              if(col%2===0) { p1=new pt(offsetX+col*w/2+w/2, row*h);
-                              p2=new pt(offsetX+col*w/2-w/2, row*h);
-                              p3=new pt(offsetX+col*w/2,     row*h+h);
-                              c =new pt(offsetX+col*w/2,     row*h+centreY);
-              }
-              else          { p1=new pt(offsetX+col*w/2,     row*h);
-                              p2=new pt(offsetX+col*w/2+w/2, row*h+h);
-                              p3=new pt(offsetX+col*w/2-w/2, row*h+h);
-                              c =new pt(offsetX+col*w/2,     row*h+h-centreY);
-              }
+            else          { p1=new pt(offsetX+col*w,    offsetY+row*h/2);
+                            p2=new pt(offsetX+col*w,    offsetY+row*h/2+h);
+                            p3=new pt(offsetX+col*w+w,  offsetY+row*h/2+h/2);
+                            c =new pt(offsetX+col*w/2,  offsetY+row*h/2+h-centreY);
             }
-    
-            points.push(p1);
-            points.push(p2);
-            points.push(p3);
-            points.push(c);
-    
-            rowCells.push(new cell(index, col, row, points));
-            
-            points=[];
-            
-            index++;
-
           }
+          else{
+  
+            if(col%2===0) { p1=new pt(offsetX+col*w,    offsetY+row*h/2);
+                            p2=new pt(offsetX+col*w,    offsetY+row*h/2+h);
+                            p3=new pt(offsetX+col*w+w,  offsetY+row*h/2+h/2);
+                            c =new pt(offsetX+col*w/2,  offsetY+row*h/2+h-centreY);
+            }
+            else          { p1=new pt(offsetX+col*w,    offsetY+row*h/2+h/2);
+                            p2=new pt(offsetX+col*w+w,  offsetY+row*h/2);
+                            p3=new pt(offsetX+col*w+w,  offsetY+row*h/2+h);
+                            c =new pt(offsetX+col*w/2,  offsetY+row*h/2+h-centreY);
+            }
+          }
+  
+          points.push(p1);
+          points.push(p2);
+          points.push(p3);
+          points.push(c);
+  
+          rowCells.push(new cell(index, col, row, points));
+          
+          points=[];
+          
+          index++;
 
-        }
-
-        app.grid.push(rowCells);
-
-        rowCells=[];
+        // }
 
       }
 
-    // }
-    
+      app.grid.push(rowCells);
+
+      rowCells=[];
+
+    }
+
   };
   var drawGrid=function(){
 
@@ -1427,21 +1410,31 @@ println(ang + " : " + degrees(ang));
   // };
   var main=function(){
 
-    if(app.running){ background(CLRS.BLACK);  }
+    if(app.running){ background(32);  }
     else           { background(16);          }
 
     // processKeys();
 
     pushMatrix();
       
-      // translate(20,20);
+      translate(app.originX, app.originY);
+      // rotate(radians(-30));
       
       drawGrid();
       
+      // axis & origin
+      fill(CLRS.RED);
+      stroke(CLRS.GRAY);
+  
+      line(-app.width/2,  0,              app.width/2,  0             );
+      line(0,             -app.height/2,  0,            app.height/2  );
+  
+      ellipse(0, 0, 10, 10);
+
     popMatrix();
 
     telemetry();
-    
+
   };
 
   var process;
@@ -1467,21 +1460,34 @@ println(ang + " : " + degrees(ang));
 
     for(var row in app.grid){
       for(var col in app.grid[row]){
-        app.grid[row][col].moved(mouseX,mouseY);
+        app.grid[row][col].moved(mouseX-app.originX,mouseY-app.originY);
       }
     }
 
 // process();
 
   };
-  var mouseClicked=   function(){
+  var mouseClicked=function(){
 
-    for(var row in app.grid){
-      for(var col in app.grid[row]){
-        app.grid[row][col].clicked(mouseX,mouseY);
-      }
+    if(mouseButton===LEFT){
+
+      if(app.level<10){ app.level++; loadGrid(); }
+
     }
-    
+    if(mouseButton===RIGHT){
+
+      if(app.level>0){ app.level--; loadGrid(); }
+
+    }
+
+    initialize();
+
+    // for(var row in app.grid){
+    //   for(var col in app.grid[row]){
+    //     app.grid[row][col].clicked(mouseX,mouseY);
+    //   }
+    // }
+
   };
   var mouseOver=      function(){
     app.running=true;
@@ -1647,7 +1653,7 @@ println(ang + " : " + degrees(ang));
        !app.keys[KEYCODES.A] &&
        !app.keys[KEYCODES.S])   {
          
-      if(app.activeCol<app.grid[0].length-1){ app.activeCol++;  }
+      if(app.grid[app.activeRow][app.activeCol+1]!==0){ app.activeCol++;  }
          
     }
     if(app.keys[KEYCODES.LEFT]     &&
@@ -1656,7 +1662,7 @@ println(ang + " : " + degrees(ang));
        !app.keys[KEYCODES.A] &&
        !app.keys[KEYCODES.S])   {
 
-      if(app.activeCol>0){ app.activeCol--;  }
+      if(app.grid[app.activeRow][app.activeCol-1]!==0){ app.activeCol--;  }
 
     }
     if(app.keys[KEYCODES.UP]       &&
@@ -1665,7 +1671,7 @@ println(ang + " : " + degrees(ang));
        !app.keys[KEYCODES.A] &&
        !app.keys[KEYCODES.S])   {
 
-      if(app.activeRow>0){ app.activeRow--;  }
+      if(app.grid[app.activeRow-1][app.activeCol]!==0){ app.activeRow--;  }
 
     }
     if(app.keys[KEYCODES.DOWN]     &&
@@ -1674,7 +1680,7 @@ println(ang + " : " + degrees(ang));
        !app.keys[KEYCODES.A] &&
        !app.keys[KEYCODES.S])   {
 
-      if(app.activeRow<app.grid.length-1){ app.activeRow++;  }
+      if(app.grid[app.activeRow+1][app.activeCol]!==0){ app.activeRow++;  }
 
     }
 
@@ -1763,17 +1769,19 @@ println(ang + " : " + degrees(ang));
 
     size(app.width, app.height);
 
-    setDisplay();
+    // setDisplay();
 
     app.ctrl  =app.keys[COMMANDS.CTRL]  =false;
     app.alt   =app.keys[COMMANDS.ALT]   =false;
     app.shift =app.keys[COMMANDS.SHIFT] =false;
 
-    app.cellH=floor(app.height/24);
-    app.cellW=floor((2*app.cellH)/tan(radians(60)));
+// println(app.levels[app.level].length);
 
-    app.rows=floor(app.height/app.cellH);
-    app.cols=floor(app.width/app.cellW);
+    app.rows=floor(app.level*6+3);
+    app.cols=floor(app.level*4+2);
+
+    app.cellH=floor(app.height/(app.rows/2+2));
+    app.cellW=floor((app.cellH/2)/tan(radians(30)));
 
     loadGrid();
 
