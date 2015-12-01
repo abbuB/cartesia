@@ -148,8 +148,11 @@ var zoomfactor=0;
     NODE_BLUE:    color(51,221,250),
     
     CONNECTION:   color(251,175,56),
-    NODE:         color(255)
-
+    NODE:         color(255),
+    
+    CODE_TEAL:    color(0,173,188),
+    CODE_PURPLE:  color(0,173,188)
+    
   };
 
   var MODES={
@@ -256,6 +259,8 @@ var zoomfactor=0;
       
       cache:          [],
       
+      controls:       [],
+      
       dragging:       false,
       activeNode:     -1,
 
@@ -263,9 +268,9 @@ var zoomfactor=0;
 
       width:          600,
       height:         600,
-      
-      vortex:         1,
-    
+
+      splash:         true,
+
     debug:          true,
     frameRate:      30,
 
@@ -488,6 +493,8 @@ var zoomfactor=0;
   };
   
   // Node ===========================================================
+  
+  // Node ===========================================================
   var Node=function(id,x,y,routes){
 
     // if(id===undefined){ this.id=getNodeAddress(); }
@@ -631,7 +638,7 @@ println(id);
 
   };
   
- // Packet ===========================================================
+ // Packet ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var Packet=function(source, destination, stringValue){
 
     this.source=source;
@@ -756,6 +763,134 @@ println(id);
 
   };
 
+  // Controls ===========================================================
+  
+  // Button ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  var Button=function(id,x,y,width,height,color,caption,func){
+
+    this.id=id;
+  
+    this.x=x;             //  x-coordinate
+    this.y=y;             //  y-coordinate
+
+    this.r=random(10,50); //  radius
+    this.w=width;         //  width
+    this.h=height;        //  height
+
+    this.color=color;     //  Color
+      
+    this.caption=caption; //  Caption
+    this.func=func;       //  Function
+
+    this.hit=false;       //  mouse is over node
+    this.active=true;     //  currently functional
+    this.selected=false;  //  highlighted
+
+    this.visible=true;    //  Is the button visible?
+    
+    this.timer=30;        //  Countdown timer
+
+  };
+  Button.prototype.draw=function(){
+
+    if(this.visible){
+
+      if(this.hit){ fill(getColor(CLRS.WHITE,5)); }
+      else        { fill(getColor(this.color,this.timer/30*50)); }
+  
+      rectMode(CORNER);
+      noStroke();
+      
+      // Border/Background
+      rect(this.x, this.y, this.w, this.h, 10);
+      
+      // Caption
+      textAlign(CENTER,CENTER);
+      textSize(24);
+      
+      if(this.hit){ fill(getColor(CLRS.WHITE,75)); }
+      else        { fill(getColor(CLRS.WHITE,50)); }
+      
+      text(this.caption, this.x+this.w/2, this.y+this.h/2);
+    
+    }
+    
+  };
+  Button.prototype.clicked=function() {
+
+    if(this.hit){ this.func(); }
+
+  };
+  Button.prototype.moved=function(x,y){
+
+    if(x>this.x &&
+       x<this.x+this.w &&
+       y>this.y &&
+       y<this.y+this.h){ this.hit=true;   this.timer++; }
+    else               { this.hit=false;  this.timer=0; }
+
+  };
+  Button.prototype.dragged=function() {
+
+    if(this.hit){
+      this.x=app.mouseX;
+      this.y=app.mouseY;
+    }
+
+  };
+  Button.prototype.pressed=function() {
+
+    if(this.hit){
+      
+    }
+
+  };
+  Button.prototype.released=function(){
+
+    if(this.hit){
+      
+    }
+
+  };
+  
+  Button.prototype.over=function(){
+
+    this.visible=true;
+
+  };
+  Button.prototype.out=function(){
+
+    this.visible=false;
+
+  };
+  
+  // Logo ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  var logo=function(x,y){
+
+    fill(getColor(CLRS.BLACK,50));
+    noStroke();
+    stroke(CLRS.BLACK);
+    strokeWeight(0.25);
+
+    rectMode(CORNER);
+
+    rect(x+5,   y-105, 100, 100);
+    rect(x+5,   y+5,   100, 100);
+    rect(x-105, y-105, 100, 100);
+    rect(x-105, y+5,   100, 100);
+
+    fill(getColor(CLRS.WHITE,80));
+    
+    rectMode(CENTER);
+    textSize(72);
+    textAlign(CENTER,CENTER);
+
+    text("C", x-52.5, y-52.5);
+    text("O", x+52.5, y-52.5);
+    text("D", x+52.5, y+52.5);
+    text("E", x-52.5, y+52.5);
+
+  };
 
   var sendPacket=function(){
     
@@ -862,6 +997,8 @@ println(id);
   
   var drawGrid=function(){
 
+    app.frameRate=30;
+
     pushMatrix();
     
       translate(app.width/2, app.height/2);
@@ -930,126 +1067,104 @@ println(id);
 
   var involute=function(){
 
-    if(app.vortex==1){
+    app.frameRate=10;
+
+    pushMatrix();
+
+      rectMode(CENTER);
+
+      background(CLRS.BLACK);
+
+      translate(app.width/2,app.height/2);
       
-      app.frameRate=10;
+      noStroke();
+      
+      for(var r=900; r>50; r-=25){
+        fill(24,24,24,64);
+        ellipse(0,0,r,r);
+      }
 
-      pushMatrix();
+      var tSize=3;
+      var clr=128;
+      var transp=50;
 
-        rectMode(CENTER);
-
-        background(CLRS.BLACK);
-
-        translate(app.width/2,app.height/2);
+      textSize(tSize);
+      textAlign(CENTER,CENTER);
         
-        noStroke();
+        beginShape();
         
-        for(var r=900; r>50; r-=25){
-          fill(24,24,24,64);
-          ellipse(0,0,r,r);
-        }
-
-        var tSize=3;
-        var clr=128;
-        var transp=200;
-
-        textSize(tSize);
-        textAlign(CENTER,CENTER);
+        for(var n=0; n<data.length; n++){
           
-          beginShape();
+          clr=n/data.length*192/255*255;
           
-          for(var n=0; n<data.length; n++){
-            
-            clr=n/data.length*192/255*255;
-            
-            if(data[n].value===1){
-                
-              noStroke();
-              fill(0,clr,0,transp);
+          if(data[n].value===1){
               
-              if(n===position){ fill(196, 186, 0,transp); }
+            noStroke();
+            fill(0,clr,0,transp);
+            
+            fill(getColor(CLRS.CODE_TEAL,transp));
+            
+            if(n===position){ fill(196, 186, 0,transp); }
 
-              rect(data[n].x, data[n].y,tSize*0.15,tSize*0.9);
-
-            }
-            else{
-
-              noFill();
-              strokeWeight(2);
-              stroke(0,clr,0,transp);
-              if(n===position){ stroke(196, 186, 0,transp); }
-              ellipse(data[n].x, data[n].y,tSize*0.75,tSize*0.9);
-
-            }
-
-            tSize*=1.003;
+            rect(data[n].x, data[n].y,tSize*0.15,tSize*0.9);
 
           }
-          
-          endShape();
-          
-      popMatrix();
+          else{
+
+            noFill();
+            
+            strokeWeight(2);
+            stroke(0,clr,0,transp);
+            
+            stroke(getColor(CLRS.CODE_TEAL,transp));
+            
+            if(n===position){ stroke(196, 186, 0, 255); }
+            
+            // if(n===position){ stroke(getColor(CLRS.CODE_TEAL,transp)); }
+            
+            ellipse(data[n].x, data[n].y,tSize*0.75,tSize*0.9);
+
+          }
+
+          tSize*=1.003;
+
+        }
+        
+        endShape();
+        
+    popMatrix();
+  
+    addBit(data);
     
-      addBit(data);
-      
-      if(position===0){ position=data.length-1;   }
-      else            { position--;               }
-      
-    }
-    else{
+    if(position===0){ position=data.length-1;   }
+    else            { position--;               }
 
-      app.frameRate=30;
+    logo(300,300);
 
-      drawGrid();
-      
-    }
-
-    telemetry();
-
-    sendPackets();
-    
-    frameRate(app.frameRate);
-    
   };
 
   loadGrid();
+  
+  var SplashScreen=function(){
 
-  var main=function(){
+    app.splash=false;
 
-    // app.command=c;
+    app.cache+="This is the message that will be sent";
 
-    // background(CLRS.ORANGE);
-
-    // if(n<100){ n++; }
-
-    // app.frameRate=frameCount;
-
-    // for(var c in app.ctrls){ app.ctrls[c].draw(); }
-
-    // text(modelX(app.mouseX,app.mouseY,0), 100, 400);
-
-    // if(app.currentCommand!==currentCommand){
-    //   setCurrentCommand();
-    // }
-
-    // telemetry();
-
-    // p(currentCommand);
-
-    drawGUI();
-    // calculatePath();
-    
-    drawGrid();
-
-    // for(var n in app.nodes){ app.nodes[n].draw(mouseX,mouseY); }
-
-    for(var n in app.packets){ app.packets[n].draw(mouseX,mouseY); }
+    // sendPackets();
 
   };
+  
+  var main=function(){
 
-  // translate(0.5,0.5);
+    frameRate(app.frameRate);
 
+    if(app.splash){ involute(); }
+    else          { drawGrid(); }
 
+    for(var c in app.controls){ app.controls[c].draw(mouseX,mouseY); }
+
+  };
 
   var draw=function(){ process(); };
 
@@ -1098,37 +1213,7 @@ println(id);
   // Mouse ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var mouseClicked=function(){
 
-    // app.vortex*=-1;
-    app.vortex=-1;
-// println(app.vortex);
-    // reset();
-
-    // switch(mouseButton){
-
-    //   case LEFT:    for(var n in app.nodes){ app.nodes[n].clicked(); }  break;
-    //   case RIGHT:   for(var n in app.nodes){ app.nodes[n].clickedR(); }  break;
-    // //   case CENTER:  // for(var c in app.ctrls){ app.ctrls[c].clicked() }  break;
-
-    //   default:      break;
-
-    // }
-
-    // if(app.keys[KEYCODES.CONTROL]==true){
-
-
-
-    // }
-
-    // process();
-
-    // endNode.active=false;
-    
-    // traverse(app.nodes[0]);
-
-    // disableNode(app.nodes[0]);
-    app.cache+="This is the message that will be sent";
-    
-    sendPackets();
+    for(var c in app.controls){ app.controls[c].clicked(mouseX,mouseY); }
     
   };
   var mouseMoved=function(){
@@ -1141,6 +1226,8 @@ println(id);
        app.nodes[row][col].moved(mouseX,mouseY);
       }
     }
+
+    for(var c in app.controls){ app.controls[c].moved(mouseX,mouseY); }
 
     // process();
 
@@ -1157,6 +1244,8 @@ println(id);
       }
     }
 
+    for(var c in app.controls){ app.controls[c].dragged(mouseX,mouseY); }
+    
     // process();
 
   };
@@ -1182,6 +1271,8 @@ println(id);
     }
     // process();
 
+    for(var c in app.controls){ app.controls[c].pressed(mouseX,mouseY); }
+    
   };
   var mouseReleased=function(){
 
@@ -1198,19 +1289,21 @@ println(id);
       }
     }
 
+    for(var c in app.controls){ app.controls[c].released(mouseX,mouseY); }
+    
     // process();
 
   };
   var mouseOut=function(){
 
-    for(var c in app.ctrls){ app.ctrls[c].out(); }
-    
+    for(var c in app.controls){ app.controls[c].out(mouseX,mouseY); }
+        
     // process();
 
   };
   var mouseOver=function(){
 
-    for(var c in app.ctrls){ app.ctrls[c].over(); }
+    for(var c in app.controls){ app.controls[c].over(mouseX,mouseY); }
     
     // process();
 
@@ -1346,7 +1439,7 @@ println(id);
     // process=main;
 
     loadData();
-    process=involute;
+    process=main;
 
     // htmlInit();
 
@@ -1358,7 +1451,9 @@ println(id);
     // reset();
     
     // endNode=app.nodes[app.nodes.length-1];
-        
+    
+    app.controls.push(new Button(2,250,420,100,30,CLRS.BACKGROUND_0,"begin...",SplashScreen));
+
   };
 
   initialize();
