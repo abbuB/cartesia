@@ -138,7 +138,17 @@ var zoomfactor=0;
     RULER:        color(231,189,33),
 
     SELECTED:     color(0,0,255),
-    HIT:          color(255,0,0)
+    HIT:          color(255,0,0),
+
+    BACKGROUND_0: color(20,90,52),
+    BACKGROUND_1: color(28,129,74),
+    BACKGROUND_2: color(34,161,91),
+    BACKGROUND_3: color(36,167,93),
+    
+    NODE_BLUE:    color(51,221,250),
+    
+    CONNECTION:   color(251,175,56),
+    NODE:         color(255)
 
   };
 
@@ -238,19 +248,23 @@ var zoomfactor=0;
   var app={
 
       nodes:          [],
-      packets:        [],
-      
-      paths:          [],
 
+      send:           [],
+      received:       [],
+
+      paths:          [],
+      
+      cache:          [],
+      
       dragging:       false,
       activeNode:     -1,
 
       gridSize:       9,
 
-    width:          600,
-    height:         600,
-    
-    vortex:         1,
+      width:          600,
+      height:         600,
+      
+      vortex:         1,
     
     debug:          true,
     frameRate:      30,
@@ -404,29 +418,43 @@ var zoomfactor=0;
   var factor=1.25;
   var endNode;
   var telemetry=function(){
-  
-    // document.getElementById('height-value').innerText=app.height;
-    // document.getElementById('width-value').innerText=app.width;
     
-    // document.getElementById('mouseX-value').innerText=app.mouseX;
-    // document.getElementById('mouseY-value').innerText=app.mouseY;
+    textSize(16);
+    fill(CLRS.YELLOW);
     
-    // document.getElementById('gridX-value').innerText=nf(app.gridX,1,2);
-    // document.getElementById('gridY-value').innerText=nf(app.gridY,1,2);
+    textAlign(LEFT,TOP);
+    text(app.cache,5,5);
+    
+    text(binary(app.cache),5,50);
+    
+    textAlign(LEFT,BOTTOM);
+    text(app.cache.length,5,app.height-5);
 
-    // document.getElementById('worldX-value').innerText=app.worldX;
-    // document.getElementById('worldY-value').innerText=app.worldY;
+    text("Frame Rate: " + app.frameRate, 20,50);
+    
+    // Display received packets
+    var strReceived="";
+    
+    for(var n in app.received){
+      strReceived+=app.received[n].stringValue;
+    }
+    
+    if(textWidth(strReceived)>480){
+      
+      textAlign(RIGHT,BOTTOM);
+      text(strReceived,540,600);
+      
+      rectMode(CORNER);
+      fill(CLRS.BACKGROUND_0);
+      rect(-10,580,70,55);
+      
+    }
+    else{
+      
+      textAlign(LEFT,BOTTOM);
+      text(strReceived, 60,600);
 
-    // document.getElementById('leftButton-value').innerText=app.left;
-    // document.getElementById('centerButton-value').innerText=app.center;
-    // document.getElementById('rightButton-value').innerText=app.right;
-
-    // // document.getElementById('focus-value').innerText=app.focus;
-    
-    // document.getElementById('currentCommand-value').innerText=app.current;
-    
-    // document.getElementById('factor-value').innerText=nf(app.factor,1,2);
-    
+    }
 
   };
 
@@ -448,12 +476,28 @@ var zoomfactor=0;
     }
 
   };
+  
+  var getNodeAddress=function(){
 
+    var NAT=round(random(0,255))+"."+round(random(0,255))+"."+round(random(0,255))+"."+round(random(0,255));
+
+    println(NAT);
+
+    return NAT;
+
+  };
+  
   // Node ===========================================================
   var Node=function(id,x,y,routes){
 
-    if(id===undefined){ this.id=getGUID();  }
-    else              { this.id=id;         }
+    // if(id===undefined){ this.id=getNodeAddress(); }
+    // else              { this.id=id;               }
+
+    this.id=getNodeAddress();
+    
+    this.gridID=id;
+    
+println(id);
 
     this.x=x;             //  x-coordinate
     this.y=y;             //  y-coordinate
@@ -479,31 +523,47 @@ var zoomfactor=0;
   Node.prototype.draw=function(){
 
     // Node connections
-    stroke(getColor(CLRS.ORANGE,64));
+    stroke(getColor(CLRS.CONNECTION,255));
     strokeWeight(0.75);
 
     for(var n in this.connections){
       line(this.x, this.y, this.connections[n].x, this.connections[n].y);
     }
-    
+
     // Range ellipse
-    fill(getColor(CLRS.WHITE,12));
-    strokeWeight(1.25);
-    noStroke();
+    fill(getColor(CLRS.WHITE,6));
+    stroke(CLRS.WHITE);
+    strokeWeight(0.125);
 
     ellipse(this.x, this.y, this.r*2, this.r*2);
 
     // Node ellipse
     fill(getColor(CLRS.WHITE,255));
-    
+
     ellipse(this.x, this.y, this.r/2, this.r/2);
 
     // Connection count label
-    if(this.hit){ fill(CLRS.RED);   }
-    else        { fill(CLRS.WHITE); }
+    if(this.hit){
+      
+      textSize(12);
+      textAlign(CENTER,CENTER);
 
-    textAlign(CENTER,BOTTOM);
-    text(this.connections.length, this.x-3, this.y+3);
+      fill(getColor(CLRS.BLACK,50));
+      
+      rect(this.x,this.y+9,textWidth(this.id)+6,16,3);
+      
+      fill(CLRS.YELLOW);
+
+      // text(this.connections.length, this.x, this.y);
+      // text(this.routes.length, this.x, this.y+10);
+      text(this.id, this.x, this.y+10);
+      
+    }
+    else{
+
+      noFill();
+
+    }
 
     // this.x+=random(-3,3);
     // this.y+=random(-3,3);
@@ -561,7 +621,7 @@ var zoomfactor=0;
         if(dist(app.nodes[row][col].x,
                 app.nodes[row][col].y,
                 this.x,
-                this.y)<(app.nodes[row][col].r+this.r*2) &&
+                this.y)<(app.nodes[row][col].r+this.r*1.5) &&
                          app.nodes[row][col].id!==this.id){
           this.connections.push(app.nodes[row][col]);
         }
@@ -572,7 +632,7 @@ var zoomfactor=0;
   };
   
  // Packet ===========================================================
-  var Packet=function(source, destination){
+  var Packet=function(source, destination, stringValue){
 
     this.source=source;
     this.destination=destination;
@@ -581,7 +641,13 @@ var zoomfactor=0;
     this.nodes=[];    //  nodes packet will travers
     this.points=[];   //  path points of packet
     this.p=0;         //  current index of packet on path
-    
+
+    this.stringValue=stringValue;
+    this.charCode=stringValue.charCodeAt(0);
+    this.binaryValue=binary(this.charCode);
+
+// println(this.stringValue + ": " + this.binaryValue);
+
     // Path must have and equal number of zeros and ones.
     for(var n=0; n<app.gridSize-1; n++){
       this.path[n]=1;
@@ -595,7 +661,7 @@ var zoomfactor=0;
     var x=0;
     var y=0;
     var n=0;
-    var incr=10;
+    var incr=5;
     
     this.nodes.push(app.nodes[x][y]);
 
@@ -626,43 +692,40 @@ var zoomfactor=0;
   Packet.prototype.draw=function(){
 
     if(this.p<this.points.length-1){
-
-      var x=0;
-      var y=0;
       
-      strokeWeight(2);
-      stroke(128,174,97);
-      noFill();
-  
-      // beginShape();
-  
-      //   for(var n in this.nodes){
-  
-      //     // if(this.path[n]===0){ x+=incr;  }
-      //     // else                { y+=incr;  }
-  
-      //     vertex(this.nodes[n].x, this.nodes[n].y);
-  
-      //   }
-  
-      // endShape();
-  
-      textSize(20);
-      textAlign(LEFT,CENTER);
-      fill(CLRS.YELLOW);
-  
-      text(this.path, 30,30);
-
-      fill(CLRS.RED);
+      // Background
       noStroke();
+      fill(getColor(CLRS.NODE_BLUE,64));
+      
+      rect(this.points[this.p].x,
+           this.points[this.p].y-5,
+           40, 35, 5);
+      
+      // Character value
+      fill(CLRS.BLACK);
+      textAlign(CENTER,BOTTOM);
+      textSize(16);
+      
+      text(this.stringValue,
+           this.points[this.p].x,
+           this.points[this.p].y);
 
-      ellipse(this.points[this.p].x, this.points[this.p].y, 15, 15);
-
+      // Binary value
+      fill(96);
+      textAlign(CENTER,TOP);
+      textSize(9);
+      
+      text(this.binaryValue,
+           this.points[this.p].x,
+           this.points[this.p].y);
+      
+      // Increment ordinal position along path
       this.p++;
 
     }
     else{
-      app.packets.splice(0,1);
+      app.send.splice(0,1);
+      app.received.push(this);
     }
 
   };
@@ -696,7 +759,7 @@ var zoomfactor=0;
 
   var sendPacket=function(){
     
-    app.packets.push(new packet(0,0));
+    app.send.push(new packet(0,0));
 
   };
 
@@ -801,12 +864,14 @@ var zoomfactor=0;
 
     pushMatrix();
     
-      translate(app.width/2,app.height/2);
+      translate(app.width/2, app.height/2);
       
       noStroke();
-      fill(20,20,20,210);
+      fill(CLRS.BACKGROUND_0);
+
       rectMode(CENTER);
-      rect(0,0,app.width,app.height);
+      
+      rect(0, 0, app.width, app.height);
     
     popMatrix();
 
@@ -816,7 +881,9 @@ var zoomfactor=0;
       }
     }
 
-    for(var n in app.packets){ app.packets[n].draw(mouseX,mouseY); }
+    for(var n in app.send){
+      app.send[n].draw(mouseX,mouseY);
+    }
 
   };
   
@@ -831,8 +898,7 @@ var zoomfactor=0;
   };
 
   angleMode="radians";
-  frameRate(0);
-
+  
   var data=[];
   var r=2.5;
   var d=48;
@@ -864,7 +930,9 @@ var zoomfactor=0;
 
   var involute=function(){
 
-    if(frameCount%6===0){
+    if(app.vortex==1){
+      
+      app.frameRate=10;
 
       pushMatrix();
 
@@ -873,6 +941,13 @@ var zoomfactor=0;
         background(CLRS.BLACK);
 
         translate(app.width/2,app.height/2);
+        
+        noStroke();
+        
+        for(var r=900; r>50; r-=25){
+          fill(24,24,24,64);
+          ellipse(0,0,r,r);
+        }
 
         var tSize=3;
         var clr=128;
@@ -880,7 +955,9 @@ var zoomfactor=0;
 
         textSize(tSize);
         textAlign(CENTER,CENTER);
-        
+          
+          beginShape();
+          
           for(var n=0; n<data.length; n++){
             
             clr=n/data.length*192/255*255;
@@ -904,33 +981,35 @@ var zoomfactor=0;
               ellipse(data[n].x, data[n].y,tSize*0.75,tSize*0.9);
 
             }
-  
+
             tSize*=1.003;
-            
+
           }
           
+          endShape();
+          
       popMatrix();
+    
+      addBit(data);
+      
+      if(position===0){ position=data.length-1;   }
+      else            { position--;               }
+      
+    }
+    else{
 
-      if(app.vortex==1){
-        
-        frameRate(60);
-        
-        addBit(data);
-        
-        if(position===0){ position=data.length-1;   }
-        else            { position--;               }
-        
-      }
-      else{
+      app.frameRate=30;
 
-        frameRate(0);
-
-        drawGrid();
-        
-      }
-
+      drawGrid();
+      
     }
 
+    telemetry();
+
+    sendPackets();
+    
+    frameRate(app.frameRate);
+    
   };
 
   loadGrid();
@@ -1003,17 +1082,16 @@ var zoomfactor=0;
     
   };
 
-  var addPackets=function(){
+  var sendPackets=function(){
 
-    for(var n=0; n<75; n++){
-
-      if(frameCount%n==0){
-        app.packets.push(new Packet(n,n));
-      }
+    if(app.cache.length>0 && frameCount%3==0){
+      
+      // for(var n=0; n<app.cache.length; n++){
+        app.send.push(new Packet(10, 20, app.cache.substring(0,1)));
+        app.cache=app.cache.substring(1,app.cache.length);
+      // }
       
     }
-
-    println(app.packets.length);
 
   };
 
@@ -1048,7 +1126,10 @@ var zoomfactor=0;
     // traverse(app.nodes[0]);
 
     // disableNode(app.nodes[0]);
-
+    app.cache+="This is the message that will be sent";
+    
+    sendPackets();
+    
   };
   var mouseMoved=function(){
 
@@ -1116,9 +1197,7 @@ var zoomfactor=0;
        app.nodes[row][col].released(mouseX,mouseY);
       }
     }
-    
-    addPackets();
-          
+
     // process();
 
   };
