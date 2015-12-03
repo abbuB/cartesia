@@ -7,7 +7,7 @@
 var proc = function(processingInstance){
   with (processingInstance){
 
-size=size(600, 600); // set size of canvas
+size(600, 600); // set size of canvas
 
   /**
 
@@ -140,24 +140,24 @@ var zoomfactor=0;
     SELECTED:     color(0,0,255),
     HIT:          color(255,0,0),
 
-    BACKGROUND_0: color(20,90,52),
-    BACKGROUND_1: color(28,129,74),
-    BACKGROUND_2: color(34,161,91),
-    BACKGROUND_3: color(36,167,93),
+    BACKGROUND_0: color( 20, 90, 52),
+    BACKGROUND_1: color( 28,129, 74),
+    BACKGROUND_2: color( 34,161, 91),
+    BACKGROUND_3: color( 36,167, 93),
     
     NODE_BLUE:    color(51,221,250),
     
-    CONNECTION:   color(251,175,56),
+    CONNECTION:   color(251,175, 56),
     NODE:         color(255),
     
-    CODE_TEAL:    color(0,173,188),
-    CODE_PURPLE:  color(0,173,188)
+    CODE_TEAL:    color(0,  173,188),
+    CODE_PURPLE:  color(118,101,160)
     
   };
 
   var MODES={
-    SAMPLE:           0,
-    MANUAL:           1
+    NETWORK:          0,
+    SPLASHSCREEN:     1
   };
 
   var KEYCODES={
@@ -269,8 +269,8 @@ var zoomfactor=0;
       width:          600,
       height:         600,
 
-      splash:         true,
-
+      sending:        false,
+      
     debug:          true,
     frameRate:      30,
 
@@ -411,11 +411,13 @@ var zoomfactor=0;
 
   };
 
-  var pt=function(x,y,value){
+  var pt=function(x,y,value, clr){
     
     this.x=x;
     this.y=y;
-    
+
+    this.color=clr;
+
     this.value=value;
 
   };
@@ -430,12 +432,12 @@ var zoomfactor=0;
     textAlign(LEFT,TOP);
     text(app.cache,5,5);
     
-    text(binary(app.cache),5,50);
+    text(app.cache.length,5,50);
     
     textAlign(LEFT,BOTTOM);
-    text(app.cache.length,5,app.height-5);
+    text(app.received.length,5,app.height-5);
 
-    text("Frame Rate: " + app.frameRate, 20,50);
+    text("Frame Rate: " + app.frameRate, 5,100);
     
     // Display received packets
     var strReceived="";
@@ -486,7 +488,7 @@ var zoomfactor=0;
 
     var NAT=round(random(0,255))+"."+round(random(0,255))+"."+round(random(0,255))+"."+round(random(0,255));
 
-    println(NAT);
+    // println(NAT);
 
     return NAT;
 
@@ -504,7 +506,7 @@ var zoomfactor=0;
     
     this.gridID=id;
     
-println(id);
+// println(id);
 
     this.x=x;             //  x-coordinate
     this.y=y;             //  y-coordinate
@@ -867,7 +869,7 @@ println(id);
   // Logo ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var logo=function(x,y){
 
-    fill(getColor(CLRS.BLACK,50));
+    fill(getColor(CLRS.BLACK,75));
     noStroke();
     stroke(CLRS.BLACK);
     strokeWeight(0.25);
@@ -887,8 +889,8 @@ println(id);
 
     text("C", x-52.5, y-52.5);
     text("O", x+52.5, y-52.5);
-    text("D", x+52.5, y+52.5);
-    text("E", x-52.5, y+52.5);
+    text("E", x+52.5, y+52.5);
+    text("D", x-52.5, y+52.5);
 
   };
 
@@ -964,7 +966,9 @@ println(id);
   };
 
   var loadGrid=function(arr){
-
+    
+    app.nodes=[];
+    
     var arrRow=[];
     var routes;
     var row=0;
@@ -974,7 +978,7 @@ println(id);
       for(col=0; col<app.gridSize; col++){
 
         if(col>0 && row>0){ routes=arrRow[col-1].routes + app.nodes[row-1][col].routes; }
-        else              { routes=1;                                     }
+        else              { routes=1;                                                   }
 
         arrRow.push(new Node(row+":"+col, row*incr+incr, col*incr+incr, routes));
 
@@ -996,8 +1000,6 @@ println(id);
   };
   
   var drawGrid=function(){
-
-    app.frameRate=30;
 
     pushMatrix();
     
@@ -1022,15 +1024,7 @@ println(id);
       app.send[n].draw(mouseX,mouseY);
     }
 
-  };
-  
-  var drawGUI=function(){
-    
-    fill(245,179,69);
-    stroke(255,255,255,90);
-    strokeWeight(5);
-    
-    rect(incr/2, incr/2, app.width-incr, app.width-incr);
+    sendPackets();
 
   };
 
@@ -1050,7 +1044,8 @@ println(id);
 
       data.push(new pt( r*(cos(theta)+theta*sin(theta)),
                         r*(sin(theta)-theta*cos(theta)),
-                        round(random(0,1)))
+                        round(random(0,1)),
+                        color(random(64)))
                );
     }
 
@@ -1059,114 +1054,140 @@ println(id);
       
     for(var n=0; n<arr.length-1; n++){
       arr[n].value=arr[n+1].value;
+      arr[n].color=arr[n+1].color;
     }
 
     arr[arr.length-1].value=round(random(0,1));
-    
+
+    if(app.left){ arr[arr.length-1].color=color(random(128,255)); }
+    else        { arr[arr.length-1].color=color(random(64));   }
+
   };
 
   var involute=function(){
 
-    app.frameRate=10;
+    rectMode(CENTER);
+
+    background(CLRS.BLACK);
+
+    noStroke();
+
+    var tSize=3;
 
     pushMatrix();
 
-      rectMode(CENTER);
-
-      background(CLRS.BLACK);
-
       translate(app.width/2,app.height/2);
-      
-      noStroke();
-      
+
       for(var r=900; r>50; r-=25){
-        fill(24,24,24,64);
+        fill(getColor(CLRS.GRAY,1));
         ellipse(0,0,r,r);
       }
 
-      var tSize=3;
-      var clr=128;
-      var transp=50;
+      beginShape();
 
-      textSize(tSize);
-      textAlign(CENTER,CENTER);
-        
-        beginShape();
-        
-        for(var n=0; n<data.length; n++){
+      for(var n=0; n<data.length; n++){
+
+        if(data[n].value===1){
+      
+          fill(data[n].color);
+          stroke(data[n].color);
           
-          clr=n/data.length*192/255*255;
-          
-          if(data[n].value===1){
-              
-            noStroke();
-            fill(0,clr,0,transp);
-            
-            fill(getColor(CLRS.CODE_TEAL,transp));
-            
-            if(n===position){ fill(196, 186, 0,transp); }
-
-            rect(data[n].x, data[n].y,tSize*0.15,tSize*0.9);
-
-          }
-          else{
-
-            noFill();
-            
-            strokeWeight(2);
-            stroke(0,clr,0,transp);
-            
-            stroke(getColor(CLRS.CODE_TEAL,transp));
-            
-            if(n===position){ stroke(196, 186, 0, 255); }
-            
-            // if(n===position){ stroke(getColor(CLRS.CODE_TEAL,transp)); }
-            
-            ellipse(data[n].x, data[n].y,tSize*0.75,tSize*0.9);
-
-          }
-
-          tSize*=1.003;
+          rect(data[n].x, data[n].y, tSize*0.15, tSize*0.9);
 
         }
-        
-        endShape();
-        
+        else{
+
+          noFill();
+          strokeWeight(2);
+          stroke(data[n].color);
+
+          ellipse(data[n].x, data[n].y, tSize*0.75, tSize*0.9);
+
+        }
+
+        tSize*=1.003;
+
+      }
+
+      endShape();
+
     popMatrix();
+
+  };
   
-    addBit(data);
+  var addMessage=function(){
+
+    app.cache+="This is the message that will be sent";
     
-    if(position===0){ position=data.length-1;   }
-    else            { position--;               }
+  };
+  
+  var send=function(){
+
+    app.sending=true;
+        
+  };
+  var clearCache=function(){
+    
+    app.send=[];
+    app.received="";
+    
+  };
+  
+  var setGrid=function(){
+
+    app.frameRate=30;
+
+    loadGrid();
+
+    app.controls=[];
+
+    app.controls.push(new Button(2,525,0,100,30,CLRS.BACKGROUND_0,"add",      addMessage));
+    app.controls.push(new Button(2,425,0,100,30,CLRS.BACKGROUND_0,"send",     send));
+    app.controls.push(new Button(2,325,0,100,30,CLRS.BACKGROUND_0,"back...",  setSplash));
+    app.controls.push(new Button(2,225,0,100,30,CLRS.BACKGROUND_0,"clear",    clearCache));
+    
+    process=drawGrid;
+    
+  };
+  var setSplash=function(){
+
+    app.frameRate=10;
+
+    loadData();
+    
+    app.controls=[];
+
+    app.controls.push(new Button(2,250,420,100,30,CLRS.BACKGROUND_0,"begin...",setGrid));
+
+    process=splashScreen;
+    
+  };
+  
+  var splashScreen=function(){
+
+    involute();
+
+    addBit(data);
 
     logo(300,300);
 
   };
 
-  loadGrid();
-  
-  var SplashScreen=function(){
-
-    app.splash=false;
-
-    app.cache+="This is the message that will be sent";
-
-    // sendPackets();
-
-  };
-  
-  var main=function(){
+  var draw=function(){
 
     frameRate(app.frameRate);
 
-    if(app.splash){ involute(); }
-    else          { drawGrid(); }
+    process();
 
     for(var c in app.controls){ app.controls[c].draw(mouseX,mouseY); }
 
-  };
+    if(app.debug){
 
-  var draw=function(){ process(); };
+      telemetry();
+
+    }
+
+  };
 
   // Events ===========================================================
 
@@ -1199,13 +1220,13 @@ println(id);
 
   var sendPackets=function(){
 
-    if(app.cache.length>0 && frameCount%3==0){
-      
-      // for(var n=0; n<app.cache.length; n++){
-        app.send.push(new Packet(10, 20, app.cache.substring(0,1)));
-        app.cache=app.cache.substring(1,app.cache.length);
-      // }
-      
+    if(app.cache.length>0 && frameCount%3==0 && app.sending){
+
+      app.send.push(new Packet(10, 20, app.cache.substring(0,1)));
+      app.cache=app.cache.substring(1,app.cache.length);
+
+      if(app.cache.length==0){ app.sending=false; }
+
     }
 
   };
@@ -1251,9 +1272,6 @@ println(id);
   };
   var mousePressed=function(){
 
-    // mStartX=mouseX;
-    // mStartY=mouseY;
-    
     switch(mouseButton){
 
       case LEFT:    app.left=true;    break;
@@ -1275,9 +1293,6 @@ println(id);
     
   };
   var mouseReleased=function(){
-
-    // mStartX=0;
-    // mStartY=0;
 
     app.left=false;
     app.center=false;
@@ -1421,44 +1436,11 @@ println(id);
 
   var initialize=function(){
 
-    // strokeJoin(ROUND);
-
-    // loadCommands();
-
-    // size(app.width, app.height,1);
-
-    // if(app.debug) { app.frameRate=62; }
-    // else          { app.frameRate=32;  }
-
-    // frameRate(app.frameRate);
-
-    // app.dwg=new drawing();
-
-    // addControls();
-
-    // process=main;
-
-    loadData();
-    process=main;
-
-    // htmlInit();
-
-  //var fontList = PFont.list();
-  // p(fontList);
-  // printCommands();
-  
-    // loadGrid();
-    // reset();
-    
-    // endNode=app.nodes[app.nodes.length-1];
-    
-    app.controls.push(new Button(2,250,420,100,30,CLRS.BACKGROUND_0,"begin...",SplashScreen));
+    setSplash();
 
   };
 
   initialize();
-
-  // process();
 
   var clickMe=function(p){
     
