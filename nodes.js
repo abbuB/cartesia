@@ -250,18 +250,24 @@ var zoomfactor=0;
 
   var app={
 
+      // Debugging aids ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      debug:          true,
+
+      telemetry:      true,
+
+      // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
       nodes:          [],
-
-      send:           [],
-      received:       [],
-
-      paths:          [],
-      
-      cache:          [],
-      
       controls:       [],
       
-      dragging:       false,
+      send:           [],
+      received:       [],
+      cache:          [],
+      
+      paths:          [],
+
+      vortex:         [],
+
       activeNode:     -1,
 
       gridSize:       9,
@@ -270,28 +276,28 @@ var zoomfactor=0;
       height:         600,
 
       sending:        false,
-      
-    debug:          true,
-    frameRate:      30,
+
+      frameRate:      30,
 
     focus:          0,
 
-    mouseX:         1000,
-    mouseY:         20,
-    
-    // mousePressed:   0,
+      mouseX:         1000,
+      mouseY:         20,
 
-    left:           false,
-    center:         false,
-    right:          false,
+      dragging:       false,
 
-    keys:           [],
+      left:           false,
+      center:         false,
+      right:          false,
+  
+      over:           true,
+
+      keys:           [],
 
     border:         true,
 
-    stack:          [],
+    stack:          []
 
-    ctrls:          [],
 
   };
 
@@ -411,7 +417,7 @@ var zoomfactor=0;
 
   };
 
-  var pt=function(x,y,value, clr){
+  var pt=function(x,y,value,clr){
     
     this.x=x;
     this.y=y;
@@ -426,43 +432,98 @@ var zoomfactor=0;
   var endNode;
   var telemetry=function(){
     
+    if(app.over && mouseX<50){
+
+      var rowHeight=20;
+      var top=100;
+      var left=15;
+      
+      textAlign(LEFT,BOTTOM);
+
+      // Border
+      stroke(CLRS.WHITE);
+      strokeWeight(0.25);
+      fill(getColor(CLRS.BLACK,40));
+
+      rect(0,top-20,150,500,0,20,20,0);
+
+      fill(getColor(CLRS.WHITE,80));
+      textSize(14);
+      
+      text("Telemetry",         left+30, top+5);
+      
+      fill(getColor(CLRS.WHITE,60));
+      textSize(12);
+      
+      text("Frame Rate: ",      left, top+2*rowHeight);
+      text("Controls count: ",  left, top+3*rowHeight);
+  
+      text("Left: ",            left, top+5*rowHeight);
+      text("Center: ",          left, top+6*rowHeight);
+      text("Right: ",           left, top+7*rowHeight);
+  
+      text("Nodes: ",           left, top+9*rowHeight);
+      text("Controls: ",        left, top+10*rowHeight);
+      
+      
+      text("Cache: ",           left, top+12*rowHeight);
+      text("Send: ",            left, top+13*rowHeight);
+      text("Received: ",        left, top+14*rowHeight);
+      
+      fill(CLRS.YELLOW);
+
+      text(app.frameRate,       left+100,  top+2*rowHeight);
+      text(app.controls.length, left+100,  top+3*rowHeight);
+      
+      text(app.left,            left+100,  top+5*rowHeight);
+      text(app.center,          left+100,  top+6*rowHeight);
+      text(app.right,           left+100,  top+7*rowHeight);
+      
+      text(app.nodes.length,    left+100,  top+9*rowHeight);
+      text(app.controls.length, left+100,  top+10*rowHeight);
+
+      text(app.cache.length,    left+100,  top+12*rowHeight);
+      text(app.send.length,     left+100,  top+13*rowHeight);
+      text(app.received.length, left+100,  top+14*rowHeight);
+
+    }
+
+    // Cache
     textSize(16);
+    textAlign(LEFT,TOP);
     fill(CLRS.YELLOW);
     
-    textAlign(LEFT,TOP);
-    text(app.cache,5,5);
-    
-    text(app.cache.length,5,50);
-    
-    textAlign(LEFT,BOTTOM);
-    text(app.received.length,5,app.height-5);
+    text(app.cache,5,5);                        //  cache contents
+    text(app.cache.length,5,50);                //  cache length
 
-    text("Frame Rate: " + app.frameRate, 5,100);
+    // # Received
+    textAlign(LEFT,BOTTOM);
+    text(app.received.length,5,app.height-5);   //  # of packets received
     
     // Display received packets
     var strReceived="";
-    
+
     for(var n in app.received){
       strReceived+=app.received[n].stringValue;
     }
-    
+
     if(textWidth(strReceived)>480){
-      
+
       textAlign(RIGHT,BOTTOM);
       text(strReceived,540,600);
-      
+
       rectMode(CORNER);
       fill(CLRS.BACKGROUND_0);
       rect(-10,580,70,55);
-      
+
     }
     else{
-      
+
       textAlign(LEFT,BOTTOM);
       text(strReceived, 60,600);
 
     }
-
+    
   };
 
   var randomizeArray=function(arr){
@@ -502,16 +563,18 @@ var zoomfactor=0;
     // if(id===undefined){ this.id=getNodeAddress(); }
     // else              { this.id=id;               }
 
-    this.id=getNodeAddress();
-    
+    this.id=id;
+    this.nat=getNodeAddress();
+
     this.gridID=id;
-    
-// println(id);
+
+    this.row=0;           //  row location
+    this.col=0;           //  column location
 
     this.x=x;             //  x-coordinate
     this.y=y;             //  y-coordinate
 
-    this.r=random(10,50); //  radius
+    this.r=random(20,40); //  radius
     this.w=10;            //  width
     this.h=10;            //  height
 
@@ -529,7 +592,7 @@ var zoomfactor=0;
     this.distance=0;
 
   };
-  Node.prototype.draw=function(){
+  Node.prototype.draw=function(x,y){
 
     // Node connections
     stroke(getColor(CLRS.CONNECTION,255));
@@ -559,18 +622,29 @@ var zoomfactor=0;
 
       fill(getColor(CLRS.BLACK,50));
       
-      rect(this.x,this.y+9,textWidth(this.id)+6,16,3);
+      rect(this.x,this.y,textWidth(this.id)+6,32,3);
+      
+      fill(CLRS.WHITE);
+
+      text(this.id, this.x, this.y+8);
       
       fill(CLRS.YELLOW);
-
-      // text(this.connections.length, this.x, this.y);
-      // text(this.routes.length, this.x, this.y+10);
-      text(this.id, this.x, this.y+10);
+      
+      text(this.connections.length, this.x, this.y-8);
+      // text(this.routes, this.x, this.y+10);
+      // text(this.id, this.x, this.y+10);
       
     }
     else{
 
-      noFill();
+      // noFill();
+
+    }
+    
+    if(this.selected){
+      
+      fill(CLRS.RED);
+      ellipse(this.x,this.y,50,50);
 
     }
 
@@ -578,7 +652,7 @@ var zoomfactor=0;
     // this.y+=random(-3,3);
     
   };
-  Node.prototype.clicked=function() {
+  Node.prototype.clicked=function(x,y) {
 
     if(this.hit &&
        app.keys[KEYCODES.CONTROL]){
@@ -595,25 +669,28 @@ var zoomfactor=0;
     else               { this.hit=false; }
 
   };
-  Node.prototype.dragged=function() {
+  Node.prototype.dragged=function(x,y) {
 
     if(this.hit &&
        app.left &&
        app.activeNode===this.id){
-      this.x=app.mouseX;
-      this.y=app.mouseY;
+
+      this.x=x;
+      this.y=y;
+
       // this.load();
+
     }
 
   };
-  Node.prototype.pressed=function() {
+  Node.prototype.pressed=function(x,y) {
 
     if(this.hit){
       app.activeNode=this.id;
     }
 
   };
-  Node.prototype.released=function(){
+  Node.prototype.released=function(x,y){
 
     if(this.hit){
       app.activeNode=-1;
@@ -624,78 +701,119 @@ var zoomfactor=0;
 
     this.connections=[];
 
-    for(var row in app.nodes){
-      for(var col in app.nodes[row]){
+    for(var n in app.nodes){
 
-        if(dist(app.nodes[row][col].x,
-                app.nodes[row][col].y,
-                this.x,
-                this.y)<(app.nodes[row][col].r+this.r*1.5) &&
-                         app.nodes[row][col].id!==this.id){
-          this.connections.push(app.nodes[row][col]);
+        if(app.nodes[n].id!=this.id){
+          if(dist(app.nodes[n].x,
+                  app.nodes[n].y,
+                  this.x,
+                  this.y)<(app.nodes[n].r+this.r*2)){
+
+            this.connections.push(app.nodes[n]);
+
+          }
         }
-        
-      }
+
     }
 
   };
-  
- // Packet ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  var Packet=function(source, destination, stringValue){
 
-    this.source=source;
-    this.destination=destination;
+  // Packet ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  var Packet=function(source, destination, text){
 
-    this.path=[];
-    this.nodes=[];    //  nodes packet will travers
+    var dX=0;
+    var dY=0;
+    var sX=0;
+    var sY=0;
+
+    // this.source=      app.nodes[round(random(1,app.nodes.length-1))];
+    // this.destination= app.nodes[round(random(1,app.nodes.length-1))];
+
+    this.source=      app.nodes[0];
+    this.destination= app.nodes[app.nodes.length-1];
+
+    this.path=[];     //  nodes packet will traverse
     this.points=[];   //  path points of packet
     this.p=0;         //  current index of packet on path
 
-    this.stringValue=stringValue;
-    this.charCode=stringValue.charCodeAt(0);
+    this.stringValue=text;
+    this.charCode=text.charCodeAt(0);
     this.binaryValue=binary(this.charCode);
+    
+    /**
+        Determine the shortest path from the source to the
+        destintaion using only adjacent connected nodes.
+        Terminate when the source and destination nodes
+        are the same.
+     */
 
-// println(this.stringValue + ": " + this.binaryValue);
-
-    // Path must have and equal number of zeros and ones.
-    for(var n=0; n<app.gridSize-1; n++){
-      this.path[n]=1;
-      this.path[n+app.gridSize-1]=0;
-    }
-
-    //  Randomly swap each element in the path with another
-    randomizeArray(this.path);
-
-    // Reference path nodes locally
-    var x=0;
-    var y=0;
+    // Set the source node
+    var src=this.source;
+    var dest=this.destination;
+    var distance=Infinity;
+    var index=0;
     var n=0;
-    var incr=5;
     
-    this.nodes.push(app.nodes[x][y]);
-
-    for(n=1; n<=this.path.length; n++){
-
-      if(this.path[n-1]===0) { x++; }
-      else                   { y++; }
-
-      this.nodes.push(app.nodes[x][y]);
-
-    }
+    this.path.push(src);
     
-// println(this.nodes.length);
+    while(src.id!=dest.id){
 
-    for(n=0; n<this.nodes.length-1; n++){
-      for(var p=0; p<incr; p++){
+      distance=dist(src.connections[n].x,
+                    src.connections[n].y,
+                    dest.x,
+                    dest.y);
+                
+      // Find the node in connections that
+      // is closest to the destination.
+      for(n=0; n<src.connections.length; n++){
         
-        // println(lerp(this.nodes[n].x, this.nodes[n+1].x, (p+1)/10)+","+
-        //         lerp(this.nodes[n].y, this.nodes[n+1].y, (p+1)/10));
+        if(dist(src.connections[n].x,
+                src.connections[n].y,
+                dest.x,
+                dest.y)<distance){
+          index=n;
+          distance=dist(src.connections[n].x,
+                        src.connections[n].y,
+                        dest.x,
+                        dest.y);
+        }
         
-        this.points.push(new pt( lerp(this.nodes[n].x, this.nodes[n+1].x, (p+1)/incr),
-                                 lerp(this.nodes[n].y, this.nodes[n+1].y, (p+1)/incr),0));
-
       }
+      
+      // println(distance);
+      // println(src.id+":"+dest.id);
+      // println(n);
+      // println("=======================");
+      
+      // add the closest node to the destination to the path
+      this.path.push(src.connections[index]);
+      
+      // src.selected=true;
+      
+      // Set the source node to the last node in the path and repeat
+      src=src.connections[index];
+
+      n=0;
+      index=0;
+      distance=Infinity;
+
     }
+
+    // this.destination.selected=true;
+
+    this.path.push(this.destination);
+    
+    for(n=0; n<this.path.length-1; n++){
+      
+      // println(this.path[0].x);
+      for(var c=0; c<10; c++){
+        this.points.push(new pt(lerp(this.path[n].x, this.path[n+1].x, c/10),
+                                lerp(this.path[n].y, this.path[n+1].y, c/10)));
+      }
+      
+    }
+
+// println("break");
 
   };
   Packet.prototype.draw=function(){
@@ -768,21 +886,21 @@ var zoomfactor=0;
   // Controls ===========================================================
   
   // Button ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  var Button=function(id,x,y,width,height,color,caption,func){
+  var Button=function(id,x,y,width,height,color,caption,execute){
 
-    this.id=id;
+    this.id=id;           //  Unique control id
   
     this.x=x;             //  x-coordinate
     this.y=y;             //  y-coordinate
 
-    this.r=random(10,50); //  radius
     this.w=width;         //  width
     this.h=height;        //  height
 
     this.color=color;     //  Color
-      
+
     this.caption=caption; //  Caption
-    this.func=func;       //  Function
+
+    this.execute=execute; //  Executes on click
 
     this.hit=false;       //  mouse is over node
     this.active=true;     //  currently functional
@@ -793,12 +911,12 @@ var zoomfactor=0;
     this.timer=30;        //  Countdown timer
 
   };
-  Button.prototype.draw=function(){
+  Button.prototype.draw=function(x,y){
 
     if(this.visible){
 
-      if(this.hit){ fill(getColor(CLRS.WHITE,5)); }
-      else        { fill(getColor(this.color,this.timer/30*50)); }
+      if(this.hit){ fill(getColor(CLRS.WHITE,5));                 }
+      else        { fill(getColor(this.color,this.timer/30*50));  }
   
       rectMode(CORNER);
       noStroke();
@@ -818,9 +936,9 @@ var zoomfactor=0;
     }
     
   };
-  Button.prototype.clicked=function() {
+  Button.prototype.clicked=function(x,y) {
 
-    if(this.hit){ this.func(); }
+    if(this.hit){ this.execute(); }
 
   };
   Button.prototype.moved=function(x,y){
@@ -832,22 +950,22 @@ var zoomfactor=0;
     else               { this.hit=false;  this.timer=0; }
 
   };
-  Button.prototype.dragged=function() {
+  Button.prototype.dragged=function(x,y) {
 
     if(this.hit){
-      this.x=app.mouseX;
-      this.y=app.mouseY;
+      this.x=x;
+      this.y=y;
     }
 
   };
-  Button.prototype.pressed=function() {
+  Button.prototype.pressed=function(x,y) {
 
     if(this.hit){
       
     }
 
   };
-  Button.prototype.released=function(){
+  Button.prototype.released=function(x,y){
 
     if(this.hit){
       
@@ -855,12 +973,12 @@ var zoomfactor=0;
 
   };
   
-  Button.prototype.over=function(){
+  Button.prototype.over=function(x,y){
 
     this.visible=true;
 
   };
-  Button.prototype.out=function(){
+  Button.prototype.out=function(x,y){
 
     this.visible=false;
 
@@ -965,6 +1083,12 @@ var zoomfactor=0;
 
   };
 
+  var loadConnections=function(){
+
+    for(var n in app.nodes){ app.nodes[n].load(); }
+
+  };
+
   var loadGrid=function(arr){
     
     app.nodes=[];
@@ -983,69 +1107,45 @@ var zoomfactor=0;
         arrRow.push(new Node(row+":"+col, row*incr+incr, col*incr+incr, routes));
 
       }
-
+      
       app.nodes.push(arrRow);
       arrRow=[];
 
     }
+
+    var nodes=[];
     
-    for(row=0; row<app.nodes.length; row++){
-      for(col=0; col<app.nodes.length; col++){
-        app.nodes[row][col].load();
+    for(var row=0; row<app.nodes.length; row++){
+      for(var col=0; col<app.nodes.length; col++){
+        nodes.push(app.nodes[row][col]);
       }
     }
+
+    app.nodes=nodes;
+
+    loadConnections();
 
 // println(app.nodes.length);
 
   };
-  
-  var drawGrid=function(){
-
-    pushMatrix();
-    
-      translate(app.width/2, app.height/2);
-      
-      noStroke();
-      fill(CLRS.BACKGROUND_0);
-
-      rectMode(CENTER);
-      
-      rect(0, 0, app.width, app.height);
-    
-    popMatrix();
-
-    for(var row in app.nodes){
-      for(var col in app.nodes[row]){
-       app.nodes[row][col].draw(mouseX,mouseY);
-      }
-    }
-
-    for(var n in app.send){
-      app.send[n].draw(mouseX,mouseY);
-    }
-
-    sendPackets();
-
-  };
 
   angleMode="radians";
-  
-  var data=[];
+
   var r=2.5;
   var d=48;
   
-  var position=data.length;
+  var position=app.vortex.length;
   
   var loadData=function(){
   
-    data=[];
+    app.vortex=[];
 
     for(var theta=0; theta<PI*d; theta+=PI/18){
 
-      data.push(new pt( r*(cos(theta)+theta*sin(theta)),
-                        r*(sin(theta)-theta*cos(theta)),
-                        round(random(0,1)),
-                        color(random(64)))
+      app.vortex.push(new pt( r*(cos(theta)+theta*sin(theta)),
+                              r*(sin(theta)-theta*cos(theta)),
+                              round(random(0,1)),
+                              color(random(64)))
                );
     }
 
@@ -1078,30 +1178,30 @@ var zoomfactor=0;
 
       translate(app.width/2,app.height/2);
 
-      for(var r=900; r>50; r-=25){
+      for(var radius=900; radius>50; radius-=25){
         fill(getColor(CLRS.GRAY,1));
-        ellipse(0,0,r,r);
+        ellipse(0,0,radius,radius);
       }
 
       beginShape();
 
-      for(var n=0; n<data.length; n++){
+      for(var n=0; n<app.vortex.length; n++){
 
-        if(data[n].value===1){
+        if(app.vortex[n].value===1){
       
-          fill(data[n].color);
-          stroke(data[n].color);
+          fill(app.vortex[n].color);
+          stroke(app.vortex[n].color);
           
-          rect(data[n].x, data[n].y, tSize*0.15, tSize*0.9);
+          rect(app.vortex[n].x, app.vortex[n].y, tSize*0.15, tSize*0.9);
 
         }
         else{
 
           noFill();
           strokeWeight(2);
-          stroke(data[n].color);
+          stroke(app.vortex[n].color);
 
-          ellipse(data[n].x, data[n].y, tSize*0.75, tSize*0.9);
+          ellipse(app.vortex[n].x, app.vortex[n].y, tSize*0.75, tSize*0.9);
 
         }
 
@@ -1117,7 +1217,8 @@ var zoomfactor=0;
   
   var addMessage=function(){
 
-    app.cache+="This is the message that will be sent";
+    // app.cache+="This is the message that will be sent";
+    app.cache+="S";
     
   };
   
@@ -1132,8 +1233,42 @@ var zoomfactor=0;
     app.received="";
     
   };
+
+  var drawGrid=function(){
+
+    pushMatrix();
+    
+      translate(app.width/2, app.height/2);
+      
+      noStroke();
+      fill(CLRS.BACKGROUND_0);
+      rectMode(CENTER);
+      
+      rect(0, 0, app.width, app.height);
+    
+    popMatrix();
+
+    for(var n in app.nodes){ app.nodes[n].draw(mouseX,mouseY); }
+
+    for(var n in app.send){ app.send[n].draw(mouseX,mouseY); }
+
+    sendPackets();
+
+  };
+  
+  var drawSplashScreen=function(){
+
+    involute();
+
+    addBit(app.vortex);
+
+    logo(300,300);
+
+  };
   
   var setGrid=function(){
+
+    app.vortex=[];
 
     app.frameRate=30;
 
@@ -1141,13 +1276,13 @@ var zoomfactor=0;
 
     app.controls=[];
 
-    app.controls.push(new Button(2,525,0,100,30,CLRS.BACKGROUND_0,"add",      addMessage));
-    app.controls.push(new Button(2,425,0,100,30,CLRS.BACKGROUND_0,"send",     send));
-    app.controls.push(new Button(2,325,0,100,30,CLRS.BACKGROUND_0,"back...",  setSplash));
-    app.controls.push(new Button(2,225,0,100,30,CLRS.BACKGROUND_0,"clear",    clearCache));
-    
+    app.controls.push(  new Button(2, 525,  0,  100,  30, CLRS.BACKGROUND_0,  "add",    addMessage));
+    app.controls.push(  new Button(2, 425,  0,  100,  30, CLRS.BACKGROUND_0,  "send",   send));
+    app.controls.push(  new Button(2, 325,  0,  100,  30, CLRS.BACKGROUND_0,  "back..", setSplash));
+    app.controls.push(  new Button(2, 225,  0,  100,  30, CLRS.BACKGROUND_0,  "clear",  clearCache))
+      
     process=drawGrid;
-    
+      
   };
   var setSplash=function(){
 
@@ -1159,33 +1294,25 @@ var zoomfactor=0;
 
     app.controls.push(new Button(2,250,420,100,30,CLRS.BACKGROUND_0,"begin...",setGrid));
 
-    process=splashScreen;
+    process=drawSplashScreen;
     
-  };
-  
-  var splashScreen=function(){
-
-    involute();
-
-    addBit(data);
-
-    logo(300,300);
-
   };
 
   var draw=function(){
+    
+    pushMatrix();
+    
+      translate(0.5,0.5);
+      
+      frameRate(app.frameRate);
+  
+      process();
+  
+      for(var c in app.controls){ app.controls[c].draw(mouseX,mouseY); }
 
-    frameRate(app.frameRate);
+    popMatrix();
 
-    process();
-
-    for(var c in app.controls){ app.controls[c].draw(mouseX,mouseY); }
-
-    if(app.debug){
-
-      telemetry();
-
-    }
+if(app.debug){ telemetry(); }
 
   };
 
@@ -1220,7 +1347,7 @@ var zoomfactor=0;
 
   var sendPackets=function(){
 
-    if(app.cache.length>0 && frameCount%3==0 && app.sending){
+    if(app.cache.length>0 && frameCount%10==0 && app.sending){
 
       app.send.push(new Packet(10, 20, app.cache.substring(0,1)));
       app.cache=app.cache.substring(1,app.cache.length);
@@ -1234,40 +1361,34 @@ var zoomfactor=0;
   // Mouse ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var mouseClicked=function(){
 
-    for(var c in app.controls){ app.controls[c].clicked(mouseX,mouseY); }
-    
+    for(var c in app.controls){
+      app.controls[c].clicked(mouseX,mouseY);
+    }
+
   };
   var mouseMoved=function(){
 
     app.mouseX=mouseX;
     app.mouseY=mouseY;
     
-    for(var row in app.nodes){
-      for(var col in app.nodes[row]){
-       app.nodes[row][col].moved(mouseX,mouseY);
-      }
-    }
-
+    for(var n in app.nodes){ app.nodes[n].moved(mouseX,mouseY); }
     for(var c in app.controls){ app.controls[c].moved(mouseX,mouseY); }
 
     // process();
 
   };
   var mouseDragged=function(){
-
-    // app.left=true;
-    app.mouseX=mouseX;
-    app.mouseY=mouseY;
     
-    for(var row in app.nodes){
-      for(var col in app.nodes[row]){
-       app.nodes[row][col].dragged(mouseX,mouseY);
-      }
-    }
+    process();
 
     for(var c in app.controls){ app.controls[c].dragged(mouseX,mouseY); }
-    
-    // process();
+    for(var d in app.controls){ app.controls[d].draw(mouseX,mouseY);    }
+
+    telemetry();
+
+    for(var n in app.nodes){ app.nodes[n].dragged(mouseX,mouseY); }
+
+    loadConnections();
 
   };
   var mousePressed=function(){
@@ -1282,13 +1403,7 @@ var zoomfactor=0;
 
     }
 
-    for(var row in app.nodes){
-      for(var col in app.nodes[row]){
-       app.nodes[row][col].pressed(mouseX,mouseY);
-      }
-    }
-    // process();
-
+    for(var n in app.nodes){ app.nodes[n].pressed(mouseX,mouseY); }
     for(var c in app.controls){ app.controls[c].pressed(mouseX,mouseY); }
     
   };
@@ -1298,29 +1413,22 @@ var zoomfactor=0;
     app.center=false;
     app.right=false;
 
-    for(var row in app.nodes){
-      for(var col in app.nodes[row]){
-       app.nodes[row][col].released(mouseX,mouseY);
-      }
-    }
-
+    for(var n in app.nodes){ app.nodes[n].released(mouseX,mouseY); }
     for(var c in app.controls){ app.controls[c].released(mouseX,mouseY); }
-    
-    // process();
 
   };
   var mouseOut=function(){
-
+    
+    app.over=false;
+    
     for(var c in app.controls){ app.controls[c].out(mouseX,mouseY); }
-        
-    // process();
 
   };
   var mouseOver=function(){
 
+    app.over=true;
+
     for(var c in app.controls){ app.controls[c].over(mouseX,mouseY); }
-    
-    // process();
 
   };
   var mouseWheel=function(){
@@ -1355,14 +1463,14 @@ var zoomfactor=0;
 
     // }
 
-    for(var c in app.ctrls){ app.ctrls[c].pressed(); }
+    for(var c in app.controls){ app.controls[c].pressed(); }
 
   };
   var keyReleased=function(){
 
     app.keys[keyCode]=false;
 
-    for(var c in app.ctrls){ app.ctrls[c].released(); }
+    for(var c in app.controls){ app.controls[c].released(); }
 
   };
   var keyTyped=function(){
@@ -1380,7 +1488,7 @@ var zoomfactor=0;
 
     // }
 
-    for(var c in app.ctrls){ app.ctrls[c].typed(); }
+    for(var c in app.controls){ app.controls[c].typed(); }
 
   };
 
@@ -1436,7 +1544,7 @@ var zoomfactor=0;
 
   var initialize=function(){
 
-    setSplash();
+    setGrid();
 
   };
 
