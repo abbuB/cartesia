@@ -7,7 +7,7 @@
 var proc = function(processingInstance){
   with (processingInstance){
 
-size(600, 600); // set size of canvas
+
 
   /**
 
@@ -40,13 +40,20 @@ size(600, 600); // set size of canvas
   **/
 
 
-var process;
 
-var zoomfactor=0;
+
+  angleMode="radians";
   
+  // Globals ==================================================================
+  var process;
+  
+  var zoomfactor=0;
+  
+  // Misc Methods =============================================================
   var p=function(s){
     println(s);
   };
+  
   var getGUID=function(){
 
     // return year()   + ''  +
@@ -79,7 +86,6 @@ var zoomfactor=0;
     return color(r,g,b);
 
   };
-  
   var hexToRGBA=function(hexStr,a){
 
     // note: hexStr should be #rrggbb
@@ -92,6 +98,42 @@ var zoomfactor=0;
 
   };
   
+  // Print Arrays ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  var printArray1D=function(arr){
+
+    println(arr);
+
+  };
+  var printArray2D=function(arr){
+
+    for(var n=0; n<arr.length; n++){
+      println(arr[n]);
+    }
+
+  };
+
+  var randomizeArray=function(arr){
+
+    var temp;
+    var swap1;
+    var swap2;
+
+    for(var n=0; n<arr.length; n++){
+
+      swap1=round(random(0,arr.length-1));
+      swap2=round(random(0,arr.length-1));
+
+      temp=arr[swap1];
+      arr[swap1]=arr[swap2];
+      arr[swap2]=temp;
+
+    }
+
+  };
+  
+    
+  // Enumerations =============================================================
+    
   var CLRS={
 
     TRANSPARENT:  color(-1,-1,-1),
@@ -157,7 +199,7 @@ var zoomfactor=0;
 
   var MODES={
     NETWORK:          0,
-    SPLASHSCREEN:     1
+    Splash:     1
   };
 
   var KEYCODES={
@@ -270,9 +312,12 @@ var zoomfactor=0;
 
       activeNode:     -1,
 
-      gridSize:       9,
+      gridSize:       0,
 
-      width:          600,
+      xIncr:          0,
+      yIncr:          0,
+  
+      width:          900,
       height:         600,
 
       sending:        false,
@@ -300,8 +345,9 @@ var zoomfactor=0;
 
 
   };
+  
 
-  // Methods ==========================================================
+  // Methods ==================================================================
 
   var getProp=function(p){
 
@@ -385,11 +431,7 @@ var zoomfactor=0;
 
   };
 
-  var reset=function(){
-    // app.current=0;
-    app.vertices=[];
-  };
-  var getDottedLine=function(x0, y0, x1, y1, n){
+  var drawDottedLine=function(x0, y0, x1, y1, n){
 
     var x,y;
 
@@ -404,32 +446,8 @@ var zoomfactor=0;
 
   };
 
-  var rec=function(x,y,w,h,r){
+  
 
-  // Find out what this Does
-
-    beginShape();
-      vertex(x,y);
-      vertex(x+w,y);
-      vertex(x+w,y+h);
-      vertex(x,y+h);
-    endShape(CLOSE);
-
-  };
-
-  var pt=function(x,y,value,clr){
-    
-    this.x=x;
-    this.y=y;
-
-    this.color=clr;
-
-    this.value=value;
-
-  };
-
-  var factor=1.25;
-  var endNode;
   var telemetry=function(){
     
     if(app.over && mouseX<50){
@@ -526,25 +544,22 @@ var zoomfactor=0;
     
   };
 
-  var randomizeArray=function(arr){
 
-    var temp;
-    var swap1;
-    var swap2;
+  // Objects ==================================================================
 
-    for(var n=0; n<arr.length; n++){
-
-      swap1=round(random(0,arr.length-1));
-      swap2=round(random(0,arr.length-1));
-
-      temp=arr[swap1];
-      arr[swap1]=arr[swap2];
-      arr[swap2]=temp;
-
-    }
-
-  };
+  // Point ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  var pt=function(x,y,value,clr){
+      
+      this.x=x;
+      this.y=y;
   
+      this.color=clr;
+  
+      this.value=value;
+  
+    };
+    
+  // Node ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var getNodeAddress=function(){
 
     var NAT=round(random(0,255))+"."+round(random(0,255))+"."+round(random(0,255))+"."+round(random(0,255));
@@ -555,9 +570,6 @@ var zoomfactor=0;
 
   };
   
-  // Node ===========================================================
-  
-  // Node ===========================================================
   var Node=function(id,x,y,routes){
 
     // if(id===undefined){ this.id=getNodeAddress(); }
@@ -581,7 +593,7 @@ var zoomfactor=0;
     this.routes=routes;   //  # of paths to the node
 
     this.hit=false;       //  mouse is over node
-    this.active=true;     //  currently functional
+    this.enabled=true;    //  currently functional
     this.selected=false;
 
     this.connections=[];
@@ -607,13 +619,15 @@ var zoomfactor=0;
     stroke(CLRS.WHITE);
     strokeWeight(0.125);
 
-    ellipse(this.x, this.y, this.r*2, this.r*2);
-
+    if(this.enabled){
+      ellipse(this.x, this.y, this.r*2, this.r*2);
+    }
+    
     // Node ellipse
     fill(getColor(CLRS.WHITE,255));
 
     ellipse(this.x, this.y, this.r/2, this.r/2);
-
+    
     // Connection count label
     if(this.hit){
       
@@ -641,22 +655,30 @@ var zoomfactor=0;
 
     }
     
-    if(this.selected){
+    if(this.enabled){
+      
+      fill(CLRS.GREEN);
+      ellipse(this.x,this.y,10,10);
+
+    }
+    else{
       
       fill(CLRS.RED);
-      ellipse(this.x,this.y,50,50);
-
+      ellipse(this.x,this.y,10,10);
+      
     }
 
     // this.x+=random(-3,3);
     // this.y+=random(-3,3);
     
   };
-  Node.prototype.clicked=function(x,y) {
+  Node.prototype.clicked=function(x,y){
 
-    if(this.hit &&
-       app.keys[KEYCODES.CONTROL]){
-      this.active=!this.active;
+    if(this.hit){
+      this.enabled=!this.enabled;
+      
+println(this.enabled);
+      
     }
 
   };
@@ -669,11 +691,12 @@ var zoomfactor=0;
     else               { this.hit=false; }
 
   };
-  Node.prototype.dragged=function(x,y) {
+  Node.prototype.dragged=function(x,y){
 
     if(this.hit &&
        app.left &&
-       app.activeNode===this.id){
+       app.activeNode===this.id &&
+       app.keys[KEYCODES.CONTROL]){
 
       this.x=x;
       this.y=y;
@@ -683,7 +706,7 @@ var zoomfactor=0;
     }
 
   };
-  Node.prototype.pressed=function(x,y) {
+  Node.prototype.pressed=function(x,y){
 
     if(this.hit){
       app.activeNode=this.id;
@@ -697,7 +720,7 @@ var zoomfactor=0;
     }
 
   };
-  Node.prototype.load=function()    {
+  Node.prototype.load=function(){
 
     this.connections=[];
 
@@ -717,7 +740,33 @@ var zoomfactor=0;
     }
 
   };
+  Node.prototype.disable=function(node){
 
+    if(node.connections.length===0){ exit(); }
+
+    var min=dist(node.connections[0].x, node.connections[0].y, endNode.x, endNode.y);
+    var distance=min;
+    var index=0;
+    
+    for(var n=0; n<node.connections.length; n++){
+
+      node.connections[n].active=false;
+      
+      distance=dist(node.connections[n].x, node.connections[n].y, endNode.x, endNode.y);
+      
+      if(distance<min){
+        
+        min=distance;
+        index=n;
+
+      }
+
+    }
+    
+    disableNode(node.connections[index]);
+    
+  };
+  
   // Packet ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var Packet=function(source, destination, text){
 
@@ -767,15 +816,19 @@ var zoomfactor=0;
       // is closest to the destination.
       for(n=0; n<src.connections.length; n++){
         
-        if(dist(src.connections[n].x,
-                src.connections[n].y,
-                dest.x,
-                dest.y)<distance){
-          index=n;
-          distance=dist(src.connections[n].x,
-                        src.connections[n].y,
-                        dest.x,
-                        dest.y);
+        if(src.connections[n].enabled){
+        
+          if(dist(src.connections[n].x,
+                  src.connections[n].y,
+                  dest.x,
+                  dest.y)<distance){
+            index=n;
+            distance=dist(src.connections[n].x,
+                          src.connections[n].y,
+                          dest.x,
+                          dest.y);
+          }
+        
         }
         
       }
@@ -883,6 +936,7 @@ var zoomfactor=0;
 
   };
 
+
   // Controls ===========================================================
   
   // Button ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -952,10 +1006,10 @@ var zoomfactor=0;
   };
   Button.prototype.dragged=function(x,y) {
 
-    if(this.hit){
-      this.x=x;
-      this.y=y;
-    }
+    // if(this.hit){
+    //   this.x=x;
+    //   this.y=y;
+    // }
 
   };
   Button.prototype.pressed=function(x,y) {
@@ -972,7 +1026,6 @@ var zoomfactor=0;
     }
 
   };
-  
   Button.prototype.over=function(x,y){
 
     this.visible=true;
@@ -983,6 +1036,156 @@ var zoomfactor=0;
     this.visible=false;
 
   };
+
+
+
+  // Network ============================================================
+  
+  var sendPacket=function(){
+    
+    app.send.push(new packet(0,0));
+
+  };
+
+  var loadGrid=function(arr){
+    
+    app.nodes=[];
+    
+    var arrRow=[];
+    var routes;
+    var row=0;
+    var col=0;
+    
+    for(row=0; row<app.gridSize; row++){
+      for(col=0; col<app.gridSize; col++){
+
+        if(col>0 && row>0){ routes=arrRow[col-1].routes + app.nodes[row-1][col].routes; }
+        else              { routes=1;                                                   }
+
+        arrRow.push(new Node(row+":"+col, row*app.xIncr+app.xIncr, col*app.yIncr+app.yIncr, routes));
+
+      }
+      
+      app.nodes.push(arrRow);
+      arrRow=[];
+
+    }
+
+    var nodes=[];
+    
+    for(var row=0; row<app.nodes.length; row++){
+      for(var col=0; col<app.nodes.length; col++){
+        nodes.push(app.nodes[row][col]);
+      }
+    }
+
+    app.nodes=nodes;
+
+    loadConnections();
+
+// println(app.nodes.length);
+
+  };
+
+  var loadConnections=function(){
+
+    for(var n in app.nodes){ app.nodes[n].load(); }
+
+  };
+
+  var drawGrid=function(){
+
+    pushMatrix();
+    
+      translate(app.width/2, app.height/2);
+      
+      noStroke();
+      fill(CLRS.BACKGROUND_0);
+      rectMode(CENTER);
+      
+      rect(0, 0, app.width, app.height);
+    
+    popMatrix();
+
+    for(var n in app.nodes){ app.nodes[n].draw(mouseX,mouseY); }
+    for(var n in app.send){ app.send[n].draw(mouseX,mouseY); }
+
+    sendPackets();
+
+  };
+  
+  var addMessage=function(){
+
+    app.cache+="This is the message that will be sent";
+    app.cache+=" | S |";
+    
+  };
+  
+  var send=function(){
+
+    app.sending=true;
+    
+    printArray1D(app.cache);
+    
+  };
+  var clearCache=function(){
+    
+    app.cache="";
+    // app.send=[];
+    // app.received="";
+    
+  };
+
+  var reset=function(){
+
+  };
+
+  var setGrid=function(){
+
+    app.vortex=[];
+
+    app.frameRate=30;
+
+    loadGrid();
+
+    app.controls=[];
+
+    app.controls.push(  new Button(2, 525,  0,  100,  30, CLRS.BACKGROUND_0,  "add",    addMessage));
+    app.controls.push(  new Button(2, 425,  0,  100,  30, CLRS.BACKGROUND_0,  "send",   send));
+    app.controls.push(  new Button(2, 325,  0,  100,  30, CLRS.BACKGROUND_0,  "back..", setSplash));
+    app.controls.push(  new Button(2, 225,  0,  100,  30, CLRS.BACKGROUND_0,  "clear",  clearCache))
+      
+    process=drawGrid;
+      
+  };
+  
+  var sendPackets=function(){
+
+    if(app.cache.length>0 && frameCount%10==0 && app.sending){
+
+      app.send.push(new Packet(10, 20, app.cache.substring(0,1)));
+      app.cache=app.cache.substring(1,app.cache.length);
+
+      if(app.cache.length==0){ app.sending=false; }
+
+    }
+
+  };
+
+
+
+  // Splash Screen ============================================================
+  
+  var currentP=new pt(0,0);
+  var currentX=0;
+  var currentY=0;
+
+  var complete=false;
+
+  var vortexRadius=2.5;
+  var vortexDiameter=48;
+  
+  var position=app.vortex.length;
   
   // Logo ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var logo=function(x,y){
@@ -1012,144 +1215,22 @@ var zoomfactor=0;
 
   };
 
-  var sendPacket=function(){
-    
-    app.send.push(new packet(0,0));
-
-  };
-
-  // Print Arrays ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  var printArray1D=function(arr){
-
-    println(arr);
-
-  };
-  var printArray2D=function(arr){
-
-    for(var n=0; n<arr.length; n++){
-      println(arr[n]);
-    }
-
-  };
-
-  var incr=app.width/(app.gridSize+1);
-
-  var currentP=new pt(0,0);
-  var currentX=0;
-  var currentY=0;
-
-  var complete=false;
-
-  var traverse=function(NODE){
-
-    strokeWeight(10);
-    stroke(CLRS.BLACK);
-
-    line(NODE.x,NODE.y,endNode.x,endNode.y);
-    
-    for(var n=0; n<NODE.connections.length; n++){
-
-      if(dist(NODE.connections[n].x,    NODE.connections[n].y,
-              endNode.connections[n].x, endNode.connections[n].y)<
-         dist(NODE.x, NODE.y,
-              endNode.connections[n].x, endNode.connections[n].y)){
-
-        NODE.connections[n].active=false;
-
-        if(NODE.connections[n]===endNode){ exit();                         }
-        else                             { traverse(NODE.connections[n]);  }
-
-      }
-
-    }
-
-  };
-
-  var reset=function(){
-
-    arrGrid=[];
-    arrPath=[];
-
-    // sz=9;
-    incr=app.width/(app.gridSize+1);
-
-    for(var n=0; n<sz; n++){
-      arrPath.push(0);
-    }
-
-    // loadGrid();
-
-    calculatePath();
-
-  };
-
-  var loadConnections=function(){
-
-    for(var n in app.nodes){ app.nodes[n].load(); }
-
-  };
-
-  var loadGrid=function(arr){
-    
-    app.nodes=[];
-    
-    var arrRow=[];
-    var routes;
-    var row=0;
-    var col=0;
-    
-    for(row=0; row<app.gridSize; row++){
-      for(col=0; col<app.gridSize; col++){
-
-        if(col>0 && row>0){ routes=arrRow[col-1].routes + app.nodes[row-1][col].routes; }
-        else              { routes=1;                                                   }
-
-        arrRow.push(new Node(row+":"+col, row*incr+incr, col*incr+incr, routes));
-
-      }
-      
-      app.nodes.push(arrRow);
-      arrRow=[];
-
-    }
-
-    var nodes=[];
-    
-    for(var row=0; row<app.nodes.length; row++){
-      for(var col=0; col<app.nodes.length; col++){
-        nodes.push(app.nodes[row][col]);
-      }
-    }
-
-    app.nodes=nodes;
-
-    loadConnections();
-
-// println(app.nodes.length);
-
-  };
-
-  angleMode="radians";
-
-  var r=2.5;
-  var d=48;
-  
-  var position=app.vortex.length;
-  
   var loadData=function(){
   
     app.vortex=[];
 
-    for(var theta=0; theta<PI*d; theta+=PI/18){
+    for(var theta=0; theta<PI*vortexDiameter; theta+=PI/18){
 
-      app.vortex.push(new pt( r*(cos(theta)+theta*sin(theta)),
-                              r*(sin(theta)-theta*cos(theta)),
+      app.vortex.push(new pt( vortexRadius*(cos(theta)+theta*sin(theta)),
+                              vortexRadius*(sin(theta)-theta*cos(theta)),
                               round(random(0,1)),
-                              color(random(64)))
-               );
+                              color(random(64))
+                            )
+                      );
     }
 
   };
+  
   var addBit=function(arr){
       
     for(var n=0; n<arr.length-1; n++){
@@ -1160,7 +1241,7 @@ var zoomfactor=0;
     arr[arr.length-1].value=round(random(0,1));
 
     if(app.left){ arr[arr.length-1].color=color(random(128,255)); }
-    else        { arr[arr.length-1].color=color(random(64));   }
+    else        { arr[arr.length-1].color=color(random(64));      }
 
   };
 
@@ -1214,76 +1295,17 @@ var zoomfactor=0;
     popMatrix();
 
   };
-  
-  var addMessage=function(){
 
-    // app.cache+="This is the message that will be sent";
-    app.cache+="S";
-    
-  };
-  
-  var send=function(){
-
-    app.sending=true;
-        
-  };
-  var clearCache=function(){
-    
-    app.send=[];
-    app.received="";
-    
-  };
-
-  var drawGrid=function(){
-
-    pushMatrix();
-    
-      translate(app.width/2, app.height/2);
-      
-      noStroke();
-      fill(CLRS.BACKGROUND_0);
-      rectMode(CENTER);
-      
-      rect(0, 0, app.width, app.height);
-    
-    popMatrix();
-
-    for(var n in app.nodes){ app.nodes[n].draw(mouseX,mouseY); }
-
-    for(var n in app.send){ app.send[n].draw(mouseX,mouseY); }
-
-    sendPackets();
-
-  };
-  
-  var drawSplashScreen=function(){
+  var drawSplash=function(){
 
     involute();
 
     addBit(app.vortex);
 
-    logo(300,300);
+    logo(app.width/2,app.height/2);
 
   };
   
-  var setGrid=function(){
-
-    app.vortex=[];
-
-    app.frameRate=30;
-
-    loadGrid();
-
-    app.controls=[];
-
-    app.controls.push(  new Button(2, 525,  0,  100,  30, CLRS.BACKGROUND_0,  "add",    addMessage));
-    app.controls.push(  new Button(2, 425,  0,  100,  30, CLRS.BACKGROUND_0,  "send",   send));
-    app.controls.push(  new Button(2, 325,  0,  100,  30, CLRS.BACKGROUND_0,  "back..", setSplash));
-    app.controls.push(  new Button(2, 225,  0,  100,  30, CLRS.BACKGROUND_0,  "clear",  clearCache))
-      
-    process=drawGrid;
-      
-  };
   var setSplash=function(){
 
     app.frameRate=10;
@@ -1292,11 +1314,14 @@ var zoomfactor=0;
     
     app.controls=[];
 
-    app.controls.push(new Button(2,250,420,100,30,CLRS.BACKGROUND_0,"begin...",setGrid));
+    app.controls.push(new Button(2,app.width/2-50,420,100,30,CLRS.BACKGROUND_0,"begin...",setGrid));
 
-    process=drawSplashScreen;
+    process=drawSplash;
     
   };
+
+
+  // Draw loop ============================================================
 
   var draw=function(){
     
@@ -1312,58 +1337,19 @@ var zoomfactor=0;
 
     popMatrix();
 
-if(app.debug){ telemetry(); }
+    if(app.debug){ telemetry(); }
 
   };
+
+
 
   // Events ===========================================================
 
-  var disableNode=function(NODE){
-
-    if(NODE.connections.length===0){ exit(); }
-
-    var min=dist(NODE.connections[0].x, NODE.connections[0].y, endNode.x,endNode.y);
-    var distance=min;
-    var index=0;
-    
-    for(var n=0; n<NODE.connections.length; n++){
-
-      NODE.connections[n].active=false;
-      
-      distance=dist(NODE.connections[n].x,NODE.connections[n].y,endNode.x,endNode.y);
-      
-      if(distance<min){
-        
-        min=distance;
-        index=n;
-
-      }
-
-    }
-    
-    disableNode(NODE.connections[index]);
-    
-  };
-
-  var sendPackets=function(){
-
-    if(app.cache.length>0 && frameCount%10==0 && app.sending){
-
-      app.send.push(new Packet(10, 20, app.cache.substring(0,1)));
-      app.cache=app.cache.substring(1,app.cache.length);
-
-      if(app.cache.length==0){ app.sending=false; }
-
-    }
-
-  };
-
-  // Mouse ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Mouse Events ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var mouseClicked=function(){
 
-    for(var c in app.controls){
-      app.controls[c].clicked(mouseX,mouseY);
-    }
+    for(var n in app.nodes){ app.nodes[n].clicked(mouseX,mouseY); }
+    for(var c in app.controls){ app.controls[c].clicked(mouseX,mouseY); }
 
   };
   var mouseMoved=function(){
@@ -1373,8 +1359,6 @@ if(app.debug){ telemetry(); }
     
     for(var n in app.nodes){ app.nodes[n].moved(mouseX,mouseY); }
     for(var c in app.controls){ app.controls[c].moved(mouseX,mouseY); }
-
-    // process();
 
   };
   var mouseDragged=function(){
@@ -1437,7 +1421,7 @@ if(app.debug){ telemetry(); }
 
   };
 
-  // Keys ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Keyboard Events ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var keyPressed=function(){
 
     // if(keyCode===32){
@@ -1492,7 +1476,10 @@ if(app.debug){ telemetry(); }
 
   };
 
+
+
   // Initialize =======================================================
+  
   var addControls=function(){
 
     // var ctrls=[];
@@ -1508,64 +1495,19 @@ if(app.debug){ telemetry(); }
 
   };
 
-  var printCommands=function(){
-
-    // saveStrings('Rectangle', COMMANDS.DEBUG);
-
-    // <?xml version='1.0'?>
-    // <CATALOG>
-
-      // <COMMAND>
-        // <NAME>Empire Burlesque</NAME>
-        // <KEYCODE>Bob Dylan</KEYCODE>
-        // <INDEX>USA</INDEX>
-        // <ENGLISH>Columbia</ENGLISH>
-        // <SPANISH>10.90</SPANISH>
-      // </COMMAND>
-
-    // </CATALOG>
-
-    p("<?xml version='1.0'?>");
-    p("<COMMANDS>");
-    
-    for(var n=150; n<arrCOMMANDS.length; n++){
-      p("  <COMMAND>"                                       );
-      p("    <INDEX>"   + arrCOMMANDS[n][0] + "</INDEX>"    );
-      p("    <KEYCODE>" + arrCOMMANDS[n][1] + "</KEYCODE>"  );
-      p("    <ICON>"    + arrCOMMANDS[n][3] + "</ICON>"     );
-      p("    <ENGLISH>" + arrCOMMANDS[n][2] + "</ENGLISH>"  );
-      p("    <SPANISH>" + arrCOMMANDS[n][3] + "</SPANISH>"  );
-      p("  </COMMAND>"                                      );
-    }
-
-    p("</COMMANDS>");
-
-  };
-
   var initialize=function(){
 
+    size(app.width, app.height); // set size of canvas
+
+    app.gridSize=11,
+
+    app.xIncr=app.width/(app.gridSize+1),
+    app.yIncr=app.height/(app.gridSize+1),
+      
     setGrid();
 
   };
 
   initialize();
-
-  var clickMe=function(p){
-    
-    if(p===1){
-      // p(1);
-      // document.getElementById('menu').style.border="1px solid red";
-      // document.getElementById("origin").checked=true;
-      app.origin=false;
-    }
-    else{
-      // p(2);
-      // document.getElementById('menu').style.border="1px solid transparent";
-      // document.getElementById("origin").checked=false;
-      app.origin=true;
-    }
-
-  };
-
 
 }};
