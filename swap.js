@@ -2,7 +2,7 @@
 
 /*
     ============================================================================
-        cartesia.js
+        swap.js
     ===========================================================================
 */
 /* @pjs globalKeyEvents="true"; */
@@ -71,9 +71,9 @@ var proc = function(processingInstance){
 
   };
   
-  var getColor=function(clr, alpha){
+  var getColor=function(clr, Key){
 
-    return color(red(clr), green(clr), blue(clr), alpha/100*255);
+    return color(red(clr), green(clr), blue(clr), Key/100*255);
 
   };
   
@@ -100,7 +100,7 @@ var proc = function(processingInstance){
 
   };
   
-  // Print Arrays ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Print Arrays ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var printArray1D=function(arr){
 
     println(arr);
@@ -138,65 +138,73 @@ var proc = function(processingInstance){
     
   var CLRS={
 
-    TRANSPARENT:  color(-1,-1,-1),
+    TRANSPARENT:    color(-1,-1,-1),
+  
+    WHITE:          color(255,255,255),     BLACK:        color(0,0,0),
+    RED:            color(170,29,29),       GREEN:        color(158,182,58),
+    BLUE:           color(29,86,170),       YELLOW:       color(238,214,15),
+    ORANGE:         color(238,136,15),      GRAY:         color(128,128,128),
+  
+    BROWN:          color(155,145,135),
+  
+    control:        color(128,128,128),     controlF:     color(242,242,242),
+  
+    TEXT:           color(255,255,255),
+  
+    Red:            color(255,0,0),         RedOrange:    color(255,81,0),
+    Orange:         color(255,127,0),       YellowOrange: color(255,190,0),
+    Yellow:         color(255,255,0),
+  
+    YellowGreen:    color(192,255,0),
+    Green:          color(0,255,0),         BlueGreen:    color(0,127,127),
+    Blue:           color(0,0,255),         BlueViolet:   color(92,0,255),
+  
+    Violet:         color(127,0,255),       RedViolet:    color(191,0,127),
+  
+    Gray1:          color(255*10/11),       Gray2:        color(255*9/11),
+    Gray3:          color(255*8/11),        Gray4:        color(255*7/11),
+    Gray5:          color(255*6/11),        Gray6:        color(255*5/11),
+    Gray7:          color(255*4/11),        Gray8:        color(255*3/11),
+    Gray9:          color(255*2/11),        Gray10:       color(255*1/11),
+    White:          color(255,255,255),     Black:        color(0,0,0),
+  
+    BUTTONH:        color(16,16,16),        BUTTON:       color(24,24,24),
+  
+    GRID:           color(33,40,48),
+  
+    VERTEX:         color(255,255,0),
+    VERTEXA:        color(255*6/11),
+    LINE:           color(255*6/11),
+    LINEA:          color(170,29,29),
+    FILL:           getColor(color(255*7/11),10),
+    FILLA:          getColor(color(255*7/11),25),
+  
+    RULER:          color(231,189,33),
+  
+    SELECTED:       color(0,0,255),
+    HIT:            color(255,0,0),
+  
+    BACKGROUND_0:   color( 20, 90, 52),
+    BACKGROUND_1:   color( 28,129, 74),
+    BACKGROUND_2:   color( 34,161, 91),
+    BACKGROUND_3:   color( 36,167, 93),
+      
+    NODE_BLUE:      color(51,221,250),
 
-    WHITE:        color(255,255,255),     BLACK:        color(0,0,0),
-    RED:          color(170,29,29),       GREEN:        color(158,182,58),
-    BLUE:         color(29,86,170),       YELLOW:       color(238,214,15),
-    ORANGE:       color(238,136,15),      GRAY:         color(128,128,128),
+    CONNECTION:     color(251,175, 56),
+    NODE:           color(255),
 
-    BROWN:        color(155,145,135),
 
-    control:      color(128,128,128),     controlF:     color(242,242,242),
-
-    TEXT:         color(255,255,255),
-
-    Red:          color(255,0,0),         RedOrange:    color(255,81,0),
-    Orange:       color(255,127,0),       YellowOrange: color(255,190,0),
-    Yellow:       color(255,255,0),
-
-    YellowGreen:  color(192,255,0),
-    Green:        color(0,255,0),         BlueGreen:    color(0,127,127),
-    Blue:         color(0,0,255),         BlueViolet:   color(92,0,255),
-
-    Violet:       color(127,0,255),       RedViolet:    color(191,0,127),
-
-    Gray1:        color(255*10/11),       Gray2:        color(255*9/11),
-    Gray3:        color(255*8/11),        Gray4:        color(255*7/11),
-    Gray5:        color(255*6/11),        Gray6:        color(255*5/11),
-    Gray7:        color(255*4/11),        Gray8:        color(255*3/11),
-    Gray9:        color(255*2/11),        Gray10:       color(255*1/11),
-    White:        color(255,255,255),     Black:        color(0,0,0),
-
-    BUTTONH:      color(16,16,16),        BUTTON:       color(24,24,24),
-
-    GRID:         color(33,40,48),
-
-    VERTEX:       color(255,255,0),
-    VERTEXA:      color(255*6/11),
-    LINE:         color(255*6/11),
-    LINEA:        color(170,29,29),
-    FILL:         getColor(color(255*7/11),10),
-    FILLA:        getColor(color(255*7/11),25),
-
-    RULER:        color(231,189,33),
-
-    SELECTED:     color(0,0,255),
-    HIT:          color(255,0,0),
-
-    BACKGROUND_0: color( 20, 90, 52),
-    BACKGROUND_1: color( 28,129, 74),
-    BACKGROUND_2: color( 34,161, 91),
-    BACKGROUND_3: color( 36,167, 93),
+    // Code.org
+    CODE_TEAL:      color(0,173,188),
     
-    NODE_BLUE:    color(51,221,250),
+    CODE_PURPLE:    color(118,101,160),
+    CODE_PURPLE_LT: color(166,155,193),
+
+    CODE_GREEN:     color(185,191,21),
     
-    CONNECTION:   color(251,175, 56),
-    NODE:         color(255),
-    
-    CODE_TEAL:    color(0,  173,188),
-    CODE_PURPLE:  color(118,101,160)
-    
+    CODE_ORANGE:    color(255,164,0)
+
   };
 
   var MODES={
@@ -294,20 +302,25 @@ var proc = function(processingInstance){
 
   var app={
 
-      // Debugging aids ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      debug:          true,
 
+      // Debugging aids ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      
+      debug:          true,
       telemetry:      true,
       
+      
       // TravelingSalesman ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      
       stops:          [],
       distance:       0,
       running:        false,
-
+      size:           50,
+      
+      
       // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
       nodes:          [],
-      controls:       [],
+      ctrls:          [],
       
       send:           [],
       received:       [],
@@ -320,7 +333,9 @@ var proc = function(processingInstance){
       activeNode:     -1,
 
       gridSize:       0,
-
+      
+      focus:          0,
+      
       xIncr:          0,
       yIncr:          0,
   
@@ -344,7 +359,7 @@ var proc = function(processingInstance){
   
       over:           true,
 
-      keys:           [],
+      ctrls:           [],
 
     border:         true,
 
@@ -457,7 +472,7 @@ var proc = function(processingInstance){
 
   var telemetry=function(){
     
-    if(app.over && mouseX<50){
+    // if(app.over && mouseX<50){
 
       var rowHeight=20;
       var top=100;
@@ -481,14 +496,14 @@ var proc = function(processingInstance){
       textSize(12);
       
       text("Frame Rate: ",      left, top+2*rowHeight);
-      text("Controls count: ",  left, top+3*rowHeight);
+      text("controls count: ",  left, top+3*rowHeight);
   
       text("Left: ",            left, top+5*rowHeight);
       text("Center: ",          left, top+6*rowHeight);
       text("Right: ",           left, top+7*rowHeight);
   
       text("Nodes: ",           left, top+9*rowHeight);
-      text("Controls: ",        left, top+10*rowHeight);
+      text("controls: ",        left, top+10*rowHeight);
       
       
       text("Cache: ",           left, top+12*rowHeight);
@@ -496,18 +511,20 @@ var proc = function(processingInstance){
       text("Received: ",        left, top+14*rowHeight);
 
       text("Running: ",         left, top+16*rowHeight);
+
+      text("Focus: ",           left, top+18*rowHeight);
       
       fill(CLRS.YELLOW);
 
       text(app.frameRate,       left+100,  top+2*rowHeight);
-      text(app.controls.length, left+100,  top+3*rowHeight);
+      text(app.ctrls.length,    left+100,  top+3*rowHeight);
       
       text(app.left,            left+100,  top+5*rowHeight);
       text(app.center,          left+100,  top+6*rowHeight);
       text(app.right,           left+100,  top+7*rowHeight);
       
       text(app.nodes.length,    left+100,  top+9*rowHeight);
-      text(app.controls.length, left+100,  top+10*rowHeight);
+      text(app.ctrls.length,    left+100,  top+10*rowHeight);
 
       text(app.cache.length,    left+100,  top+12*rowHeight);
       text(app.send.length,     left+100,  top+13*rowHeight);
@@ -515,7 +532,9 @@ var proc = function(processingInstance){
 
       text(app.running,         left+100,  top+16*rowHeight);
 
-    }
+      text(app.focus,           left+100,  top+18*rowHeight);
+      
+    // }
 
     // Cache
     textSize(16);
@@ -558,7 +577,9 @@ var proc = function(processingInstance){
 
   // Objects ==================================================================
 
-  // Point ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  // Point ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
   var pt=function(x,y,value,clr){
       
       this.x=x;
@@ -570,7 +591,8 @@ var proc = function(processingInstance){
   
     };
     
-  // Node ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Node ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
   var getNodeAddress=function(){
 
     var NAT=round(random(0,255))+"."+round(random(0,255))+"."+round(random(0,255))+"."+round(random(0,255));
@@ -778,7 +800,7 @@ println(this.enabled);
     
   };
   
-  // Packet ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Packet ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var Packet=function(source, destination, text){
 
     var dX=0;
@@ -948,32 +970,126 @@ println(this.enabled);
   };
 
 
-  // Controls ===========================================================
-  
-  // Button ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  var Button=function(id,x,y,width,height,color,caption,execute){
+  // ctrls =================================================================
 
-    this.id=id;           //  Unique control id
-  
-    this.x=x;             //  x-coordinate
-    this.y=y;             //  y-coordinate
+  var Control=function(id,parent,ctrls,x,y,width,height,color,caption,execute){
 
-    this.w=width;         //  width
-    this.h=height;        //  height
+    this.id=id;             //  Unique control id
 
-    this.color=color;     //  Color
-
-    this.caption=caption; //  Caption
-
-    this.execute=execute; //  Executes on click
-
-    this.hit=false;       //  mouse is over node
-    this.active=true;     //  currently functional
-    this.selected=false;  //  highlighted
-
-    this.visible=true;    //  Is the button visible?
+    this.parent=parent;     //  container control
     
-    this.timer=30;        //  Countdown timer
+    this.ctrls=ctrls;       //  contained ctrls
+    
+    this.x=x;               //  x-coordinate
+    this.y=y;               //  y-coordinate
+  
+    this.w=width;           //  width
+    this.h=height;          //  height
+  
+    this.color=color;       //  Color
+  
+    this.caption=caption;   //  Caption
+  
+    this.execute=execute;   //  Executes on click
+  
+    this.hit=false;         //  mouse is over node
+    this.active=true;       //  currently functional
+    this.selected=false;    //  highlighted
+  
+    this.visible=true;      //  Is the button visible?
+  
+    this.timer=30;          //  Countdown timer
+    
+  };
+  Control.prototype.draw=function(x,y){
+
+    // if(this.visible){
+
+    //   if(this.hit){ fill(getColor(CLRS.WHITE,5));                 }
+    //   else        { fill(getColor(this.color,this.timer/30*50));  }
+  
+    //   rectMode(CORNER);
+    //   noStroke();
+      
+    //   // Border/Background
+    //   rect(this.x, this.y, this.w, this.h, 10);
+      
+    //   // Caption
+    //   textAlign(CENTER,CENTER);
+    //   textSize(24);
+      
+    //   if(this.hit){ fill(getColor(CLRS.WHITE,75)); }
+    //   else        { fill(getColor(CLRS.WHITE,50)); }
+      
+    //   text(this.caption, this.x+this.w/2, this.y+this.h/2);
+    
+    // }
+    
+  };
+  Control.prototype.clicked=function(x,y) {
+
+    if(this.hit){ this.execute(); }
+
+  };
+  Control.prototype.moved=function(x,y){
+
+    if(x>this.x &&
+       x<this.x+this.w &&
+       y>this.y &&
+       y<this.y+this.h){
+         
+      this.hit=true;
+      app.focus=this.id;
+
+      for(var c in this.ctrls){ this.ctrls[c].moved(mouseX,mouseY); }
+
+    }
+    else{
+
+      this.hit=false;
+
+    }
+
+  };
+  Control.prototype.dragged=function(x,y) {
+
+    // if(this.hit){
+    //   this.x=x;
+    //   this.y=y;
+    // }
+
+  };
+  Control.prototype.pressed=function(x,y) {
+
+    if(this.hit){
+      
+    }
+
+  };
+  Control.prototype.released=function(x,y){
+
+    if(this.hit){
+      
+    }
+
+  };
+  Control.prototype.over=function(x,y){
+
+    this.visible=true;
+
+  };
+  Control.prototype.out=function(x,y){
+
+    this.visible=false;
+
+  };
+  
+      
+      
+  // Button ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  var Button=function(id,parent,ctrls,x,y,width,height,color,caption,execute){
+    
+    Control.call(this,id,parent,ctrls,x,y,width,height,color,caption,execute);
 
   };
   Button.prototype.draw=function(x,y){
@@ -987,7 +1103,10 @@ println(this.enabled);
       noStroke();
       
       // Border/Background
-      rect(this.x, this.y, this.w, this.h, 10);
+      rect(this.parent.x+this.x,
+           this.parent.y+this.y,
+           this.w,
+           this.h, 10);
       
       // Caption
       textAlign(CENTER,CENTER);
@@ -995,24 +1114,37 @@ println(this.enabled);
       
       if(this.hit){ fill(getColor(CLRS.WHITE,75)); }
       else        { fill(getColor(CLRS.WHITE,50)); }
-      
-      text(this.caption, this.x+this.w/2, this.y+this.h/2);
-    
+
+      text(this.caption,
+           this.parent.x+this.x+this.w/2,
+           this.parent.y+this.y+this.h/2);
+
     }
     
   };
-  Button.prototype.clicked=function(x,y) {
+  Button.prototype.clicked=function(x,y){
 
     if(this.hit){ this.execute(); }
 
   };
   Button.prototype.moved=function(x,y){
 
-    if(x>this.x &&
-       x<this.x+this.w &&
-       y>this.y &&
-       y<this.y+this.h){ this.hit=true;   this.timer++; }
-    else               { this.hit=false;  this.timer=0; }
+    if(x>this.parent.x+this.x &&
+       x<this.parent.x+this.x+this.w &&
+       y>this.parent.y+this.y &&
+       y<this.parent.y+this.y+this.h){
+      
+      app.focus=this.id;
+      this.hit=true;
+      this.timer++;
+
+    }
+    else{
+
+      this.hit=false;
+      this.timer=0;
+
+    }
 
   };
   Button.prototype.dragged=function(x,y) {
@@ -1048,10 +1180,259 @@ println(this.enabled);
 
   };
 
+  // Key ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  var inputKey=function(k){
 
+    app.cache+=k;
 
+  };
+
+  var Key=function(id,parent,ctrls,x,y,width,height,color,caption,execute){
+
+    Control.call(this,id,parent,ctrls,x,y,width,height,color,caption,execute);
+
+  };
+  Key.prototype.draw=function(x,y){
+
+    if(this.visible){
+
+      if(app.left &&
+         this.hit){ this.offset=1; }
+      else        { this.offset=0; }
+
+      if(this.hit){
+
+        if(app.left){ fill(getColor(CLRS.CODE_PURPLE,85)); }
+        else        { fill(getColor(CLRS.CODE_PURPLE,70)); }
+
+        cursor(HAND);
+
+      }
+      else{
+        
+        if(this.parent.hit){ fill(getColor(CLRS.CODE_PURPLE,40)); }
+        else               { fill(getColor(CLRS.CODE_PURPLE,30)); }
+        
+        // cursor(ARROW);
+        
+      }
+
+      rectMode(CORNER);
+      noStroke();
+      
+      // Border/Background
+      rect(this.parent.x+this.x+this.offset,
+           this.parent.y+this.y+this.offset,
+           this.w, this.h,
+           10);
+      
+      // Caption
+      textAlign(CENTER,CENTER);
+      textSize(24);
+
+      if(this.hit){ fill(getColor(CLRS.WHITE,100)); }
+      else        { fill(getColor(CLRS.WHITE,50));  }
+      
+      text(this.caption,
+           this.parent.x+this.x+this.w/2+this.offset,
+           this.parent.y+this.y+this.h/2+this.offset);
+
+    }
+
+  };
+  Key.prototype.clicked=function(x,y){
+
+    if(this.hit){
+
+      this.execute(this.caption);
+
+    }
+
+  };
+  Key.prototype.moved=function(x,y){
+    
+    // Control.moved(this,x,y);
+    
+    if(x>this.parent.x+this.x &&
+      x<this.parent.x+this.x+this.w &&
+      y>this.parent.y+this.y &&
+      y<this.parent.y+this.y+this.h){
+
+      app.focus=this.id;
+      this.hit=true;
+
+    }
+    else{
+
+      this.hit=false;
+
+    }
+
+  };
+  Key.prototype.dragged=function(x,y){
+
+    // if(this.hit){
+    //   this.x=x;
+    //   this.y=y;
+    // }
+
+  };
+  Key.prototype.pressed=function(x,y){
+
+    if(this.hit){
+
+// println(this.caption);
+
+      this.pressed=true;
+
+    }
+
+  };
+  Key.prototype.released=function(x,y){
+
+    if(this.hit){
+      this.pressed=false;
+    }
+
+  };
+  Key.prototype.over=function(x,y){
+
+    this.visible=true;
+
+  };
+  Key.prototype.out=function(x,y){
+
+    this.visible=false;
+
+  };
+
+  // Keypad ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  var container=function(id,parent,ctrls,x,y,width,height,color,caption,execute){
+
+    Control.call(this,id,parent,ctrls,x,y,width,height,color,caption,execute);
+    
+  };
+  container.prototype.draw=function(x,y){
+
+    if(this.visible){
+
+      if(this.hit){
+        
+        fill(getColor(this.color, 15+this.timer));
+
+        if(this.timer<10){ this.timer++; }
+        
+        cursor(ARROW);
+      }
+      else{
+
+        fill(getColor(this.color, 15+this.timer));
+        
+        if(this.timer>5){  this.timer--; }
+
+      }
+  
+      rectMode(CORNER);
+      noStroke();
+      stroke(CLRS.RED);
+      strokeWeight(1);
+      
+      // Border/Background
+      rect(this.x, this.y, this.w, this.h, 10);
+      
+      // Caption
+      textAlign(CENTER,CENTER);
+      textSize(24);
+      
+      if(this.hit){ fill(getColor(CLRS.WHITE,75)); }
+      else        { fill(getColor(CLRS.WHITE,50)); }
+      
+      // text(this.caption, this.x+this.w/2, this.y+this.h/2);
+    
+      for(var c in this.ctrls){ this.ctrls[c].draw(mouseX,mouseY); }
+
+    }
+
+  };
+  container.prototype.clicked=function(x,y){
+
+    if(this.hit){
+
+      for(var c in this.ctrls){ this.ctrls[c].clicked(mouseX,mouseY); }
+
+      // this.execute();
+
+    }
+
+  };
+  container.prototype.moved=function(x,y){
+
+    if(x>this.x &&
+       x<this.x+this.w &&
+       y>this.y &&
+       y<this.y+this.h){
+         
+      this.hit=true;
+      app.focus=this.id;
+
+      for(var c in this.ctrls){ this.ctrls[c].moved(mouseX,mouseY); }
+               
+    }
+    else{
+      
+      this.hit=false;
+      this.timer=0;
+      
+    }
+
+  };
+  container.prototype.dragged=function(x,y){
+
+    // if(this.hit){
+    //   this.x=x;
+    //   this.y=y;
+    //   for(var c in this.ctrls){ this.ctrls[c].dragged(mouseX,mouseY); }
+    // }
+    
+      
+  };
+  container.prototype.pressed=function(x,y){
+
+//     if(this.hit){
+
+//       for(var c in this.ctrls){ this.ctrls[c].pressed(mouseX,mouseY); }
+      
+// println(this.keys.length);
+
+//     }
+
+  };
+  container.prototype.released=function(x,y){
+
+    if(this.hit){
+      for(var c in this.ctrls){ this.ctrls[c].released(mouseX,mouseY); }
+    }
+
+  };
+  container.prototype.over=function(x,y){
+
+    this.visible=true;
+
+  };
+  container.prototype.out=function(x,y){
+
+    this.visible=false;
+
+  };
+  
+  
   // Network ============================================================
   
+  var blank=function(){
+  
+    
+    
+  };
   var sendPacket=function(){
     
     app.send.push(new packet(0,0));
@@ -1119,12 +1500,12 @@ println(this.enabled);
     popMatrix();
 
     for(var n in app.nodes){ app.nodes[n].draw(mouseX,mouseY); }
-    for(var n in app.send){ app.send[n].draw(mouseX,mouseY); }
+    for(var n in app.send) { app.send[n].draw(mouseX,mouseY);  }
 
     sendPackets();
 
   };
-  
+
   var addMessage=function(){
 
     app.cache+="This is the message that will be sent";
@@ -1155,17 +1536,70 @@ println(this.enabled);
 
     app.vortex=[];
 
-    app.frameRate=30;
+    app.frameRate=0;
 
-    loadGrid();
+    // loadGrid();
 
-    app.controls=[];
+    app.ctrls=[];
+    
+    
+    // Toolbar
+    
+    var actrls=[];
+    
+    var toolbar =new container("T"+actrls.length, 0, actrls, 200, 10, 450, 40, CLRS.BLACK, "toolbar", blank);
+    
+    actrls.push(new Button("B"+0, toolbar, [],  10, 5, 100, 30, CLRS.BACKGROUND_0, "add",    addMessage));
+    actrls.push(new Button("B"+1, toolbar, [], 120, 5, 100, 30, CLRS.BACKGROUND_0, "send",   send));
+    actrls.push(new Button("B"+2, toolbar, [], 230, 5, 100, 30, CLRS.BACKGROUND_0, "back..", setSplash));
+    actrls.push(new Button("B"+3, toolbar, [], 340, 5, 100, 30, CLRS.BACKGROUND_0, "clear",  clearCache))
+    
+    toolbar.ctrls=actrls;
 
-    app.controls.push(  new Button(2, 525,  0,  100,  30, CLRS.BACKGROUND_0,  "add",    addMessage));
-    app.controls.push(  new Button(2, 425,  0,  100,  30, CLRS.BACKGROUND_0,  "send",   send));
-    app.controls.push(  new Button(2, 325,  0,  100,  30, CLRS.BACKGROUND_0,  "back..", setSplash));
-    app.controls.push(  new Button(2, 225,  0,  100,  30, CLRS.BACKGROUND_0,  "clear",  clearCache))
+    app.ctrls.push(toolbar);
+
+
+    // Keypad
+    
+    var ctrls=[];
+    
+    var keypad=new container("P"+app.ctrls.length,0,[], 50, 400,  610, 190,CLRS.CODE_PURPLE,"keypad",blank);
+    
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  10,   10,   50,  50, CLRS.BLUE,  "q",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  70,   10,   50,  50, CLRS.BLUE,  "w",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  130,  10,   50,  50, CLRS.BLUE,  "e",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  190,  10,   50,  50, CLRS.BLUE,  "r",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  250,  10,   50,  50, CLRS.BLUE,  "t",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  310,  10,   50,  50, CLRS.BLUE,  "y",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  370,  10,   50,  50, CLRS.BLUE,  "u",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  430,  10,   50,  50, CLRS.BLUE,  "i",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  490,  10,   50,  50, CLRS.BLUE,  "o",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  550,  10,   50,  50, CLRS.BLUE,  "p",  inputKey));
+    
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  40,   70,   50,  50, CLRS.BLUE,  "a",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  100,  70,   50,  50, CLRS.BLUE,  "s",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  160,  70,   50,  50, CLRS.BLUE,  "d",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  220,  70,   50,  50, CLRS.BLUE,  "f",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  280,  70,   50,  50, CLRS.BLUE,  "g",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  340,  70,   50,  50, CLRS.BLUE,  "h",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  400,  70,   50,  50, CLRS.BLUE,  "j",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  460,  70,   50,  50, CLRS.BLUE,  "k",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  520,  70,   50,  50, CLRS.BLUE,  "l",  inputKey));
+    
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  70,   130,  50,  50, CLRS.BLUE,  "z",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  130,  130,  50,  50, CLRS.BLUE,  "x",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  190,  130,  50,  50, CLRS.BLUE,  "c",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  250,  130,  50,  50, CLRS.BLUE,  "v",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  310,  130,  50,  50, CLRS.BLUE,  "b",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  370,  130,  50,  50, CLRS.BLUE,  "n",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  430,  130,  50,  50, CLRS.BLUE,  "m",  inputKey));
       
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  10,   170, 400,  50, CLRS.BLUE,  " ",  inputKey));
+    
+    keypad.ctrls=ctrls;
+    
+    app.ctrls.push(keypad);
+
     process=drawGrid;
       
   };
@@ -1185,11 +1619,6 @@ println(this.enabled);
 
 
   // Travelling Salesman ======================================================
-  var setSwap=function(){
-
-    app.running=!app.running;
-
-  };
   
   var arraySwap=function(arr, index1, index2){
 
@@ -1200,31 +1629,83 @@ println(this.enabled);
 
   };
   
-  var swap=function(){
+  var resetTS=function(){
 
+    for(var n=0; n<app.stops.length; n++){
+      arraySwap(app.stops,n, round(random(app.stops.length-1)));
+    }
+
+  };
+  
+  var setSwap=function(){
+
+    app.running=!app.running;
+
+  };
+  var setKeypad=function(){
+    
+    
+    
+  };
+  var normalize=function(){
+  
+    var distance=0;
+    
+    for(var n=0; n<app.stops.length-1; n++){
+  
+        distance=dist(app.stops[n].x,
+                      app.stops[n].y,
+                      app.stops[n+1].x,
+                      app.stops[n+1].y);
+ 
+      if(distance>(app.width*0.5)){
+
+        arraySwap(app.stops,n,n+1);
+        distance=0;
+        
+      }
+    
+    }
+
+  };
+  
+  var swap=function(){
+    
+    // normalize();
+    
     var distance=0;
     var index1=round(random(app.stops.length-1));
     var index2=round(random(app.stops.length-1));
     
-    // println(index1+", "+index2);
+    // if(abs(index1-index2<5)){
+      
+      // println(index1+", "+index2);
+      
+      arraySwap(app.stops,index1,index2);
+  
+      for(var n=0; n<app.stops.length-1; n++){
+  
+        distance+=dist(app.stops[n].x,
+                       app.stops[n].y,
+                       app.stops[n+1].x,
+                       app.stops[n+1].y);
+      }
+      
+      distance+=dist(app.stops[0].x,
+                     app.stops[0].y,
+                     app.stops[app.stops.length-1].x,
+                     app.stops[app.stops.length-1].y);
+      
+      var difference=app.distance-distance;
+      
+      if(app.distance<distance){
+  
+        arraySwap(app.stops,index1,index2);
+  
+      }
+  
+    // }
     
-    arraySwap(app.stops,index1,index2);
-
-    for(var n=0; n<app.stops.length-1; n++){
-
-      distance+=dist(app.stops[n].x,
-                     app.stops[n].y,
-                     app.stops[n+1].x,
-                     app.stops[n+1].y);
-    }
-    
-    distance+=dist(app.stops[0].x,
-                   app.stops[0].y,
-                   app.stops[app.stops.length-1].x,
-                   app.stops[app.stops.length-1].y);
-
-    if(app.distance<distance){ arraySwap(app.stops,index1,index2); }
-
   };
 
   var setTravelingSalesman=function(){
@@ -1237,16 +1718,20 @@ println(this.enabled);
 
     // loadGrid();
 
-    app.controls=[];
+    app.ctrls=[];
 
-    app.controls.push(  new Button(2, 525,  0,  100,  30, CLRS.BACKGROUND_0,  "swap",    setSwap));
-    // app.controls.push(  new Button(2, 425,  0,  100,  30, CLRS.BACKGROUND_0,  "send",   send));
-    // app.controls.push(  new Button(2, 325,  0,  100,  30, CLRS.BACKGROUND_0,  "back..", setSplash));
-    // app.controls.push(  new Button(2, 225,  0,  100,  30, CLRS.BACKGROUND_0,  "clear",  clearCache))
+    app.ctrls.push(  new Button(1, 0,[],225,  0,  100,  30, CLRS.BACKGROUND_0,  "add",    addMessage));
+    app.ctrls.push(  new Button(2, 0,[],325,  0,  100,  30, CLRS.BACKGROUND_0,  "send",   send));
+      
+    app.ctrls.push(  new Button(3, 0,[],525,  0,  100,  30, CLRS.BACKGROUND_0,  "swap",    setSwap));
+    app.ctrls.push(  new Button(4, 0,[],425,  0,  100,  30, CLRS.BACKGROUND_0,  "reset",   resetTS));
+    
+
+    // app.ctrls.push(  new Button(2, 225,  0,  100,  30, CLRS.BACKGROUND_0,  "clear",  clearCache))
       
     process=drawTravelingSalesman;
 
-    for(var n=0; n<100; n++){
+    for(var n=0; n<app.size; n++){
       app.stops.push(new pt(random(20,app.width-20),random(20,app.height-20)));
     }
 
@@ -1327,6 +1812,7 @@ println(this.enabled);
 
   };
 
+
   // Splash Screen ============================================================
   
   var currentP=new pt(0,0);
@@ -1340,7 +1826,8 @@ println(this.enabled);
   
   var position=app.vortex.length;
   
-  // Logo ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  // Logo =====================================================================
   var logo=function(x,y){
 
     fill(getColor(CLRS.BLACK,75));
@@ -1465,16 +1952,16 @@ println(this.enabled);
 
     loadData();
     
-    app.controls=[];
+    app.ctrls=[];
 
-    app.controls.push(new Button(2,app.width/2-50,420,100,30,CLRS.BACKGROUND_0,"begin...",setGrid));
+    app.ctrls.push(new Button(2,app.width/2-50,420,100,30,CLRS.BACKGROUND_0,"begin...",setGrid));
 
     process=drawSplash;
     
   };
 
 
-  // Draw loop ============================================================
+  // Draw loop ================================================================
 
   var draw=function(){
     
@@ -1486,7 +1973,7 @@ println(this.enabled);
   
       process();
   
-      for(var c in app.controls){ app.controls[c].draw(mouseX,mouseY); }
+      for(var c in app.ctrls){ app.ctrls[c].draw(mouseX,mouseY); }
 
     popMatrix();
 
@@ -1496,13 +1983,13 @@ println(this.enabled);
 
 
 
-  // Events ===========================================================
+  // Events ===================================================================
 
-  // Mouse Events ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Mouse Events ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var mouseClicked=function(){
 
     for(var n in app.nodes){ app.nodes[n].clicked(mouseX,mouseY); }
-    for(var c in app.controls){ app.controls[c].clicked(mouseX,mouseY); }
+    for(var c in app.ctrls){ app.ctrls[c].clicked(mouseX,mouseY); }
 
   };
   var mouseMoved=function(){
@@ -1512,15 +1999,15 @@ println(this.enabled);
     
     if(process!=drawTravelingSalesman){ for(var n in app.nodes){ app.nodes[n].moved(mouseX,mouseY); } }
     
-    for(var c in app.controls){ app.controls[c].moved(mouseX,mouseY); }
+    for(var c in app.ctrls){ app.ctrls[c].moved(mouseX,mouseY); }
 
   };
   var mouseDragged=function(){
     
     process();
 
-    for(var c in app.controls){ app.controls[c].dragged(mouseX,mouseY); }
-    for(var d in app.controls){ app.controls[d].draw(mouseX,mouseY);    }
+    for(var c in app.ctrls){ app.ctrls[c].dragged(mouseX,mouseY); }
+    for(var d in app.ctrls){ app.ctrls[d].draw(mouseX,mouseY);    }
 
     telemetry();
 
@@ -1541,9 +2028,9 @@ println(this.enabled);
 
     }
 
-    for(var n in app.nodes){ app.nodes[n].pressed(mouseX,mouseY); }
-    for(var c in app.controls){ app.controls[c].pressed(mouseX,mouseY); }
-    
+    for(var n in app.nodes)   { app.nodes[n].pressed(mouseX,mouseY);    }
+    for(var c in app.ctrls){ app.ctrls[c].pressed(mouseX,mouseY); }
+
   };
   var mouseReleased=function(){
 
@@ -1552,21 +2039,21 @@ println(this.enabled);
     app.right=false;
 
     for(var n in app.nodes){ app.nodes[n].released(mouseX,mouseY); }
-    for(var c in app.controls){ app.controls[c].released(mouseX,mouseY); }
+    for(var c in app.ctrls){ app.ctrls[c].released(mouseX,mouseY); }
 
   };
   var mouseOut=function(){
     
     app.over=false;
     
-    for(var c in app.controls){ app.controls[c].out(mouseX,mouseY); }
+    // for(var c in app.ctrls){ app.ctrls[c].out(mouseX,mouseY); }
 
   };
   var mouseOver=function(){
 
     app.over=true;
 
-    for(var c in app.controls){ app.controls[c].over(mouseX,mouseY); }
+    // for(var c in app.ctrls){ app.ctrls[c].over(mouseX,mouseY); }
 
   };
   var mouseWheel=function(){
@@ -1575,7 +2062,7 @@ println(this.enabled);
 
   };
 
-  // Keyboard Events ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Keyboard Events ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var keyPressed=function(){
 
     // if(keyCode===32){
@@ -1601,14 +2088,14 @@ println(this.enabled);
 
     // }
 
-    for(var c in app.controls){ app.controls[c].pressed(); }
+    for(var c in app.ctrls){ app.ctrls[c].pressed(); }
 
   };
   var keyReleased=function(){
 
     app.keys[keyCode]=false;
 
-    for(var c in app.controls){ app.controls[c].released(); }
+    for(var c in app.ctrls){ app.ctrls[c].released(); }
 
   };
   var keyTyped=function(){
@@ -1625,14 +2112,14 @@ println(this.enabled);
     //   default:  break;
 
     // }
-
-    for(var c in app.controls){ app.controls[c].typed(); }
+    app.cache+=key.toString();
+    // for(var c in app.ctrls){ app.ctrls[c].typed(); }
 
   };
 
 
 
-  // Initialize =======================================================
+  // Initialize ===============================================================
   
   var addControls=function(){
 
@@ -1658,8 +2145,8 @@ println(this.enabled);
     app.xIncr=app.width/(app.gridSize+1),
     app.yIncr=app.height/(app.gridSize+1),
 
-    // setGrid();
-    setTravelingSalesman();
+    setGrid();
+    // setTravelingSalesman();
 
   };
 
