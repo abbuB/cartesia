@@ -358,8 +358,7 @@ var proc = function(processingInstance){
       right:          false,
   
       over:           true,
-
-      ctrls:           [],
+      keys:           [],
 
     border:         true,
 
@@ -999,7 +998,9 @@ println(this.enabled);
     this.visible=true;      //  Is the button visible?
   
     this.timer=30;          //  Countdown timer
-    
+
+    this.tag=0;             //  Misc property
+
   };
   Control.prototype.draw=function(x,y){
 
@@ -1096,22 +1097,31 @@ println(this.enabled);
 
     if(this.visible){
 
-      if(this.hit){ fill(getColor(CLRS.WHITE,5));                 }
-      else        { fill(getColor(this.color,this.timer/30*50));  }
-  
+      if(this.hit){
+        
+        fill(getColor(CLRS.WHITE,5));
+        cursor(HAND);
+        
+      }
+      else{
+
+        fill(getColor(this.color,this.timer/30*50));
+
+      }
+
       rectMode(CORNER);
       noStroke();
-      
+
       // Border/Background
       rect(this.parent.x+this.x,
            this.parent.y+this.y,
            this.w,
            this.h, 10);
-      
+
       // Caption
       textAlign(CENTER,CENTER);
       textSize(24);
-      
+
       if(this.hit){ fill(getColor(CLRS.WHITE,75)); }
       else        { fill(getColor(CLRS.WHITE,50)); }
 
@@ -1195,23 +1205,23 @@ println(this.enabled);
   Key.prototype.draw=function(x,y){
 
     if(this.visible){
-
+      
       if(app.left &&
          this.hit){ this.offset=1; }
       else        { this.offset=0; }
 
       if(this.hit){
 
-        if(app.left){ fill(getColor(CLRS.CODE_PURPLE,85)); }
-        else        { fill(getColor(CLRS.CODE_PURPLE,70)); }
+        if(app.left){ fill(getColor(this.color,85)); }
+        else        { fill(getColor(this.color,70)); }
 
         cursor(HAND);
 
       }
       else{
         
-        if(this.parent.hit){ fill(getColor(CLRS.CODE_PURPLE,40)); }
-        else               { fill(getColor(CLRS.CODE_PURPLE,30)); }
+        if(this.parent.hit){ fill(getColor(this.color,40)); }
+        else               { fill(getColor(this.color,30)); }
         
         // cursor(ARROW);
         
@@ -1221,8 +1231,8 @@ println(this.enabled);
       noStroke();
       
       // Border/Background
-      rect(this.parent.x+this.x+this.offset,
-           this.parent.y+this.y+this.offset,
+      rect(x+this.x+this.offset,
+           y+this.y+this.offset,
            this.w, this.h,
            10);
       
@@ -1234,8 +1244,8 @@ println(this.enabled);
       else        { fill(getColor(CLRS.WHITE,50));  }
       
       text(this.caption,
-           this.parent.x+this.x+this.w/2+this.offset,
-           this.parent.y+this.y+this.h/2+this.offset);
+           x+this.x+this.w/2+this.offset,
+           y+this.y+this.h/2+this.offset);
 
     }
 
@@ -1253,10 +1263,8 @@ println(this.enabled);
     
     // Control.moved(this,x,y);
     
-    if(x>this.parent.x+this.x &&
-      x<this.parent.x+this.x+this.w &&
-      y>this.parent.y+this.y &&
-      y<this.parent.y+this.y+this.h){
+    if(mouseX>x+this.x && mouseX<x+this.x+this.w &&
+       mouseY>y+this.y && mouseY<y+this.y+this.h){
 
       app.focus=this.id;
       this.hit=true;
@@ -1306,7 +1314,7 @@ println(this.enabled);
 
   };
 
-  // Keypad ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Container ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var container=function(id,parent,ctrls,x,y,width,height,color,caption,execute){
 
     Control.call(this,id,parent,ctrls,x,y,width,height,color,caption,execute);
@@ -1317,12 +1325,13 @@ println(this.enabled);
     if(this.visible){
 
       if(this.hit){
-        
+
         fill(getColor(this.color, 15+this.timer));
 
         if(this.timer<10){ this.timer++; }
-        
+
         cursor(ARROW);
+
       }
       else{
 
@@ -1425,6 +1434,139 @@ println(this.enabled);
 
   };
   
+  // Keypad ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  var Keypad=function(id,parent,ctrls,x,y,width,height,color,caption,execute){
+
+    Control.call(this,id,parent,ctrls,x,y,width,height,color,caption,execute);
+    
+  };
+  Keypad.prototype.draw=function(x,y){
+
+    if(this.visible){
+
+      if(this.hit){
+
+        if(this.tag<this.h){ this.tag+=3; }
+        
+      }
+      else{
+        
+        if(this.tag>0){ this.tag-=3; }
+        
+      }
+
+      if(this.hit){
+
+        fill(getColor(this.color, 15+this.timer));
+
+        if(this.timer<10){ this.timer++; }
+
+        cursor(ARROW);
+
+      }
+      else{
+
+        fill(getColor(this.color, 15+this.timer));
+
+        if(this.timer>5){  this.timer--; }
+
+      }
+
+      rectMode(CORNER);
+      noStroke();
+      
+      stroke(this.color);
+      strokeWeight(1);
+
+      // Border/Background
+      rect(this.x, this.y-this.tag,
+           this.w, this.h,
+           10,20);
+
+      // Caption
+      textAlign(CENTER,CENTER);
+      textSize(24);
+
+      if(this.hit){ fill(getColor(CLRS.WHITE,75)); }
+      else        { fill(getColor(CLRS.WHITE,50)); }
+
+      // text(this.caption, this.x+this.w/2, this.y+this.h/2);
+
+      for(var c in this.ctrls){ this.ctrls[c].draw(this.x,this.y-this.tag); }
+
+    }
+
+  };
+  Keypad.prototype.clicked=function(x,y){
+
+    if(this.hit){
+
+      for(var c in this.ctrls){ this.ctrls[c].clicked(mouseX,mouseY); }
+
+      // this.execute();
+
+    }
+
+  };
+  Keypad.prototype.moved=function(x,y){
+
+    if(mouseX>this.x &&
+       mouseX<this.x+this.w &&
+       mouseY>this.y-this.tag &&
+       mouseY<this.y+this.h-this.tag){
+
+      this.hit=true;
+      app.focus=this.id;
+
+      for(var c in this.ctrls){ this.ctrls[c].moved(this.x, this.y-this.tag); }
+
+    }
+    else{
+
+      this.hit=false;
+      this.timer=0;
+
+    }
+
+  };
+  Keypad.prototype.dragged=function(x,y){
+
+    // if(this.hit){
+    //   this.x=x;
+    //   this.y=y;
+    //   for(var c in this.ctrls){ this.ctrls[c].dragged(mouseX,mouseY); }
+    // }
+    
+      
+  };
+  Keypad.prototype.pressed=function(x,y){
+
+//     if(this.hit){
+
+//       for(var c in this.ctrls){ this.ctrls[c].pressed(mouseX,mouseY); }
+      
+// println(this.keys.length);
+
+//     }
+
+  };
+  Keypad.prototype.released=function(x,y){
+
+    if(this.hit){
+      for(var c in this.ctrls){ this.ctrls[c].released(mouseX,mouseY); }
+    }
+
+  };
+  Keypad.prototype.over=function(x,y){
+
+    this.visible=true;
+
+  };
+  Keypad.prototype.out=function(x,y){
+
+    this.visible=false;
+
+  };
   
   // Network ============================================================
   
@@ -1547,7 +1689,7 @@ println(this.enabled);
     
     var actrls=[];
     
-    var toolbar =new container("T"+actrls.length, 0, actrls, 200, 10, 450, 40, CLRS.BLACK, "toolbar", blank);
+    var toolbar =new container("C"+actrls.length, 0, actrls, 200, 10, 450, 40, CLRS.BLACK, "toolbar", blank);
     
     actrls.push(new Button("B"+0, toolbar, [],  10, 5, 100, 30, CLRS.BACKGROUND_0, "add",    addMessage));
     actrls.push(new Button("B"+1, toolbar, [], 120, 5, 100, 30, CLRS.BACKGROUND_0, "send",   send));
@@ -1562,39 +1704,41 @@ println(this.enabled);
     // Keypad
     
     var ctrls=[];
+    var sz=40;
+    var keyClr=CLRS.CODE_PURPLE;
     
-    var keypad=new container("P"+app.ctrls.length,0,[], 50, 400,  610, 190,CLRS.CODE_PURPLE,"keypad",blank);
+    var keypad=new Keypad("C"+app.ctrls.length,0,[], 250,  590,  510, 210, keyClr,"keypad",blank);
     
-    ctrls.push(new Key("K"+ctrls.length, keypad, [],  10,   10,   50,  50, CLRS.BLUE,  "q",  inputKey));
-    ctrls.push(new Key("K"+ctrls.length, keypad, [],  70,   10,   50,  50, CLRS.BLUE,  "w",  inputKey));
-    ctrls.push(new Key("K"+ctrls.length, keypad, [],  130,  10,   50,  50, CLRS.BLUE,  "e",  inputKey));
-    ctrls.push(new Key("K"+ctrls.length, keypad, [],  190,  10,   50,  50, CLRS.BLUE,  "r",  inputKey));
-    ctrls.push(new Key("K"+ctrls.length, keypad, [],  250,  10,   50,  50, CLRS.BLUE,  "t",  inputKey));
-    ctrls.push(new Key("K"+ctrls.length, keypad, [],  310,  10,   50,  50, CLRS.BLUE,  "y",  inputKey));
-    ctrls.push(new Key("K"+ctrls.length, keypad, [],  370,  10,   50,  50, CLRS.BLUE,  "u",  inputKey));
-    ctrls.push(new Key("K"+ctrls.length, keypad, [],  430,  10,   50,  50, CLRS.BLUE,  "i",  inputKey));
-    ctrls.push(new Key("K"+ctrls.length, keypad, [],  490,  10,   50,  50, CLRS.BLUE,  "o",  inputKey));
-    ctrls.push(new Key("K"+ctrls.length, keypad, [],  550,  10,   50,  50, CLRS.BLUE,  "p",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  10,   10,   sz,  sz, keyClr,  "q",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  60,   10,   sz,  sz, keyClr,  "w",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  110,  10,   sz,  sz, keyClr,  "e",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  160,  10,   sz,  sz, keyClr,  "r",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  210,  10,   sz,  sz, keyClr,  "t",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  260,  10,   sz,  sz, keyClr,  "y",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  310,  10,   sz,  sz, keyClr,  "u",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  360,  10,   sz,  sz, keyClr,  "i",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  410,  10,   sz,  sz, keyClr,  "o",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  460,  10,   sz,  sz, keyClr,  "p",  inputKey));
     
-    ctrls.push(new Key("K"+ctrls.length, keypad, [],  40,   70,   50,  50, CLRS.BLUE,  "a",  inputKey));
-    ctrls.push(new Key("K"+ctrls.length, keypad, [],  100,  70,   50,  50, CLRS.BLUE,  "s",  inputKey));
-    ctrls.push(new Key("K"+ctrls.length, keypad, [],  160,  70,   50,  50, CLRS.BLUE,  "d",  inputKey));
-    ctrls.push(new Key("K"+ctrls.length, keypad, [],  220,  70,   50,  50, CLRS.BLUE,  "f",  inputKey));
-    ctrls.push(new Key("K"+ctrls.length, keypad, [],  280,  70,   50,  50, CLRS.BLUE,  "g",  inputKey));
-    ctrls.push(new Key("K"+ctrls.length, keypad, [],  340,  70,   50,  50, CLRS.BLUE,  "h",  inputKey));
-    ctrls.push(new Key("K"+ctrls.length, keypad, [],  400,  70,   50,  50, CLRS.BLUE,  "j",  inputKey));
-    ctrls.push(new Key("K"+ctrls.length, keypad, [],  460,  70,   50,  50, CLRS.BLUE,  "k",  inputKey));
-    ctrls.push(new Key("K"+ctrls.length, keypad, [],  520,  70,   50,  50, CLRS.BLUE,  "l",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  40,   60,   sz,  sz, keyClr,  "a",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  90,   60,   sz,  sz, keyClr,  "s",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  140,  60,   sz,  sz, keyClr,  "d",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  190,  60,   sz,  sz, keyClr,  "f",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  240,  60,   sz,  sz, keyClr,  "g",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  290,  60,   sz,  sz, keyClr,  "h",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  340,  60,   sz,  sz, keyClr,  "j",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  390,  60,   sz,  sz, keyClr,  "k",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  440,  60,   sz,  sz, keyClr,  "l",  inputKey));
     
-    ctrls.push(new Key("K"+ctrls.length, keypad, [],  70,   130,  50,  50, CLRS.BLUE,  "z",  inputKey));
-    ctrls.push(new Key("K"+ctrls.length, keypad, [],  130,  130,  50,  50, CLRS.BLUE,  "x",  inputKey));
-    ctrls.push(new Key("K"+ctrls.length, keypad, [],  190,  130,  50,  50, CLRS.BLUE,  "c",  inputKey));
-    ctrls.push(new Key("K"+ctrls.length, keypad, [],  250,  130,  50,  50, CLRS.BLUE,  "v",  inputKey));
-    ctrls.push(new Key("K"+ctrls.length, keypad, [],  310,  130,  50,  50, CLRS.BLUE,  "b",  inputKey));
-    ctrls.push(new Key("K"+ctrls.length, keypad, [],  370,  130,  50,  50, CLRS.BLUE,  "n",  inputKey));
-    ctrls.push(new Key("K"+ctrls.length, keypad, [],  430,  130,  50,  50, CLRS.BLUE,  "m",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  70,   110,  sz,  sz, keyClr,  "z",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  120,  110,  sz,  sz, keyClr,  "x",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  170,  110,  sz,  sz, keyClr,  "c",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  220,  110,  sz,  sz, keyClr,  "v",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  270,  110,  sz,  sz, keyClr,  "b",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  320,  110,  sz,  sz, keyClr,  "n",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  370,  110,  sz,  sz, keyClr,  "m",  inputKey));
       
-    ctrls.push(new Key("K"+ctrls.length, keypad, [],  10,   170, 400,  50, CLRS.BLUE,  " ",  inputKey));
+    ctrls.push(new Key("K"+ctrls.length, keypad, [],  90,   160, 300,  sz, keyClr,  " ",  inputKey));
     
     keypad.ctrls=ctrls;
     
@@ -1967,13 +2111,13 @@ println(this.enabled);
     
     pushMatrix();
     
-      translate(0.5,0.5);
+      // translate(0.5,0.5);
       
       frameRate(app.frameRate);
   
       process();
   
-      for(var c in app.ctrls){ app.ctrls[c].draw(mouseX,mouseY); }
+      for(var c in app.ctrls){ app.ctrls[c].draw(0,0); }
 
     popMatrix();
 
