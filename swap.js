@@ -316,7 +316,7 @@ var proc = function(processingInstance){
 
       // Debugging aids ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       
-      debug:          true,
+      debug:          false,
       telemetry:      true,
       
       
@@ -325,7 +325,7 @@ var proc = function(processingInstance){
       stops:          [],
       distance:       0,
       running:        false,
-      size:           10,
+      size:           20,
       algorithm:      0,
       
       
@@ -378,9 +378,22 @@ var proc = function(processingInstance){
 
 
   };
-  
-  var getAlgorithm=function(){ return app.algorithm; };
 
+  var getAlgorithm= function(){ return app.algorithm; };
+
+  var getDistance=  function(){ return app.distance;  };
+  var setDistance=  function(){ return app.distance;  };
+  
+  var getSize=      function(){ return app.size;      };
+  var setSize=      function(n){
+
+    if     (n===0){ if(app.size<100){ app.size++; } }
+    else if(n==1) { if(app.size>5)  { app.size--; } }
+
+    newTSP();
+
+  };
+  
   // Methods ==================================================================
 
   var getProp=function(p){
@@ -1280,16 +1293,27 @@ println(this.enabled);
       if(this.hit){ fill(getColor(CLRS.WHITE,75)); }
       else        { fill(getColor(CLRS.WHITE,50)); }
 
-      text(this.caption,
-           x+this.x,
-           y+this.y+this.h/2);
-      
+      if(this.caption=="0000"){
+
+        text(this.execute(),
+             x+this.x,
+             y+this.y+this.h/2);
+
+      }
+      else{
+        
+        text(this.caption,
+             x+this.x,
+             y+this.y+this.h/2);
+
+      }
+
       // Control origin ~~~~~~~~~~
       if(app.debug){  fill(CLRS.RED);
                       ellipse(x+this.x,y+this.y,3,3);
                    }
     }
-    
+
   };
   Label.prototype.clicked=  function(x,y){
 
@@ -1459,6 +1483,198 @@ println(this.enabled);
 
   };
   
+  // Option ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  var UpDown=function(id,parent,ctrls,x,y,width,height,color,caption,execute,params){
+
+    Control.call(this,id,parent,ctrls,x,y,width,height,color,caption,execute,params);
+
+    this.hitUp=false;     //  The mouse is over the Up arrow
+    this.hitDown=false;   //  The mouse is over the Down arrow
+
+  };
+  UpDown.prototype.draw=    function(x,y){
+
+    if(this.visible){
+
+      // if(this.hitUp || this.hitDown){ cursor(HAND); }
+
+      rectMode(CORNER);
+      noStroke();
+
+      textSize(16);
+      textAlign(LEFT,CENTER);
+
+      // rect(x+this.x, y+this.y,
+      //     textWidth(this.execute())+20, this.h,
+      //     10);
+
+      // Up Arrow ~~~~~~~~~~~
+      stroke(CLRS.GRAY);
+      strokeWeight(0.5);
+      fill(CLRS.RED);
+      
+      if(this.hitUp){ fill(CLRS.CODE_BLUE); }
+      else          { noFill();             }
+
+      triangle(x+this.x+10, y+this.y,
+               x+this.x,    y+this.y+this.h/2-2,
+               x+this.x+20, y+this.y+this.h/2-2);
+
+      // Down Arrow ~~~~~~~~~~~
+
+      if(this.hitDown){ fill(CLRS.CODE_BLUE); }
+      else            { noFill();             }
+
+      triangle(x+this.x+10, y+this.y+this.h,
+               x+this.x,    y+this.y+this.h/2+2,
+               x+this.x+20, y+this.y+this.h/2+2);
+
+      // Caption ~~~~~~~~~~
+      if(this.hit){ fill(getColor(CLRS.WHITE,75)); }
+      else        { fill(getColor(CLRS.WHITE,50)); }
+
+      text(this.ctrls(),
+           x+this.x+25,
+           y+this.y+this.h/2);
+
+      if(this.hitUp || this.hitDown){ cursor(HAND);   }
+      else                          { cursor(ARROW);  }
+
+      // Control origin ~~~~~~~~~~
+      if(app.debug){  fill(CLRS.RED);
+                      ellipse(x+this.x,y+this.y,3,3);
+                   }
+
+    }
+
+  };
+  UpDown.prototype.clicked= function(x,y){
+
+    if     (this.hitUp)  { this.execute(0); }
+    else if(this.hitDown){ this.execute(1); }
+
+  };
+  
+  var hitTriangle=function(x1,y1,x2,y2,x3,y3){
+
+    // Point triangle
+    var a=dist(x1,y1,x2,y2);
+    var b=dist(x2,y2,x3,y3);
+    var c=dist(x3,y3,x1,y1);
+
+    var s=(a+b+c)/2;
+
+    var area=floor(pow(s*(s-a)*(s-b)*(s-c),0.5));
+
+    // Mouse Triangle 1
+    a=dist(mouseX,mouseY,x2,y2);
+    b=dist(x2,y2,x3,y3);
+    c=dist(x3,y3,mouseX,mouseY);
+
+    s=(a+b+c)/2;
+
+    var area1=floor(pow((s*(s-a)*(s-b)*(s-c)),0.5));
+    
+    // Mouse Triangle 2
+    a=dist(x1,y1,mouseX,mouseY);
+    b=dist(mouseX,mouseY,x3,y3);
+    c=dist(x3,y3,x1,y1);
+
+    s=(a+b+c)/2;
+
+    var area2=floor(pow(s*(s-a)*(s-b)*(s-c),0.5));
+    
+    // Mouse Triangle 3
+    a=dist(x1,y1,x2,y2);
+    b=dist(x2,y2,mouseX,mouseY);
+    c=dist(mouseX,mouseY,x1,y1);
+
+    s=(a+b+c)/2;
+
+    var area3=floor(pow(s*(s-a)*(s-b)*(s-c),0.5));
+
+    var retVal=abs(area-(area1+area2+area3));
+
+    return retVal<=3;
+    
+  };
+  
+  UpDown.prototype.moved=   function(x,y){
+
+    if(mouseX>x+this.x &&
+       mouseX<x+this.x+this.w &&
+       mouseY>y+this.y &&
+       mouseY<y+this.y+this.h){
+
+      app.focus=this.id;
+      this.hit=true;
+
+      if(hitTriangle(x+this.x+10, y+this.y,
+                     x+this.x,    y+this.y+this.h/2-2,
+                     x+this.x+20, y+this.y+this.h/2-2)){
+
+        this.hitUp=true;
+
+      }
+      else{
+        this.hitUp=false;
+      }
+
+      if(hitTriangle(x+this.x+10, y+this.y+this.h,
+                    x+this.x,    y+this.y+this.h/2+2,
+                    x+this.x+20, y+this.y+this.h/2+2)){
+
+        this.hitDown=true;
+
+      }
+      else{
+        this.hitDown=false;
+      }
+
+    }
+    else{
+      
+      this.hitUp=false;
+      this.hitDown=false;
+
+      this.hit=false;
+
+    }
+
+  };
+  UpDown.prototype.dragged= function(x,y){
+
+    // if(this.hit){
+    //   this.x=x;
+    //   this.y=y;
+    // }
+
+  };
+  UpDown.prototype.pressed= function(x,y){
+
+    if(this.hit){
+      
+    }
+
+  };
+  UpDown.prototype.released=function(x,y){
+
+    if(this.hit){
+      
+    }
+
+  };
+  UpDown.prototype.over=    function(x,y){
+
+    this.visible=true;
+
+  };
+  UpDown.prototype.out=     function(x,y){
+
+    this.visible=false;
+
+  };
+  
   // Button ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var Button=function(id,parent,ctrls,x,y,width,height,color,caption,execute,params){
     
@@ -1587,7 +1803,7 @@ println(this.enabled);
       }
       else{
 
-        fill(getColor(CLRS.BLACK,70));
+        fill(getColor(CLRS.BLACK,80));
 
       }
 
@@ -2239,24 +2455,34 @@ println(this.enabled);
 
     var ctrls=[];
     
-    var cntrTSP =new Container(getGUID(), undefined, [], 10, 10, app.width-20, app.height-20, undefined, "TSP Background", blank);
+    var cntrTSP =new Container(getGUID(), undefined, [], 0, 0, app.width-20, app.height-20, undefined, "TSP Background", blank);
 
     ctrls.push(new Button(getGUID(), cntrTSP, [], 10, app.height-40, 100, 30, CLRS.CODE_YELLOW, "back...", setSplash));
-    ctrls.push(new Button(getGUID(), cntrTSP, [], 10, 30, 100, 30, CLRS.BACKGROUND_0, "new",     newTSP));
+    ctrls.push(new Button(getGUID(), cntrTSP, [], 10, 30, 100, 30, CLRS.CODE_YELLOW, "new",     newTSP));
 
-    ctrls.push(new Button(getGUID(), cntrTSP, [], 10, 60, 100, 30, CLRS.BACKGROUND_0, "run",     runTSP));
-    ctrls.push(new Button(getGUID(), cntrTSP, [], 10, 90, 100, 30, CLRS.BACKGROUND_0, "retry",   retryTSP));
+    ctrls.push(new Button(getGUID(), cntrTSP, [], 10, 60, 100, 30, CLRS.CODE_YELLOW, "run",     runTSP));
+    ctrls.push(new Button(getGUID(), cntrTSP, [], 10, 90, 100, 30, CLRS.CODE_YELLOW, "retry",   retryTSP));
 
     ctrls.push(
-      new Label( getGUID(), cntrTSP, getAlgorithm,0, 210, 100, 14, CLRS.CODE_PURPLE, "Select Algorithm",setAlgorithm,0));
+      new Label(getGUID(), cntrTSP, getDistance, 30, 150, 100, 20, CLRS.CODE_YELLOW, "0000",   getDistance,0));
+
     ctrls.push(
-      new Option(getGUID(), cntrTSP, getAlgorithm,0, 225, 100, 30, CLRS.CODE_PURPLE, "Random",       setAlgorithm,0));
+      new Label( getGUID(), cntrTSP, [],10, 210, 100, 14, CLRS.CODE_PURPLE, "Select Algorithm",getDistance,0));
+      
     ctrls.push(
-      new Option(getGUID(), cntrTSP, getAlgorithm,0, 250, 100, 30, CLRS.CODE_PURPLE, "Sim Annealing",setAlgorithm,1));
+      new Option(getGUID(), cntrTSP, getAlgorithm,10, 225, 100, 30, CLRS.CODE_PURPLE, "Random",       setAlgorithm,0));
     ctrls.push(
-      new Option(getGUID(), cntrTSP, getAlgorithm,0, 275, 100, 30, CLRS.CODE_PURPLE, "Ant Colony",   setAlgorithm,2));
+      new Option(getGUID(), cntrTSP, getAlgorithm,10, 250, 100, 30, CLRS.CODE_PURPLE, "Sim Annealing",setAlgorithm,1));
     ctrls.push(
-      new Option(getGUID(), cntrTSP, getAlgorithm,0, 300, 100, 30, CLRS.CODE_PURPLE, "Genetic - B&B",setAlgorithm,3));
+      new Option(getGUID(), cntrTSP, getAlgorithm,10, 275, 100, 30, CLRS.CODE_PURPLE, "Ant Colony",   setAlgorithm,2));
+    ctrls.push(
+      new Option(getGUID(), cntrTSP, getAlgorithm,10, 300, 100, 30, CLRS.CODE_PURPLE, "Genetic - B&B",setAlgorithm,3));
+
+    ctrls.push(
+      new Label( getGUID(), cntrTSP, [],45, 470, 100, 14, CLRS.CODE_PURPLE, "Nodes","",0));
+
+    ctrls.push(
+      new UpDown(getGUID(), cntrTSP, getSize,50, 500, 100, 30, CLRS.CODE_PURPLE, "#",setSize,3));
 
     // ALGORITHMS.RANDOM:                   0,
     // ALGORITHMS.SIMULATED_ANNEALLING:     1,
@@ -2269,11 +2495,11 @@ println(this.enabled);
     cntrTSP.tag=false;
 
     app.ctrls.push(cntrTSP);
-    
+
     process=drawTSP;
 
     for(var n=0; n<app.size; n++){
-      app.stops.push(new pt(random(120,app.width-20),random(20,app.height-20)));
+      app.stops.push(new pt(random(140,app.width-20),random(20,app.height-20)));
     }
 
   };
@@ -2350,7 +2576,7 @@ println(this.enabled);
         textSize(24);
         textAlign(LEFT,BOTTOM);
         
-        text(app.distance, 20,30);
+        // text(app.distance, 20,30);
 
     popMatrix();
     
@@ -2380,41 +2606,6 @@ println(this.enabled);
   var vortexDiameter=48;
   
   var position=app.vortex.length;
-  
-  
-  // Logo =====================================================================
-  var logo=function(x,y){
-
-    // Go faster stripe
-    fill(getColor(CLRS.CODE_TEAL,50));
-    
-    rect(0,app.height/2-50,app.width,100);
-    
-    //
-    fill(getColor(CLRS.BLACK,75));
-    noStroke();
-    stroke(CLRS.BLACK);
-    strokeWeight(0.25);
-
-    rectMode(CORNER);
-
-    rect(x+5,   y-105, 100, 100);
-    rect(x+5,   y+5,   100, 100);
-    rect(x-105, y-105, 100, 100);
-    rect(x-105, y+5,   100, 100);
-
-    fill(getColor(CLRS.WHITE,80));
-    
-    rectMode(CENTER);
-    textSize(72);
-    textAlign(CENTER,CENTER);
-
-    text("C", x-52.5, y-52.5);
-    text("O", x+52.5, y-52.5);
-    text("E", x+52.5, y+52.5);
-    text("D", x-52.5, y+52.5);
-
-  };
 
   var loadData=function(){
   
@@ -2425,7 +2616,7 @@ println(this.enabled);
       app.vortex.push(new pt( vortexRadius*(cos(theta)+theta*sin(theta)),
                               vortexRadius*(sin(theta)-theta*cos(theta)),
                               round(random(0,1)),
-                              color(random(64))
+                              color(random(128,192))
                             )
                       );
     }
@@ -2442,7 +2633,7 @@ println(this.enabled);
     arr[arr.length-1].value=round(random(0,1));
 
     if(app.left){ arr[arr.length-1].color=getColor(CLRS.CODE_GREEN,50); }
-    else        { arr[arr.length-1].color=color(random(64));           }
+    else        { arr[arr.length-1].color=color(random(128,192));       }
 
   };
 
@@ -2450,7 +2641,7 @@ println(this.enabled);
 
     rectMode(CENTER);
 
-    background(CLRS.BLACK);
+    background(getColor(CLRS.CODE_TEAL,80));
 
     noStroke();
 
@@ -2460,10 +2651,10 @@ println(this.enabled);
 
       translate(app.width/2,app.height/2);
 
-      for(var radius=900; radius>50; radius-=25){
-        fill(getColor(CLRS.GRAY,1));
-        ellipse(0,0,radius,radius);
-      }
+      // for(var radius=900; radius>50; radius-=25){
+      //   fill(getColor(CLRS.GRAY,1));
+      //   ellipse(0,0,radius,radius);
+      // }
 
       beginShape();
 
@@ -2504,14 +2695,21 @@ println(this.enabled);
     addBit(app.vortex);
 
     // Go faster stripe
-    fill(getColor(CLRS.CODE_TEAL,70));
+    fill(getColor(CLRS.WHITE,70));
 
     pushMatrix();
       
       noStroke();
       
       rectMode(CORNER);
-      rect(0,app.height/2-50,app.width,100);
+      
+      fill(getColor(CLRS.BLACK,50));
+      
+      rect(0,0,app.width,app.height);
+      
+      fill(getColor(CLRS.CODE_TEAL,50));
+      
+      // rect(0,app.height/2-50,app.width,100);
 
     popMatrix();
 
