@@ -203,13 +203,17 @@ var proc = function(processingInstance){
 
     CODE_GREEN:     color(185,191,21),
     
-    CODE_ORANGE:    color(255,164,0)
-
+    CODE_ORANGE:    color(255,164,0),
+    
+    CODE_BLUE:      color(0,148,202),
+    
+    CODE_YELLOW:    color(0,148,202)
+    
   };
 
   var MODES={
-    NETWORK:          0,
-    Splash:     1
+    NETWORK:    0,
+    SPLASH:     1
   };
 
   var KEYCODES={
@@ -316,12 +320,12 @@ var proc = function(processingInstance){
       telemetry:      true,
       
       
-      // TravelingSalesman ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      // TSP ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       
       stops:          [],
       distance:       0,
       running:        false,
-      size:           50,
+      size:           10,
       algorithm:      0,
       
       
@@ -347,7 +351,7 @@ var proc = function(processingInstance){
       xIncr:          0,
       yIncr:          0,
   
-      width:          900,
+      width:          600,
       height:         600,
 
       sending:        false,
@@ -476,15 +480,13 @@ var proc = function(processingInstance){
 
   };
 
-  
-
   var telemetry=function(){
     
-    // if(app.over && mouseX<50){
+    if(app.over && app.keys[KEYCODES.CONTROL]){
 
       var rowHeight=20;
       var top=100;
-      var left=15;
+      var left=10;
       
       textAlign(LEFT,BOTTOM);
 
@@ -545,20 +547,20 @@ var proc = function(processingInstance){
       text(app.focus,           left+100,  top+18*rowHeight);
 
       text(app.algorithm,       left+100,  top+20*rowHeight);
+
+      // Cache
+      textSize(16);
+      textAlign(LEFT,TOP);
+      fill(CLRS.YELLOW);
       
-    // }
-
-    // Cache
-    textSize(16);
-    textAlign(LEFT,TOP);
-    fill(CLRS.YELLOW);
-    
-    text(app.cache,5,5);                        //  cache contents
-    text(app.cache.length,5,50);                //  cache length
-
-    // # Received
-    textAlign(LEFT,BOTTOM);
-    text(app.received.length,5,app.height-5);   //  # of packets received
+      text(app.cache,5,5);                        //  cache contents
+      text(app.cache.length,5,50);                //  cache length
+  
+      // # Received
+      textAlign(LEFT,BOTTOM);
+      text(app.received.length,5,app.height-5);   //  # of packets received
+      
+    }
     
     // Display received packets
     var strReceived="";
@@ -649,7 +651,7 @@ var proc = function(processingInstance){
     this.distance=0;
 
   };
-  Node.prototype.draw     =function(x,y){
+  Node.prototype.draw=    function(x,y){
 
     // Node connections
     stroke(getColor(CLRS.CONNECTION,255));
@@ -720,7 +722,7 @@ var proc = function(processingInstance){
     // this.y+=random(-3,3);
     
   };
-  Node.prototype.clicked  =function(x,y){
+  Node.prototype.clicked= function(x,y){
 
     if(this.hit){
       this.enabled=!this.enabled;
@@ -730,7 +732,7 @@ println(this.enabled);
     }
 
   };
-  Node.prototype.moved=function(x,y){
+  Node.prototype.moved=   function(x,y){
 
     if(mouseX>this.x-this.r &&
        mouseX<this.x+this.r &&
@@ -748,7 +750,7 @@ println(this.enabled);
     }
 
   };
-  Node.prototype.dragged  =function(x,y){
+  Node.prototype.dragged= function(x,y){
 
     if(this.hit &&
        app.left &&
@@ -763,21 +765,21 @@ println(this.enabled);
     }
 
   };
-  Node.prototype.pressed  =function(x,y){
+  Node.prototype.pressed= function(x,y){
 
     if(this.hit){
       app.activeNode=this.id;
     }
 
   };
-  Node.prototype.released =function(x,y){
+  Node.prototype.released=function(x,y){
 
     if(this.hit){
       app.activeNode=-1;
     }
 
   };
-  Node.prototype.load     =function(){
+  Node.prototype.load=    function(){
 
     this.connections=[];
 
@@ -797,7 +799,7 @@ println(this.enabled);
     }
 
   };
-  Node.prototype.disable  =function(node){
+  Node.prototype.disable= function(node){
 
     if(node.connections.length===0){ exit(); }
 
@@ -926,7 +928,7 @@ println(this.enabled);
 // println("break");
 
   };
-  Packet.prototype.draw=function(){
+  Packet.prototype.draw=    function(){
 
     if(this.p<this.points.length-1){
       
@@ -966,7 +968,7 @@ println(this.enabled);
     }
 
   };
-  Packet.prototype.clicked=function(){
+  Packet.prototype.clicked= function(){
 
     if(app.current===COMMANDS.SELECT[0]){
 
@@ -978,8 +980,8 @@ println(this.enabled);
     }
 
   };
-  Packet.prototype.moved=function(x,y){};
-  Packet.prototype.dragged=function(){
+  Packet.prototype.moved=   function(x,y){};
+  Packet.prototype.dragged= function(){
 
     for(var n in this.vertices){
 
@@ -1029,7 +1031,7 @@ println(this.enabled);
     this.params=params;     // optional parameter (arrays, boolean...)
     
   };
-  Control.prototype.draw=function(x,y){
+  Control.prototype.draw=     function(x,y){
 
     if (typeof this.parent != "undefined") {
       // alert("GOT THERE");
@@ -1059,12 +1061,12 @@ println(this.enabled);
     // }
     
   };
-  Control.prototype.clicked=function(x,y) {
+  Control.prototype.clicked=  function(x,y){
 
     if(this.hit){ this.execute(); }
 
   };
-  Control.prototype.moved=function(x,y){
+  Control.prototype.moved=    function(x,y){
 
     if(x>this.x &&
        x<this.x+this.w &&
@@ -1084,7 +1086,7 @@ println(this.enabled);
     }
 
   };
-  Control.prototype.dragged=function(x,y) {
+  Control.prototype.dragged=  function(x,y){
 
     // if(this.hit){
     //   this.x=x;
@@ -1092,26 +1094,26 @@ println(this.enabled);
     // }
 
   };
-  Control.prototype.pressed=function(x,y) {
+  Control.prototype.pressed=  function(x,y){
 
     if(this.hit){
       
     }
 
   };
-  Control.prototype.released=function(x,y){
+  Control.prototype.released= function(x,y){
 
     if(this.hit){
       
     }
 
   };
-  Control.prototype.over=function(x,y){
+  Control.prototype.over=     function(x,y){
 
     this.visible=true;
 
   };
-  Control.prototype.out=function(x,y){
+  Control.prototype.out=      function(x,y){
 
     this.visible=false;
 
@@ -1124,7 +1126,7 @@ println(this.enabled);
     Control.call(this,id,parent,ctrls,x,y,width,height,color,caption,execute,params);
     
   };
-  Container.prototype.draw=function(x,y){
+  Container.prototype.draw=     function(x,y){
 
     if(this.visible){
 
@@ -1175,7 +1177,7 @@ println(this.enabled);
     }
 
   };
-  Container.prototype.clicked=function(x,y){
+  Container.prototype.clicked=  function(x,y){
 
     if(this.hit){
 
@@ -1186,7 +1188,7 @@ println(this.enabled);
     }
 
   };
-  Container.prototype.moved=function(x,y){
+  Container.prototype.moved=    function(x,y){
 
     if(mouseX>this.x &&
        mouseX<this.x+this.w &&
@@ -1207,7 +1209,7 @@ println(this.enabled);
     }
 
   };
-  Container.prototype.dragged=function(x,y){
+  Container.prototype.dragged=  function(x,y){
 
     // if(this.hit){
     //   this.x=x;
@@ -1217,7 +1219,7 @@ println(this.enabled);
     
       
   };
-  Container.prototype.pressed=function(x,y){
+  Container.prototype.pressed=  function(x,y){
 
 //     if(this.hit){
 
@@ -1228,19 +1230,19 @@ println(this.enabled);
 //     }
 
   };
-  Container.prototype.released=function(x,y){
+  Container.prototype.released= function(x,y){
 
     if(this.hit){
       for(var c in this.ctrls){ this.ctrls[c].released(mouseX,mouseY); }
     }
 
   };
-  Container.prototype.over=function(x,y){
+  Container.prototype.over=     function(x,y){
 
     this.visible=true;
 
   };
-  Container.prototype.out=function(x,y){
+  Container.prototype.out=      function(x,y){
 
     this.visible=false;
 
@@ -1253,7 +1255,7 @@ println(this.enabled);
     Control.call(this,id,parent,ctrls,x,y,width,height,color,caption,execute,params);
 
   };
-  Label.prototype.draw=function(x,y){
+  Label.prototype.draw=     function(x,y){
 
     if(this.visible){
 
@@ -1289,12 +1291,12 @@ println(this.enabled);
     }
     
   };
-  Label.prototype.clicked=function(x,y){
+  Label.prototype.clicked=  function(x,y){
 
     // if(this.hit){ this.execute(this.params); }
 
   };
-  Label.prototype.moved=function(x,y){
+  Label.prototype.moved=    function(x,y){
 
     if(mouseX>x+this.x &&
        mouseX<x+this.x+this.w &&
@@ -1312,7 +1314,7 @@ println(this.enabled);
     }
 
   };
-  Label.prototype.dragged=function(x,y) {
+  Label.prototype.dragged=  function(x,y){
 
     // if(this.hit){
     //   this.x=x;
@@ -1320,26 +1322,26 @@ println(this.enabled);
     // }
 
   };
-  Label.prototype.pressed=function(x,y) {
+  Label.prototype.pressed=  function(x,y){
 
     if(this.hit){
       
     }
 
   };
-  Label.prototype.released=function(x,y){
+  Label.prototype.released= function(x,y){
 
     if(this.hit){
       
     }
 
   };
-  Label.prototype.over=function(x,y){
+  Label.prototype.over=     function(x,y){
 
     this.visible=true;
 
   };
-  Label.prototype.out=function(x,y){
+  Label.prototype.out=      function(x,y){
 
     this.visible=false;
 
@@ -1351,7 +1353,7 @@ println(this.enabled);
     Control.call(this,id,parent,ctrls,x,y,width,height,color,caption,execute,params);
 
   };
-  Option.prototype.draw=function(x,y){
+  Option.prototype.draw=    function(x,y){
 
     if(this.visible){
 
@@ -1401,12 +1403,12 @@ println(this.enabled);
     }
     
   };
-  Option.prototype.clicked=function(x,y){
+  Option.prototype.clicked= function(x,y){
 
     if(this.hit){ this.execute(this.params); }
 
   };
-  Option.prototype.moved=function(x,y){
+  Option.prototype.moved=   function(x,y){
 
     if(mouseX>x+this.x &&
        mouseX<x+this.x+this.w &&
@@ -1424,7 +1426,7 @@ println(this.enabled);
     }
 
   };
-  Option.prototype.dragged=function(x,y) {
+  Option.prototype.dragged= function(x,y){
 
     // if(this.hit){
     //   this.x=x;
@@ -1432,7 +1434,7 @@ println(this.enabled);
     // }
 
   };
-  Option.prototype.pressed=function(x,y) {
+  Option.prototype.pressed= function(x,y){
 
     if(this.hit){
       
@@ -1446,12 +1448,12 @@ println(this.enabled);
     }
 
   };
-  Option.prototype.over=function(x,y){
+  Option.prototype.over=    function(x,y){
 
     this.visible=true;
 
   };
-  Option.prototype.out=function(x,y){
+  Option.prototype.out=     function(x,y){
 
     this.visible=false;
 
@@ -1463,7 +1465,7 @@ println(this.enabled);
     Control.call(this,id,parent,ctrls,x,y,width,height,color,caption,execute,params);
 
   };
-  Button.prototype.draw=function(x,y){
+  Button.prototype.draw=    function(x,y){
 
     if (typeof this.parent != "undefined") {
       // alert("GOT THERE");
@@ -1505,12 +1507,12 @@ println(this.enabled);
     }
     
   };
-  Button.prototype.clicked=function(x,y){
+  Button.prototype.clicked= function(x,y){
 
     if(this.hit){ this.execute(); }
 
   };
-  Button.prototype.moved=function(x,y){
+  Button.prototype.moved=   function(x,y){
 
     if(mouseX>x+this.x &&
        mouseX<x+this.x+this.w &&
@@ -1528,7 +1530,7 @@ println(this.enabled);
     }
 
   };
-  Button.prototype.dragged=function(x,y) {
+  Button.prototype.dragged= function(x,y){
 
     // if(this.hit){
     //   this.x=x;
@@ -1536,7 +1538,7 @@ println(this.enabled);
     // }
 
   };
-  Button.prototype.pressed=function(x,y) {
+  Button.prototype.pressed= function(x,y){
 
     if(this.hit){
       
@@ -1550,18 +1552,122 @@ println(this.enabled);
     }
 
   };
-  Button.prototype.over=function(x,y){
+  Button.prototype.over=    function(x,y){
 
     this.visible=true;
 
   };
-  Button.prototype.out=function(x,y){
+  Button.prototype.out=     function(x,y){
 
     this.visible=false;
 
   };
 
 
+  // Button ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  var codeButton=function(id,parent,ctrls,x,y,width,height,color,caption,execute,params){
+    
+    Control.call(this,id,parent,ctrls,x,y,width,height,color,caption,execute,params);
+
+  };
+  codeButton.prototype.draw=    function(x,y){
+
+    if (typeof this.parent != "undefined") {
+      // alert("GOT THERE");
+      // println("No parent");
+    }
+
+    if(this.visible){
+
+      if(this.hit){
+        
+        fill(getColor(this.color,90));
+        cursor(HAND);
+        
+      }
+      else{
+
+        fill(getColor(CLRS.BLACK,70));
+
+      }
+
+      rectMode(CORNER);
+      noStroke();
+
+      rect(x+this.x, y+this.y,
+           this.w,   this.h,
+           10);
+
+      // Caption
+      textAlign(CENTER,CENTER);
+      textSize(this.h*0.72);
+
+      if(this.hit){ fill(getColor(CLRS.WHITE,75)); }
+      else        { fill(getColor(CLRS.WHITE,50)); }
+
+      text(this.caption,
+           x+this.x+this.w/2,
+           y+this.y+this.h/2);
+
+    }
+    
+  };
+  codeButton.prototype.clicked= function(x,y){
+
+    if(this.hit){ this.execute(); }
+
+  };
+  codeButton.prototype.moved=   function(x,y){
+
+    if(mouseX>x+this.x &&
+       mouseX<x+this.x+this.w &&
+       mouseY>y+this.y &&
+       mouseY<y+this.y+this.h){
+      
+      app.focus=this.id;
+      this.hit=true;
+
+    }
+    else{
+
+      this.hit=false;
+
+    }
+
+  };
+  codeButton.prototype.dragged= function(x,y){
+
+    // if(this.hit){
+    //   this.x=x;
+    //   this.y=y;
+    // }
+
+  };
+  codeButton.prototype.pressed= function(x,y){
+
+    if(this.hit){
+      
+    }
+
+  };
+  codeButton.prototype.released=function(x,y){
+
+    if(this.hit){
+      
+    }
+
+  };
+  codeButton.prototype.over=    function(x,y){
+
+    this.visible=true;
+
+  };
+  codeButton.prototype.out=     function(x,y){
+
+    this.visible=false;
+
+  };
+  
   // Key ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var inputKey=function(k){
 
@@ -1574,7 +1680,7 @@ println(this.enabled);
     Control.call(this,id,parent,ctrls,x,y,width,height,color,caption,execute,params);
 
   };
-  Key.prototype.draw=function(x,y){
+  Key.prototype.draw=       function(x,y){
 
     if(this.visible){
       
@@ -1622,7 +1728,7 @@ println(this.enabled);
     }
 
   };
-  Key.prototype.clicked=function(x,y){
+  Key.prototype.clicked=    function(x,y){
 
     if(this.hit){
 
@@ -1631,7 +1737,7 @@ println(this.enabled);
     }
 
   };
-  Key.prototype.moved=function(x,y){
+  Key.prototype.moved=      function(x,y){
     
     // Control.moved(this,x,y);
     
@@ -1649,7 +1755,7 @@ println(this.enabled);
     }
 
   };
-  Key.prototype.dragged=function(x,y){
+  Key.prototype.dragged=    function(x,y){
 
     // if(this.hit){
     //   this.x=x;
@@ -1657,7 +1763,7 @@ println(this.enabled);
     // }
 
   };
-  Key.prototype.pressed=function(x,y){
+  Key.prototype.pressed=    function(x,y){
 
     if(this.hit){
 
@@ -1668,19 +1774,19 @@ println(this.enabled);
     }
 
   };
-  Key.prototype.released=function(x,y){
+  Key.prototype.released=   function(x,y){
 
     if(this.hit){
       this.pressed=false;
     }
 
   };
-  Key.prototype.over=function(x,y){
+  Key.prototype.over=       function(x,y){
 
     this.visible=true;
 
   };
-  Key.prototype.out=function(x,y){
+  Key.prototype.out=        function(x,y){
 
     this.visible=false;
 
@@ -1693,7 +1799,7 @@ println(this.enabled);
     Control.call(this,id,parent,ctrls,x,y,width,height,color,caption,execute,params);
     
   };
-  Keypad.prototype.draw=function(x,y){
+  Keypad.prototype.draw=    function(x,y){
 
     if(this.visible){
 
@@ -1751,7 +1857,7 @@ println(this.enabled);
     }
 
   };
-  Keypad.prototype.clicked=function(x,y){
+  Keypad.prototype.clicked= function(x,y){
 
     if(this.hit){
 
@@ -1762,7 +1868,7 @@ println(this.enabled);
     }
 
   };
-  Keypad.prototype.moved=function(x,y){
+  Keypad.prototype.moved=   function(x,y){
 
     if(mouseX>this.x &&
        mouseX<this.x+this.w &&
@@ -1783,7 +1889,7 @@ println(this.enabled);
     }
 
   };
-  Keypad.prototype.dragged=function(x,y){
+  Keypad.prototype.dragged= function(x,y){
 
     // if(this.hit){
     //   this.x=x;
@@ -1793,7 +1899,7 @@ println(this.enabled);
     
       
   };
-  Keypad.prototype.pressed=function(x,y){
+  Keypad.prototype.pressed= function(x,y){
 
 //     if(this.hit){
 
@@ -1811,12 +1917,12 @@ println(this.enabled);
     }
 
   };
-  Keypad.prototype.over=function(x,y){
+  Keypad.prototype.over=    function(x,y){
 
     this.visible=true;
 
   };
-  Keypad.prototype.out=function(x,y){
+  Keypad.prototype.out=     function(x,y){
 
     this.visible=false;
     this.hit=false;
@@ -1825,7 +1931,7 @@ println(this.enabled);
 
 
   // Network ============================================================
-  
+  {
   var blank=function(){
   
     
@@ -2017,10 +2123,10 @@ println(this.enabled);
     }
 
   };
-
+  }
 
   // Travelling Salesman ======================================================
-  
+  {
   var arraySwap=function(arr, index1, index2){
 
     var temp=arr[index1];
@@ -2030,15 +2136,25 @@ println(this.enabled);
 
   };
   
-  var resetTS=function(){
+  var newTSP=function(){
 
-    for(var n=0; n<app.stops.length; n++){
-      arraySwap(app.stops,n, round(random(app.stops.length-1)));
+    app.stops=[];
+
+    for(var n=0; n<app.size; n++){
+      app.stops.push(new pt(random(150,app.width-20),random(20,app.height-20)));
     }
 
   };
   
-  var setSwap=function(){
+  var retryTSP=function(){
+
+    for(var n=0; n<app.stops.length; n++){
+      arraySwap(app.stops,n, round(random(app.stops.length-1)));
+    }
+    
+  };
+  
+  var runTSP=function(){
 
     app.running=!app.running;
 
@@ -2109,7 +2225,7 @@ println(this.enabled);
     
   };
 
-  var setTravelingSalesman=function(){
+  var setTSP=function(){
 
     app.vortex=[];
     app.nodes=[];
@@ -2121,19 +2237,43 @@ println(this.enabled);
 
     app.ctrls=[];
 
-    app.ctrls.push(  new Button(getGUID(), 0, [], 225, 0, 100, 30, CLRS.BACKGROUND_0, "add",    addMessage));
-    app.ctrls.push(  new Button(getGUID(), 0, [], 325, 0, 100, 30, CLRS.BACKGROUND_0, "send",   send));
-      
-    app.ctrls.push(  new Button(getGUID(), 0, [], 525, 0, 100, 30, CLRS.BACKGROUND_0, "swap",   setSwap));
-    app.ctrls.push(  new Button(getGUID(), 0, [], 425, 0, 100, 30, CLRS.BACKGROUND_0, "reset",  resetTS));
+    var ctrls=[];
     
+    var cntrTSP =new Container(getGUID(), undefined, [], 10, 10, app.width-20, app.height-20, undefined, "TSP Background", blank);
+
+    ctrls.push(new Button(getGUID(), cntrTSP, [], 10, app.height-40, 100, 30, CLRS.CODE_YELLOW, "back...", setSplash));
+    ctrls.push(new Button(getGUID(), cntrTSP, [], 10, 30, 100, 30, CLRS.BACKGROUND_0, "new",     newTSP));
+
+    ctrls.push(new Button(getGUID(), cntrTSP, [], 10, 60, 100, 30, CLRS.BACKGROUND_0, "run",     runTSP));
+    ctrls.push(new Button(getGUID(), cntrTSP, [], 10, 90, 100, 30, CLRS.BACKGROUND_0, "retry",   retryTSP));
+
+    ctrls.push(
+      new Label( getGUID(), cntrTSP, getAlgorithm,0, 210, 100, 14, CLRS.CODE_PURPLE, "Select Algorithm",setAlgorithm,0));
+    ctrls.push(
+      new Option(getGUID(), cntrTSP, getAlgorithm,0, 225, 100, 30, CLRS.CODE_PURPLE, "Random",       setAlgorithm,0));
+    ctrls.push(
+      new Option(getGUID(), cntrTSP, getAlgorithm,0, 250, 100, 30, CLRS.CODE_PURPLE, "Sim Annealing",setAlgorithm,1));
+    ctrls.push(
+      new Option(getGUID(), cntrTSP, getAlgorithm,0, 275, 100, 30, CLRS.CODE_PURPLE, "Ant Colony",   setAlgorithm,2));
+    ctrls.push(
+      new Option(getGUID(), cntrTSP, getAlgorithm,0, 300, 100, 30, CLRS.CODE_PURPLE, "Genetic - B&B",setAlgorithm,3));
+
+    // ALGORITHMS.RANDOM:                   0,
+    // ALGORITHMS.SIMULATED_ANNEALLING:     1,
+    // ALGORITHMS.ANT_COLONY_OPTIMIZATION:  2,
+    // ALGORITHMS.GENETIC_BRANCH_BOUND:     3
 
     // app.ctrls.push(  new Button(2, 225,  0,  100,  30, CLRS.BACKGROUND_0,  "clear",  clearCache))
-      
-    process=drawTravelingSalesman;
+
+    cntrTSP.ctrls=ctrls;
+    cntrTSP.tag=false;
+
+    app.ctrls.push(cntrTSP);
+    
+    process=drawTSP;
 
     for(var n=0; n<app.size; n++){
-      app.stops.push(new pt(random(20,app.width-20),random(20,app.height-20)));
+      app.stops.push(new pt(random(120,app.width-20),random(20,app.height-20)));
     }
 
   };
@@ -2157,13 +2297,18 @@ println(this.enabled);
 
   };
 
-  var drawTravelingSalesman=function(){
+  var drawTSP=function(){
     
     pushMatrix();
     
       translate(0.5, 0.5);
       
-        background(CLRS.BACKGROUND_0);
+        background(CLRS.BLACK);
+        
+        stroke(CLRS.CODE_BLUE);
+        fill(getColor(CLRS.CODE_BLUE,75));
+
+        rect(135,5,app.width-140,app.height-10);
         
         stroke(CLRS.RED);
         strokeWeight(2);
@@ -2175,14 +2320,14 @@ println(this.enabled);
           strokeWeight(1);
           noFill();
     
-          line(app.stops[n].x,   app.stops[n].y,
+          line(app.stops[n].x,  app.stops[n].y,
               app.stops[n+1].x, app.stops[n+1].y);
           
           noStroke();
           fill(CLRS.RED);
     
-          if(n==0){ ellipse(app.stops[n].x, app.stops[n].y,20,20);  }
-          else    { ellipse(app.stops[n].x, app.stops[n].y,10,10);    }
+          if(n==0){ ellipse(app.stops[n].x, app.stops[n].y, 20, 20);  }
+          else    { ellipse(app.stops[n].x, app.stops[n].y, 10, 10);    }
     
         }
     
@@ -2213,7 +2358,7 @@ println(this.enabled);
 
   };
 
-  var selectAlgorithm=function(opt){
+  var setAlgorithm=function(opt){
     
     app.algorithm=opt;
     
@@ -2221,6 +2366,8 @@ println(this.enabled);
     
   };
 
+  }
+  
   // Splash Screen ============================================================
   
   var currentP=new pt(0,0);
@@ -2238,6 +2385,12 @@ println(this.enabled);
   // Logo =====================================================================
   var logo=function(x,y){
 
+    // Go faster stripe
+    fill(getColor(CLRS.CODE_TEAL,50));
+    
+    rect(0,app.height/2-50,app.width,100);
+    
+    //
     fill(getColor(CLRS.BLACK,75));
     noStroke();
     stroke(CLRS.BLACK);
@@ -2288,8 +2441,8 @@ println(this.enabled);
 
     arr[arr.length-1].value=round(random(0,1));
 
-    if(app.left){ arr[arr.length-1].color=color(random(128,255)); }
-    else        { arr[arr.length-1].color=color(random(64));      }
+    if(app.left){ arr[arr.length-1].color=getColor(CLRS.CODE_GREEN,50); }
+    else        { arr[arr.length-1].color=color(random(64));           }
 
   };
 
@@ -2350,7 +2503,19 @@ println(this.enabled);
 
     addBit(app.vortex);
 
-    logo(app.width/2,app.height/2);
+    // Go faster stripe
+    fill(getColor(CLRS.CODE_TEAL,70));
+
+    pushMatrix();
+      
+      noStroke();
+      
+      rectMode(CORNER);
+      rect(0,app.height/2-50,app.width,100);
+
+    popMatrix();
+
+    // logo(app.width/2,app.height/2);
 
   };
   
@@ -2365,22 +2530,16 @@ println(this.enabled);
     // Toolbar
     var ctrls=[];
     
-    var cntrSplash =new Container(getGUID(), undefined, [], 10, 10, app.width-20, app.height-20, undefined, "Splash Background", blank);
+    var cntrSplash =new Container(getGUID(), undefined, [], 0, 0, app.width, app.height, undefined, "Splash Background", blank);
     
-    ctrls.push(new Button(getGUID(), cntrSplash, undefined,10, 5, 100, 30, CLRS.CODE_PURPLE, "begin...", setGrid));
-
-
-    ctrls.push(new Label( getGUID(), cntrSplash, getAlgorithm,500, 410, 100, 14, CLRS.CODE_PURPLE, "Select Algorithm",       selectAlgorithm,0));
-    ctrls.push(new Option(getGUID(), cntrSplash, getAlgorithm,500, 425, 100, 30, CLRS.CODE_PURPLE, "Random",       selectAlgorithm,0));
-    ctrls.push(new Option(getGUID(), cntrSplash, getAlgorithm,500, 450, 100, 30, CLRS.CODE_PURPLE, "Sim Annealing",selectAlgorithm,1));
-    ctrls.push(new Option(getGUID(), cntrSplash, getAlgorithm,500, 475, 100, 30, CLRS.CODE_PURPLE, "Ant Colony",   selectAlgorithm,2));
-    ctrls.push(new Option(getGUID(), cntrSplash, getAlgorithm,500, 500, 100, 30, CLRS.CODE_PURPLE, "Genetic - B&B",selectAlgorithm,3));
-
-    // ALGORITHMS.RANDOM:                   0,
-    // ALGORITHMS.SIMULATED_ANNEALLING:     1,
-    // ALGORITHMS.ANT_COLONY_OPTIMIZATION:  2,
-    // ALGORITHMS.GENETIC_BRANCH_BOUND:     3
+    var x=app.width/2;
+    var y=app.height/2;
     
+    ctrls.push(new codeButton(getGUID(), cntrSplash, undefined,x-105, y-105, 100, 100, CLRS.CODE_PURPLE, "C", setGrid,1));
+    ctrls.push(new codeButton(getGUID(), cntrSplash, undefined,x+5,   y-105, 100, 100, CLRS.CODE_ORANGE, "O", setTSP, 2));
+    ctrls.push(new codeButton(getGUID(), cntrSplash, undefined,x-105, y+5,   100, 100, CLRS.CODE_BLUE,   "D", setTSP, 3));
+    ctrls.push(new codeButton(getGUID(), cntrSplash, undefined,x+5,   y+5,   100, 100, CLRS.CODE_GREEN,  "E", setTSP, 4));
+
     cntrSplash.ctrls=ctrls;
     cntrSplash.tag=false;
 
@@ -2427,7 +2586,7 @@ println(this.enabled);
     app.mouseX=mouseX;
     app.mouseY=mouseY;
 
-    if(process!=drawTravelingSalesman){ for(var n in app.nodes){ app.nodes[n].moved(0,0); } }
+    if(process!=drawTSP){ for(var n in app.nodes){ app.nodes[n].moved(0,0); } }
 
     for(var c in app.ctrls){ app.ctrls[c].moved(0,0); }
 
@@ -2576,7 +2735,7 @@ println(this.enabled);
     app.yIncr=app.height/(app.gridSize+1),
 
     // setGrid();
-    // setTravelingSalesman();
+    // setTSP();
     setSplash();
 
   };
