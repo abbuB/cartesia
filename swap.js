@@ -255,7 +255,8 @@ var proc = function(processingInstance){
 
   var MODES={
     NETWORK:    0,
-    SPLASH:     1
+    SPLASH:     1,
+    TSP:        2
   };
 
   var KEYCODES={
@@ -347,10 +348,10 @@ var proc = function(processingInstance){
   };
 
   var ALGORITHMS={
-    HC:           0,    //  Hill Climb
-    SA:           1,    //  Simulated Annealling
-    ANT_COLONY:   2,    //  Ant Colony Optimization
-    GENETIC:      3     //  Branch and Bound
+    HC:     0,    //  Hill Climb
+    SA:     1,    //  Simulated Annealling
+    ANT:    2,    //  Ant Colony Optimization
+    GEN:    3     //  Genetic - Branch and Bound
   };
 
   var app={
@@ -362,34 +363,45 @@ var proc = function(processingInstance){
       
       
       // TSP ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      
+
+      running:        false,
+
       HC:             [],   //  Hill Climb
       displayHC:      true,
       distanceHC:     0,
-
+      swapsHC:        0,
+      
       SA:             [],   //  Simulated Annealling
       displaySA:      false,
       distanceSA:     0,
+      swapsSA:        0,
       
       ANT:            [],   //  Ant Colony
       displayANT:     false,
       distanceANT:    0,
+      swapsANT:       0,
       
       GEN:            [],   //  Genetic
       displayGEN:     false,
       distanceGEN:    0,
+      swapsGEN:       0,
       
       USER:           [],     //  User selected path
       displayUSER:    false,
       distanceUSER:   0,
+      swapsUSER:      0,
 
-      running:        false,
-      size:           20,
+      tspSize:        20,
 
       swaps:          0,
 
       temp:           0,
-      tempIncrement:  0.0025,
+      tempIncrement:  0.025,
+
+      maximize:       false,
+      minimize:       false,
+
+      tspCtrls:       [],
       
       // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -403,7 +415,9 @@ var proc = function(processingInstance){
       paths:          [],
 
       vortex:         [],
-
+      
+      mode:           MODES.SPLASH,
+      
       activeNode:     -1,
 
       gridSize:       0,
@@ -420,7 +434,7 @@ var proc = function(processingInstance){
 
       frameRate:      30,
 
-    focus:          0,
+    // focus:          0,
 
       mouseX:         1000,
       mouseY:         20,
@@ -441,23 +455,35 @@ var proc = function(processingInstance){
 
   };
 
-  var getAlgorithm= function(){ return app.algorithm; };
-
-  var getDistanceHC=  function(){
-
-    return round(app.distanceHC);
-
-  };
-  var setDistance=  function(){ return app.distance;  };
+  var getMaximize=    function() { return app.maximize;      };
+  var setMaximize=    function(b){ app.maximize=b;           };
   
-  var getSize=      function(){ return app.size;      };
-  var setSize=      function(n){
+  var getMinimize=    function() { return app.minimize;      };
+  var setMinimize=    function(b){ app.minimize=b;           };
+  
+  var getDebug=       function() { return app.debug;      };
+  var setDebug=       function(b){ app.debug=b;           };
+  
+  var getDistanceSA=  function() { return round(app.distanceSA); };
+  var setDistance=    function() { return app.distance;   };
+  
+  var getSize=        function() { return app.tspSize;    };
+  var setSize=        function(n){
 
-    if     (n===0){ if(app.size<100){ app.size++; } }
-    else if(n==1) { if(app.size>5)  { app.size--; } }
+    if     (n===0){ if(app.tspSize<100){ app.tspSize++; } }
+    else if(n==1 ){ if(app.tspSize>5  ){ app.tspSize--; } }
 
     newTSP();
 
+  };
+  
+  var getAlgorithm=   function(){ return app.algorithm; };
+  var setAlgorithm=   function(a){
+    
+    app.algorithm=a;
+    
+    println(app.algorithm);
+    
   };
   
   // Methods ==================================================================
@@ -558,6 +584,23 @@ var proc = function(processingInstance){
     }
 
   };
+
+  var getNodeAddress=function(){
+
+    var NAT=round(random(0,255))+"."+round(random(0,255))+"."+round(random(0,255))+"."+round(random(0,255));
+
+    // println(NAT);
+
+    return NAT;
+
+  };
+  
+  var inputKey=function(k){
+
+    app.cache+=k;
+
+  };
+
 
   var telemetry=function(){
     
@@ -685,525 +728,489 @@ var proc = function(processingInstance){
     };
     
   // Node ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  {
+    var Node=function(id,x,y,row,col,routes){
   
-  var getNodeAddress=function(){
-
-    var NAT=round(random(0,255))+"."+round(random(0,255))+"."+round(random(0,255))+"."+round(random(0,255));
-
-    // println(NAT);
-
-    return NAT;
-
-  };
+      // if(id===undefined){ this.id=getNodeAddress(); }
+      // else              { this.id=id;               }
   
-  var Node=function(id,x,y,row,col,routes){
-
-    // if(id===undefined){ this.id=getNodeAddress(); }
-    // else              { this.id=id;               }
-
-    this.id=id;
-    this.nat=getNodeAddress();
-
-    this.gridID=row+":"+col;
-
-    this.row=row;         //  row location
-    this.col=col;         //  column location
-
-    this.x=x;             //  x-coordinate
-    this.y=y;             //  y-coordinate
-
-    this.r=random(20,40); //  radius
-    this.w=10;            //  width
-    this.h=10;            //  height
-
-    this.routes=routes;   //  # of paths to the node
-
-    this.hit=false;       //  mouse is over node
-    this.enabled=true;    //  currently functional
-    this.selected=false;
-
-    this.connections=[];
-
-    this.xIncr=random(-5,5);
-    this.yIncr=random(-5,5);
-
-    this.distance=0;
-
-  };
-  Node.prototype.draw=    function(x,y){
-
-    // Node connections
-    stroke(getColor(CLRS.CONNECTION,255));
-    strokeWeight(0.75);
-
-    for(var n in this.connections){
-      line(this.x, this.y, this.connections[n].x, this.connections[n].y);
-    }
-
-    // Range ellipse
-    fill(getColor(CLRS.WHITE,6));
-    stroke(CLRS.WHITE);
-    strokeWeight(0.125);
-
-    if(this.enabled){
-      ellipse(this.x, this.y, this.r*2, this.r*2);
-    }
-    
-    // Node ellipse
-    fill(getColor(CLRS.WHITE,255));
-
-    ellipse(this.x, this.y, this.r/2, this.r/2);
-    
-    if(this.enabled){
-      
-      fill(CLRS.GREEN);
-      ellipse(this.x,this.y,10,10);
-
-    }
-    else{
-      
-      fill(CLRS.RED);
-      ellipse(this.x,this.y,10,10);
-      
-    }
-    
-    // Connection count label
-    if(this.hit){
-      
-      textSize(12);
-      textAlign(LEFT,TOP);
-
-      fill(getColor(CLRS.BLACK,75));
-      rectMode(CORNER);
-      rect(this.x-3,this.y,textWidth(this.id)+6,76,3);
-      
-      fill(CLRS.WHITE);
-
-      text(this.gridID,             this.x, this.y);
-      text(this.id,                 this.x, this.y+12);
-      text(this.row+":"+this.col,   this.x, this.y+24);
-      text(this.nat,                this.x, this.y+36);
-      text(this.connections.length, this.x, this.y+48);
-      text(this.routes,             this.x, this.y+60);
-      
-      fill(CLRS.YELLOW);
-      
-    }
-    else{
-
-      // noFill();
-
-    }
-    
-
-
-    // this.x+=random(-3,3);
-    // this.y+=random(-3,3);
-    
-  };
-  Node.prototype.clicked= function(x,y){
-
-    if(this.hit){
-      this.enabled=!this.enabled;
-      
-println(this.enabled);
-      
-    }
-
-  };
-  Node.prototype.moved=   function(x,y){
-
-    if(mouseX>this.x-this.r &&
-       mouseX<this.x+this.r &&
-       mouseY>this.y-this.r &&
-       mouseY<this.y+this.r){
-         
-      this.hit=true;
-      app.focus=this.id;
-      
-    }
-    else{
-
-      this.hit=false;
-
-    }
-
-  };
-  Node.prototype.dragged= function(x,y){
-
-    if(this.hit &&
-       app.left &&
-       app.activeNode===this.id &&
-       app.keys[KEYCODES.CONTROL]){
-
-      this.x=x;
-      this.y=y;
-
-      // this.load();
-
-    }
-
-  };
-  Node.prototype.pressed= function(x,y){
-
-    if(this.hit){
-      app.activeNode=this.id;
-    }
-
-  };
-  Node.prototype.released=function(x,y){
-
-    if(this.hit){
-      app.activeNode=-1;
-    }
-
-  };
-  Node.prototype.load=    function(){
-
-    this.connections=[];
-
-    for(var n in app.nodes){
-
-        if(app.nodes[n].id!=this.id){
-          if(dist(app.nodes[n].x,
-                  app.nodes[n].y,
-                  this.x,
-                  this.y)<(app.nodes[n].r+this.r*2)){
-
-            this.connections.push(app.nodes[n]);
-
-          }
-        }
-
-    }
-
-  };
-  Node.prototype.disable= function(node){
-
-    if(node.connections.length===0){ exit(); }
-
-    var min=dist(node.connections[0].x, node.connections[0].y, endNode.x, endNode.y);
-    var distance=min;
-    var index=0;
-    
-    for(var n=0; n<node.connections.length; n++){
-
-      node.connections[n].active=false;
-      
-      distance=dist(node.connections[n].x, node.connections[n].y, endNode.x, endNode.y);
-      
-      if(distance<min){
-        
-        min=distance;
-        index=n;
-
+      this.id=id;
+      this.nat=getNodeAddress();
+  
+      this.gridID=row+":"+col;
+  
+      this.row=row;         //  row location
+      this.col=col;         //  column location
+  
+      this.x=x;             //  x-coordinate
+      this.y=y;             //  y-coordinate
+  
+      this.r=random(20,40); //  radius
+      this.w=10;            //  width
+      this.h=10;            //  height
+  
+      this.routes=routes;   //  # of paths to the node
+  
+      this.hit=false;       //  mouse is over node
+      this.enabled=true;    //  currently functional
+      this.selected=false;
+  
+      this.connections=[];
+  
+      this.xIncr=random(-5,5);
+      this.yIncr=random(-5,5);
+  
+      this.distance=0;
+  
+    };
+    Node.prototype.draw=    function(x,y){
+  
+      // Node connections
+      stroke(getColor(CLRS.CONNECTION,255));
+      strokeWeight(0.75);
+  
+      for(var n in this.connections){
+        line(this.x, this.y, this.connections[n].x, this.connections[n].y);
       }
-
-    }
-    
-    disableNode(node.connections[index]);
-    
-  };
   
-
-  // tspNode ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-  var tspNode=function(id,x,y,row,col,routes){
-
-    // if(id===undefined){ this.id=getNodeAddress(); }
-    // else              { this.id=id;               }
-
-    this.id=id;
-    this.nat=getNodeAddress();
-
-    this.gridID=row+":"+col;
-
-    this.row=row;         //  row location
-    this.col=col;         //  column location
-
-    this.x=x;             //  x-coordinate
-    this.y=y;             //  y-coordinate
-
-    this.r=25;            //  radius
-    this.w=10;            //  width
-    this.h=10;            //  height
-
-    this.routes=routes;   //  # of paths to the node
-
-    this.hit=false;       //  mouse is over node
-    this.enabled=true;    //  currently functional
-    this.selected=false;
-
-    this.connections=[];
-
-    this.xIncr=random(-5,5);
-    this.yIncr=random(-5,5);
-    
-    this.offsetX=0;
-    this.offsetY=0;
-
-    this.distance=0;
-    
-    this.dX=0;
-    this.dy=0;
-    
-  };
-  tspNode.prototype.draw=    function(x,y){
-    
-    var d=app.temp;
-
-    this.dX=this.x+random(-d,d);
-    this.dY=this.y+random(-d,d);
-    
-    // Node connections
-    stroke(getColor(CLRS.CONNECTION,255));
-    strokeWeight(0.75);
-
-    // for(var n in this.connections){
-    //   line(this.x, this.y, this.connections[n].x, this.connections[n].y);
-    // }
-
-    // Range ellipse
-    fill(getColor(CLRS.WHITE,6));
-    stroke(CLRS.WHITE);
-    strokeWeight(0.125);
-
-    if(this.enabled &&
-       app.keys[KEYCODES.CONTROL]){
-      ellipse(this.x, this.y,
-              this.r*2, this.r*2);
-    }
-
-    // Node ellipse
-    fill(getColor(CLRS.WHITE,255));
-
-    ellipse(this.x, this.y, 15, 15);
-    
-    if(this.enabled){ fill(CLRS.CODE_GREEN);
-                      ellipse(this.x, this.y, 10, 10); }
-    else            { fill(CLRS.RED);
-                      ellipse(this.x, this.y, 10, 10); }
-
-    if(this.hit){ cursor(HAND);   }
-    else        { cursor(ARROW);  }
-
-    // this.x+=random(-3,3);
-    // this.y+=random(-3,3);
-
-  };
-  tspNode.prototype.clicked= function(x,y){
-
-    if(this.hit){
-      this.enabled=!this.enabled;
-    }
-
-  };
-  tspNode.prototype.moved=   function(x,y){
-
-    if(mouseX>this.x-this.r &&
-       mouseX<this.x+this.r &&
-       mouseY>this.y-this.r &&
-       mouseY<this.y+this.r){
-         
-      this.hit=true;
-      app.focus=this.id;
+      // Range ellipse
+      fill(getColor(CLRS.WHITE,6));
+      stroke(CLRS.WHITE);
+      strokeWeight(0.125);
+  
+      if(this.enabled){
+        ellipse(this.x, this.y, this.r*2, this.r*2);
+      }
       
-    }
-    else{
+      // Node ellipse
+      fill(getColor(CLRS.WHITE,255));
+  
+      ellipse(this.x, this.y, this.r/2, this.r/2);
+      
+      if(this.enabled){
+        
+        fill(CLRS.GREEN);
+        ellipse(this.x,this.y,10,10);
+  
+      }
+      else{
+        
+        fill(CLRS.RED);
+        ellipse(this.x,this.y,10,10);
+        
+      }
+      
+      // Connection count label
+      if(this.hit){
+        
+        textSize(12);
+        textAlign(LEFT,TOP);
+  
+        fill(getColor(CLRS.BLACK,75));
+        rectMode(CORNER);
+        rect(this.x-3,this.y,textWidth(this.id)+6,76,3);
+        
+        fill(CLRS.WHITE);
+  
+        text(this.gridID,             this.x, this.y);
+        text(this.id,                 this.x, this.y+12);
+        text(this.row+":"+this.col,   this.x, this.y+24);
+        text(this.nat,                this.x, this.y+36);
+        text(this.connections.length, this.x, this.y+48);
+        text(this.routes,             this.x, this.y+60);
+        
+        fill(CLRS.YELLOW);
+        
+      }
+      else{
+  
+        // noFill();
+  
+      }
+      
+  
+  
+      // this.x+=random(-3,3);
+      // this.y+=random(-3,3);
+      
+    };
+    Node.prototype.clicked= function(x,y){
+  
+      if(this.hit){
+        this.enabled=!this.enabled;
+        
+  println(this.enabled);
+        
+      }
+  
+    };
+    Node.prototype.moved=   function(x,y){
+  
+      if(mouseX>this.x-this.r &&
+         mouseX<this.x+this.r &&
+         mouseY>this.y-this.r &&
+         mouseY<this.y+this.r){
+           
+        this.hit=true;
+        app.focus=this.id;
+        
+      }
+      else{
+  
+        this.hit=false;
+  
+      }
+  
+    };
+    Node.prototype.dragged= function(x,y){
+  
+      if(this.hit &&
+         app.left &&
+         app.activeNode===this.id &&
+         app.keys[KEYCODES.CONTROL]){
+  
+        this.x=x;
+        this.y=y;
+  
+        // this.load();
+  
+      }
+  
+    };
+    Node.prototype.pressed= function(x,y){
+  
+      if(this.hit){
+        app.activeNode=this.id;
+      }
+  
+    };
+    Node.prototype.released=function(x,y){
+  
+      if(this.hit){
+        app.activeNode=-1;
+      }
+  
+    };
+    Node.prototype.load=    function(){
+  
+      this.connections=[];
+  
+      for(var n in app.nodes){
+  
+          if(app.nodes[n].id!=this.id){
+            if(dist(app.nodes[n].x,
+                    app.nodes[n].y,
+                    this.x,
+                    this.y)<(app.nodes[n].r+this.r*2)){
+  
+              this.connections.push(app.nodes[n]);
+  
+            }
+          }
+  
+      }
+  
+    };
+    Node.prototype.disable= function(node){
+  
+      if(node.connections.length===0){ exit(); }
+  
+      var min=dist(node.connections[0].x, node.connections[0].y, endNode.x, endNode.y);
+      var distance=min;
+      var index=0;
+      
+      for(var n=0; n<node.connections.length; n++){
+  
+        node.connections[n].active=false;
+        
+        distance=dist(node.connections[n].x, node.connections[n].y, endNode.x, endNode.y);
+        
+        if(distance<min){
+          
+          min=distance;
+          index=n;
+  
+        }
+  
+      }
+      
+      disableNode(node.connections[index]);
+      
+    };
+  }
 
-      this.hit=false;
-
-    }
-
-  };
-  tspNode.prototype.dragged= function(x,y){
-
-    if(this.hit &&
-       app.left &&
-       app.keys[KEYCODES.CONTROL]){
-
-      this.x=x;
-      this.y=y;
-
-      // this.load();
-
-    }
-
-  };
+  // tNode ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  {
+    var tNode=function(id,x,y,row,col,routes){
+  
+      Node.call(this,id,x,y,row,col,routes);
+  
+      this.offsetX=0;
+      this.offsetY=0;
+  
+      this.distance=0;
+      
+      this.dX=0;
+      this.dy=0;
+      
+    };
+    tNode.prototype.draw=    function(x,y){
+      
+      var d=app.temp;
+  
+      this.dX=this.x+random(-d,d);
+      this.dY=this.y+random(-d,d);
+      
+      // Node connections
+      stroke(getColor(CLRS.CONNECTION,255));
+      strokeWeight(0.75);
+  
+      // for(var n in this.connections){
+      //   line(this.x, this.y, this.connections[n].x, this.connections[n].y);
+      // }
+  
+      // Range ellipse
+      fill(getColor(CLRS.WHITE,6));
+      stroke(CLRS.WHITE);
+      strokeWeight(0.125);
+  
+      if(this.enabled &&
+         app.keys[KEYCODES.CONTROL]){
+        ellipse(this.x, this.y,
+                this.r*2, this.r*2);
+      }
+  
+      // Node ellipse
+      fill(getColor(CLRS.WHITE,255));
+  
+      ellipse(this.x, this.y, 15, 15);
+      
+      if(this.enabled){ fill(CLRS.CODE_GREEN);
+                        ellipse(this.x, this.y, 10, 10); }
+      else            { fill(CLRS.RED);
+                        ellipse(this.x, this.y, 10, 10); }
+  
+      if(this.hit){ cursor(HAND);   }
+      else        { cursor(ARROW);  }
+  
+      // this.x+=random(-3,3);
+      // this.y+=random(-3,3);
+  
+    };
+    tNode.prototype.clicked= function(x,y){
+  
+      if(this.hit){
+        this.enabled=!this.enabled;
+      }
+  
+    };
+    tNode.prototype.moved=   function(x,y){
+  
+      if(mouseX>this.x-this.r &&
+         mouseX<this.x+this.r &&
+         mouseY>this.y-this.r &&
+         mouseY<this.y+this.r){
+  
+        this.hit=true;
+        app.focus=this.id;
+      }
+      else{
+        this.hit=false;
+      }
+  
+    };
+    tNode.prototype.dragged= function(x,y){
+  
+      if(this.hit &&
+         app.left &&
+         app.keys[KEYCODES.CONTROL]){
+  
+        this.x=x;
+        this.y=y;
+  
+        // this.load();
+  
+      }
+  
+    };
+  }
   
   // Packet ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  var Packet=function(source, destination, text){
-
-    var dX=0;
-    var dY=0;
-    var sX=0;
-    var sY=0;
-
-    // this.source=      app.nodes[round(random(1,app.nodes.length-1))];
-    // this.destination= app.nodes[round(random(1,app.nodes.length-1))];
-
-    this.source=      app.nodes[0];
-    this.destination= app.nodes[app.nodes.length-1];
-
-    this.path=[];     //  nodes packet will traverse
-    this.points=[];   //  path points of packet
-    this.p=0;         //  current index of packet on path
-
-    this.stringValue=text;
-    this.charCode=text.charCodeAt(0);
-    this.binaryValue=binary(this.charCode);
-    
-    /**
-        Determine the shortest path from the source to the
-        destintaion using only adjacent connected nodes.
-        Terminate when the source and destination nodes
-        are the same.
-     */
-
-    // Set the source node
-    var src=this.source;
-    var dest=this.destination;
-    var distance=Infinity;
-    var index=0;
-    var n=0;
-    
-    this.path.push(src);
-    
-    while(src.id!=dest.id){
-
-      distance=dist(src.connections[n].x,
+  {
+    var Packet=function(source, destination, text){
+  
+      var dX=0;
+      var dY=0;
+      var sX=0;
+      var sY=0;
+  
+      // this.source=      app.nodes[round(random(1,app.nodes.length-1))];
+      // this.destination= app.nodes[round(random(1,app.nodes.length-1))];
+  
+      this.source=      app.nodes[0];
+      this.destination= app.nodes[app.nodes.length-1];
+  
+      this.path=[];     //  nodes packet will traverse
+      this.points=[];   //  path points of packet
+      this.p=0;         //  current index of packet on path
+  
+      this.stringValue=text;
+      this.charCode=text.charCodeAt(0);
+      this.binaryValue=binary(this.charCode);
+      
+      /**
+          Determine the shortest path from the source to the
+          destintaion using only adjacent connected nodes.
+          Terminate when the source and destination nodes
+          are the same.
+       */
+  
+      // Set the source node
+      var src=this.source;
+      var dest=this.destination;
+      var distance=Infinity;
+      var index=0;
+      var n=0;
+      
+      this.path.push(src);
+      
+      while(src.id!=dest.id){
+  
+        distance=dist(src.connections[n].x,
+                      src.connections[n].y,
+                      dest.x,
+                      dest.y);
+                  
+        // Find the node in connections that
+        // is closest to the destination.
+        for(n=0; n<src.connections.length; n++){
+          
+          if(src.connections[n].enabled){
+          
+            if(dist(src.connections[n].x,
                     src.connections[n].y,
                     dest.x,
-                    dest.y);
-                
-      // Find the node in connections that
-      // is closest to the destination.
-      for(n=0; n<src.connections.length; n++){
-        
-        if(src.connections[n].enabled){
-        
-          if(dist(src.connections[n].x,
-                  src.connections[n].y,
-                  dest.x,
-                  dest.y)<distance){
-            index=n;
-            distance=dist(src.connections[n].x,
-                          src.connections[n].y,
-                          dest.x,
-                          dest.y);
+                    dest.y)<distance){
+              index=n;
+              distance=dist(src.connections[n].x,
+                            src.connections[n].y,
+                            dest.x,
+                            dest.y);
+            }
+          
           }
+          
+        }
         
+        // println(distance);
+        // println(src.id+":"+dest.id);
+        // println(n);
+        // println("=======================");
+        
+        // add the closest node to the destination to the path
+        this.path.push(src.connections[index]);
+        
+        // src.selected=true;
+        
+        // Set the source node to the last node in the path and repeat
+        src=src.connections[index];
+  
+        n=0;
+        index=0;
+        distance=Infinity;
+  
+      }
+  
+      // this.destination.selected=true;
+  
+      this.path.push(this.destination);
+      
+      for(n=0; n<this.path.length-1; n++){
+        
+        // println(this.path[0].x);
+        for(var c=0; c<10; c++){
+          this.points.push(new pt(lerp(this.path[n].x, this.path[n+1].x, c/10),
+                                  lerp(this.path[n].y, this.path[n+1].y, c/10)));
         }
         
       }
-      
-      // println(distance);
-      // println(src.id+":"+dest.id);
-      // println(n);
-      // println("=======================");
-      
-      // add the closest node to the destination to the path
-      this.path.push(src.connections[index]);
-      
-      // src.selected=true;
-      
-      // Set the source node to the last node in the path and repeat
-      src=src.connections[index];
-
-      n=0;
-      index=0;
-      distance=Infinity;
-
-    }
-
-    // this.destination.selected=true;
-
-    this.path.push(this.destination);
-    
-    for(n=0; n<this.path.length-1; n++){
-      
-      // println(this.path[0].x);
-      for(var c=0; c<10; c++){
-        this.points.push(new pt(lerp(this.path[n].x, this.path[n+1].x, c/10),
-                                lerp(this.path[n].y, this.path[n+1].y, c/10)));
+  
+  // println("break");
+  
+    };
+    Packet.prototype.draw=    function(){
+  
+      if(this.p<this.points.length-1){
+        
+        // Background
+        noStroke();
+        fill(getColor(CLRS.NODE_BLUE,64));
+        
+        rect(this.points[this.p].x,
+             this.points[this.p].y-5,
+             40, 35, 5);
+        
+        // Character value
+        fill(CLRS.BLACK);
+        textAlign(CENTER,BOTTOM);
+        textSize(16);
+        
+        text(this.stringValue,
+             this.points[this.p].x,
+             this.points[this.p].y);
+  
+        // Binary value
+        fill(96);
+        textAlign(CENTER,TOP);
+        textSize(9);
+        
+        text(this.binaryValue,
+             this.points[this.p].x,
+             this.points[this.p].y);
+        
+        // Increment ordinal position along path
+        this.p++;
+  
       }
-      
-    }
-
-// println("break");
-
-  };
-  Packet.prototype.draw=    function(){
-
-    if(this.p<this.points.length-1){
-      
-      // Background
-      noStroke();
-      fill(getColor(CLRS.NODE_BLUE,64));
-      
-      rect(this.points[this.p].x,
-           this.points[this.p].y-5,
-           40, 35, 5);
-      
-      // Character value
-      fill(CLRS.BLACK);
-      textAlign(CENTER,BOTTOM);
-      textSize(16);
-      
-      text(this.stringValue,
-           this.points[this.p].x,
-           this.points[this.p].y);
-
-      // Binary value
-      fill(96);
-      textAlign(CENTER,TOP);
-      textSize(9);
-      
-      text(this.binaryValue,
-           this.points[this.p].x,
-           this.points[this.p].y);
-      
-      // Increment ordinal position along path
-      this.p++;
-
-    }
-    else{
-      app.send.splice(0,1);
-      app.received.push(this);
-    }
-
-  };
-  Packet.prototype.clicked= function(){
-
-    if(app.current===COMMANDS.SELECT[0]){
-
-      if(this.hit){
-        this.selected=!this.selected;
-        for(var n in this.vertices){ this.vertices[n].selected=this.selected; }
+      else{
+        app.send.splice(0,1);
+        app.received.push(this);
       }
-
-    }
-
-  };
-  Packet.prototype.moved=   function(x,y){};
-  Packet.prototype.dragged= function(){
-
-    for(var n in this.vertices){
-
-      if(this.hitP[n] && app.left){
-        this.vertices[n].x=app.mouseX;
-        this.vertices[n].y=app.mouseY;
-        this.recalc();
+  
+    };
+    Packet.prototype.clicked= function(){
+  
+      if(app.current===COMMANDS.SELECT[0]){
+  
+        if(this.hit){
+          this.selected=!this.selected;
+          for(var n in this.vertices){ this.vertices[n].selected=this.selected; }
+        }
+  
       }
-
-    }
-
-  };
-
+  
+    };
+    Packet.prototype.moved=   function(x,y){};
+    Packet.prototype.dragged= function(){
+  
+      for(var n in this.vertices){
+  
+        if(this.hitP[n] && app.left){
+          this.vertices[n].x=app.mouseX;
+          this.vertices[n].y=app.mouseY;
+          this.recalc();
+        }
+  
+      }
+  
+    };
+  }
 
   // ctrls =================================================================
 
-  var Control=function(id,parent,ctrls,x,y,width,height,color,caption,execute,params){
+  // Control ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  {
+    var Control=function(id,parent,ctrls,x,y,width,height,color,caption,execute,params){
 
     this.id=id;             //  Unique control id
 
@@ -1226,7 +1233,9 @@ println(this.enabled);
     this.hit=false;         //  mouse is over node
     this.active=true;       //  currently functional
     this.selected=false;    //  highlighted
-  
+    
+    this.value=false;       //  current value
+    
     this.visible=true;      //  Is the button visible?
   
     this.timer=0;          //  Countdown timer
@@ -1236,227 +1245,227 @@ println(this.enabled);
     this.params=params;     // optional parameter (arrays, boolean...)
     
   };
-  Control.prototype.draw=     function(x,y){
-
-    if (typeof this.parent != "undefined") {
-      // alert("GOT THERE");
-      // println("No parent");
-    }
+    Control.prototype.draw=     function(x,y){
+  
+      if (typeof this.parent != "undefined") {
+        // alert("GOT THERE");
+        // println("No parent");
+      }
+      
+      // if(this.visible){
+  
+      //   if(this.hit){ fill(getColor(CLRS.WHITE,5));                 }
+      //   else        { fill(getColor(this.color,this.timer/30*50));  }
     
-    // if(this.visible){
-
-    //   if(this.hit){ fill(getColor(CLRS.WHITE,5));                 }
-    //   else        { fill(getColor(this.color,this.timer/30*50));  }
-  
-    //   rectMode(CORNER);
-    //   noStroke();
-      
-    //   // Border/Background
-    //   rect(this.x, this.y, this.w, this.h, 10);
-      
-    //   // Caption
-    //   textAlign(CENTER,CENTER);
-    //   textSize(24);
-      
-    //   if(this.hit){ fill(getColor(CLRS.WHITE,75)); }
-    //   else        { fill(getColor(CLRS.WHITE,50)); }
-      
-    //   text(this.caption, this.x+this.w/2, this.y+this.h/2);
-    
-    // }
-    
-  };
-  Control.prototype.clicked=  function(x,y){
-
-    if(this.hit){ this.execute(); }
-
-  };
-  Control.prototype.moved=    function(x,y){
-
-    if(x>this.x &&
-       x<this.x+this.w &&
-       y>this.y &&
-       y<this.y+this.h){
-         
-      this.hit=true;
-      app.focus=this.id;
-
-      for(var c in this.ctrls){ this.ctrls[c].moved(mouseX,mouseY); }
-
-    }
-    else{
-
-      this.hit=false;
-
-    }
-
-  };
-  Control.prototype.dragged=  function(x,y){
-
-    // if(this.hit){
-    //   this.x=x;
-    //   this.y=y;
-    // }
-
-  };
-  Control.prototype.pressed=  function(x,y){
-
-    if(this.hit){
-      
-    }
-
-  };
-  Control.prototype.released= function(x,y){
-
-    if(this.hit){
-      
-    }
-
-  };
-  Control.prototype.over=     function(x,y){
-
-    this.visible=true;
-
-  };
-  Control.prototype.out=      function(x,y){
-
-    this.visible=false;
-
-  };
-  
-  
-  // Container ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  var Container=function(id,parent,ctrls,x,y,width,height,color,caption,execute,params){
-
-    Control.call(this,id,parent,ctrls,x,y,width,height,color,caption,execute,params);
-    
-  };
-  Container.prototype.draw=     function(x,y){
-
-    if(this.visible){
-
-      // if(this.tag!=false){
-
-        if(this.hit){
-  
-          fill(getColor(this.color, 15+this.timer));
-  
-          if(this.timer<10){ this.timer++; }
-  
-          cursor(ARROW);
-  
-        }
-        else{
-  
-          fill(getColor(this.color, 15+this.timer));
-          
-          if(this.timer>5){  this.timer--; }
-  
-        }
-    
-        rectMode(CORNER);
-        noStroke();
-        stroke(CLRS.RED);
-        strokeWeight(1);
+      //   rectMode(CORNER);
+      //   noStroke();
         
-        // Border/Background
-        if(this.tag==true){
+      //   // Border/Background
+      //   rect(this.x, this.y, this.w, this.h, 10);
         
-          rect(this.x, this.y, this.w, this.h, 10);
+      //   // Caption
+      //   textAlign(CENTER,CENTER);
+      //   textSize(24);
         
-        }
+      //   if(this.hit){ fill(getColor(CLRS.WHITE,75)); }
+      //   else        { fill(getColor(CLRS.WHITE,50)); }
         
-        // Caption
-        textAlign(CENTER,CENTER);
-        textSize(24);
-        
-        if(this.hit){ fill(getColor(CLRS.WHITE,75)); }
-        else        { fill(getColor(CLRS.WHITE,50)); }
-        
-        // text(this.caption, this.x+this.w/2, this.y+this.h/2);
+      //   text(this.caption, this.x+this.w/2, this.y+this.h/2);
       
       // }
       
-      for(var c in this.ctrls){ this.ctrls[c].draw(this.x, this.y); }
-
-    }
-
-  };
-  Container.prototype.clicked=  function(x,y){
-
-    if(this.hit){
-
-      for(var c in this.ctrls){ this.ctrls[c].clicked(this.y, this.x); }
-
-      // this.execute();
-
-    }
-
-  };
-  Container.prototype.moved=    function(x,y){
-
-    if(mouseX>this.x &&
-       mouseX<this.x+this.w &&
-       mouseY>this.y &&
-       mouseY<this.y+this.h){
-         
-      this.hit=true;
-      app.focus=this.id;
-
-      for(var c in this.ctrls){ this.ctrls[c].moved(this.x, this.y); }
-               
-    }
-    else{
-      
-      this.hit=false;
-      this.timer=0;
-      
-    }
-
-  };
-  Container.prototype.dragged=  function(x,y){
-
-    // if(this.hit){
-    //   this.x=x;
-    //   this.y=y;
-    //   for(var c in this.ctrls){ this.ctrls[c].dragged(mouseX,mouseY); }
-    // }
-    
-      
-  };
-  Container.prototype.pressed=  function(x,y){
-
-//     if(this.hit){
-
-//       for(var c in this.ctrls){ this.ctrls[c].pressed(mouseX,mouseY); }
-      
-// println(this.keys.length);
-
-//     }
-
-  };
-  Container.prototype.released= function(x,y){
-
-    if(this.hit){
-      for(var c in this.ctrls){ this.ctrls[c].released(mouseX,mouseY); }
-    }
-
-  };
-  Container.prototype.over=     function(x,y){
-
-    this.visible=true;
-
-  };
-  Container.prototype.out=      function(x,y){
-
-    this.visible=false;
-
-  };
+    };
+    Control.prototype.clicked=  function(x,y){
   
+      if(this.hit){ this.execute(); }
+  
+    };
+    Control.prototype.moved=    function(x,y){
+  
+      if(x>this.x &&
+         x<this.x+this.w &&
+         y>this.y &&
+         y<this.y+this.h){
+           
+        this.hit=true;
+        app.focus=this.id;
+  
+        for(var c in this.ctrls){ this.ctrls[c].moved(mouseX,mouseY); }
+  
+      }
+      else{
+  
+        this.hit=false;
+  
+      }
+  
+    };
+    Control.prototype.dragged=  function(x,y){
+  
+      // if(this.hit){
+      //   this.x=x;
+      //   this.y=y;
+      // }
+  
+    };
+    Control.prototype.pressed=  function(x,y){
+  
+      if(this.hit){
+        
+      }
+  
+      };
+    Control.prototype.released= function(x,y){
+  
+      if(this.hit){
+        
+      }
+  
+    };
+    Control.prototype.over=     function(x,y){
+  
+      this.visible=true;
+  
+    };
+    Control.prototype.out=      function(x,y){
+  
+      this.visible=false;
+  
+    };
+  }
+  
+  // Container ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  {
+    var Container=function(id,parent,ctrls,x,y,width,height,color,caption,execute,params){
+  
+      Control.call(this,id,parent,ctrls,x,y,width,height,color,caption,execute,params);
+      
+    };
+    Container.prototype.draw=     function(x,y){
+  
+      if(this.visible){
+  
+        // if(this.tag!=false){
+  
+          if(this.hit){
+    
+            fill(getColor(this.color, 15+this.timer));
+    
+            if(this.timer<10){ this.timer++; }
+    
+            cursor(ARROW);
+    
+          }
+          else{
+    
+            fill(getColor(this.color, 15+this.timer));
+            
+            if(this.timer>5){  this.timer--; }
+    
+          }
+      
+          rectMode(CORNER);
+          noStroke();
+          stroke(CLRS.RED);
+          strokeWeight(1);
+          
+          // Border/Background
+          // if(this.tag==true){
+            
+            fill(this.color);
+            
+            rect(this.x, this.y, this.w, this.h);
+          
+          // }
+          
+          // Caption
+          textAlign(CENTER,CENTER);
+          textSize(24);
+          
+          if(this.hit){ fill(getColor(CLRS.WHITE,75)); }
+          else        { fill(getColor(CLRS.WHITE,50)); }
+          
+          // text(this.caption, this.x+this.w/2, this.y+this.h/2);
+        
+        // }
+        
+        for(var c in this.ctrls){ this.ctrls[c].draw(this.x, this.y); }
+  
+      }
+  
+    };
+    Container.prototype.clicked=  function(x,y){
+  
+      if(this.hit){
+  
+        for(var c in this.ctrls){ this.ctrls[c].clicked(this.y, this.x); }
+  
+        // this.execute();
+  
+      }
+  
+    };
+    Container.prototype.moved=    function(x,y){
+  
+      if(mouseX>this.x &&
+         mouseX<this.x+this.w &&
+         mouseY>this.y &&
+         mouseY<this.y+this.h){
+           
+        this.hit=true;
+        app.focus=this.id;
+  
+        for(var c in this.ctrls){ this.ctrls[c].moved(this.x, this.y); }
+                 
+      }
+      else{
+        
+        this.hit=false;
+        this.timer=0;
+        
+      }
+  
+    };
+    Container.prototype.dragged=  function(x,y){
+  
+      // if(this.hit){
+      //   this.x=x;
+      //   this.y=y;
+      //   for(var c in this.ctrls){ this.ctrls[c].dragged(mouseX,mouseY); }
+      // }
+      
+        
+    };
+    Container.prototype.pressed=  function(x,y){
+  
+      if(this.hit){
+  
+        for(var c in this.ctrls){ this.ctrls[c].pressed(mouseX,mouseY); }
+
+      }
+  
+    };
+    Container.prototype.released= function(x,y){
+  
+      if(this.hit){
+        for(var c in this.ctrls){ this.ctrls[c].released(mouseX,mouseY); }
+      }
+  
+    };
+    Container.prototype.over=     function(x,y){
+  
+      this.visible=true;
+  
+    };
+    Container.prototype.out=      function(x,y){
+  
+      this.visible=false;
+  
+    };
+  }
 
   // Label ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
-  
     var Label=function(id,parent,ctrls,x,y,width,height,color,caption,execute,params){
       
       Control.call(this,id,parent,ctrls,x,y,width,height,color,caption,execute,params);
@@ -1564,12 +1573,10 @@ println(this.enabled);
       this.visible=false;
   
     };
-  
   }
-  
+
   // Option ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
-  
     var Option=function(id,parent,ctrls,x,y,width,height,color,caption,execute,params){
       
       Control.call(this,id,parent,ctrls,x,y,width,height,color,caption,execute,params);
@@ -1680,7 +1687,122 @@ println(this.enabled);
       this.visible=false;
   
     };
-    
+  }
+  
+  // Checkbox ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  {
+    var Checkbox=function(id,parent,ctrls,x,y,width,height,color,caption,execute,params){
+      
+      Control.call(this,id,parent,ctrls,x,y,width,height,color,caption,execute,params);
+  
+    };
+    Checkbox.prototype.draw=    function(x,y){
+  
+      if(this.visible){
+  
+        if(this.hit){ fill(getColor(this.color,20));
+                      cursor(HAND);                   }
+        else        { fill(getColor(this.color,0));   }
+  
+        rectMode(CORNER);
+        noStroke();
+  
+        textSize(12);
+        textAlign(LEFT,CENTER);
+  
+        rect(x+this.x, y+this.y,
+             textWidth(this.caption)+30, this.h,
+             10);
+  
+        // Outer Rectangle ~~~~~~~~~~~
+        rectMode(CENTER);
+
+        stroke(CLRS.GRAY);
+        strokeWeight(0.5);
+  
+        rect(x+this.x+10,
+             y+this.y+this.h/2,
+             10, 10);
+  
+        // Inner Rectangle ~~~~~~~~~~~
+        if(this.value){ fill(CLRS.RED);       }
+        else          { noFill(); noStroke(); }
+
+        rect(x+this.x+10,
+             y+this.y+this.h/2,
+             8, 8);
+  
+        // Caption ~~~~~~~~~~
+        if(this.hit){ fill(getColor(CLRS.WHITE,75)); }
+        else        { fill(getColor(CLRS.WHITE,50)); }
+  
+        text(this.caption,
+             x+this.x+20,
+             y+this.y+this.h/2);
+  
+        // Control origin ~~~~~~~~~~
+        if(app.debug){  fill(CLRS.RED);
+                        ellipse(x+this.x,y+this.y,3,3);
+                     }
+  
+      }
+      
+    };
+    Checkbox.prototype.clicked= function(x,y){
+  
+      if(this.hit){ this.execute(this.value=!this.value); }
+  
+    };
+    Checkbox.prototype.moved=   function(x,y){
+  
+      if(mouseX>x+this.x &&
+         mouseX<x+this.x+this.w &&
+         mouseY>y+this.y &&
+         mouseY<y+this.y+this.h){
+        
+        app.focus=this.id;
+        this.hit=true;
+  
+      }
+      else{
+  
+        this.hit=false;
+  
+      }
+  
+    };
+    Checkbox.prototype.dragged= function(x,y){
+  
+      // if(this.hit){
+      //   this.x=x;
+      //   this.y=y;
+      // }
+  
+    };
+    Checkbox.prototype.pressed= function(x,y){
+  
+      if(this.hit){
+        
+      }
+  
+    };
+    Checkbox.prototype.released=function(x,y){
+  
+      if(this.hit){
+        
+      }
+  
+    };
+    Checkbox.prototype.over=    function(x,y){
+  
+      this.visible=true;
+  
+    };
+    Checkbox.prototype.out=     function(x,y){
+  
+      this.visible=false;
+  
+    };
   }
   
   // UpDown ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1807,11 +1929,12 @@ println(this.enabled);
   
     };
     UpDown.prototype.pressed= function(x,y){
-  
-      if(this.hit){
-        
-      }
-  
+
+println("pressed");
+
+      if     (this.hitUp)  { this.execute(0); }
+      else if(this.hitDown){ this.execute(1); }
+
     };
     UpDown.prototype.released=function(x,y){
   
@@ -1830,8 +1953,159 @@ println(this.enabled);
       this.visible=false;
   
     };
-  }
 
+  }
+  
+  // Slider ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  {
+    var Slider=function(id,parent,ctrls,x,y,width,height,color,caption,execute,params){
+  
+      Control.call(this,id,parent,ctrls,x,y,width,height,color,caption,execute,params);
+  
+      this.hitUp=false;     //  The mouse is over the Up arrow
+      this.hitDown=false;   //  The mouse is over the Down arrow
+  
+    };
+    Slider.prototype.draw=    function(x,y){
+  
+      if(this.visible){
+  
+        // if(this.hitUp || this.hitDown){ cursor(HAND); }
+  
+        rectMode(CORNER);
+        noStroke();
+  
+        textSize(16);
+        textAlign(LEFT,CENTER);
+  
+        // rect(x+this.x, y+this.y,
+        //     textWidth(this.execute())+20, this.h,
+        //     10);
+  
+        // Up Arrow ~~~~~~~~~~~
+        stroke(CLRS.GRAY);
+        strokeWeight(0.5);
+        fill(CLRS.RED);
+        
+        if(this.hitUp){ fill(CLRS.CODE_BLUE); }
+        else          { noFill();             }
+  
+        triangle(x+this.x+10, y+this.y,
+                 x+this.x,    y+this.y+this.h/2-2,
+                 x+this.x+20, y+this.y+this.h/2-2);
+  
+        // Down Arrow ~~~~~~~~~~~
+  
+        if(this.hitDown){ fill(CLRS.CODE_BLUE); }
+        else            { noFill();             }
+  
+        triangle(x+this.x+10, y+this.y+this.h,
+                 x+this.x,    y+this.y+this.h/2+2,
+                 x+this.x+20, y+this.y+this.h/2+2);
+  
+        // Caption ~~~~~~~~~~
+        if(this.hit){ fill(getColor(CLRS.WHITE,75)); }
+        else        { fill(getColor(CLRS.WHITE,50)); }
+  
+        text(this.ctrls(),
+             x+this.x+25,
+             y+this.y+this.h/2);
+  
+        if(this.hitUp || this.hitDown){ cursor(HAND);   }
+        else                          { cursor(ARROW);  }
+  
+        // Control origin ~~~~~~~~~~
+        if(app.debug){  fill(CLRS.RED);
+                        ellipse(x+this.x,y+this.y,3,3);
+                     }
+  
+      }
+  
+    };
+    Slider.prototype.clicked= function(x,y){
+  
+      if     (this.hitUp)  { this.execute(0); }
+      else if(this.hitDown){ this.execute(1); }
+  
+    };
+    Slider.prototype.moved=   function(x,y){
+  
+      if(mouseX>x+this.x &&
+         mouseX<x+this.x+this.w &&
+         mouseY>y+this.y &&
+         mouseY<y+this.y+this.h){
+  
+        app.focus=this.id;
+        this.hit=true;
+  
+        if(hitTriangle(x+this.x+10, y+this.y,
+                       x+this.x,    y+this.y+this.h/2-2,
+                       x+this.x+20, y+this.y+this.h/2-2)){
+  
+          this.hitUp=true;
+  
+        }
+        else{
+          this.hitUp=false;
+        }
+  
+        if(hitTriangle(x+this.x+10, y+this.y+this.h,
+                      x+this.x,    y+this.y+this.h/2+2,
+                      x+this.x+20, y+this.y+this.h/2+2)){
+  
+          this.hitDown=true;
+  
+        }
+        else{
+          this.hitDown=false;
+        }
+  
+      }
+      else{
+        
+        this.hitUp=false;
+        this.hitDown=false;
+  
+        this.hit=false;
+  
+      }
+  
+    };
+    Slider.prototype.dragged= function(x,y){
+  
+      // if(this.hit){
+      //   this.x=x;
+      //   this.y=y;
+      // }
+  
+    };
+    Slider.prototype.pressed= function(x,y){
+
+println("pressed");
+
+      if     (this.hitUp)  { this.execute(0); }
+      else if(this.hitDown){ this.execute(1); }
+
+    };
+    Slider.prototype.released=function(x,y){
+  
+      if(this.hit){
+        
+      }
+  
+    };
+    Slider.prototype.over=    function(x,y){
+  
+      this.visible=true;
+  
+    };
+    Slider.prototype.out=     function(x,y){
+  
+      this.visible=false;
+  
+    };
+
+  }
   // Button ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
     var Button=function(id,parent,ctrls,x,y,width,height,color,caption,execute,params){
@@ -1937,7 +2211,7 @@ println(this.enabled);
   
     };
   }
-
+  
   // codeButton ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
     var codeButton=function(id,parent,ctrls,x,y,width,height,color,caption,execute,params){
@@ -2044,270 +2318,268 @@ println(this.enabled);
     };
   }
   
+  
+
   // Key ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  var inputKey=function(k){
-
-    app.cache+=k;
-
-  };
-
-  var Key=function(id,parent,ctrls,x,y,width,height,color,caption,execute,params){
-
-    Control.call(this,id,parent,ctrls,x,y,width,height,color,caption,execute,params);
-
-  };
-  Key.prototype.draw=       function(x,y){
-
-    if(this.visible){
-      
-      if(app.left &&
-         this.hit){ this.offset=1; }
-      else        { this.offset=0; }
-
+  {
+    var Key=function(id,parent,ctrls,x,y,width,height,color,caption,execute,params){
+  
+      Control.call(this,id,parent,ctrls,x,y,width,height,color,caption,execute,params);
+  
+    };
+    Key.prototype.draw=       function(x,y){
+  
+      if(this.visible){
+        
+        if(app.left &&
+           this.hit){ this.offset=1; }
+        else        { this.offset=0; }
+  
+        if(this.hit){
+  
+          if(app.left){ fill(getColor(this.color,85)); }
+          else        { fill(getColor(this.color,70)); }
+  
+          cursor(HAND);
+  
+        }
+        else{
+          
+          if(this.parent.hit){ fill(getColor(this.color,40)); }
+          else               { fill(getColor(this.color,30)); }
+          
+          // cursor(ARROW);
+          
+        }
+  
+        rectMode(CORNER);
+        noStroke();
+        
+        // Border/Background
+        rect(x+this.x+this.offset,
+             y+this.y+this.offset,
+             this.w, this.h,
+             10);
+        
+        // Caption
+        textAlign(CENTER,CENTER);
+        textSize(24);
+  
+        if(this.hit){ fill(getColor(CLRS.WHITE,100)); }
+        else        { fill(getColor(CLRS.WHITE,50));  }
+        
+        text(this.caption,
+             x+this.x+this.w/2+this.offset,
+             y+this.y+this.h/2+this.offset);
+  
+      }
+  
+    };
+    Key.prototype.clicked=    function(x,y){
+  
       if(this.hit){
-
-        if(app.left){ fill(getColor(this.color,85)); }
-        else        { fill(getColor(this.color,70)); }
-
-        cursor(HAND);
-
+  
+        this.execute(this.caption);
+  
+      }
+  
+    };
+    Key.prototype.moved=      function(x,y){
+      
+      // Control.moved(this,x,y);
+      
+      if(mouseX>x+this.x && mouseX<x+this.x+this.w &&
+         mouseY>y+this.y && mouseY<y+this.y+this.h){
+  
+        app.focus=this.id;
+        this.hit=true;
+  
       }
       else{
-        
-        if(this.parent.hit){ fill(getColor(this.color,40)); }
-        else               { fill(getColor(this.color,30)); }
-        
-        // cursor(ARROW);
-        
+  
+        this.hit=false;
+  
       }
-
-      rectMode(CORNER);
-      noStroke();
-      
-      // Border/Background
-      rect(x+this.x+this.offset,
-           y+this.y+this.offset,
-           this.w, this.h,
-           10);
-      
-      // Caption
-      textAlign(CENTER,CENTER);
-      textSize(24);
-
-      if(this.hit){ fill(getColor(CLRS.WHITE,100)); }
-      else        { fill(getColor(CLRS.WHITE,50));  }
-      
-      text(this.caption,
-           x+this.x+this.w/2+this.offset,
-           y+this.y+this.h/2+this.offset);
-
-    }
-
-  };
-  Key.prototype.clicked=    function(x,y){
-
-    if(this.hit){
-
-      this.execute(this.caption);
-
-    }
-
-  };
-  Key.prototype.moved=      function(x,y){
-    
-    // Control.moved(this,x,y);
-    
-    if(mouseX>x+this.x && mouseX<x+this.x+this.w &&
-       mouseY>y+this.y && mouseY<y+this.y+this.h){
-
-      app.focus=this.id;
-      this.hit=true;
-
-    }
-    else{
-
-      this.hit=false;
-
-    }
-
-  };
-  Key.prototype.dragged=    function(x,y){
-
-    // if(this.hit){
-    //   this.x=x;
-    //   this.y=y;
-    // }
-
-  };
-  Key.prototype.pressed=    function(x,y){
-
-    if(this.hit){
-
-// println(this.caption);
-
-      this.pressed=true;
-
-    }
-
-  };
-  Key.prototype.released=   function(x,y){
-
-    if(this.hit){
-      this.pressed=false;
-    }
-
-  };
-  Key.prototype.over=       function(x,y){
-
-    this.visible=true;
-
-  };
-  Key.prototype.out=        function(x,y){
-
-    this.visible=false;
-
-  };
-
+  
+    };
+    Key.prototype.dragged=    function(x,y){
+  
+      // if(this.hit){
+      //   this.x=x;
+      //   this.y=y;
+      // }
+  
+    };
+    Key.prototype.pressed=    function(x,y){
+  
+      if(this.hit){
+  
+  // println(this.caption);
+  
+        this.pressed=true;
+  
+      }
+  
+    };
+    Key.prototype.released=   function(x,y){
+  
+      if(this.hit){
+        this.pressed=false;
+      }
+  
+    };
+    Key.prototype.over=       function(x,y){
+  
+      this.visible=true;
+  
+    };
+    Key.prototype.out=        function(x,y){
+  
+      this.visible=false;
+  
+    };
+  }
 
   // Keypad ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  var Keypad=function(id,parent,ctrls,x,y,width,height,color,caption,execute,params){
+  {
+    var Keypad=function(id,parent,ctrls,x,y,width,height,color,caption,execute,params){
 
     Control.call(this,id,parent,ctrls,x,y,width,height,color,caption,execute,params);
     
   };
-  Keypad.prototype.draw=    function(x,y){
-
-    if(this.visible){
-
-      if(this.hit){
-
-        if(this.tag<this.h){ this.tag+=10; }
+    Keypad.prototype.draw=    function(x,y){
+  
+      if(this.visible){
+  
+        if(this.hit){
+  
+          if(this.tag<this.h){ this.tag+=10; }
+          
+        }
+        else{
+          
+          if(this.tag>0){ this.tag-=10; }
+          
+        }
+  
+        if(this.hit){
+  
+          fill(getColor(this.color, 15+this.timer));
+  
+          if(this.timer<10){ this.timer++; }
+  
+          tNode(ARROW);
+  
+        }
+        else{
+  
+          fill(getColor(this.color, 15+this.timer));
+  
+          if(this.timer>5){  this.timer--; }
+  
+        }
+  
+        rectMode(CORNER);
+        noStroke();
         
+        stroke(this.color);
+        strokeWeight(1);
+  
+        // Border/Background
+        rect(this.x, this.y-this.tag,
+             this.w, this.h,
+             10,20);
+  
+        // Caption
+        textAlign(CENTER,CENTER);
+        textSize(24);
+  
+        if(this.hit){ fill(getColor(CLRS.WHITE,75)); }
+        else        { fill(getColor(CLRS.WHITE,50)); }
+  
+        // text(this.caption, this.x+this.w/2, this.y+this.h/2);
+        if(this.tag>0){
+          for(var c in this.ctrls){ this.ctrls[c].draw(this.x,this.y-this.tag); }
+        }
+  
+      }
+  
+    };
+    Keypad.prototype.clicked= function(x,y){
+  
+      if(this.hit){
+  
+        for(var c in this.ctrls){ this.ctrls[c].clicked(mouseX,mouseY); }
+  
+        // this.execute();
+  
+      }
+  
+    };
+    Keypad.prototype.moved=   function(x,y){
+  
+      if(mouseX>this.x &&
+         mouseX<this.x+this.w &&
+         mouseY>this.y-this.tag &&
+         mouseY<this.y+this.h-this.tag){
+  
+        this.hit=true;
+        app.focus=this.id;
+  
+        for(var c in this.ctrls){ this.ctrls[c].moved(this.x, this.y-this.tag); }
+  
       }
       else{
-        
-        if(this.tag>0){ this.tag-=10; }
-        
+  
+        this.hit=false;
+        this.timer=0;
+  
       }
-
-      if(this.hit){
-
-        fill(getColor(this.color, 15+this.timer));
-
-        if(this.timer<10){ this.timer++; }
-
-        cursor(ARROW);
-
-      }
-      else{
-
-        fill(getColor(this.color, 15+this.timer));
-
-        if(this.timer>5){  this.timer--; }
-
-      }
-
-      rectMode(CORNER);
-      noStroke();
+  
+    };
+    Keypad.prototype.dragged= function(x,y){
+  
+      // if(this.hit){
+      //   this.x=x;
+      //   this.y=y;
+      //   for(var c in this.ctrls){ this.ctrls[c].dragged(mouseX,mouseY); }
+      // }
       
-      stroke(this.color);
-      strokeWeight(1);
-
-      // Border/Background
-      rect(this.x, this.y-this.tag,
-           this.w, this.h,
-           10,20);
-
-      // Caption
-      textAlign(CENTER,CENTER);
-      textSize(24);
-
-      if(this.hit){ fill(getColor(CLRS.WHITE,75)); }
-      else        { fill(getColor(CLRS.WHITE,50)); }
-
-      // text(this.caption, this.x+this.w/2, this.y+this.h/2);
-      if(this.tag>0){
-        for(var c in this.ctrls){ this.ctrls[c].draw(this.x,this.y-this.tag); }
+        
+    };
+    Keypad.prototype.pressed= function(x,y){
+  
+  //     if(this.hit){
+  
+  //       for(var c in this.ctrls){ this.ctrls[c].pressed(mouseX,mouseY); }
+        
+  // println(this.keys.length);
+  
+  //     }
+  
+    };
+    Keypad.prototype.released=function(x,y){
+  
+      if(this.hit){
+        for(var c in this.ctrls){ this.ctrls[c].released(mouseX,mouseY); }
       }
-
-    }
-
-  };
-  Keypad.prototype.clicked= function(x,y){
-
-    if(this.hit){
-
-      for(var c in this.ctrls){ this.ctrls[c].clicked(mouseX,mouseY); }
-
-      // this.execute();
-
-    }
-
-  };
-  Keypad.prototype.moved=   function(x,y){
-
-    if(mouseX>this.x &&
-       mouseX<this.x+this.w &&
-       mouseY>this.y-this.tag &&
-       mouseY<this.y+this.h-this.tag){
-
-      this.hit=true;
-      app.focus=this.id;
-
-      for(var c in this.ctrls){ this.ctrls[c].moved(this.x, this.y-this.tag); }
-
-    }
-    else{
-
+  
+    };
+    Keypad.prototype.over=    function(x,y){
+  
+      this.visible=true;
+  
+    };
+    Keypad.prototype.out=     function(x,y){
+  
+      this.visible=false;
       this.hit=false;
-      this.timer=0;
-
-    }
-
-  };
-  Keypad.prototype.dragged= function(x,y){
-
-    // if(this.hit){
-    //   this.x=x;
-    //   this.y=y;
-    //   for(var c in this.ctrls){ this.ctrls[c].dragged(mouseX,mouseY); }
-    // }
-    
       
-  };
-  Keypad.prototype.pressed= function(x,y){
-
-//     if(this.hit){
-
-//       for(var c in this.ctrls){ this.ctrls[c].pressed(mouseX,mouseY); }
-      
-// println(this.keys.length);
-
-//     }
-
-  };
-  Keypad.prototype.released=function(x,y){
-
-    if(this.hit){
-      for(var c in this.ctrls){ this.ctrls[c].released(mouseX,mouseY); }
-    }
-
-  };
-  Keypad.prototype.over=    function(x,y){
-
-    this.visible=true;
-
-  };
-  Keypad.prototype.out=     function(x,y){
-
-    this.visible=false;
-    this.hit=false;
-    
-  };
-
+    };
+  }
 
   // Network ============================================================
-  {
+
   var blank=function(){
   
     
@@ -2412,7 +2684,7 @@ println(this.enabled);
 
   };
 
-  var setGrid=function(){
+  var initGrid=function(){
 
     app.vortex=[];
 
@@ -2499,11 +2771,44 @@ println(this.enabled);
     }
 
   };
-  }
 
   // Travelling Salesman ======================================================
-  {
+
+  var swap=function(arr){
+
+    var distance=0;
+    var index1=0;
+    var index2=0;
     
+    while(index1==index2){
+      index1=round(random(arr.length-1));
+      index2=round(random(arr.length-1));
+    }
+
+    arraySwap(arr, index1, index2);
+
+    for(var n=0; n<arr.length-1; n++){
+
+      distance+=dist(arr[n].dX,
+                     arr[n].dY,
+                     arr[n+1].dX,
+                     arr[n+1].dY);
+    }
+    
+    distance+=dist(arr[0].dX,
+                   arr[0].dY,
+                   arr[arr.length-1].dX,
+                   arr[arr.length-1].dY);
+    
+    var difference=app.distanceSA-distance;
+
+    if(difference<0){ arraySwap(arr,index1,index2); }
+    else            { app.swaps++;                  }
+
+    if(app.temp>0){ app.temp-=app.tempIncrement; }
+
+  };
+
   var runTSP=function(){
 
     app.running=!app.running;
@@ -2512,12 +2817,10 @@ println(this.enabled);
 
   var resetTSP=function(){
     
-    app.swaps=0;
-    app.HC=[];
-    app.temp=round(width/5);
+
     
   };
-  
+
   var arraySwap=function(arr, index1, index2){
 
     var temp=arr[index1];
@@ -2526,132 +2829,163 @@ println(this.enabled);
     arr[index2]=temp;
 
   };
-
+  
+  var loadNodes=function(){
+    
+    for(var n=0; n<app.tspSize; n++){
+      app.SA.push( new tNode( getGUID(), random(150, app.width-20), random(20, app.height-20), 0, 0, 0) );
+    }
+    
+  };
+  
   var newTSP=function(){
 
-    resetTSP();
+    app.tspSwaps=0;
+    app.HC=[];
+    app.SA=[];
+    
+    app.temp=round(app.tspSize*5);
+    
+    loadNodes();
+    
+    // for(var n=0; n<app.tspSize; n++){
+    //   app.SA.push( new tNode( getGUID(), random(150, app.width-20), random(20, app.height-20), 0, 0, 0) );
+    // }
 
-    for(var n=0; n<app.size; n++){
-      app.HC.push( new tspNode( getGUID(),
-                                random(150, app.width-20),
-                                random(20,  app.height-20),
-                                0,0,0
-                              )
-                    );
-    }
+    if(app.maximize){ maximizeTour(app.SA); }
+    if(app.minimize){ minimizeTour(app.SA); }
 
   };
 
   var retryTSP=function(){
     
     app.swaps=0;
-    app.temp=round(width/5);
+    app.temp=round(app.tspSize*5);
     
-    for(var n=0; n<app.HC.length; n++){
-      arraySwap(app.HC, n, round(random(app.HC.length-1)));
+    for(var n=0; n<app.SA.length; n++){
+      arraySwap(app.SA, n, round(random(app.SA.length-1)));
+    }
+
+    if(app.maximize){ maximizeTour(app.SA); }
+    if(app.minimize){ minimizeTour(app.SA); }
+
+  };
+
+  var minimizeTour=function(arr){
+    
+    var minDistance=Infinity;
+    var tempDistance=0;
+    var index=0;
+
+    // Sort based on the min distance between each successive point
+    for(n=0; n<arr.length-1; n++){
+
+      for(m=n+1; m<arr.length; m++){
+
+        tempDistance=dist(arr[n].x, arr[n].y,
+                          arr[m].x, arr[m].y);
+
+        if(tempDistance<minDistance){
+          minDistance=tempDistance;
+          index=m;
+        }
+        
+      }
+
+      arraySwap(arr,n+1,index);
+      minDistance=Infinity;
+      tempDistance=Infinity;
+
     }
     
   };
   
-  var swap=function(){
+  var maximizeTour=function(arr){
+    
+    var maxDistance=0;
+    var tempDistance=0;
+    var index=0;
 
-    var distance=0;
-    var index1=0;
-    var index2=0;
-    
-    while(index1==index2){
-      index1=round(random(app.HC.length-1));
-      index2=round(random(app.HC.length-1));
-    }
-    
-    if(index1!=index2){
-      
-      // println(index1+", "+index2);
-      
-      arraySwap(app.HC,index1,index2);
-  
-      for(var n=0; n<app.HC.length-1; n++){
-  
-        distance+=dist(app.HC[n].dX,
-                       app.HC[n].dY,
-                       app.HC[n+1].dX,
-                       app.HC[n+1].dY);
-      }
-      
-      distance+=dist(app.HC[0].dX,
-                     app.HC[0].dY,
-                     app.HC[app.HC.length-1].dX,
-                     app.HC[app.HC.length-1].dY);
-      
-      var difference=app.distanceHC-distance;
-      
-      // if(difference<0 && random()>app.temp/1000){
-      //   arraySwap(app.HC,index1,index2);
-      // }
-      // else{
-      //   app.swaps++;
-      // }
-      
-      if(difference<0){
-        arraySwap(app.HC,index1,index2);
-        app.swaps++;
+    // Sort based on the max distance between each successive point
+    for(n=0; n<arr.length-1; n++){
+
+      for(m=n+1; m<arr.length; m++){
+
+        tempDistance=dist(arr[n].x, arr[n].y,
+                          arr[m].x, arr[m].y);
+
+        if(tempDistance>maxDistance){
+          maxDistance=tempDistance;
+          index=m;
+        }
+        
       }
 
-      if(app.temp>0){ app.temp-=app.tempIncrement; }
-      
+      arraySwap(arr,n+1,index);
+      maxDistance=0;
+      tempDistance=0;
+
     }
     
   };
+  
+  var resetTSP=function(){
 
-  var setTSP=function(){
+    loadNodes();
+    
+    // for(n=0; n<app.tspSize; n++){
+    //   app.SA.push( new tNode( getGUID(), random(140, app.width-20), random(20,  app.height-20), 0,0,0) );
+    // }
+    
+    if(app.maximize){ maximizeTour(app.SA); }
+    if(app.minimize){ minimizeTour(app.SA); }
+
+  };
+  
+  var initTSP=function(){
 
     app.vortex=[];
     app.nodes=[];
+    
     app.HC=[];
+    app.SA=[];
+    app.ANT=[];
+    app.GEN=[];
+    app.USER=[];
+    
     app.temp=round(width/5);
     app.frameRate=60;
-
-    // loadGrid();
 
     app.ctrls=[];
 
     var ctrls=[];
     
-    var cntrTSP =new Container(getGUID(), undefined, [], 0, 0, app.width-20, app.height-20, undefined, "TSP Background", blank);
+    var cntrTSP=new Container(getGUID(), undefined, [], 0, 0, app.width-3, app.height-3, getColor(CLRS.BLUE,50), "TSP Background", blank, 0);
 
-    ctrls.push(new Button(getGUID(), cntrTSP, [], 10, app.height-40, 100, 30, CLRS.CODE_YELLOW, "back...", setSplash));
-    ctrls.push(new Button(getGUID(), cntrTSP, [], 10, 30, 100, 30, CLRS.CODE_YELLOW, "new",     newTSP));
+    ctrls.push(new Checkbox(getGUID() ,cntrTSP, getDebug,10, 0, 100, 30, CLRS.CODE_PURPLE, "Debug",  setDebug, 3));
 
-    ctrls.push(new Button(getGUID(), cntrTSP, [], 10, 60, 100, 30, CLRS.CODE_YELLOW, "run",     runTSP));
-    ctrls.push(new Button(getGUID(), cntrTSP, [], 10, 90, 100, 30, CLRS.CODE_YELLOW, "retry",   retryTSP));
+    ctrls.push(new Button(getGUID(), cntrTSP, [], 10, 30, 100, 30, CLRS.CODE_YELLOW, "new",     newTSP, 0));
 
-    ctrls.push(
-      new Label(getGUID(), cntrTSP, getDistanceHC, 30, 150, 100, 20, CLRS.CODE_YELLOW, "0000",   getDistanceHC,0));
+    ctrls.push(new Button(getGUID(), cntrTSP, [], 10, 60, 100, 30, CLRS.CODE_YELLOW, "run",     runTSP, 0));
+    ctrls.push(new Button(getGUID(), cntrTSP, [], 10, 90, 100, 30, CLRS.CODE_YELLOW, "retry",   retryTSP, 0));
 
-    ctrls.push(
-      new Label( getGUID(), cntrTSP, [],10, 210, 100, 14, CLRS.CODE_PURPLE, "Select Algorithm",0,0));
+    ctrls.push(new Label(getGUID(), cntrTSP, getDistanceSA, 30, 150, 100, 20, CLRS.CODE_YELLOW, "0000", getDistanceSA, 0));
+
+    ctrls.push(new Label( getGUID(), cntrTSP, [],10, 210, 100, 14, CLRS.CODE_PURPLE, "Select Algorithm",0,0));
       
-    ctrls.push(
-      new Option(getGUID(), cntrTSP, getAlgorithm,10, 225, 100, 30, CLRS.CODE_PURPLE, "Hill climb",     setAlgorithm,0));
-    ctrls.push(
-      new Option(getGUID(), cntrTSP, getAlgorithm,10, 250, 100, 30, CLRS.CODE_PURPLE, "Sim Annealing",  setAlgorithm,1));
-    ctrls.push(
-      new Option(getGUID(), cntrTSP, getAlgorithm,10, 275, 100, 30, CLRS.CODE_PURPLE, "Ant Colony",     setAlgorithm,2));
-    ctrls.push(
-      new Option(getGUID(), cntrTSP, getAlgorithm,10, 300, 100, 30, CLRS.CODE_PURPLE, "Genetic - B&B",  setAlgorithm,3));
+    ctrls.push(new Option(getGUID(), cntrTSP, getAlgorithm,10, 225, 100, 30, CLRS.CODE_PURPLE, "Hill climb",     setAlgorithm, 0));
+    ctrls.push(new Option(getGUID(), cntrTSP, getAlgorithm,10, 250, 100, 30, CLRS.CODE_PURPLE, "Sim Annealing",  setAlgorithm, 1));
+    ctrls.push(new Option(getGUID(), cntrTSP, getAlgorithm,10, 275, 100, 30, CLRS.CODE_PURPLE, "Ant Colony",     setAlgorithm, 2));
+    ctrls.push(new Option(getGUID(), cntrTSP, getAlgorithm,10, 300, 100, 30, CLRS.CODE_PURPLE, "Genetic - B&B",  setAlgorithm, 3));
 
-    ctrls.push(
-      new Label( getGUID(), cntrTSP, [],45, 470, 100, 14, CLRS.CODE_PURPLE, "Nodes","",0));
+    ctrls.push(new Checkbox(getGUID(), cntrTSP, getMaximize, 10, 380, 100, 30, CLRS.CODE_PURPLE, "Maximize",  setMaximize, 3));
+    ctrls.push(new Checkbox(getGUID(), cntrTSP, getMinimize, 10, 400, 100, 30, CLRS.CODE_PURPLE, "Minimize",  setMinimize, 3));
 
-    ctrls.push(
-      new UpDown(getGUID(), cntrTSP, getSize,50, 500, 100, 30, CLRS.CODE_PURPLE, "#",setSize,3));
+    ctrls.push(new Label( getGUID(), cntrTSP, [], 45, 470, 100, 14, CLRS.CODE_PURPLE, "Nodes", "", 0));
 
-    // ALGORITHMS.RANDOM:                   0,
-    // ALGORITHMS.SIMULATED_ANNEALLING:     1,
-    // ALGORITHMS.ANT_COLONY_OPTIMIZATION:  2,
-    // ALGORITHMS.GENETIC_BRANCH_BOUND:     3
+    ctrls.push(new UpDown(getGUID(), cntrTSP, getSize, 50, 500, 100, 30, CLRS.CODE_PURPLE, "#", setSize, 3));
 
-    // app.ctrls.push(  new Button(2, 225,  0,  100,  30, CLRS.BACKGROUND_0,  "clear",  clearCache))
+    ctrls.push(new Button(getGUID(), cntrTSP, [], 10, app.height-40, 100, 30, CLRS.CODE_YELLOW, "back...", setSplash, 0));
 
     cntrTSP.ctrls=ctrls;
     cntrTSP.tag=false;
@@ -2660,43 +2994,45 @@ println(this.enabled);
 
     process=drawTSP;
 
-    for(var n=0; n<app.size; n++){
-      app.HC.push(
-        new tspNode(getGUID(),
-                    random(140,app.width-20),
-                    random(20,app.height-20),
-                    0,0,0
-                   )
-      );
-    }
-
+    resetTSP();
+    
+    app.mode=MODES.TSP;
+    
   };
 
-  var calculateDistance=function(){
+  var tourDistance=function(arr){
 
-    app.distanceHC=0;
+    var distance=0;
 
-    for(var n=0; n<app.HC.length-1; n++){
+    for(var n=0; n<arr.length-1; n++){
 
-      app.distanceHC+=dist(app.HC[n].x,
-                           app.HC[n].y,
-                           app.HC[n+1].x,
-                           app.HC[n+1].y);
+      distance+=dist(arr[n].x,
+                     arr[n].y,
+                     arr[n+1].x,
+                     arr[n+1].y);
     }
     
-    app.distanceHC+=dist(app.HC[0].x,
-                         app.HC[0].y,
-                         app.HC[app.HC.length-1].x,
-                         app.HC[app.HC.length-1].y);
-
+    distance+=dist(arr[0].x,
+                   arr[0].y,
+                   arr[arr.length-1].x,
+                   arr[arr.length-1].y);
+    
+    return distance;
+    
   };
+
   
-  var hillClimb=function(){
+
+
+  
+  var drawHC=function(){
   
     stroke(CLRS.RED);
     strokeWeight(2);
     noFill();
-    
+
+    app.temp=0;
+
     for(var n=0; n<app.HC.length-1; n++){
       
       stroke(CLRS.YELLOW);
@@ -2724,25 +3060,77 @@ println(this.enabled);
     noStroke();
     fill(CLRS.RED);
     
-    // ellipse(app.HC[app.HC.length-1].x, app.HC[app.HC.length-1].y, 20, 20);
+    ellipse(app.HC[app.HC.length-1].x, app.HC[app.HC.length-1].y, 20, 20);
     
     for(var c in app.HC){ app.HC[c].draw(0,0); }
     
-    calculateDistance();
+    app.distanceHC=tourDistance(app.HC)
 
-    if(app.running){ swap(); }
+    if(app.running){ swap(app.HC); }
+    
+    textSize(20);
+    fill(CLRS.WHITE);
+
+    text("Swaps: " + round(app.swaps), 160, 570);
+
+  };
+
+  var drawSA=function(){
+
+    stroke(CLRS.RED);
+    strokeWeight(2);
+    noFill();
+    
+    for(var n=0; n<app.SA.length-1; n++){
+      
+      stroke(CLRS.YELLOW);
+      strokeWeight(1);
+      noFill();
+  
+      line(app.SA[n].x,   app.SA[n].y,
+           app.SA[n+1].x, app.SA[n+1].y);
+      
+      noStroke();
+      fill(CLRS.RED);
+  
+      if(n==0){ ellipse(app.SA[n].x, app.SA[n].y, 20, 20);  }
+      // else    { ellipse(app.SA[n].x, app.SA[n].y, 10, 10);  }
+
+    }
+
+    stroke(CLRS.YELLOW);
+    strokeWeight(1);
+    noFill();
+
+    line(app.SA[0].x,               app.SA[0].y,
+         app.SA[app.SA.length-1].x, app.SA[app.SA.length-1].y);
+
+    noStroke();
+    fill(CLRS.RED);
+    
+    ellipse(app.SA[app.SA.length-1].x, app.SA[app.SA.length-1].y, 20, 20);
+    
+    for(var c in app.SA){ app.SA[c].draw(0,0); }
+    
+    app.distanceSA=tourDistance(app.SA)
+
+    if(app.running){ swap(app.SA); }
+    
+    textSize(20);
+    textAlign(LEFT,BASELINE);
+    
+    fill(CLRS.WHITE);
+
+    text("Swaps: " + round(app.swaps), 160, 570);
+    text("Temp:  " + round(app.temp),  160, 590);
+
+  };
+
+  var drawANT=function(){
     
   };
 
-  var simAnnealing=function(){
-    
-  };
-
-  var antColony=function(){
-    
-  };
-
-  var genetic=function(){
+  var drawGEN=function(){
     
   };
 
@@ -2754,212 +3142,184 @@ println(this.enabled);
       
         background(CLRS.BLACK);
         
-        stroke(CLRS.CODE_BLUE);
+        strokeWeight(1);
+        stroke(CLRS.CODE_ORANGE);
         fill(getColor(CLRS.CODE_BLUE,75));
 
         rect(135,5,app.width-140,app.height-10);
 
+        for(var c in app.ctrls){ app.ctrls[c].draw(0,0); }
+
         switch(app.algorithm){
 
-          case 0: hillClimb();    break;
+          case 0: drawHC();   break;
+          case 1: drawSA();   break;
+          case 2: drawANT();  break;
+          case 4: drawGEN();  break;
 
-          case 1: simAnnealing(); break;
-
-          case 2: antColony();    break;
-
-          case 4: genetic();      break;
-
-          default:                break;
+          default:            break;
 
         }
-        
-        // Display total distance
-        fill(CLRS.GRAY);
-        textSize(24);
-        textAlign(LEFT,BOTTOM);
-        
-        // text(app.distance, 20,30);
 
     popMatrix();
-    
 
-
-    textSize(20);
-    fill(CLRS.WHITE);
-
-    text("Swaps: " + round(app.swaps), 160, 570);
-    text("Temp:  " + round(app.temp),  160, 590);
-    
   };
 
-  var setAlgorithm=function(opt){
-    
-    app.algorithm=opt;
-    
-    println(app.algorithm);
-    
-  };
-
-  }
-  
   // Splash Screen ============================================================
+  {
+    var currentP=new pt(0,0);
+    var currentX=0;
+    var currentY=0;
   
-  var currentP=new pt(0,0);
-  var currentX=0;
-  var currentY=0;
-
-  var complete=false;
-
-  var vortexRadius=2.5;
-  var vortexDiameter=48;
+    var complete=false;
   
-  var position=app.vortex.length;
-
-  var loadData=function(){
+    var vortexRadius=2.5;
+    var vortexDiameter=48;
+    
+    var position=app.vortex.length;
   
-    app.vortex=[];
-
-    for(var theta=0; theta<PI*vortexDiameter; theta+=PI/18){
-
-      app.vortex.push(new pt( vortexRadius*(cos(theta)+theta*sin(theta)),
-                              vortexRadius*(sin(theta)-theta*cos(theta)),
-                              round(random(0,1)),
-                              color(random(128,192))
-                            )
-                      );
-    }
-
-  };
+    var loadData=function(){
+    
+      app.vortex=[];
   
-  var addBit=function(arr){
-      
-    for(var n=0; n<arr.length-1; n++){
-      arr[n].value=arr[n+1].value;
-      arr[n].color=arr[n+1].color;
-    }
-
-    arr[arr.length-1].value=round(random(0,1));
-
-    if(app.left){ arr[arr.length-1].color=getColor(CLRS.CODE_GREEN,50); }
-    else        { arr[arr.length-1].color=color(random(128,192));       }
-
-  };
-
-  var involute=function(){
-
-    rectMode(CENTER);
-
-    background(getColor(CLRS.CODE_TEAL,80));
-
-    noStroke();
-
-    var tSize=3;
-
-    pushMatrix();
-
-      translate(app.width/2,app.height/2);
-
-      // for(var radius=900; radius>50; radius-=25){
-      //   fill(getColor(CLRS.GRAY,1));
-      //   ellipse(0,0,radius,radius);
-      // }
-
-      beginShape();
-
-      for(var n=0; n<app.vortex.length; n++){
-
-        if(app.vortex[n].value===1){
-      
-          fill(app.vortex[n].color);
-          stroke(app.vortex[n].color);
-          
-          rect(app.vortex[n].x, app.vortex[n].y, tSize*0.15, tSize*0.9);
-
-        }
-        else{
-
-          noFill();
-          strokeWeight(2);
-          stroke(app.vortex[n].color);
-
-          ellipse(app.vortex[n].x, app.vortex[n].y, tSize*0.75, tSize*0.9);
-
-        }
-
-        tSize*=1.003;
-
+      for(var theta=0; theta<PI*vortexDiameter; theta+=PI/18){
+  
+        app.vortex.push(new pt( vortexRadius*(cos(theta)+theta*sin(theta)),
+                                vortexRadius*(sin(theta)-theta*cos(theta)),
+                                round(random(0,1)),
+                                color(random(128,192))
+                              )
+                        );
       }
-
-      endShape();
-
-    popMatrix();
-
-  };
-
-  var drawSplash=function(){
-
-    involute();
-
-    addBit(app.vortex);
-
-    // Go faster stripe
-    fill(getColor(CLRS.WHITE,70));
-
-    pushMatrix();
-      
-      noStroke();
-      
-      rectMode(CORNER);
-      
-      fill(getColor(CLRS.BLACK,50));
-      
-      rect(0,0,app.width,app.height);
-      
-      fill(getColor(CLRS.CODE_TEAL,50));
-      
-      // rect(0,app.height/2-50,app.width,100);
-
-    popMatrix();
-
-    // logo(app.width/2,app.height/2);
-
-  };
   
-  var setSplash=function(){
-
-    app.frameRate=10;
-
-    loadData();
+    };
     
-    app.ctrls=[];
+    var addBit=function(arr){
+        
+      for(var n=0; n<arr.length-1; n++){
+        arr[n].value=arr[n+1].value;
+        arr[n].color=arr[n+1].color;
+      }
+  
+      arr[arr.length-1].value=round(random(0,1));
+  
+      if(app.left){ arr[arr.length-1].color=getColor(CLRS.CODE_GREEN,50); }
+      else        { arr[arr.length-1].color=color(random(128,192));       }
+  
+    };
+  
+    var involute=function(){
+  
+      rectMode(CENTER);
 
-    // Toolbar
-    var ctrls=[];
+      noStroke();
+  
+      var tSize=3;
+  
+      pushMatrix();
+  
+        translate(app.width/2,app.height/2);
+  
+        // for(var radius=900; radius>50; radius-=25){
+        //   fill(getColor(CLRS.GRAY,1));
+        //   ellipse(0,0,radius,radius);
+        // }
+  
+        beginShape();
+  
+        for(var n=0; n<app.vortex.length; n++){
+  
+          if(app.vortex[n].value===1){
+        
+            fill(app.vortex[n].color);
+            stroke(app.vortex[n].color);
+            
+            rect(app.vortex[n].x, app.vortex[n].y, tSize*0.15, tSize*0.9);
+  
+          }
+          else{
+  
+            noFill();
+            strokeWeight(2);
+            stroke(app.vortex[n].color);
+  
+            ellipse(app.vortex[n].x, app.vortex[n].y, tSize*0.75, tSize*0.9);
+  
+          }
+  
+          tSize*=1.003;
+  
+        }
+  
+        endShape();
+  
+      popMatrix();
+  
+    };
+  
+    var drawSplash=function(){
+
+      background(getColor(CLRS.CODE_TEAL,80));
+
+      involute();
+  
+      addBit(app.vortex);
+  
+      pushMatrix();
+        
+        noStroke();
+        
+        rectMode(CORNER);
+        
+        fill(getColor(CLRS.BLACK,50));
+        
+        rect(0,0,app.width,app.height);
+        
+        fill(getColor(CLRS.CODE_TEAL,50));
+        
+        rect(0,app.height/2-50,app.width,100);
+        
+        for(var c in app.ctrls){ app.ctrls[c].draw(0,0); }
+  
+      popMatrix();
+  
+    };
     
-    var cntrSplash =new Container(getGUID(), undefined, [], 0, 0, app.width, app.height, undefined, "Splash Background", blank);
-    
-    var x=app.width/2;
-    var y=app.height/2;
-    
-    ctrls.push(new codeButton(getGUID(), cntrSplash, undefined,x-105, y-105, 100, 100, CLRS.CODE_PURPLE, "C", setGrid,1));
-    ctrls.push(new codeButton(getGUID(), cntrSplash, undefined,x+5,   y-105, 100, 100, CLRS.CODE_ORANGE, "O", setTSP, 2));
-    ctrls.push(new codeButton(getGUID(), cntrSplash, undefined,x-105, y+5,   100, 100, CLRS.CODE_BLUE,   "D", setTSP, 3));
-    ctrls.push(new codeButton(getGUID(), cntrSplash, undefined,x+5,   y+5,   100, 100, CLRS.CODE_GREEN,  "E", setTSP, 4));
-
-    cntrSplash.ctrls=ctrls;
-    cntrSplash.tag=false;
-
-    app.ctrls.push(cntrSplash);
-
-    process=drawSplash;
-    
-  };
-
+    var setSplash=function(){
+  
+      app.frameRate=10;
+  
+      loadData();
+      
+      app.ctrls=[];
+  
+      // Toolbar
+      var ctrls=[];
+      
+      var cntrSplash =new Container(getGUID(), undefined, [], 10, 10, app.width-3, app.height-3, getColor(CLRS.WHITE,1), "Splash Background", blank);
+      
+      var x=app.width/2;
+      var y=app.height/2;
+      
+      ctrls.push(new codeButton(getGUID(), cntrSplash, undefined, x-105, y-105, 100, 100, CLRS.CODE_PURPLE, "C", initGrid, 1));
+      ctrls.push(new codeButton(getGUID(), cntrSplash, undefined, x+5,   y-105, 100, 100, CLRS.CODE_ORANGE, "O", initTSP,  2));
+      ctrls.push(new codeButton(getGUID(), cntrSplash, undefined, x-105, y+5,   100, 100, CLRS.CODE_BLUE,   "D", initTSP,  3));
+      ctrls.push(new codeButton(getGUID(), cntrSplash, undefined, x+5,   y+5,   100, 100, CLRS.CODE_GREEN,  "E", initTSP,  4));
+  
+      cntrSplash.ctrls=ctrls;
+      cntrSplash.tag=false;
+  
+      app.ctrls.push(cntrSplash);
+  
+      process=drawSplash;
+      
+    };
+  }
 
   // Draw loop ================================================================
 
   var draw=function(){
-    
+
     pushMatrix();
     
       translate(0.5,0.5);
@@ -2967,8 +3327,6 @@ println(this.enabled);
       frameRate(app.frameRate);
   
       process();
-  
-      for(var c in app.ctrls){ app.ctrls[c].draw(0,0); }
 
     popMatrix();
 
@@ -2981,148 +3339,152 @@ println(this.enabled);
   // Events ===================================================================
 
   // Mouse Events ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  var mouseClicked=function(){
-
-    for(var n in app.nodes){ app.nodes[n].clicked(mouseX,mouseY); }
-    for(var c in app.ctrls){ app.ctrls[c].clicked(mouseX,mouseY); }
-
-    for(var n in app.HC){ app.HC[n].clicked(0,0); }
-
-  };
-  var mouseMoved=function(){
-
-    app.mouseX=mouseX;
-    app.mouseY=mouseY;
-
-    if(process!=drawTSP){
-      for(var n in app.nodes){ app.nodes[n].moved(0,0); }
-    }
-    else{
+  {
+    var mouseClicked= function(){
+  
+      for(var c in app.ctrls){ app.ctrls[c].clicked(mouseX,mouseY); }
+      // for(var n in app.nodes){ app.nodes[n].clicked(mouseX,mouseY); }
+      for(var n in app.SA){ app.SA[n].clicked(mouseX,mouseY); }
       
-    }
-
-    for(var c in app.ctrls){ app.ctrls[c].moved(0,0); }
-    
-    for(var n in app.HC){ app.HC[n].moved(0,0); }
-
-  };
-  var mouseDragged=function(){
-    
-    process();
-
-    for(var c in app.ctrls){ app.ctrls[c].dragged(mouseX,mouseY); }
-    for(var d in app.ctrls){ app.ctrls[d].draw(mouseX,mouseY);    }
-
-    telemetry();
-
-    for(var n in app.nodes){ app.nodes[n].dragged(mouseX,mouseY); }
-
-    loadConnections();
-
-    for(var n in app.HC){ app.HC[n].dragged(mouseX,mouseY); }
-
-  };
-  var mousePressed=function(){
-
-    switch(mouseButton){
-
-      case LEFT:    app.left=true;    break;
-      case CENTER:  app.center=true;  break;
-      case RIGHT:   app.right=true;   break;
-
-      default:                        break;
-
-    }
-
-    for(var n in app.nodes)   { app.nodes[n].pressed(mouseX,mouseY);    }
-    for(var c in app.ctrls){ app.ctrls[c].pressed(mouseX,mouseY); }
-
-  };
-  var mouseReleased=function(){
-
-    app.left=false;
-    app.center=false;
-    app.right=false;
-
-    for(var n in app.nodes){ app.nodes[n].released(mouseX,mouseY); }
-    for(var c in app.ctrls){ app.ctrls[c].released(mouseX,mouseY); }
-
-  };
-  var mouseOut=function(){
-    
-    app.over=false;
-    
-    // for(var c in app.ctrls){ app.ctrls[c].out(mouseX,mouseY); }
-
-  };
-  var mouseOver=function(){
-
-    app.over=true;
-
-    // for(var c in app.ctrls){ app.ctrls[c].over(mouseX,mouseY); }
-
-  };
-  var mouseWheel=function(){
-
-    p("scroll");
-
-  };
-
+    };
+    var mouseMoved=   function(){
+  
+      app.mouseX=mouseX;
+      app.mouseY=mouseY;
+  
+      // if(process!=drawTSP){
+      //   for(var n in app.nodes){ app.nodes[n].moved(0,0); }
+      // }
+      // else{
+        
+      // }
+  
+      for(var c in app.ctrls){ app.ctrls[c].moved(0,0); }
+      
+      for(var n in app.SA){ app.SA[n].moved(0,0); }
+  
+    };
+    var mouseDragged= function(){
+      
+      process();
+  
+      for(var c in app.ctrls){ app.ctrls[c].dragged(mouseX,mouseY); }
+      // for(var d in app.ctrls){ app.ctrls[d].draw(mouseX,mouseY);    }
+  
+      // telemetry();
+  
+      // for(var n in app.nodes){ app.nodes[n].dragged(mouseX,mouseY); }
+  
+      // loadConnections();
+  
+      for(var n in app.SA){ app.SA[n].dragged(mouseX,mouseY); }
+  
+    };
+    var mousePressed= function(){
+  
+      switch(mouseButton){
+  
+        case LEFT:    app.left=true;    break;
+        case CENTER:  app.center=true;  break;
+        case RIGHT:   app.right=true;   break;
+  
+        default:                        break;
+  
+      }
+  
+  // println("pressed");
+  
+      for(var n in app.nodes){ app.nodes[n].pressed(mouseX,mouseY); }
+      for(var c in app.ctrls){ app.ctrls[c].pressed(mouseX,mouseY); }
+  
+      };
+    var mouseReleased=function(){
+  
+      app.left=false;
+      app.center=false;
+      app.right=false;
+  
+      for(var n in app.nodes){ app.nodes[n].released(mouseX,mouseY); }
+      for(var c in app.ctrls){ app.ctrls[c].released(mouseX,mouseY); }
+  
+    };
+    var mouseOut=     function(){
+      
+      app.over=false;
+      
+      // for(var c in app.ctrls){ app.ctrls[c].out(mouseX,mouseY); }
+  
+    };
+    var mouseOver=    function(){
+  
+      app.over=true;
+  
+      // for(var c in app.ctrls){ app.ctrls[c].over(mouseX,mouseY); }
+  
+    };
+    var mouseWheel=   function(){
+  
+      p("scroll");
+  
+    };
+  }
+  
   // Keyboard Events ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  var keyPressed=function(){
-
-    // if(keyCode===32){
-    //   app.current=COMMANDS.SELECT[0];
-    //   reset();
-    //   process();
-    // }
-
-    app.keys[keyCode]=true;
-
-// p(keyCode);
-
-    // switch(keyCode){
-    
-    //   case KEYCODES.SPACE:                  commands(COMMANDS.SELECT[0]); break;
-
-    //   case KEYCODES.CONTROL && KEYCODES.Z:  commands(COMMANDS.UNDO[0]);   break;
+  {
+    var keyPressed=   function(){
+  
+      // if(keyCode===32){
+      //   app.current=COMMANDS.SELECT[0];
+      //   reset();
+      //   process();
+      // }
+  
+      app.keys[keyCode]=true;
+  
+  // p(keyCode);
+  
+      // switch(keyCode){
       
-    //   case KEYCODES.F7:                     commands(COMMANDS.STG[0]);    break;
-    //   case KEYCODES.F8:                     commands(COMMANDS.ORTHO[0]);  break;
-
-    //   default:  break;
-
-    // }
-
-    for(var c in app.ctrls){ app.ctrls[c].pressed(); }
-
-  };
-  var keyReleased=function(){
-
-    app.keys[keyCode]=false;
-
-    for(var c in app.ctrls){ app.ctrls[c].released(); }
-
-  };
-  var keyTyped=function(){
-
-    // switch(key){
-
-    //   case app.keys[KEYCODES.SPACE]:      commands(COMMANDS.SELECT[0]); break;
-
-    //   case app.keys[KEYCODES.CONTROL] &&
-    //       app.keys[KEYCODES.Z]:          commands(COMMANDS.UNDO[0]);   break;
-    //   case app.keys[KEYCODES.F7]:         commands(COMMANDS.STG[0]);    break;
-    //   case app.keys[KEYCODES.F8]:         commands(COMMANDS.ORTHO[0]);  break;
-
-    //   default:  break;
-
-    // }
-    app.cache+=key.toString();
-    // for(var c in app.ctrls){ app.ctrls[c].typed(); }
-
-  };
-
+      //   case KEYCODES.SPACE:                  commands(COMMANDS.SELECT[0]); break;
+  
+      //   case KEYCODES.CONTROL && KEYCODES.Z:  commands(COMMANDS.UNDO[0]);   break;
+        
+      //   case KEYCODES.F7:                     commands(COMMANDS.STG[0]);    break;
+      //   case KEYCODES.F8:                     commands(COMMANDS.ORTHO[0]);  break;
+  
+      //   default:  break;
+  
+      // }
+  
+      for(var c in app.ctrls){ app.ctrls[c].pressed(); }
+  
+    };
+    var keyReleased=  function(){
+  
+      app.keys[keyCode]=false;
+  
+      for(var c in app.ctrls){ app.ctrls[c].released(); }
+  
+    };
+    var keyTyped=     function(){
+  
+      // switch(key){
+  
+      //   case app.keys[KEYCODES.SPACE]:      commands(COMMANDS.SELECT[0]); break;
+  
+      //   case app.keys[KEYCODES.CONTROL] &&
+      //       app.keys[KEYCODES.Z]:          commands(COMMANDS.UNDO[0]);   break;
+      //   case app.keys[KEYCODES.F7]:         commands(COMMANDS.STG[0]);    break;
+      //   case app.keys[KEYCODES.F8]:         commands(COMMANDS.ORTHO[0]);  break;
+  
+      //   default:  break;
+  
+      // }
+      app.cache+=key.toString();
+      // for(var c in app.ctrls){ app.ctrls[c].typed(); }
+  
+    };
+  }
 
 
   // Initialize ===============================================================
