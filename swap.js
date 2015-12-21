@@ -346,7 +346,9 @@ var proc = function(processingInstance){
     HC:     0,    //  Hill Climb
     SA:     1,    //  Simulated Annealling
     ANT:    2,    //  Ant Colony Optimization
-    GEN:    3     //  Genetic - Branch and Bound
+    GEN:    3,    //  Genetic - Branch and Bound
+    USER:   4,    //  User selected
+    SHRINK: 5,    //  Shrink Wrap
   };
 
   var app={
@@ -360,7 +362,11 @@ var proc = function(processingInstance){
       // TSP ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
       running:        false,
-
+      
+      displaGrid:     true,
+      
+      currentPATH:    [],
+      
       HC:             [],   //  Hill Climb
       displayHC:      true,
       distanceHC:     0,
@@ -386,6 +392,13 @@ var proc = function(processingInstance){
       distanceUSER:   0,
       swapsUSER:      0,
 
+      SHRINK:         [],     //  Shrink Wrap
+      displaySHRINK:  false,
+      distanceSHRINK: 0,
+      swapsSHRINK:    0,
+
+      algorithm:      ALGORITHMS.SA,
+      
       tspSize:        20,
 
       swaps:          0,
@@ -450,18 +463,43 @@ var proc = function(processingInstance){
 
   };
 
+  var getSwaps=       function() { return app.swaps;              };
+  var setSwaps=       function(b){ app.swaps=b;                   };
+
+  var getTemp=        function() { return round(app.temp);        };
+  var setTemp=        function(b){ app.temp=b;                    };
+
   var getMaximize=    function() { return app.maximize;           };
   var setMaximize=    function(b){ app.maximize=b;                };
-  
+
   var getMinimize=    function() { return app.minimize;           };
   var setMinimize=    function(b){ app.minimize=b;                };
-  
+
   var getDebug=       function() { return app.debug;              };
   var setDebug=       function(b){ app.debug=b;                   };
-  
-  var getDistanceSA=  function() { return round(app.distanceSA);  };
+
+  var getDistanceSA=  function() {
+    
+    var retVal=0;
+    
+    switch(app.algorithm){
+      
+      case ALGORITHMS.HC:       retVal=app.distanceHC;      break;
+      case ALGORITHMS.SA:       retVal=app.distanceSA;      break;
+      case ALGORITHMS.ANT:      retVal=app.distanceANT;     break;
+      case ALGORITHMS.GEN:      retVal=app.distanceGEN;     break;
+      case ALGORITHMS.USER:     retVal=app.distanceUSER;    break;
+      case ALGORITHMS.SHRINK:   retVal=app.distanceSHRINK;  break;
+
+      default:                                              break;
+
+    }
+
+    return round(retVal);
+
+  };
   var setDistance=    function() { return app.distance;           };
-  
+
   var getSize=        function() { return app.tspSize;            };
   var setSize=        function(n){
 
@@ -472,16 +510,29 @@ var proc = function(processingInstance){
     newTSP();
 
                                };
-  
+
   var getAlgorithm=   function(){ return app.algorithm;           };
   var setAlgorithm=   function(a){
-    
+
     app.algorithm=a;
     
+    switch(app.algorithm){
+      
+      case ALGORITHMS.HC:       app.currentPATH=app.HC;     break;
+      case ALGORITHMS.SA:       app.currentPATH=app.SA;     break;
+      case ALGORITHMS.ANT:      app.currentPATH=app.ANT;    break;
+      case ALGORITHMS.GEN:      app.currentPATH=app.GEN;    break;
+      case ALGORITHMS.USER:     app.currentPATH=app.USER;   break;
+      case ALGORITHMS.SHRINK:   app.currentPATH=app.SHRINK; break;
+
+      default:                                              break;
+
+    }
+
     println(app.algorithm);
-    
+
                                };
-  
+
   // Methods ==================================================================
 
   var getProp=function(p){
@@ -759,7 +810,7 @@ var proc = function(processingInstance){
       this.distance=0;
   
     };
-    Node.prototype.draw=    function(x,y){
+    Node.prototype.draw=      function(x,y){
   
       // Node connections
       stroke(getColor(CLRS.CONNECTION,255));
@@ -830,7 +881,7 @@ var proc = function(processingInstance){
       // this.y+=random(-3,3);
       
     };
-    Node.prototype.clicked= function(x,y){
+    Node.prototype.clicked=   function(x,y){
   
       if(this.hit){
         this.enabled=!this.enabled;
@@ -840,7 +891,7 @@ var proc = function(processingInstance){
       }
   
     };
-    Node.prototype.moved=   function(x,y){
+    Node.prototype.moved=     function(x,y){
   
       if(mouseX>this.x-this.r &&
          mouseX<this.x+this.r &&
@@ -858,7 +909,7 @@ var proc = function(processingInstance){
       }
   
     };
-    Node.prototype.dragged= function(x,y){
+    Node.prototype.dragged=   function(x,y){
   
       if(this.hit &&
          app.left &&
@@ -873,21 +924,21 @@ var proc = function(processingInstance){
       }
   
     };
-    Node.prototype.mPressed=function(x,y){
+    Node.prototype.mPressed=  function(x,y){
   
       if(this.hit){
         app.activeNode=this.id;
       }
   
     };
-    Node.prototype.released=function(x,y){
+    Node.prototype.mReleased= function(x,y){
   
       if(this.hit){
         app.activeNode=-1;
       }
   
     };
-    Node.prototype.load=    function(){
+    Node.prototype.load=      function(){
   
       this.connections=[];
   
@@ -907,7 +958,7 @@ var proc = function(processingInstance){
       }
   
     };
-    Node.prototype.disable= function(node){
+    Node.prototype.disable=   function(node){
   
       if(node.connections.length===0){ exit(); }
   
@@ -950,7 +1001,7 @@ var proc = function(processingInstance){
       this.dy=0;
       
     };
-    tNode.prototype.draw=    function(x,y){
+    tNode.prototype.draw=     function(x,y){
       
       var d=app.temp;
   
@@ -993,14 +1044,14 @@ var proc = function(processingInstance){
       // this.y+=random(-3,3);
   
     };
-    tNode.prototype.clicked= function(x,y){
+    tNode.prototype.clicked=  function(x,y){
   
       if(this.hit){
         this.enabled=!this.enabled;
       }
   
     };
-    tNode.prototype.moved=   function(x,y){
+    tNode.prototype.moved=    function(x,y){
   
       if(mouseX>this.x-this.r &&
          mouseX<this.x+this.r &&
@@ -1015,7 +1066,7 @@ var proc = function(processingInstance){
       }
   
     };
-    tNode.prototype.dragged= function(x,y){
+    tNode.prototype.dragged=  function(x,y){
   
       if(this.hit &&
          app.left &&
@@ -1029,7 +1080,7 @@ var proc = function(processingInstance){
       }
   
     };
-    tNode.prototype.mPressed=    function(x,y){
+    tNode.prototype.mPressed= function(x,y){
   
       if(this.hit){
      
@@ -1142,7 +1193,7 @@ var proc = function(processingInstance){
   // println("break");
   
     };
-    Packet.prototype.draw=    function(){
+    Packet.prototype.draw=      function(){
   
       if(this.p<this.points.length-1){
         
@@ -1182,7 +1233,7 @@ var proc = function(processingInstance){
       }
   
     };
-    Packet.prototype.clicked= function(){
+    Packet.prototype.clicked=   function(){
   
       if(app.current===COMMANDS.SELECT[0]){
   
@@ -1194,8 +1245,8 @@ var proc = function(processingInstance){
       }
   
     };
-    Packet.prototype.moved=   function(x,y){};
-    Packet.prototype.dragged= function(){
+    Packet.prototype.moved=     function(x,y){};
+    Packet.prototype.dragged=   function(){
   
       for(var n in this.vertices){
   
@@ -1208,7 +1259,7 @@ var proc = function(processingInstance){
       }
   
     };
-    Packet.prototype.mPressed=    function(x,y){
+    Packet.prototype.mPressed=  function(x,y){
   
       if(this.hit){
 
@@ -1259,7 +1310,7 @@ var proc = function(processingInstance){
     this.params=params;     // optional parameter (arrays, boolean...)
     
   };
-    Control.prototype.draw=     function(x,y){
+    Control.prototype.draw=       function(x,y){
   
       if (typeof this.parent != "undefined") {
         // alert("GOT THERE");
@@ -1289,12 +1340,12 @@ var proc = function(processingInstance){
       // }
       
     };
-    Control.prototype.clicked=  function(x,y){
+    Control.prototype.clicked=    function(x,y){
   
       if(this.hit){ this.execute(); }
   
     };
-    Control.prototype.moved=    function(x,y){
+    Control.prototype.moved=      function(x,y){
   
       if(x>this.x &&
          x<this.x+this.w &&
@@ -1314,35 +1365,35 @@ var proc = function(processingInstance){
       }
   
     };
-    Control.prototype.dragged=  function(x,y){
+    Control.prototype.dragged=    function(x,y){
   
       if(this.hit){
         for(var c in this.ctrls){ this.ctrls[c].dragged(mouseX,mouseY); }
       }
   
     };
-    Control.prototype.mPressed=     function(x,y){
+    Control.prototype.mPressed=   function(x,y){
   
       if(this.hit){
         for(var c in this.ctrls){ this.ctrls[c].left(mouseX,mouseY); }
       }
   
       };
-    Control.prototype.released= function(x,y){
+    Control.prototype.mReleased=  function(x,y){
   
       if(this.hit){
         for(var c in this.ctrls){ this.ctrls[c].released(mouseX,mouseY); }
       }
   
     };
-    Control.prototype.over=     function(x,y){
+    Control.prototype.over=       function(x,y){
   
       if(this.hit){
         for(var c in this.ctrls){ this.ctrls[c].over(mouseX,mouseY); }
       }
   
     };
-    Control.prototype.out=      function(x,y){
+    Control.prototype.out=        function(x,y){
   
       if(this.hit){
         for(var c in this.ctrls){ this.ctrls[c].out(mouseX,mouseY); }
@@ -1358,7 +1409,7 @@ var proc = function(processingInstance){
       Control.call(this,id,parent,ctrls,x,y,width,height,color,caption,execute,params);
       
     };
-    Container.prototype.draw=     function(x,y){
+    Container.prototype.draw=       function(x,y){
   
       if(this.visible){
   
@@ -1411,7 +1462,7 @@ var proc = function(processingInstance){
       }
   
     };
-    Container.prototype.clicked=  function(x,y){
+    Container.prototype.clicked=    function(x,y){
   
       if(this.hit){
   
@@ -1422,7 +1473,7 @@ var proc = function(processingInstance){
       }
   
     };
-    Container.prototype.moved=    function(x,y){
+    Container.prototype.moved=      function(x,y){
   
       if(mouseX>this.x &&
          mouseX<this.x+this.w &&
@@ -1443,7 +1494,7 @@ var proc = function(processingInstance){
       }
   
     };
-    Container.prototype.dragged=  function(x,y){
+    Container.prototype.dragged=    function(x,y){
   
       if(this.hit){
         for(var c in this.ctrls){ this.ctrls[c].dragged(mouseX,mouseY); }
@@ -1451,7 +1502,7 @@ var proc = function(processingInstance){
       
         
     };
-    Container.prototype.mPressed= function(x,y){
+    Container.prototype.mPressed=   function(x,y){
   
       if(this.hit){
   
@@ -1460,21 +1511,21 @@ var proc = function(processingInstance){
       }
   
     };
-    Container.prototype.released= function(x,y){
+    Container.prototype.mReleased=  function(x,y){
   
       if(this.hit){
-        for(var c in this.ctrls){ this.ctrls[c].released(mouseX,mouseY); }
+        for(var c in this.ctrls){ this.ctrls[c].mReleased(mouseX,mouseY); }
       }
   
     };
-    Container.prototype.over=     function(x,y){
+    Container.prototype.over=       function(x,y){
   
       this.visible=true;
       
       for(var c in this.ctrls){ this.ctrls[c].over(mouseX,mouseY); }
   
     };
-    Container.prototype.out=      function(x,y){
+    Container.prototype.out=        function(x,y){
   
       this.visible=false;
       
@@ -1490,7 +1541,7 @@ var proc = function(processingInstance){
       Control.call(this,id,parent,ctrls,x,y,width,height,color,caption,execute,params);
   
     };
-    Label.prototype.draw=     function(x,y){
+    Label.prototype.draw=       function(x,y){
   
       if(this.visible){
   
@@ -1509,11 +1560,11 @@ var proc = function(processingInstance){
              10);
   
         // Caption ~~~~~~~~~~
-        stroke(CLRS.GRAY);
+        stroke(this.color);
         strokeWeight(0.5);
   
-        if(this.hit){ fill(getColor(CLRS.WHITE,75)); }
-        else        { fill(getColor(CLRS.WHITE,50)); }
+        if(this.hit){ fill(getColor(this.color,60)); }
+        else        { fill(getColor(this.color,50)); }
   
         if(this.caption=="0000"){
   
@@ -1530,19 +1581,31 @@ var proc = function(processingInstance){
   
         }
   
-        // Control origin ~~~~~~~~~~
-        if(app.debug){  fill(CLRS.RED);
-                        ellipse(x+this.x,y+this.y,3,3);
-                     }
+        // Control boundaries ~~~~~~~~~~
+        if(app.debug){
+          
+          // Origin
+          fill(CLRS.RED);
+          ellipse(x+this.x,y+this.y,3,3);
+          
+          // Hit box
+          strokeWeight(0.5);
+          stroke(CLRS.GRAY);
+          noFill();
+          
+          rect(this.x,this.y,textWidth(this.caption),this.h);
+
+        }
+        
       }
   
     };
-    Label.prototype.clicked=  function(x,y){
+    Label.prototype.clicked=    function(x,y){
   
       // if(this.hit){ this.execute(this.params); }
   
     };
-    Label.prototype.moved=    function(x,y){
+    Label.prototype.moved=      function(x,y){
   
       if(mouseX>x+this.x &&
          mouseX<x+this.x+this.w &&
@@ -1560,7 +1623,7 @@ var proc = function(processingInstance){
       }
   
     };
-    Label.prototype.dragged=  function(x,y){
+    Label.prototype.dragged=    function(x,y){
   
       // if(this.hit){
       //   this.x=x;
@@ -1568,26 +1631,26 @@ var proc = function(processingInstance){
       // }
   
     };
-    Label.prototype.mPressed= function(x,y){
+    Label.prototype.mPressed=   function(x,y){
   
       if(this.hit){
         
       }
   
     };
-    Label.prototype.released= function(x,y){
+    Label.prototype.mReleased=  function(x,y){
   
       if(this.hit){
         
       }
   
     };
-    Label.prototype.over=     function(x,y){
+    Label.prototype.over=       function(x,y){
   
       this.visible=true;
   
     };
-    Label.prototype.out=      function(x,y){
+    Label.prototype.out=        function(x,y){
   
       this.visible=false;
   
@@ -1601,7 +1664,7 @@ var proc = function(processingInstance){
       Control.call(this,id,parent,ctrls,x,y,width,height,color,caption,execute,params);
   
     };
-    Option.prototype.draw=    function(x,y){
+    Option.prototype.draw=      function(x,y){
   
       if(this.visible){
   
@@ -1612,7 +1675,7 @@ var proc = function(processingInstance){
         rectMode(CORNER);
         noStroke();
   
-        textSize(12);
+        textSize(this.h);
         textAlign(LEFT,CENTER);
         
         if(app.debug){
@@ -1645,21 +1708,31 @@ var proc = function(processingInstance){
              x+this.x+20,
              y+this.y+this.h/2);
   
-        // Control origin ~~~~~~~~~~
+        // Control boundaries ~~~~~~~~~~
         if(app.debug){
+          
+          // Origin
           fill(CLRS.RED);
           ellipse(x+this.x,y+this.y,3,3);
-        }
+          
+          // Hit box
+          strokeWeight(0.5);
+          stroke(CLRS.GRAY);
+          noFill();
+          
+          rect(this.x,this.y,this.w,this.h);
 
+        }
+        
       }
       
     };
-    Option.prototype.clicked= function(x,y){
+    Option.prototype.clicked=   function(x,y){
   
       if(this.hit){ this.execute(this.params); }
   
     };
-    Option.prototype.moved=   function(x,y){
+    Option.prototype.moved=     function(x,y){
   
       if(mouseX>x+this.x &&
          mouseX<x+this.x+this.w &&
@@ -1677,7 +1750,7 @@ var proc = function(processingInstance){
       }
   
     };
-    Option.prototype.dragged= function(x,y){
+    Option.prototype.dragged=   function(x,y){
   
       // if(this.hit){
       //   this.x=x;
@@ -1685,26 +1758,26 @@ var proc = function(processingInstance){
       // }
   
     };
-    Option.prototype.mPressed=function(x,y){
+    Option.prototype.mPressed=  function(x,y){
   
       if(this.hit){
         
       }
   
     };
-    Option.prototype.released=function(x,y){
+    Option.prototype.mReleased= function(x,y){
   
       if(this.hit){
         
       }
   
     };
-    Option.prototype.over=    function(x,y){
+    Option.prototype.over=      function(x,y){
   
       this.visible=true;
   
     };
-    Option.prototype.out=     function(x,y){
+    Option.prototype.out=       function(x,y){
   
       this.visible=false;
   
@@ -1718,7 +1791,7 @@ var proc = function(processingInstance){
       Control.call(this,id,parent,ctrls,x,y,width,height,color,caption,execute,params);
   
     };
-    Checkbox.prototype.draw=    function(x,y){
+    Checkbox.prototype.draw=      function(x,y){
   
       if(this.visible){
 
@@ -1765,10 +1838,23 @@ var proc = function(processingInstance){
              x+this.x+20,
              y+this.y+this.h/2);
   
-        // Control origin ~~~~~~~~~~
-        if(app.debug){  fill(CLRS.RED);
-                        ellipse(x+this.x,y+this.y,3,3);
-                     }
+        // Control boundaries ~~~~~~~~~~
+        if(app.debug){
+          
+          rectMode(CORNER);
+          
+          // Origin
+          fill(CLRS.RED);
+          ellipse(x+this.x,y+this.y,3,3);
+          
+          // Hit box
+          strokeWeight(0.5);
+          stroke(CLRS.GRAY);
+          noFill();
+          
+          rect(this.x,this.y,this.w,this.h);
+
+        }
   
       }
       
@@ -1778,7 +1864,7 @@ var proc = function(processingInstance){
       if(this.hit){ this.execute(this.value=!this.value); }
   
     };
-    Checkbox.prototype.moved=   function(x,y){
+    Checkbox.prototype.moved=     function(x,y){
   
       if(mouseX>x+this.x &&
          mouseX<x+this.x+this.w &&
@@ -1796,7 +1882,7 @@ var proc = function(processingInstance){
       }
   
     };
-    Checkbox.prototype.dragged= function(x,y){
+    Checkbox.prototype.dragged=   function(x,y){
   
       // if(this.hit){
       //   this.x=x;
@@ -1804,26 +1890,26 @@ var proc = function(processingInstance){
       // }
   
     };
-    Checkbox.prototype.mPressed=    function(x,y){
+    Checkbox.prototype.mPressed=  function(x,y){
   
       if(this.hit){
         
       }
   
     };
-    Checkbox.prototype.released=function(x,y){
+    Checkbox.prototype.mReleased= function(x,y){
   
       if(this.hit){
         
       }
   
     };
-    Checkbox.prototype.over=    function(x,y){
+    Checkbox.prototype.over=      function(x,y){
   
       this.visible=true;
   
     };
-    Checkbox.prototype.out=     function(x,y){
+    Checkbox.prototype.out=       function(x,y){
   
       this.visible=false;
   
@@ -1840,7 +1926,7 @@ var proc = function(processingInstance){
       this.hitDown=false;   //  The mouse is over the Down arrow
   
     };
-    UpDown.prototype.draw=    function(x,y){
+    UpDown.prototype.draw=      function(x,y){
   
       if(this.visible){
   
@@ -1888,21 +1974,32 @@ var proc = function(processingInstance){
         if(this.hitUp || this.hitDown){ cursor(HAND);   }
         else                          { cursor(ARROW);  }
   
-        // Control origin ~~~~~~~~~~
-        if(app.debug){  fill(CLRS.RED);
-                        ellipse(x+this.x,y+this.y,3,3);
-                     }
+        // Control boundaries ~~~~~~~~~~
+        if(app.debug){
+          
+          // Origin
+          fill(CLRS.RED);
+          ellipse(x+this.x,y+this.y,3,3);
+          
+          // Hit box
+          strokeWeight(0.5);
+          stroke(CLRS.GRAY);
+          noFill();
+          
+          rect(this.x,this.y,this.w,this.h);
+
+        }
   
       }
   
     };
-    UpDown.prototype.clicked= function(x,y){
+    UpDown.prototype.clicked=   function(x,y){
   
       if     (this.hitUp)  { this.execute(0); }
       else if(this.hitDown){ this.execute(1); }
   
     };
-    UpDown.prototype.moved=   function(x,y){
+    UpDown.prototype.moved=     function(x,y){
   
       if(mouseX>x+this.x &&
          mouseX<x+this.x+this.w &&
@@ -1945,7 +2042,7 @@ var proc = function(processingInstance){
       }
   
     };
-    UpDown.prototype.dragged= function(x,y){
+    UpDown.prototype.dragged=   function(x,y){
   
       // if(this.hit){
       //   this.x=x;
@@ -1953,25 +2050,25 @@ var proc = function(processingInstance){
       // }
   
     };
-    UpDown.prototype.mPressed=    function(x,y){
+    UpDown.prototype.mPressed=  function(x,y){
 
-      if     (this.hitUp)  { this.execute(0); }
-      else if(this.hitDown){ this.execute(1); }
+      if     (this.hitUp)  { }
+      else if(this.hitDown){ }
 
     };
-    UpDown.prototype.released=function(x,y){
+    UpDown.prototype.mReleased= function(x,y){
   
       if(this.hit){
         
       }
   
     };
-    UpDown.prototype.over=    function(x,y){
+    UpDown.prototype.over=      function(x,y){
   
       this.visible=true;
   
     };
-    UpDown.prototype.out=     function(x,y){
+    UpDown.prototype.out=       function(x,y){
   
       this.visible=false;
   
@@ -1988,16 +2085,12 @@ var proc = function(processingInstance){
       this.value=ctrls();
 
     };
-    Slider.prototype.draw=    function(x,y){
+    Slider.prototype.draw=      function(x,y){
   
       if(this.visible){
         
         pushMatrix();
-          
-          translate(0.5, 0.5);
-          
-          // if(this.hitUp || this.hitDown){ cursor(HAND); }
-    
+
           rectMode(CORNER);
           noStroke();
     
@@ -2032,17 +2125,28 @@ var proc = function(processingInstance){
           if(this.hit){ cursor(HAND);   }
           else        { cursor(ARROW);  }
     
-          // Control origin ~~~~~~~~~~
-          if(app.debug){  fill(CLRS.RED);
-                          ellipse(x+this.x,y+this.y,3,3);
-                       }
+          // Control boundaries ~~~~~~~~~~
+          if(app.debug){
+            
+            // Origin
+            fill(CLRS.RED);
+            ellipse(x+this.x,y+this.y,3,3);
+            
+            // Hit box
+            strokeWeight(0.5);
+            stroke(CLRS.GRAY);
+            noFill();
+            
+            rect(this.x,this.y,this.w,this.h);
+  
+          }
                      
         popMatrix();
   
       }
   
     };
-    Slider.prototype.clicked=function(x,y){
+    Slider.prototype.clicked=   function(x,y){
   
       if(this.hit){
         this.value=constrain(mouseX-this.x,2,this.w);
@@ -2050,7 +2154,7 @@ var proc = function(processingInstance){
       }
   
     };
-    Slider.prototype.moved=   function(x,y){
+    Slider.prototype.moved=     function(x,y){
   
       if(mouseX>x+this.x &&
          mouseX<x+this.x+this.w &&
@@ -2068,7 +2172,7 @@ var proc = function(processingInstance){
       }
   
     };
-    Slider.prototype.dragged= function(x,y){
+    Slider.prototype.dragged=   function(x,y){
 
       if(this.hit){
         this.value=constrain(mouseX-this.x,2,this.w);
@@ -2076,14 +2180,14 @@ var proc = function(processingInstance){
       }
 
     };
-    Slider.prototype.mPressed= function(x,y){};
-    Slider.prototype.released=function(x,y){};
-    Slider.prototype.over=    function(x,y){
+    Slider.prototype.mPressed=  function(x,y){};
+    Slider.prototype.mReleased= function(x,y){};
+    Slider.prototype.over=      function(x,y){
   
       this.visible=true;
   
     };
-    Slider.prototype.out=     function(x,y){
+    Slider.prototype.out=       function(x,y){
   
       this.visible=false;
   
@@ -2099,7 +2203,7 @@ var proc = function(processingInstance){
       this.offset=0;
 
     };
-    Button.prototype.draw=    function(x,y){
+    Button.prototype.draw=      function(x,y){
   
       if (typeof this.parent != "undefined") {
         // alert("GOT THERE");
@@ -2125,24 +2229,24 @@ var proc = function(processingInstance){
   
           }
 
-          if(app.debug){
+          // if(app.debug){
            
-            rectMode(CORNER);
-            noStroke();
+          //   rectMode(CORNER);
+          //   noStroke();
             
-            rect(x+this.x+this.offset,
-                 y+this.y+this.offset,
-                 this.w,   this.h,
-                 10);
-          }
+          //   rect(x+this.x+this.offset,
+          //       y+this.y+this.offset,
+          //       this.w,   this.h,
+          //       10);
+          // }
           
           // Caption
           // rectMode(CENTER);
           textAlign(CENTER,CENTER);
           textSize(24);
 
-          if(this.hit){ fill(getColor(CLRS.WHITE,75)); }
-          else        { fill(getColor(CLRS.WHITE,50)); }
+          if(this.hit){ fill(getColor(this.color,75)); }
+          else        { fill(getColor(this.color,50)); }
 
           if(this.caption=="new"){
 
@@ -2193,15 +2297,31 @@ var proc = function(processingInstance){
 
         popMatrix();
 
+        // Control boundaries ~~~~~~~~~~
+        if(app.debug){
+          
+          // Origin
+          fill(CLRS.RED);
+          ellipse(x+this.x,y+this.y,3,3);
+          
+          // Hit box
+          strokeWeight(0.5);
+          stroke(CLRS.GRAY);
+          noFill();
+          
+          rect(this.x,this.y,this.w,this.h);
+
+        }
+        
       }
 
     };
-    Button.prototype.clicked= function(x,y){
+    Button.prototype.clicked=   function(x,y){
   
       if(this.hit){ this.execute(); }
   
     };
-    Button.prototype.moved=   function(x,y){
+    Button.prototype.moved=     function(x,y){
   
       if(mouseX>x+this.x &&
          mouseX<x+this.x+this.w &&
@@ -2219,7 +2339,7 @@ var proc = function(processingInstance){
       }
   
     };
-    Button.prototype.dragged= function(x,y){
+    Button.prototype.dragged=   function(x,y){
   
       // if(this.hit){
       //   this.x=x;
@@ -2227,26 +2347,26 @@ var proc = function(processingInstance){
       // }
   
     };
-    Button.prototype.mPressed=    function(x,y){
+    Button.prototype.mPressed=  function(x,y){
   
       if(this.hit){
         
       }
   
     };
-    Button.prototype.released=function(x,y){
+    Button.prototype.mReleased= function(x,y){
   
       if(this.hit){
         
       }
   
     };
-    Button.prototype.over=    function(x,y){
+    Button.prototype.over=      function(x,y){
   
       this.visible=true;
   
     };
-    Button.prototype.out=     function(x,y){
+    Button.prototype.out=       function(x,y){
   
       this.visible=false;
   
@@ -2260,7 +2380,7 @@ var proc = function(processingInstance){
       Control.call(this,id,parent,ctrls,x,y,width,height,color,caption,execute,params);
   
     };
-    codeButton.prototype.draw=    function(x,y){
+    codeButton.prototype.draw=      function(x,y){
   
       if (typeof this.parent != "undefined") {
         // alert("GOT THERE");
@@ -2298,16 +2418,32 @@ var proc = function(processingInstance){
         text(this.caption,
              x+this.x+this.w/2,
              y+this.y+this.h/2);
-  
+
+        // Control boundaries ~~~~~~~~~~
+        if(app.debug){
+          
+          // Origin
+          fill(CLRS.RED);
+          ellipse(x+this.x,y+this.y,3,3);
+          
+          // Hit box
+          strokeWeight(0.5);
+          stroke(CLRS.GRAY);
+          noFill();
+          
+          rect(this.x,this.y,this.w,this.h);
+
+        }
+        
       }
       
     };
-    codeButton.prototype.clicked= function(x,y){
+    codeButton.prototype.clicked=   function(x,y){
   
       if(this.hit){ this.execute(); }
   
     };
-    codeButton.prototype.moved=   function(x,y){
+    codeButton.prototype.moved=     function(x,y){
   
       if(mouseX>x+this.x &&
          mouseX<x+this.x+this.w &&
@@ -2325,7 +2461,7 @@ var proc = function(processingInstance){
       }
   
     };
-    codeButton.prototype.dragged= function(x,y){
+    codeButton.prototype.dragged=   function(x,y){
   
       // if(this.hit){
       //   this.x=x;
@@ -2333,26 +2469,26 @@ var proc = function(processingInstance){
       // }
   
     };
-    codeButton.prototype.mPressed=    function(x,y){
+    codeButton.prototype.mPressed=  function(x,y){
   
       if(this.hit){
         
       }
   
     };
-    codeButton.prototype.released=function(x,y){
+    codeButton.prototype.mReleased= function(x,y){
   
       if(this.hit){
         
       }
   
     };
-    codeButton.prototype.over=    function(x,y){
+    codeButton.prototype.over=      function(x,y){
   
       this.visible=true;
   
     };
-    codeButton.prototype.out=     function(x,y){
+    codeButton.prototype.out=       function(x,y){
   
       this.visible=false;
   
@@ -2451,7 +2587,7 @@ var proc = function(processingInstance){
       // }
   
     };
-    Key.prototype.mPressed=    function(x,y){
+    Key.prototype.mPressed=   function(x,y){
   
       if(this.hit){
   
@@ -2462,7 +2598,7 @@ var proc = function(processingInstance){
       }
   
     };
-    Key.prototype.released=   function(x,y){
+    Key.prototype.mReleased=  function(x,y){
   
       if(this.hit){
         this.left=false;
@@ -2488,7 +2624,7 @@ var proc = function(processingInstance){
     Control.call(this,id,parent,ctrls,x,y,width,height,color,caption,execute,params);
     
   };
-    Keypad.prototype.draw=    function(x,y){
+    Keypad.prototype.draw=      function(x,y){
   
       if(this.visible){
   
@@ -2546,7 +2682,7 @@ var proc = function(processingInstance){
       }
   
     };
-    Keypad.prototype.clicked= function(x,y){
+    Keypad.prototype.clicked=   function(x,y){
   
       if(this.hit){
   
@@ -2557,7 +2693,7 @@ var proc = function(processingInstance){
       }
   
     };
-    Keypad.prototype.moved=   function(x,y){
+    Keypad.prototype.moved=     function(x,y){
   
       if(mouseX>this.x &&
          mouseX<this.x+this.w &&
@@ -2578,7 +2714,7 @@ var proc = function(processingInstance){
       }
   
     };
-    Keypad.prototype.dragged= function(x,y){
+    Keypad.prototype.dragged=   function(x,y){
   
       // if(this.hit){
       //   this.x=x;
@@ -2588,7 +2724,7 @@ var proc = function(processingInstance){
       
         
     };
-    Keypad.prototype.mPressed= function(x,y){
+    Keypad.prototype.mPressed=  function(x,y){
   
   //     if(this.hit){
   
@@ -2599,19 +2735,19 @@ var proc = function(processingInstance){
   //     }
   
     };
-    Keypad.prototype.released=function(x,y){
+    Keypad.prototype.mReleased= function(x,y){
   
       if(this.hit){
         for(var c in this.ctrls){ this.ctrls[c].released(mouseX,mouseY); }
       }
   
     };
-    Keypad.prototype.over=    function(x,y){
+    Keypad.prototype.over=      function(x,y){
   
       this.visible=true;
   
     };
-    Keypad.prototype.out=     function(x,y){
+    Keypad.prototype.out=       function(x,y){
   
       this.visible=false;
       this.hit=false;
@@ -2859,12 +2995,6 @@ var proc = function(processingInstance){
 
   };
 
-  var resetTSP=function(){
-    
-
-    
-  };
-
   var arraySwap=function(arr, index1, index2){
 
     var temp=arr[index1];
@@ -2877,42 +3007,66 @@ var proc = function(processingInstance){
   var loadNodes=function(){
     
     for(var n=0; n<app.tspSize; n++){
-      app.SA.push( new tNode( getGUID(), random(150, app.width-20), random(20, app.height-20), 0, 0, 0) );
+      app.currentPATH.push( new tNode( getGUID(),
+                                       10+20*round(random(8, (app.width -40)/20)),
+                                       10+20*round(random(1, (app.height-40)/20)), 0, 0, 0
+                                     )
+                 );
     }
-    
+
   };
   
+  var resetTemp=function(){
+
+    app.temp=round(app.tspSize*5);
+
+  }
   var newTSP=function(){
 
-    app.tspSwaps=0;
+    app.swaps=0;
+
     app.HC=[];
     app.SA=[];
-    
-    app.temp=round(app.tspSize*5);
-    
-    loadNodes();
-    
-    // for(var n=0; n<app.tspSize; n++){
-    //   app.SA.push( new tNode( getGUID(), random(150, app.width-20), random(20, app.height-20), 0, 0, 0) );
-    // }
 
-    if(app.maximize){ maximizeTour(app.SA); }
-    if(app.minimize){ minimizeTour(app.SA); }
+    resetTemp();
+    loadNodes();
+
+println(app.currentPATH.length);
+
+    app.HC=subset(app.currentPATH, 0);
+    app.SA=subset(app.currentPATH, 0);
+    app.ANT=subset(app.currentPATH, 0);
+    app.GEN=subset(app.currentPATH, 0);
+    app.USER=subset(app.currentPATH, 0);
+    app.SHRINK=subset(app.currentPATH, 0);
+
+println(app.HC.length);
+
+    if(app.maximize){ maximizeTour(app.currentPATH); }
+    if(app.minimize){ minimizeTour(app.currentPATH); }
 
   };
 
   var retryTSP=function(){
     
     app.swaps=0;
-    app.temp=round(app.tspSize*5);
+
+    resetTemp();
     
-    for(var n=0; n<app.SA.length; n++){
-      arraySwap(app.SA, n, round(random(app.SA.length-1)));
+    for(var n=0; n<app.currentPATH.length; n++){
+      arraySwap(app.currentPATH, n, round(random(app.currentPATH.length-1)));
     }
 
-    if(app.maximize){ maximizeTour(app.SA); }
-    if(app.minimize){ minimizeTour(app.SA); }
+    if(app.maximize){ maximizeTour(app.currentPATH); }
+    if(app.minimize){ minimizeTour(app.currentPATH); }
 
+    app.HC=subset(app.currentPATH, 0);
+    app.SA=subset(app.currentPATH, 0);
+    app.ANT=subset(app.currentPATH, 0);
+    app.GEN=subset(app.currentPATH, 0);
+    app.USER=subset(app.currentPATH, 0);
+    app.SHRINK=subset(app.currentPATH, 0);
+    
   };
 
   var minimizeTour=function(arr){
@@ -2976,13 +3130,9 @@ var proc = function(processingInstance){
   var resetTSP=function(){
 
     loadNodes();
-    
-    // for(n=0; n<app.tspSize; n++){
-    //   app.SA.push( new tNode( getGUID(), random(140, app.width-20), random(20,  app.height-20), 0,0,0) );
-    // }
-    
-    if(app.maximize){ maximizeTour(app.SA); }
-    if(app.minimize){ minimizeTour(app.SA); }
+
+    if(app.maximize){ maximizeTour(app.currentPATH); }
+    if(app.minimize){ minimizeTour(app.currentPATH); }
 
   };
 
@@ -3012,11 +3162,14 @@ var proc = function(processingInstance){
     app.vortex=[];
     app.nodes=[];
     
+    app.currentPATH=[];
+    
     app.HC=[];
     app.SA=[];
     app.ANT=[];
     app.GEN=[];
     app.USER=[];
+    app.SHRINK=[];
     
     app.temp=round(width/5);
     app.frameRate=60;
@@ -3025,33 +3178,55 @@ var proc = function(processingInstance){
 
     var ctrls=[];
     
-    var containerTSP=new Container(getGUID(), undefined, [], 0, 0, app.width-3, app.height-3, getColor(CLRS.BLUE,50), "TSP Background", blank, 0);
+    var containerTSP=new Container(getGUID(), undefined, [], 0, 0, app.width-3, app.height-3, getColor(CLRS.BLACK,100), "TSP Background", blank, 0);
 
-    ctrls.push(new Checkbox(getGUID() ,containerTSP, getDebug,10, 0, 100, 20, CLRS.CODE_PURPLE, "Debug",  setDebug, 3));
+    ctrls.push(new    Label(getGUID(), containerTSP, [],10, 15, 100, 14, CLRS.WHITE, "Travelling Salesman",0,0));
+    ctrls.push(new    Label(getGUID(), containerTSP, [],10, 30, 100, 14, CLRS.WHITE, "        Problem      ",0,0));
 
-    ctrls.push(new   Button(getGUID(), containerTSP, [], 50, 30, 30, 20, CLRS.CODE_YELLOW, "new",    newTSP,   0));
-    ctrls.push(new   Button(getGUID(), containerTSP, [], 50, 60, 30, 20, CLRS.CODE_YELLOW, "run",    runTSP,   1));
-    ctrls.push(new   Button(getGUID(), containerTSP, [], 50, 90, 30, 20, CLRS.CODE_YELLOW, "reload", retryTSP, 2));
 
-    ctrls.push(new    Label(getGUID(), containerTSP, getDistanceSA, 30, 150, 100, 20, CLRS.CODE_YELLOW, "0000", getDistanceSA, 0));
-
-    ctrls.push(new    Label(getGUID(), containerTSP, [],10, 210, 100, 14, CLRS.CODE_PURPLE, "Select Algorithm",0,0));
+    ctrls.push(new    Label(getGUID(), containerTSP, [],           35, 60, 100, 13, CLRS.YELLOW, "Algorithm",0,0));
       
-    ctrls.push(new   Option(getGUID(), containerTSP, getAlgorithm, 10, 225, 100, 20, CLRS.CODE_PURPLE, "Hill climb",     setAlgorithm, 0));
-    ctrls.push(new   Option(getGUID(), containerTSP, getAlgorithm, 10, 250, 100, 20, CLRS.CODE_PURPLE, "Sim Annealing",  setAlgorithm, 1));
-    ctrls.push(new   Option(getGUID(), containerTSP, getAlgorithm, 10, 275, 100, 20, CLRS.CODE_PURPLE, "Ant Colony",     setAlgorithm, 2));
-    ctrls.push(new   Option(getGUID(), containerTSP, getAlgorithm, 10, 300, 100, 20, CLRS.CODE_PURPLE, "Genetic - B&B",  setAlgorithm, 3));
+    ctrls.push(new   Option(getGUID(), containerTSP, getAlgorithm, 20, 85, 100, 12, CLRS.CODE_PURPLE, "Hill climb",     setAlgorithm, 0));
+    ctrls.push(new   Option(getGUID(), containerTSP, getAlgorithm, 20, 105, 100, 12, CLRS.CODE_PURPLE, "Sim Annealing",  setAlgorithm, 1));
+    ctrls.push(new   Option(getGUID(), containerTSP, getAlgorithm, 20, 125, 100, 12, CLRS.CODE_PURPLE, "Ant Colony",     setAlgorithm, 2));
+    ctrls.push(new   Option(getGUID(), containerTSP, getAlgorithm, 20, 145, 100, 12, CLRS.CODE_PURPLE, "Genetic - B&B",  setAlgorithm, 3));
+    ctrls.push(new   Option(getGUID(), containerTSP, getAlgorithm, 20, 165, 100, 12, CLRS.CODE_PURPLE, "User Selected",  setAlgorithm, 4));
 
-    ctrls.push(new   Slider(getGUID(), containerTSP, getSize, 10, 340, 100, 12, CLRS.CODE_PURPLE, "",  setSize, 3));
 
-    ctrls.push(new Checkbox(getGUID(), containerTSP, getMaximize, 10, 380, 100, 20, CLRS.CODE_PURPLE, "Maximize",  setMaximize, 3));
-    ctrls.push(new Checkbox(getGUID(), containerTSP, getMinimize, 10, 400, 100, 20, CLRS.CODE_PURPLE, "Minimize",  setMinimize, 3));
+    ctrls.push(new    Label(getGUID(), containerTSP, [],      55, 200, 100, 12, CLRS.YELLOW, "Nodes", "", 0));
+    ctrls.push(new   Slider(getGUID(), containerTSP, getSize, 25, 220, 100, 12, CLRS.CODE_PURPLE, "12345",  setSize, 3));
 
-    ctrls.push(new    Label(getGUID(), containerTSP, [], 45, 470, 100, 14, CLRS.CODE_PURPLE, "Nodes", "", 0));
 
-    ctrls.push(new   UpDown(getGUID(), containerTSP, getSize, 50, 500, 100, 30, CLRS.CODE_PURPLE, "#", setSize, 3));
+    ctrls.push(new    Label(getGUID(), containerTSP, [], 35, 260, 100, 12, CLRS.YELLOW, "Optimizations", "", 0));
+    ctrls.push(new Checkbox(getGUID(), containerTSP, getMaximize, 20, 285, 100, 12, CLRS.CODE_PURPLE, "Maximize Tour",  setMaximize, 3));
+    ctrls.push(new Checkbox(getGUID(), containerTSP, getMinimize, 20, 305, 100, 12, CLRS.CODE_PURPLE, "Minimize Tour",  setMinimize, 3));
 
+
+    ctrls.push(new   Button(getGUID(), containerTSP, [], 10, 340, 40, 30, CLRS.RED,    "new",    newTSP,   0));
+    ctrls.push(new   Button(getGUID(), containerTSP, [], 50, 340, 40, 30, CLRS.RED,    "run",    runTSP,   1));
+    ctrls.push(new   Button(getGUID(), containerTSP, [], 90, 340, 40, 30, CLRS.YELLOW, "reload", retryTSP, 2));
+    
+    
+    ctrls.push(new    Label(getGUID(), containerTSP, undefined,     18, 400, 100, 18, CLRS.YELLOW, "Tour Distance", undefined, 16));
+    ctrls.push(new    Label(getGUID(), containerTSP, getDistanceSA, 40, 425, 100, 24, CLRS.WHITE, "0000", getDistanceSA, 14));
+
+    
+    ctrls.push(new    Label(getGUID(), containerTSP, undefined, 18, 470, 100, 14, CLRS.CODE_GREEN, "Swaps", undefined, 16));
+    ctrls.push(new    Label(getGUID(), containerTSP, getSwaps,  30, 495, 100, 16, CLRS.WHITE, "0000", getSwaps, 14));
+    
+    ctrls.push(new    Label(getGUID(), containerTSP, undefined, 80, 470, 100, 14, CLRS.CODE_GREEN, "Temp", undefined, 16));
+    ctrls.push(new    Label(getGUID(), containerTSP, getTemp,   85, 495, 100, 16, CLRS.WHITE, "0000", getTemp, 14));
+    
+   
     ctrls.push(new   Button(getGUID(), containerTSP, [], 10, app.height-40, 100, 30, CLRS.CODE_YELLOW, "back...", setSplash, 0));
+
+    ctrls.push(new Checkbox(getGUID() ,containerTSP, getDebug, 30, 520, 100, 20, CLRS.CODE_PURPLE, "Debug",  setDebug, 3));
+
+
+
+
+// ctrls.push(new   UpDown(getGUID(), containerTSP, getSize, 50, 500, 100, 30, CLRS.CODE_PURPLE, "#", setSize, 3));
+
 
     containerTSP.ctrls=ctrls;
     containerTSP.tag=false;
@@ -3060,7 +3235,8 @@ var proc = function(processingInstance){
 
     process=drawTSP;
 
-    resetTSP();
+    // resetTSP();
+    newTSP();
     
     app.mode=MODES.TSP;
     
@@ -3069,10 +3245,17 @@ var proc = function(processingInstance){
   /**
 
     TO DO:
+      
+      - pre-configured shapes (star, hexagon, etc)
+
+      - grid and nodes on vertices (snap-to-grid)
+
+      - display possible solutions for each # of nodes and configurations
+
       - swap routine based on longest segment
-      
+
       - slider control
-      
+
       - asetta corsa appearance for controls
 
   **/
@@ -3120,14 +3303,14 @@ var proc = function(processingInstance){
     
     for(var c in app.HC){ app.HC[c].draw(0,0); }
     
-    app.distanceHC=tourDistance(app.HC)
-
+    var distance=tourDistance(app.HC);
+    println(distance);
+    
     if(app.running){ swap(app.HC); }
     
-    textSize(20);
-    fill(CLRS.WHITE);
+    if(distance<app.distanceHC){ app.distanceHC=distance; }
 
-    text("Swaps: " + round(app.swaps), 160, 570);
+    
 
   };
   
@@ -3195,6 +3378,44 @@ println(index1+":"+index2);
 
   };
 
+  var drawGrid=function(){
+    
+    rectMode(CORNER);
+
+    noStroke();
+    fill(getColor(CLRS.CODE_BLUE,70));
+
+    rect(150,10,app.width-160,app.height-20);
+    
+    pushMatrix();
+
+      translate(150,10);
+        
+      // Grid
+      stroke(CLRS.GRAY);
+      strokeWeight(0.5);
+
+      ellipse(0,0,20,20);
+      
+      var incr=20;
+      
+      for(var n=incr; n<app.width-10; n+=incr){
+        
+        line(n,0,n,app.height-20);
+        line(0,n,app.width-160,n);
+        
+      }
+      
+    popMatrix();
+
+    strokeWeight(1.25);
+    stroke(CLRS.CODE_ORANGE);
+    noFill();
+
+    rect(150,10,app.width-160,app.height-20);
+    
+  };
+
   var drawSA=function(){
 
     stroke(CLRS.RED);
@@ -3222,6 +3443,8 @@ println(index1+":"+index2);
     strokeWeight(1);
     noFill();
 
+println(app.SA.length);
+
     line(app.SA[0].x,               app.SA[0].y,
          app.SA[app.SA.length-1].x, app.SA[app.SA.length-1].y);
 
@@ -3232,18 +3455,10 @@ println(index1+":"+index2);
     
     for(var c in app.SA){ app.SA[c].draw(0,0); }
     
-    app.distanceSA=tourDistance(app.SA)
+    app.distanceSA=tourDistance(app.SA);
 
     if(app.running){ swap(app.SA); }
     // if(app.running){ swapLongest(app.SA); }
-        
-    textSize(20);
-    textAlign(LEFT,BASELINE);
-    
-    fill(CLRS.WHITE);
-
-    text("Swaps: " + round(app.swaps), 160, 570);
-    text("Temp:  " + round(app.temp),  160, 590);
 
   };
 
@@ -3259,17 +3474,13 @@ println(index1+":"+index2);
     
     pushMatrix();
     
-      translate(0.5, 0.5);
+      // translate(0.5, 0.5);
       
-        background(CLRS.BLACK);
-        
-        strokeWeight(1);
-        stroke(CLRS.CODE_ORANGE);
-        fill(getColor(CLRS.CODE_BLUE,75));
-
-        rect(135,5,app.width-140,app.height-10);
+        background(CLRS.WHITE);
 
         for(var c in app.ctrls){ app.ctrls[c].draw(0,0); }
+
+        drawGrid();
 
         switch(app.algorithm){
 
@@ -3531,8 +3742,8 @@ println(index1+":"+index2);
       app.center=false;
       app.right=false;
   
-      for(var n in app.nodes){ app.nodes[n].released(mouseX,mouseY); }
-      for(var c in app.ctrls){ app.ctrls[c].released(mouseX,mouseY); }
+      for(var n in app.nodes){ app.nodes[n].mReleased(mouseX,mouseY); }
+      for(var c in app.ctrls){ app.ctrls[c].mReleased(mouseX,mouseY); }
   
     };
     var mouseOut=     function(){
@@ -3583,14 +3794,14 @@ println(index1+":"+index2);
   
       // }
   
-      for(var c in app.ctrls){ app.ctrls[c].keyPressed(); }
+      for(var c in app.ctrls){ app.ctrls[c].kPressed(); }
   
     };
     var keyReleased=  function(){
   
       app.keys[keyCode]=false;
   
-      for(var c in app.ctrls){ app.ctrls[c].keyReleased(); }
+      for(var c in app.ctrls){ app.ctrls[c].kReleased(); }
   
     };
     var keyTyped=     function(){
