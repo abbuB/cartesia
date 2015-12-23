@@ -348,7 +348,7 @@ var proc = function(processingInstance){
     ANT:    2,    //  Ant Colony Optimization
     GEN:    3,    //  Genetic - Branch and Bound
     USER:   4,    //  User selected
-    SHRINK: 5,    //  Shrink Wrap
+    SW:     5     //  Shrink Wrap
   };
 
   var app={
@@ -387,7 +387,8 @@ var proc = function(processingInstance){
       distanceGEN:    0,
       swapsGEN:       0,
       
-      USER:           [],     //  User selected path
+      USER:           [],     //  User selected
+      USER_CLICK:     [],     //  User currently clicked
       displayUSER:    false,
       distanceUSER:   0,
       swapsUSER:      0,
@@ -397,9 +398,9 @@ var proc = function(processingInstance){
       distanceSHRINK: 0,
       swapsSHRINK:    0,
 
-      algorithm:      ALGORITHMS.SA,
+      algorithm:      ALGORITHMS.USER,
       
-      tspSize:        20,
+      tspSize:        5,
 
       swaps:          0,
 
@@ -997,16 +998,16 @@ var proc = function(processingInstance){
   
       this.distance=0;
       
-      this.dX=0;
-      this.dy=0;
+      // this.dX=0;
+      // this.dy=0;
       
     };
     tNode.prototype.draw=     function(x,y){
       
-      var d=app.temp;
+      // var d=app.temp;
   
-      this.dX=this.x+random(-d,d);
-      this.dY=this.y+random(-d,d);
+      // this.dX=this.x+random(-d,d);
+      // this.dY=this.y+random(-d,d);
       
       // Node connections
       stroke(getColor(CLRS.CONNECTION,255));
@@ -1032,14 +1033,19 @@ var proc = function(processingInstance){
   
       ellipse(this.x, this.y, 15, 15);
       
-      if(this.enabled){ fill(CLRS.CODE_GREEN);
-                        ellipse(this.x, this.y, 10, 10); }
-      else            { fill(CLRS.RED);
-                        ellipse(this.x, this.y, 10, 10); }
+      if(this.selected){ fill(CLRS.CODE_GREEN);
+                         ellipse(this.x, this.y, 10, 10); }
+      else             { fill(CLRS.RED);
+                         ellipse(this.x, this.y, 10, 10); }
   
       if(this.hit){ cursor(HAND);   }
       else        { cursor(ARROW);  }
-  
+      
+      fill(CLRS.WHITE);
+      textSize(16);
+      
+      textAlign(RIGHT,CENTER);
+      text(this.row, this.x-12, this.y);
       // this.x+=random(-3,3);
       // this.y+=random(-3,3);
   
@@ -1047,16 +1053,17 @@ var proc = function(processingInstance){
     tNode.prototype.clicked=  function(x,y){
   
       if(this.hit){
-        this.enabled=!this.enabled;
+        this.selected=!this.selected;
+        this.routes(this);
       }
   
     };
     tNode.prototype.moved=    function(x,y){
   
-      if(mouseX>this.x-this.r &&
-         mouseX<this.x+this.r &&
-         mouseY>this.y-this.r &&
-         mouseY<this.y+this.r){
+      if(mouseX>this.x-15 &&
+         mouseX<this.x+15 &&
+         mouseY>this.y-15 &&
+         mouseY<this.y+15){
   
         this.hit=true;
         app.focus=this.id;
@@ -2954,33 +2961,62 @@ var proc = function(processingInstance){
   
   // Travelling Salesman ======================================================
 
-  var swap=function(arr){
+  var findLongest=function(arr){
+  
+    var longest=0;
+    var longestIndex=0;
+    var distance=0;
+    
+    for(var n=0; n<arr.length-1; n++){
+
+      distance=dist(arr[n].x,
+                    arr[n].y,
+                    arr[n+1].x,
+                    arr[n+1].y);
+      
+      if(distance>longest){
+        
+        longestIndex=n+1;
+        longest=distance;
+
+      }
+
+    }
+
+    return longestIndex;
+
+  };
+  
+  var swapLongest=function(arr){
 
     var distance=0;
     var index1=0;
-    var index2=0;
+    var index2=round(random(arr.length-1));
     
+    index1=findLongest(app.SA);
+
     while(index1==index2){
-      index1=round(random(arr.length-1));
       index2=round(random(arr.length-1));
     }
+
+// println(index1+":"+index2);
 
     arraySwap(arr, index1, index2);
 
     for(var n=0; n<arr.length-1; n++){
 
-      distance+=dist(arr[n].dX,
-                     arr[n].dY,
-                     arr[n+1].dX,
-                     arr[n+1].dY);
+      distance+=dist(arr[n].x,
+                     arr[n].y,
+                     arr[n+1].x,
+                     arr[n+1].y);
     }
     
-    distance+=dist(arr[0].dX,
-                   arr[0].dY,
-                   arr[arr.length-1].dX,
-                   arr[arr.length-1].dY);
+    distance+=dist(arr[0].x,
+                   arr[0].y,
+                   arr[arr.length-1].x,
+                   arr[arr.length-1].y);
     
-    var difference=app.distanceSA-distance;
+    var difference=app.distanceHC-distance;
 
     if(difference<0){ arraySwap(arr,index1,index2); }
     else            { app.swaps++;                  }
@@ -3009,7 +3045,7 @@ var proc = function(processingInstance){
     for(var n=0; n<app.tspSize; n++){
       app.currentPATH.push( new tNode( getGUID(),
                                        10+20*round(random(8, (app.width -40)/20)),
-                                       10+20*round(random(1, (app.height-40)/20)), 0, 0, 0
+                                       10+20*round(random(1, (app.height-40)/20)), 0, 0, addToTour
                                      )
                  );
     }
@@ -3021,17 +3057,25 @@ var proc = function(processingInstance){
     app.temp=round(app.tspSize*5);
 
   }
+  
   var newTSP=function(){
 
     app.swaps=0;
-
+    
+    app.currentPATH=[];
+    
     app.HC=[];
     app.SA=[];
+    app.ANT=[];
+    app.GEN=[];
+    app.USER=[];
+    app.USER_CLICK=[];
+    app.SHRINK=[];
 
     resetTemp();
     loadNodes();
 
-println(app.currentPATH.length);
+// println(app.currentPATH.length);
 
     app.HC=subset(app.currentPATH, 0);
     app.SA=subset(app.currentPATH, 0);
@@ -3040,22 +3084,28 @@ println(app.currentPATH.length);
     app.USER=subset(app.currentPATH, 0);
     app.SHRINK=subset(app.currentPATH, 0);
 
-println(app.HC.length);
+// println(app.USER.length);
 
     if(app.maximize){ maximizeTour(app.currentPATH); }
     if(app.minimize){ minimizeTour(app.currentPATH); }
 
   };
 
+  var shufflePath=function(){
+    
+    for(var n=0; n<app.currentPATH.length; n++){
+      arraySwap(app.currentPATH, n, round(random(app.currentPATH.length-1)));
+    }
+    
+  };
+  
   var retryTSP=function(){
     
     app.swaps=0;
 
     resetTemp();
-    
-    for(var n=0; n<app.currentPATH.length; n++){
-      arraySwap(app.currentPATH, n, round(random(app.currentPATH.length-1)));
-    }
+
+    shufflePath();
 
     if(app.maximize){ maximizeTour(app.currentPATH); }
     if(app.minimize){ minimizeTour(app.currentPATH); }
@@ -3065,8 +3115,9 @@ println(app.HC.length);
     app.ANT=subset(app.currentPATH, 0);
     app.GEN=subset(app.currentPATH, 0);
     app.USER=subset(app.currentPATH, 0);
+    app.USER_CLICK=[];
     app.SHRINK=subset(app.currentPATH, 0);
-    
+
   };
 
   var minimizeTour=function(arr){
@@ -3157,6 +3208,364 @@ println(app.HC.length);
     
   };
   
+
+
+  
+
+  var drawGrid=function(){
+    
+    rectMode(CORNER);
+
+    noStroke();
+    fill(getColor(CLRS.CODE_BLUE,70));
+
+    rect(150,10,app.width-160,app.height-20);
+    
+    pushMatrix();
+
+      translate(150,10);
+        
+      // Grid
+      stroke(CLRS.GRAY);
+      strokeWeight(0.5);
+
+      ellipse(0,0,20,20);
+      
+      var incr=20;
+      
+      for(var n=incr; n<app.width-10; n+=incr){
+        
+        line(n,0,n,app.height-20);
+        line(0,n,app.width-160,n);
+        
+      }
+      
+    popMatrix();
+
+    strokeWeight(1.25);
+    stroke(CLRS.CODE_ORANGE);
+    noFill();
+
+    rect(150,10,app.width-160,app.height-20);
+    
+  };
+
+
+
+  // HC - Hill Climb or Greedy~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  var drawHC=function(){
+  
+    stroke(CLRS.RED);
+    strokeWeight(2);
+    noFill();
+
+    for(var n=0; n<app.HC.length-1; n++){
+      
+      stroke(CLRS.YELLOW);
+      strokeWeight(1);
+      noFill();
+  
+      line(app.HC[n].x,   app.HC[n].y,
+           app.HC[n+1].x, app.HC[n+1].y);
+      
+      noStroke();
+      fill(CLRS.RED);
+  
+      if(n==0){ ellipse(app.HC[n].x, app.HC[n].y, 20, 20);  }
+      else    { ellipse(app.HC[n].x, app.HC[n].y, 10, 10);  }
+
+    }
+
+    stroke(CLRS.YELLOW);
+    strokeWeight(1);
+    noFill();
+
+    line(app.HC[0].x,               app.HC[0].y,
+         app.HC[app.HC.length-1].x, app.HC[app.HC.length-1].y);
+
+    noStroke();
+    fill(CLRS.RED);
+    
+    ellipse(app.HC[app.HC.length-1].x, app.HC[app.HC.length-1].y, 20, 20);
+    
+    for(var c in app.HC){ app.HC[c].draw(0,0); }
+
+  };
+  
+  var HC=function(){
+    
+    app.temp=0;
+    
+    if(app.running){
+      
+      var index1=0;
+      var index2=0;
+      
+      while(index1==index2){
+        index1=round(random(app.HC.length-1));
+        index2=round(random(app.HC.length-1));
+      }
+
+      arraySwap(app.HC, index1, index2);
+  
+      var distance=tourDistance(app.HC);
+  
+      if(distance>app.distanceHC){
+
+        arraySwap(app.HC,index1,index2);
+
+      }
+      else{
+
+        app.distanceHC=distance;
+        app.swaps++;
+
+      }
+
+    }
+
+    app.distanceHC=tourDistance(app.HC);
+
+    drawHC();
+    
+  };
+
+
+  // SA - Simulated Annealing ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  var drawSA=function(){
+
+    //  Draw the tour path
+    for(var n=0; n<app.SA.length-1; n++){
+      
+      stroke(CLRS.YELLOW);
+      strokeWeight(1);
+      noFill();
+  
+      line(app.SA[n].x,   app.SA[n].y,
+           app.SA[n+1].x, app.SA[n+1].y);
+
+    }
+    
+    // Connect the first and last nodes
+    stroke(CLRS.YELLOW);
+    strokeWeight(1);
+    noFill();
+
+    line(app.SA[0].x,               app.SA[0].y,
+         app.SA[app.SA.length-1].x, app.SA[app.SA.length-1].y);
+    
+
+    if(app.debug){
+      
+      // Identify the first and last node
+      noStroke();
+      fill(CLRS.RED);
+      
+      ellipse(app.SA[0].x, app.SA[0].y, 20, 20);
+      ellipse(app.SA[app.SA.length-1].x, app.SA[app.SA.length-1].y, 20, 20);
+
+    }
+    
+    // Draw the nodes themselves
+    for(var c in app.SA){ app.SA[c].draw(0,0); }
+
+  };
+  
+  var SA=function(){
+
+    if(app.running){
+      
+      var distance=0;
+      var index1=0;
+      var index2=0;
+      
+      while(index1==index2){
+        index1=round(random(app.SA.length-1));
+        index2=round(random(app.SA.length-1));
+      }
+  
+      arraySwap(app.SA, index1, index2);
+  
+      if(tourDistance(app.SA)>app.distanceSA){
+        
+// println(random()+" : "+app.temp/(round(app.tspSize*5)));
+        
+        if(random(app.tspSize*5)>app.temp){ arraySwap(app.SA,index1,index2); }
+        
+      }
+      else{
+        
+        app.swaps++;
+
+      }
+
+      text(frameCount,200,30);
+
+      if(app.temp>0){ app.temp-=app.tempIncrement; }
+
+    }
+
+    app.distanceSA=tourDistance(app.SA);
+    // if(app.running){ swapLongest(app.SA); }
+    
+    drawSA();
+    
+  };
+  
+  // ANT - Ant Colony ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  var drawANT=function(){
+
+
+    
+  };
+
+  var ANT=function(){
+    
+    if(app.running){
+  
+      
+  
+      
+    }
+
+    app.distanceANT=tourDistance(app.ANT);
+    // if(app.running){ swapLongest(app.SA); }
+    
+    drawSA();
+    
+    
+  };
+
+
+  // GEN - GENETIC ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  var drawGEN=function(){
+    
+  };
+  
+  var GEN=function(){
+    
+    
+    
+  };
+
+
+  // SW - Shrink wrap ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  var drawSW=function(){
+    
+  };
+  
+  var SW=function(){
+    
+    
+    
+  };
+  
+  
+  // USER - User selected path ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  var addToTour=function(nod){
+
+    if(app.USER_CLICK.length<app.USER.length){
+      app.USER_CLICK.push(nod);
+      app.USER_CLICK[app.USER_CLICK.length-1].row=app.USER_CLICK.length-1;
+    }
+
+  };
+  
+  var drawUSER=function(){
+
+    // Draw the nodes themselves
+    if(app.USER_CLICK.length<app.USER.length){
+      for(var c in app.USER){ app.USER[c].draw(0,0); }
+    }
+
+    if(app.USER_CLICK.length>0){
+
+      //  Draw the tour path
+      for(var n=0; n<app.USER_CLICK.length-1; n++){
+        
+        stroke(getColor(CLRS.YELLOW,75));
+        strokeWeight(0.75);
+        noFill();
+
+        line(app.USER_CLICK[n].x,  app.USER_CLICK[n].y,
+            app.USER_CLICK[n+1].x, app.USER_CLICK[n+1].y);
+
+      }
+      
+      if(app.USER.length==app.USER_CLICK.length){
+        line(app.USER_CLICK[0].x,
+             app.USER_CLICK[0].y,
+             app.USER_CLICK[app.USER_CLICK.length-1].x,
+             app.USER_CLICK[app.USER_CLICK.length-1].y);
+      }
+  
+      if(app.debug){
+        
+        // Identify the first and last node
+        noStroke();
+        fill(CLRS.RED);
+        
+        ellipse(app.USER[0].x, app.USER[0].y, 20, 20);
+        ellipse(app.USER[app.USER.length-1].x, app.USER[app.USER.length-1].y, 20, 20);
+  
+      }
+
+      for(var c in app.USER_CLICK){ app.USER_CLICK[c].draw(0,0); }
+
+    }
+
+  };
+  
+  var USER=function(){
+    
+    if(app.running){
+      
+      
+    }
+    
+    if(app.USER_CLICK.length!==0){
+      app.distanceUSER=tourDistance(app.USER_CLICK);
+    }
+    // if(app.running){ swapLongest(app.SA); }
+    
+    drawUSER();
+
+  };
+
+  
+  // TSP - Travelling Salesman Problem ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  var drawTSP=function(){
+    
+    pushMatrix();
+    
+      // translate(0.5, 0.5);
+      
+        background(CLRS.WHITE);
+
+        for(var c in app.ctrls){ app.ctrls[c].draw(0,0); }
+
+        drawGrid();
+
+        switch(app.algorithm){
+
+          case 0: HC();   break;
+          case 1: SA();   break;
+          case 2: ANT();  break;
+          case 3: GEN();  break;
+          case 4: USER(); break;
+          case 5: SW();   break;
+
+          default:        break;
+
+        }
+
+    popMatrix();
+
+  };
+
   var initTSP=function(){
 
     app.vortex=[];
@@ -3197,27 +3606,27 @@ println(app.HC.length);
     ctrls.push(new   Slider(getGUID(), containerTSP, getSize, 25, 220, 100, 12, CLRS.CODE_PURPLE, "12345",  setSize, 3));
 
 
-    ctrls.push(new    Label(getGUID(), containerTSP, [], 35, 260, 100, 12, CLRS.YELLOW, "Optimizations", "", 0));
+    ctrls.push(new    Label(getGUID(), containerTSP, [], 35, 260, 100, 12, CLRS.YELLOW, "Initializations", "", 0));
     ctrls.push(new Checkbox(getGUID(), containerTSP, getMaximize, 20, 285, 100, 12, CLRS.CODE_PURPLE, "Maximize Tour",  setMaximize, 3));
     ctrls.push(new Checkbox(getGUID(), containerTSP, getMinimize, 20, 305, 100, 12, CLRS.CODE_PURPLE, "Minimize Tour",  setMinimize, 3));
 
 
     ctrls.push(new   Button(getGUID(), containerTSP, [], 10, 340, 40, 30, CLRS.RED,    "new",    newTSP,   0));
-    ctrls.push(new   Button(getGUID(), containerTSP, [], 50, 340, 40, 30, CLRS.RED,    "run",    runTSP,   1));
+    ctrls.push(new   Button(getGUID(), containerTSP, [], 50, 340, 40, 30, CLRS.GREEN,  "run",    runTSP,   1));
     ctrls.push(new   Button(getGUID(), containerTSP, [], 90, 340, 40, 30, CLRS.YELLOW, "reload", retryTSP, 2));
-    
-    
+
+
     ctrls.push(new    Label(getGUID(), containerTSP, undefined,     18, 400, 100, 18, CLRS.YELLOW, "Tour Distance", undefined, 16));
     ctrls.push(new    Label(getGUID(), containerTSP, getDistanceSA, 40, 425, 100, 24, CLRS.WHITE, "0000", getDistanceSA, 14));
 
-    
+
     ctrls.push(new    Label(getGUID(), containerTSP, undefined, 18, 470, 100, 14, CLRS.CODE_GREEN, "Swaps", undefined, 16));
     ctrls.push(new    Label(getGUID(), containerTSP, getSwaps,  30, 495, 100, 16, CLRS.WHITE, "0000", getSwaps, 14));
-    
+
     ctrls.push(new    Label(getGUID(), containerTSP, undefined, 80, 470, 100, 14, CLRS.CODE_GREEN, "Temp", undefined, 16));
     ctrls.push(new    Label(getGUID(), containerTSP, getTemp,   85, 495, 100, 16, CLRS.WHITE, "0000", getTemp, 14));
-    
-   
+
+
     ctrls.push(new   Button(getGUID(), containerTSP, [], 10, app.height-40, 100, 30, CLRS.CODE_YELLOW, "back...", setSplash, 0));
 
     ctrls.push(new Checkbox(getGUID() ,containerTSP, getDebug, 30, 520, 100, 20, CLRS.CODE_PURPLE, "Debug",  setDebug, 3));
@@ -3259,244 +3668,6 @@ println(app.HC.length);
       - asetta corsa appearance for controls
 
   **/
-
-  
-
-
-  
-  var drawHC=function(){
-  
-    stroke(CLRS.RED);
-    strokeWeight(2);
-    noFill();
-
-    app.temp=0;
-
-    for(var n=0; n<app.HC.length-1; n++){
-      
-      stroke(CLRS.YELLOW);
-      strokeWeight(1);
-      noFill();
-  
-      line(app.HC[n].x,   app.HC[n].y,
-           app.HC[n+1].x, app.HC[n+1].y);
-      
-      noStroke();
-      fill(CLRS.RED);
-  
-      if(n==0){ ellipse(app.HC[n].x, app.HC[n].y, 20, 20);  }
-      else    { ellipse(app.HC[n].x, app.HC[n].y, 10, 10);  }
-
-    }
-
-    stroke(CLRS.YELLOW);
-    strokeWeight(1);
-    noFill();
-
-    line(app.HC[0].x,               app.HC[0].y,
-         app.HC[app.HC.length-1].x, app.HC[app.HC.length-1].y);
-
-    noStroke();
-    fill(CLRS.RED);
-    
-    ellipse(app.HC[app.HC.length-1].x, app.HC[app.HC.length-1].y, 20, 20);
-    
-    for(var c in app.HC){ app.HC[c].draw(0,0); }
-    
-    var distance=tourDistance(app.HC);
-    println(distance);
-    
-    if(app.running){ swap(app.HC); }
-    
-    if(distance<app.distanceHC){ app.distanceHC=distance; }
-
-    
-
-  };
-  
-  var findLongest=function(arr){
-  
-    var longest=0;
-    var longestIndex=0;
-    var distance=0;
-    
-    for(var n=0; n<arr.length-1; n++){
-
-      distance=dist(arr[n].dX,
-                    arr[n].dY,
-                    arr[n+1].dX,
-                    arr[n+1].dY);
-      
-      if(distance>longest){
-        
-        longestIndex=n+1;
-        longest=distance;
-
-      }
-
-    }
-
-    return longestIndex;
-
-  };
-  
-  var swapLongest=function(arr){
-
-    var distance=0;
-    var index1=0;
-    var index2=round(random(arr.length-1));
-    
-    index1=findLongest(app.SA);
-
-    while(index1==index2){
-      index2=round(random(arr.length-1));
-    }
-
-println(index1+":"+index2);
-
-    arraySwap(arr, index1, index2);
-
-    for(var n=0; n<arr.length-1; n++){
-
-      distance+=dist(arr[n].dX,
-                     arr[n].dY,
-                     arr[n+1].dX,
-                     arr[n+1].dY);
-    }
-    
-    distance+=dist(arr[0].dX,
-                   arr[0].dY,
-                   arr[arr.length-1].dX,
-                   arr[arr.length-1].dY);
-    
-    var difference=app.distanceSA-distance;
-
-    if(difference<0){ arraySwap(arr,index1,index2); }
-    else            { app.swaps++;                  }
-
-    if(app.temp>0){ app.temp-=app.tempIncrement; }
-
-  };
-
-  var drawGrid=function(){
-    
-    rectMode(CORNER);
-
-    noStroke();
-    fill(getColor(CLRS.CODE_BLUE,70));
-
-    rect(150,10,app.width-160,app.height-20);
-    
-    pushMatrix();
-
-      translate(150,10);
-        
-      // Grid
-      stroke(CLRS.GRAY);
-      strokeWeight(0.5);
-
-      ellipse(0,0,20,20);
-      
-      var incr=20;
-      
-      for(var n=incr; n<app.width-10; n+=incr){
-        
-        line(n,0,n,app.height-20);
-        line(0,n,app.width-160,n);
-        
-      }
-      
-    popMatrix();
-
-    strokeWeight(1.25);
-    stroke(CLRS.CODE_ORANGE);
-    noFill();
-
-    rect(150,10,app.width-160,app.height-20);
-    
-  };
-
-  var drawSA=function(){
-
-    stroke(CLRS.RED);
-    strokeWeight(2);
-    noFill();
-    
-    for(var n=0; n<app.SA.length-1; n++){
-      
-      stroke(CLRS.YELLOW);
-      strokeWeight(1);
-      noFill();
-  
-      line(app.SA[n].x,   app.SA[n].y,
-           app.SA[n+1].x, app.SA[n+1].y);
-      
-      noStroke();
-      fill(CLRS.RED);
-  
-      if(n==0){ ellipse(app.SA[n].x, app.SA[n].y, 20, 20);  }
-      // else    { ellipse(app.SA[n].x, app.SA[n].y, 10, 10);  }
-
-    }
-
-    stroke(CLRS.YELLOW);
-    strokeWeight(1);
-    noFill();
-
-println(app.SA.length);
-
-    line(app.SA[0].x,               app.SA[0].y,
-         app.SA[app.SA.length-1].x, app.SA[app.SA.length-1].y);
-
-    noStroke();
-    fill(CLRS.RED);
-    
-    ellipse(app.SA[app.SA.length-1].x, app.SA[app.SA.length-1].y, 20, 20);
-    
-    for(var c in app.SA){ app.SA[c].draw(0,0); }
-    
-    app.distanceSA=tourDistance(app.SA);
-
-    if(app.running){ swap(app.SA); }
-    // if(app.running){ swapLongest(app.SA); }
-
-  };
-
-  var drawANT=function(){
-    
-  };
-
-  var drawGEN=function(){
-    
-  };
-
-  var drawTSP=function(){
-    
-    pushMatrix();
-    
-      // translate(0.5, 0.5);
-      
-        background(CLRS.WHITE);
-
-        for(var c in app.ctrls){ app.ctrls[c].draw(0,0); }
-
-        drawGrid();
-
-        switch(app.algorithm){
-
-          case 0: drawHC();   break;
-          case 1: drawSA();   break;
-          case 2: drawANT();  break;
-          case 4: drawGEN();  break;
-
-          default:            break;
-
-        }
-
-    popMatrix();
-
-  };
-
   
   // Splash Screen ============================================================
   {
