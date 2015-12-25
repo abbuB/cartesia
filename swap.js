@@ -393,19 +393,20 @@ var proc = function(processingInstance){
       distanceUSER:   0,
       swapsUSER:      0,
 
-      SHRINK:         [],     //  Shrink Wrap
-      displaySHRINK:  false,
-      distanceSHRINK: 0,
-      swapsSHRINK:    0,
+      SW:             [],     //  Shrink Wrap
+      displaySW:      false,
+      distanceSW:     0,
+      swapsSW:        0,
 
-      algorithm:      ALGORITHMS.USER,
+      algorithm:      ALGORITHMS.SA,
       
-      tspSize:        5,
+      tspSize:        20,
 
       swaps:          0,
 
       temp:           0,
-      tempIncrement:  0.025,
+      maxTemp:        0,
+      tempIncrement:  0.0125,
 
       maximize:       false,
       minimize:       false,
@@ -485,14 +486,14 @@ var proc = function(processingInstance){
     
     switch(app.algorithm){
       
-      case ALGORITHMS.HC:       retVal=app.distanceHC;      break;
-      case ALGORITHMS.SA:       retVal=app.distanceSA;      break;
-      case ALGORITHMS.ANT:      retVal=app.distanceANT;     break;
-      case ALGORITHMS.GEN:      retVal=app.distanceGEN;     break;
-      case ALGORITHMS.USER:     retVal=app.distanceUSER;    break;
-      case ALGORITHMS.SHRINK:   retVal=app.distanceSHRINK;  break;
+      case ALGORITHMS.HC:   retVal=app.distanceHC;    break;
+      case ALGORITHMS.SA:   retVal=app.distanceSA;    break;
+      case ALGORITHMS.ANT:  retVal=app.distanceANT;   break;
+      case ALGORITHMS.GEN:  retVal=app.distanceGEN;   break;
+      case ALGORITHMS.USER: retVal=app.distanceUSER;  break;
+      case ALGORITHMS.SW:   retVal=app.distanceSW;    break;
 
-      default:                                              break;
+      default:                                        break;
 
     }
 
@@ -3055,10 +3056,16 @@ var proc = function(processingInstance){
   var resetTemp=function(){
 
     app.temp=round(app.tspSize*5);
-
+    app.maxTemp=round(app.tspSize*5);
+    
   }
   
   var newTSP=function(){
+
+    swX1=150;
+    swX2=590;
+    swY1=10;
+    swY2=590;
 
     app.swaps=0;
     
@@ -3070,7 +3077,7 @@ var proc = function(processingInstance){
     app.GEN=[];
     app.USER=[];
     app.USER_CLICK=[];
-    app.SHRINK=[];
+    app.SW=[];
 
     resetTemp();
     loadNodes();
@@ -3082,12 +3089,14 @@ var proc = function(processingInstance){
     app.ANT=subset(app.currentPATH, 0);
     app.GEN=subset(app.currentPATH, 0);
     app.USER=subset(app.currentPATH, 0);
-    app.SHRINK=subset(app.currentPATH, 0);
+    app.SW=subset(app.currentPATH, 0);
 
 // println(app.USER.length);
 
     if(app.maximize){ maximizeTour(app.currentPATH); }
     if(app.minimize){ minimizeTour(app.currentPATH); }
+
+    app.distanceSA=tourDistance(app.SA);
 
   };
 
@@ -3101,6 +3110,11 @@ var proc = function(processingInstance){
   
   var retryTSP=function(){
     
+    swX1=150;
+    swX2=590;
+    swY1=10;
+    swY2=590;
+
     app.swaps=0;
 
     resetTemp();
@@ -3116,8 +3130,10 @@ var proc = function(processingInstance){
     app.GEN=subset(app.currentPATH, 0);
     app.USER=subset(app.currentPATH, 0);
     app.USER_CLICK=[];
-    app.SHRINK=subset(app.currentPATH, 0);
+    app.SW=subset(app.currentPATH, 0);
 
+    app.distanceSA=tourDistance(app.SA);
+    
   };
 
   var minimizeTour=function(arr){
@@ -3179,6 +3195,11 @@ var proc = function(processingInstance){
   };
   
   var resetTSP=function(){
+
+    swX1=150;
+    swX2=590;
+    swY1=10;
+    swY2=590;
 
     loadNodes();
 
@@ -3345,6 +3366,8 @@ var proc = function(processingInstance){
   
       line(app.SA[n].x,   app.SA[n].y,
            app.SA[n+1].x, app.SA[n+1].y);
+      
+      app.SA[n].row=n;
 
     }
     
@@ -3356,7 +3379,8 @@ var proc = function(processingInstance){
     line(app.SA[0].x,               app.SA[0].y,
          app.SA[app.SA.length-1].x, app.SA[app.SA.length-1].y);
     
-
+    app.SA[app.SA.length-1].row=app.SA.length-1;
+      
     if(app.debug){
       
       // Identify the first and last node
@@ -3376,11 +3400,11 @@ var proc = function(processingInstance){
   var SA=function(){
 
     if(app.running){
-      
-      var distance=0;
+
       var index1=0;
       var index2=0;
-      
+      var distance=0;
+    
       while(index1==index2){
         index1=round(random(app.SA.length-1));
         index2=round(random(app.SA.length-1));
@@ -3388,16 +3412,20 @@ var proc = function(processingInstance){
   
       arraySwap(app.SA, index1, index2);
   
-      if(tourDistance(app.SA)>app.distanceSA){
-        
-// println(random()+" : "+app.temp/(round(app.tspSize*5)));
-        
-        if(random(app.tspSize*5)>app.temp){ arraySwap(app.SA,index1,index2); }
-        
+      distance=tourDistance(app.SA);
+
+// println(distance+" : " + (app.distanceSA+app.temp/app.maxTemp*100));
+
+      if(distance<app.distanceSA+app.temp/app.maxTemp*100){
+
+        app.swaps++;
+        app.distanceSA=distance;
+
       }
       else{
+        arraySwap(app.SA,index1,index2);
         
-        app.swaps++;
+        
 
       }
 
@@ -3407,7 +3435,7 @@ var proc = function(processingInstance){
 
     }
 
-    app.distanceSA=tourDistance(app.SA);
+    // app.distanceSA=distance;
     // if(app.running){ swapLongest(app.SA); }
     
     drawSA();
@@ -3452,13 +3480,109 @@ var proc = function(processingInstance){
 
 
   // SW - Shrink wrap ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  var swX1=150;
+  var swX2=590;
+  var swY1=10;
+  var swY2=590;
+
   var drawSW=function(){
+
+    stroke(CLRS.RED);
+    strokeWeight(2);
+    noFill();
+
+    for(var n=0; n<app.SW.length-1; n++){
+      
+      stroke(CLRS.YELLOW);
+      strokeWeight(1);
+      noFill();
+  
+      line(app.SW[n].x,   app.SW[n].y,
+           app.SW[n+1].x, app.SW[n+1].y);
+      
+      noStroke();
+      fill(CLRS.RED);
+  
+      if(n==0){ ellipse(app.SW[n].x, app.SW[n].y, 20, 20);  }
+      else    { ellipse(app.SW[n].x, app.SW[n].y, 10, 10);  }
+
+    }
+
+    stroke(CLRS.YELLOW);
+    strokeWeight(1);
+    noFill();
+
+    line(app.SW[0].x,               app.SW[0].y,
+         app.SW[app.HC.length-1].x, app.SW[app.HC.length-1].y);
+
+    noStroke();
+    fill(CLRS.RED);
     
+    ellipse(app.SW[app.HC.length-1].x, app.SW[app.HC.length-1].y, 20, 20);
+    
+    for(var c in app.SW){ app.SW[c].draw(0,0); }
+    
+    // Boundary
+    stroke(CLRS.RED);
+    strokeWeight(1);
+
+    line(swX1, 10, swX1, height-10);
+    
+    stroke(CLRS.GREEN);
+    line(swX2, 10, swX2, height-10);
+    
+    stroke(CLRS.BLUE);
+    line(150, swY1, width-10, swY1);
+    
+    stroke(CLRS.YELLOW);
+    line(150, swY2, width-10, swY2);
+    
+    if(app.running){
+      
+      swX1+=0.2;
+      swX2-=0.2;
+      swY1+=0.2;
+      swY2-=0.2;
+      
+    }
   };
   
   var SW=function(){
     
+    app.temp=0;
     
+    if(app.running){
+      
+      var index1=0;
+      var index2=0;
+      
+      while(index1==index2){
+        index1=round(random(app.SW.length-1));
+        index2=round(random(app.SW.length-1));
+      }
+
+      arraySwap(app.SW, index1, index2);
+  
+      var distance=tourDistance(app.SW);
+  
+      if(distance>app.distanceSW){
+
+        arraySwap(app.SW,index1,index2);
+
+      }
+      else{
+
+        app.distanceSW=distance;
+        app.swaps++;
+
+      }
+
+    }
+
+    app.distanceSW=tourDistance(app.SW);
+
+    drawSW();
     
   };
   
@@ -3578,7 +3702,7 @@ var proc = function(processingInstance){
     app.ANT=[];
     app.GEN=[];
     app.USER=[];
-    app.SHRINK=[];
+    app.SW=[];
     
     app.temp=round(width/5);
     app.frameRate=60;
@@ -3595,44 +3719,41 @@ var proc = function(processingInstance){
 
     ctrls.push(new    Label(getGUID(), containerTSP, [],           35, 60, 100, 13, CLRS.YELLOW, "Algorithm",0,0));
       
-    ctrls.push(new   Option(getGUID(), containerTSP, getAlgorithm, 20, 85, 100, 12, CLRS.CODE_PURPLE, "Hill climb",     setAlgorithm, 0));
+    ctrls.push(new   Option(getGUID(), containerTSP, getAlgorithm, 20, 85, 100, 12, CLRS.CODE_PURPLE, "Hill climb",      setAlgorithm, 0));
     ctrls.push(new   Option(getGUID(), containerTSP, getAlgorithm, 20, 105, 100, 12, CLRS.CODE_PURPLE, "Sim Annealing",  setAlgorithm, 1));
     ctrls.push(new   Option(getGUID(), containerTSP, getAlgorithm, 20, 125, 100, 12, CLRS.CODE_PURPLE, "Ant Colony",     setAlgorithm, 2));
     ctrls.push(new   Option(getGUID(), containerTSP, getAlgorithm, 20, 145, 100, 12, CLRS.CODE_PURPLE, "Genetic - B&B",  setAlgorithm, 3));
     ctrls.push(new   Option(getGUID(), containerTSP, getAlgorithm, 20, 165, 100, 12, CLRS.CODE_PURPLE, "User Selected",  setAlgorithm, 4));
+    ctrls.push(new   Option(getGUID(), containerTSP, getAlgorithm, 20, 185, 100, 12, CLRS.CODE_PURPLE, "Shrink Wrap",    setAlgorithm, 5));
+
+    ctrls.push(new    Label(getGUID(), containerTSP, [],      55, 225, 100, 12, CLRS.YELLOW, "Nodes", "", 0));
+    ctrls.push(new   Slider(getGUID(), containerTSP, getSize, 25, 245, 100, 12, CLRS.CODE_PURPLE, "12345",  setSize, 3));
 
 
-    ctrls.push(new    Label(getGUID(), containerTSP, [],      55, 200, 100, 12, CLRS.YELLOW, "Nodes", "", 0));
-    ctrls.push(new   Slider(getGUID(), containerTSP, getSize, 25, 220, 100, 12, CLRS.CODE_PURPLE, "12345",  setSize, 3));
+    ctrls.push(new    Label(getGUID(), containerTSP, [], 35, 280, 100, 12, CLRS.YELLOW, "Initializations", "", 0));
+    ctrls.push(new Checkbox(getGUID(), containerTSP, getMaximize, 20, 305, 100, 12, CLRS.CODE_PURPLE, "Maximize Tour",  setMaximize, 3));
+    ctrls.push(new Checkbox(getGUID(), containerTSP, getMinimize, 20, 325, 100, 12, CLRS.CODE_PURPLE, "Minimize Tour",  setMinimize, 3));
 
 
-    ctrls.push(new    Label(getGUID(), containerTSP, [], 35, 260, 100, 12, CLRS.YELLOW, "Initializations", "", 0));
-    ctrls.push(new Checkbox(getGUID(), containerTSP, getMaximize, 20, 285, 100, 12, CLRS.CODE_PURPLE, "Maximize Tour",  setMaximize, 3));
-    ctrls.push(new Checkbox(getGUID(), containerTSP, getMinimize, 20, 305, 100, 12, CLRS.CODE_PURPLE, "Minimize Tour",  setMinimize, 3));
+    ctrls.push(new   Button(getGUID(), containerTSP, [], 10, 360, 40, 30, CLRS.RED,    "new",    newTSP,   0));
+    ctrls.push(new   Button(getGUID(), containerTSP, [], 50, 360, 40, 30, CLRS.GREEN,  "run",    runTSP,   1));
+    ctrls.push(new   Button(getGUID(), containerTSP, [], 90, 360, 40, 30, CLRS.YELLOW, "reload", retryTSP, 2));
 
 
-    ctrls.push(new   Button(getGUID(), containerTSP, [], 10, 340, 40, 30, CLRS.RED,    "new",    newTSP,   0));
-    ctrls.push(new   Button(getGUID(), containerTSP, [], 50, 340, 40, 30, CLRS.GREEN,  "run",    runTSP,   1));
-    ctrls.push(new   Button(getGUID(), containerTSP, [], 90, 340, 40, 30, CLRS.YELLOW, "reload", retryTSP, 2));
+    ctrls.push(new    Label(getGUID(), containerTSP, undefined,     18, 420, 100, 18, CLRS.YELLOW, "Tour Distance", undefined, 16));
+    ctrls.push(new    Label(getGUID(), containerTSP, getDistanceSA, 40, 445, 100, 24, CLRS.WHITE, "0000", getDistanceSA, 14));
 
 
-    ctrls.push(new    Label(getGUID(), containerTSP, undefined,     18, 400, 100, 18, CLRS.YELLOW, "Tour Distance", undefined, 16));
-    ctrls.push(new    Label(getGUID(), containerTSP, getDistanceSA, 40, 425, 100, 24, CLRS.WHITE, "0000", getDistanceSA, 14));
+    ctrls.push(new    Label(getGUID(), containerTSP, undefined, 18, 490, 100, 14, CLRS.CODE_GREEN, "Swaps", undefined, 16));
+    ctrls.push(new    Label(getGUID(), containerTSP, getSwaps,  30, 515, 100, 16, CLRS.WHITE, "0000", getSwaps, 14));
 
-
-    ctrls.push(new    Label(getGUID(), containerTSP, undefined, 18, 470, 100, 14, CLRS.CODE_GREEN, "Swaps", undefined, 16));
-    ctrls.push(new    Label(getGUID(), containerTSP, getSwaps,  30, 495, 100, 16, CLRS.WHITE, "0000", getSwaps, 14));
-
-    ctrls.push(new    Label(getGUID(), containerTSP, undefined, 80, 470, 100, 14, CLRS.CODE_GREEN, "Temp", undefined, 16));
-    ctrls.push(new    Label(getGUID(), containerTSP, getTemp,   85, 495, 100, 16, CLRS.WHITE, "0000", getTemp, 14));
+    ctrls.push(new    Label(getGUID(), containerTSP, undefined, 80, 490, 100, 14, CLRS.CODE_GREEN, "Temp", undefined, 16));
+    ctrls.push(new    Label(getGUID(), containerTSP, getTemp,   85, 515, 100, 16, CLRS.WHITE, "0000", getTemp, 14));
 
 
     ctrls.push(new   Button(getGUID(), containerTSP, [], 10, app.height-40, 100, 30, CLRS.CODE_YELLOW, "back...", setSplash, 0));
 
-    ctrls.push(new Checkbox(getGUID() ,containerTSP, getDebug, 30, 520, 100, 20, CLRS.CODE_PURPLE, "Debug",  setDebug, 3));
-
-
-
+    ctrls.push(new Checkbox(getGUID() ,containerTSP, getDebug, 30, 540, 100, 20, CLRS.CODE_PURPLE, "Debug",  setDebug, 3));
 
 // ctrls.push(new   UpDown(getGUID(), containerTSP, getSize, 50, 500, 100, 30, CLRS.CODE_PURPLE, "#", setSize, 3));
 
