@@ -398,15 +398,20 @@ var proc = function(processingInstance){
       distanceSW:     0,
       swapsSW:        0,
 
-      algorithm:      ALGORITHMS.SA,
+      algorithm:      ALGORITHMS.ANT,
       
-      tspSize:        20,
+      tspSize:        10,
 
       swaps:          0,
 
       temp:           0,
       maxTemp:        0,
       tempIncrement:  0.0125,
+      
+      leftMost:       0,
+      rightMost:      0,
+      topMost:        0,
+      bottomMost:     0,
 
       maximize:       false,
       minimize:       false,
@@ -531,7 +536,7 @@ var proc = function(processingInstance){
 
     }
 
-    println(app.algorithm);
+    // println(app.algorithm);
 
                                };
 
@@ -774,7 +779,16 @@ var proc = function(processingInstance){
   
       this.value=value;
   
-    };
+  };
+
+  var edge=function(id1,id2,value){
+      
+      this.id1=id1;
+      this.id2=id2;
+  
+      this.value=value;
+  
+  };
     
   // Node ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
@@ -999,6 +1013,8 @@ var proc = function(processingInstance){
   
       this.distance=0;
       
+      this.selected=true;
+      
       // this.dX=0;
       // this.dy=0;
       
@@ -1030,14 +1046,23 @@ var proc = function(processingInstance){
       }
   
       // Node ellipse
-      fill(getColor(CLRS.WHITE,255));
-  
-      ellipse(this.x, this.y, 15, 15);
+      noFill();
+      stroke(getColor(CLRS.WHITE,75));
+      strokeWeight(1.5);
       
-      if(this.selected){ fill(CLRS.CODE_GREEN);
-                         ellipse(this.x, this.y, 10, 10); }
+      if(this.id==app.leftMost)  { stroke(CLRS.RED);    }
+      if(this.id==app.rightMost) { stroke(CLRS.GREEN);  }
+      if(this.id==app.topMost)   { stroke(CLRS.BLUE);   }
+      if(this.id==app.bottomMost){ stroke(CLRS.YELLOW); }
+
+      ellipse(this.x, this.y, 20, 20);
+      
+      noStroke();
+      
+      if(this.selected){ fill(CLRS.WHITE);
+                         ellipse(this.x, this.y, 8, 8); }
       else             { fill(CLRS.RED);
-                         ellipse(this.x, this.y, 10, 10); }
+                         ellipse(this.x, this.y, 8, 8); }
   
       if(this.hit){ cursor(HAND);   }
       else        { cursor(ARROW);  }
@@ -1049,7 +1074,7 @@ var proc = function(processingInstance){
       text(this.row, this.x-12, this.y);
       // this.x+=random(-3,3);
       // this.y+=random(-3,3);
-  
+
     };
     tNode.prototype.clicked=  function(x,y){
   
@@ -2962,6 +2987,37 @@ var proc = function(processingInstance){
   
   // Travelling Salesman ======================================================
 
+  var setLimits=function(arr){
+    
+    var top=Infinity;
+    var bottom=0;
+    var left=Infinity;
+    var right=0;
+    var topID=0;
+    var bottomID=0;
+    var leftID=0;
+    var rightID=0;
+
+    for(var n=0; n<arr.length-1; n++){
+
+      if(arr[n].y<top)    { topID=arr[n].id;
+                            top=arr[n].y;     }
+      if(arr[n].y>bottom) { bottomID=arr[n].id;
+                            bottom=arr[n].y;  }
+      if(arr[n].x>right)  { rightID=arr[n].id;
+                            right=arr[n].x;   }
+      if(arr[n].x<left)   { leftID=arr[n].id;
+                            left=arr[n].x;    }
+
+    }
+
+    app.topMost=topID;
+    app.bottomMost=bottomID;
+    app.rightMost=rightID;
+    app.leftMost=leftID;
+
+  };
+
   var findLongest=function(arr){
   
     var longest=0;
@@ -3046,7 +3102,7 @@ var proc = function(processingInstance){
     for(var n=0; n<app.tspSize; n++){
       app.currentPATH.push( new tNode( getGUID(),
                                        10+20*round(random(8, (app.width -40)/20)),
-                                       10+20*round(random(1, (app.height-40)/20)), 0, 0, addToTour
+                                       10+20*round(random(1, (app.height-40)/20)), n, n, addToTour
                                      )
                  );
     }
@@ -3060,8 +3116,34 @@ var proc = function(processingInstance){
     
   }
   
-  var newTSP=function(){
+  var loadANT=function(){
+    
+    var sz=app.tspSize;
 
+// println(sz);
+
+    for(var n=0; n<sz; n++){
+      for(var m=0; m<sz; m++){
+
+        if(n!==m){
+// println(n+", "+m);
+          app.ANT.push(new edge(app.currentPATH[n].id,
+                                app.currentPATH[m].id,
+                                0));
+                                
+// println(app.ANT[app.ANT.length-1].value);
+
+        }
+
+      }
+    }
+
+// println(app.ANT.length);
+
+  };
+  
+  var newTSP=function(){
+    
     swX1=150;
     swX2=590;
     swY1=10;
@@ -3096,7 +3178,26 @@ var proc = function(processingInstance){
     if(app.maximize){ maximizeTour(app.currentPATH); }
     if(app.minimize){ minimizeTour(app.currentPATH); }
 
-    app.distanceSA=tourDistance(app.SA);
+    app.distanceSA=tourDistance(app.currentPATH);
+    
+    setLimits(app.currentPATH);
+    
+    switch(app.algorithm){
+      
+      case ALGORITHMS.HC:                   break;
+      case ALGORITHMS.SA:                   break;
+      case ALGORITHMS.ANT:      loadANT();  break;
+      case ALGORITHMS.GEN:                  break;
+      case ALGORITHMS.USER:                 break;
+      case ALGORITHMS.SHRINK:               break;
+
+      default:                              break;
+
+    }
+// println("Top:     " + app.topMost);
+// println("Bottom:  " + app.bottomMost);
+// println("Left:    " + app.leftMost);
+// println("Right:   " + app.rightMost);
 
   };
 
@@ -3423,9 +3524,8 @@ var proc = function(processingInstance){
 
       }
       else{
+        
         arraySwap(app.SA,index1,index2);
-        
-        
 
       }
 
@@ -3443,27 +3543,133 @@ var proc = function(processingInstance){
   };
   
   // ANT - Ant Colony ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  var getTransparency=function(id1, id2){
+  
+// println("exit");
+
+    for(var n=0; n<app.ANT.length; n++){
+
+// println("exit");
+
+      if(app.ANT[n].id1==id1 &&
+         app.ANT[n].id2==id2){
+
+// println("exit");
+
+        return app.ANT[n].value;
+        
+      }
+      
+    }
+    
+  };
+  
   var drawANT=function(){
+    
+    var transp=0;
+    
+    //  Draw the tour path
+    for(var n=0; n<app.SA.length-1; n++){
+      
+      transp=getTransparency(app.SA[n].id, app.SA[n+1].id);
+      
+// println(transp);
+      
+      stroke(getColor(CLRS.YELLOW, transp));
+      strokeWeight(1);
+      noFill();
 
+      line(app.SA[n].x,   app.SA[n].y,
+           app.SA[n+1].x, app.SA[n+1].y);
+      
+      app.SA[n].row=n;
 
+    }
+    
+    // Connect the first and last nodes
+    transp=getTransparency(app.SA[0].id, app.SA[app.SA.length-1].id);
+    
+    stroke(getColor(CLRS.YELLOW,transp));
+    strokeWeight(1);
+    noFill();
+
+    line(app.SA[0].x,               app.SA[0].y,
+        app.SA[app.SA.length-1].x, app.SA[app.SA.length-1].y);
+    
+    app.SA[app.SA.length-1].row=app.SA.length-1;
+      
+    if(app.debug){
+      
+      // Identify the first and last node
+      noStroke();
+      fill(CLRS.RED);
+      
+      ellipse(app.SA[0].x, app.SA[0].y, 20, 20);
+      ellipse(app.SA[app.SA.length-1].x, app.SA[app.SA.length-1].y, 20, 20);
+
+    }
+    
+    // Draw the nodes themselves
+    for(var c in app.SA){ app.SA[c].draw(0,0); }
     
   };
 
   var ANT=function(){
     
     if(app.running){
+
+      var index1=0;
+      var index2=0;
+      var distance=0;
+    
+      while(index1==index2){
+        index1=round(random(app.SA.length-1));
+        index2=round(random(app.SA.length-1));
+      }
   
-      
+      arraySwap(app.SA, index1, index2);
   
+      distance=tourDistance(app.SA);
+
+// println(distance+" : " + (app.distanceSA+app.temp/app.maxTemp*100));
+
       
+
+        for(var n=0; n<app.SA.length-1; n++){
+
+          for(var m=0; m<app.ANT.length-1; m++){
+    
+            if(app.ANT[m].id1==app.SA[n].id &&
+               app.ANT[m].id2==app.SA[n+1].id){
+               app.ANT[m].value++;
+  
+              if(distance<app.distanceSA){
+                app.ANT[m].value+=2;
+             }
+             else{
+      
+               app.ANT[m].value-=3;
+             }
+
+          }
+
+        }
+
+      }
+      
+      arraySwap(app.SA,index1,index2);
+
+      text(frameCount,200,30);
+
+      if(app.temp>0){ app.temp-=app.tempIncrement; }
+
     }
 
-    app.distanceANT=tourDistance(app.ANT);
+    // app.distanceSA=distance;
     // if(app.running){ swapLongest(app.SA); }
     
-    drawSA();
-    
-    
+    drawANT();
+
   };
 
 
@@ -3524,18 +3730,18 @@ var proc = function(processingInstance){
     for(var c in app.SW){ app.SW[c].draw(0,0); }
     
     // Boundary
-    stroke(CLRS.RED);
-    strokeWeight(1);
+    stroke(getColor(CLRS.RED,50));
+    strokeWeight(5);
 
     line(swX1, 10, swX1, height-10);
     
-    stroke(CLRS.GREEN);
+    stroke(getColor(CLRS.GREEN,50));
     line(swX2, 10, swX2, height-10);
     
-    stroke(CLRS.BLUE);
+    stroke(getColor(CLRS.BLUE,50));
     line(150, swY1, width-10, swY1);
     
-    stroke(CLRS.YELLOW);
+    stroke(getColor(CLRS.YELLOW,50));
     line(150, swY2, width-10, swY2);
     
     if(app.running){
@@ -3546,6 +3752,7 @@ var proc = function(processingInstance){
       swY2-=0.2;
       
     }
+
   };
   
   var SW=function(){
@@ -3767,15 +3974,19 @@ var proc = function(processingInstance){
 
     // resetTSP();
     newTSP();
-    
+
     app.mode=MODES.TSP;
-    
+
   };
 
   /**
 
     TO DO:
-      
+
+      - clumpiness
+
+      - eliminate crossed lines
+
       - pre-configured shapes (star, hexagon, etc)
 
       - grid and nodes on vertices (snap-to-grid)
