@@ -36,13 +36,16 @@ var proc = function(processingInstance){
 // +dailymotion.com
 // +pistolslut.com
 // +latin-phrases.co.uk/quotes/beginning-end/
-
+// +code.org
   **/
 
   angleMode="radians";
   
   // Globals ==================================================================
   var process;
+  
+  // Constants
+  var UNDEF;
   
   var zoomfactor=0;
   
@@ -244,7 +247,9 @@ var proc = function(processingInstance){
     
     CODE_BLUE:      color(0,148,202),
     
-    CODE_YELLOW:    color(0,148,202)
+    CODE_YELLOW:    color(0,148,202),
+    
+    CODE_RED:       color(170,29,29)
     
   };
 
@@ -295,50 +300,79 @@ var proc = function(processingInstance){
 
   var COMMANDS={
 
-    // General ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // General ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    UNDEF:        [   1,  'Undefined',        'UNDEFINED'             ],
+    UNDEF:                  [   0,  'Undefined',              'UNDEFINED'                           ],
 
-    CARTESIA:     [   2,  'Cartesia',         'CARTESIA'              ],
+    DEBUG:                  [   1,  'Debug',                  'DEBUG'                               ],
 
-    Container:    [   3,  'Container',        'Container'             ],
-    HEADER:       [   4,  'Header',           'HEADER'                ],
-    FOOTER:       [   5,  'Footer',           'FOOTER'                ],
-    TELEMETRY:    [   6,  'Telemetry',        'TELEMETRY'             ],
-    TOOLTIP:      [   7,  'ToolTip',          'TOOLTIP'               ],
+    
+    // Mouse ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    TSP:                    [   1,  'Travelling Salesman Problem',  'Travelling Salesman Problem'   ],
+    NETWORK:                [   1,  'Network',                      'Network'                       ],
+    PLACEHOLDER1:           [   1,  'PH1',                          'PH1'                           ],
+    PLACEHOLDER1:           [   1,  'PH2',                          'PH2'                           ],
 
-    DEBUG:        [   9,  'Debug',            'DEBUG'                 ],
 
-    WIDTH:        [  10,  'Width',            'WIDTH'                 ],
-    HEIGHT:       [  11,  'Height',           'HEIGHT'                ],
+    // Travaelling Salesman Problem ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    HILL_CLIMB:             [   200,  'HIll Climb',           'Hill Climb'            ],    //  Greedy
+    SIMULATED_ANNEALING:    [   200,  'Simulated Annealing',  'Simulated Annealing'   ],
+    ANT_COLOBY:             [   200,  'Ant Colony',           'Ant Colony'            ],
+    GENETIC:                [   200,  'Genetic',              'Genetic'               ],
+    USER_SELECTED:          [   200,  'User Selected',        'User Selected'         ],
+    USER_DIRECTED:          [   200,  'User Directed',        'User Directed'         ],
+    SHRINK_WRAP:            [   200,  'Shrink Wrap',          'Shrink Wrap'           ],
 
-    FRAMERATEA:   [  12,  'FrameRateA',       'FRAMERATE(A)'          ],
-    FRAMERATE:    [  13,  'FrameRate',        'FRAMERATE'             ],
+    TEMPERATURE:            [   200,  'Shrink Wrap',          'Shrink Wrap'           ],
 
-    VISIBLE:      [  21,  'Visible',          'VISIBLE'               ],
+    TEMPERATURE_INITIAL:    [   200,  'Shrink Wrap',          'Shrink Wrap'           ],
+    TEMPERATURE_INCREMENT:  [   200,  'Shrink Wrap',          'Shrink Wrap'           ],
 
-    SPACER:       [  26,  'Spacer',           'SPACER'                ],
+    MAXIMIZE_TOUR:          [   200,  'Maximize Tour',        'Maximize Tour'         ],
+    MINIMIZE_TOUR:          [   200,  'Minimize Tour',        'Minimize Tour'         ],
 
-    CURRENT:      [  27,  'Current',          'CURRENT'               ],
-    FACTOR:       [  28,  'Factor',           'FACTOR'                ],
-    UTIL:         [  29,  'Util',             'UTIL'                  ],
+    TWO_OPT:                [   200,  'Two Opt',              'Two Opt'               ],
+    THREE_OPT:              [   200,  'Three Opt',            'Three Opt'             ],
+
+    NEW:                    [   200,  'New',                  'New'                   ],
+    PLAY_PAUSE:             [   200,  'Play - Pause',         'Play - Pause'          ],
+    RELOAD:                 [   200,  'Reload',               'Reload'                ],
+
+    NODES:                  [   200,  'Nodes',                'Nodes'                 ],
+
+
+    // Mouse ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    WIDTH:                [  10,  'Width',            'WIDTH'                 ],
+    HEIGHT:               [  11,  'Height',           'HEIGHT'                ],
+
+    FRAMERATE:            [  12,  'FrameRateA',       'FRAMERATE(A)'          ],
+
+    VISIBLE:              [  21,  'Visible',          'VISIBLE'               ],
+
+    CURRENT:              [  27,  'Current',          'CURRENT'               ],
+    FACTOR:               [  28,  'Factor',           'FACTOR'                ],
+    UTIL:                 [  29,  'Util',             'UTIL'                  ],
+
 
     // Mouse ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    MOUSEX:       [  14,  'MouseX',           'MOUSEX'                ],
-    MOUSEY:       [  15,  'MouseY',           'MOUSEY'                ],
-    WORLDX:       [  16,  'WorldX',           'WORLDX'                ],
-    WORLDY:       [  17,  'WorldY',           'WORLDY'                ],
-    GRIDX:        [  18,  'GridX',            'GRIDX'                 ],
-    GRIDY:        [  19,  'GridY',            'GRIDY'                 ],
-
-    pressed:      [  20,  'pressed',          'pressed'               ],
-
-    FOCUS:        [  22,  'Focus',            'FOCUS'                 ],
-
-    LEFT:         [  23,  'Left button',      'LEFT'                  ],
-    CENTER:       [  24,  'Center button',    'CENTER'                ],
-    RIGHT:        [  25,  'Right button',     'RIGHT'                 ],
+    MOUSEX:               [  14,  'MouseX',           'MOUSEX'                ],
+    MOUSEY:               [  15,  'MouseY',           'MOUSEY'                ],
+    WORLDX:               [  16,  'WorldX',           'WORLDX'                ],
+    WORLDY:               [  17,  'WorldY',           'WORLDY'                ],
+    GRIDX:                [  18,  'GridX',            'GRIDX'                 ],
+    GRIDY:                [  19,  'GridY',            'GRIDY'                 ],
+        
+    pressed:              [  20,  'pressed',          'pressed'               ],
+        
+    FOCUS:                [  22,  'Focus',            'FOCUS'                 ],
+        
+    LEFT:                 [  23,  'Left button',      'LEFT'                  ],
+    CENTER:               [  24,  'Center button',    'CENTER'                ],
+    RIGHT:                [  25,  'Right button',     'RIGHT'                 ],
 
   };
 
@@ -361,6 +395,8 @@ var proc = function(processingInstance){
       
       // TSP ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+      grid:           0,
+      
       running:        false,
       
       displaGrid:     true,
@@ -398,9 +434,9 @@ var proc = function(processingInstance){
       distanceSW:     0,
       swapsSW:        0,
 
-      algorithm:      ALGORITHMS.ANT,
+      algorithm:      ALGORITHMS.SA,
       
-      tspSize:        10,
+      tspSize:        20,
 
       swaps:          0,
 
@@ -639,7 +675,7 @@ var proc = function(processingInstance){
 
   };
 
-  var getNodeAddress=function(){
+  var gevNodeAddress=function(){
 
     var NAT=round(random(0,255))+"."+round(random(0,255))+"."+round(random(0,255))+"."+round(random(0,255));
 
@@ -781,24 +817,29 @@ var proc = function(processingInstance){
   
   };
 
-  var edge=function(id1,id2,value){
-      
+  var edge=function(id1,x1,y1, id2,x2,y2, value){
+
       this.id1=id1;
+      this.x1=x1;
+      this.y1=y1;
+
       this.id2=id2;
-  
+      this.x2=x2;
+      this.y2=y2;
+
       this.value=value;
-  
+
   };
-    
+
   // Node ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
     var Node=function(id,x,y,row,col,routes){
   
-      // if(id===undefined){ this.id=getNodeAddress(); }
+      // if(id===undefined){ this.id=gevNodeAddress(); }
       // else              { this.id=id;               }
   
       this.id=id;
-      this.nat=getNodeAddress();
+      this.nat=gevNodeAddress();
   
       this.gridID=row+":"+col;
   
@@ -1002,9 +1043,9 @@ var proc = function(processingInstance){
     };
   }
 
-  // tNode ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // vNode ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
-    var tNode=function(id,x,y,row,col,routes){
+    var vNode=function(id,x,y,row,col,routes){
   
       Node.call(this,id,x,y,row,col,routes);
   
@@ -1014,26 +1055,22 @@ var proc = function(processingInstance){
       this.distance=0;
       
       this.selected=true;
-      
-      // this.dX=0;
-      // this.dy=0;
-      
+
     };
-    tNode.prototype.draw=     function(x,y){
+    vNode.prototype.draw=     function(x,y){
+
+      // Node ellipse
+      noFill();
+      stroke(getColor(CLRS.WHITE,75));
+      strokeWeight(1.25);
       
-      // var d=app.temp;
-  
-      // this.dX=this.x+random(-d,d);
-      // this.dY=this.y+random(-d,d);
+      if(this.id==app.leftMost)  { stroke(CLRS.RED);    }
+      if(this.id==app.rightMost) { stroke(CLRS.GREEN);  }
+      if(this.id==app.topMost)   { stroke(CLRS.BLUE);   }
+      if(this.id==app.bottomMost){ stroke(CLRS.YELLOW); }
       
-      // Node connections
-      stroke(getColor(CLRS.CONNECTION,255));
-      strokeWeight(0.75);
-  
-      // for(var n in this.connections){
-      //   line(this.x, this.y, this.connections[n].x, this.connections[n].y);
-      // }
-  
+      ellipse(this.x, this.y, 25, 25);
+      
       // Range ellipse
       fill(getColor(CLRS.WHITE,6));
       stroke(CLRS.WHITE);
@@ -1044,39 +1081,36 @@ var proc = function(processingInstance){
         ellipse(this.x, this.y,
                 this.r*2, this.r*2);
       }
-  
-      // Node ellipse
-      noFill();
-      stroke(getColor(CLRS.WHITE,75));
-      strokeWeight(1.5);
-      
-      if(this.id==app.leftMost)  { stroke(CLRS.RED);    }
-      if(this.id==app.rightMost) { stroke(CLRS.GREEN);  }
-      if(this.id==app.topMost)   { stroke(CLRS.BLUE);   }
-      if(this.id==app.bottomMost){ stroke(CLRS.YELLOW); }
 
-      ellipse(this.x, this.y, 20, 20);
-      
       noStroke();
       
       if(this.selected){ fill(CLRS.WHITE);
-                         ellipse(this.x, this.y, 8, 8); }
+                         ellipse(this.x, this.y, 12, 12); }
       else             { fill(CLRS.RED);
-                         ellipse(this.x, this.y, 8, 8); }
+                         ellipse(this.x, this.y, 12, 12); }
   
-      if(this.hit){ cursor(HAND);   }
-      else        { cursor(ARROW);  }
+      if(this.hit){
+        
+        if(app.focus==this.id){ cursor(HAND); }
+
+        fill(CLRS.CODE_BLUE);
+        ellipse(this.x, this.y, 12, 12);
+        
+      }
+      else{
+
+        cursor(ARROW);
+
+      }
       
-      fill(CLRS.WHITE);
-      textSize(16);
+      // fill(CLRS.WHITE);
+      // textSize(16);
       
-      textAlign(RIGHT,CENTER);
-      text(this.row, this.x-12, this.y);
-      // this.x+=random(-3,3);
-      // this.y+=random(-3,3);
+      // textAlign(RIGHT,CENTER);
+      // text(this.row, this.x-12, this.y);
 
     };
-    tNode.prototype.clicked=  function(x,y){
+    vNode.prototype.clicked=  function(x,y){
   
       if(this.hit){
         this.selected=!this.selected;
@@ -1084,22 +1118,25 @@ var proc = function(processingInstance){
       }
   
     };
-    tNode.prototype.moved=    function(x,y){
+    vNode.prototype.moved=    function(x,y){
   
       if(mouseX>this.x-15 &&
          mouseX<this.x+15 &&
          mouseY>this.y-15 &&
          mouseY<this.y+15){
-  
+
         this.hit=true;
         app.focus=this.id;
+
       }
       else{
+
         this.hit=false;
+
       }
   
     };
-    tNode.prototype.dragged=  function(x,y){
+    vNode.prototype.dragged=  function(x,y){
   
       if(this.hit &&
          app.left &&
@@ -1113,7 +1150,7 @@ var proc = function(processingInstance){
       }
   
     };
-    tNode.prototype.mPressed= function(x,y){
+    vNode.prototype.mPressed= function(x,y){
   
       if(this.hit){
      
@@ -2678,7 +2715,7 @@ var proc = function(processingInstance){
   
           if(this.timer<10){ this.timer++; }
   
-          tNode(ARROW);
+          vNode(ARROW);
   
         }
         else{
@@ -2788,6 +2825,310 @@ var proc = function(processingInstance){
     };
   }
 
+  // Grid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  {
+    var Grid=function(id,parent,ctrls,x,y,w,h,color,caption,execute,params){
+      
+      Control.call(this,id,parent,ctrls,x,y,w,h,color,caption,execute,params);
+      this.offset=0;
+      
+      this.originX=w/2;
+      this.originY=h/2;
+      
+      this.increment=20;
+      
+    };
+    Grid.prototype.draw=      function(x,y){
+  
+      if (typeof this.parent != "undefined") {
+        // alert("GOT THERE");
+        // println("No parent");
+      }
+
+      // if(this.visible){
+
+        var background=function(t){
+          
+          // Background ~~~~~~~~~~~~~~~~~~~~
+          fill(t.color);
+          
+          // Border     ~~~~~~~~~~~~~~~~~~~~
+          noStroke()
+          
+          rect(0, 0, t.w, t.h);
+          
+        };
+
+        var border=function(t){
+          
+          // Background ~~~~~~~~~~~~~~~~~~~~
+          noFill()
+          
+          // Border     ~~~~~~~~~~~~~~~~~~~~
+          stroke(getColor(CLRS.WHITE,75));
+          strokeWeight(2);
+          
+          rect(0, 0, t.w, t.h);
+          
+        };
+        
+        var gridlines=function(t){
+          
+          noFill();
+          
+          stroke(CLRS.GRAY);
+          strokeWeight(0.5);
+          
+          pushMatrix();
+            
+            translate(t.w/2,t.h/2);
+            
+            // Horizontal
+            for(var n=0; n<t.h/2; n+=t.increment){
+            
+              line(-t.w/2,  n, t.w/2,  n);
+              line(-t.w/2, -n, t.w/2, -n);
+              
+            }
+          
+            // Vertical
+            for(var n=0; n<t.w/2; n+=t.increment){
+            
+              line( n, -t.h/2,  n, t.h/2);
+              line(-n, -t.h/2, -n, t.h/2);
+              
+            }
+
+          popMatrix();
+
+        };
+        
+        var origin=function(t){
+
+          fill(getColor(CLRS.BLACK,50));
+          noStroke();
+
+          ellipse(t.originX, t.originY, 2, 2);
+
+          noFill();
+          stroke(getColor(CLRS.BLACK,50));
+          
+          ellipse(t.originX, t.originY, 5, 5);
+
+        };
+        var axes=function(t){
+          
+          noFill();
+          strokeWeight(1.25);
+          stroke(getColor(CLRS.BLACK,40));
+          
+          // x-axis
+          line(0, t.h/2, t.w, t.h/2);
+          
+          // y-axis
+          line(t.w/2, 0, t.w/2, t.h);
+          
+        };
+        var arrows=function(t){
+
+          noStroke();
+
+          fill(getColor(CLRS.BLACK,50));
+
+          triangle(t.w, t.h/2, t.w-10, t.h/2+3, t.w-10, t.h/2-3); // right
+          triangle(0,   t.h/2, 10,     t.h/2+3,     10, t.h/2-3); // left
+
+          triangle(t.w/2, 0,   t.w/2+3, 10,     t.w/2-3, 10); // top
+          triangle(t.w/2, t.h, t.w/2+3, t.h-10, t.w/2-3, t.h-10); // bottom
+
+        };
+        var ticks=function(t){
+
+          noFill();
+          
+          stroke(getColor(CLRS.BLACK,50));
+          strokeWeight(0.5);
+          
+          pushMatrix();
+            
+            translate(t.w/2,t.h/2);
+            
+            // Horizontal
+            for(var n=20; n<t.h/2; n+=t.increment){
+            
+              line(3,  n, -3,  n);
+              line(3, -n, -3, -n);
+              
+            }
+          
+            // Vertical
+            for(var n=0; n<t.w/2; n+=t.increment){
+            
+              line( n, -3,  n, 3);
+              line(-n, -3, -n, 3);
+              
+            }
+
+          popMatrix();
+          
+        };
+        var labels=function(t){
+
+          noStroke();
+
+          fill(getColor(CLRS.WHITE,35));
+
+          textSize(9);
+          
+          pushMatrix();
+            
+            translate(t.w/2,t.h/2);
+            
+            textAlign(RIGHT,CENTER);
+            
+            var incr=t.increment;
+            
+            // Horizontal
+            for(var n=incr; n<t.h/2; n+=incr){
+            
+              text( n/incr, -5, -n);
+              text(-n/incr, -5,  n);
+              
+            }
+            
+            textAlign(CENTER,TOP);
+            
+            // Vertical
+            for(var n=incr; n<t.w/2; n+=incr){
+            
+              text( n/incr, -n, 5);
+              text(-n/incr,  n, 5);
+              
+            }
+
+          popMatrix();
+          
+        };
+        var quadrants=function(t){
+
+          fill(getColor(CLRS.BLACK,50));
+          
+          textAlign(CENTER,CENTER);
+          textSize(72);
+
+          text("I",   3*t.w/4,   t.h/4);
+          text("II",    t.w/4,   t.h/4);
+          text("III",   t.w/4, 3*t.h/4);
+          text("IV",  3*t.w/4, 3*t.h/4);
+
+        };
+        
+        pushMatrix();
+          
+          translate(this.x, this.y);
+          
+          rectMode(CORNER);
+
+          background(this);
+
+          gridlines(this);
+          quadrants(this);
+          axes(this);
+          ticks(this);
+          labels(this);
+          arrows(this);
+          origin(this);
+                    
+          border(this);
+
+        popMatrix();
+
+        // Draw child controls
+        for(var c in this.ctrls){ this.ctrls[c].draw(this.x, this.y); }
+
+        // Control boundaries ~~~~~~~~~~
+        if(app.debug){
+          
+          // Origin
+          fill(CLRS.RED);
+          ellipse(x+this.x,y+this.y,3,3);
+          
+          // Hit box
+          strokeWeight(0.5);
+          stroke(CLRS.GRAY);
+          noFill();
+          
+          // rect(this.x,this.y,this.w,this.h);
+
+        }
+        
+      // }
+
+    };
+    Grid.prototype.clicked=   function(x,y){
+  
+      if(this.hit){
+        
+        this.execute();
+        
+        for(var c in this.ctrls){ this.ctrls[c].clicked(this.x, this.y); }
+        
+      }
+  
+    };
+    Grid.prototype.moved=     function(x,y){
+  
+      if(mouseX>x+this.x &&
+         mouseX<x+this.x+this.w &&
+         mouseY>y+this.y &&
+         mouseY<y+this.y+this.h){
+        
+        app.focus=this.id;
+        this.hit=true;
+
+        for(var c in this.ctrls){ this.ctrls[c].moved(this.x, this.y); }
+        
+      }
+      else{
+  
+        this.hit=false;
+  
+      }
+  
+    };
+    Grid.prototype.dragged=   function(x,y){
+  
+      // if(this.hit){
+      //   this.x=x;
+      //   this.y=y;
+      // }
+  
+    };
+    Grid.prototype.mPressed=  function(x,y){
+  
+      if(this.hit){
+        
+      }
+  
+    };
+    Grid.prototype.mReleased= function(x,y){
+  
+      if(this.hit){
+        
+      }
+  
+    };
+    Grid.prototype.over=      function(x,y){
+  
+      this.visible=true;
+  
+    };
+    Grid.prototype.out=       function(x,y){
+  
+      this.visible=false;
+  
+    };
+  }
   
   // Network ============================================================
   {
@@ -2987,6 +3328,27 @@ var proc = function(processingInstance){
   
   // Travelling Salesman ======================================================
 
+  var tourDistance=function(arr){
+
+    var distance=0;
+
+    for(var n=0; n<arr.length-1; n++){
+
+      distance+=dist(arr[n].x,
+                     arr[n].y,
+                     arr[n+1].x,
+                     arr[n+1].y);
+    }
+    
+    distance+=dist(arr[0].x,
+                   arr[0].y,
+                   arr[arr.length-1].x,
+                   arr[arr.length-1].y);
+    
+    return distance;
+    
+  };
+  
   var setLimits=function(arr){
     
     var top=Infinity;
@@ -3058,7 +3420,7 @@ var proc = function(processingInstance){
 
 // println(index1+":"+index2);
 
-    arraySwap(arr, index1, index2);
+    swap2(arr, index1, index2);
 
     for(var n=0; n<arr.length-1; n++){
 
@@ -3075,7 +3437,7 @@ var proc = function(processingInstance){
     
     var difference=app.distanceHC-distance;
 
-    if(difference<0){ arraySwap(arr,index1,index2); }
+    if(difference<0){ swap2(arr,index1,index2); }
     else            { app.swaps++;                  }
 
     if(app.temp>0){ app.temp-=app.tempIncrement; }
@@ -3088,7 +3450,7 @@ var proc = function(processingInstance){
 
   };
 
-  var arraySwap=function(arr, index1, index2){
+  var swap2=function(arr, index1, index2){
 
     var temp=arr[index1];
 
@@ -3096,15 +3458,32 @@ var proc = function(processingInstance){
     arr[index2]=temp;
 
   };
+
+  var swap3=function(arr, index1, index2, index3){
+
+    var temp=arr[index1];
+
+    arr[index1]=arr[index2];
+    arr[index2]=arr[index3];
+    arr[index3]=temp;
+
+  };
   
   var loadNodes=function(){
     
+    var x=0;
+    var y=0;
+    
     for(var n=0; n<app.tspSize; n++){
-      app.currentPATH.push( new tNode( getGUID(),
-                                       10+20*round(random(8, (app.width -40)/20)),
-                                       10+20*round(random(1, (app.height-40)/20)), n, n, addToTour
-                                     )
-                 );
+
+      x=10+20*round(random(8, (app.width -40)/20));
+      y=10+20*round(random(1, (app.height-40)/20));
+
+      x=random(160, width-20);
+      y=random(20,height-20);
+
+      app.currentPATH.push( new vNode( getGUID(), x, y, n, n, addToTour ) );
+
     }
 
   };
@@ -3127,8 +3506,8 @@ var proc = function(processingInstance){
 
         if(n!==m){
 // println(n+", "+m);
-          app.ANT.push(new edge(app.currentPATH[n].id,
-                                app.currentPATH[m].id,
+          app.ANT.push(new edge(app.currentPATH[n].id, app.currentPATH[n].x, app.currentPATH[n].y,
+                                app.currentPATH[m].id, app.currentPATH[m].x, app.currentPATH[m].y,
                                 0));
                                 
 // println(app.ANT[app.ANT.length-1].value);
@@ -3204,7 +3583,7 @@ var proc = function(processingInstance){
   var shufflePath=function(){
     
     for(var n=0; n<app.currentPATH.length; n++){
-      arraySwap(app.currentPATH, n, round(random(app.currentPATH.length-1)));
+      swap2(app.currentPATH, n, round(random(app.currentPATH.length-1)));
     }
     
   };
@@ -3235,6 +3614,19 @@ var proc = function(processingInstance){
 
     app.distanceSA=tourDistance(app.SA);
     
+    switch(app.algorithm){
+      
+      case ALGORITHMS.HC:                   break;
+      case ALGORITHMS.SA:                   break;
+      case ALGORITHMS.ANT:      loadANT();  break;
+      case ALGORITHMS.GEN:                  break;
+      case ALGORITHMS.USER:                 break;
+      case ALGORITHMS.SHRINK:               break;
+
+      default:                              break;
+
+    }
+
   };
 
   var minimizeTour=function(arr){
@@ -3258,7 +3650,7 @@ var proc = function(processingInstance){
         
       }
 
-      arraySwap(arr,n+1,index);
+      swap2(arr, n+1, index);
       minDistance=Infinity;
       tempDistance=Infinity;
 
@@ -3287,7 +3679,7 @@ var proc = function(processingInstance){
         
       }
 
-      arraySwap(arr,n+1,index);
+      swap2(arr, n+1, index);
       maxDistance=0;
       tempDistance=0;
 
@@ -3308,70 +3700,6 @@ var proc = function(processingInstance){
     if(app.minimize){ minimizeTour(app.currentPATH); }
 
   };
-
-  var tourDistance=function(arr){
-
-    var distance=0;
-
-    for(var n=0; n<arr.length-1; n++){
-
-      distance+=dist(arr[n].x,
-                     arr[n].y,
-                     arr[n+1].x,
-                     arr[n+1].y);
-    }
-    
-    distance+=dist(arr[0].x,
-                   arr[0].y,
-                   arr[arr.length-1].x,
-                   arr[arr.length-1].y);
-    
-    return distance;
-    
-  };
-  
-
-
-  
-
-  var drawGrid=function(){
-    
-    rectMode(CORNER);
-
-    noStroke();
-    fill(getColor(CLRS.CODE_BLUE,70));
-
-    rect(150,10,app.width-160,app.height-20);
-    
-    pushMatrix();
-
-      translate(150,10);
-        
-      // Grid
-      stroke(CLRS.GRAY);
-      strokeWeight(0.5);
-
-      ellipse(0,0,20,20);
-      
-      var incr=20;
-      
-      for(var n=incr; n<app.width-10; n+=incr){
-        
-        line(n,0,n,app.height-20);
-        line(0,n,app.width-160,n);
-        
-      }
-      
-    popMatrix();
-
-    strokeWeight(1.25);
-    stroke(CLRS.CODE_ORANGE);
-    noFill();
-
-    rect(150,10,app.width-160,app.height-20);
-    
-  };
-
 
 
   // HC - Hill Climb or Greedy~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -3429,13 +3757,13 @@ var proc = function(processingInstance){
         index2=round(random(app.HC.length-1));
       }
 
-      arraySwap(app.HC, index1, index2);
+      swap2(app.HC, index1, index2);
   
       var distance=tourDistance(app.HC);
   
       if(distance>app.distanceHC){
 
-        arraySwap(app.HC,index1,index2);
+        swap2(app.HC,index1,index2);
 
       }
       else{
@@ -3511,7 +3839,7 @@ var proc = function(processingInstance){
         index2=round(random(app.SA.length-1));
       }
   
-      arraySwap(app.SA, index1, index2);
+      swap2(app.SA, index1, index2);
   
       distance=tourDistance(app.SA);
 
@@ -3524,8 +3852,8 @@ var proc = function(processingInstance){
 
       }
       else{
-        
-        arraySwap(app.SA,index1,index2);
+
+        swap2(app.SA, index1, index2);
 
       }
 
@@ -3563,40 +3891,45 @@ var proc = function(processingInstance){
     }
     
   };
-  
+
   var drawANT=function(){
     
     var transp=0;
+    var max=app.SA.length-1;
     
     //  Draw the tour path
-    for(var n=0; n<app.SA.length-1; n++){
+    for(var n=0; n<app.ANT.length; n++){
       
-      transp=getTransparency(app.SA[n].id, app.SA[n+1].id);
+      transp=app.ANT[n].value;
       
-// println(transp);
+// println(app.ANT.length);
       
       stroke(getColor(CLRS.YELLOW, transp));
       strokeWeight(1);
       noFill();
 
-      line(app.SA[n].x,   app.SA[n].y,
-           app.SA[n+1].x, app.SA[n+1].y);
+      line(app.ANT[n].x1, app.ANT[n].y1, app.ANT[n].x2, app.ANT[n].y2);
       
-      app.SA[n].row=n;
+      fill(CLRS.ORANGE);
+      // text(round(transp), (app.ANT[n].x1+app.ANT[n].x2)/2, (app.ANT[n].y1+app.ANT[n].y2)/2);
+      
+      // app.ANT[n].row=n;
 
     }
     
     // Connect the first and last nodes
-    transp=getTransparency(app.SA[0].id, app.SA[app.SA.length-1].id);
+    // transp=app.ANT[n].value;
     
     stroke(getColor(CLRS.YELLOW,transp));
     strokeWeight(1);
     noFill();
 
-    line(app.SA[0].x,               app.SA[0].y,
-        app.SA[app.SA.length-1].x, app.SA[app.SA.length-1].y);
-    
-    app.SA[app.SA.length-1].row=app.SA.length-1;
+    // line(app.ANT[0].x, app.ANT[0].y, app.ANT[max].x, app.ANT[max].y);
+
+    fill(CLRS.ORANGE);
+    // text(round(transp), (app.ANT[0].x+app.ANT[max].x)/2, (app.ANT[0].y+app.ANT[max].y)/2);
+      
+    app.SA[max].row=app.SA.length-1;
       
     if(app.debug){
       
@@ -3604,8 +3937,8 @@ var proc = function(processingInstance){
       noStroke();
       fill(CLRS.RED);
       
-      ellipse(app.SA[0].x, app.SA[0].y, 20, 20);
-      ellipse(app.SA[app.SA.length-1].x, app.SA[app.SA.length-1].y, 20, 20);
+      ellipse(app.SA[0].x,   app.SA[0].y,   20, 20);
+      ellipse(app.SA[max].x, app.SA[max].y, 20, 20);
 
     }
     
@@ -3626,38 +3959,40 @@ var proc = function(processingInstance){
         index1=round(random(app.SA.length-1));
         index2=round(random(app.SA.length-1));
       }
-  
-      arraySwap(app.SA, index1, index2);
-  
+
+      swap2(app.SA, index1, index2);
+
       distance=tourDistance(app.SA);
 
 // println(distance+" : " + (app.distanceSA+app.temp/app.maxTemp*100));
 
-      
+      for(var n=0; n<app.SA.length-1; n++){
 
-        for(var n=0; n<app.SA.length-1; n++){
+        for(var m=0; m<app.ANT.length-1; m++){
 
-          for(var m=0; m<app.ANT.length-1; m++){
-    
-            if(app.ANT[m].id1==app.SA[n].id &&
-               app.ANT[m].id2==app.SA[n+1].id){
-               app.ANT[m].value++;
-  
-              if(distance<app.distanceSA){
-                app.ANT[m].value+=2;
-             }
-             else{
-      
-               app.ANT[m].value-=3;
-             }
+          if(app.ANT[m].id1==app.SA[n].id &&
+             app.ANT[m].id2==app.SA[n+1].id){
+               
+             app.ANT[m].value++;
+
+            if(distance<=app.distanceSA){
+
+              app.ANT[m].value+=0.002;
+
+            }
+            else{
+
+              app.ANT[m].value-=0.00375;
+              
+            }
 
           }
 
         }
 
       }
-      
-      arraySwap(app.SA,index1,index2);
+
+// swap2(app.SA,index1,index2);
 
       text(frameCount,200,30);
 
@@ -3769,13 +4104,13 @@ var proc = function(processingInstance){
         index2=round(random(app.SW.length-1));
       }
 
-      arraySwap(app.SW, index1, index2);
+      swap2(app.SW, index1, index2);
   
       var distance=tourDistance(app.SW);
   
       if(distance>app.distanceSW){
 
-        arraySwap(app.SW,index1,index2);
+        swap2(app.SW,index1,index2);
 
       }
       else{
@@ -3878,8 +4213,10 @@ var proc = function(processingInstance){
 
         for(var c in app.ctrls){ app.ctrls[c].draw(0,0); }
 
-        drawGrid();
-
+        // drawGrid();
+        
+        app.grid.draw();
+        
         switch(app.algorithm){
 
           case 0: HC();   break;
@@ -3960,10 +4297,14 @@ var proc = function(processingInstance){
 
     ctrls.push(new   Button(getGUID(), containerTSP, [], 10, app.height-40, 100, 30, CLRS.CODE_YELLOW, "back...", setSplash, 0));
 
-    ctrls.push(new Checkbox(getGUID() ,containerTSP, getDebug, 30, 540, 100, 20, CLRS.CODE_PURPLE, "Debug",  setDebug, 3));
+    ctrls.push(new Checkbox(getGUID(), containerTSP, getDebug, 30, 540, 100, 20, CLRS.CODE_PURPLE, "Debug",  setDebug, 3));
 
 // ctrls.push(new   UpDown(getGUID(), containerTSP, getSize, 50, 500, 100, 30, CLRS.CODE_PURPLE, "#", setSize, 3));
 
+    // Grid
+    // ctrls.push(new     Grid(getGUID(), containerTSP, undefined, 150, 10, 440, 580, getColor(CLRS.CODE_BLUE,70), "Debug",  undefined, 3));
+
+    app.grid=new Grid(getGUID(), containerTSP, undefined, 150, 10, 440, 580, getColor(CLRS.CODE_BLUE,70), "Debug",  undefined, 3);
 
     containerTSP.ctrls=ctrls;
     containerTSP.tag=false;
@@ -3982,6 +4323,8 @@ var proc = function(processingInstance){
   /**
 
     TO DO:
+
+      - node color as a percentage of how close it is to each side
 
       - clumpiness
 
