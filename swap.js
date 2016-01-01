@@ -389,7 +389,7 @@ var proc = function(processingInstance){
 
       // Debugging aids ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       
-      debug:          false,
+      debug:          true,
       telemetry:      true,
       
       
@@ -833,7 +833,7 @@ var proc = function(processingInstance){
 
   // Node ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
-    var Node=function(id,x,y,row,col,routes){
+    var Node=function(id,parent,ctrls,x,y,w,h,color,caption,execute,params){
   
       // if(id===undefined){ this.id=gevNodeAddress(); }
       // else              { this.id=id;               }
@@ -841,10 +841,10 @@ var proc = function(processingInstance){
       this.id=id;
       this.nat=gevNodeAddress();
   
-      this.gridID=row+":"+col;
+      // this.gridID=row+":"+col;
   
-      this.row=row;         //  row location
-      this.col=col;         //  column location
+      // this.row=row;         //  row location
+      // this.col=col;         //  column location
   
       this.x=x;             //  x-coordinate
       this.y=y;             //  y-coordinate
@@ -853,7 +853,7 @@ var proc = function(processingInstance){
       this.w=10;            //  width
       this.h=10;            //  height
   
-      this.routes=routes;   //  # of paths to the node
+      // this.routes=routes;   //  # of paths to the node
   
       this.hit=false;       //  mouse is over node
       this.enabled=true;    //  currently functional
@@ -861,8 +861,8 @@ var proc = function(processingInstance){
   
       this.connections=[];
   
-      this.xIncr=random(-5,5);
-      this.yIncr=random(-5,5);
+      this.incrX=round(random(-15,15));
+      this.incrY=round(random(-15,15));
   
       this.distance=0;
   
@@ -883,24 +883,24 @@ var proc = function(processingInstance){
       strokeWeight(0.125);
   
       if(this.enabled){
-        ellipse(this.x, this.y, this.r*2, this.r*2);
+        ellipse(x+this.x, y+this.y, this.r*2, this.r*2);
       }
       
       // Node ellipse
       fill(getColor(CLRS.WHITE,255));
   
-      ellipse(this.x, this.y, this.r/2, this.r/2);
+      ellipse(x+this.x, y+this.y, this.r/2, this.r/2);
       
       if(this.enabled){
         
         fill(CLRS.GREEN);
-        ellipse(this.x,this.y,10,10);
+        ellipse(x+this.x, y+this.y, 10, 10);
   
       }
       else{
         
         fill(CLRS.RED);
-        ellipse(this.x,this.y,10,10);
+        ellipse(x+this.x, y+this.y, 10, 10);
         
       }
       
@@ -912,16 +912,16 @@ var proc = function(processingInstance){
   
         fill(getColor(CLRS.BLACK,75));
         rectMode(CORNER);
-        rect(this.x-3,this.y,textWidth(this.id)+6,76,3);
+        rect(x+this.x-3, y+this.y,textWidth(this.id)+6, 76, 3);
         
         fill(CLRS.WHITE);
   
-        text(this.gridID,             this.x, this.y);
-        text(this.id,                 this.x, this.y+12);
-        text(this.row+":"+this.col,   this.x, this.y+24);
-        text(this.nat,                this.x, this.y+36);
-        text(this.connections.length, this.x, this.y+48);
-        text(this.routes,             this.x, this.y+60);
+        text(this.gridID,             x+this.x, y+this.y);
+        text(this.id,                 x+this.x, y+this.y+12);
+        text(this.row+":"+this.col,   x+this.x, y+this.y+24);
+        text(this.nat,                x+this.x, y+this.y+36);
+        text(this.connections.length, x+this.x, y+this.y+48);
+        text(this.routes,             x+this.x, y+this.y+60);
         
         fill(CLRS.YELLOW);
         
@@ -932,11 +932,34 @@ var proc = function(processingInstance){
   
       }
       
-  
-  
-      // this.x+=random(-3,3);
-      // this.y+=random(-3,3);
+      if(this.x<this.r){
+        
+        this.x=this.r;
+        this.incrX*=-0.9;
+        
+      }
+      if(this.x>440-this.r){
+        
+        this.x=440-this.r;
+        this.incrX*=-0.9;
+
+      }
+      if(this.y<this.r){
+        
+        this.y=this.r;
+        this.incrY*=-0.9;
+
+      }
+      if(this.y>580-this.r){
+        
+        this.y=580-this.r;
+        this.incrY*=-0.9;
+        
+      }
       
+      this.x+=this.incrX;
+      this.y+=this.incrY;
+
     };
     Node.prototype.clicked=   function(x,y){
   
@@ -950,10 +973,10 @@ var proc = function(processingInstance){
     };
     Node.prototype.moved=     function(x,y){
   
-      if(mouseX>this.x-this.r &&
-         mouseX<this.x+this.r &&
-         mouseY>this.y-this.r &&
-         mouseY<this.y+this.r){
+      if(mouseX>x+this.x-this.r &&
+         mouseX<x+this.x+this.r &&
+         mouseY>y+this.y-this.r &&
+         mouseY<y+this.y+this.r){
            
         this.hit=true;
         app.focus=this.id;
@@ -973,8 +996,8 @@ var proc = function(processingInstance){
          app.activeNode===this.id &&
          app.keys[KEYCODES.CONTROL]){
   
-        this.x=x;
-        this.y=y;
+        this.x=mouseX-x;
+        this.y=mouseY-y;
   
         // this.load();
   
@@ -1047,8 +1070,18 @@ var proc = function(processingInstance){
   {
     var vNode=function(id,x,y,row,col,routes){
   
-      Node.call(this,id,x,y,row,col,routes);
-  
+      // Node.call(this,id,x,y,row,col,routes);
+      
+      this.id=id;
+      
+      this.x=x;
+      this.y=y;
+      
+      this.row=row;
+      this.col=col;
+      
+      this.routes=routes;
+      
       this.offsetX=0;
       this.offsetY=0;
   
@@ -2725,10 +2758,16 @@ var proc = function(processingInstance){
           if(this.timer>5){  this.timer--; }
   
         }
-  
-        rectMode(CORNER);
-        noStroke();
         
+        rectMode(CORNER);
+        
+        noStroke();
+        fill(CLRS.BLACK);
+        
+        rect(this.x, this.y-this.tag,
+             this.w, this.h,
+             10,20);
+             
         stroke(this.color);
         strokeWeight(1);
   
@@ -3041,10 +3080,13 @@ var proc = function(processingInstance){
                     
           border(this);
 
+          for(var c in this.ctrls){ this.ctrls[c].draw(0,0); }
+
         popMatrix();
 
-        // Draw child controls
-        for(var c in this.ctrls){ this.ctrls[c].draw(this.x, this.y); }
+
+
+// println(this.ctrls.length);
 
         // Control boundaries ~~~~~~~~~~
         if(app.debug){
@@ -3061,7 +3103,10 @@ var proc = function(processingInstance){
           // rect(this.x,this.y,this.w,this.h);
 
         }
+
+        // Draw child controls
         
+
       // }
 
     };
@@ -3069,7 +3114,7 @@ var proc = function(processingInstance){
   
       if(this.hit){
         
-        this.execute();
+        // this.execute();
         
         for(var c in this.ctrls){ this.ctrls[c].clicked(this.x, this.y); }
         
@@ -3086,7 +3131,7 @@ var proc = function(processingInstance){
         app.focus=this.id;
         this.hit=true;
 
-        for(var c in this.ctrls){ this.ctrls[c].moved(this.x, this.y); }
+        for(var c in this.ctrls){ this.ctrls[c].moved(x+this.x, y+this.y); }
         
       }
       else{
@@ -3098,23 +3143,22 @@ var proc = function(processingInstance){
     };
     Grid.prototype.dragged=   function(x,y){
   
-      // if(this.hit){
-      //   this.x=x;
-      //   this.y=y;
-      // }
+      if(this.hit){
+        for(var c in this.ctrls){ this.ctrls[c].dragged(this.x, this.y); }
+      }
   
     };
     Grid.prototype.mPressed=  function(x,y){
   
       if(this.hit){
-        
+        for(var c in this.ctrls){ this.ctrls[c].mPressed(x+this.x, y+this.y); }
       }
   
     };
     Grid.prototype.mReleased= function(x,y){
   
       if(this.hit){
-        
+        for(var c in this.ctrls){ this.ctrls[c].mReleased(x+this.x, y+this.y); }
       }
   
     };
@@ -3132,6 +3176,7 @@ var proc = function(processingInstance){
   
   // Network ============================================================
   {
+    
     var blank=function(){
     
       
@@ -3142,69 +3187,77 @@ var proc = function(processingInstance){
       app.send.push(new packet(0,0));
   
     };
+
+    var loadConnections=function(){
   
-    var loadGrid=function(arr){
+      for(var n in app.nodes){ app.nodes[n].load(); }
+  
+    };
+    var loadGrid=function(){
       
-      app.nodes=[];
+      var nodes=[];
       
       var arrRow=[];
       var routes;
       var row=0;
       var col=0;
       
-      for(row=0; row<app.gridSize; row++){
-        for(col=0; col<app.gridSize; col++){
+      // for(row=0; row<app.gridSize; row++){
+      //   for(col=0; col<app.gridSize; col++){
   
-          if(col>0 && row>0){ routes=arrRow[col-1].routes + app.nodes[row-1][col].routes; }
-          else              { routes=1;                                                   }
+      //     if(col>0 && row>0){ routes=arrRow[col-1].routes + app.nodes[row-1][col].routes; }
+      //     else              { routes=1;                                                   }
   
-          arrRow.push(new Node(getGUID(), row*app.xIncr+app.xIncr, col*app.yIncr+app.yIncr, row, col, routes));
+      //     arrRow.push(new Node(getGUID(), row*app.xIncr+app.xIncr, col*app.yIncr+app.yIncr, row, col, routes));
   
-        }
+      //   }
         
-        app.nodes.push(arrRow);
-        arrRow=[];
+      //   nodes.push(arrRow);
+      //   arrRow=[];
   
-      }
+      // }
   
-      var nodes=[];
+      nodes=[];
       
-      for(var row=0; row<app.nodes.length; row++){
-        for(var col=0; col<app.nodes.length; col++){
-          nodes.push(app.nodes[row][col]);
+      var incr=random(3,10);
+      
+      for(var row=0; row<incr; row++){
+        for(var col=0; col<incr; col++){
+          // nodes.push(app.nodes[row][col]);
+          nodes.push(new Node(getGUID(), 0, 0, random(10,430), random(10,570), 10, 10, routes));
         }
       }
   
-      app.nodes=nodes;
+      
   
-      loadConnections();
+      // loadConnections();
   
-  // println(app.nodes.length);
-  
+      return nodes;
+
     };
   
-    var loadConnections=function(){
-  
-      for(var n in app.nodes){ app.nodes[n].load(); }
-  
-    };
+
   
     var drawGrid=function(){
-  
+      
+      background(CLRS.BLACK);
+      
       pushMatrix();
       
         translate(app.width/2, app.height/2);
         
         noStroke();
-        fill(CLRS.BACKGROUND_0);
+        fill(getColor(CLRS.BACKGROUND_0,5));
         rectMode(CENTER);
         
         rect(0, 0, app.width, app.height);
       
       popMatrix();
   
-      for(var n in app.nodes){ app.nodes[n].draw(0,0); }
-      for(var n in app.send) { app.send[n].draw(0,0);  }
+      // for(var n in app.nodes){ app.nodes[n].draw(0,0); }
+      // for(var n in app.send) { app.send[n].draw(0,0);  }
+      
+      for(var c in app.ctrls) { app.ctrls[c].draw(0,0);  }
   
       sendPackets();
   
@@ -3235,77 +3288,89 @@ var proc = function(processingInstance){
     var reset=function(){
   
     };
-  
+
     var initGrid=function(){
-  
+
       app.vortex=[];
-  
+
       app.frameRate=30;
-  
+
       loadGrid();
-  
+
       app.ctrls=[];
-      
-      
+
+
       // Toolbar
+
+      // var actrls=[];
+
+      // var toolbar=new Container(getGUID(), undefined, actrls, 20, 10, 450, 40, CLRS.BLACK,     "toolbar", blank);
+
+      // actrls.push(new Button(   getGUID(), toolbar, [],        10,  5, 100, 30, CLRS.CODE_TEAL, "add",     addMessage));
+      // actrls.push(new Button(   getGUID(), toolbar, [],       120,  5, 100, 30, CLRS.CODE_TEAL, "send",    send));
+      // actrls.push(new Button(   getGUID(), toolbar, [],       230,  5, 100, 30, CLRS.CODE_TEAL, "back..",  setSplash));
+      // actrls.push(new Button(   getGUID(), toolbar, [],       340,  5, 100, 30, CLRS.CODE_TEAL, "clear",   clearCache))
       
-      var actrls=[];
+      // toolbar.ctrls=actrls;
+      // toolbar.tag=false;
       
-      var toolbar =new Container(getGUID(), undefined, actrls, 200, 10, 450, 40, CLRS.BLACK, "toolbar", blank);
-      
-      actrls.push(new Button(getGUID(), toolbar, [],  10, 5, 100, 30, CLRS.CODE_TEAL, "add",    addMessage));
-      actrls.push(new Button(getGUID(), toolbar, [], 120, 5, 100, 30, CLRS.CODE_TEAL, "send",   send));
-      actrls.push(new Button(getGUID(), toolbar, [], 230, 5, 100, 30, CLRS.CODE_TEAL, "back..", setSplash));
-      actrls.push(new Button(getGUID(), toolbar, [], 340, 5, 100, 30, CLRS.CODE_TEAL, "clear",  clearCache))
-      
-      toolbar.ctrls=actrls;
-      toolbar.tag=false;
-      
-      app.ctrls.push(toolbar);
-  
-  
+      // app.ctrls.push(toolbar);
+
       // Keypad
       
-      var ctrls=[];
-      var sz=40;
-      var keyClr=CLRS.CODE_PURPLE;
+      // var ctrls=[];
+      // var sz=40;
+      // var keyClr=CLRS.CODE_PURPLE;
       
-      var keypad=new Keypad(getGUID(), undefined, [], 250,  590,  510, 210, keyClr,"keypad", blank);
+      // var keypad=new Keypad(getGUID(), undefined, [], 50,  590,  510, 210, keyClr,"keypad", blank);
       
-      ctrls.push(new Key(getGUID(), keypad, [],  10,   10,   sz,  sz, keyClr,  "q",  inputKey));
-      ctrls.push(new Key(getGUID(), keypad, [],  60,   10,   sz,  sz, keyClr,  "w",  inputKey));
-      ctrls.push(new Key(getGUID(), keypad, [],  110,  10,   sz,  sz, keyClr,  "e",  inputKey));
-      ctrls.push(new Key(getGUID(), keypad, [],  160,  10,   sz,  sz, keyClr,  "r",  inputKey));
-      ctrls.push(new Key(getGUID(), keypad, [],  210,  10,   sz,  sz, keyClr,  "t",  inputKey));
-      ctrls.push(new Key(getGUID(), keypad, [],  260,  10,   sz,  sz, keyClr,  "y",  inputKey));
-      ctrls.push(new Key(getGUID(), keypad, [],  310,  10,   sz,  sz, keyClr,  "u",  inputKey));
-      ctrls.push(new Key(getGUID(), keypad, [],  360,  10,   sz,  sz, keyClr,  "i",  inputKey));
-      ctrls.push(new Key(getGUID(), keypad, [],  410,  10,   sz,  sz, keyClr,  "o",  inputKey));
-      ctrls.push(new Key(getGUID(), keypad, [],  460,  10,   sz,  sz, keyClr,  "p",  inputKey));
-      
-      ctrls.push(new Key(getGUID(), keypad, [],  40,   60,   sz,  sz, keyClr,  "a",  inputKey));
-      ctrls.push(new Key(getGUID(), keypad, [],  90,   60,   sz,  sz, keyClr,  "s",  inputKey));
-      ctrls.push(new Key(getGUID(), keypad, [],  140,  60,   sz,  sz, keyClr,  "d",  inputKey));
-      ctrls.push(new Key(getGUID(), keypad, [],  190,  60,   sz,  sz, keyClr,  "f",  inputKey));
-      ctrls.push(new Key(getGUID(), keypad, [],  240,  60,   sz,  sz, keyClr,  "g",  inputKey));
-      ctrls.push(new Key(getGUID(), keypad, [],  290,  60,   sz,  sz, keyClr,  "h",  inputKey));
-      ctrls.push(new Key(getGUID(), keypad, [],  340,  60,   sz,  sz, keyClr,  "j",  inputKey));
-      ctrls.push(new Key(getGUID(), keypad, [],  390,  60,   sz,  sz, keyClr,  "k",  inputKey));
-      ctrls.push(new Key(getGUID(), keypad, [],  440,  60,   sz,  sz, keyClr,  "l",  inputKey));
-      
-      ctrls.push(new Key(getGUID(), keypad, [],  70,   110,  sz,  sz, keyClr,  "z",  inputKey));
-      ctrls.push(new Key(getGUID(), keypad, [],  120,  110,  sz,  sz, keyClr,  "x",  inputKey));
-      ctrls.push(new Key(getGUID(), keypad, [],  170,  110,  sz,  sz, keyClr,  "c",  inputKey));
-      ctrls.push(new Key(getGUID(), keypad, [],  220,  110,  sz,  sz, keyClr,  "v",  inputKey));
-      ctrls.push(new Key(getGUID(), keypad, [],  270,  110,  sz,  sz, keyClr,  "b",  inputKey));
-      ctrls.push(new Key(getGUID(), keypad, [],  320,  110,  sz,  sz, keyClr,  "n",  inputKey));
-      ctrls.push(new Key(getGUID(), keypad, [],  370,  110,  sz,  sz, keyClr,  "m",  inputKey));
+      // {
+
+      //   ctrls.push(new Key(getGUID(), keypad, [],  10,   10,   sz,  sz, keyClr,  "q",  inputKey));
+      //   ctrls.push(new Key(getGUID(), keypad, [],  60,   10,   sz,  sz, keyClr,  "w",  inputKey));
+      //   ctrls.push(new Key(getGUID(), keypad, [],  110,  10,   sz,  sz, keyClr,  "e",  inputKey));
+      //   ctrls.push(new Key(getGUID(), keypad, [],  160,  10,   sz,  sz, keyClr,  "r",  inputKey));
+      //   ctrls.push(new Key(getGUID(), keypad, [],  210,  10,   sz,  sz, keyClr,  "t",  inputKey));
+      //   ctrls.push(new Key(getGUID(), keypad, [],  260,  10,   sz,  sz, keyClr,  "y",  inputKey));
+      //   ctrls.push(new Key(getGUID(), keypad, [],  310,  10,   sz,  sz, keyClr,  "u",  inputKey));
+      //   ctrls.push(new Key(getGUID(), keypad, [],  360,  10,   sz,  sz, keyClr,  "i",  inputKey));
+      //   ctrls.push(new Key(getGUID(), keypad, [],  410,  10,   sz,  sz, keyClr,  "o",  inputKey));
+      //   ctrls.push(new Key(getGUID(), keypad, [],  460,  10,   sz,  sz, keyClr,  "p",  inputKey));
         
-      ctrls.push(new Key(getGUID(), keypad, [],  90,   160, 300,  sz, keyClr,  " ",  inputKey));
+      //   ctrls.push(new Key(getGUID(), keypad, [],  40,   60,   sz,  sz, keyClr,  "a",  inputKey));
+      //   ctrls.push(new Key(getGUID(), keypad, [],  90,   60,   sz,  sz, keyClr,  "s",  inputKey));
+      //   ctrls.push(new Key(getGUID(), keypad, [],  140,  60,   sz,  sz, keyClr,  "d",  inputKey));
+      //   ctrls.push(new Key(getGUID(), keypad, [],  190,  60,   sz,  sz, keyClr,  "f",  inputKey));
+      //   ctrls.push(new Key(getGUID(), keypad, [],  240,  60,   sz,  sz, keyClr,  "g",  inputKey));
+      //   ctrls.push(new Key(getGUID(), keypad, [],  290,  60,   sz,  sz, keyClr,  "h",  inputKey));
+      //   ctrls.push(new Key(getGUID(), keypad, [],  340,  60,   sz,  sz, keyClr,  "j",  inputKey));
+      //   ctrls.push(new Key(getGUID(), keypad, [],  390,  60,   sz,  sz, keyClr,  "k",  inputKey));
+      //   ctrls.push(new Key(getGUID(), keypad, [],  440,  60,   sz,  sz, keyClr,  "l",  inputKey));
+        
+      //   ctrls.push(new Key(getGUID(), keypad, [],  70,   110,  sz,  sz, keyClr,  "z",  inputKey));
+      //   ctrls.push(new Key(getGUID(), keypad, [],  120,  110,  sz,  sz, keyClr,  "x",  inputKey));
+      //   ctrls.push(new Key(getGUID(), keypad, [],  170,  110,  sz,  sz, keyClr,  "c",  inputKey));
+      //   ctrls.push(new Key(getGUID(), keypad, [],  220,  110,  sz,  sz, keyClr,  "v",  inputKey));
+      //   ctrls.push(new Key(getGUID(), keypad, [],  270,  110,  sz,  sz, keyClr,  "b",  inputKey));
+      //   ctrls.push(new Key(getGUID(), keypad, [],  320,  110,  sz,  sz, keyClr,  "n",  inputKey));
+      //   ctrls.push(new Key(getGUID(), keypad, [],  370,  110,  sz,  sz, keyClr,  "m",  inputKey));
+          
+      //   ctrls.push(new Key(getGUID(), keypad, [],  90,   160, 300,  sz, keyClr,  " ",  inputKey));
+
+      // }
       
-      keypad.ctrls=ctrls;
+      // keypad.ctrls=ctrls;
       
-      app.ctrls.push(keypad);
+      // app.ctrls.push(keypad);
+      
+      var nodes=loadGrid();
+      
+println(nodes.length);
+      
+      app.ctrls.push(
+        new Grid(getGUID(), undefined, nodes, 150, 10, 440, 580, getColor(CLRS.CODE_BLUE,70), "Debug",  undefined, 3)
+      );
+
   
       process=drawGrid;
         
@@ -3323,10 +3388,13 @@ var proc = function(processingInstance){
       }
   
     };
+  
+    
   }
   
   
   // Travelling Salesman ======================================================
+  {
 
   var tourDistance=function(arr){
 
@@ -3480,7 +3548,7 @@ var proc = function(processingInstance){
       y=10+20*round(random(1, (app.height-40)/20));
 
       x=random(160, width-20);
-      y=random(20,height-20);
+      y=random(20,  height-20);
 
       app.currentPATH.push( new vNode( getGUID(), x, y, n, n, addToTour ) );
 
@@ -3869,6 +3937,7 @@ var proc = function(processingInstance){
     drawSA();
     
   };
+
   
   // ANT - Ant Colony ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var getTransparency=function(id1, id2){
@@ -4343,6 +4412,7 @@ var proc = function(processingInstance){
       - asetta corsa appearance for controls
 
   **/
+  }
   
   // Splash Screen ============================================================
   {
@@ -4588,7 +4658,7 @@ var proc = function(processingInstance){
       app.center=false;
       app.right=false;
   
-      for(var n in app.nodes){ app.nodes[n].mReleased(mouseX,mouseY); }
+      // for(var n in app.nodes){ app.nodes[n].mReleased(mouseX,mouseY); }
       for(var c in app.ctrls){ app.ctrls[c].mReleased(mouseX,mouseY); }
   
     };
@@ -4640,14 +4710,14 @@ var proc = function(processingInstance){
   
       // }
   
-      for(var c in app.ctrls){ app.ctrls[c].kPressed(); }
+      // for(var c in app.ctrls){ app.ctrls[c].kPressed(); }
   
     };
     var keyReleased=  function(){
   
       app.keys[keyCode]=false;
   
-      for(var c in app.ctrls){ app.ctrls[c].kReleased(); }
+      // for(var c in app.ctrls){ app.ctrls[c].kReleased(); }
   
     };
     var keyTyped=     function(){
