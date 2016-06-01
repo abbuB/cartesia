@@ -41,6 +41,7 @@ var proc = function(processingInstance){
 +natureofcode.com
 +alssndro.github.io/trianglify-background-generator
 +p5js.org
++google.ca
 
 **/
 
@@ -398,9 +399,11 @@ var proc = function(processingInstance){
       telemetry:      true,
 
       // protagonists ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      protagonist:      0,
+      prot:           0,
 
-      maxSpeed:       10,
+      maxSpeedX:      10,
+      maxSpeedY:      0,
+
       codf:           0.85,     //  Coefficient of dynamic friction
       G:              12,
 
@@ -413,7 +416,7 @@ var proc = function(processingInstance){
 
       grid:           0,
 
-      width:          600,
+      width:          750,
       height:         600,
       
       running:        false,
@@ -710,11 +713,17 @@ var proc = function(processingInstance){
 
   var telemetry=function(){
     
-    if(app.over && app.keys[KEYCODES.CONTROL]){
+    println("telemetry");
+    
+    // if(app.over && app.keys[KEYCODES.CONTROL]){
+      
+      pushMatrix();
+        
+        resetMatrix();
 
       var rowHeight=20;
-      var top=100;
-      var Left=300;
+      var top=25;
+      var Left=605;
       
       textAlign(LEFT,BOTTOM);
 
@@ -722,8 +731,8 @@ var proc = function(processingInstance){
       stroke(CLRS.WHITE);
       strokeWeight(0.25);
       fill(getColor(CLRS.BLACK,40));
-
-      rect(Left-10,top-20,150,500,0,20,20,0);
+  
+      rect(Left-10,top-20,150,5900,0,20,20,0);
 
       fill(getColor(CLRS.WHITE,80));
       textSize(14);
@@ -776,6 +785,23 @@ var proc = function(processingInstance){
 
       text(app.algorithm,       Left+100,  top+20*rowHeight);
 
+
+
+
+      fill(getColor(CLRS.WHITE,60));
+      
+      text("Right: ",                 Left, top+24*rowHeight);
+      text("Left: ",                  Left, top+25*rowHeight);
+      text("Horizontal Speed: ",      Left, top+26*rowHeight);
+      
+      fill(CLRS.YELLOW);
+      
+      text(app.prot.right,            Left+100,  top+24*rowHeight);
+      text(app.prot.left,             Left+100,  top+25*rowHeight);
+      text(nf(app.prot.speed.x,1,3),  Left+100,  top+26*rowHeight);
+
+
+
       // Cache
       textSize(16);
       textAlign(LEFT,TOP);
@@ -787,8 +813,10 @@ var proc = function(processingInstance){
       // # Received
       textAlign(LEFT,BOTTOM);
       text(app.received.length,5,app.height-5);   //  # of packets received
-      
-    }
+
+      popMatrix();
+
+    // }
     
     // Display received packets
     var strReceived="";
@@ -2528,6 +2556,28 @@ var proc = function(processingInstance){
     };
   }
 
+  // Collision detection
+  var horizontalCollision=function(prot){
+    
+    // println(prot.position.x);
+    
+    var retval=-1;
+
+    for(var n=0; n<app.obstacles.length; n++){
+
+      if(prot.position.x < app.obstacles[n].position.x+app.obstacles[n].size.x &&
+         prot.position.x+prot.size.x>app.obstacles[n].position.x){
+           
+        retval=n;
+
+      }
+
+    }
+
+    return retval;
+
+  };
+  
   // protagonists =================================================================
 
   // Obstacles ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2540,7 +2590,11 @@ var proc = function(processingInstance){
       this.position   = new PVector(x,y);
       this.speed      = new PVector(0,0);
       this.size       = new PVector(w,h);
-
+      
+      this.w          = w;
+      this.h          = h;
+      this.deflection = 0.75;
+      
       this.hit        = false;      //  mouse is over node
 
       this.visible    = true;       //  Is the control visible?
@@ -2557,10 +2611,10 @@ var proc = function(processingInstance){
         fill(CLRS.RED);
         
         var distance=dist(this.position.x, this.position.y,
-                          app.protagonist.position.x, app.protagonist.position.y);
+                          app.prot.position.x, app.prot.position.y);
                 
         // if(dist(this.position.x, this.position.y,
-        //         app.protagonist.position.x, app.protagonist.position.y)<25){
+        //         app.prot.position.x, app.prot.position.y)<25){
 
         //   fill(CLRS.ORANGE);
 
@@ -2568,10 +2622,12 @@ var proc = function(processingInstance){
         
         
 
-        fill(128-distance,0,0,255-distance);
-  
-        stroke(128-distance,0,0,255-distance);
-  
+        // fill(128-distance,0,0,255-distance);
+        // stroke(128-distance,0,0,255-distance);
+        // strokeWeight(0);
+        
+        fill(128-distance,0,0);
+        stroke(128-distance,0,0);
         strokeWeight(0);
   
         rect(this.position.x, this.position.y,
@@ -2666,6 +2722,8 @@ var proc = function(processingInstance){
       this.speed      = new PVector(0,0);
       this.size       = new PVector(w,h);
 
+      this.deflection = 0.75;
+
       this.hit        = false;      //  mouse is over node
 
       this.visible    = true;       //  Is the control visible?
@@ -2683,13 +2741,17 @@ var proc = function(processingInstance){
         
         var distance=dist(this.position.x,
                           this.position.y,
-                          app.protagonist.position.x,
-                          app.protagonist.position.y);
+                          app.prot.position.x,
+                          app.prot.position.y);
 
-        fill(getColor(CLRS.ORANGE,128-distance));
-        stroke(getColor(CLRS.ORANGE,128-distance));
+        // fill(getColor(CLRS.ORANGE,128-distance));
+        // stroke(getColor(CLRS.ORANGE,128-distance));
+        // strokeWeight(0);
+
+        fill(CLRS.ORANGE);
+        stroke(CLRS.ORANGE);
         strokeWeight(0);
-
+        
         rect(this.position.x, this.position.y,
              this.size.x,     this.size.y);
 
@@ -2765,12 +2827,14 @@ var proc = function(processingInstance){
 
       this.id         = id;         //  Unique control id
 
+      this.w          = w;          //  width
+      this.h          = h;          //  height
+
       this.position   = new PVector(x,y);
       this.speed      = new PVector(0,0);
       this.size       = new PVector(20,20);
 
-      this.w          = w;          //  width
-      this.h          = h;          //  height
+      this.deflection = 0.75;
 
       this.hit        = false;      //  mouse is over node
 
@@ -2780,7 +2844,12 @@ var proc = function(processingInstance){
       this.timer      = 0;          //  Countdown timer
 
       this.tag        = 0;          //  Misc property
-
+      
+      this.left       = -1;      //  Is there an obstacle on the left?
+      this.right      = -1;      //  Is there an obstacle on the right?
+      this.up         = -1;      //  Is there an obstacle above?
+      this.down       = -1;      //  Is there an obstacle below?
+      
     };
     Protagonist.prototype.draw=       function(x,y){
 
@@ -2791,39 +2860,107 @@ var proc = function(processingInstance){
 
       /** Movement ---------- */
       
+      var deltaX=this.speed.x;
+      var deltaY=this.speed.y;
+      var maxX=app.maxSpeedX;
+      var maxY=app.maxSpeedY;
+      var proximityX=Infinity;
+      var proximityY=Infinity;
+      
+      // Clear all the obstable switches
+      this.left =-1;
+      this.right=-1;
+      this.above=-1;
+      this.below=-1;
+      
       // Horizontal
       {
 
+// println(index);
+
+        // Determine on which side there is an obstable or hazard
+        {
+
+          for(var n=0; n<app.obstacles.length; n++){
+            
+            // Proximity Test
+            proximityX=dist(this.position.x,             this.position.y,
+                            app.obstacles[n].position.x, app.obstacles[n].position.y);
+  
+            if(proximityX <= app.obstacles[n].size.x-0.5*deltaX){
+
+              // Collision Test
+
+              // Left
+              if(this.position.x-1             <= app.obstacles[n].position.x + app.obstacles[n].size.x &&
+                 this.position.x + this.size.x >= app.obstacles[n].position.x){
+
+                this.left=n;
+                // break;
+
+              }
+
+              // Right
+              if(this.position.x + this.size.x+1 >= app.obstacles[n].position.x &&
+                 this.position.x                 <= app.obstacles[n].position.x &&
+                 this.position.y - app.obstacles[n].position.y < 2){
+  
+                this.right=n;
+                // break;
+  
+              }
+
+            }
+
+          }
+
+        } 
+
+        // Left --------------------------------------------------
         if(app.keys[KEYCODES.LEFT]){
 
-          if(this.speed.x>-app.maxSpeed){ this.speed.x-=0.5; }
-
-          this.position.x+=this.speed.x;
-
-        }
-        else if(app.keys[KEYCODES.RIGHT]){
-
-          if(this.speed.x<app.maxSpeed){ this.speed.x+=0.5; }
-
-          this.position.x+=this.speed.x;
-
-        }
-        else {
-
-          if(this.speed.x!==0) { this.speed.x*=app.codf; }
-          if(this.speed.x<0.1 &&
-             this.speed.x>-0.1){ this.speed.x=0;         }
-
-          this.position.x+=this.speed.x;
+          if(this.left==-1){ this.speed.x=constrain(this.speed.x-=0.5,-maxX, maxX); } // Clear of obstacle(s)
+          else             { this.speed.x=0;                                        } // Obstacle(s) encountered
 
         }
 
-        // println(this.speed.x);
+        // Right --------------------------------------------------
+        if(app.keys[KEYCODES.RIGHT]){
+
+          if(this.right==-1){ this.speed.x=constrain(this.speed.x+=0.5,-maxX, maxX); } // Clear of obstacle(s)
+          else              { this.speed.x=0;                                        } // Obstacle(s) encountered
+
+        }
+        
+        // !Right && !Left --------------------------------------------------
+        if(!app.keys[KEYCODES.LEFT] && !app.keys[KEYCODES.RIGHT]){
+
+          if(this.right==-1){ this.speed.x=constrain(this.speed.x*=app.codf,-maxX, maxX); } // Clear of obstacle(s)
+          else              { this.speed.x=0;                                             } // Obstacle(s) encountered
+
+        }
+
+        if(app.keys[KEYCODES.LEFT] &&
+           app.keys[KEYCODES.RIGHT]){ this.speed.x=0; }
+        
+        if(this.speed.x>-0.1 && this.speed.x<0.1){ this.speed.x=0; }
+        
+        this.position.x+=this.speed.x;
+
+        // if(verticalCollision)  { this.speed.y=0; }
 
       }
 
       // Vertical
       {
+
+        if(app.keys[KEYCODES.UP] && !this.jumping){
+          this.jumping=true;
+          this.speed.y+=1.2*app.G;
+        }
+        else{
+          this.jumping=false;
+        }
 
         this.position.y+=this.speed.y;
 
@@ -2834,58 +2971,108 @@ var proc = function(processingInstance){
 
         if(this.speed.y!=0){ this.jumping=true;  }
         else               { this.jumping=false; }
+        
 
-        // println(this.speed.y + " : " + this.position.y + " : " + this.jumping);
+
+// println(this.speed.y + " : " + this.position.y + " : " + this.jumping);
 
       }
       
-      for(var h in app.hazards){
+      // Hides the obstacle based on proximity
+      // for(var h in app.hazards){
        
-        if(dist(this.position.x,           this.position.y,
-                app.hazards[h].position.x, app.hazards[h].position.y)<50){
-                  // app.protagonist=[];
-                  this.visible=false;
-        }
-        else{ this.visible=true; }
+      //   if(dist(this.position.x,           this.position.y,
+      //           app.hazards[h].position.x, app.hazards[h].position.y)<5){
+      //             // app.prot=[];
+      //             this.visible=false;
+      //   }
+      //   else{ this.visible=true; }
                       
-      }
-      // if(this.visible){
-
-        if(this.hit){ fill(getColor(CLRS.WHITE,5));                 }
-        else        { fill(getColor(this.color,this.timer/30*50));  }
-
-        rectMode(CORNER);
-        noStroke();
-
-        // Border/Background
-        fill(CLRS.WHITE);
-        stroke(CLRS.BLACK);
-
-        var offset=0;
-
-        if     (this.speed.x>0) { offset=this.speed.x/4;  }
-        else if(this.speed.x<0) { offset=this.speed.x/4;  }
-        else if(this.speed.x==0){ }
-
-        quad(this.position.x,                    this.position.y,
-             this.position.x+this.size.x,        this.position.y,
-             this.position.x+this.size.x-offset, this.position.y+this.size.x,
-             this.position.x-offset,             this.position.y+this.size.x);
-
-        fill(CLRS.WHITE);
-        noFill();
-        strokeWeight(0.75);
-        
-        if(this.visible){ fill(CLRS.BLACK); }
-        else            { fill(CLRS.RED);   }
-        
-        quad(this.position.x+3,                    this.position.y+3,
-             this.position.x+this.size.x-3,        this.position.y+3,
-             this.position.x+this.size.x-3-offset, this.position.y+this.size.y-3,
-             this.position.x+3-offset,             this.position.y+this.size.y-3);
-
       // }
       
+      // Display
+      {
+
+        if(this.visible){
+  
+          if(this.hit){ fill(getColor(CLRS.WHITE,5));                 }
+          else        { fill(getColor(this.color,this.timer/30*50));  }
+  
+          rectMode(CORNER);
+          noStroke();
+  
+          // Border/Background
+          fill(CLRS.WHITE);
+          stroke(CLRS.BLACK);
+          strokeWeight(0);
+          
+          // Skew of prot top based on speed
+          var offset=0;
+  
+          if     (this.speed.x>0) { offset=this.speed.x/5;  }
+          else if(this.speed.x<0) { offset=this.speed.x/5;  }
+          else if(this.speed.x==0){ offset=0;               }
+          
+          // Exterior cube
+          quad(this.position.x,                    this.position.y,
+               this.position.x+this.size.x,        this.position.y,
+               this.position.x+this.size.x-offset, this.position.y+this.size.x,
+               this.position.x-offset,             this.position.y+this.size.x);
+  
+          fill(CLRS.WHITE);
+          noFill();
+          strokeWeight(0.25);
+  
+          if(this.visible){ fill(CLRS.BLACK); }
+          else            { fill(CLRS.RED);   }
+          
+          // Interior cube
+          // quad(this.position.x+3,                   this.position.y+3,
+          //     this.position.x+this.size.x-3,        this.position.y+3,
+          //     this.position.x+this.size.x-3-offset, this.position.y+this.size.y-3,
+          //     this.position.x+3-offset,             this.position.y+this.size.y-3);
+          
+          // Eyes
+          
+          switch(true){
+
+            case app.keys[KEYCODES.RIGHT] &&
+                 app.keys[KEYCODES.LEFT]:
+
+              rect(this.position.x+this.size.x/2-5, this.position.y+this.size.y-6, 3, 3);
+              rect(this.position.x+this.size.x/2+2, this.position.y+this.size.y-6, 3, 3);
+              break;
+
+            case !app.keys[KEYCODES.RIGHT] &&
+                 !app.keys[KEYCODES.LEFT]:
+
+              rect(this.position.x+this.size.x/2-5, this.position.y+this.size.y-6, 3, 3);
+              rect(this.position.x+this.size.x/2+2, this.position.y+this.size.y-6, 3, 3);
+
+              break;
+
+            case app.keys[KEYCODES.LEFT]:
+
+              rect(this.position.x+3-offset, this.position.y+this.size.y-6, 3, 3);
+              rect(this.position.x+9-offset, this.position.y+this.size.y-6, 3, 3);
+              break;
+
+            case app.keys[KEYCODES.RIGHT]:
+
+              rect(this.position.x+this.size.x-6-offset, this.position.y+this.size.y-6, 3, 3);
+              rect(this.position.x+this.size.x-12-offset, this.position.y+this.size.y-6, 3, 3);
+              break;
+
+            default:
+            
+              break;
+      
+          }
+  
+        }
+        
+      }        
+
     };
     Protagonist.prototype.clicked=    function(x,y){
   
@@ -2949,18 +3136,20 @@ var proc = function(processingInstance){
     };
     Protagonist.prototype.kPressed=   function(keyCode){
       
-      if(keyCode==KEYCODES.UP &&
-         this.jumping==false){
+      // app.keys[keyCode];
+      
+      // if(keyCode==KEYCODES.UP &&
+      //   this.jumping==false){
         
-        if(this.position.y<=0 &&
-           this.speed.y<=0){
+      //   if(this.position.y<=0 &&
+      //     this.speed.y<=0){
           
-          this.jumping=true;
-          this.speed.y+=app.G;
+      //     this.jumping=true;
+      //     this.speed.y+=app.G;
           
-        }
+      //   }
 
-      }
+      // }
       
     };
 
@@ -2999,12 +3188,12 @@ var proc = function(processingInstance){
       stroke(64,0,0);
       strokeWeight(1);
 
-      // rect(0,0,590,590);
+      rect(0,0,590,590);
 
       for(var o in app.obstacles){ app.obstacles[o].draw(); }
-      for(var h in app.hazards){ app.hazards[h].draw();   }
+      for(var h in app.hazards)  { app.hazards[h].draw();   }
 
-      app.protagonist.draw();
+      app.prot.draw();
 
       strokeWeight(1);
       stroke(CLRS.RED);
@@ -3146,7 +3335,7 @@ var proc = function(processingInstance){
   
       // for(var c in app.ctrls){ app.ctrls[c].kPressed(); }
   
-      app.protagonist.kPressed(keyCode);
+      // app.prot.kPressed(keyCode);
   
     };
     var keyReleased=  function(){
@@ -3196,28 +3385,30 @@ var proc = function(processingInstance){
     // }
 
     // Protagonist
-    app.protagonist=new Protagonist(111,20,0,20,-20);
+    app.prot=new Protagonist(111,55,60,20,-20);
 
     // Floor
-    for(var n=0; n<width/20-1; n++){
-      app.obstacles.push(new Obstacle(n, 10+n*20, -20, 20, 20));
-    }
+    // for(var n=0; n<width/20-1; n++){
+    //   app.obstacles.push(new Obstacle(n, 10+n*20, -20, 20, 20));
+    // }
 
     // Left border
     for(var n=0; n<height/20; n++){
-      app.obstacles.push(new Obstacle(n, 10, n*20, 20, 20));
+      app.obstacles.push(new Obstacle(n, 10, -60+n*20, 20, 20));
     }
   
     // Right border
     for(var n=0; n<height/20; n++){
-      app.obstacles.push(new Obstacle(n, width-30, n*20, 20, 20));
+      // app.obstacles.push(new Obstacle(n, 230, n*20, 20, 20));
     }
     
+    app.obstacles.push(new Obstacle(n, 230, 0, 20, 20));
+    
     // Large Block
-    app.obstacles.push(new Obstacle(n, 60, 20, 200, 20));
+    // app.obstacles.push(new Obstacle(n, 60, 20, 200, 20));
   
     // Hazards
-    app.hazards.push(new Hazard(n, 200, 20, 20, 20));
+    // app.hazards.push(new Hazard(n, 200, 20, 20, 20));
   
     // setGrid();
     // setTSP();
