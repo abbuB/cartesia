@@ -1,7 +1,13 @@
 /*  TBD
 
     TO DO:
-
+        
+        - Asymtotes
+            - Tangent
+            - Cotangent
+            - Cosecant
+            - Secant
+        
         - Unit circle on/off (glide)
         - index on/off (glide)
         - convert menu hit to dist()
@@ -1680,6 +1686,35 @@ var diagrams = function(processingInstance){
 
       };
 
+      var unitCircle=function(){
+        
+        pushMatrix();
+        
+          translate(84.375,-135);
+            
+            // Axes
+            strokeWeight(1.125);
+            stroke(CLRS.BLACK);
+            
+            line(-75, 0, 75, 0);
+            line(0, -75, 0, 75);
+            
+            //  Circle
+            fill(getColor(CLRS.GRAY,20));
+            strokeWeight(1.25);
+            stroke(getColor(CLRS.RED,75));
+            
+            ellipse(0, 0, 123, 123);
+            
+            //  Intersesctions
+            noStroke();
+            fill(getColor(CLRS.BLACK,40));
+
+            ellipse(0,61.5,5,5);
+            
+        popMatrix();
+        
+      };
       pushMatrix();
 
         // translate(app.border+20*app.unit, height/2);
@@ -1695,17 +1730,19 @@ var diagrams = function(processingInstance){
           origin();
           ticks();
           labels();
+          
+          unitCircle();
 
           // if(app.quadrantsOn) { quadrants();     }
                     
           if(app.sinOn){ sineCurve();       }
-          // if(app.cscOn){ cosecantCurve();   }  
+          if(app.cscOn){ cosecantCurve();   }  
 
           if(app.cosOn){ cosineCurve();     }
-          // if(app.secOn){ secantCurve();     }
+          if(app.secOn){ secantCurve();     }
 
           if(app.tanOn){ tangentCurve();    }
-          // if(app.cotOn){ cotangentCurve();  }
+          if(app.cotOn){ cotangentCurve();  }
 
 
 
@@ -1811,20 +1848,31 @@ var diagrams = function(processingInstance){
     var h=15;
 
     var row0=20;
-    var row1=row0+h;
-    var row2=row0+2*h;
-    var row3=row0+3*h;
-    var row4=row0+4*h;
-    var row5=row0+5*h;
-    var row6=row0+6*h;
-    var row7=row0+7*h;
-    var row8=row0+8*h;
-    var row9=row0+9*h;
+    var row1=row0 +h;
+    var row2=row0 +2*h;
+    var row3=row0 +3*h;
+    var row4=row0 +4*h;
+    var row5=row0 +5*h;
+    var row6=row0 +6*h;
+    var row7=row0 +7*h;
+    var row8=row0 +8*h;
+    var row9=row0 +9*h;
     var row10=row0+10*h;
     var row11=row0+11*h;
     var row12=row0+12*h;
     var row13=row0+13*h;
 
+    var row14=row0+14*h;
+    var row15=row0+15*h;
+    var row16=row0+16*h;
+    var row17=row0+17*h;
+    var row18=row0+18*h;
+    var row19=row0+19*h;
+    var row20=row0+20*h;
+    var row21=row0+21*h;
+    var row22=row0+22*h;
+    var row23=row0+23*h;
+    
     var col0=620;
     var col1=630;
     var col2=720;
@@ -1836,28 +1884,42 @@ var diagrams = function(processingInstance){
 
     // text("Cursor:",     col0, row0);
 
-    text("x: ",         col1, row1);
-    text("y: ",         col1, row2);
+    text("x: ",           col1, row1);
+    text("y: ",           col1, row2);
 
-    text(mouseX,        col2, row1);
-    text(mouseY,        col2, row2);
+    text(mouseX,          col2, row1);
+    text(mouseY,          col2, row2);
 
-    text("Sine:",       col1, row4);
-    text("Cosine:",     col1, row5);
-    text("Tangent:",    col1, row6);
-    text("Cosecant:",   col1, row7);
-    text("Secant:",     col1, row8);
-    text("Cotangent:",  col1, row9);
+    text("Sine On:",      col1, row4);
+    text("Cosine On:",    col1, row5);
+    text("Tangent On:",   col1, row6);
+    text("Cosecant On:",  col1, row7);
+    text("Secant On:",    col1, row8);
+    text("Cotangent On:", col1, row9);
 
-    text(app.sinOn,     col2, row4);
-    text(app.cosOn,     col2, row5);
-    text(app.tanOn,     col2, row6);
-    text(app.cscOn,     col2, row7);
-    text(app.secOn,     col2, row8);
-    text(app.cotOn,     col2, row9);
+    text(app.sinOn,       col2, row4);
+    text(app.cosOn,       col2, row5);
+    text(app.tanOn,       col2, row6);
+    text(app.cscOn,       col2, row7);
+    text(app.secOn,       col2, row8);
+    text(app.cotOn,       col2, row9);
 
-    text("Theta ("+CONSTANTS.THETA+"):",      col1, row11);
-    text(app.theta,     col2, row11);
+    text("Sine:",         col1, row11);
+    text("Cosine:",       col1, row12);
+    text("Tangent:",      col1, row13);
+    text("Cosecant:",     col1, row14);
+    text("Secant:",       col1, row15);
+    text("Cotangent:",    col1, row16);
+
+    text(nf(sin(radians(app.theta)),1,3),   col2, row11);
+    text(nf(cos(radians(app.theta)),1,3),   col2, row12);
+    // text(nf(tan(radians(app.theta)),1,3),   col2, row13);
+    // text(nf(1/sin(radians(app.theta)),1,3), col2, row14);
+    // text(nf(1/cos(radians(app.theta)),1,3), col2, row15);
+    // text(nf(1/tan(radians(app.theta)),1,3), col2, row16);
+    
+    text("Theta ("+CONSTANTS.THETA+"):",      col1, row18);
+    text(app.theta,     col2, row18);
 
   };
 
