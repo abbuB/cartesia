@@ -1,13 +1,13 @@
 /*  TBD
 
     TO DO:
-        
+
         - Asymtotes
             - Tangent
             - Cotangent
             - Cosecant
             - Secant
-        
+
         - Unit circle on/off (glide)
         - index on/off (glide)
         - convert menu hit to dist()
@@ -66,12 +66,15 @@ var diagrams = function(processingInstance){
       this.mouseX=0;            //  current mouseX location
       this.mouseY=0;            //  current mouseY location
 
+      this.unitHit=false;
+      this.graphHit=false;
+
       this.lightsOn=true;
       this.autoPilot=true;
 
       this.frameRate=60;
 
-      this.theta=0;
+      this.theta=radians(45);
 
       this.data=[];
 
@@ -187,7 +190,7 @@ var diagrams = function(processingInstance){
 
     SIN:          color(170,29,29,255),   SIN_LT:       color(170,29,29,128),
     COS:          color(29,86,170,255),   COS_LT:       color(29,86,170,128),
-    TAN:          color(238,214,15,255),  TAN_LT:       color(238,214,15,128),
+    TAN:          color(158,182,58,255),  TAN_LT:       color(158,182,58,192),
 
     CSC:          color(238,136,15,255),  CSC_LT:       color(238,136,15,128),
     SEC:          color(158,182,58,255),  SEC_LT:       color(158,182,58,128),
@@ -842,7 +845,7 @@ var diagrams = function(processingInstance){
 
       draw_Index();
 
-      if (app.autoPilot)  { app.theta+=1; app.theta%=360;}
+      // if (app.autoPilot)  { app.theta+=1; app.theta%=360;}
 
   };
 
@@ -995,11 +998,192 @@ var diagrams = function(processingInstance){
 
   };
 
+  // Unit Circle ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+{
+    var unitCircle=function(x_coord, y_coord, width, height){
+
+      control.call(this, x_coord, y_coord, width, height);
+
+      this.r=61.5;
+      this.theta=0;
+
+      // control.call(this,c,l,a,ctrls);
+
+      // app.factor=     this.h/22;   // required for initial grid height
+
+      // this.shapes=    [];
+      // this.Temp=      0;
+
+      // this.cX=        0;
+      // this.cY=        0;
+
+      // this.originX=   0;
+      // this.originY=   0;
+
+      // this.offsetX=   0;
+      // this.offsetY=   0;
+
+      // this.hitProp=   false;
+
+    };
+    unitCircle.prototype=Object.create(control.prototype);
+    unitCircle.prototype.draw=function(){
+
+        pushMatrix();
+
+          translate(122.5,444.5);
+          scale(1,-1);
+
+            var r=this.r;
+            var rTheta;
+
+            // Axes ----------
+            strokeWeight(1);
+            stroke(CLRS.BLACK);
+
+            line(-75,  0, 75,  0);
+            line(  0,-75,  0, 75);
+
+            //  Circle ----------
+            fill(getColor(CLRS.GRAY,20));
+            strokeWeight(1);
+
+            if(this.hit){
+              app.theta=125;
+              stroke(getColor(CLRS.RED,100));
+              strokeWeight(1.25);
+              
+            }
+            else{
+              stroke(getColor(CLRS.RED,75));
+              strokeWeight(1);
+              rTheta=radians(app.theta);
+            }
+
+            ellipse(0, 0, 2*r, 2*r);
+
+            //  Intersesctions ----------
+            noStroke();
+            fill(getColor(CLRS.BLACK,40));
+
+            var cs=3.5;
+
+            ellipse( 0, r, cs, cs);
+            ellipse( 0,-r, cs, cs);
+            ellipse( r, 0, cs, cs);
+            ellipse(-r, 0, cs, cs);
+
+
+            // Theta ----------
+            fill(getColor(CLRS.GRAY,20));
+
+            stroke(getColor(CLRS.BLACK,50));
+            strokeWeight(0.75);
+
+            triangle(0,0,
+                     cos(rTheta)*r, sin(rTheta)*r,
+                     cos(rTheta)*r, 0);
+
+            noStroke();
+            fill(getColor(CLRS.BLACK,50));
+
+            ellipse(cos(rTheta)*r, sin(rTheta)*r, cs, cs);
+
+            // Theta Text  ----------
+            var tw=textWidth(app.theta+CONSTANTS.DEGREES);
+
+            noStroke();
+            fill(CLRS.WHITE);
+
+            rect(-tw/2,-r*1.35-7.5,tw+2,15);
+
+            textAlign(CENTER,CENTER);
+            fill(CLRS.BLACK);
+            noStroke();
+
+            scale(1,-1);
+
+            text(app.theta+CONSTANTS.DEGREES, 0, r*1.35);
+
+            // Quadrants  ----------
+            textAlign(CENTER,CENTER);
+            textSize(14);
+            fill(getColor(CLRS.BLACK,25));
+
+            var w=r*0.55;
+
+            text("I",   w*cos(radians( -45)),  w*sin(radians( -45)));
+            text("II",  w*cos(radians(-135)),  w*sin(radians(-135)));
+            text("III", w*cos(radians( 135 )), w*sin(radians( 135)));
+            text("IV",  w*cos(radians(  45)),  w*sin(radians(  45)));
+
+        popMatrix();
+
+    };
+
+    unitCircle.prototype.clicked=function(){
+
+
+    };
+    unitCircle.prototype.clickedR=function(){
+
+    };
+    unitCircle.prototype.moved=function(x,y){
+
+      if(dist(mouseX,mouseY,122.5,444.5)<this.r){
+
+        this.hit=true;
+        // app.theta=round(degrees(atan2(mouseY+444.5, mouseX-122.5)));
+        app.theta=abs(round(degrees(atan2(mouseY-444.5, mouseX-122.5))));
+println(app.theta+", "+degrees(atan2(mouseY-444.5, mouseX-122.5)));
+      }
+      else{
+
+        this.hit=false;
+
+      }
+      app.unitHit=this.hit;
+      app.graphHit=!this.hit;
+
+    };
+    unitCircle.prototype.dragged=function(){
+
+
+
+    };
+    unitCircle.prototype.pressed=function(){
+
+
+
+    };
+    unitCircle.prototype.released=function(){
+
+
+    };
+    unitCircle.prototype.typed=function(){
+
+
+
+    };
+    unitCircle.prototype.over=function(){
+
+
+
+    };
+    unitCircle.prototype.out=function(){
+
+
+    };
+
+  }
+
   // Graph ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
     var graph=function(x_coord, y_coord, width, height){
 
       control.call(this, x_coord, y_coord, width, height);
+
+      this.innerHit=false;
 
       // control.call(this,c,l,a,ctrls);
 
@@ -1032,7 +1216,7 @@ var diagrams = function(processingInstance){
 
       var min=0;
       var max=360;
-      
+
       // var n=0;        //  number iterator
       var h=540;      //  height
       var h2=h/2;     //  height / 2
@@ -1341,16 +1525,17 @@ var diagrams = function(processingInstance){
           curveVertex(x,y);
 
         endShape();
-        
+
+        // Current Value
         if(p.innerHit){
-          
+
           stroke(CLRS.SIN);
           fill(CLRS.SIN);
-          
+
           ellipse(mouseX-20, app.data[app.theta].sin*4*gw, 5, 5);
-          
+
         }
-        
+
       };
       var cosineCurve=function(){
 
@@ -1359,7 +1544,7 @@ var diagrams = function(processingInstance){
 
         var x=0;
         var y=app.data[0].cos*4*gw;
-        
+
         beginShape();
 
           curveVertex(x,y);
@@ -1377,25 +1562,26 @@ var diagrams = function(processingInstance){
 
         endShape();
 
+        // Current Value
         if(p.innerHit){
-          
+
           stroke(CLRS.COS);
           fill(CLRS.COS);
-          
+
           ellipse(mouseX-20, app.data[app.theta].cos*4*gw, 5, 5);
-          
+
         }
-        
+
       };
       var tangentCurve=function(){
-        
+
         noFill();
         stroke(CLRS.TAN);
 
         var x=0;
         var y=0;
         var n=0;
-        
+
         beginShape();
 
           curveVertex(x, y);
@@ -1440,190 +1626,160 @@ var diagrams = function(processingInstance){
         endShape();
 
         if(p.innerHit){
-          
+
           var val=app.data[app.theta].tan*f;
-          
+
           if(val>=-h2 && val<=h2){
-                      
+
             stroke(CLRS.TAN);
             fill(CLRS.TAN);
-            
+
             ellipse(mouseX-20, val, 5, 5);
 
           }
 
         }
-        
+
       };
       var cosecantCurve=function(){
-        
-        noFill();
-        stroke(CLRS.CSC);
+
+        fill(CLRS.SIN_LT);
+        noStroke();
 
         var x=0;
         var y=0;
         var n=0;
-        
-        beginShape();
 
-          for(n=app.MIN; n<180; n++){
+        for(n=app.MIN; n<180; n+=2){
 
-            x=n/app.MAX*h;
-            y=app.data[n].csc*4*gw;
+          x=n/app.MAX*h;
+          y=app.data[n].csc*4*gw;
 
-            if(y>=-h2 && y<=h2){ curveVertex(x, y); }
+          if(y>=-h2 && y<=h2){ ellipse(x, y, 2, 2); }
 
-          }
+        }
 
-        endShape();
+        for(n=181; n<app.MAX; n+=2){
 
-        beginShape();
+          x=n/app.MAX*h;
+          y=app.data[n].csc*4*gw;
 
-          for(n=181; n<app.MAX; n++){
+          if(y>=-h2 && y<=h2){ ellipse(x, y, 2, 2); }
 
-            x=n/app.MAX*h;
-            y=app.data[n].csc*4*gw;
+        }
 
-            if(y>=-h2 && y<=h2){ curveVertex(x, y); }
-
-          }
-
-        endShape();
-
+        // Current Value
         if(p.innerHit){
-          
+
           var val=app.data[app.theta].csc*4*gw;
-          
+
           if(val>=-h && val<=h){
 
-            stroke(CLRS.CSC);
-            fill(CLRS.CSC);
+            stroke(CLRS.SIN_LT);
 
             ellipse(mouseX-20, val, 5, 5);
 
           };
 
         }
-        
+
       };
       var secantCurve=function(){
-        
-        noFill();
-        stroke(CLRS.SEC);
+
+        fill(CLRS.COS_LT);
+        noStroke();
 
         var x=0;
         var y=app.data[0].sec;
         var n=0;
-        
-        beginShape();
 
-          curveVertex(x, y);
+        for(n=app.MIN; n<90; n+=2){
 
-          for(n=app.MIN; n<90; n++){
+          x=n/app.MAX*h;
+          y=app.data[n].sec*4*gw;
 
-            x=n/app.MAX*h;
-            y=app.data[n].sec*4*gw;
+          if(y>=-h2 && y<=h2){ ellipse(x, y, 2, 2); }
 
-            if(y>=-h2 && y<=h2){ curveVertex(x, y); }
+        }
 
-          }
+        for(n=91; n<270; n+=2){
 
-        endShape();
+          x=n/app.MAX*h;
+          y=app.data[n].sec*4*gw;
 
-        beginShape();
+          if(y>=-h2 && y<=h2){ ellipse(x, y, 2, 2); }
 
-          for(n=91; n<270; n++){
+        }
 
-            x=n/app.MAX*h;
-            y=app.data[n].sec*4*gw;
+        for(n=271; n<=app.MAX; n+=2){
 
-            if(y>=-h2 && y<=h2){ curveVertex(x, y); }
+          x=n/app.MAX*h;
+          y=app.data[n].sec*4*gw;
 
-          }
+          if(y>=-h2 && y<=h2){ ellipse(x, y, 2, 2); }
 
-        endShape();
+        }
 
-        beginShape();
-
-          for(n=271; n<=app.MAX; n++){
-
-            x=n/app.MAX*h;
-            y=app.data[n].sec*4*gw;
-
-            if(y>=-h2 && y<=h2){ curveVertex(x, y); }
-
-          }
-
-          curveVertex(x, y);
-
-        endShape();
-
+        // Current Value
         if(p.innerHit){
-          
+
           var val=app.data[app.theta].sec*4*gw;
-          
+
           if(val>=-h2 && val<=h2){
 
-            stroke(CLRS.SEC);
-            fill(CLRS.SEC);
+            stroke(CLRS.COS_LT);
+            fill(CLRS.COS_LT);
 
             ellipse(mouseX-20, val, 5, 5);
 
           };
 
         }
-        
+
       };
       var cotangentCurve=function(){
-        
-        noFill();
-        stroke(CLRS.COT);
+
+        noStroke();
+        fill(CLRS.TAN_LT);
 
         var x=0;
         var y=0;
         var n=0;
+        var incr=2;
 
-        beginShape();
+        for(n=app.MIN; n<180; n+=incr){
 
-          for(n=app.MIN; n<180; n++){
+          x=n/app.MAX*h;
+          y=app.data[n].cot*4*gw;
 
-            x=n/app.MAX*h;
-            y=app.data[n].cot*4*gw;
+          if(y>=-h2 && y<=h2){ ellipse(x, y, 2, 2); }
 
-            if(y>=-h2 && y<=h2){ curveVertex(x, y); }
+        }
 
-          }
+        for(n=181; n<=app.MAX; n+=incr){
 
-        endShape();
+          x=n/app.MAX*h;
+          y=app.data[n].cot*4*gw;
 
-        beginShape();
+          if(y>=-h2 && y<=h2){ ellipse(x, y, 2, 2); }
 
-          for(n=181; n<=app.MAX; n++){
+        }
 
-            x=n/app.MAX*h;
-            y=app.data[n].cot*4*gw;
-
-            if(y>=-h2 && y<=h2){ curveVertex(x, y); }
-
-          }
-
-        endShape();
-
+        // Current Value
         if(p.innerHit){
-          
+
           var val=app.data[app.theta].cot*4*gw;
-          
+
           if(val>=-h2 && val<=h2){
 
-            stroke(CLRS.COT);
-            fill(CLRS.COT);
+            stroke(CLRS.TAN_LT);
 
             ellipse(mouseX-20, val, 5, 5);
 
           };
 
         }
-        
+
       };
 
       var values=function(){
@@ -1686,35 +1842,48 @@ var diagrams = function(processingInstance){
 
       };
 
-      var unitCircle=function(){
-        
-        pushMatrix();
-        
-          translate(84.375,-135);
-            
-            // Axes
-            strokeWeight(1.125);
-            stroke(CLRS.BLACK);
-            
-            line(-75, 0, 75, 0);
-            line(0, -75, 0, 75);
-            
-            //  Circle
-            fill(getColor(CLRS.GRAY,20));
-            strokeWeight(1.25);
-            stroke(getColor(CLRS.RED,75));
-            
-            ellipse(0, 0, 123, 123);
-            
-            //  Intersesctions
-            noStroke();
-            fill(getColor(CLRS.BLACK,40));
+      var legend=function(){
 
-            ellipse(0,61.5,5,5);
-            
+        pushMatrix();
+
+          translate(160,150);
+
+          fill(getColor(CLRS.WHITE,50));
+          stroke(CLRS.BLACK);
+          strokeWeight(0.25);
+
+          rect(0,40,220,70,10);
+
+          scale(1,-1);
+
+          fill(getColor(CLRS.WHITE,80));
+          textSize(11);
+
+          textAlign(LEFT,BOTTOM);
+
+          fill(CLRS.SIN);   text("Sin "+CONSTANTS.THETA+"",10,-90);
+          fill(CLRS.COS);   text("Cos "+CONSTANTS.THETA+"",10,-70);
+          fill(CLRS.TAN);   text("Tan "+CONSTANTS.THETA+"",10,-50);
+
+          fill(CLRS.SIN);   text("Csc "+CONSTANTS.THETA+"",120,-90);
+          fill(CLRS.COS);   text("Sec "+CONSTANTS.THETA+"",120,-70);
+          fill(CLRS.TAN);   text("Cot "+CONSTANTS.THETA+"",120,-50);
+
+          textAlign(RIGHT,BOTTOM);
+
+          fill(CLRS.SIN);   text(nf(sin(radians(app.theta)),1,4),95,-90);
+          fill(CLRS.COS);   text(nf(cos(radians(app.theta)),1,4),95,-70);
+          fill(CLRS.TAN);   text(nf(tan(radians(app.theta)),1,4),95,-50);
+
+          fill(CLRS.SIN);   text(nf(sin(1/radians(app.theta)),1,4),210,-90);
+          fill(CLRS.COS);   text(nf(cos(1/radians(app.theta)),1,4),210,-70);
+          fill(CLRS.TAN);   text(nf(tan(1/radians(app.theta)),1,4),210,-50);
+
         popMatrix();
-        
+
       };
+
+      // Draw --------------------------------------------------------------------------------
       pushMatrix();
 
         // translate(app.border+20*app.unit, height/2);
@@ -1730,13 +1899,14 @@ var diagrams = function(processingInstance){
           origin();
           ticks();
           labels();
-          
+
           unitCircle();
+          legend();
 
           // if(app.quadrantsOn) { quadrants();     }
-                    
+
           if(app.sinOn){ sineCurve();       }
-          if(app.cscOn){ cosecantCurve();   }  
+          if(app.cscOn){ cosecantCurve();   }
 
           if(app.cosOn){ cosineCurve();     }
           if(app.secOn){ secantCurve();     }
@@ -1744,9 +1914,7 @@ var diagrams = function(processingInstance){
           if(app.tanOn){ tangentCurve();    }
           if(app.cotOn){ cotangentCurve();  }
 
-
-
-          values();
+          // values();
 
       popMatrix();
 
@@ -1762,16 +1930,19 @@ var diagrams = function(processingInstance){
          mouseY>y+20 &&
          mouseY<y+600){
 
-        this.hit=true;
+        app.graphHit=true;
 
         if(mouseX>=20 &&
            mouseX<=560 &&
            mouseY>=30 &&
            mouseY<=580){
-
+          
           this.innerHit=true;
-          app.theta=round(map(mouseX-20,0,540,0,360));
 
+          if(app.unitHit==false){            
+            app.theta=round(map(mouseX-20,0,540,0,360));
+          }
+          
         }
         else{
 
@@ -1783,7 +1954,7 @@ var diagrams = function(processingInstance){
       }
       else{
 
-        this.hit=false;
+        app.graphHit=false;
 
         // println("miss");
 
@@ -1834,8 +2005,9 @@ var diagrams = function(processingInstance){
     };
 
   }
-  
+
   var Graph=new graph(21, 309, 580, 580);
+  var UnitCircle=new unitCircle(450, 309, 580, 580);
 
   var telemetry=function(){
 
@@ -1872,7 +2044,7 @@ var diagrams = function(processingInstance){
     var row21=row0+21*h;
     var row22=row0+22*h;
     var row23=row0+23*h;
-    
+
     var col0=620;
     var col1=630;
     var col2=720;
@@ -1917,7 +2089,7 @@ var diagrams = function(processingInstance){
     // text(nf(1/sin(radians(app.theta)),1,3), col2, row14);
     // text(nf(1/cos(radians(app.theta)),1,3), col2, row15);
     // text(nf(1/tan(radians(app.theta)),1,3), col2, row16);
-    
+
     text("Theta ("+CONSTANTS.THETA+"):",      col1, row18);
     text(app.theta,     col2, row18);
 
@@ -1930,6 +2102,10 @@ var diagrams = function(processingInstance){
     // initialize();
     //println(mouseX-20 + "," + mouseY);
     Graph.draw(30,-300);
+    UnitCircle.draw(30,300);
+
+    // app.theta+=1;
+    // app.theta%360;
 
     if(app.DEBUG){
       telemetry();
@@ -1960,8 +2136,8 @@ var diagrams = function(processingInstance){
       app.mouseX=mouseX;
       app.mouseX=mouseY;
 
-
       Graph.moved(0,0);
+      UnitCircle.moved(0,0);
 
       // if (mouseX>19 && mouseX<380){
       //   if(!app.autoPilot){
