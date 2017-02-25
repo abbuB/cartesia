@@ -1045,20 +1045,18 @@ var diagrams = function(processingInstance){
             line(  0,-75,  0, 75);
 
             //  Circle ----------
-            fill(getColor(CLRS.GRAY,20));
-            strokeWeight(1);
-
             if(this.hit){
-              app.theta=125;
-              stroke(getColor(CLRS.RED,100));
-              strokeWeight(1.25);
-              
+              fill(getColor(CLRS.GRAY,20));
+              stroke(getColor(CLRS.BLACK,75));
+              strokeWeight(1.25);              
             }
             else{
-              stroke(getColor(CLRS.RED,75));
-              strokeWeight(1);
-              rTheta=radians(app.theta);
+              noFill();
+              stroke(getColor(CLRS.BLACK,50));
+              strokeWeight(1);             
             }
+            
+            rTheta=radians(app.theta);
 
             ellipse(0, 0, 2*r, 2*r);
 
@@ -1078,8 +1076,22 @@ var diagrams = function(processingInstance){
             fill(getColor(CLRS.GRAY,20));
 
             stroke(getColor(CLRS.BLACK,50));
-            strokeWeight(0.75);
-
+            strokeWeight(1.25);
+            
+            stroke(CLRS.TAN);
+            
+            line(0, 0, cos(rTheta)*r, sin(rTheta)*r);
+            
+            stroke(CLRS.SIN);
+            
+            line(cos(rTheta)*r, 0, cos(rTheta)*r, sin(rTheta)*r);
+            
+            stroke(CLRS.COS);
+            
+            line(0, 0, cos(rTheta)*r, 0);
+            
+            noStroke();
+            
             triangle(0,0,
                      cos(rTheta)*r, sin(rTheta)*r,
                      cos(rTheta)*r, 0);
@@ -1133,9 +1145,15 @@ var diagrams = function(processingInstance){
       if(dist(mouseX,mouseY,122.5,444.5)<this.r){
 
         this.hit=true;
-        // app.theta=round(degrees(atan2(mouseY+444.5, mouseX-122.5)));
-        app.theta=abs(round(degrees(atan2(mouseY-444.5, mouseX-122.5))));
-println(app.theta+", "+degrees(atan2(mouseY-444.5, mouseX-122.5)));
+
+        var d=round(degrees(atan2(mouseY-444.5, mouseX-122.5)));
+        
+        if(d<0){ d+=360; }
+        
+        app.theta=360-d;
+        
+// println(app.theta+", "+d);
+
       }
       else{
 
@@ -1532,7 +1550,7 @@ println(app.theta+", "+degrees(atan2(mouseY-444.5, mouseX-122.5)));
           stroke(CLRS.SIN);
           fill(CLRS.SIN);
 
-          ellipse(mouseX-20, app.data[app.theta].sin*4*gw, 5, 5);
+          ellipse(map(app.theta,0,360,0,540), app.data[app.theta].sin*4*gw, 5, 5);
 
         }
 
@@ -1568,7 +1586,7 @@ println(app.theta+", "+degrees(atan2(mouseY-444.5, mouseX-122.5)));
           stroke(CLRS.COS);
           fill(CLRS.COS);
 
-          ellipse(mouseX-20, app.data[app.theta].cos*4*gw, 5, 5);
+          ellipse(map(app.theta,0,360,0,540), app.data[app.theta].cos*4*gw, 5, 5);
 
         }
 
@@ -1634,7 +1652,7 @@ println(app.theta+", "+degrees(atan2(mouseY-444.5, mouseX-122.5)));
             stroke(CLRS.TAN);
             fill(CLRS.TAN);
 
-            ellipse(mouseX-20, val, 5, 5);
+            ellipse(map(app.theta,0,360,0,540), val, 5, 5);
 
           }
 
@@ -1673,11 +1691,11 @@ println(app.theta+", "+degrees(atan2(mouseY-444.5, mouseX-122.5)));
 
           var val=app.data[app.theta].csc*4*gw;
 
-          if(val>=-h && val<=h){
+          if(val>=-h2 && val<=h2){
 
             stroke(CLRS.SIN_LT);
 
-            ellipse(mouseX-20, val, 5, 5);
+            ellipse(map(app.theta,0,360,0,540), val, 5, 5);
 
           };
 
@@ -1730,7 +1748,7 @@ println(app.theta+", "+degrees(atan2(mouseY-444.5, mouseX-122.5)));
             stroke(CLRS.COS_LT);
             fill(CLRS.COS_LT);
 
-            ellipse(mouseX-20, val, 5, 5);
+            ellipse(map(app.theta,0,360,0,540), val, 5, 5);
 
           };
 
@@ -1774,7 +1792,7 @@ println(app.theta+", "+degrees(atan2(mouseY-444.5, mouseX-122.5)));
 
             stroke(CLRS.TAN_LT);
 
-            ellipse(mouseX-20, val, 5, 5);
+            ellipse(map(app.theta,0,360,0,540), val, 5, 5);
 
           };
 
@@ -1941,6 +1959,9 @@ println(app.theta+", "+degrees(atan2(mouseY-444.5, mouseX-122.5)));
 
           if(app.unitHit==false){            
             app.theta=round(map(mouseX-20,0,540,0,360));
+          }
+          else{
+            
           }
           
         }
