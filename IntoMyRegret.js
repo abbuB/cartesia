@@ -2,36 +2,33 @@
 
     TO DO:
 
-        - Asymtotes
-            - Tangent
-            - Cotangent
-            - Cosecant
-            - Secant
+        - ***** Find out how to handle Infinity and -Infinity *****
+                  Asymtotes
+                    - Tangent
+                    - Cotangent
+                    - Cosecant
+                    - Secant
 
-        
-        - index on/off (glide)
-        
-        - convert to new menus
         - question list
         - Addition and subtraction trig identities
         - Law of cosines
         - Pythagorean identities
-        
-        
-        
+
         - keyboard controls
-      
+
       TO DONE:
-      
+
+        - convert to new menus
         - control theta from within the unit circle
         - convert menu hit to dist()
         - Unit circle on/off (glide)
         - right/left arrows to increment/decrement theta +-=1
-        
+        - index on/off (glide)
+
       Decided Against:
-      
+
         - set theta by clicking the scale
-      
+
 *
 +stackoverflow.com
 +khanacademy.org
@@ -106,7 +103,9 @@ var diagrams = function(processingInstance){
       this.cscOn=true;
       this.secOn=true;
       this.cotOn=true;
-
+      
+      this.quadrantsOn=true;
+      
       this.controls=[];
       
       this.initialize=function(){
@@ -342,14 +341,49 @@ var diagrams = function(processingInstance){
     if(app.theta<0){ app.theta=360; }
     
   };
-  
-  var getSine=function(){      return app.data[app.theta].sin;   }
-  var getCosine=function(){    return app.data[app.theta].cos;   }
-  var getTangent=function(){   return app.data[app.theta].tan;   }
-  var getCosecant=function(){  return app.data[app.theta].csc; }
-  var getSecant=function(){    return app.data[app.theta].sec; }
-  var getCotangent=function(){ return app.data[app.theta].cot; }
-  
+
+  var getSine=function()   { return app.data[app.theta].sin; };
+  var getCosine=function() { return app.data[app.theta].cos; };
+  var getTangent=function(){
+
+    var retTan=app.data[app.theta].tan;
+
+    if(retTan<-60){ retTan="-INF"; }
+    if(retTan>60) { retTan="INF";  }
+
+    return retTan;
+
+  };    
+  var getCosecant=function(){
+
+    var retCsc=app.data[app.theta].csc;
+
+    if(retCsc<-60){ retCsc="-INF"; }
+    if(retCsc>60) { retCsc="INF";  }
+
+    return retCsc;
+
+  };
+  var getSecant=function(){
+
+    var retSec=app.data[app.theta].sec;
+
+    if(retSec<-60){ retSec="-INF"; }
+    if(retSec>60) { retSec="INF";  }
+
+    return retSec;
+
+  };
+  var getCotangent=function(){
+
+    var retCot=app.data[app.theta].cot;;
+
+    if(retCot<-60){ retCot="-INF"; }
+    if(retCot>60) { retCot="INF";  }
+
+    return retCot;
+
+  };  
   // Controls =========================================================
 
   // Control ===========================================================
@@ -546,10 +580,16 @@ var diagrams = function(processingInstance){
             
             textAlign(RIGHT,CENTER);
             
-            if(!(this.tag==null)){
-              text(nf(this.tag(),1,4), this.w-10, this.h/2);
-            }
+            var txt=this.tag();
             
+            if(!(txt==null)){
+
+              if     (txt== "INF"){ text( "Infinity",  this.w-10, this.h/2); }
+              else if(txt=="-INF"){ text("-Infinity",  this.w-10, this.h/2); }
+              else                { text(nf(txt,1,4),  this.w-10, this.h/2); }
+
+            }
+
         popMatrix();
 
     };
@@ -738,14 +778,16 @@ var diagrams = function(processingInstance){
           ellipse(0,             0,             cs, cs);
 
           // Theta Text  ----------
+          textSize(11);
+          textAlign(CENTER,CENTER);
+          
           var tw=textWidth(app.theta+CONSTANTS.DEGREES);
 
           noStroke();
           fill(CLRS.WHITE);
 
           rect(-tw/2,-r*1.35-7.5,tw+2,15);
-
-          textAlign(CENTER,CENTER);
+          
           fill(CLRS.BLACK);
           noStroke();
 
@@ -1501,6 +1543,25 @@ var diagrams = function(processingInstance){
 
       };
 
+      var quadrants=function(){
+
+        pushMatrix();
+
+          scale(1,-1);
+            
+            fill(getColor(CLRS.BLACK,25));
+            textAlign(CENTER,CENTER);
+            textSize(48);
+
+            text("I",   67.25, 0);
+            text("II",  67.25+135, 0);
+            text("III", 67.25+270, 0);
+            text("IV",  67.25+405, 0);
+
+        popMatrix();
+
+      }
+      
       // var legend=function(){
 
         // pushMatrix();
@@ -1559,10 +1620,9 @@ var diagrams = function(processingInstance){
           ticks();
           labels();
 
-          unitCircle();
           // legend();
 
-          // if(app.quadrantsOn) { quadrants();     }
+          if(app.quadrantsOn) { quadrants();     }
 
           if(app.sinOn){ sineCurve();       }
           if(app.cscOn){ cosecantCurve();   }
@@ -1789,7 +1849,7 @@ var diagrams = function(processingInstance){
     if(app.DEBUG){
       telemetry();
     }
-
+// println(app.data[app.theta].tan);
   };
 
   // Keyboard Events ==================================================
@@ -1818,7 +1878,7 @@ var diagrams = function(processingInstance){
 
     var mouseClicked=function(){
 
-      // app.locked=!app.locked;
+      app.locked=!app.locked;
 
       for(var c in app.controls){ app.controls[c].clicked(); }
 
