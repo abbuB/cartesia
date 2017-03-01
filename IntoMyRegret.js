@@ -78,7 +78,9 @@ var diagrams = function(processingInstance){
 
       this.mouseX=0;            //  current mouseX location
       this.mouseY=0;            //  current mouseY location
-
+      
+      this.legend=false;        //  Is the legend displayed
+      
       this.unitHit=false;       //  Cursor is within the bounds of the unit circle
       this.graphHit=false;      //  Cursor is within the bounds of the graph
 
@@ -439,6 +441,178 @@ var diagrams = function(processingInstance){
 
   };
 
+  // Legend ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  {
+    var legend=function(id, x_coord, y_coord, width, height, txt, execute, tag, clr){
+
+      control.call(this, id, x_coord, y_coord, width, height);
+
+      this.txt=txt;
+      this.execute=execute;
+      this.clr=clr;
+      this.on=true;
+      this.tag=tag;
+
+    };
+    legend.prototype=Object.create(control.prototype);
+    legend.prototype.draw=function(){
+      
+      var p=this;
+      
+      // Border
+      var border=function(){
+        
+        fill(getColor(CLRS.TEAL_0,75));
+        stroke(getColor(CLRS.TEAL_0,100));
+
+        rect(0, 0, p.w, p.h);
+
+      }
+      var values=function(){
+        
+        var left=0;
+        var h=15;
+
+        var row0=30;
+
+        var col0=left+20;
+        var col1=left+30;
+        var col2=left+130;
+
+        fill(getColor(CLRS.WHITE,75));
+
+        textAlign(LEFT,CENTER);
+        textSize(12);
+
+        text("Telemetry",     col0, 20);
+
+        textAlign(LEFT,CENTER);
+        textSize(10);
+
+        text("x: ",           col1, row0+h);
+        text("y: ",           col1, row0+2*h);
+
+        text("Sine On:",      col1, row0+4*h);
+        text("Cosine On:",    col1, row0+5*h);
+        text("Tangent On:",   col1, row0+6*h);
+        text("Cosecant On:",  col1, row0+7*h);
+        text("Secant On:",    col1, row0+8*h);
+        text("Cotangent On:", col1, row0+9*h);
+
+        text("Sine:",         col1, row0+11*h);
+        text("Cosine:",       col1, row0+12*h);
+        text("Tangent:",      col1, row0+13*h);
+        text("Cosecant:",     col1, row0+14*h);
+        text("Secant:",       col1, row0+15*h);
+        text("Cotangent:",    col1, row0+16*h);
+
+        text("Theta ("+CONSTANTS.THETA+"):",      col1, row0+18*h);
+
+        text("Locked:",       col1, row0+20*h);
+
+        text("AutoPilot:",    col1, row0+22*h);
+
+        text("Focus:",    col1, row0+24*h);
+            
+        fill(getColor(CLRS.YELLOW,75));
+        textSize(11);
+        textAlign(RIGHT,CENTER);
+        
+        text(mouseX,          col2, row0+h);
+        text(mouseY,          col2, row0+2*h);
+
+        text(app.sinOn,       col2, row0+4*h);
+        text(app.cosOn,       col2, row0+5*h);
+        text(app.tanOn,       col2, row0+6*h);
+        text(app.cscOn,       col2, row0+7*h);
+        text(app.secOn,       col2, row0+8*h);
+        text(app.cotOn,       col2, row0+9*h);
+
+        text(app.data[app.theta].sin, col2, row0+11*h);
+        text(app.data[app.theta].cos, col2, row0+12*h);
+        
+        if     (app.data[app.theta].tan> 100){ text( "Infinity", col2, row0+13*h);             }
+        else if(app.data[app.theta].tan<-100){ text("-Infinity", col2, row0+13*h);             }
+        else                                 { text(app.data[app.theta].tan, col2, row0+13*h); }
+
+        text(app.data[app.theta].csc, col2, row0+14*h);
+        text(app.data[app.theta].sec, col2, row0+15*h);
+        text(app.data[app.theta].cot, col2, row0+16*h);
+
+        text(app.theta,       col2, row0+18*h);
+
+        text(app.locked,      col2, row0+20*h);
+
+        text(app.autoPilot,     col2, row0+22*h);
+
+        
+        text(app.focus,     col2, row0+24*h);
+      }
+      
+      pushMatrix();
+
+      println(this.w+ '\t' + this.h);
+
+        translate(this.x, this.y);
+        // scale(1, -1);
+
+          border();
+          values();
+          
+      popMatrix();
+
+    };
+    legend.prototype.clicked=function(){
+
+      if(this.hit){
+        this.execute();
+        this.on=!this.on;
+      }
+
+    };
+    legend.prototype.clickedR=function(){
+
+    };
+    legend.prototype.moved=function(x,y){
+
+      this.hit=mouseX>this.x &&
+               mouseX<this.x + this.w &&
+               mouseY>this.y &&
+               mouseY<this.y + this.h;
+      
+      if(this.hit){ app.focus=this.id; }
+
+    };
+    legend.prototype.dragged=function(){
+
+
+
+    };
+    legend.prototype.pressed=function(){
+
+
+
+    };
+    legend.prototype.released=function(){
+
+
+    };
+    legend.prototype.typed=function(){
+
+
+
+    };
+    legend.prototype.over=function(){
+
+
+
+    };
+    legend.prototype.out=function(){
+
+
+    };
+
+  }
     // Radio ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
     var radio=function(id, x_coord, y_coord, width, height, txt, execute, tag, clr){
@@ -446,7 +620,7 @@ var diagrams = function(processingInstance){
       control.call(this, id, x_coord, y_coord, width, height);
 
       this.txt=txt;
-      if(execute){ this.execute=execute.bind(this); }
+      this.execute=execute;
       this.clr=clr;
       this.on=true;
       this.tag=tag;
@@ -461,19 +635,22 @@ var diagrams = function(processingInstance){
 
           ellipseMode(CENTER);
 
-            if(this.hit){ stroke(getColor(this.clr, 75)); cursor(HAND);  }
-            else        { stroke(getColor(this.clr, 50)); cursor(ARROW); }
-
-            if(!this.on){
+            if(this.hit){
               
-              rotate(-PI/2);
-
+              stroke(getColor(this.clr, 75));
+              cursor(HAND);
+              
             }
-            else{ this.value=0; }
+            else{
+              stroke(getColor(this.clr, 50));
+            }
+
+            if(!this.on){ rotate(-PI/2); }
+            else        { this.value=0;  }
 
             strokeWeight(3);
             noFill();
-            
+
             arc(0, 0, this.w, this.h, -PI/4, 3*PI/2-PI/4);
             
             line(0,1,0,-11);
@@ -481,13 +658,11 @@ var diagrams = function(processingInstance){
         popMatrix();
 
     };
-
     radio.prototype.clicked=function(){
 
       if(this.hit){
         this.execute();
-        this.on=!this.on;
-        app.focus=this.id;
+        this.on=!this.on;      
       }
 
     };
@@ -497,6 +672,8 @@ var diagrams = function(processingInstance){
     radio.prototype.moved=function(x,y){
 
       this.hit=dist(mouseX,mouseY,this.x,this.y)<this.w;
+
+      if(this.hit){ app.focus=this.id; }
 
     };
     radio.prototype.dragged=function(){
@@ -558,6 +735,8 @@ var diagrams = function(processingInstance){
               
               if(this.on){ stroke(this.clr);              }
               else       { stroke(getColor(this.clr,50)); }
+              
+              cursor(HAND);
 
             }
             else{
@@ -587,14 +766,10 @@ var diagrams = function(processingInstance){
               else              { text( txt,        this.w-10, this.h/2); }
               
             }
-            
-            if(app.focus==this.id){ cursor(HAND);  }
-            else                  { cursor(ARROW); }
 
         popMatrix();
 
     };
-
     button.prototype.clicked=function(){
 
       if(this.hit){
@@ -678,14 +853,16 @@ var diagrams = function(processingInstance){
         var circle=function(){
 
           if(hit){
-            fill(getColor(CLRS.GRAY, 20));
+            fill(getColor(CLRS.GRAY, this.value));
             stroke(getColor(CLRS.BLACK, 75));
             strokeWeight(1.25);
+            if(this.value<25){ this.value+=2; }
           }
           else{
             noFill();
             stroke(getColor(CLRS.BLACK, 50));
             strokeWeight(1);
+            value=5;
           }
 
           rTheta=radians(app.theta);
@@ -786,7 +963,6 @@ var diagrams = function(processingInstance){
         popMatrix();
 
     };
-
     unitCircle.prototype.clicked=function(){
 
 
@@ -798,7 +974,7 @@ var diagrams = function(processingInstance){
       
       this.hit=dist(mouseX, mouseY, 122.5, 444.5)<this.r;
 
-      if(this.hit){
+      if(this.hit && !app.autoPilot){
         
         app.active=this.id;
         
@@ -874,16 +1050,16 @@ var diagrams = function(processingInstance){
 
       var border=function(){
 
-        if(p.hit){
-
+        if(this.hit){
+        
           noFill();
-          stroke(borderColor);
+          stroke(CLRS.GREEN);
           strokeWeight(0.5);
 
           rect(-20, -p.h/2, p.w, p.h);
 
           if(p.innerHit){
-
+            
             stroke(CLRS.BLUE);
             strokeWeight(2);
 
@@ -1377,10 +1553,11 @@ var diagrams = function(processingInstance){
           if(app.tanOn      ){ tangentCurve();   }
           if(app.cotOn      ){ cotangentCurve(); }
 
+          if(this.innerHit  ){ cursor(ARROW);    }
+
       popMatrix();
 
     };
-
     graph.prototype.clicked=function(){
       for(var c in this.ctrls){ this.ctrls[c].clicked(0,0); }
     };
@@ -1390,7 +1567,7 @@ var diagrams = function(processingInstance){
                     mouseX<=560 &&
                     mouseY>=40 &&
                     mouseY<=580;
-
+                    
       if(this.innerHit){
         
         app.focus=this.id;
@@ -1400,7 +1577,6 @@ var diagrams = function(processingInstance){
         }
 
       }
-
     };
     graph.prototype.dragged=function(x,y){
 
@@ -1454,6 +1630,8 @@ var diagrams = function(processingInstance){
   var toggleCot=function(){ app.cotOn=!app.cotOn; };
 
   var toggleAuto=function(){ app.autoPilot=!app.autoPilot; };
+  
+  var toggleLegend=function(){ app.legend=!app.legend; };
 
   app.controls.push(new graph(0, 21, 309, 580, 580));
   
@@ -1468,6 +1646,8 @@ var diagrams = function(processingInstance){
   app.controls.push(new button(6, 305, 45, 110, 20, "Csc "+CONSTANTS.THETA, toggleCsc, getCosecant,  CLRS.SIN));
   app.controls.push(new button(7, 305, 65, 110, 20, "Sec "+CONSTANTS.THETA, toggleSec, getSecant,    CLRS.COS));
   app.controls.push(new button(8, 305, 85, 110, 20, "Cot "+CONSTANTS.THETA, toggleCot, getCotangent, CLRS.TAN));
+  
+  app.controls.push(new legend(9, 600, 0, 200, 600, "Telemetry", toggleLegend, "", CLRS.TEAL_0));
   
   var telemetry=function(){
 
@@ -1574,7 +1754,7 @@ var diagrams = function(processingInstance){
     }
 
     if(app.DEBUG){
-      telemetry();
+      // telemetry();
     }
 
   };
