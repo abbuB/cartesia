@@ -72,18 +72,16 @@ var diagrams = function(processingInstance){
 
   var application=function(){
 
-      this.DEBUG=true;         //  mode that displays enhanced debugging tools
+      this.DEBUG=true;          //  mode that displays enhanced debugging tools
 
-      this.frameRate=0;        //  refresh speed
+      this.frameRate=0;         //  refresh speed
 
       this.mouseX=0;            //  current mouseX location
       this.mouseY=0;            //  current mouseY location
 
-      this.locked=false;        //  When locked the mouse cursor doesn't change theta
       this.unitHit=false;       //  Cursor is within the bounds of the unit circle
       this.graphHit=false;      //  Cursor is within the bounds of the graph
 
-      this.lightsOn=true;
       this.autoPilot=false;     //  Alpha changes automatically
 
       this.theta=145;           //   Current angle
@@ -109,6 +107,8 @@ var diagrams = function(processingInstance){
       
       this.clicking=-1;
       
+      this.focus=0;             //  The ID of the control with focus
+      
       this.initialize=function(){
 
         this.loadData();
@@ -116,24 +116,10 @@ var diagrams = function(processingInstance){
         // if (this.DEBUG) { frameRate(0);              }
         // else            { frameRate(this.frameRate);  }
 
-      };      
+      };
       var rationalize=function(txt){
 
-        var retVal=txt.toFixed(4);
-
-        // if     (retVal==16331239353195370)      { retVal=Infinity;  }
-        // else if(retVal==6.123233995736766e-17)  { retVal=Infinity;  }
-        // else if(retVal==5443746451065123)       { retVal=Infinity;  }
-        // else if(retVal==1.2246467991473532e-16) { retVal=Infinity;  }        
-        // else if(retVal==8165619676597685)       { retVal=Infinity;  }        
-        // else if(retVal==-1.8369701987210297e-16){ retVal=-Infinity; }
-        // else if(retVal==-2.4492935982947064e-16){ retVal=-Infinity; }        
-        // else if(retVal==-1.2246467991473532e-16){ retVal=-Infinity; }        
-        // else if(retVal> 60)                     { retval=Infinity;  }
-        // else if(retVal<-60)                     { retVal=-Infinity; }
-        // else                                    { retVal=retVal;    }
-
-        return retVal;
+        return txt.toFixed(4);
 
       };
       this.loadData=function(){
@@ -152,9 +138,6 @@ var diagrams = function(processingInstance){
               this.data.push({  sin:  sinN, csc:  cscN,
                                 cos:  cosN, sec:  secN,
                                 tan:  tanN, cot:  cotN });
-
-// println(n + "   " + sinN + "   " + cosN + "   " + tanN + "   " + cscN + "   " + secN + "   " + cotN);
-
           }
 
       };
@@ -379,135 +362,91 @@ var diagrams = function(processingInstance){
   // Controls =========================================================
 
   // Control ===========================================================
-  var control=function(x_coord, y_coord, width, height){
-  // var control=function(c,l,a,ctrls){
+  var control=function(id, x_coord, y_coord, width, height){  
 
     // controls properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // this.i=c.i;                 // guid
     // this.parent=c.p;            // parent
+    
+    this.id=id;                 // Unique identification number
 
     this.x=x_coord;             // left
     this.y=y_coord;             // top
     this.w=width;               // width
     this.h=height;              // height
-
-    this.zOrder=0;              //  z-order - in front or behind value
-
-    // misc properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    this.value=0;               // generic property    
+    this.zOrder=0;              // z-order - in front or behind value
     this.hit=false;             // mouse is over the control
-
     this.visible=true;          // is the control currently being displayed
     // this.ctrls=ctrls;           // array of child controls
 
   };
   control.prototype.draw=function(){
 
-    for(var c in this.ctrls){ this.ctrls[c].draw(); }
+    // for(var c in this.ctrls){ this.ctrls[c].draw(); }
 
   };
   control.prototype.clicked=function(){
 
-    if(this.hit && app.left){
-      commands(this.c, this.g);
-      for(var c in this.ctrls){ this.ctrls[c].clicked(); }
-    }
+    // if(this.hit && app.left){
+      // commands(this.c, this.g);
+      // for(var c in this.ctrls){ this.ctrls[c].clicked(); }
+    // }
 
   };
   control.prototype.clickedR=function(){
     if(this.hit){
-      for(var c in this.ctrls){ this.ctrls[c].clickedR(); }
+      // for(var c in this.ctrls){ this.ctrls[c].clickedR(); }
     }
   };
   control.prototype.moved=function(x,y){
-
-    // if(this.alignX===LEFT){
-
-    //   if(app.mouseX>x+this.x && app.mouseX<x+this.x+this.w &&
-    //     app.mouseY>y+this.y && app.mouseY<y+this.y+this.h){
-
-    //     this.hit=true;
-    //     app.focus=this.i;
-
-    //   }
-    //   else{
-    //     this.hit=false;
-    //   }
-
-    // }
-    // else if(this.alignX===CENTER){
-
-    //   if(app.mouseX>=x+this.x-this.w/2 && app.mouseX<=x+this.x+this.w/2 &&
-    //     app.mouseY>=y+this.y-this.h/2 && app.mouseY<=y+this.y+this.h/2){
-
-    //     this.hit=true;
-    //     app.focus=this.i;
-
-    //   }
-    //   else{
-    //     this.hit=false;
-    //   }
-
-    // }
-    // else if(this.alignX===RIGHT){
-
-    //   if(app.mouseX>x+this.x && app.mouseX<x+this.x+this.w &&
-    //     app.mouseY>y+this.y && app.mouseY<y+this.y+this.h){
-
-    //     this.hit=true;
-    //     app.focus=this.i;
-
-    //   }
-    //   else{
-    //     this.hit=false;
-    //   }
-
-    // }
-    // else{}
-
-    for(var c in this.ctrls){ this.ctrls[c].moved(x+this.x, y+this.y); }
+    
+    if(this.hit){ app.focus=this.id; }
+    // for(var c in this.ctrls){ this.ctrls[c].moved(x+this.x, y+this.y); }
 
   };
   control.prototype.dragged=function(){
 
-    for(var c in this.ctrls){ this.ctrls[c].dragged(); }
+    // for(var c in this.ctrls){ this.ctrls[c].dragged(); }
 
   };
   control.prototype.pressed=function(){
 
-    for(var c in this.ctrls){ this.ctrls[c].pressed(); }
+    // for(var c in this.ctrls){ this.ctrls[c].pressed(); }
 
   };
   control.prototype.released=function(){
     // this.hit=false;
 
-    for(var c in this.ctrls){ this.ctrls[c].released(); }
+    // for(var c in this.ctrls){ this.ctrls[c].released(); }
 
   };
   control.prototype.typed=function(){
 
-    for(var c in this.ctrls){ this.ctrls[c].typed(); }
+    // for(var c in this.ctrls){ this.ctrls[c].typed(); }
 
   };
   control.prototype.over=function(){
 
-    for(var c in this.ctrls){ this.ctrls[c].over(); }
+    // for(var c in this.ctrls){ this.ctrls[c].over(); }
 
   };
   control.prototype.out=function(){
 
-    this.hit=false;
-    for(var c in this.ctrls){ this.ctrls[c].out(); }
+    // this.hit=false;
+    // for(var c in this.ctrls){ this.ctrls[c].out(); }
 
   };
 
     // Radio ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
-    var radio=function(x_coord, y_coord, width, height, txt, execute, tag, clr){
+    var radio=function(id, x_coord, y_coord, width, height, txt, execute, tag, clr){
 
-      control.call(this, x_coord, y_coord, width, height);
+      control.call(this, id, x_coord, y_coord, width, height);
 
       this.txt=txt;
-      this.execute=execute;
+      if(execute){ this.execute=execute.bind(this); }
       this.clr=clr;
       this.on=true;
       this.tag=tag;
@@ -519,22 +458,25 @@ var diagrams = function(processingInstance){
         pushMatrix();
 
           translate(this.x, this.y);
-          // scale(1,-1);
-          ellipseMode(CENTER);
 
-            fill(getColor(CLRS.WHITE,75));
-            strokeWeight(1);
+          ellipseMode(CENTER);
 
             if(this.hit){ stroke(getColor(this.clr, 75)); cursor(HAND);  }
             else        { stroke(getColor(this.clr, 50)); cursor(ARROW); }
 
-            if(this.on){ rotate(-PI/2); }
+            if(!this.on){
+              
+              rotate(-PI/2);
+
+            }
+            else{ this.value=0; }
 
             strokeWeight(3);
             noFill();
+            
             arc(0, 0, this.w, this.h, -PI/4, 3*PI/2-PI/4);
             
-            line(0,0,0,-12);
+            line(0,1,0,-11);
 
         popMatrix();
 
@@ -545,6 +487,7 @@ var diagrams = function(processingInstance){
       if(this.hit){
         this.execute();
         this.on=!this.on;
+        app.focus=this.id;
       }
 
     };
@@ -553,16 +496,7 @@ var diagrams = function(processingInstance){
     };
     radio.prototype.moved=function(x,y){
 
-      if(dist(mouseX,mouseY,this.x,this.y)<10){
-
-        this.hit=true;
-
-      }
-      else{
-
-        this.hit=false;
-
-      }
+      this.hit=dist(mouseX,mouseY,this.x,this.y)<this.w;
 
     };
     radio.prototype.dragged=function(){
@@ -598,9 +532,9 @@ var diagrams = function(processingInstance){
   
   // Button ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
-    var button=function(x_coord, y_coord, width, height, txt, execute, tag, clr){
+    var button=function(id, x_coord, y_coord, width, height, txt, execute, tag, clr){
 
-      control.call(this, x_coord, y_coord, width, height);
+      control.call(this, id, x_coord, y_coord, width, height);
 
       this.txt=txt;
       this.execute=execute;
@@ -621,12 +555,13 @@ var diagrams = function(processingInstance){
             strokeWeight(1);
 
             if(this.hit){
-
+              
               if(this.on){ stroke(this.clr);              }
               else       { stroke(getColor(this.clr,50)); }
 
             }
             else{
+               
               noStroke();
             }
 
@@ -653,6 +588,9 @@ var diagrams = function(processingInstance){
               
             }
             
+            if(app.focus==this.id){ cursor(HAND);  }
+            else                  { cursor(ARROW); }
+
         popMatrix();
 
     };
@@ -670,19 +608,12 @@ var diagrams = function(processingInstance){
     };
     button.prototype.moved=function(x,y){
 
-      if(mouseX>this.x &&
-         mouseX<this.x+this.w &&
-         mouseY>this.y &&
-         mouseY<this.y+this.h){
-
-        this.hit=true;
-
-      }
-      else{
-
-        this.hit=false;
-
-      }
+      this.hit=mouseX>this.x &&
+               mouseX<this.x + this.w &&
+               mouseY>this.y &&
+               mouseY<this.y + this.h;
+      
+      if(this.hit){ app.focus=this.id; }
 
     };
     button.prototype.dragged=function(){
@@ -718,9 +649,9 @@ var diagrams = function(processingInstance){
 
   // Unit Circle ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 {
-    var unitCircle=function(x_coord, y_coord, width, height){
+    var unitCircle=function(id, x_coord, y_coord, width, height){
 
-      control.call(this, x_coord, y_coord, width, height);
+      control.call(this, id, x_coord, y_coord, width, height);
 
       this.r=61.5;
       this.theta=0;
@@ -864,27 +795,20 @@ var diagrams = function(processingInstance){
 
     };
     unitCircle.prototype.moved=function(x,y){
+      
+      this.hit=dist(mouseX, mouseY, 122.5, 444.5)<this.r;
 
-      if(!app.locked){
+      if(this.hit){
+        
+        app.active=this.id;
+        
+        var d=round(degrees(atan2(mouseY-444.5, mouseX-122.5)));
 
-        if(dist(mouseX, mouseY, 122.5, 444.5)<this.r){
+        if(d<0){ d+=360; }
 
-          this.hit=true;
+        app.theta=360-d;
 
-          var d=round(degrees(atan2(mouseY-444.5, mouseX-122.5)));
-
-          if(d<0){ d+=360; }
-
-          app.theta=360-d;
-
-        }
-        else{
-
-          this.hit=false;
-
-        }
-        app.unitHit=this.hit;
-        app.graphHit=!this.hit;
+        app.focus=this.id;
 
       }
 
@@ -922,29 +846,11 @@ var diagrams = function(processingInstance){
 
   // Graph ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
-    var graph=function(x_coord, y_coord, width, height){
+    var graph=function(id, x_coord, y_coord, width, height){
 
-      control.call(this, x_coord, y_coord, width, height);
+      control.call(this, id, x_coord, y_coord, width, height);
 
       this.innerHit=false;
-
-      // control.call(this,c,l,a,ctrls);
-
-      // app.factor=     this.h/22;   // required for initial grid height
-
-      // this.shapes=    [];
-      // this.Temp=      0;
-
-      // this.cX=        0;
-      // this.cY=        0;
-
-      // this.originX=   0;
-      // this.originY=   0;
-
-      // this.offsetX=   0;
-      // this.offsetY=   0;
-
-      // this.hitProp=   false;
 
     };
     graph.prototype=Object.create(control.prototype);
@@ -962,7 +868,7 @@ var diagrams = function(processingInstance){
       var gw=h/16;    //  grid width
       var f=4*gw;     //  coefficient to account for grid size
 
-      var borderColor=color(CLRS.BORDER);
+      var borderColor=CLRS.BORDER;
 
       var innerHit=false;
 
@@ -1480,42 +1386,17 @@ var diagrams = function(processingInstance){
     };
     graph.prototype.moved=function(x,y){
 
-      if(!app.locked){
+      this.innerHit=mouseX>=20 &&
+                    mouseX<=560 &&
+                    mouseY>=40 &&
+                    mouseY<=580;
 
-        if(mouseX>x+0 &&
-           mouseX<x+580 &&
-           mouseY>y+20 &&
-           mouseY<y+600){
+      if(this.innerHit){
+        
+        app.focus=this.id;
 
-          app.graphHit=true;
-
-          if(mouseX>=20 &&
-             mouseX<=560 &&
-             mouseY>=30 &&
-             mouseY<=580){
-
-            this.innerHit=true;
-
-            if(app.unitHit==false &&
-               app.autoPilot==false){
-              app.theta=round(map(mouseX-20,0,540,0,360));
-            }
-            else{
-
-            }
-
-          }
-          else{
-
-            this.innerHit=false;
-
-          }
-
-        }
-        else{
-
-          app.graphHit=false;
-
+        if(!app.autoPilot){
+          app.theta=round(map(mouseX-20,0,540,0,360));
         }
 
       }
@@ -1574,19 +1455,20 @@ var diagrams = function(processingInstance){
 
   var toggleAuto=function(){ app.autoPilot=!app.autoPilot; };
 
-  app.controls.push(new graph(21, 309, 580, 580));
-  // app.controls.push(new unitCircle(450, 309, 580, 580));
+  app.controls.push(new graph(0, 21, 309, 580, 580));
+  
+  app.controls.push(new unitCircle(1, 450, 309, 580, 580));
 
-  // app.controls.push(new button(175, 45, 110, 20, "Sin "+CONSTANTS.THETA, toggleAuto, getSine,      CLRS.SIN));
-  // app.controls.push(new button(175, 65, 110, 20, "Cos "+CONSTANTS.THETA, toggleCos, getCosine,    CLRS.COS));
-  // app.controls.push(new button(175, 85, 110, 20, "Tan "+CONSTANTS.THETA, toggleTan, getTangent,   CLRS.TAN));
-
-  // app.controls.push(new button(305, 45, 110, 20, "Csc "+CONSTANTS.THETA, toggleCsc, getCosecant,  CLRS.SIN));
-  // app.controls.push(new button(305, 65, 110, 20, "Sec "+CONSTANTS.THETA, toggleSec, getSecant,    CLRS.COS));
-  // app.controls.push(new button(305, 85, 110, 20, "Cot "+CONSTANTS.THETA, toggleCot, getCotangent, CLRS.TAN));
-
-  app.controls.push(new radio(40, 20, 15, 15, "NO TEXT", toggleAuto, getAuto, CLRS.BLACK));
+  app.controls.push(new radio(2, 40, 20, 15, 15, "NO TEXT", toggleAuto, getAuto, CLRS.BLACK));
     
+  app.controls.push(new button(3, 175, 45, 110, 20, "Sin "+CONSTANTS.THETA, toggleSin, getSine,      CLRS.SIN));
+  app.controls.push(new button(4, 175, 65, 110, 20, "Cos "+CONSTANTS.THETA, toggleCos, getCosine,    CLRS.COS));
+  app.controls.push(new button(5, 175, 85, 110, 20, "Tan "+CONSTANTS.THETA, toggleTan, getTangent,   CLRS.TAN));
+
+  app.controls.push(new button(6, 305, 45, 110, 20, "Csc "+CONSTANTS.THETA, toggleCsc, getCosecant,  CLRS.SIN));
+  app.controls.push(new button(7, 305, 65, 110, 20, "Sec "+CONSTANTS.THETA, toggleSec, getSecant,    CLRS.COS));
+  app.controls.push(new button(8, 305, 85, 110, 20, "Cot "+CONSTANTS.THETA, toggleCot, getCotangent, CLRS.TAN));
+  
   var telemetry=function(){
 
     // Border
@@ -1638,6 +1520,8 @@ var diagrams = function(processingInstance){
 
     text("AutoPilot:",    col1, row0+22*h);
 
+    text("Focus:",    col1, row0+24*h);
+        
     fill(getColor(CLRS.YELLOW,75));
     textSize(11);
     textAlign(RIGHT,CENTER);
@@ -1669,6 +1553,9 @@ var diagrams = function(processingInstance){
 
     text(app.autoPilot,     col2, row0+22*h);
 
+    
+    text(app.focus,     col2, row0+24*h);
+        
   };
 
   var draw= function() {
