@@ -1,7 +1,11 @@
 /*  TBD
 
     TO DO:
-
+        
+        - full size the graph or create a container object
+        - legend button
+        - disable arrows while autoPilot is on
+        
         - question list
         - Addition and subtraction trig identities
         - Law of cosines
@@ -64,7 +68,7 @@
 var diagrams = function(processingInstance){
   with (processingInstance){
 
-  size(800, 600); // set size of canvas
+  size(600, 600); // set size of canvas
 
   // angleMode="radians";
 
@@ -567,7 +571,7 @@ var diagrams = function(processingInstance){
 
         text(app.legend,      col2, row0+21*h);
         
-        var txt="Press the left and right arrow keys to increment and decrement alpha by a single degree.";
+        var txt="Type or press the left and right arrow keys to increment and decrement alpha by a single degree.";
         
         textAlign(LEFT, TOP);
         
@@ -590,10 +594,7 @@ var diagrams = function(processingInstance){
     };
     legend.prototype.clicked=function(){
 
-      if(this.hit){ this.execute(); }
-
-    };
-    legend.prototype.clickedR=function(){
+      if(this.hit){  }
 
     };
     legend.prototype.moved=function(x,y){
@@ -608,7 +609,8 @@ var diagrams = function(processingInstance){
     };
 
   }
-    // Radio ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  // Radio ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
     var radio=function(id, x_coord, y_coord, width, height, txt, execute, tag, clr){
 
@@ -640,15 +642,15 @@ var diagrams = function(processingInstance){
               stroke(getColor(this.clr, 50));
             }
 
-            if(!this.on){ rotate(-PI/2); }
+            if(this.on){ rotate(-PI/2); }
             else        { this.value=0;  }
 
-            strokeWeight(3);
+            strokeWeight(2);
             noFill();
 
             arc(0, 0, this.w, this.h, -PI/4, 3*PI/2-PI/4);
             
-            line(0,1,0,-11);
+            line(0,1,0,-9);
 
         popMatrix();
 
@@ -661,13 +663,77 @@ var diagrams = function(processingInstance){
       }
 
     };
-    radio.prototype.clickedR=function(){
-
-    };
     radio.prototype.moved=function(x,y){
 
       this.hit=dist(mouseX,mouseY,this.x,this.y)<this.w;
 
+      if(this.hit){ app.focus=this.id; }
+
+    };
+
+  }
+  
+  // Telemetry ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  {
+    var telemetry=function(id, x_coord, y_coord, width, height, txt, execute, tag, clr){
+
+      control.call(this, id, x_coord, y_coord, width, height);
+
+      this.txt=txt;
+      this.execute=execute;
+      this.clr=clr;
+      this.on=true;
+      this.tag=tag;
+
+    };
+    telemetry.prototype=Object.create(control.prototype);
+    telemetry.prototype.draw=function(){
+
+        pushMatrix();
+
+          translate(this.x, this.y);
+          // scale(1,-1);
+
+            noStroke();
+            noFill();
+              
+            if(this.hit){
+
+              fill(getColor(CLRS.BLACK,10));
+              cursor(HAND);
+
+            }
+
+            rect(0, 0, this.w, this.h, 2, 2);
+
+            fill(getColor(CLRS.BLACK, 65));
+            noStroke();
+
+            ellipse(this.w/2, this.h/2-6, 3, 3);
+            ellipse(this.w/2, this.h/2,   3, 3);
+            ellipse(this.w/2, this.h/2+6, 3, 3);
+            
+            // Origin
+            // ellipse(0,0,3,3);
+            
+        popMatrix();
+
+    };
+    telemetry.prototype.clicked=function(){
+
+      if(this.hit){
+        this.execute();
+        this.on=!this.on;
+      }
+
+    };
+    telemetry.prototype.moved=function(x,y){
+
+      this.hit=mouseX>this.x &&
+               mouseX<this.x + this.w &&
+               mouseY>this.y &&
+               mouseY<this.y + this.h;
+      
       if(this.hit){ app.focus=this.id; }
 
     };
@@ -700,15 +766,19 @@ var diagrams = function(processingInstance){
 
             if(this.hit){
               
+              fill(getColor(CLRS.WHITE,50));
+              
               if(this.on){ stroke(this.clr);              }
               else       { stroke(getColor(this.clr,50)); }
-              
+
               cursor(HAND);
 
             }
             else{
-               
+
+              fill(getColor(CLRS.WHITE,30));
               noStroke();
+
             }
 
             rect(0, -this.h, this.w, this.h);
@@ -719,7 +789,8 @@ var diagrams = function(processingInstance){
             scale(1,-1);
 
             textAlign(LEFT,CENTER);
-
+            
+            textSize(12);
             text(this.txt, 10, this.h/2);
 
             textAlign(RIGHT,CENTER);
@@ -745,9 +816,6 @@ var diagrams = function(processingInstance){
       }
 
     };
-    button.prototype.clickedR=function(){
-
-    };
     button.prototype.moved=function(x,y){
 
       this.hit=mouseX>this.x &&
@@ -762,7 +830,7 @@ var diagrams = function(processingInstance){
   }
 
   // Unit Circle ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-{
+  {  
     var unitCircle=function(id, x_coord, y_coord, width, height){
 
       control.call(this, id, x_coord, y_coord, width, height);
@@ -890,7 +958,7 @@ var diagrams = function(processingInstance){
 
         pushMatrix();
 
-          translate(122.5, 444.5);
+          translate(131.5, 450.5);
           scale(1, -1);
 
             axes();
@@ -904,9 +972,6 @@ var diagrams = function(processingInstance){
     };
     unitCircle.prototype.clicked=function(){
 
-
-    };
-    unitCircle.prototype.clickedR=function(){
 
     };
     unitCircle.prototype.moved=function(x,y){
@@ -998,7 +1063,7 @@ var diagrams = function(processingInstance){
         strokeWeight(1);
 
         line(-5,       0, p.w-30,       0); // x-axis
-        line(0, -p.h/2+5,      0, p.h/2-5); // y-axis
+        line(0, -p.h/2+10,      0, p.h/2-10); // y-axis
 
       };
       var arrows=function(){
@@ -1009,8 +1074,8 @@ var diagrams = function(processingInstance){
         quad(555, 0, 545, -3, 547, 0, 545, 3);    // x-right
         // quad(-20, 0, -10, -3, -12, 0, -10, 3);    // x-left
 
-        quad(0,  285, -3,  275, 0,  277, 3,  275);    // y-top
-        quad(0, -285, -3, -275, 0, -277, 3, -275);    // y-bottom
+        quad(0,  283, -3,  273, 0,  275, 3,  273);    // y-top
+        quad(0, -283, -3, -273, 0, -275, 3, -273);    // y-bottom
 
       };
       var grid=function(){
@@ -1091,21 +1156,21 @@ var diagrams = function(processingInstance){
 
             textAlign(CENTER,TOP);
 
-            text( "π/2",  gw*4+20, 585);
-            text(   "π",  gw*8+20, 585);
-            text("3π/2", gw*12+20, 585);
-            text(  "2π", gw*16+20, 585);
+            text( "π/2",  gw*4+29, 587);
+            text(   "π",  gw*8+29, 587);
+            text("3π/2", gw*12+29, 587);
+            text(  "2π", gw*16+29, 587);
 
             textAlign(RIGHT,CENTER);
 
-            text("0",13,310);
+            text("0",18,315);
 
             // y-axis
             for(n=1; n<p.h/2/gw; n++){
 
               if(n%4==0){
-                text( n/4, 13, 310-n*gw);  //  Positive y-axis
-                text(-n/4, 13, 310+n*gw);  //  Negative y-axis
+                text( n/4, 18, 315-n*gw);  //  Positive y-axis
+                text(-n/4, 18, 315+n*gw);  //  Negative y-axis
               }
 
             }
@@ -1503,11 +1568,11 @@ var diagrams = function(processingInstance){
   
   var toggleLegend=function(){ app.legend=!app.legend; };
 
-  app.controls.push(new graph(0, 21, 309, 580, 580));
+  app.controls.push(new graph(0, 30, 315, 580, 580));
   
-  app.controls.push(new unitCircle(1, 450, 309, 580, 580));
+  app.controls.push(new unitCircle(1, 460, 309, 580, 580));
 
-  app.controls.push(new radio(2, 40, 20, 15, 15, "NO TEXT", toggleAuto, getAuto, CLRS.BLACK));
+  app.controls.push(new radio(2, 17, 15, 13, 13, "NO TEXT", toggleAuto, getAuto, CLRS.BLACK));
     
   app.controls.push(new button(3, 175, 45, 110, 20, "Sin "+CONSTANTS.THETA, toggleSin, getSine,      CLRS.SIN));
   app.controls.push(new button(4, 175, 65, 110, 20, "Cos "+CONSTANTS.THETA, toggleCos, getCosine,    CLRS.COS));
@@ -1517,7 +1582,9 @@ var diagrams = function(processingInstance){
   app.controls.push(new button(7, 305, 65, 110, 20, "Sec "+CONSTANTS.THETA, toggleSec, getSecant,    CLRS.COS));
   app.controls.push(new button(8, 305, 85, 110, 20, "Cot "+CONSTANTS.THETA, toggleCot, getCotangent, CLRS.TAN));
   
-  app.controls.push(new legend(9, 600, 0, 200, 600, "Telemetry", toggleLegend, getLegend, CLRS.TEAL_0));
+  app.controls.push(new legend(9, 600, 30, 200, 570, "Legend", "", "", CLRS.TEAL_0));
+  
+  app.controls.push(new telemetry(10, 575, 5, 22, 22, "Telemetry", toggleLegend, getLegend, CLRS.TEAL_2));
   
   var telemetry=function(){
 
@@ -1608,9 +1675,26 @@ var diagrams = function(processingInstance){
         
   };
 
+  var toolbar=function(){
+
+    noStroke();
+    fill(CLRS.TEAL_1);
+
+    rect(0,0,600,30);
+    
+    fill(getColor(CLRS.WHITE,75));
+    
+    textAlign(CENTER,CENTER);
+    textSize(16);
+    
+    text("Trig Curves", 300,15);
+    
+  };
   var draw= function() {
 
-    background(255);
+    background(242);
+
+    toolbar();
 
     // initialize();
     //println(mouseX-20 + "," + mouseY);
