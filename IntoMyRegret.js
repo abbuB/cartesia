@@ -1,34 +1,38 @@
 /*  TBD
 
     TO DO:
-
-        - Z-Order for controls
-        - handle single control clicks
-
-        - ***** Find out how to handle Infinity and -Infinity *****
-                  Asymtotes
-                    - Tangent
-                    - Cotangent
-                    - Cosecant
-                    - Secant
+        
+        - fix cursor/theta correlation
+        - create a container object
 
         - question list
         - Addition and subtraction trig identities
         - Law of cosines
         - Pythagorean identities
 
-        - keyboard controls
-
-      TO DONE:
-
+    TO DONE:
+        
+        - legend button
+        - disable arrows while autoPilot is on
+        
+        - ***** Find out how to handle Infinity and -Infinity *****
+                  Asymtotes
+                    - Tangent
+                    - Cotangent
+                    - Cosecant
+                    - Secant
+                    
         - convert to new menus
         - control theta from within the unit circle
         - convert menu hit to dist()
         - Unit circle on/off (glide)
         - right/left arrows to increment/decrement theta +-=1
         - index on/off (glide)
+        - handle single control clicks
+        - Z-Order for controls
+        - keyboard controls
 
-      Decided Against:
+    Decided Against:
 
         - set theta by clicking the scale
 
@@ -66,9 +70,11 @@
 var diagrams = function(processingInstance){
   with (processingInstance){
 
-  size(800, 600); // set size of canvas
+  cursor(WAIT);
+    
+  size(600, 600); // set size of canvas
 
-  // angleMode="radians";
+  angleMode="radians";
 
   var application=function(){
 
@@ -78,7 +84,11 @@ var diagrams = function(processingInstance){
 
       this.mouseX=0;            //  current mouseX location
       this.mouseY=0;            //  current mouseY location
-      
+
+      this.left=false;          //  Is the left mouse button pressed
+      this.right=false;         //  Is the right mouse button pressed
+      this.center=false;        //  Is the center mouse button pressed
+
       this.legend=false;        //  Is the legend displayed
       
       this.unitHit=false;       //  Cursor is within the bounds of the unit circle
@@ -360,11 +370,12 @@ var diagrams = function(processingInstance){
   var getCotangent=function(){ return app.data[app.theta].cot; };
   
   var getAuto=function()     { return app.autoPilot;           };
+  var getLegend=function()   { return app.legend;              };
 
   // Controls =========================================================
 
   // Control ===========================================================
-  var control=function(id, x_coord, y_coord, width, height){  
+  var control=function(id, x_coord, y_coord, width, height, execute, tag){
 
     // controls properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // this.i=c.i;                 // guid
@@ -376,7 +387,13 @@ var diagrams = function(processingInstance){
     this.y=y_coord;             // top
     this.w=width;               // width
     this.h=height;              // height
+
+    this.execute=execute;       //  function to execute upon action
     
+    this.on=false;              // Is the control on or off
+
+    this.tag=tag;               //  generic property
+
     this.value=0;               // generic property    
     this.zOrder=0;              // z-order - in front or behind value
     this.hit=false;             // mouse is over the control
@@ -403,9 +420,21 @@ var diagrams = function(processingInstance){
     }
   };
   control.prototype.moved=function(x,y){
-    
-    if(this.hit){ app.focus=this.id; }
-    // for(var c in this.ctrls){ this.ctrls[c].moved(x+this.x, y+this.y); }
+
+    if(mouseX>this.x &&
+       mouseX<this.x + this.w &&
+       mouseY>this.y &&
+       mouseY<this.y + this.h){
+         
+         this.hit=true;
+         app.focus=this.id;
+         
+      }
+      else{
+
+        this.hit=false;
+
+      }
 
   };
   control.prototype.dragged=function(){
@@ -436,7 +465,7 @@ var diagrams = function(processingInstance){
   };
   control.prototype.out=function(){
 
-    // this.hit=false;
+    this.hit=false;
     // for(var c in this.ctrls){ this.ctrls[c].out(); }
 
   };
@@ -445,41 +474,55 @@ var diagrams = function(processingInstance){
   {
     var legend=function(id, x_coord, y_coord, width, height, txt, execute, tag, clr){
 
-      control.call(this, id, x_coord, y_coord, width, height);
+      control.call(this, id, x_coord, y_coord, width, height, execute, tag);
 
       this.txt=txt;
-      this.execute=execute;
       this.clr=clr;
-      this.on=true;
-      this.tag=tag;
+
+      this.left=0;      //  Dynamic x-coordinate
 
     };
     legend.prototype=Object.create(control.prototype);
     legend.prototype.draw=function(){
       
       var p=this;
-      
+
       // Border
       var border=function(){
-        
-        fill(getColor(CLRS.TEAL_0,75));
+
+        if(p.hit){ fill(getColor(CLRS.TEAL_0,85)); }
+        else     { fill(getColor(CLRS.TEAL_0,75)); }
+
         stroke(getColor(CLRS.TEAL_0,100));
 
-        rect(0, 0, p.w, p.h);
+        rect(p.left, 0, p.w, p.h);
 
       }
-      var values=function(){
-        
-        var left=0;
+      //  Properties
+      var properties=function(){
+
         var h=15;
 
         var row0=30;
 
-        var col0=left+20;
-        var col1=left+30;
-        var col2=left+130;
+        var col0=p.left+20;
+        var col1=p.left+30;
+        var col2=p.left+130;
+        
+        if     ( app.legend && p.left>-200){ p.left-=10; }
+        else if(!app.legend && p.left<0   ){ p.left+=10; }
 
-        fill(getColor(CLRS.WHITE,75));
+        if(p.hit){
+
+          app.current=this.id;
+          fill(getColor(CLRS.WHITE,80));
+
+        }
+        else{
+
+          fill(getColor(CLRS.WHITE,60));
+
+        }
 
         textAlign(LEFT,CENTER);
         textSize(12);
@@ -492,28 +535,25 @@ var diagrams = function(processingInstance){
         text("x: ",           col1, row0+h);
         text("y: ",           col1, row0+2*h);
 
-        text("Sine On:",      col1, row0+4*h);
-        text("Cosine On:",    col1, row0+5*h);
-        text("Tangent On:",   col1, row0+6*h);
-        text("Cosecant On:",  col1, row0+7*h);
-        text("Secant On:",    col1, row0+8*h);
-        text("Cotangent On:", col1, row0+9*h);
+        text("Left:",         col1, row0+4*h);
+        text("Right:",        col1, row0+5*h);
+        text("Center:",       col1, row0+6*h);
+        
+        text("Sine On:",      col1, row0+8*h);
+        text("Cosine On:",    col1, row0+9*h);
+        text("Tangent On:",   col1, row0+10*h);
+        text("Cosecant On:",  col1, row0+11*h);
+        text("Secant On:",    col1, row0+12*h);
+        text("Cotangent On:", col1, row0+13*h);
 
-        text("Sine:",         col1, row0+11*h);
-        text("Cosine:",       col1, row0+12*h);
-        text("Tangent:",      col1, row0+13*h);
-        text("Cosecant:",     col1, row0+14*h);
-        text("Secant:",       col1, row0+15*h);
-        text("Cotangent:",    col1, row0+16*h);
+        text("Theta ("+CONSTANTS.THETA+"):",      col1, row0+15*h);
 
-        text("Theta ("+CONSTANTS.THETA+"):",      col1, row0+18*h);
+        text("AutoPilot:",    col1, row0+17*h);
 
-        text("Locked:",       col1, row0+20*h);
-
-        text("AutoPilot:",    col1, row0+22*h);
-
-        text("Focus:",    col1, row0+24*h);
-            
+        text("Focus:",        col1, row0+19*h);
+        
+        text("Legend:",       col1, row0+21*h);
+        
         fill(getColor(CLRS.YELLOW,75));
         textSize(11);
         textAlign(RIGHT,CENTER);
@@ -521,109 +561,88 @@ var diagrams = function(processingInstance){
         text(mouseX,          col2, row0+h);
         text(mouseY,          col2, row0+2*h);
 
-        text(app.sinOn,       col2, row0+4*h);
-        text(app.cosOn,       col2, row0+5*h);
-        text(app.tanOn,       col2, row0+6*h);
-        text(app.cscOn,       col2, row0+7*h);
-        text(app.secOn,       col2, row0+8*h);
-        text(app.cotOn,       col2, row0+9*h);
-
-        text(app.data[app.theta].sin, col2, row0+11*h);
-        text(app.data[app.theta].cos, col2, row0+12*h);
+        text(app.left,        col2, row0+4*h);
+        text(app.right,       col2, row0+5*h);
+        text(app.center,      col2, row0+6*h);
         
-        if     (app.data[app.theta].tan> 100){ text( "Infinity", col2, row0+13*h);             }
-        else if(app.data[app.theta].tan<-100){ text("-Infinity", col2, row0+13*h);             }
-        else                                 { text(app.data[app.theta].tan, col2, row0+13*h); }
+        text(app.sinOn,       col2, row0+8*h);  //  Sine display
+        text(app.cosOn,       col2, row0+9*h);  //  Cosine Display
+        text(app.tanOn,       col2, row0+10*h); //  Tangent Display
+        text(app.cscOn,       col2, row0+11*h); //  Cosecant Display
+        text(app.secOn,       col2, row0+12*h); //  Secant Display
+        text(app.cotOn,       col2, row0+13*h); //  Cotangent Display
 
-        text(app.data[app.theta].csc, col2, row0+14*h);
-        text(app.data[app.theta].sec, col2, row0+15*h);
-        text(app.data[app.theta].cot, col2, row0+16*h);
-
-        text(app.theta,       col2, row0+18*h);
-
-        text(app.locked,      col2, row0+20*h);
-
-        text(app.autoPilot,     col2, row0+22*h);
-
+        // text(app.data[app.theta].sin, col2, row0+11*h);
+        // text(app.data[app.theta].cos, col2, row0+12*h);
         
-        text(app.focus,     col2, row0+24*h);
+        // if     (app.data[app.theta].tan> 100){ text( "Infinity", col2, row0+13*h);             }
+        // else if(app.data[app.theta].tan<-100){ text("-Infinity", col2, row0+13*h);             }
+        // else                                 { text(app.data[app.theta].tan, col2, row0+13*h); }
+
+        // text(app.data[app.theta].csc, col2, row0+14*h);
+        // text(app.data[app.theta].sec, col2, row0+15*h);
+        // text(app.data[app.theta].cot, col2, row0+16*h);
+
+        text(app.theta,       col2, row0+15*h);
+
+        text(app.autoPilot,   col2, row0+17*h);
+        
+        text(app.focus,       col2, row0+19*h);
+
+        text(app.legend,      col2, row0+21*h);
+        
+        var txt="Type or press the left and right arrow keys to increment and decrement theta.";
+        
+        textAlign(LEFT, TOP);
+        
+        text(txt, col0, row0 + 23*h, 170, 1000);
+
       }
       
       pushMatrix();
 
-      println(this.w+ '\t' + this.h);
-
         translate(this.x, this.y);
-        // scale(1, -1);
 
+          if(p.hit){            
+            app.focus=this.id;
+            cursor(WAIT);
+          }
+          
           border();
-          values();
+          properties();
           
       popMatrix();
 
     };
-    legend.prototype.clicked=function(){
-
-      if(this.hit){
-        this.execute();
-        this.on=!this.on;
-      }
-
-    };
-    legend.prototype.clickedR=function(){
-
-    };
-    legend.prototype.moved=function(x,y){
-
-      this.hit=mouseX>this.x &&
-               mouseX<this.x + this.w &&
-               mouseY>this.y &&
-               mouseY<this.y + this.h;
+    legend.prototype.moved=function(){
       
-      if(this.hit){ app.focus=this.id; }
+      if(mouseX>this.x + this.left &&
+        mouseX<this.x + this.w &&
+        mouseY>this.y &&
+        mouseY<this.y + this.h){
+         
+        this.hit=true;
+        app.focus=this.id;
+         
+      }
+      else{
 
+        this.hit=false;
+
+      }
+      
     };
-    legend.prototype.dragged=function(){
-
-
-
-    };
-    legend.prototype.pressed=function(){
-
-
-
-    };
-    legend.prototype.released=function(){
-
-
-    };
-    legend.prototype.typed=function(){
-
-
-
-    };
-    legend.prototype.over=function(){
-
-
-
-    };
-    legend.prototype.out=function(){
-
-
-    };
-
   }
-    // Radio ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  // Radio * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
     var radio=function(id, x_coord, y_coord, width, height, txt, execute, tag, clr){
 
-      control.call(this, id, x_coord, y_coord, width, height);
+      control.call(this, id, x_coord, y_coord, width, height, execute, tag);
 
       this.txt=txt;
-      this.execute=execute;
       this.clr=clr;
       this.on=true;
-      this.tag=tag;
 
     };
     radio.prototype=Object.create(control.prototype);
@@ -637,23 +656,27 @@ var diagrams = function(processingInstance){
 
             if(this.hit){
               
-              stroke(getColor(this.clr, 75));
+              app.focus=this.id;
               cursor(HAND);
+              
+              stroke(getColor(this.clr, 75));
               
             }
             else{
+              
               stroke(getColor(this.clr, 50));
+              
             }
 
-            if(!this.on){ rotate(-PI/2); }
-            else        { this.value=0;  }
+            if(this.on){ rotate(-PI/2); }
+            else       { this.value=0;  }
 
-            strokeWeight(3);
+            strokeWeight(2);
             noFill();
 
             arc(0, 0, this.w, this.h, -PI/4, 3*PI/2-PI/4);
             
-            line(0,1,0,-11);
+            line(0, 1, 0, -9);
 
         popMatrix();
 
@@ -666,42 +689,64 @@ var diagrams = function(processingInstance){
       }
 
     };
-    radio.prototype.clickedR=function(){
-
-    };
     radio.prototype.moved=function(x,y){
 
-      this.hit=dist(mouseX,mouseY,this.x,this.y)<this.w;
-
-      if(this.hit){ app.focus=this.id; }
-
-    };
-    radio.prototype.dragged=function(){
-
-
+      if(dist(mouseX, mouseY, 
+              this.x, this.y)<this.w){ this.hit=true;  }
+      else                           { this.hit=false; }
 
     };
-    radio.prototype.pressed=function(){
 
+  }
+  
+  // Settings * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  {
+    var settings=function(id, x_coord, y_coord, width, height, txt, execute, tag, clr){
 
+      control.call(this, id, x_coord, y_coord, width, height, execute, tag);
 
-    };
-    radio.prototype.released=function(){
-
-
-    };
-    radio.prototype.typed=function(){
-
-
-
-    };
-    radio.prototype.over=function(){
-
-
+      this.txt=txt;
+      this.clr=clr;
+      this.on=true;
 
     };
-    radio.prototype.out=function(){
+    settings.prototype=Object.create(control.prototype);
+    settings.prototype.draw=function(){
 
+        pushMatrix();
+
+          translate(this.x, this.y);
+
+            noStroke();
+            noFill();
+              
+            if(this.hit){
+
+              app.focus=this.id;
+              cursor(HAND);
+              
+              fill(getColor(CLRS.BLACK,10));
+
+            }
+
+            rect(0, 0, this.w, this.h, 2, 2);
+
+            fill(getColor(CLRS.BLACK, 65));
+            noStroke();
+
+            ellipse(this.w/2, this.h/2-6, 3, 3);
+            ellipse(this.w/2, this.h/2,   3, 3);
+            ellipse(this.w/2, this.h/2+6, 3, 3);
+
+        popMatrix();
+
+    };
+    settings.prototype.clicked=function(){
+
+      if(this.hit){
+        this.execute();
+        this.on=!this.on;
+      }
 
     };
 
@@ -711,13 +756,11 @@ var diagrams = function(processingInstance){
   {
     var button=function(id, x_coord, y_coord, width, height, txt, execute, tag, clr){
 
-      control.call(this, id, x_coord, y_coord, width, height);
+      control.call(this, id, x_coord, y_coord, width, height, execute, tag);
 
       this.txt=txt;
-      this.execute=execute;
       this.clr=clr;
       this.on=true;
-      this.tag=tag;
 
     };
     button.prototype=Object.create(control.prototype);
@@ -727,32 +770,39 @@ var diagrams = function(processingInstance){
 
           translate(this.x, this.y);
           scale(1,-1);
-
-            fill(getColor(CLRS.WHITE,50));
+            
+            // Border
             strokeWeight(1);
 
             if(this.hit){
               
+              app.focus=this.id;
+              cursor(HAND);
+
+              fill(getColor(CLRS.WHITE,50));
+              
               if(this.on){ stroke(this.clr);              }
               else       { stroke(getColor(this.clr,50)); }
-              
-              cursor(HAND);
 
             }
             else{
-               
+
+              fill(getColor(CLRS.WHITE,30));
               noStroke();
+
             }
 
-            rect(0, -this.h, this.w, this.h);
+            rect(0, -this.h, this.w, this.h, 2, 2);
 
+            // Caption
             if(this.on){ fill(this.clr);              }
             else       { fill(getColor(this.clr,50)); }
 
             scale(1,-1);
 
             textAlign(LEFT,CENTER);
-
+            
+            textSize(12);
             text(this.txt, 10, this.h/2);
 
             textAlign(RIGHT,CENTER);
@@ -778,68 +828,24 @@ var diagrams = function(processingInstance){
       }
 
     };
-    button.prototype.clickedR=function(){
-
-    };
-    button.prototype.moved=function(x,y){
-
-      this.hit=mouseX>this.x &&
-               mouseX<this.x + this.w &&
-               mouseY>this.y &&
-               mouseY<this.y + this.h;
-      
-      if(this.hit){ app.focus=this.id; }
-
-    };
-    button.prototype.dragged=function(){
-
-
-
-    };
-    button.prototype.pressed=function(){
-
-
-
-    };
-    button.prototype.released=function(){
-
-
-    };
-    button.prototype.typed=function(){
-
-
-
-    };
-    button.prototype.over=function(){
-
-
-
-    };
-    button.prototype.out=function(){
-
-
-    };
 
   }
 
-  // Unit Circle ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-{
-    var unitCircle=function(id, x_coord, y_coord, width, height){
+  // Unit Circle * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  {  
+    var unitCircle=function(id, x_coord, y_coord, width, height, execute, tag){
 
-      control.call(this, id, x_coord, y_coord, width, height);
-
-      this.r=61.5;
-      this.theta=0;
-      this.rTheta=0;
+      control.call(this, id, x_coord, y_coord, width, height, execute, tag);
 
     };
     unitCircle.prototype=Object.create(control.prototype);
     unitCircle.prototype.draw=function(){
 
-        var rTheta=0;
-        var r=this.r;
-        var cs=3.5;
-        var hit=this.hit;
+        var rTheta=0;       //  angle in radians
+        var r=this.w;       //  radius
+        var cs=3.5;         //  crossing size
+        
+        var p=this;         //  object reference
 
         var axes=function(){
 
@@ -852,17 +858,23 @@ var diagrams = function(processingInstance){
         };
         var circle=function(){
 
-          if(hit){
-            fill(getColor(CLRS.GRAY, this.value));
+          if(p.hit){
+            
+            fill(getColor(CLRS.GRAY, p.value));
             stroke(getColor(CLRS.BLACK, 75));
             strokeWeight(1.25);
-            if(this.value<25){ this.value+=2; }
+            
+            if(p.value<25){ p.value+=2; }
+            
           }
           else{
+
             noFill();
             stroke(getColor(CLRS.BLACK, 50));
             strokeWeight(1);
-            value=5;
+
+            p.value=5;
+
           }
 
           rTheta=radians(app.theta);
@@ -885,9 +897,10 @@ var diagrams = function(processingInstance){
 
           textAlign(CENTER, CENTER);
           textSize(14);
+          noStroke();
           fill(getColor(CLRS.BLACK, 25));
 
-          var w=r*0.55;
+          var w=r*0.55;  // Distance along radius
 
           text("I",   w*cos(radians( -45)),  w*sin(radians( -45)));
           text("II",  w*cos(radians(-135)),  w*sin(radians(-135)));
@@ -897,10 +910,8 @@ var diagrams = function(processingInstance){
         };
         var theta=function(){
 
-          fill(getColor(CLRS.GRAY, 20));
-
           // Hypotenuse
-          strokeWeight(1.75);
+          strokeWeight(1);
           stroke(CLRS.GRAY);
 
           line(0, 0, cos(rTheta)*r, sin(rTheta)*r);
@@ -917,8 +928,9 @@ var diagrams = function(processingInstance){
 
           // Triangle
           noStroke();
-
-          triangle(0,0,
+          fill(getColor(CLRS.GRAY, 20));
+          
+          triangle(            0,             0,
                    cos(rTheta)*r, sin(rTheta)*r,
                    cos(rTheta)*r, 0);
 
@@ -936,12 +948,12 @@ var diagrams = function(processingInstance){
           var tw=textWidth(app.theta+CONSTANTS.DEGREES);
 
           noStroke();
+          
           fill(CLRS.WHITE);
 
           rect(-tw/2, -r*1.35-7.5, tw+2, 15);
 
           fill(CLRS.BLACK);
-          noStroke();
 
           scale(1,-1);
 
@@ -951,8 +963,21 @@ var diagrams = function(processingInstance){
 
         pushMatrix();
 
-          translate(122.5, 444.5);
+          translate(this.x, this.y);
           scale(1, -1);
+
+            if(this.hit){
+
+              app.focus=this.id;
+              cursor(ARROW);
+
+              var d=round(degrees(atan2(mouseY-this.y, mouseX-this.x)));
+
+              if(d<0){ d+=360; }
+
+              app.theta=360-d;
+
+            }
 
             axes();
             circle();
@@ -963,58 +988,23 @@ var diagrams = function(processingInstance){
         popMatrix();
 
     };
-    unitCircle.prototype.clicked=function(){
-
-
-    };
-    unitCircle.prototype.clickedR=function(){
-
-    };
     unitCircle.prototype.moved=function(x,y){
-      
-      this.hit=dist(mouseX, mouseY, 122.5, 444.5)<this.r;
 
-      if(this.hit && !app.autoPilot){
-        
-        app.active=this.id;
-        
-        var d=round(degrees(atan2(mouseY-444.5, mouseX-122.5)));
+      if(!app.autoPilot){
 
-        if(d<0){ d+=360; }
+        if(dist(mouseX, mouseY,
+                this.x, this.y)<this.w){
 
-        app.theta=360-d;
+          this.hit=true;
 
-        app.focus=this.id;
+        }
+        else {
+
+          this.hit=false;
+
+        }
 
       }
-
-    };
-    unitCircle.prototype.dragged=function(){
-
-
-
-    };
-    unitCircle.prototype.pressed=function(){
-
-
-
-    };
-    unitCircle.prototype.released=function(){
-
-
-    };
-    unitCircle.prototype.typed=function(){
-
-
-
-    };
-    unitCircle.prototype.over=function(){
-
-
-
-    };
-    unitCircle.prototype.out=function(){
-
 
     };
 
@@ -1022,9 +1012,9 @@ var diagrams = function(processingInstance){
 
   // Graph ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
-    var graph=function(id, x_coord, y_coord, width, height){
+    var graph=function(id, x_coord, y_coord, width, height, execute, tag){
 
-      control.call(this, id, x_coord, y_coord, width, height);
+      control.call(this, id, x_coord, y_coord, width, height, execute, tag);
 
       this.innerHit=false;
 
@@ -1046,28 +1036,28 @@ var diagrams = function(processingInstance){
 
       var borderColor=CLRS.BORDER;
 
-      var innerHit=false;
-
-      var border=function(){
-
-        if(this.hit){
+      var innerHit=this.innerHit;
+      
+      var container=function(){
         
-          noFill();
-          stroke(CLRS.GREEN);
-          strokeWeight(0.5);
+        fill(CLRS.WHITE);
+        stroke(getColor(CLRS.BLACk,30));
+        
+        // rect(-20, p.h/2, p.w, p.h);
+        
+      };
+      var border=function(){
+        
+        noFill();
+        stroke(CLRS.GREEN);
+        strokeWeight(0.5);
 
-          rect(-20, -p.h/2, p.w, p.h);
+        // rect(0, -270, p.w, p.h);
+          
+        stroke(CLRS.BLUE);
+        strokeWeight(2);
 
-          if(p.innerHit){
-            
-            stroke(CLRS.BLUE);
-            strokeWeight(2);
-
-            rect(0,-270,540,540);
-
-          }
-
-        }
+        // rect(0,-270,540,540);
 
       };
       var origin=function(){
@@ -1087,7 +1077,7 @@ var diagrams = function(processingInstance){
         strokeWeight(1);
 
         line(-5,       0, p.w-30,       0); // x-axis
-        line(0, -p.h/2+5,      0, p.h/2-5); // y-axis
+        line(0, -p.h/2+10,      0, p.h/2-10); // y-axis
 
       };
       var arrows=function(){
@@ -1098,11 +1088,17 @@ var diagrams = function(processingInstance){
         quad(555, 0, 545, -3, 547, 0, 545, 3);    // x-right
         // quad(-20, 0, -10, -3, -12, 0, -10, 3);    // x-left
 
-        quad(0,  285, -3,  275, 0,  277, 3,  275);    // y-top
-        quad(0, -285, -3, -275, 0, -277, 3, -275);    // y-bottom
+        quad(0,  283, -3,  273, 0,  275, 3,  273);    // y-top
+        quad(0, -283, -3, -273, 0, -275, 3, -273);    // y-bottom
 
       };
       var grid=function(){
+
+        //  Background
+        fill(getColor(CLRS.WHITE,95));
+        noStroke();
+        
+        // rect(0,0,540,540);
 
         var n=0;
 
@@ -1180,21 +1176,21 @@ var diagrams = function(processingInstance){
 
             textAlign(CENTER,TOP);
 
-            text( "π/2",  gw*4+20, 585);
-            text(   "π",  gw*8+20, 585);
-            text("3π/2", gw*12+20, 585);
-            text(  "2π", gw*16+20, 585);
+            text( "π/2",  gw*4+29, 587);
+            text(   "π",  gw*8+29, 587);
+            text("3π/2", gw*12+29, 587);
+            text(  "2π", gw*16+29, 587);
 
             textAlign(RIGHT,CENTER);
 
-            text("0",13,310);
+            text("0",18,315);
 
             // y-axis
             for(n=1; n<p.h/2/gw; n++){
 
               if(n%4==0){
-                text( n/4, 13, 310-n*gw);  //  Positive y-axis
-                text(-n/4, 13, 310+n*gw);  //  Negative y-axis
+                text( n/4, 18, 315-n*gw);  //  Positive y-axis
+                text(-n/4, 18, 315+n*gw);  //  Negative y-axis
               }
 
             }
@@ -1529,12 +1525,35 @@ var diagrams = function(processingInstance){
       // Draw --------------------------------------------------------------------------------
       pushMatrix();
 
-        translate(this.x+0.5, this.y+0.5);
+        translate(this.x, this.y);
         scale(1,-1);
 
-          noFill();
+          // noFill();
 
-          border();
+          if(mouseX>=30 &&
+             mouseX<=570 &&
+             mouseY>=40 &&
+             mouseY<=580){
+
+            this.innerHit=true;  
+
+            app.focus=this.id;
+            cursor(MOVE);
+
+            if(!app.autoPilot){
+              app.theta=round(map(mouseX-this.x,0,540,0,360));
+            }
+
+            border();
+                      
+          }
+          else{
+
+            this.innerHit=false;
+
+          }
+          
+          container();
           axes();
           grid();
           arrows();
@@ -1553,70 +1572,9 @@ var diagrams = function(processingInstance){
           if(app.tanOn      ){ tangentCurve();   }
           if(app.cotOn      ){ cotangentCurve(); }
 
-          if(this.innerHit  ){ cursor(ARROW);    }
+          // if(this.innerHit  ){ cursor(ARROW);    }
 
       popMatrix();
-
-    };
-    graph.prototype.clicked=function(){
-      for(var c in this.ctrls){ this.ctrls[c].clicked(0,0); }
-    };
-    graph.prototype.moved=function(x,y){
-
-      this.innerHit=mouseX>=20 &&
-                    mouseX<=560 &&
-                    mouseY>=40 &&
-                    mouseY<=580;
-                    
-      if(this.innerHit){
-        
-        app.focus=this.id;
-
-        if(!app.autoPilot){
-          app.theta=round(map(mouseX-20,0,540,0,360));
-        }
-
-      }
-    };
-    graph.prototype.dragged=function(x,y){
-
-      if(this.hit){
-        for(var c in this.ctrls){ this.ctrls[c].dragged(); }
-      }
-
-    };
-    graph.prototype.pressed=function(){
-
-      if(this.hit){
-        for(var c in this.ctrls){ this.ctrls[c].pressed(); }
-      }
-
-    };
-    graph.prototype.released=function(){
-
-      if(this.hit){
-        for(var c in this.ctrls){ this.ctrls[c].released(); }
-      };
-
-    };
-    graph.prototype.typed=function(){
-
-      if(app.keys[KEYCODES.SPACE]){
-        this.vertices=[];
-        this.temp=0;
-      }
-
-      if(app.keys[KEYCODES.CONTROL] &&
-         app.keys[KEYCODES.Z]){
-        this.shapes.splice(this.shapes.length-1,1);
-        process();
-      }
-
-    };
-    graph.prototype.mouseOut=function(){
-      this.hit=false;
-    };
-    graph.prototype.mouseOver=function(){
 
     };
 
@@ -1633,11 +1591,11 @@ var diagrams = function(processingInstance){
   
   var toggleLegend=function(){ app.legend=!app.legend; };
 
-  app.controls.push(new graph(0, 21, 309, 580, 580));
+  app.controls.push(new graph(0, 30, 315, 580, 580));
   
-  app.controls.push(new unitCircle(1, 450, 309, 580, 580));
+  app.controls.push(new unitCircle(1, 131, 450, 61.5, 61.5));
 
-  app.controls.push(new radio(2, 40, 20, 15, 15, "NO TEXT", toggleAuto, getAuto, CLRS.BLACK));
+  app.controls.push(new radio(2, 17, 15, 13, 13, "NO TEXT", toggleAuto, getAuto, CLRS.BLACK));
     
   app.controls.push(new button(3, 175, 45, 110, 20, "Sin "+CONSTANTS.THETA, toggleSin, getSine,      CLRS.SIN));
   app.controls.push(new button(4, 175, 65, 110, 20, "Cos "+CONSTANTS.THETA, toggleCos, getCosine,    CLRS.COS));
@@ -1647,116 +1605,52 @@ var diagrams = function(processingInstance){
   app.controls.push(new button(7, 305, 65, 110, 20, "Sec "+CONSTANTS.THETA, toggleSec, getSecant,    CLRS.COS));
   app.controls.push(new button(8, 305, 85, 110, 20, "Cot "+CONSTANTS.THETA, toggleCot, getCotangent, CLRS.TAN));
   
-  app.controls.push(new legend(9, 600, 0, 200, 600, "Telemetry", toggleLegend, "", CLRS.TEAL_0));
+  app.controls.push(new legend(9, 600, 30, 200, 570, "Legend", "", "", CLRS.TEAL_0));
   
-  var telemetry=function(){
+  app.controls.push(new settings(10, 575, 5, 22, 22, "Settings", toggleLegend, getLegend, CLRS.TEAL_2));
 
-    // Border
-    fill(getColor(CLRS.TEAL_0,75));
-    stroke(getColor(CLRS.TEAL_0,100));
+  var toolbar=function(){
 
-    var left=600;
+    noStroke();
+    fill(CLRS.TEAL_1);
 
-    rect(left,0,199,599);
-
-    var h=15;
-
-    var row0=30;
-
-    var col0=left+20;
-    var col1=left+30;
-    var col2=left+130;
-
+    rect(0,0,600,30);
+    
     fill(getColor(CLRS.WHITE,75));
-
-    textAlign(LEFT,CENTER);
-    textSize(12);
-
-    text("Telemetry",     col0, 20);
-
-    textAlign(LEFT,CENTER);
-    textSize(10);
-
-    text("x: ",           col1, row0+h);
-    text("y: ",           col1, row0+2*h);
-
-    text("Sine On:",      col1, row0+4*h);
-    text("Cosine On:",    col1, row0+5*h);
-    text("Tangent On:",   col1, row0+6*h);
-    text("Cosecant On:",  col1, row0+7*h);
-    text("Secant On:",    col1, row0+8*h);
-    text("Cotangent On:", col1, row0+9*h);
-
-    text("Sine:",         col1, row0+11*h);
-    text("Cosine:",       col1, row0+12*h);
-    text("Tangent:",      col1, row0+13*h);
-    text("Cosecant:",     col1, row0+14*h);
-    text("Secant:",       col1, row0+15*h);
-    text("Cotangent:",    col1, row0+16*h);
-
-    text("Theta ("+CONSTANTS.THETA+"):",      col1, row0+18*h);
-
-    text("Locked:",       col1, row0+20*h);
-
-    text("AutoPilot:",    col1, row0+22*h);
-
-    text("Focus:",    col1, row0+24*h);
-        
-    fill(getColor(CLRS.YELLOW,75));
-    textSize(11);
-    textAlign(RIGHT,CENTER);
     
-    text(mouseX,          col2, row0+h);
-    text(mouseY,          col2, row0+2*h);
-
-    text(app.sinOn,       col2, row0+4*h);
-    text(app.cosOn,       col2, row0+5*h);
-    text(app.tanOn,       col2, row0+6*h);
-    text(app.cscOn,       col2, row0+7*h);
-    text(app.secOn,       col2, row0+8*h);
-    text(app.cotOn,       col2, row0+9*h);
-
-    text(app.data[app.theta].sin, col2, row0+11*h);
-    text(app.data[app.theta].cos, col2, row0+12*h);
+    textAlign(CENTER,CENTER);
+    textSize(16);
     
-    if     (app.data[app.theta].tan> 100){ text( "Infinity", col2, row0+13*h);             }
-    else if(app.data[app.theta].tan<-100){ text("-Infinity", col2, row0+13*h);             }
-    else                                 { text(app.data[app.theta].tan, col2, row0+13*h); }
-
-    text(app.data[app.theta].csc, col2, row0+14*h);
-    text(app.data[app.theta].sec, col2, row0+15*h);
-    text(app.data[app.theta].cot, col2, row0+16*h);
-
-    text(app.theta,       col2, row0+18*h);
-
-    text(app.locked,      col2, row0+20*h);
-
-    text(app.autoPilot,     col2, row0+22*h);
-
+    text("Trig Curves", 300,15);
     
-    text(app.focus,     col2, row0+24*h);
-        
   };
-
+  
   var draw= function() {
+    
+    pushMatrix();
+    
+      translate(0.5, 0.5);
+      
+        background(242);
 
-    background(255);
+        toolbar();
 
-    // initialize();
-    //println(mouseX-20 + "," + mouseY);
-    for(var c in app.controls){ app.controls[c].draw(); }
+        // initialize();
+        for(var c in app.controls){ app.controls[c].draw(); }
 
-    if(app.autoPilot){
-// println(app.theta);
-      app.theta+=1;
-      if(app.theta>360){ app.theta=0; }
+        if(app.autoPilot){
 
-    }
+          app.theta+=1;
+          if(app.theta>360){ app.theta=0; }
 
-    if(app.DEBUG){
-      // telemetry();
-    }
+        }
 
+        if(app.DEBUG){
+          // telemetry();
+        }
+        
+    popMatrix();
+    
   };
 
   // Keyboard Events ==================================================
@@ -1765,8 +1659,8 @@ var diagrams = function(processingInstance){
     var keyPressed = function() {
 
 
-      if(keyCode==KEYCODES.RIGHT){ increment(); }
-      if(keyCode==KEYCODES.LEFT) { decrement(); }
+      if(keyCode==KEYCODES.RIGHT){ if(!app.autoPilot){ increment(); } }
+      if(keyCode==KEYCODES.LEFT) { if(!app.autoPilot){ decrement(); } }
 
     };
     var keyTyped = function() {
@@ -1790,7 +1684,26 @@ var diagrams = function(processingInstance){
       for(var c in app.controls){ app.controls[c].clicked(); }
 
     };
+    var mousePressed=function(){
 
+    switch(mouseButton){
+
+        case LEFT:    app.left=true;    break;
+        case CENTER:  app.center=true;  break;
+        case RIGHT:   app.right=true;   break;
+
+        default:                        break;
+
+      }
+      
+    };
+    var mouseReleased=function(){
+      
+      app.left=false;
+      app.right=false;
+      app.center=false;
+
+    };
     var mouseMoved=function(){
 
       app.mouseX=mouseX;
@@ -1802,6 +1715,7 @@ var diagrams = function(processingInstance){
     var mouseOut=function(){
 
       for(var c in app.controls){ app.controls[c].out(); }
+      app.focus=-1;
       // menu.refresh(100,100);
 
     };
@@ -1895,5 +1809,6 @@ var diagrams = function(processingInstance){
 
 
 
-// 1729 = 10^3+9^3 = 12^3+1^3
 
+
+// 1729 = 10^3+9^3 = 12^3+1^3
