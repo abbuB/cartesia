@@ -2,8 +2,13 @@
 
     TO DO:
         
+        - nest controls
+        - update on mouseMove - loop() noLoop()
+        - page focus on mouseOver possible?????
+        
+        - create props object that contains arbitrary number of named props
         - create checkbox object for graph features, etc.
-        - fix boundary conditions on all trig ratios above 2 and below -2
+
         - tooltips?
 
         - question list
@@ -12,7 +17,8 @@
         - Pythagorean identities
 
     TO DONE:
-        
+
+        - fix boundary conditions on all trig ratios above 2 and below -2        
         - create toolbar object
         - onOff control
         - fix cursor/theta correlation        
@@ -83,9 +89,9 @@ var diagrams = function(processingInstance){
 
   var application=function(){
 
-      this.DEBUG=true;          //  mode that displays enhanced debugging tools
+      this.debug=true;          //  mode that displays enhanced debugging tools
 
-      this.frameRate=10;         //  refresh speed
+      this.frameRate=10;        //  refresh speed
 
       this.mouseX=0;            //  current mouseX location
       this.mouseY=0;            //  current mouseY location
@@ -94,12 +100,12 @@ var diagrams = function(processingInstance){
       this.right=false;         //  Is the right mouse button pressed
       this.center=false;        //  Is the center mouse button pressed
 
-      this.legend=false;        //  Is the legend displayed
+      this.legend=true;         //  Is the legend displayed
 
       this.unitHit=false;       //  Cursor is within the bounds of the unit circle
       this.graphHit=false;      //  Cursor is within the bounds of the graph
 
-      this.autoRun=false;     //  Alpha changes automatically
+      this.autoRun=true;       //  Alpha changes automatically
 
       this.theta=145;           //   Current angle
 
@@ -122,7 +128,7 @@ var diagrams = function(processingInstance){
 
       this.controls=[];         //  collection of controls in the app
 
-      this.clicking=-1;
+      // this.clicking=-1;
 
       this.focus=0;             //  The ID of the control with focus
 
@@ -363,7 +369,7 @@ var diagrams = function(processingInstance){
     if(app.theta<0){ app.theta=360; }
 
   };
-
+  
   var getSine=function()     { return app.data[app.theta].sin; };
   var getCosine=function()   { return app.data[app.theta].cos; };
   var getTangent=function()  { return app.data[app.theta].tan; };
@@ -371,9 +377,16 @@ var diagrams = function(processingInstance){
   var getSecant=function()   { return app.data[app.theta].sec; };
   var getCotangent=function(){ return app.data[app.theta].cot; };
 
-  var getAuto=function()     { return app.autoRun;           };
-  var getLegend=function()   { return app.legend;              };
+  var getAuto=function()     { return app.autoRun;  };
+  var getLegend=function()   { return app.legend;   };
 
+  var getSineOn=function()     { return app.sinOn; };
+  var getCosineOn=function()   { return app.cosOn; };
+  var getTangentOn=function()  { return app.tanOn; };
+  var getCosecantOn=function() { return app.cscOn; };
+  var getSecantOn=function()   { return app.secOn; };
+  var getCotangentOn=function(){ return app.cotOn; };
+  
   var toggleSin=function(){ app.sinOn=!app.sinOn; };
   var toggleCos=function(){ app.cosOn=!app.cosOn; };
   var toggleTan=function(){ app.tanOn=!app.tanOn; };
@@ -388,7 +401,7 @@ var diagrams = function(processingInstance){
   // Controls =========================================================
 
   // Control ===========================================================
-  var control=function(id, x_coord, y_coord, width, height, execute, tag){
+  var control=function(id, parent, x, y, w, h, txt, execute, tag, retrieve, clr){
 
     // controls properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // this.i=c.i;                 // guid
@@ -396,16 +409,24 @@ var diagrams = function(processingInstance){
 
     this.id=id;                 // Unique identification number
 
-    this.x=x_coord;             // left
-    this.y=y_coord;             // top
-    this.w=width;               // width
-    this.h=height;              // height
+    this.parent=parent;         // parent control (acts as a container)
+    
+    this.x=x;                   // left
+    this.y=y;                   // top
+    this.w=w;                   // width
+    this.h=h;                   // height
 
-    this.execute=execute;       //  function to execute upon action
+    this.txt=txt;               // control text
+    
+    this.execute=execute;       // function to execute upon action
 
     this.on=false;              // Is the control on or off
 
-    this.tag=tag;               //  generic property
+    this.tag=tag;               // generic property
+
+    this.retrieve=retrieve;     // function to retrieve a property setting
+    
+    this.clr=clr;               // a control color
 
     this.value=0;               // generic property
     this.zOrder=0;              // z-order - in front or behind value
@@ -428,9 +449,9 @@ var diagrams = function(processingInstance){
 
   };
   control.prototype.clickedR=function(){
-    if(this.hit){
+    // if(this.hit){
       // for(var c in this.ctrls){ this.ctrls[c].clickedR(); }
-    }
+    // }
   };
   control.prototype.moved=function(x,y){
 
@@ -440,7 +461,6 @@ var diagrams = function(processingInstance){
        mouseY<this.y + this.h){
 
       this.hit=true;
-      app.focus=this.id;
 
     }
     else{
@@ -487,13 +507,9 @@ var diagrams = function(processingInstance){
   // Container ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
 
-    var container=function(id, x_coord, y_coord, width, height, txt, execute, tag, clr){
+    var container=function(id, parent, x, y, w, h, txt, execute, tag, retrieve, clr){
 
-      control.call(this, id, x_coord, y_coord, width, height, execute, tag);
-
-      this.txt=txt;
-      this.clr=clr;
-      this.on=true;
+      control.call(this, parent, id, x, y, w, h, txt, execute, tag, retrieve, clr);
 
     };
     container.prototype=Object.create(control.prototype);
@@ -526,62 +542,12 @@ var diagrams = function(processingInstance){
 
   }
 
-  // Toolbar ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  {
-
-    var toolbar=function(id, x_coord, y_coord, width, height, txt, execute, tag, clr){
-
-      control.call(this, id, x_coord, y_coord, width, height, execute, tag);
-
-      this.txt=txt;
-      this.clr=clr;
-      // this.on=true;
-
-    };
-    toolbar.prototype=Object.create(control.prototype);
-    toolbar.prototype.draw=function(){
-
-      pushMatrix();
-
-        translate(-0.5,-0.5);
-
-          noStroke();
-          strokeWeight(1);
-          fill(getColor(this.clr, 100));
-
-          if(this.hit){
-
-            app.focus=this.id;
-            cursor(CROSS);
-
-            // fill(getColor(this.clr, 75));
-
-          }
-
-          rect(this.x, this.y, this.w, this.h, this.execute);
-          
-          fill(CLRS.WHITE);
-          textSize(16);
-          textAlign(CENTER,CENTER);
-
-          text(this.txt, this.x+this.w/2, this.y + this.h/2);
-
-      popMatrix();
-
-    };
-
-  }
-
   // Container1 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
 
-    var container1=function(id, x_coord, y_coord, width, height, txt, execute, tag, clr){
+    var container1=function(id, parent, x, y, w, h, txt, execute, tag, retrieve, clr){
 
-      control.call(this, id, x_coord, y_coord, width, height, execute, tag);
-
-      this.txt=txt;
-      this.clr=clr;
-      this.on=true;
+      control.call(this, id, parent, x, y, w, h, txt, execute, tag, retrieve, clr);
 
     };
     container1.prototype=Object.create(control.prototype);
@@ -612,16 +578,55 @@ var diagrams = function(processingInstance){
     };
 
   }
-
   
+  // Toolbar ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  {
+
+    var toolbar=function(id, parent, x, y, w, h, txt, execute, tag, retrieve, clr){
+
+      control.call(this, id, parent, x, y, w, h, txt, execute, tag, retrieve, clr);
+
+    };
+    toolbar.prototype=Object.create(control.prototype);
+    toolbar.prototype.draw=function(){
+
+      pushMatrix();
+
+        translate(-0.5,-0.5);
+
+          noStroke();
+          strokeWeight(1);
+          fill(getColor(this.clr, 100));
+
+          if(this.hit){
+
+            app.focus=this.id;
+            cursor(ARROW);
+
+            // fill(getColor(this.clr, 75));
+
+          }
+
+          rect(this.x, this.y, this.w, this.h, this.execute);
+          
+          fill(CLRS.WHITE);
+          textSize(16);
+          textAlign(CENTER,CENTER);
+
+          text(this.txt, this.x+this.w/2, this.y + this.h/2);
+
+      popMatrix();
+
+    };
+
+  }
+
   // Legend ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
-    var legend=function(id, x_coord, y_coord, width, height, txt, execute, tag, clr){
+  
+    var legend=function(id, parent, x, y, w, h, txt, execute, tag, retrieve, clr){
 
-      control.call(this, id, x_coord, y_coord, width, height, execute, tag);
-
-      this.txt=txt;
-      this.clr=clr;
+      control.call(this, id, parent, x, y, w, h, txt, execute, tag, retrieve, clr);
 
       this.left=0;      //  Dynamic x-coordinate
 
@@ -636,10 +641,10 @@ var diagrams = function(processingInstance){
 
         strokeWeight(1);
 
-        if(p.hit){ fill(getColor(this.clr, 85)); }
-        else     { fill(getColor(this.clr, 75)); }
+        if(p.hit){ fill(getColor(p.clr, 85)); }
+        else     { fill(getColor(p.clr, 75)); }
 
-        stroke(getColor(this.clr,100));
+        stroke(getColor(p.clr,100));
 
         rect(p.left, 0, p.w, p.h);
 
@@ -660,7 +665,6 @@ var diagrams = function(processingInstance){
 
         if(p.hit){
 
-          app.current=this.id;
           fill(getColor(CLRS.WHITE,80));
 
         }
@@ -694,11 +698,13 @@ var diagrams = function(processingInstance){
 
         text("Theta ("+CONSTANTS.THETA+"):",      col1, row0+15*h);
 
-        text("autoRun:",    col1, row0+17*h);
+        text("autoRun:",      col1, row0+17*h);
 
         text("Focus:",        col1, row0+19*h);
 
-        text("Legend:",       col1, row0+21*h);
+        text("Focused:",      col1, row0+21*h);
+                
+        text("Legend:",       col1, row0+23*h);
 
         fill(getColor(CLRS.YELLOW,75));
         textSize(11);
@@ -731,17 +737,19 @@ var diagrams = function(processingInstance){
 
         text(app.theta,       col2, row0+15*h);
 
-        text(app.autoRun,   col2, row0+17*h);
+        text(app.autoRun,     col2, row0+17*h);
 
         text(app.focus,       col2, row0+19*h);
 
-        text(app.legend,      col2, row0+21*h);
+        text(focused,         col2, row0+21*h);
+                
+        text(app.legend,      col2, row0+23*h);
 
         var txt="Press the left and right arrow keys to increment and decrement theta.";
 
         textAlign(LEFT, TOP);
 
-        text(txt, col0, row0 + 23*h, p.w-30, 100);
+        text(txt, col0, row0 + 26*h, p.w-30, 100);
 
       }
 
@@ -749,9 +757,11 @@ var diagrams = function(processingInstance){
 
         translate(this.x, this.y);
 
-          if(p.hit){
+          if(this.hit){
+            
             app.focus=this.id;
-            cursor(WAIT);
+            cursor(CROSS);
+
           }
 
           border();
@@ -763,12 +773,11 @@ var diagrams = function(processingInstance){
     legend.prototype.moved=function(){
 
       if(mouseX>this.x + this.left &&
-         mouseX<this.x + this.w &&
+         mouseX<this.x + this.left + this.w  &&
          mouseY>this.y &&
          mouseY<this.y + this.h){
 
         this.hit=true;
-        app.focus=this.id;
 
       }
       else{
@@ -778,18 +787,15 @@ var diagrams = function(processingInstance){
       }
 
     };
+  
   }
 
   // OnOff * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
 
-    var onOff=function(id, x_coord, y_coord, width, height, txt, execute, tag, clr){
+    var onOff=function(id, parent, x, y, w, h, txt, execute, tag, retrieve, clr){
 
-      control.call(this, id, x_coord, y_coord, width, height, execute, tag);
-
-      this.txt=txt;
-      this.clr=clr;
-      this.on=true;
+      control.call(this, id, parent, x, y, w, h, txt, execute, tag, retrieve, clr);
 
     };
     onOff.prototype=Object.create(control.prototype);
@@ -839,8 +845,12 @@ var diagrams = function(processingInstance){
     onOff.prototype.moved=function(x,y){
 
       if(dist(mouseX, mouseY,
-              this.x, this.y)<this.w){ this.hit=true;  }
-      else                           { this.hit=false; }
+              this.x, this.y)<this.w){
+        this.hit=true;
+      }
+      else{
+        this.hit=false;
+      }
 
     };
 
@@ -849,18 +859,16 @@ var diagrams = function(processingInstance){
   // Settings * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
 
-    var settings=function(id, x_coord, y_coord, width, height, txt, execute, tag, clr){
+    var settings=function(id, parent, x, y, w, h, txt, execute, tag, retrieve, clr){
 
-      control.call(this, id, x_coord, y_coord, width, height, execute, tag);
-
-      this.txt=txt;
-      this.clr=clr;
-      this.on=true;
+      control.call(this, id, parent, x, y, w, h, txt, execute, tag, retrieve, clr);
 
     };
     settings.prototype=Object.create(control.prototype);
     settings.prototype.draw=function(){
 
+        var offset=0;
+        
         pushMatrix();
 
           translate(this.x, this.y);
@@ -869,6 +877,8 @@ var diagrams = function(processingInstance){
             noFill();
 
             if(this.hit){
+              
+              if(app.left){ offset=1; }
 
               app.focus=this.id;
               cursor(HAND);
@@ -877,14 +887,14 @@ var diagrams = function(processingInstance){
 
             }
 
-            rect(0, 0, this.w, this.h, 2, 2);
+            rect(offset, offset, this.w, this.h, 2, 2);
 
             fill(getColor(CLRS.BLACK, 65));
             noStroke();
 
-            ellipse(this.w/2, this.h/2-6, 3, 3);
-            ellipse(this.w/2, this.h/2,   3, 3);
-            ellipse(this.w/2, this.h/2+6, 3, 3);
+            ellipse(this.w/2+offset, this.h/2-6+offset, 3, 3);
+            ellipse(this.w/2+offset, this.h/2,          3, 3);
+            ellipse(this.w/2+offset, this.h/2+6+offset, 3, 3);
 
         popMatrix();
 
@@ -903,18 +913,16 @@ var diagrams = function(processingInstance){
   // Button ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
 
-    var button=function(id, x_coord, y_coord, width, height, txt, execute, tag, clr){
+    var button=function(id, parent, x, y, w, h, txt, execute, tag, retrieve, clr){
 
-      control.call(this, id, x_coord, y_coord, width, height, execute, tag);
-
-      this.txt=txt;
-      this.clr=clr;
-      this.on=true;
+      control.call(this, id, parent, x, y, w, h, txt, execute, tag, retrieve, clr);
 
     };
     button.prototype=Object.create(control.prototype);
     button.prototype.draw=function(){
-
+        
+        var offset=0;
+        
         pushMatrix();
 
           translate(this.x+0.5, this.y+0.5);
@@ -924,6 +932,8 @@ var diagrams = function(processingInstance){
             strokeWeight(0.75);
 
             if(this.hit){
+
+              if(app.left){ offset=1; }
 
               app.focus=this.id;
               cursor(HAND);
@@ -942,18 +952,18 @@ var diagrams = function(processingInstance){
 
             }
 
-            rect(0, -this.h, this.w, this.h, 3, 3);
+            rect(offset, -this.h-offset, this.w, this.h, 3, 3);
 
             // Caption
-            if(this.on){ fill(this.clr);              }
-            else       { fill(getColor(this.clr,50)); }
+            if(this.retrieve()){ fill(this.clr);              }
+            else          { fill(getColor(this.clr,50)); }
 
             scale(1,-1);
 
             textAlign(LEFT,CENTER);
 
             textSize(12);
-            text(this.txt, 10, this.h/2);
+            text(this.txt, 10+offset, this.h/2+offset);
 
             textAlign(RIGHT,CENTER);
 
@@ -961,9 +971,9 @@ var diagrams = function(processingInstance){
 
             if(!(txt==null)){
 
-              if      (txt> 100){ text( "Infinity", this.w-10, this.h/2); }
-              else if (txt<-100){ text("-Infinity", this.w-10, this.h/2); }
-              else              { text( txt,        this.w-10, this.h/2); }
+              if      (txt> 100){ text( "Infinity", this.w-10+offset, this.h/2+offset); }
+              else if (txt<-100){ text("-Infinity", this.w-10+offset, this.h/2+offset); }
+              else              { text( txt,        this.w-10+offset, this.h/2+offset); }
 
             }
 
@@ -980,14 +990,95 @@ var diagrams = function(processingInstance){
     };
 
   }
+  
+  // Toggle ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  {
+
+    var toggle=function(id, parent, x, y, w, h, txt, execute, tag, retrieve, clr){
+
+      control.call(this, id, parent, x, y, w, h, txt, execute, tag, retrieve, clr);
+
+    };
+    toggle.prototype=Object.create(control.prototype);
+    toggle.prototype.draw=function(){
+
+      pushMatrix();
+
+        translate(-0.5,-0.5);
+          
+          var on=this.retrieve();
+
+          stroke(CLRS.BLACK);
+          strokeWeight(1);
+          fill(getColor(CLRS.WHITE, 10));
+
+          if(this.hit){
+
+            cursor(HAND);
+            app.focus=this.id;
+
+            fill(getColor(this.clr, 15));
+
+          }
+
+          //  Determine how wide the text is
+          textSize(11);
+          textAlign(LEFT,CENTER);
+          
+          this.w=40+textWidth(this.txt);                  
+          
+          //  Control border
+          if(app.debug){
+            rect(this.x-3, this.y-3, this.w+6, this.h+6);   
+          }
+          
+          //  Outer toggle circle
+          stroke(getColor(CLRS.BLACK,30));
+          
+          if(on){ fill(getColor(CLRS.BLACK,25)); }
+          else  { fill(getColor(CLRS.BLACK,50)); }
+          
+          rect(this.x, this.y, 30, this.h, this.h/2);   
+
+          //  Inner toggle circle
+          fill(this.clr);
+          stroke(CLRS.BLACK);
+          strokeWeight(0.5);
+
+          if(on){
+            ellipse(this.x+this.h/2+1, this.y+this.h/2+0.5, this.h-5, this.h-5);
+          }
+          else{
+            ellipse(this.x+this.h/2+15, this.y+this.h/2+0.5, this.h-5, this.h-5);
+          }
+
+          //  Text
+          if(on){ fill(getColor(this.clr,100)); }
+          else  { fill(getColor(this.clr, 50)); }
+
+          text(this.txt, this.x+35, this.y + this.h/2);
+
+      popMatrix();
+
+    };
+    toggle.prototype.clicked=function(){
+
+      if(this.hit){
+        this.execute();
+      }
+
+    };
+  
+  }
+
 
   // Unit Circle * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
 
-    var unitCircle=function(id, x_coord, y_coord, width, height, execute, tag){
+    var unitCircle=function(id, parent, x, y, w, h, txt, execute, tag, retrieve, clr){
 
-      control.call(this, id, x_coord, y_coord, width, height, execute, tag);
-
+      control.call(this, id, parent, x, y, w, h, txt, execute, tag, retrieve, clr);
+      
     };
     unitCircle.prototype=Object.create(control.prototype);
     unitCircle.prototype.draw=function(){
@@ -1122,8 +1213,6 @@ var diagrams = function(processingInstance){
               app.focus=this.id;
               cursor(ARROW);
 
-
-
             }
 
             axes();
@@ -1166,9 +1255,9 @@ var diagrams = function(processingInstance){
   // Graph ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
 
-    var graph=function(id, x_coord, y_coord, width, height, execute, tag){
+    var graph=function(id, parent, x, y, w, h, txt, execute, tag, retrieve, clr){
 
-      control.call(this, id, x_coord, y_coord, width, height, execute, tag);
+      control.call(this, id, parent, x, y, w, h, txt, execute, tag, retrieve, clr);
 
       this.gridHit=false;
 
@@ -1179,7 +1268,7 @@ var diagrams = function(processingInstance){
       this.ticksOn=true;
       this.labelsOn=true;
       this.borderOn=false;
-      
+
     };
     graph.prototype=Object.create(control.prototype);
     graph.prototype.draw=function(){
@@ -1393,6 +1482,7 @@ var diagrams = function(processingInstance){
 
       var sineCurve=function(){
 
+        strokeWeight(1);
         stroke(CLRS.SIN);
         noFill();
 
@@ -1429,6 +1519,7 @@ var diagrams = function(processingInstance){
       };
       var cosineCurve=function(){
 
+        strokeWeight(1);
         stroke(CLRS.COS);
         noFill();
 
@@ -1463,6 +1554,7 @@ var diagrams = function(processingInstance){
       };
       var tangentCurve=function(){
 
+        strokeWeight(1);      
         noFill();
         stroke(CLRS.TAN);
 
@@ -1482,10 +1574,16 @@ var diagrams = function(processingInstance){
             if(y>=-h2 && y<=h2){ curveVertex(x, y); }
 
           }
+          
+          curveVertex(degrees(atan(2))/app.MAX*h, h2);
+          curveVertex(degrees(atan(2))/app.MAX*h, h2);
 
         endShape();
 
         beginShape();
+
+          curveVertex(116.56/app.MAX*h, -h2);
+          curveVertex(116.56/app.MAX*h, -h2);
 
           for(n=91; n<270; n++){
 
@@ -1496,10 +1594,16 @@ var diagrams = function(processingInstance){
 
           }
 
+          curveVertex(243.44/app.MAX*h, h2);
+          curveVertex(243.44/app.MAX*h, h2);
+          
         endShape();
 
         beginShape();
 
+          curveVertex(296.56/app.MAX*h, -h2);
+          curveVertex(296.56/app.MAX*h, -h2);
+          
           for(n=271; n<app.MAX; n++){
 
             x=n/app.MAX*h;
@@ -1528,8 +1632,7 @@ var diagrams = function(processingInstance){
       };
       var cosecantCurve=function(){
 
-        // fill(CLRS.SIN_LT);
-        // noStroke();
+        strokeWeight(1);
         stroke(getColor(CLRS.SIN_LT, 10));
         noFill();
 
@@ -1538,11 +1641,10 @@ var diagrams = function(processingInstance){
         var n=0;
         
         beginShape();
-        // println(degrees(1/atan(2))/(app.MAX*h));
-        
-          ellipse(degrees(atan(2))/app.MAX*h, h2, 2, 2);
-          curveVertex(30/app.MAX*h, h2);
-          curveVertex(30/app.MAX*h, h2);
+
+          ellipse(degrees(PI/6)/app.MAX*h, h2, 2, 2);
+          curveVertex(degrees(PI/6)/app.MAX*h, h2);
+          curveVertex(degrees(PI/6)/app.MAX*h, h2);
           
           for(n=1; n<180; n+=2){
 
@@ -1551,22 +1653,22 @@ var diagrams = function(processingInstance){
 
             if(y>=-h2 && y<=h2){
               ellipse(x, y, 2, 2);
-              curveVertex(x, y, 2, 2);
+              curveVertex(x, y);
             }
 
           }
           
-          ellipse(150/app.MAX*h, h2, 2, 2);
-          curveVertex(150/app.MAX*h, h2);
-          curveVertex(150/app.MAX*h, h2);
+          ellipse(degrees(5*PI/6)/app.MAX*h, h2, 2, 2);
+          curveVertex(degrees(5*PI/6)/app.MAX*h, h2);
+          curveVertex(degrees(5*PI/6)/app.MAX*h, h2);
 
         endShape();
         
         beginShape();
 
-          ellipse(210/app.MAX*h, -h2, 2, 2);
-          curveVertex(210/app.MAX*h, -h2);
-          curveVertex(210/app.MAX*h, -h2);
+          ellipse(degrees(7*PI/6)/app.MAX*h, -h2, 2, 2);
+          curveVertex(degrees(7*PI/6)/app.MAX*h, -h2);
+          curveVertex(degrees(7*PI/6)/app.MAX*h, -h2);
 
           for(n=181; n<app.MAX; n+=2){
 
@@ -1575,14 +1677,14 @@ var diagrams = function(processingInstance){
 
             if(y>=-h2 && y<=h2){
               ellipse(x, y, 2, 2);
-              curveVertex(x, y, 2, 2);
+              curveVertex(x, y);
             }
 
           }
 
-          ellipse(330/app.MAX*h, -h2, 2, 2);
-          curveVertex(330/app.MAX*h, -h2);
-          curveVertex(330/app.MAX*h, -h2);
+          ellipse(degrees(11*PI/6)/app.MAX*h, -h2, 2, 2);
+          curveVertex(degrees(11*PI/6)/app.MAX*h, -h2);
+          curveVertex(degrees(11*PI/6)/app.MAX*h, -h2);
           
         endShape();
 
@@ -1599,40 +1701,81 @@ var diagrams = function(processingInstance){
 
       };
       var secantCurve=function(){
-
-        fill(CLRS.COS_LT);
-        noStroke();
+        
+        strokeWeight(1);
+        stroke(getColor(CLRS.COS_LT, 10));
+        noFill();
 
         var x=0;
         var y=app.data[0].sec;
         var n=0;
+        
+        beginShape();
 
-        for(n=1; n<90; n+=2){
+          for(n=1; n<90; n+=2){
 
-          x=n/app.MAX*h;
-          y=app.data[n].sec*f;
+            x=n/app.MAX*h;
+            y=app.data[n].sec*f;
 
-          if(y>=-h2 && y<=h2){ ellipse(x, y, 2, 2); }
+            if(y>=-h2 && y<=h2){
+              
+              ellipse(x, y, 2, 2);
+              curveVertex(x, y);
 
-        }
+            }
 
-        for(n=91; n<270; n+=2){
+          }
 
-          x=n/app.MAX*h;
-          y=app.data[n].sec*f;
+          ellipse(degrees(PI/3)/app.MAX*h, h2, 2, 2);
+          curveVertex(degrees(PI/3)/app.MAX*h, h2);
+          curveVertex(degrees(PI/3)/app.MAX*h, h2);    
+          
+        endShape();
+        
+        beginShape();
+        
+          ellipse(degrees(2*PI/3)/app.MAX*h, -h2, 2, 2);
+          curveVertex(degrees(2*PI/3)/app.MAX*h, -h2);
+          curveVertex(degrees(2*PI/3)/app.MAX*h, -h2);    
+          
+          
+          for(n=91; n<270; n+=2){
 
-          if(y>=-h2 && y<=h2){ ellipse(x, y, 2, 2); }
+            x=n/app.MAX*h;
+            y=app.data[n].sec*f;
 
-        }
+            if(y>=-h2 && y<=h2){
+              ellipse(x, y, 2, 2);
+              curveVertex(x, y);
+            }
 
-        for(n=271; n<=app.MAX; n+=2){
+          }
+        
+          ellipse(degrees(4*PI/3)/app.MAX*h, -h2, 2, 2);
+          curveVertex(degrees(4*PI/3)/app.MAX*h, -h2);
+          curveVertex(degrees(4*PI/3)/app.MAX*h, -h2);    
 
-          x=n/app.MAX*h;
-          y=app.data[n].sec*f;
+        endShape();
 
-          if(y>=-h2 && y<=h2){ ellipse(x, y, 2, 2); }
+        beginShape();
+        
+          ellipse(degrees(5*PI/3)/app.MAX*h, h2, 2, 2);
+          curveVertex(degrees(5*PI/3)/app.MAX*h, h2);
+          curveVertex(degrees(5*PI/3)/app.MAX*h, h2);    
+          
+          for(n=271; n<=app.MAX; n+=2){
 
-        }
+            x=n/app.MAX*h;
+            y=app.data[n].sec*f;
+
+            if(y>=-h2 && y<=h2){
+              ellipse(x, y, 2, 2);
+              curveVertex(x, y);
+            }
+
+          }
+
+        endShape();
 
         // Current Value
         var val=app.data[app.theta].sec*f;
@@ -1649,38 +1792,71 @@ var diagrams = function(processingInstance){
       };
       var cotangentCurve=function(){
 
-        noStroke();
-        fill(CLRS.TAN_LT);
+        strokeWeight(1);
+        stroke(getColor(CLRS.TAN_LT, 10));
+        noFill();
 
         var x=0;
         var y=0;
         var n=0;
         var incr=2;
 
-        for(n=2; n<180; n+=incr){
+        beginShape();
+        
+          ellipse(26.5/app.MAX*h, h2, 2, 2);
+          curveVertex(26.5/app.MAX*h, h2);
+          curveVertex(26.5/app.MAX*h, h2);    
+          
+          for(n=2; n<180; n+=incr){
 
-          x=n/app.MAX*h;
-          y=app.data[n].cot*f;
+            x=n/app.MAX*h;
+            y=app.data[n].cot*f;
 
-          if(y>=-h2 && y<=h2){ ellipse(x, y, 2, 2); }
+            if(y>=-h2 && y<=h2){
+              ellipse(x, y, 2, 2);
+              curveVertex(x, y);
+            }
 
-        }
+          }
 
-        for(n=181; n<=app.MAX; n+=incr){
+          ellipse(153.5/app.MAX*h, -h2, 2, 2);
+          curveVertex(153.5/app.MAX*h, -h2);
+          curveVertex(153.5/app.MAX*h, -h2);    
+        
+        endShape();
+        
+        beginShape();
 
-          x=n/app.MAX*h;
-          y=app.data[n].cot*f;
+          ellipse(206.5/app.MAX*h, h2, 2, 2);
+          curveVertex(206.5/app.MAX*h, h2);
+          curveVertex(206.5/app.MAX*h, h2);    
+          
+          for(n=181; n<=app.MAX; n+=incr){
 
-          if(y>=-h2 && y<=h2){ ellipse(x, y, 2, 2); }
+            x=n/app.MAX*h;
+            y=app.data[n].cot*f;
 
-        }
+            if(y>=-h2 && y<=h2){
+              ellipse(x, y, 2, 2);
+              curveVertex(x, y);
+            }
 
+          }
+
+          ellipse(333.5/app.MAX*h, -h2, 2, 2);
+          curveVertex(333.5/app.MAX*h, -h2);
+          curveVertex(333.5/app.MAX*h, -h2);    
+          
+        endShape();
+        
         // Current Value
         var val=app.data[app.theta].cot*f;
 
         if(val>=-h2 && val<=h2){
 
-          stroke(CLRS.TAN_LT);
+          strokeWeight(1);
+          stroke(getColor(CLRS.TAN_LT, 10));
+          noFill();
 
           ellipse(thetaMap(app.theta), val, 5, 5);
 
@@ -1695,10 +1871,10 @@ var diagrams = function(processingInstance){
         scale(1,-1);
 
           noFill();
-
-          if(this.gridHit==true){ app.focus=this.id;
-                                  cursor(MOVE);       }
-          else                  { cursor(ARROW);      }
+  
+          if(this.hit)    { app.focus=this.id;
+                            cursor(WAIT);        }
+          if(this.gridHit){ cursor(CROSS);       }
 
           pushMatrix();
 
@@ -1737,7 +1913,8 @@ var diagrams = function(processingInstance){
          mouseY<=this.y+this.h){
            
         this.hit=true;
-
+        // app.focus=this.id;
+        
         if(mouseX>=this.x+30 &&
            mouseX<=this.x+560 &&
            mouseY>=this.y+20 &&
@@ -1768,28 +1945,38 @@ var diagrams = function(processingInstance){
   // Initialize
   var initialize=function(){
 
-    // app.controls.push(new container(0, 0, 0, 599, 599, "", "", "", CLRS.TEAL_0));
+    // var control=function(id, parent, ctrls, x_coord, y_coord, width, height, txt, execute, tag, retrieve, clr){
+    var p1=0;
+    
+    // Graph --------------------------------------------------    
+    // app.controls.push(new container(11, p1, 0, 0, 599, 599, "Text", "", "", "", CLRS.TEAL_0));
 
-    app.controls.push(new graph(0, 0, 30, 600, 570));
+    // app.controls.push(new graph(12, p1, 0, 30, 600, 570, "Text", "", "", "", CLRS.TEAL_0));
+    app.controls.push(new unitCircle(2, p1, 129, 447, 61.5, 61.5, "Text", "", "", "", CLRS.TEAL_0));
 
-    app.controls.push(new unitCircle(2, 129, 447, 61.5, 61.5));
+    // Toolbar --------------------------------------------------
+    // app.controls.push(new toolbar(3, p1, 0, 0, 600, 30, "Trig Curves", "", "", "", CLRS.TEAL_1));
+    
+    app.controls.push(new onOff(4, p1, 17, 15, 13, 13, "NO TEXT", toggleAuto, getAuto, "", CLRS.BLACK));
+    app.controls.push(new settings(5, p1, 575, 5, 22, 22, "Settings", toggleLegend, getLegend, "", CLRS.TEAL_2));
 
-    app.controls.push(new toolbar(3, 0, 0, 600, 30, "Trig Curves", "", "", CLRS.TEAL_1));
-    app.controls.push(new onOff(4, 17, 15, 13, 13, "NO TEXT", toggleAuto, getAuto, CLRS.BLACK));
-    app.controls.push(new settings(5, 575, 5, 22, 22, "Settings", toggleLegend, getLegend, CLRS.TEAL_2));
+    // Legend --------------------------------------------------
+    app.controls.push(new container1(6, p1, 170, 55, 250, 65, "BORDER", 5, "", "", CLRS.WHITE));
 
-    app.controls.push(new container1(6, 170, 55, 250, 65, "BORDER", 5, "", CLRS.WHITE));
+    app.controls.push(new button(20, p1, 175, 58, 110, 20, "Sin "+CONSTANTS.THETA, toggleSin, getSine,      getSineOn,      CLRS.SIN));
+    app.controls.push(new button(21, p1, 175, 78, 110, 20, "Cos "+CONSTANTS.THETA, toggleCos, getCosine,    getCosineOn,    CLRS.COS));
+    app.controls.push(new button(22, p1, 175, 98, 110, 20, "Tan "+CONSTANTS.THETA, toggleTan, getTangent,   getTangentOn,   CLRS.TAN));
 
-    app.controls.push(new button( 7, 175, 58, 110, 20, "Sin "+CONSTANTS.THETA, toggleSin, getSine,      CLRS.SIN));
-    app.controls.push(new button( 8, 175, 78, 110, 20, "Cos "+CONSTANTS.THETA, toggleCos, getCosine,    CLRS.COS));
-    app.controls.push(new button( 9, 175, 98, 110, 20, "Tan "+CONSTANTS.THETA, toggleTan, getTangent,   CLRS.TAN));
+    app.controls.push(new button(23, p1, 305, 58, 110, 20, "Csc "+CONSTANTS.THETA, toggleCsc, getCosecant,  getCosecantOn,  CLRS.SIN));
+    app.controls.push(new button(24, p1, 305, 78, 110, 20, "Sec "+CONSTANTS.THETA, toggleSec, getSecant,    getSecantOn,    CLRS.COS));
+    app.controls.push(new button(25, p1, 305, 98, 110, 20, "Cot "+CONSTANTS.THETA, toggleCot, getCotangent, getCotangentOn, CLRS.TAN));
 
-    app.controls.push(new button(10, 305, 58, 110, 20, "Csc "+CONSTANTS.THETA, toggleCsc, getCosecant,  CLRS.SIN));
-    app.controls.push(new button(11, 305, 78, 110, 20, "Sec "+CONSTANTS.THETA, toggleSec, getSecant,    CLRS.COS));
-    app.controls.push(new button(12, 305, 98, 110, 20, "Cot "+CONSTANTS.THETA, toggleCot, getCotangent, CLRS.TAN));
-
-    app.controls.push(new legend(13, 600, 30, 200, 570, "Legend", "", "", CLRS.BLACK));
-
+    // Telemetry --------------------------------------------------
+    app.controls.push(new legend(26, p1, 600,  30, 200, 570, "Legend", "", "", "", CLRS.BLACK));
+    
+    app.controls.push(new toggle(27, p1, 350, 500,  50,  15, "Sine Curve",   toggleSin, "", getSineOn,   CLRS.SIN));
+    app.controls.push(new toggle(28, p1, 450, 550,  50,  15, "Cosine Curve", toggleCos, "", getCosineOn, CLRS.COS));
+    
   };
   
   var incrementTheta=function(){
