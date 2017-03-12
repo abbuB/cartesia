@@ -2,6 +2,7 @@
 
     TO DO:
         
+        - graph large cross hair cursor
         - nest controls
         - update on mouseMove - loop() noLoop()
         - page focus on mouseOver possible?????
@@ -394,63 +395,59 @@ var diagrams = function(processingInstance){
   var toggleSec=function(){ app.secOn=!app.secOn; };
   var toggleCot=function(){ app.cotOn=!app.cotOn; };
 
-  var toggleAuto=function(){ app.autoRun=!app.autoRun; };
+  var checkboxAuto=function(){ app.autoRun=!app.autoRun; };
 
-  var toggleLegend=function(){ app.legend=!app.legend; };
+  var checkboxLegend=function(){ app.legend=!app.legend; };
 
   // Controls =========================================================
 
   // Control ===========================================================
-  var control=function(id, parent, x, y, w, h, txt, execute, tag, retrieve, clr){
+  var control=function(id, parent, x, y, w, h, controls){
 
-    // controls properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // this.i=c.i;                 // guid
-    // this.parent=c.p;            // parent
-
-    this.id=id;                 // Unique identification number
-
-    this.parent=parent;         // parent control (acts as a container)
+    // control properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    this.id=id;                 /* Unique identification number -- Change to GUID for production) */
     
-    this.x=x;                   // left
-    this.y=y;                   // top
-    this.w=w;                   // width
-    this.h=h;                   // height
-
-    this.txt=txt;               // control text
+    this.parent=parent;         /* parent control (acts as a container) */
     
-    this.execute=execute;       // function to execute upon action
+    this.x=x;                   /* left */
+    this.y=y;                   /* top */
+    this.w=w;                   /* width */
+    this.h=h;                   /* height */
 
-    this.on=false;              // Is the control on or off
+    this.controls=controls;           /* array of child controls */
 
-    this.tag=tag;               // generic property
+    // this.color=clr;             /* a control color */
+    // this.text=txt;              /* control text     */
+    // this.execute=execute;       /* function to execute upon action */
+    // this.retrieve=retrieve;     /* function to retrieve a property setting */
+    // this.tag=tag;               /* generic property */
 
-    this.retrieve=retrieve;     // function to retrieve a property setting
+    this.on=false;              /* Is the control on or off */
+
+    this.value=0;               /* generic property */
+    this.zOrder=0;              /* z-order - in front or behind value */
+
+    this.hit=false;             /* mouse is over the control */
+    this.visible=true;          /* is the control currently being displayed */
     
-    this.clr=clr;               // a control color
-
-    this.value=0;               // generic property
-    this.zOrder=0;              // z-order - in front or behind value
-    this.hit=false;             // mouse is over the control
-    this.visible=true;          // is the control currently being displayed
-    // this.ctrls=ctrls;           // array of child controls
 
   };
   control.prototype.draw=function(){
 
-    // for(var c in this.ctrls){ this.ctrls[c].draw(); }
+    // for(var c in this.controls){ this.controls[c].draw(); }
 
   };
   control.prototype.clicked=function(){
 
     // if(this.hit && app.left){
       // commands(this.c, this.g);
-      // for(var c in this.ctrls){ this.ctrls[c].clicked(); }
+      // for(var c in this.controls){ this.controls[c].clicked(); }
     // }
 
   };
   control.prototype.clickedR=function(){
     // if(this.hit){
-      // for(var c in this.ctrls){ this.ctrls[c].clickedR(); }
+      // for(var c in this.controls){ this.controls[c].clickedR(); }
     // }
   };
   control.prototype.moved=function(x,y){
@@ -462,6 +459,8 @@ var diagrams = function(processingInstance){
 
       this.hit=true;
 
+      // for(var c in this.controls){ this.controls[c].moved(); }
+
     }
     else{
 
@@ -472,34 +471,34 @@ var diagrams = function(processingInstance){
   };
   control.prototype.dragged=function(){
 
-    // for(var c in this.ctrls){ this.ctrls[c].dragged(); }
+    // for(var c in this.controls){ this.controls[c].dragged(); }
 
   };
   control.prototype.pressed=function(){
 
-    // for(var c in this.ctrls){ this.ctrls[c].pressed(); }
+    // for(var c in this.controls){ this.controls[c].pressed(); }
 
   };
   control.prototype.released=function(){
     // this.hit=false;
 
-    // for(var c in this.ctrls){ this.ctrls[c].released(); }
+    // for(var c in this.controls){ this.controls[c].released(); }
 
   };
   control.prototype.typed=function(){
 
-    // for(var c in this.ctrls){ this.ctrls[c].typed(); }
+    // for(var c in this.controls){ this.controls[c].typed(); }
 
   };
   control.prototype.over=function(){
 
-    // for(var c in this.ctrls){ this.ctrls[c].over(); }
+    // for(var c in this.controls){ this.controls[c].over(); }
 
   };
   control.prototype.out=function(){
 
     this.hit=false;
-    // for(var c in this.ctrls){ this.ctrls[c].out(); }
+    // for(var c in this.controls){ this.controls[c].out(); }
 
   };
 
@@ -507,9 +506,12 @@ var diagrams = function(processingInstance){
   // Container ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
 
-    var container=function(id, parent, x, y, w, h, txt, execute, tag, retrieve, clr){
+    var container=function(id, parent, x, y, w, h, controls, params){
 
-      control.call(this, parent, id, x, y, w, h, txt, execute, tag, retrieve, clr);
+      control.call(this, id, parent, x, y, w, h, controls);
+
+      this.text=params.text;
+      this.color=params.color;
 
     };
     container.prototype=Object.create(control.prototype);
@@ -521,18 +523,18 @@ var diagrams = function(processingInstance){
 
           noStroke();
           strokeWeight(1);
-          fill(getColor(this.clr, 5));
+          fill(getColor(this.color, 5));
 
           if(this.hit){
 
             app.focus=this.id;
             cursor(ARROW);
 
-            fill(getColor(this.clr, 10));
+            fill(getColor(this.color, 10));
 
           }
 
-          if(this.txt="Border"){ stroke(getColor(this.clr, 50)); }
+          if(this.txt="Border"){ stroke(getColor(this.color, 50)); }
 
           rect(this.x, this.y, this.w, this.h, this.execute);
 
@@ -545,10 +547,13 @@ var diagrams = function(processingInstance){
   // Container1 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
 
-    var container1=function(id, parent, x, y, w, h, txt, execute, tag, retrieve, clr){
+    var container1=function(id, parent, x, y, w, h, controls, params){
 
-      control.call(this, id, parent, x, y, w, h, txt, execute, tag, retrieve, clr);
-
+      control.call(this, id, parent, x, y, w, h, controls);
+      
+      this.radius=params.radius;
+      this.color=params.color;
+      
     };
     container1.prototype=Object.create(control.prototype);
     container1.prototype.draw=function(){
@@ -559,32 +564,70 @@ var diagrams = function(processingInstance){
 
           strokeWeight(1);
           stroke(getColor(CLRS.BLACK, 20));
-          fill(getColor(this.clr, 50));
+          fill(getColor(this.color, 50));
 
           if(this.hit){
 
             app.focus=this.id;
-            cursor(ARROW);
+            cursor(HAND);
 
-            stroke(getColor(CLRS.BLACk, 40));
-            fill(getColor(this.clr, 75));
+            stroke(getColor(CLRS.BLACK, 40));
+            fill(getColor(this.color, 75));
 
           }
 
-          rect(this.x, this.y, this.w, this.h, this.execute);
-
+          rect(this.x, this.y, this.w, this.h, this.radius);
+        
+          for(var c in this.controls){ this.controls[c].draw(); }
+    
       popMatrix();
 
     };
 
   }
+  container1.prototype.moved=function(){
+    
+    if(mouseX>this.x &&
+       mouseX<this.x + this.w &&
+       mouseY>this.y &&
+       mouseY<this.y + this.h){
+
+      this.hit=true;
+
+      for(var c in this.controls){ this.controls[c].moved(); }
+
+    }
+    else{
+
+      this.hit=false;
+
+    }
+    
+  };
+  container1.prototype.clicked=function(){
+
+    if(this.hit){
+
+      for(var c in this.controls){ this.controls[c].clicked(); }
+
+    }
+    else{
+
+      this.hit=false;
+
+    }
+    
+  };
   
   // Toolbar ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
 
-    var toolbar=function(id, parent, x, y, w, h, txt, execute, tag, retrieve, clr){
+    var toolbar=function(id, parent, x, y, w, h, controls, params){
 
-      control.call(this, id, parent, x, y, w, h, txt, execute, tag, retrieve, clr);
+      control.call(this, id, parent, x, y, w, h, controls);
+      
+      this.text=params.text;
+      this.color=params.color;
 
     };
     toolbar.prototype=Object.create(control.prototype);
@@ -596,14 +639,14 @@ var diagrams = function(processingInstance){
 
           noStroke();
           strokeWeight(1);
-          fill(getColor(this.clr, 100));
+          fill(getColor(this.color, 100));
 
           if(this.hit){
 
             app.focus=this.id;
             cursor(ARROW);
 
-            // fill(getColor(this.clr, 75));
+            // fill(getColor(this.color, 75));
 
           }
 
@@ -613,7 +656,7 @@ var diagrams = function(processingInstance){
           textSize(16);
           textAlign(CENTER,CENTER);
 
-          text(this.txt, this.x+this.w/2, this.y + this.h/2);
+          text(this.text, this.x+this.w/2, this.y + this.h/2);
 
       popMatrix();
 
@@ -624,10 +667,12 @@ var diagrams = function(processingInstance){
   // Legend ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
   
-    var legend=function(id, parent, x, y, w, h, txt, execute, tag, retrieve, clr){
+    var legend=function(id, parent, x, y, w, h, controls, params){
 
-      control.call(this, id, parent, x, y, w, h, txt, execute, tag, retrieve, clr);
+      control.call(this, id, parent, x, y, w, h, controls, params);
 
+      this.color=params.color;
+      
       this.left=0;      //  Dynamic x-coordinate
 
     };
@@ -793,9 +838,13 @@ var diagrams = function(processingInstance){
   // OnOff * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
 
-    var onOff=function(id, parent, x, y, w, h, txt, execute, tag, retrieve, clr){
+    var onOff=function(id, parent, x, y, w, h, controls, params){
 
-      control.call(this, id, parent, x, y, w, h, txt, execute, tag, retrieve, clr);
+      control.call(this, id, parent, x, y, w, h, controls, params);
+      
+      this.execute=params.execute;
+      this.retrieve=params.retrieve;
+      this.color=params.color;
 
     };
     onOff.prototype=Object.create(control.prototype);
@@ -812,12 +861,12 @@ var diagrams = function(processingInstance){
               app.focus=this.id;
               cursor(HAND);
 
-              stroke(getColor(this.clr, 75));
+              stroke(getColor(this.color, 75));
 
             }
             else{
 
-              stroke(getColor(this.clr, 50));
+              stroke(getColor(this.color, 50));
 
             }
 
@@ -859,10 +908,15 @@ var diagrams = function(processingInstance){
   // Settings * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
 
-    var settings=function(id, parent, x, y, w, h, txt, execute, tag, retrieve, clr){
+    var settings=function(id, parent, x, y, w, h, controls, params){
 
-      control.call(this, id, parent, x, y, w, h, txt, execute, tag, retrieve, clr);
+      control.call(this, id, parent, x, y, w, h, controls);
 
+      this.execute=params.execute;
+      this.retrieve=params.retrieve;
+
+      this.color=params.color;
+            
     };
     settings.prototype=Object.create(control.prototype);
     settings.prototype.draw=function(){
@@ -883,13 +937,13 @@ var diagrams = function(processingInstance){
               app.focus=this.id;
               cursor(HAND);
 
-              fill(getColor(CLRS.BLACK,10));
+              fill(getColor(this.color,10));
 
             }
 
             rect(offset, offset, this.w, this.h, 2, 2);
 
-            fill(getColor(CLRS.BLACK, 65));
+            fill(getColor(this.color, 65));
             noStroke();
 
             ellipse(this.w/2+offset, this.h/2-6+offset, 3, 3);
@@ -913,9 +967,15 @@ var diagrams = function(processingInstance){
   // Button ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
 
-    var button=function(id, parent, x, y, w, h, txt, execute, tag, retrieve, clr){
+    var button=function(id, parent, x, y, w, h, controls, params){
 
-      control.call(this, id, parent, x, y, w, h, txt, execute, tag, retrieve, clr);
+      control.call(this, id, parent, x, y, w, h, controls);
+
+      this.execute=params.execute;
+      this.retrieve=params.retrieve;
+      this.tag=params.tag;
+      this.text=params.text;
+      this.color=params.color;
 
     };
     button.prototype=Object.create(control.prototype);
@@ -939,14 +999,14 @@ var diagrams = function(processingInstance){
               cursor(HAND);
 
               fill(getColor(CLRS.WHITE,25));
-
+              println(this.parent.w);
               if(this.on){ stroke(this.clr);              }
-              else       { stroke(getColor(this.clr,50)); }
+              else       { stroke(getColor(this.color,50)); }
 
             }
             else{
 
-              fill(getColor(CLRS.ACTIVE,5));
+              fill(getColor(CLRS.ACTIVE, 5));
               noFill();
               noStroke();
 
@@ -955,15 +1015,15 @@ var diagrams = function(processingInstance){
             rect(offset, -this.h-offset, this.w, this.h, 3, 3);
 
             // Caption
-            if(this.retrieve()){ fill(this.clr);              }
-            else          { fill(getColor(this.clr,50)); }
+            if(this.retrieve()){ fill(this.color);              }
+            else               { fill(getColor(this.color,50)); }
 
             scale(1,-1);
 
             textAlign(LEFT,CENTER);
 
             textSize(12);
-            text(this.txt, 10+offset, this.h/2+offset);
+            text(this.text, 10+offset, this.h/2+offset);
 
             textAlign(RIGHT,CENTER);
 
@@ -982,7 +1042,8 @@ var diagrams = function(processingInstance){
     };
     button.prototype.clicked=function(){
 
-      if(this.hit){
+      if(this.hit &&
+         app.focus==this.id){
         this.execute();
         this.on=!this.on;
       }
@@ -991,22 +1052,27 @@ var diagrams = function(processingInstance){
 
   }
   
-  // Toggle ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Checkbox ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
 
-    var toggle=function(id, parent, x, y, w, h, txt, execute, tag, retrieve, clr){
+    var checkbox=function(id, parent, x, y, w, h, controls, params){
 
-      control.call(this, id, parent, x, y, w, h, txt, execute, tag, retrieve, clr);
+      control.call(this, id, parent, x, y, w, h, controls);
 
+      this.text=params.text;
+      this.execute=params.execute;
+      this.retrieve=params.retrieve;
+      this.color=params.color;
+ 
     };
-    toggle.prototype=Object.create(control.prototype);
-    toggle.prototype.draw=function(){
+    checkbox.prototype=Object.create(control.prototype);
+    checkbox.prototype.draw=function(){
 
       pushMatrix();
 
         translate(-0.5,-0.5);
           
-          var on=this.retrieve();
+          this.on=this.retrieve();
 
           stroke(CLRS.BLACK);
           strokeWeight(1);
@@ -1017,7 +1083,7 @@ var diagrams = function(processingInstance){
             cursor(HAND);
             app.focus=this.id;
 
-            fill(getColor(this.clr, 15));
+            fill(getColor(this.color, 15));
 
           }
 
@@ -1025,45 +1091,43 @@ var diagrams = function(processingInstance){
           textSize(11);
           textAlign(LEFT,CENTER);
           
-          this.w=40+textWidth(this.txt);                  
+          this.w=40+textWidth(this.text);  /*  Add 40 pixels to accommodate the slider */
           
           //  Control border
           if(app.debug){
             rect(this.x-3, this.y-3, this.w+6, this.h+6);   
           }
           
-          //  Outer toggle circle
+          //  Outer checkbox circle
+          strokeWeight(0);
           stroke(getColor(CLRS.BLACK,30));
           
-          if(on){ fill(getColor(CLRS.BLACK,25)); }
-          else  { fill(getColor(CLRS.BLACK,50)); }
+          if(this.on){ fill(getColor(CLRS.BLACK,25)); }
+          else       { fill(getColor(CLRS.BLACK,50)); }
           
           rect(this.x, this.y, 30, this.h, this.h/2);   
 
-          //  Inner toggle circle
-          fill(this.clr);
-          stroke(CLRS.BLACK);
+          //  Inner checkbox circle
+          fill(this.color);
+          stroke(CLRS.GRAY);
           strokeWeight(0.5);
 
-          if(on){
-            ellipse(this.x+this.h/2+1, this.y+this.h/2+0.5, this.h-5, this.h-5);
-          }
-          else{
-            ellipse(this.x+this.h/2+15, this.y+this.h/2+0.5, this.h-5, this.h-5);
-          }
+          if(this.on){ ellipse(this.x+this.h/2+1, this.y+this.h/2+0.5, this.h-5, this.h-5);  }
+          else       { ellipse(this.x+this.h/2+15, this.y+this.h/2+0.5, this.h-5, this.h-5); }
 
           //  Text
-          if(on){ fill(getColor(this.clr,100)); }
-          else  { fill(getColor(this.clr, 50)); }
+          if(this.on){ fill(getColor(this.color,100)); }
+          else       { fill(getColor(this.color, 50)); }
 
-          text(this.txt, this.x+35, this.y + this.h/2);
+          text(this.text, this.x+35, this.y + this.h/2);
 
       popMatrix();
 
     };
-    toggle.prototype.clicked=function(){
+    checkbox.prototype.clicked=function(){
 
-      if(this.hit){
+      if(this.hit &&
+         app.focus == this.id ){
         this.execute();
       }
 
@@ -1075,10 +1139,12 @@ var diagrams = function(processingInstance){
   // Unit Circle * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
 
-    var unitCircle=function(id, parent, x, y, w, h, txt, execute, tag, retrieve, clr){
+    var unitCircle=function(id, parent, x, y, w, h, controls, params){
 
-      control.call(this, id, parent, x, y, w, h, txt, execute, tag, retrieve, clr);
-      
+      control.call(this, id, parent, x, y, w, h, controls);
+
+      this.color=params.color;
+
     };
     unitCircle.prototype=Object.create(control.prototype);
     unitCircle.prototype.draw=function(){
@@ -1255,9 +1321,9 @@ var diagrams = function(processingInstance){
   // Graph ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
 
-    var graph=function(id, parent, x, y, w, h, txt, execute, tag, retrieve, clr){
+    var graph=function(id, parent, x, y, w, h, txt, controls, params){
 
-      control.call(this, id, parent, x, y, w, h, txt, execute, tag, retrieve, clr);
+      control.call(this, id, parent, x, y, w, h, controls);
 
       this.gridHit=false;
 
@@ -1945,38 +2011,61 @@ var diagrams = function(processingInstance){
   // Initialize
   var initialize=function(){
 
-    // var control=function(id, parent, ctrls, x_coord, y_coord, width, height, txt, execute, tag, retrieve, clr){
+    // var control=function(id, parent, controls, x_coord, y_coord, width, height, txt, execute, tag, retrieve, clr){
     var p1=0;
-    
-    // Graph --------------------------------------------------    
-    // app.controls.push(new container(11, p1, 0, 0, 599, 599, "Text", "", "", "", CLRS.TEAL_0));
+    var controls=[];
 
-    // app.controls.push(new graph(12, p1, 0, 30, 600, 570, "Text", "", "", "", CLRS.TEAL_0));
-    app.controls.push(new unitCircle(2, p1, 129, 447, 61.5, 61.5, "Text", "", "", "", CLRS.TEAL_0));
+    // Graph --------------------------------------------------
+    app.controls.push(new container(11, p1, 0, 0, 599, 599, controls,
+      {text: "container", color: CLRS.TEAL_0}));
+
+    app.controls.push(new graph(12, p1, 0, 30, 600, 570, controls,
+      {color: CLRS.TEAL_0}));
+    app.controls.push(new unitCircle(2, p1, 129, 447, 61.5, 61.5, controls,
+      {color: CLRS.TEAL_0}));
 
     // Toolbar --------------------------------------------------
-    // app.controls.push(new toolbar(3, p1, 0, 0, 600, 30, "Trig Curves", "", "", "", CLRS.TEAL_1));
-    
-    app.controls.push(new onOff(4, p1, 17, 15, 13, 13, "NO TEXT", toggleAuto, getAuto, "", CLRS.BLACK));
-    app.controls.push(new settings(5, p1, 575, 5, 22, 22, "Settings", toggleLegend, getLegend, "", CLRS.TEAL_2));
+    app.controls.push(new toolbar(3, p1, 0, 0, 600, 30, controls,
+      {text: "Trig Curves", color: CLRS.TEAL_1}));
+
+    app.controls.push(new onOff(4, p1, 17, 15, 13, 13, controls,
+      {execute: checkboxAuto, retrieve: getAuto, color: CLRS.BLACK}));
+    app.controls.push(new settings(5, p1, 575, 5, 22, 22, controls,
+      {execute: checkboxLegend, retrieve: getLegend,  color: CLRS.BLACK}));
 
     // Legend --------------------------------------------------
-    app.controls.push(new container1(6, p1, 170, 55, 250, 65, "BORDER", 5, "", "", CLRS.WHITE));
+    var leg=new container1(6, p1, 170, 55, 250, 65, controls,
+      {radius: 5, color: CLRS.WHITE});
 
-    app.controls.push(new button(20, p1, 175, 58, 110, 20, "Sin "+CONSTANTS.THETA, toggleSin, getSine,      getSineOn,      CLRS.SIN));
-    app.controls.push(new button(21, p1, 175, 78, 110, 20, "Cos "+CONSTANTS.THETA, toggleCos, getCosine,    getCosineOn,    CLRS.COS));
-    app.controls.push(new button(22, p1, 175, 98, 110, 20, "Tan "+CONSTANTS.THETA, toggleTan, getTangent,   getTangentOn,   CLRS.TAN));
+    app.controls.push(leg);
+          
+    leg.controls.push(new button(20, leg, 175, 58, 110, 20, controls,
+      {text: "Sin "+CONSTANTS.THETA, execute: toggleSin, tag: getSine, retrieve: getSineOn, color: CLRS.SIN}));
+    leg.controls.push(new button(21, leg, 175, 78, 110, 20, controls,
+      {text: "Cos "+CONSTANTS.THETA, execute:  toggleCos, tag: getCosine, retrieve: getCosineOn, color: CLRS.COS}));
+    leg.controls.push(new button(22, leg, 175, 98, 110, 20, controls,
+      {text: "Tan "+CONSTANTS.THETA, execute: toggleTan, tag: getTangent, retrieve: getTangentOn, color: CLRS.TAN}));
 
-    app.controls.push(new button(23, p1, 305, 58, 110, 20, "Csc "+CONSTANTS.THETA, toggleCsc, getCosecant,  getCosecantOn,  CLRS.SIN));
-    app.controls.push(new button(24, p1, 305, 78, 110, 20, "Sec "+CONSTANTS.THETA, toggleSec, getSecant,    getSecantOn,    CLRS.COS));
-    app.controls.push(new button(25, p1, 305, 98, 110, 20, "Cot "+CONSTANTS.THETA, toggleCot, getCotangent, getCotangentOn, CLRS.TAN));
+    leg.controls.push(new button(23, leg, 305, 58, 110, 20, controls,
+      {text: "Csc "+CONSTANTS.THETA, execute: toggleCsc, tag: getCosecant, retrieve: getCosecantOn, color: CLRS.SIN}));
+    leg.controls.push(new button(24, leg, 305, 78, 110, 20, controls,
+      {text: "Sec "+CONSTANTS.THETA, execute: toggleSec, tag: getSecant, retrieve: getSecantOn, color: CLRS.COS}));
+    leg.controls.push(new button(25, leg, 305, 98, 110, 20, controls,
+      {text: "Cot "+CONSTANTS.THETA, execute: toggleCot, tag: getCotangent, retrieve: getCotangentOn, color: CLRS.TAN}));
 
-    // Telemetry --------------------------------------------------
-    app.controls.push(new legend(26, p1, 600,  30, 200, 570, "Legend", "", "", "", CLRS.BLACK));
+    if(app.debug){
     
-    app.controls.push(new toggle(27, p1, 350, 500,  50,  15, "Sine Curve",   toggleSin, "", getSineOn,   CLRS.SIN));
-    app.controls.push(new toggle(28, p1, 450, 550,  50,  15, "Cosine Curve", toggleCos, "", getCosineOn, CLRS.COS));
-    
+      // Telemetry --------------------------------------------------
+      app.controls.push(new legend(26, p1, 400, 30, 200, 570, controls,
+        {color: CLRS.BLUE}));
+      
+      app.controls.push(new checkbox(27, p1, 350, 500,  50,  15, controls,
+        {text: "Sine Curve",   execute: toggleSin, retrieve: getSineOn,  color: CLRS.SIN}));
+      app.controls.push(new checkbox(28, p1, 450, 550,  50,  15, controls, 
+        {text: "Cosine Curve", execute: toggleCos, retrieve: getCosineOn, color: CLRS.COS}));
+
+    }
+
   };
   
   var incrementTheta=function(){
@@ -1996,7 +2085,7 @@ var diagrams = function(processingInstance){
           if(app.autoRun){ incrementTheta(); }
           // if(app.DEBUG)  { telemetry();      }
 
-          toolbar();
+          // toolbar();
 
           for(var c in app.controls){ app.controls[c].draw(); }
 
