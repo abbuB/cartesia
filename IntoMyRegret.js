@@ -105,7 +105,7 @@ var diagrams = function(processingInstance){
       this.right=false;         //  Is the right mouse button pressed
       this.center=false;        //  Is the center mouse button pressed
 
-      this.legend=false;         //  Is the legend displayed
+      this.legend=true;         //  Is the legend displayed
       this.index=true;          //  Is the Index displayed
       this.unitCircle=true;     //  Is the unit circle displayed
 
@@ -219,7 +219,9 @@ var diagrams = function(processingInstance){
     var CLRS={
 
       ACTIVE:       color( 28,117,138,255),
-
+    
+      CYAN:         color( 49,204,167,255),
+    
       TEAL_0:       color( 28,117,138,255), TEAL_0_LT:    color( 28,117,138,128),
       TEAL_1:       color( 41,171,202,255), TEAL_1_LT:    color( 41,171,202,128),
       TEAL_2:       color( 88,196,221,255), TEAL_2_LT:    color( 88,196,221,128),
@@ -328,11 +330,6 @@ var diagrams = function(processingInstance){
 
   }
 
-  var getColor=function(clr, alpha){
-
-    return color(red(clr), green(clr), blue(clr), alpha/100*255);
-
-  };
 
   // var initialize=function(){
 
@@ -364,6 +361,13 @@ var diagrams = function(processingInstance){
   
   // Helper Functions =========================================================
   {
+    
+    var getColor=function(clr, alpha){
+
+      return color(red(clr), green(clr), blue(clr), alpha/100*255);
+
+    };
+
     var increment=function(){
 
       app.theta++;
@@ -410,101 +414,104 @@ var diagrams = function(processingInstance){
   
   // Controls =========================================================
 
-  // Control ===========================================================
-  var control=function(id, parent, x, y, w, h){
-
-    // explicit properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    this.id=id;                 /* Unique identification number -- Change to GUID for production) */
+  // Control ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  {
     
-    this.parent=parent;         /* parent control (acts as a container) */
-    
-    this.x=x;                   /* left */
-    this.y=y;                   /* top */
-    this.w=w;                   /* width */
-    this.h=h;                   /* height */
+    var control=function(id, parent, x, y, w, h){
 
-    // inherent properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    this.controls=[];           /* array of child controls */
+      // explicit properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      this.id=id;                 /* Unique identification number -- Change to GUID for production) */
+      
+      this.parent=parent;         /* parent control (acts as a container) */
+      
+      this.x=x;                   /* left */
+      this.y=y;                   /* top */
+      this.w=w;                   /* width */
+      this.h=h;                   /* height */
 
-    this.on=false;              /* Is the control on or off */
+      // inherent properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      this.controls=[];           /* array of child controls */
 
-    this.value=0;               /* generic property */
-    this.zOrder=0;              /* z-order - in front or behind value */
+      this.on=false;              /* Is the control on or off */
 
-    this.hit=false;             /* mouse is over the control */
-    this.visible=true;          /* is the control currently being displayed */
-    
+      // this.value=0;               /* generic property */
+      // this.zOrder=0;              /* z-order - in front or behind value */
 
-  };
-  control.prototype.draw=function(){
+      this.hit=false;             /* mouse is over the control */
+      // this.visible=true;          /* is the control currently being displayed */
+      
 
-    // for(var c in this.controls){ this.controls[c].draw(); }
+    };
+    control.prototype.draw=function(){
 
-  };
-  control.prototype.clicked=function(){
+      // for(var c in this.controls){ this.controls[c].draw(); }
 
-    // if(this.hit){
-      // for(var c in this.controls){ this.controls[c].clicked(); }
-    // }
+    };
+    control.prototype.clicked=function(){
 
-  };
-  control.prototype.clickedR=function(){
-    // if(this.hit){
-      // for(var c in this.controls){ this.controls[c].clickedR(); }
-    // }
-  };
-  control.prototype.moved=function(x,y){
+      // if(this.hit){
+        // for(var c in this.controls){ this.controls[c].clicked(); }
+      // }
 
-    // if(mouseX>this.x &&
-       // mouseX<this.x + this.w &&
-       // mouseY>this.y &&
-       // mouseY<this.y + this.h){
+    };
+    control.prototype.clickedR=function(){
+      // if(this.hit){
+        // for(var c in this.controls){ this.controls[c].clickedR(); }
+      // }
+    };
+    control.prototype.moved=function(x,y){
 
-      // this.hit=true;
+      // if(mouseX>this.x &&
+         // mouseX<this.x + this.w &&
+         // mouseY>this.y &&
+         // mouseY<this.y + this.h){
 
-      // for(var c in this.controls){ this.controls[c].moved(); }
+        // this.hit=true;
 
-    // }
-    // else{
+        // for(var c in this.controls){ this.controls[c].moved(); }
+
+      // }
+      // else{
+
+        // this.hit=false;
+
+      // }
+
+    };
+    control.prototype.dragged=function(){
+
+      // for(var c in this.controls){ this.controls[c].dragged(); }
+
+    };
+    control.prototype.pressed=function(){
+
+      // for(var c in this.controls){ this.controls[c].pressed(); }
+
+    };
+    control.prototype.released=function(){
+
+      // for(var c in this.controls){ this.controls[c].released(); }
+
+    };
+    control.prototype.typed=function(){
+
+      // for(var c in this.controls){ this.controls[c].typed(); }
+
+    };
+    control.prototype.over=function(){
+
+      // for(var c in this.controls){ this.controls[c].over(); }
+
+    };
+    control.prototype.out=function(){
 
       // this.hit=false;
+      // app.focus=-1;
+      // for(var c in this.controls){ this.controls[c].out(); }
 
-    // }
+    };
 
-  };
-  control.prototype.dragged=function(){
-
-    // for(var c in this.controls){ this.controls[c].dragged(); }
-
-  };
-  control.prototype.pressed=function(){
-
-    // for(var c in this.controls){ this.controls[c].pressed(); }
-
-  };
-  control.prototype.released=function(){
-
-    // for(var c in this.controls){ this.controls[c].released(); }
-
-  };
-  control.prototype.typed=function(){
-
-    // for(var c in this.controls){ this.controls[c].typed(); }
-
-  };
-  control.prototype.over=function(){
-
-    // for(var c in this.controls){ this.controls[c].over(); }
-
-  };
-  control.prototype.out=function(){
-
-    this.hit=false;
-    app.focus=-1;
-    // for(var c in this.controls){ this.controls[c].out(); }
-
-  };
-
+  }
 
   var drawOrigin=function(){
     
@@ -570,8 +577,7 @@ var diagrams = function(processingInstance){
 
       }
       else{
-        
-        app.focus=-1;        
+   
         this.hit=false;
 
       }
@@ -612,7 +618,8 @@ var diagrams = function(processingInstance){
           strokeWeight(1);
           fill(getColor(this.color, 5));
 
-          if(this.hit){
+          if(this.hit && 
+             this.parent.hit){
 
             app.focus=this.id;
             cursor(ARROW);
@@ -644,8 +651,7 @@ var diagrams = function(processingInstance){
 
       }
       else{
-        
-        app.focus=-1;        
+
         this.hit=false;
 
       }
@@ -685,7 +691,8 @@ var diagrams = function(processingInstance){
           stroke(getColor(CLRS.BLACK, 20));
           fill(getColor(this.color, 50));
 
-          if(this.hit && this.parent.hit){
+          if(this.hit &&
+             this.parent.hit){
 
             app.focus=this.id;
             cursor(ARROW);
@@ -716,8 +723,7 @@ var diagrams = function(processingInstance){
 
       }
       else{
-        
-        app.focus=-1;
+
         this.hit=false;
 
       }
@@ -757,7 +763,8 @@ var diagrams = function(processingInstance){
           strokeWeight(1);
           fill(getColor(this.color, 100));
 
-          if(this.hit && this.parent.hit){
+          if(this.hit &&
+             this.parent.hit){
 
             app.focus=this.id;
             cursor(ARROW);
@@ -793,8 +800,7 @@ var diagrams = function(processingInstance){
 
       }
       else{
-        
-        app.focus=-1;
+
         this.hit=false;
 
       }
@@ -821,99 +827,114 @@ var diagrams = function(processingInstance){
 
       this.color=params.color;
       
-      this.left=0;      /*  Dynamic x-coordinate */
+      this.offset=0;      /*  Dynamic x-coordinate */
 
     };
     legend.prototype=Object.create(control.prototype);
     legend.prototype.draw=function(){
 
       var p=this;
-
+            
       // Border
       var border=function(){
-
+       
         strokeWeight(1);
 
-        if(p.hit){ fill(getColor(p.clr, 85)); }
-        else     { fill(getColor(p.clr, 75)); }
+        if(p.hit){ fill(getColor(p.clr, 75)); }
+        else     { fill(getColor(p.clr, 70)); }
 
         stroke(getColor(p.clr,100));
 
-        rect(p.left, 0, p.w, p.h);
+        rect(p.offset, 0, p.w, p.h);
 
       }
       //  Properties
       var properties=function(){
 
-        var h=15;
+        var h=13;
 
         var row0=30;
         
-        var col0=p.left+20;
-        var col1=p.left+30;
-        var col2=p.left+130;
+        var col0=p.offset+20;
+        var col1=p.offset+30;
+        var col2=p.offset+130;
 
-        if     ( app.legend && p.left>-200){ p.left-=10; }
-        else if(!app.legend && p.left<0   ){ p.left+=10; }
+        if     ( app.legend && p.offset>-200){ p.offset-=10; }
+        else if(!app.legend && p.offset<0   ){ p.offset+=10; }
 
-        if(p.hit){ fill(getColor(CLRS.WHITE,80)); }
-        else     { fill(getColor(CLRS.WHITE,60)); }
+        if(this.hit){ fill(getColor(CLRS.WHITE,80)); }
+        else        { fill(getColor(CLRS.WHITE,60)); }
 
-        textAlign(LEFT,CENTER);
+        /* Mouse Coordinates */
+        textAlign(CENTER,CENTER);
         textSize(12);
+        fill(CLRS.TEAL_2);
+        
+        text("Telemetry",     p.w/2+p.offset, 20);
 
-        text("Telemetry",     col0, 20);
+        /* Mouse Coordinates */
+        textSize(11);
+        
+        fill(40,40,40);
 
+        rect(p.offset+15, row0+5, 175, 1, 5);
+
+        fill(getColor(CLRS.WHITE,75));
         textAlign(LEFT,CENTER);
-        textSize(10);
 
-        // text("x: ",           col1, row0+h);
-        // text("y: ",           col1, row0+2*h);
+        text("x: ",           col1, row0+15);
+        text("y: ",           col1, row0+30);
 
-        // text("Left:",         col1, row0+4*h);
-        // text("Right:",        col1, row0+5*h);
-        // text("Center:",       col1, row0+6*h);
-
-        // text("Focus:",        col1, row0+8*h);
-        // text("Focused:",      col1, row0+9*h);                
-        // text("Legend:",       col1, row0+10*h);
-
-        // text("autoRun:",      col1, row0+12*h);
-
-        // text("Theta ("+CONSTANTS.THETA+"):",      col1, row0+14*h);
-        
-        // text("Sine On:",      col1, row0+8*h);
-        // text("Cosine On:",    col1, row0+9*h);
-        // text("Tangent On:",   col1, row0+10*h);
-        // text("Cosecant On:",  col1, row0+11*h);
-        // text("Secant On:",    col1, row0+12*h);
-        // text("Cotangent On:", col1, row0+13*h);
-        
-        fill(getColor(CLRS.BLACK,75));
+        fill(getColor(CLRS.YELLOW,75));
         textSize(11);
         textAlign(RIGHT,CENTER);
 
-        // text(mouseX,          col2, row0+h);
-        // text(mouseY,          col2, row0+2*h);
+        text(mouseX,          col2, row0+15);
+        text(mouseY,          col2, row0+30);
 
-        // text(app.left,        col2, row0+4*h);
-        // text(app.right,       col2, row0+5*h);
-        // text(app.center,      col2, row0+6*h);
+        /* Mouse Buttons */
 
-        text(app.focus,       col2, row0+8*h);
-        // text(focused,         col2, row0+9*h);                
-        // text(app.legend,      col2, row0+10*h);
+        strokeWeight(1);
+        stroke(0);
 
-        // text(app.autoRun,     col2, row0+12*h);
+        line(p.offset+15, row0+50, p.offset+185, row0+50);
 
-        // text(app.theta,       col2, row0+14*h);
+        fill(getColor(CLRS.WHITE,75));
+        textAlign(LEFT,CENTER);
+        textSize(10);
+        
+        text("Left:",         col1, row0+60);
+        text("Right:",        col1, row0+73);
+        text("Center:",       col1, row0+86);
 
-        // text(app.sinOn,       col2, row0+8*h);  //  Sine display
-        // text(app.cosOn,       col2, row0+9*h);  //  Cosine Display
-        // text(app.tanOn,       col2, row0+10*h); //  Tangent Display
-        // text(app.cscOn,       col2, row0+11*h); //  Cosecant Display
-        // text(app.secOn,       col2, row0+12*h); //  Secant Display
-        // text(app.cotOn,       col2, row0+13*h); //  Cotangent Display
+        fill(getColor(CLRS.YELLOW,75));
+        textAlign(LEFT,CENTER);
+        textSize(10);
+
+        text(app.left,        col2, row0+60);
+        text(app.right,       col2, row0+73);
+        text(app.center,      col2, row0+86);
+        
+        /* Mouse Buttons */
+        text("Focus:",        col1, row0+8*h);
+        text("Focused:",      col1, row0+9*h);                
+        text("Legend:",       col1, row0+10*h);
+
+        text("autoRun:",      col1, row0+12*h);
+
+        text("Theta ("+CONSTANTS.THETA+"):",      col1, row0+14*h);
+        
+
+
+
+
+        // text(app.focus,       col2, row0+8*h);
+        text(focused,         col2, row0+9*h);                
+        text(app.legend,      col2, row0+10*h);
+
+        text(app.autoRun,     col2, row0+12*h);
+
+        text(app.theta,       col2, row0+14*h);
 
         // text(app.data[app.theta].sin, col2, row0+11*h);
         // text(app.data[app.theta].cos, col2, row0+12*h);
@@ -930,10 +951,10 @@ var diagrams = function(processingInstance){
 
         textAlign(LEFT, TOP);
 
-        // text(txt, col0, row0 + 33*h, p.w-30, 100);
+        text(txt, col0, row0 + 33*h, p.w-30, 100);
         
-      }
-
+      };
+      
       pushMatrix();
 
         translate(this.x, this.y);
@@ -942,29 +963,41 @@ var diagrams = function(processingInstance){
              this.parent.hit){
             
             app.focus=this.id;
-            cursor(CROSS);
+            cursor(ARROW);
 
           }
 
-          // border();
+          if     ( app.legend && this.offset>-200){ this.offset-=10; }
+          else if(!app.legend && this.offset<0   ){ this.offset+=10; }
+
+          border();
           properties();
 
           // Draw child controls
           for(var c in this.controls){ this.controls[c].draw(); }
 
+          /* The following is outside the properties function because it has
+             to be done after the child controls are drawn to
+             determine which control has the focus                  */
+          fill(getColor(CLRS.WHITE,75));
+          textSize(11);
+          textAlign(RIGHT,CENTER);
+
+          text(app.focus, this.offset+130, 150);
+          
       popMatrix();
 
     };
     legend.prototype.moved=function(x,y){
       
-      if(mouseX>this.x+x+this.left &&
-         mouseX<this.x+x+this.left + this.w &&
+      if(mouseX>this.x+x+this.offset &&
+         mouseX<this.x+x+this.offset + this.w &&
          mouseY>this.y+y &&
          mouseY<this.y+y + this.h){
 
         this.hit=true;
 
-        for(var c in this.controls){ this.controls[c].moved(this.x+x+this.left, this.y+y); }
+        for(var c in this.controls){ this.controls[c].moved(this.x+x+this.offset, this.y+y); }
 
       }
       else{
@@ -1006,7 +1039,8 @@ var diagrams = function(processingInstance){
 
           ellipseMode(CENTER);
 
-            if(this.hit && this.parent.hit){
+            if(this.hit &&
+               this.parent.hit){
 
               app.focus=this.id;
               cursor(HAND);
@@ -1040,7 +1074,7 @@ var diagrams = function(processingInstance){
         
         this.hit=true;
         
-        for(var c in this.controls){ this.controls[c].moved(this.x+x, this.y+y); }
+        // for(var c in this.controls){ this.controls[c].moved(this.x+x, this.y+y); }
         
       }
       else{
@@ -1078,36 +1112,37 @@ var diagrams = function(processingInstance){
     settings.prototype=Object.create(control.prototype);
     settings.prototype.draw=function(){
 
-        var offset=0;
-        
-        pushMatrix();
+      var offset=0;
+      
+      pushMatrix();
 
-          translate(this.x, this.y);
+        translate(this.x, this.y);
 
-            noStroke();
-            noFill();
+          noStroke();
+          noFill();
 
-            if(this.hit && this.parent.hit){
-              
-              if(app.left){ offset=1; }
+          if(this.hit &&
+             this.parent.hit){
+            
+            if(app.left){ offset=1; }
 
-              app.focus=this.id;
-              cursor(HAND);
+            app.focus=this.id;
+            cursor(HAND);
 
-              fill(getColor(this.color,10));
+            fill(getColor(this.color,10));
 
-            }
+          }
 
-            rect(offset, offset, this.w, this.h, 2, 2);
+          rect(offset, offset, this.w, this.h, 2, 2);
 
-            fill(getColor(this.color, 65));
-            noStroke();
+          fill(getColor(this.color, 65));
+          noStroke();
 
-            ellipse(this.w/2+offset, this.h/2-6+offset, 3, 3);
-            ellipse(this.w/2+offset, this.h/2,          3, 3);
-            ellipse(this.w/2+offset, this.h/2+6+offset, 3, 3);
+          ellipse(this.w/2+offset, this.h/2-6+offset, 3, 3);
+          ellipse(this.w/2+offset, this.h/2,          3, 3);
+          ellipse(this.w/2+offset, this.h/2+6+offset, 3, 3);
 
-        popMatrix();
+      popMatrix();
 
     };
     settings.prototype.moved=function(x,y){
@@ -1119,7 +1154,7 @@ var diagrams = function(processingInstance){
 
         this.hit=true;
 
-        for(var c in this.controls){ this.controls[c].moved(this.x+x, this.y+y); }
+        // for(var c in this.controls){ this.controls[c].moved(this.x+x, this.y+y); }
 
       }
       else{
@@ -1171,7 +1206,8 @@ var diagrams = function(processingInstance){
             // Border
             strokeWeight(0.75);
 
-            if(this.hit && this.parent.hit){
+            if(this.hit &&
+               this.parent.hit){
 
               if(app.left){ offset=1; }
 
@@ -1240,8 +1276,9 @@ var diagrams = function(processingInstance){
     };       
     button.prototype.clicked=function(){
 
-      if(this.hit &&
-         app.focus==this.id){
+     // &&
+         // app.focus==this.id
+      if(this.hit){
         this.execute();
         this.on=!this.on;
       }
@@ -1265,13 +1302,11 @@ var diagrams = function(processingInstance){
     };
     checkbox.prototype=Object.create(control.prototype);
     checkbox.prototype.draw=function(){
-      
-      var p=this.parent;
-println(p.left);
+
       pushMatrix();
-        
-        translate(this.x+p.left, this.y);
-          
+
+        translate(this.x + this.parent.offset, this.y);
+
           this.on=this.retrieve();
 
           stroke(CLRS.BLACK);
@@ -1291,20 +1326,20 @@ println(p.left);
           //  Determine how wide the text is
           textSize(11);
           textAlign(LEFT,CENTER);
-          
+
           this.w=40+textWidth(this.text);  /*  Add 40 pixels to accommodate the slider */
-          
+
           //  Control border
           if(app.debug){
-             rect(-3, -3, this.w+6, this.h+6);   
+             // rect(-3, -3, this.w+6, this.h+6);
           }
           
           //  Outer checkbox circle
           strokeWeight(0.5);
           stroke(getColor(CLRS.BLACK,100));
           
-          if(this.on){ fill(getColor(CLRS.GRAY, 75)); }
-          else       { fill(getColor(CLRS.GRAY, 50)); }
+          if(this.on){ fill(getColor(CLRS.WHITE, 45)); }
+          else       { fill(getColor(CLRS.WHITE, 20)); }
           
           rect(0, 0, 30, this.h, this.h/2);   
 
@@ -1313,12 +1348,11 @@ println(p.left);
           stroke(CLRS.GRAY);
           strokeWeight(0.5);
 
-          if(this.on){ ellipse(this.h/2+1,  this.h/2+0.5, this.h-5, this.h-5);  }
+          if(this.on){ ellipse(this.h/2+1,  this.h/2+0.5, this.h-5, this.h-5); }
           else       { ellipse(this.h/2+15, this.h/2+0.5, this.h-5, this.h-5); }
 
           //  Text
-          if(this.on){ fill(getColor(CLRS.WHITE, 75)); }
-          else       { fill(getColor(CLRS.WHITE, 25)); }
+          fill(getColor(CLRS.WHITE, 65)); 
 
           text(this.text, 35, this.h/2);
 
@@ -1327,14 +1361,14 @@ println(p.left);
     };
     checkbox.prototype.moved=function(x,y){
 
-      if(mouseX>this.x+x &&
-         mouseX<this.x+x + this.w &&
-         mouseY>this.y+y &&
-         mouseY<this.y+y + this.h){
+      if(mouseX>=this.x+x &&
+         mouseX<=this.x+x+this.w &&
+         mouseY>=this.y+y &&
+         mouseY<=this.y+y+this.h){
 
         this.hit=true;
-
-        for(var c in this.controls){ this.controls[c].moved(this.x+x, this.y+y); }
+        // app.focus=this.id;
+        // for(var c in this.controls){ this.controls[c].moved(this.x+x, this.y+y); }
 
       }
       else{
@@ -2232,7 +2266,7 @@ println(p.left);
 
  }
 
-  // Initialize
+  // Initialize ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   var initialize=function(){
 
     // var control=function(id, parent, controls, x coordindate, y coordinate, width, height,
@@ -2240,133 +2274,152 @@ println(p.left);
 
     // Background --------------------------------------------------
     {
-      var bk=new root(11, null, 0, 0, 699, 699,                         /* root control       */
+      /* root control       */
+      var bk=new root(11, null, 0, 0, 599, 599,                         
         {text:  "root",
          color: CLRS.TEAL_2});
     
       app.controls.push(bk);
-    
-      // bk.controls.push(new graph(12, bk, 0, 30, 600, 570,               /* graph              */
-        // {color: CLRS.PINK}));                                       
-      
-      bk.controls.push(new unitCircle(2, bk, 129, 447, 61.5, 61.5,      /* unit circle        */
-        {color: CLRS.ORANGE}));
+        
+        /* graph              */
+        bk.controls.push(new graph(12, bk, 0, 30, 600, 570,               
+          {color: CLRS.PINK}));                                       
+          
+        /* unit circle        */
+        bk.controls.push(new unitCircle(2, bk, 129, 447, 61.5, 61.5,      
+          {color: CLRS.ORANGE}));
     }
     
     // Toolbar --------------------------------------------------
     {
-      var toolb=new toolbar(3, bk, 0, 0, 600, 30,                       /* toolbar            */
+      /* toolbar            */
+      var toolb=new toolbar(3, bk, 0, 0, 600, 30,                       
         {text:  "Trig Curves",
          color: CLRS.TEAL_1});
 
       bk.controls.push(toolb);
-      
-      toolb.controls.push(new onOff(4, toolb, 17, 15, 13, 13,           /* auto-run           */
-        {execute:  checkboxAuto,
-         retrieve: getAuto,
-         color:    CLRS.BLACK}));
-      
-      toolb.controls.push(new settings(5, toolb, 575, 5, 22, 22,        /* display settings   */
-        {execute:  checkboxLegend,
-         retrieve: getLegend,
-         color:    CLRS.BLACK}));
+        /* auto-run           */
+        toolb.controls.push(new onOff(4, toolb, 17, 15, 13, 13,           
+          {execute:  checkboxAuto,
+           retrieve: getAuto,
+           color:    CLRS.BLACK}));
+           
+        /* display settings   */
+        toolb.controls.push(new settings(5, toolb, 575, 5, 22, 22,        
+          {execute:  checkboxLegend,
+           retrieve: getLegend,
+           color:    CLRS.BLACK}));
       
     }
     
     // Index --------------------------------------------------
     {
-      var idx=new index(6, bk, 170, 55, 250, 70,                        /* index              */
+      /* index              */
+      var idx=new index(6, bk, 170, 55, 250, 70,                        
         {radius: 5, color: CLRS.WHITE});
 
       bk.controls.push(idx);
+        
+        /* Sine button        */
+        idx.controls.push(new button(20, idx, 5, 5, 110, 20,              
+          {text:     "Sin "+CONSTANTS.THETA,
+           execute:  toggleSin,
+           tag:      getSine,
+           retrieve: getSineOn,
+           color:    CLRS.SIN}));
+         
+        /* Cosine button      */
+        idx.controls.push(new button(21, idx, 5, 25, 110, 20,             
+          {text:     "Cos "+CONSTANTS.THETA,
+           execute:  toggleCos,
+           tag:      getCosine,
+           retrieve: getCosineOn,
+           color:    CLRS.COS}));
+        
+        /* Tangent button     */
+        idx.controls.push(new button(22, idx, 5, 45, 110, 20,             
+          {text:     "Tan "+CONSTANTS.THETA,
+           execute:  toggleTan,
+           tag:      getTangent,
+           retrieve: getTangentOn,
+           color:    CLRS.TAN}));
 
-      idx.controls.push(new button(20, idx, 5, 5, 110, 20,              /* Sine button        */
-        {text:     "Sin "+CONSTANTS.THETA,
-         execute:  toggleSin,
-         tag:      getSine,
-         retrieve: getSineOn,
-         color:    CLRS.SIN}));
-         
-      idx.controls.push(new button(21, idx, 5, 25, 110, 20,             /* Cosine button      */
-        {text:     "Cos "+CONSTANTS.THETA,
-         execute:  toggleCos,
-         tag:      getCosine,
-         retrieve: getCosineOn,
-         color:    CLRS.COS}));
-         
-      idx.controls.push(new button(22, idx, 5, 45, 110, 20,             /* Tangent button     */
-        {text:     "Tan "+CONSTANTS.THETA,
-         execute:  toggleTan,
-         tag:      getTangent,
-         retrieve: getTangentOn,
-         color:    CLRS.TAN}));
-
-      idx.controls.push(new button(23, idx, 135, 5, 110, 20,            /* Cosecant button    */
-        {text:     "Csc "+CONSTANTS.THETA,
-         execute:  toggleCsc,
-         tag:      getCosecant,
-         retrieve: getCosecantOn,
-         color:    CLRS.SIN}));
-         
-      idx.controls.push(new button(24, idx, 135, 25, 110, 20,           /* Secant button      */
-        {text:     "Sec "+CONSTANTS.THETA,
-         execute:  toggleSec,
-         tag:      getSecant,
-         retrieve: getSecantOn,
-         color:    CLRS.COS}));
-         
-      idx.controls.push(new button(25, idx, 135, 45, 110, 20,           /* Cotangent button   */
-        {text:     "Cot "+CONSTANTS.THETA,
-         execute:  toggleCot,
-         tag:      getCotangent,
-         retrieve: getCotangentOn,
-         color:    CLRS.TAN}));
+        /* Cosecant button    */
+        idx.controls.push(new button(23, idx, 135, 5, 110, 20,            
+          {text:     "Csc "+CONSTANTS.THETA,
+           execute:  toggleCsc,
+           tag:      getCosecant,
+           retrieve: getCosecantOn,
+           color:    CLRS.SIN}));
+        
+        /* Secant button      */
+        idx.controls.push(new button(24, idx, 135, 25, 110, 20,           
+          {text:     "Sec "+CONSTANTS.THETA,
+           execute:  toggleSec,
+           tag:      getSecant,
+           retrieve: getSecantOn,
+           color:    CLRS.COS}));
+           
+        /* Cotangent button   */
+        idx.controls.push(new button(25, idx, 135, 45, 110, 20,           
+          {text:     "Cot "+CONSTANTS.THETA,
+           execute:  toggleCot,
+           tag:      getCotangent,
+           retrieve: getCotangentOn,
+           color:    CLRS.TAN}));
 
     }
     
     // Telemetry --------------------------------------------------
     if(app.debug){
 
-      var telem=new legend(26, bk, 600, 30, 200, 570,                   /* Telemetry          */
+      /* Telemetry          */
+      var telem=new legend(26, bk, 600, 30, 200, 570,                   
         {color:    CLRS.BLUE});
 
       bk.controls.push(telem);
               
-      bk.controls.push(new checkbox(27, bk, 200, 270,  50,  15,    /* Sine Checkbox      */
-        {text:     "Sine Curve",
-         execute:  toggleSin,
-         retrieve: getSineOn,
-         color:    CLRS.SIN}));
+        /* Sine Checkbox      */
+        telem.controls.push(new checkbox(27, telem, 25, 270,  50,  15,         
+          {text:     "Sine Curve",
+           execute:  toggleSin,
+           retrieve: getSineOn,
+           color:    CLRS.SIN}));
 
-      telem.controls.push(new checkbox(28, telem, 25, 290,  50,  15,    /* Cosine Checkbox    */
-        {text:     "Cosine Curve",
-         execute:  toggleCos,
-         retrieve: getCosineOn,
-         color:    CLRS.COS}));
+        /* Cosine Checkbox    */
+        telem.controls.push(new checkbox(28, telem, 25, 290,  50,  15,    
+          {text:     "Cosine Curve",
+           execute:  toggleCos,
+           retrieve: getCosineOn,
+           color:    CLRS.COS}));
 
-      telem.controls.push(new checkbox(29, telem, 25, 310,  50,  15,    /* Tangent Checkbox   */
-        {text:     "Tangent Curve",
-         execute:  toggleTan,
-         retrieve: getTangentOn,
-         color:    CLRS.TAN}));
+        /* Tangent Checkbox   */
+        telem.controls.push(new checkbox(29, telem, 25, 310,  50,  15,    
+          {text:     "Tangent Curve",
+           execute:  toggleTan,
+           retrieve: getTangentOn,
+           color:    CLRS.TAN}));
 
-      telem.controls.push(new checkbox(30, telem, 25, 330,  50,  15,    /* Cosecant Checkbox  */
-        {text:     "Cosecent Curve",
-         execute:  toggleCsc,
-         retrieve: getCosecantOn,
-         color:    CLRS.SIN_LT}));
+        /* Cosecant Checkbox  */
+        telem.controls.push(new checkbox(30, telem, 25, 330,  50,  15,    
+          {text:     "Cosecent Curve",
+           execute:  toggleCsc,
+           retrieve: getCosecantOn,
+           color:    CLRS.SIN_LT}));
 
-      telem.controls.push(new checkbox(31, telem, 25, 350,  50,  15,    /* Secant Checkbox    */
-        {text:     "Secant Curve",
-         execute:  toggleSec,
-         retrieve: getSecantOn,
-         color:    CLRS.COS_LT}));
+        /* Secant Checkbox    */
+        telem.controls.push(new checkbox(31, telem, 25, 350,  50,  15,    
+          {text:     "Secant Curve",
+           execute:  toggleSec,
+           retrieve: getSecantOn,
+           color:    CLRS.COS_LT}));
 
-      telem.controls.push(new checkbox(32, telem, 25, 370,  50,  15,    /* Cotangent Checkbox */
-        {text:     "Cotangent Curve",
-         execute:  toggleCot,
-         retrieve: getCotangentOn,
-         color:    CLRS.TAN_LT}));
+        /* Cotangent Checkbox */
+        telem.controls.push(new checkbox(32, telem, 25, 370,  50,  15,    
+          {text:     "Cotangent Curve",
+           execute:  toggleCot,
+           retrieve: getCotangentOn,
+           color:    CLRS.TAN_LT}));
 
     }
 
@@ -2459,22 +2512,20 @@ println(p.left);
       app.mouseX=mouseX;
       app.mouseX=mouseY;
 
-      // execute();
-
       for(var c in app.controls){ app.controls[c].moved(0,0); }
-// println(app.focus);
 
     };
     var mouseOut=function(){
 
+      // for(var c in app.controls){ app.controls[c].out(); }
       app.focus=-1;
-      for(var c in app.controls){ app.controls[c].out(); }
 
     };
     var mouseOver=function(){
       
+      
+      // for(var c in app.controls){ app.controls[c].over(); }
       app.focus=-2;
-      for(var c in app.controls){ app.controls[c].over(); }
 
     };
 
