@@ -105,7 +105,7 @@ var diagrams = function(processingInstance){
 
     this.debug=true;          //  mode that displays enhanced debugging tools
 
-    this.frameRate=10;        //  refresh speed
+    this.frameRate=0 ;        //  refresh speed
 
     this.mouseX=0;            //  current mouseX location
     this.mouseY=0;            //  current mouseY location
@@ -143,7 +143,7 @@ var diagrams = function(processingInstance){
 
     this.initialize=function(){
 
-      frameRate(30);
+      frameRate(0);
     
       cursor(WAIT);
 
@@ -161,11 +161,11 @@ var diagrams = function(processingInstance){
         for (var n=this.MIN; n<=this.MAX; n++){
 
             sinN=sin(radians(n)).toFixed(4);
-            cscN=(1/sinN).toFixed(4);
+            cscN=       (1/sinN).toFixed(4);
             cosN=cos(radians(n)).toFixed(4);
-            secN=(1/cosN).toFixed(4);
+            secN=       (1/cosN).toFixed(4);
             tanN=tan(radians(n)).toFixed(4);
-            cotN=(1/tanN).toFixed(4);;
+            cotN=       (1/tanN).toFixed(4);;
 
             this.data.push({  sin:  sinN, csc:  cscN,
                               cos:  cosN, sec:  secN,
@@ -514,6 +514,7 @@ var diagrams = function(processingInstance){
       this.color=params.color;
       this.left=0;
       this.cursor=params.cursor;
+      this.border=params.border;
       
     };
     root.prototype=Object.create(control.prototype);
@@ -524,7 +525,7 @@ var diagrams = function(processingInstance){
         translate(this.x, this.y);
 
           noStroke();
-          strokeWeight(1);
+          
           fill(getColor(this.color, 5));
 
           if(this.hit){
@@ -536,9 +537,12 @@ var diagrams = function(processingInstance){
 
           }
 
-          if(this.txt="Border"){ stroke(getColor(this.color, 50)); }
+          if(this.border){
+            strokeWeight(1);
+            stroke(getColor(this.color, 50));
+          }
 
-          rect(0, 0, this.w, this.h, this.execute);
+          rect(0, 0, this.w, this.h);
 
           // Draw child controls
           for(var c in this.controls){ this.controls[c].draw(); }
@@ -546,37 +550,8 @@ var diagrams = function(processingInstance){
       popMatrix();
 
     };
-    // root.prototype.moved=function(x,y){
-      
-      // if(mouseX>(this.x+x) &&
-         // mouseX<(this.x+x) + this.w &&
-         // mouseY>(this.y+y) &&
-         // mouseY<(this.y+y) + this.h){
-
-        // this.hit=true;
-
-        // for(var c in this.controls){ this.controls[c].moved(this.x+x, this.y+y); }
-
-      // }
-      // else{
-   
-        // this.hit=false;
-
-      // }
-      
-    // };
-    // root.prototype.clicked=function(){
-
-      // if(this.hit){
-
-        // for(var c in this.controls){ this.controls[c].clicked(); }
-
-      // }
-      
-    // };
     
   }
-
 
   // Container ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   {
@@ -588,7 +563,8 @@ var diagrams = function(processingInstance){
       this.text=params.text;
       this.color=params.color;
       this.cursor=params.cursor;
-      
+      this.border=params.border;
+
     };
     container.prototype=Object.create(control.prototype);
     container.prototype.draw=function(){
@@ -597,8 +573,7 @@ var diagrams = function(processingInstance){
 
         translate(this.x, this.y);
 
-          noStroke();
-          strokeWeight(1);
+          noStroke();          
           fill(getColor(this.color, 5));
 
           if(this.hit && 
@@ -611,7 +586,12 @@ var diagrams = function(processingInstance){
 
           }
 
-          if(this.txt="Border"){ stroke(getColor(this.color, 50)); }
+          if(this.border){
+            
+            strokeWeight(1);
+            stroke(getColor(this.color, 50));
+            
+          }
 
           rect(0, 0, this.w, this.h, this.execute);
 
@@ -634,7 +614,7 @@ var diagrams = function(processingInstance){
       this.radius=params.radius;
       this.color=params.color;
       this.cursor=params.cursor;
-
+      
     };
     index.prototype=Object.create(control.prototype);
     index.prototype.draw=function(){
@@ -689,8 +669,7 @@ var diagrams = function(processingInstance){
         translate(this.x, this.y);
 
           noStroke();
-          strokeWeight(1);
-          fill(getColor(this.color, 100));
+          fill(getColor(this.color, 75));
 
           if(this.hit &&
              this.parent.hit){
@@ -698,12 +677,13 @@ var diagrams = function(processingInstance){
             app.focus=this.id;
             cursor(this.cursor);
 
-            fill(getColor(this.color, 75));
+            fill(getColor(this.color, 100));
 
           }
 
-          rect(0, 0, this.w, this.h, this.execute);
+          rect(0, 0, this.w, this.h);
           
+          // Caption
           fill(CLRS.WHITE);
           textSize(16);
           textAlign(CENTER,CENTER);
@@ -741,19 +721,19 @@ var diagrams = function(processingInstance){
       var border=function(){
        
         strokeWeight(1);
+        stroke(getColor(p.clr,100));
 
         if(p.hit){ fill(getColor(p.clr, 75)); }
         else     { fill(getColor(p.clr, 70)); }
 
-        stroke(getColor(p.clr,100));
-
         rect(p.offset, 0, p.w, p.h);
 
       }
+
       //  Properties
       var properties=function(){
 
-        var h=13;
+        // var h=13;
 
         var row0=30;
         
@@ -852,10 +832,11 @@ var diagrams = function(processingInstance){
           text(app.theta,       col2, row0+255);
 
         var txt="Press the left and right arrow keys to increment and decrement theta.";
-
+        
+        textSize(11);
         textAlign(LEFT,BOTTOM);
 
-        text(txt, col0, row0 + 500, p.w-30, 100);
+        text(txt, p.offset+17, row0 + 480, p.w-20, 100);
         
       };
       
@@ -880,9 +861,9 @@ var diagrams = function(processingInstance){
           // Draw child controls
           for(var c in this.controls){ this.controls[c].draw(); }
 
-          /* The following is outside the properties function because it has
-             to be done after the child controls are drawn to
-             determine which control has the focus                  */
+          /* The following is outside the properties function because
+             it has to be done after the child controls are drawn to
+             maintain proper control focus                              */
           fill(getColor(CLRS.YELLOW,75));
           textSize(11);
           textAlign(RIGHT,CENTER);
@@ -893,8 +874,8 @@ var diagrams = function(processingInstance){
 
     };
     legend.prototype.moved=function(x,y){
-      
-      /* Over ridden because of the dynamic x-coordinate offset */
+    /* Overridden because of the dynamic x-coordinate offset */
+
       if(mouseX>this.x+x+this.offset &&
          mouseX<this.x+x+this.offset + this.w &&
          mouseY>this.y+y &&
@@ -910,7 +891,7 @@ var diagrams = function(processingInstance){
         this.hit=false;
 
       }
-      
+
     };
 
   }
@@ -931,48 +912,48 @@ var diagrams = function(processingInstance){
     onOff.prototype=Object.create(control.prototype);
     onOff.prototype.draw=function(){
 
-        pushMatrix();
+      pushMatrix();
 
-          translate(this.x, this.y);
+        translate(this.x, this.y);
 
           ellipseMode(CENTER);
 
-            if(this.hit &&
-               this.parent.hit){
+          if(this.hit &&
+             this.parent.hit){
 
-              app.focus=this.id;
-              cursor(this.cursor);
+            app.focus=this.id;
+            cursor(this.cursor);
 
-              stroke(getColor(this.color, 75));
+            stroke(getColor(this.color, 75));
 
-            }
-            else{
+          }
+          else{
 
-              stroke(getColor(this.color, 50));
+            stroke(getColor(this.color, 50));
 
-            }
+          }
 
-            if(this.on){ rotate(-PI/2); }
-            else       { this.value=0;  }
+          if(this.on){ rotate(-PI/2); }
+          else       { this.value=0;  }
 
-            strokeWeight(2);
-            noFill();
+          strokeWeight(2);
+          noFill();
 
-            arc(0, 0, this.w, this.h, -PI/4, 3*PI/2-PI/4);
+          arc(0, 0, this.w, this.h, -PI/4, 3*PI/2-PI/4);
 
-            line(0, 1, 0, -9);
+          line(0, 1, 0, -9);
 
-        popMatrix();
+      popMatrix();
 
     };
     onOff.prototype.moved=function(x,y){
-
+    /* Overridden because the control is round */
       if(dist(mouseX, mouseY,
               this.x+x, this.y+y)<this.w){
         
         this.hit=true;
         
-        // for(var c in this.controls){ this.controls[c].moved(this.x+x, this.y+y); }
+        for(var c in this.controls){ this.controls[c].moved(this.x+x, this.y+y); }
         
       }
       else{
@@ -983,8 +964,8 @@ var diagrams = function(processingInstance){
 
     };
     onOff.prototype.clicked=function(){
-      
-      /* Over ridden to maintain on/off value */
+    /* Overridden to maintain on/off value */
+    
       if(this.hit){
         this.execute();
         this.on=!this.on;
@@ -1031,8 +1012,10 @@ var diagrams = function(processingInstance){
 
           }
 
-          rect(offset, offset, this.w, this.h, 2, 2);
+          //  Background
+          rect(offset, offset, this.w, this.h, 2);
 
+          // Icon
           fill(getColor(this.color, 65));
           noStroke();
 
@@ -1044,8 +1027,8 @@ var diagrams = function(processingInstance){
 
     }; 
     settings.prototype.clicked=function(){
+    /* Overridden to maintain on/off value */
 
-      /* Over ridden to maintain on/off value */
       if(this.hit){
         
         this.execute();
@@ -1096,7 +1079,8 @@ var diagrams = function(processingInstance){
               cursor(this.cursor);
 
               fill(getColor(this.parent.color,25));
-              if(this.on){ stroke(this.clr);              }
+              
+              if(this.on){ stroke(this.clr);                }
               else       { stroke(getColor(this.color,50)); }
 
             }
@@ -1108,7 +1092,7 @@ var diagrams = function(processingInstance){
 
             }
 
-            rect(offset, -this.h-offset, this.w, this.h, 3, 3);
+            rect(offset, -this.h-offset, this.w, this.h, 3);
 
             // Caption
             if(this.retrieve()){ fill(this.color);              }
@@ -1137,8 +1121,8 @@ var diagrams = function(processingInstance){
 
     };      
     button.prototype.clicked=function(){
+    /* Overridden to maintain on/off value */
 
-      /* Over ridden to maintain on/off value */
       if(this.hit){
         
         this.execute();
@@ -1159,8 +1143,6 @@ var diagrams = function(processingInstance){
 
       control.call(this, id, parent, x, y, w, h);
 
-      this.cursor=params.cursor;
-
       this.text=params.text;
       this.execute=params.execute;
       this.retrieve=params.retrieve;
@@ -1172,7 +1154,8 @@ var diagrams = function(processingInstance){
     checkbox.prototype.draw=function(){
 
       pushMatrix();
-
+        
+        //  Required because of dynamic parent location
         translate(this.x + this.parent.offset, this.y);
 
           this.on=this.retrieve();
@@ -1199,7 +1182,7 @@ var diagrams = function(processingInstance){
 
           //  Control border
           if(app.debug){
-             // rect(-3, -3, this.w+6, this.h+6);
+             rect(-3, -3, this.w+6, this.h+6);
           }
           
           //  Outer checkbox circle
@@ -1228,8 +1211,8 @@ var diagrams = function(processingInstance){
 
     };       
     checkbox.prototype.clicked=function(){
+    /* Overridden to maintain on/off value */
 
-      /* Over ridden to maintain on/off value */
       if(this.hit){
         
         this.execute();
@@ -1329,32 +1312,32 @@ var diagrams = function(processingInstance){
           strokeWeight(1.5);
           stroke(CLRS.GRAY);
 
-          line(0, 0, cos(rTheta)*r, sin(rTheta)*r);
+            line(0, 0, cos(rTheta)*r, sin(rTheta)*r);
 
           // Cos: Vertical
           stroke(CLRS.SIN);
 
-          line(cos(rTheta)*r, 0, cos(rTheta)*r, sin(rTheta)*r);
+            line(cos(rTheta)*r, 0, cos(rTheta)*r, sin(rTheta)*r);
 
           // Sin: Horizontal
           stroke(CLRS.COS);
 
-          line(0, 0, cos(rTheta)*r, 0);
+            line(0, 0, cos(rTheta)*r, 0);
 
           // Triangle
           noStroke();
           fill(getColor(CLRS.GRAY, 20));
 
-          triangle(            0,             0,
-                   cos(rTheta)*r, sin(rTheta)*r,
-                   cos(rTheta)*r, 0);
+            triangle(            0,             0,
+                     cos(rTheta)*r, sin(rTheta)*r,
+                     cos(rTheta)*r, 0);
 
           noStroke();
           fill(getColor(CLRS.BLACK, 100));
 
-          ellipse(cos(rTheta)*r, sin(rTheta)*r, cs, cs);
-          ellipse(cos(rTheta)*r, 0,             cs, cs);
-          ellipse(0,             0,             cs, cs);
+            ellipse(cos(rTheta)*r, sin(rTheta)*r, cs, cs);
+            ellipse(cos(rTheta)*r, 0,             cs, cs);
+            ellipse(0,             0,             cs, cs);
 
           // Theta Text  ----------
           textSize(11);
@@ -1366,13 +1349,13 @@ var diagrams = function(processingInstance){
 
           fill(this.parent.color);
 
-          rect(-tw/2, -r*1.35-7.5, tw+2, 15);
+            rect(-tw/2, -r*1.35-7.5, tw+2, 15);
 
           fill(CLRS.BLACK);
 
           scale(1,-1);
 
-          text(app.theta+CONSTANTS.DEGREES, 0, r*1.35);
+            text(app.theta+CONSTANTS.DEGREES, 0, r*1.35);
 
         };
 
@@ -1400,7 +1383,8 @@ var diagrams = function(processingInstance){
 
     };
     unitCircle.prototype.moved=function(x,y){
-
+    /* Overridden because of the shape - round */
+    
       if(dist(mouseX, mouseY,
               this.x+x, this.y+y)<this.w){
 
@@ -1622,14 +1606,14 @@ var diagrams = function(processingInstance){
 
             textAlign(RIGHT,CENTER);
 
-            text("0", 22, 315);
+            text("0", p.x+22, p.y+p.h/2);
 
             // y-axis
             for(n=1; n<p.h/2/gw; n++){
 
               if(n%4==0){
-                text( n/4, 20, 315-n*gw);  //  Positive y-axis
-                text(-n/4, 20, 315+n*gw);  //  Negative y-axis
+                text( n/4, p.x+20, p.y+p.h/2-n*gw);  //  Positive y-axis
+                text(-n/4, p.x+20, p.y+p.h/2+n*gw);  //  Negative y-axis
               }
 
             }
@@ -2070,7 +2054,7 @@ var diagrams = function(processingInstance){
   
           if(this.hit &&
              this.parent.hit){
-               
+
             app.focus=this.id;
             cursor(this.cursor);
 
@@ -2114,8 +2098,8 @@ var diagrams = function(processingInstance){
       
     }
     graph.prototype.moved=function(x,y){
-      
-      /* Over ridden because of the 2-stage hit requirements */
+    /* Overridden because of the 2-stage hit requirements */
+
       if(mouseX>=this.x+x &&
          mouseX<=this.x+x+this.w &&
          mouseY>=this.y+y &&
@@ -2164,7 +2148,8 @@ var diagrams = function(processingInstance){
       var bk=new root(11, null, 0, 0, 599, 599,                         
         {text:    "root",
          color:   CLRS.TEAL_2,
-         cursor:  ARROW});
+         cursor:  ARROW,
+         border:  false});
 
       app.controls.push(bk);
 
@@ -2282,7 +2267,7 @@ var diagrams = function(processingInstance){
       bk.controls.push(telem);
               
         /* Sine Checkbox      */
-        telem.controls.push(new checkbox(27, telem, 25, 400,  50,  15,         
+        telem.controls.push(new checkbox(27, telem, 30, 360,  50,  15,         
           {text:     "Sine Curve",
            execute:  toggleSin,
            retrieve: getSineOn,
@@ -2290,7 +2275,7 @@ var diagrams = function(processingInstance){
            cursor:   HAND}));
 
         /* Cosine Checkbox    */
-        telem.controls.push(new checkbox(28, telem, 25, 420,  50,  15,    
+        telem.controls.push(new checkbox(28, telem, 30, 380,  50,  15,    
           {text:     "Cosine Curve",
            execute:  toggleCos,
            retrieve: getCosineOn,
@@ -2298,7 +2283,7 @@ var diagrams = function(processingInstance){
            cursor:   HAND}));
 
         /* Tangent Checkbox   */
-        telem.controls.push(new checkbox(29, telem, 25, 440,  50,  15,    
+        telem.controls.push(new checkbox(29, telem, 30, 400,  50,  15,    
           {text:     "Tangent Curve",
            execute:  toggleTan,
            retrieve: getTangentOn,
@@ -2306,7 +2291,7 @@ var diagrams = function(processingInstance){
            cursor:   HAND}));
 
         /* Cosecant Checkbox  */
-        telem.controls.push(new checkbox(30, telem, 25, 460,  50,  15,    
+        telem.controls.push(new checkbox(30, telem, 30, 420,  50,  15,    
           {text:     "Cosecent Curve",
            execute:  toggleCsc,
            retrieve: getCosecantOn,
@@ -2314,7 +2299,7 @@ var diagrams = function(processingInstance){
            cursor:   HAND}));
 
         /* Secant Checkbox    */
-        telem.controls.push(new checkbox(31, telem, 25, 480,  50,  15,    
+        telem.controls.push(new checkbox(31, telem, 30, 440,  50,  15,    
           {text:     "Secant Curve",
            execute:  toggleSec,
            retrieve: getSecantOn,
@@ -2322,7 +2307,7 @@ var diagrams = function(processingInstance){
            cursor:   HAND}));
 
         /* Cotangent Checkbox */
-        telem.controls.push(new checkbox(32, telem, 25, 500,  50,  15,    
+        telem.controls.push(new checkbox(32, telem, 30, 460,  50,  15,    
           {text:     "Cotangent Curve",
            execute:  toggleCot,
            retrieve: getCotangentOn,
