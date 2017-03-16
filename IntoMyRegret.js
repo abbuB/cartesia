@@ -865,93 +865,104 @@ var diagrams = function(processingInstance){
         if(this.hit){ fill(getColor(CLRS.WHITE,80)); }
         else        { fill(getColor(CLRS.WHITE,60)); }
 
-        /* Mouse Coordinates */
+        /* Title ------------------------- */
         textAlign(CENTER,CENTER);
         textSize(12);
-        fill(CLRS.TEAL_2);
+        fill(CLRS.WHITE);
         
-        text("Telemetry",     p.w/2+p.offset, 20);
+          text("Debug Telemetry",     p.w/2+p.offset, 20);
 
-        /* Mouse Coordinates */
-        textSize(11);
+        /* Mouse Coordinates ------------------------- */
+        textSize(10);
         
         fill(40,40,40);
 
-        rect(p.offset+15, row0+5, 175, 1, 5);
+        // line(p.offset+15, row0+10, p.offset+185, row0+10);
 
-        fill(getColor(CLRS.WHITE,75));
+        fill(getColor(CLRS.TEAL_2,75));
         textAlign(LEFT,CENTER);
 
-        text("x: ",           col1, row0+15);
-        text("y: ",           col1, row0+30);
+          text("Mouse Coordinates", col1, row0+15); 
+
+        fill(getColor(CLRS.WHITE,75));
+        
+          text("x: ",           col1, row0+30);
+          text("y: ",           col1, row0+45);
 
         fill(getColor(CLRS.YELLOW,75));
-        textSize(11);
         textAlign(RIGHT,CENTER);
 
-        text(mouseX,          col2, row0+15);
-        text(mouseY,          col2, row0+30);
+          text(mouseX,          col2, row0+30);
+          text(mouseY,          col2, row0+45);
 
-        /* Mouse Buttons */
+        /* Mouse Buttons ------------------------- */
+        
+        textAlign(LEFT, CENTER);
+        fill(getColor(CLRS.TEAL_2,75));
+        
+          text("Mouse Buttons",           col1, row0+75);
 
         strokeWeight(1);
         stroke(0);
 
-        line(p.offset+15, row0+50, p.offset+185, row0+50);
+        // line(p.offset+15, row0+50, p.offset+185, row0+50);
 
         fill(getColor(CLRS.WHITE,75));
         textAlign(LEFT,CENTER);
-        textSize(10);
         
-        text("Left:",         col1, row0+60);
-        text("Right:",        col1, row0+73);
-        text("Center:",       col1, row0+86);
+          text("Left:",         col1, row0+90);
+          text("Right:",        col1, row0+105);
+          text("Center:",       col1, row0+120);
 
         fill(getColor(CLRS.YELLOW,75));
-        textAlign(LEFT,CENTER);
-        textSize(10);
+        textAlign(RIGHT,CENTER);
 
-        text(app.left,        col2, row0+60);
-        text(app.right,       col2, row0+73);
-        text(app.center,      col2, row0+86);
+          text(app.left,        col2, row0+90);
+          text(app.right,       col2, row0+105);
+          text(app.center,      col2, row0+120);
         
-        /* Mouse Buttons */
-        text("Focus:",        col1, row0+8*h);
-        text("Focused:",      col1, row0+9*h);                
-        text("Legend:",       col1, row0+10*h);
+        /* Focus ------------------------- */
 
-        text("autoRun:",      col1, row0+12*h);
-
-        text("Theta ("+CONSTANTS.THETA+"):",      col1, row0+14*h);
+        textAlign(LEFT, CENTER);
+        fill(getColor(CLRS.TEAL_2,75));
         
+          text("Controls",           col1, row0+150);
+        
+        fill(getColor(CLRS.WHITE,75));
+        
+          text("Focus:",        col1, row0+165);
+          text("Focused:",      col1, row0+180);                
 
+        fill(getColor(CLRS.YELLOW,75));
+        textAlign(RIGHT,CENTER);
 
+        /* app.focus is required to be done after control update in main draw sub */
+        text(focused,         col2, row0+180);                
 
+        /* App Specific ------------------------- */
+        textAlign(LEFT, CENTER);
+        fill(getColor(CLRS.TEAL_2,75));
+        
+          text("App", col1, row0+210);
 
-        // text(app.focus,       col2, row0+8*h);
-        text(focused,         col2, row0+9*h);                
-        text(app.legend,      col2, row0+10*h);
+        fill(getColor(CLRS.WHITE,75));
+        
+          text("Legend:",                      col1, row0+225);
+          text("autoRun:",                     col1, row0+240);
+          text("Theta ("+CONSTANTS.THETA+"):", col1, row0+255);
 
-        text(app.autoRun,     col2, row0+12*h);
-
-        text(app.theta,       col2, row0+14*h);
-
-        // text(app.data[app.theta].sin, col2, row0+11*h);
-        // text(app.data[app.theta].cos, col2, row0+12*h);
-
-        // if     (app.data[app.theta].tan> 100){ text( "Infinity", col2, row0+13*h);             }
-        // else if(app.data[app.theta].tan<-100){ text("-Infinity", col2, row0+13*h);             }
-        // else                                 { text(app.data[app.theta].tan, col2, row0+13*h); }
-
-        // text(app.data[app.theta].csc, col2, row0+14*h);
-        // text(app.data[app.theta].sec, col2, row0+15*h);
-        // text(app.data[app.theta].cot, col2, row0+16*h);
+        fill(getColor(CLRS.YELLOW,75));
+        textAlign(RIGHT, CENTER);
+        
+          text(app.legend,      col2, row0+225);
+          text(app.autoRun,     col2, row0+240);
+          text(app.theta,       col2, row0+255);
 
         var txt="Press the left and right arrow keys to increment and decrement theta.";
 
-        textAlign(LEFT, TOP);
+        textAlign(LEFT,BOTTOM);
 
-        text(txt, col0, row0 + 33*h, p.w-30, 100);
+        text(txt, col0, row0 + 500, p.w-30, 100);
         
       };
       
@@ -979,11 +990,11 @@ var diagrams = function(processingInstance){
           /* The following is outside the properties function because it has
              to be done after the child controls are drawn to
              determine which control has the focus                  */
-          fill(getColor(CLRS.WHITE,75));
+          fill(getColor(CLRS.YELLOW,75));
           textSize(11);
           textAlign(RIGHT,CENTER);
 
-          text(app.focus, this.offset+130, 150);
+          text(app.focus, this.offset+130, 195);
           
       popMatrix();
 
@@ -2195,9 +2206,14 @@ var diagrams = function(processingInstance){
           noFill();
   
           if(this.hit &&
-             this.parent.hit){ app.focus=this.id;
-                               cursor(WAIT);        }
-          if(this.gridHit)   { cursor(CROSS);       }
+             this.parent.hit){
+               
+            app.focus=this.id;
+            cursor(WAIT);
+            
+            if(this.gridHit){ noCursor(); }
+
+          }
 
           pushMatrix();
 
@@ -2380,42 +2396,42 @@ var diagrams = function(processingInstance){
       bk.controls.push(telem);
               
         /* Sine Checkbox      */
-        telem.controls.push(new checkbox(27, telem, 25, 270,  50,  15,         
+        telem.controls.push(new checkbox(27, telem, 25, 400,  50,  15,         
           {text:     "Sine Curve",
            execute:  toggleSin,
            retrieve: getSineOn,
            color:    CLRS.SIN}));
 
         /* Cosine Checkbox    */
-        telem.controls.push(new checkbox(28, telem, 25, 290,  50,  15,    
+        telem.controls.push(new checkbox(28, telem, 25, 420,  50,  15,    
           {text:     "Cosine Curve",
            execute:  toggleCos,
            retrieve: getCosineOn,
            color:    CLRS.COS}));
 
         /* Tangent Checkbox   */
-        telem.controls.push(new checkbox(29, telem, 25, 310,  50,  15,    
+        telem.controls.push(new checkbox(29, telem, 25, 440,  50,  15,    
           {text:     "Tangent Curve",
            execute:  toggleTan,
            retrieve: getTangentOn,
            color:    CLRS.TAN}));
 
         /* Cosecant Checkbox  */
-        telem.controls.push(new checkbox(30, telem, 25, 330,  50,  15,    
+        telem.controls.push(new checkbox(30, telem, 25, 460,  50,  15,    
           {text:     "Cosecent Curve",
            execute:  toggleCsc,
            retrieve: getCosecantOn,
            color:    CLRS.SIN_LT}));
 
         /* Secant Checkbox    */
-        telem.controls.push(new checkbox(31, telem, 25, 350,  50,  15,    
+        telem.controls.push(new checkbox(31, telem, 25, 480,  50,  15,    
           {text:     "Secant Curve",
            execute:  toggleSec,
            retrieve: getSecantOn,
            color:    CLRS.COS_LT}));
 
         /* Cotangent Checkbox */
-        telem.controls.push(new checkbox(32, telem, 25, 370,  50,  15,    
+        telem.controls.push(new checkbox(32, telem, 25, 500,  50,  15,    
           {text:     "Cotangent Curve",
            execute:  toggleCot,
            retrieve: getCotangentOn,
