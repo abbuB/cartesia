@@ -328,7 +328,8 @@ var diagrams = function(processingInstance){
       PI:       "π",
       UP_ARROW: "▲",
       INFINITY: "∞",
-      THETA:    "θ"
+      THETA:    "θ",
+      RADIANS:  "ᶜ"
 
     };
     var TRIG_INDEX={
@@ -1278,7 +1279,7 @@ var diagrams = function(processingInstance){
 
               // fill(getColor(CLRS.WHITE, p.value));                          
               stroke(getColor(CLRS.BLACK, 75));
-              strokeWeight(2.25);
+              // strokeWeight(2.25);
 
               // if(p.value<100){ p.value+=2; }
 
@@ -1300,7 +1301,7 @@ var diagrams = function(processingInstance){
           };
           var drawDegrees=function(){
 
-            noFill()
+            fill(CLRS.BLACK);
             stroke(getColor(CLRS.BLACK, 90));
             strokeWeight(0.5);
             
@@ -1309,24 +1310,107 @@ var diagrams = function(processingInstance){
               for(var n=0; n<360; n++){
 
                 if      (n%10==0){ line(p.w-35, 0, p.w, 0); }
-                else if ( n%5==0){ line(p.w-25, 0, p.w, 0); }                
+                else if ( n%5==0){ line(p.w-25, 0, p.w, 0); }
                 else             { line(p.w-15, 0, p.w, 0); }
-                
+
                 rotate(radians(1));
-                
+
               }
-              
+
             popMatrix();
             
-            // ellipse( 0, r, cs, cs);
-            // ellipse( 0,-r, cs, cs);
-            // ellipse( r, 0, cs, cs);
-            // ellipse(-r, 0, cs, cs);
+            // Labels
+            textSize(10);
+            
+            pushMatrix();
+            
+              resetMatrix();
+              translate(p.x, p.y);
+              textAlign(CENTER,CENTER);
+              var offset=p.w-50;
+              
+                for(var n=10; n<360; n+=10){
+
+                  text(n,
+                       cos(-radians(n))*offset,
+                       sin(-radians(n))*offset);
+                }
+                
+              textAlign(RIGHT,CENTER);
+              
+              offset=p.w-44;
+              
+              text("0 & 360",
+                   cos(radians(0))*offset,
+                   sin(radians(0))*offset);
+                
+            popMatrix();
 
           };
           var drawRadians=function(){
 
+            noFill()
+            stroke(getColor(CLRS.BLACK, 90));
+            strokeWeight(0.5);
+            
+            pushMatrix();
 
+              for(var n=0; n<TWO_PI*100; n++){
+
+                if(n%10==0){
+
+                  stroke(getColor(CLRS.BLACK, 90));
+                  line(p.w+25, 0, p.w, 0);
+
+                }
+                else if ( n%5==0){
+
+                  stroke(getColor(CLRS.BLACK, 90));
+                  line(p.w+15, 0, p.w, 0);
+
+                }
+                else{
+
+                  stroke(getColor(CLRS.BLACK, 90));
+                  line(p.w+10, 0, p.w, 0);
+
+                }
+                
+                rotate(0.01);
+                
+              }
+              
+            popMatrix();
+
+            // Labels
+            textSize(9);
+            
+            pushMatrix();
+            
+              resetMatrix();
+              translate(p.x, p.y);
+              textAlign(CENTER,CENTER);
+              
+              fill(getColor(CLRS.BLACK, 90));
+
+              var offset=p.w+37;
+
+              for(var n=0.1; n<TWO_PI; n+=0.1){
+
+                text(n.toFixed(1),
+                     cos(-radians(180*n/PI))*offset,
+                     sin(-radians(180*n/PI))*offset);
+
+              }
+
+              offset=p.w+30;              
+              textAlign(LEFT,CENTER);
+              println(offset);
+              text("0 & 2"+CONSTANTS.PI,
+                   cos(radians(0))*offset,
+                   sin(radians(0))*offset);
+
+            popMatrix();
 
           };
           var quadrants=function(){
@@ -1334,7 +1418,7 @@ var diagrams = function(processingInstance){
             textAlign(CENTER, CENTER);
             textSize(16);
             noStroke();
-            fill(getColor(CLRS.WHITE, 50));
+            fill(getColor(CLRS.BLACK, 25));
 
             var w=r*0.15;  // Distance along radius
 
@@ -1347,7 +1431,7 @@ var diagrams = function(processingInstance){
           var theta=function(){
 
             // Hypotenuse
-            strokeWeight(1.5);
+            strokeWeight(0.5);
             stroke(CLRS.GRAY);
 
               line(0, 0, cos(rTheta)*r, sin(rTheta)*r);
@@ -1378,22 +1462,23 @@ var diagrams = function(processingInstance){
               ellipse(0,             0,             cs, cs);
 
             // Theta Text  ----------
-            textSize(11);
+            textSize(20);
             textAlign(CENTER,CENTER);
 
             var tw=textWidth(app.theta+CONSTANTS.DEGREES);
 
             noStroke();
 
-            fill(this.parent.color);
+            fill(p.parent.color);
 
-              rect(-tw/2, -r*1.35-7.5, tw+2, 15);
+              // rect(-tw/2, -r*1.35-7.5, tw+2, 15);
 
             fill(CLRS.BLACK);
 
             scale(1,-1);
 
-              text(app.theta+CONSTANTS.DEGREES, 0, r*1.35);
+              text(((app.theta*PI/180).toFixed(2)) + CONSTANTS.RADIANS, 0, r*1.2);
+              text(app.theta + CONSTANTS.DEGREES, 0, r*1.35);
 
           };
 
@@ -2203,7 +2288,7 @@ var diagrams = function(processingInstance){
         /* root control       */
         var bk=new root(100, null, 0, 0, 599, 599,                         
           {text:    "root",
-           color:   getColor(CLRS.TEAL_3, 5),
+           color:   CLRS.GRAY2,
            cursor:  ARROW,
            border:  false});
 
@@ -2216,14 +2301,14 @@ var diagrams = function(processingInstance){
 
           /* unit circle        */
           bk.controls.push(new unitCircle(120, bk, 300, 300, 200, 150,      
-            {color:   CLRS.ORANGE,
+            {color:   CLRS.GRAY2,
              cursor:  ARROW}));
       
       // Toolbar --------------------------------------------------
 
         /* toolbar            */
         var toolb=new toolbar(200, bk, 0, 0, 600, 30,  
-          {text:    "Trig Curves",
+          {text:    "Degrees and Radians",
            color:   CLRS.TEAL_1,
            cursor:  ARROW});
 
