@@ -2,17 +2,15 @@
 
     TO DO:
         
-        - optimize graph display (ellipses vs curves...)
-
-        - tidy up controls to accomodate arbitrary positions
-
-        - differentiate left/right/center mouse clicks
-
+        - mouseOut/mouseOver twitchyness
+        
         - page focus on mouseOver possible?????
 
         - tooltips?
         
       Implemented but ***** NEEDS WORK *****
+        
+        - dashed line for secondary trig ratios
         
         - graph large cross hair cursor 
 
@@ -20,13 +18,22 @@
 
     Research:
 
+        - ask question on Khan to determine trig ratios for given values.
+          In other words, when is tan(theta)=2, etc.
+          
         - question list
         - Addition and subtraction trig identities
         - Law of cosines
         - Pythagorean identities        
 
     TO DONE:
-
+        
+        - differentiate left/right/center mouse clicks
+        
+        - optimize graph display (ellipses vs curves...)
+        
+        - tidy up controls to accomodate arbitrary positions
+        
         - add focus cursor to control params
     
         - create checkbox object for graph features, etc.
@@ -335,7 +342,7 @@ var diagrams = function(processingInstance){
 
   }
   
-  // Helper Functions =========================================================
+  /* Helper Functions ========================================================= */
   {
     
     var getColor=function(clr, alpha){ return color(red(clr), green(clr), blue(clr), alpha/100*255); };
@@ -1448,6 +1455,7 @@ var diagrams = function(processingInstance){
       var h2=h/2;     //  height / 2
       var gw=h/16;    //  grid width
       var f=4*gw;     //  coefficient to account for grid size
+      var increment=0;
 
       var borderColor=CLRS.BORDER;
 
@@ -1650,6 +1658,8 @@ var diagrams = function(processingInstance){
         stroke(CLRS.SIN);
         noFill();
 
+        increment=20;
+
         // beginShape(m);
         beginShape();
 
@@ -1658,7 +1668,7 @@ var diagrams = function(processingInstance){
 
           curveVertex(x,y);
 
-            for(var n=app.MIN; n<=app.MAX; n++){
+            for(var n=app.MIN; n<=app.MAX; n+=increment){
 
               x=n/app.MAX*h;
               y=app.data[n].sin*f;
@@ -1672,8 +1682,6 @@ var diagrams = function(processingInstance){
         endShape();
 
         // Current Value
-
-        stroke(CLRS.SIN);
         fill(CLRS.SIN);
 
         var val=app.data[app.theta].sin*f;
@@ -1687,6 +1695,8 @@ var diagrams = function(processingInstance){
         stroke(CLRS.COS);
         noFill();
 
+        increment=20;
+        
         var x=0;
         var y=app.data[0].cos*f;
 
@@ -1694,7 +1704,7 @@ var diagrams = function(processingInstance){
 
           curveVertex(x,y);
 
-            for(var n=app.MIN; n<=app.MAX; n++){
+            for(var n=app.MIN; n<=app.MAX; n+=increment){
 
               x=n/app.MAX*h;
               y=app.data[n].cos*f;
@@ -1726,16 +1736,20 @@ var diagrams = function(processingInstance){
         var y=0;
         var n=0;
 
+        increment=6;
+        
         beginShape();
 
           curveVertex(x, y);
 
-          for(n=app.MIN; n<90; n++){
+          for(n=app.MIN; n<90; n+=increment){
 
             x=n/app.MAX*h;
             y=app.data[n].tan*f;
 
-            if(y>=-h2 && y<=h2){ curveVertex(x, y); }
+            if(y>=-h2 && y<=h2){
+              curveVertex(x, y);
+            }
 
           }
           
@@ -1749,12 +1763,14 @@ var diagrams = function(processingInstance){
           curveVertex(116.56/app.MAX*h, -h2);
           curveVertex(116.56/app.MAX*h, -h2);
 
-          for(n=91; n<270; n++){
+          for(n=91; n<270; n+=increment){
 
             x=n/app.MAX*h;
             y=app.data[n].tan*f;
 
-            if(y>=-h2 && y<=h2){ curveVertex(x, y); }
+            if(y>=-h2 && y<=h2){
+              curveVertex(x, y);
+            }
 
           }
 
@@ -1768,16 +1784,21 @@ var diagrams = function(processingInstance){
           curveVertex(296.56/app.MAX*h, -h2);
           curveVertex(296.56/app.MAX*h, -h2);
           
-          for(n=271; n<app.MAX; n++){
+          for(n=271; n<app.MAX; n+=increment){
 
             x=n/app.MAX*h;
             y=app.data[n].tan*f;
 
-            if(y>=-h2 && y<=h2){ curveVertex(x, y); }
+            if(y>=-h2 && y<=h2){
+              curveVertex(x, y);
+            }
 
           }
 
-          curveVertex(x,y);
+          // curveVertex(x,y);
+          
+          curveVertex(n/app.MAX*h,0);
+          curveVertex(n/app.MAX*h,0);
 
         endShape();
 
@@ -1797,32 +1818,34 @@ var diagrams = function(processingInstance){
       var cosecantCurve=function(){
 
         strokeWeight(1);
-        stroke(getColor(CLRS.SIN_LT, 10));
+        stroke(getColor(CLRS.SIN_LT, 30));
         noFill();
 
         var x=0;
         var y=0;
         var n=0;
         
+        incr=9;
+        
         beginShape();
 
-          ellipse(degrees(PI/6)/app.MAX*h, h2, 2, 2);
+          // ellipse(degrees(PI/6)/app.MAX*h, h2, 2, 2);
           curveVertex(degrees(PI/6)/app.MAX*h, h2);
           curveVertex(degrees(PI/6)/app.MAX*h, h2);
           
-          for(n=1; n<180; n+=2){
+          for(n=1; n<180; n+=incr){
 
             x=n/app.MAX*h;
             y=app.data[n].csc*f;
 
             if(y>=-h2 && y<=h2){
-              ellipse(x, y, 2, 2);
+              // ellipse(x, y, 2, 2);
               curveVertex(x, y);
             }
 
           }
           
-          ellipse(degrees(5*PI/6)/app.MAX*h, h2, 2, 2);
+          // ellipse(degrees(5*PI/6)/app.MAX*h, h2, 2, 2);
           curveVertex(degrees(5*PI/6)/app.MAX*h, h2);
           curveVertex(degrees(5*PI/6)/app.MAX*h, h2);
 
@@ -1830,23 +1853,23 @@ var diagrams = function(processingInstance){
         
         beginShape();
 
-          ellipse(degrees(7*PI/6)/app.MAX*h, -h2, 2, 2);
+          // ellipse(degrees(7*PI/6)/app.MAX*h, -h2, 2, 2);
           curveVertex(degrees(7*PI/6)/app.MAX*h, -h2);
           curveVertex(degrees(7*PI/6)/app.MAX*h, -h2);
 
-          for(n=181; n<app.MAX; n+=2){
+          for(n=181; n<app.MAX; n+=incr){
 
             x=n/app.MAX*h;
             y=app.data[n].csc*f;
 
             if(y>=-h2 && y<=h2){
-              ellipse(x, y, 2, 2);
+              // ellipse(x, y, 2, 2);
               curveVertex(x, y);
             }
 
           }
 
-          ellipse(degrees(11*PI/6)/app.MAX*h, -h2, 2, 2);
+          // ellipse(degrees(11*PI/6)/app.MAX*h, -h2, 2, 2);
           curveVertex(degrees(11*PI/6)/app.MAX*h, -h2);
           curveVertex(degrees(11*PI/6)/app.MAX*h, -h2);
           
@@ -1867,30 +1890,32 @@ var diagrams = function(processingInstance){
       var secantCurve=function(){
         
         strokeWeight(1);
-        stroke(getColor(CLRS.COS_LT, 10));
+        stroke(getColor(CLRS.COS_LT, 30));
         noFill();
 
         var x=0;
         var y=app.data[0].sec;
         var n=0;
         
+        increment=6;
+        
         beginShape();
 
-          for(n=1; n<90; n+=2){
+          for(n=1; n<90; n+=increment){
 
             x=n/app.MAX*h;
             y=app.data[n].sec*f;
 
             if(y>=-h2 && y<=h2){
               
-              ellipse(x, y, 2, 2);
+              // ellipse(x, y, 2, 2);
               curveVertex(x, y);
 
             }
 
           }
 
-          ellipse(degrees(PI/3)/app.MAX*h, h2, 2, 2);
+          // ellipse(degrees(PI/3)/app.MAX*h, h2, 2, 2);
           curveVertex(degrees(PI/3)/app.MAX*h, h2);
           curveVertex(degrees(PI/3)/app.MAX*h, h2);    
           
@@ -1898,24 +1923,24 @@ var diagrams = function(processingInstance){
         
         beginShape();
         
-          ellipse(degrees(2*PI/3)/app.MAX*h, -h2, 2, 2);
+          // ellipse(degrees(2*PI/3)/app.MAX*h, -h2, 2, 2);
           curveVertex(degrees(2*PI/3)/app.MAX*h, -h2);
           curveVertex(degrees(2*PI/3)/app.MAX*h, -h2);    
           
           
-          for(n=91; n<270; n+=2){
+          for(n=91; n<270; n+=increment){
 
             x=n/app.MAX*h;
             y=app.data[n].sec*f;
 
             if(y>=-h2 && y<=h2){
-              ellipse(x, y, 2, 2);
+              // ellipse(x, y, 2, 2);
               curveVertex(x, y);
             }
 
           }
         
-          ellipse(degrees(4*PI/3)/app.MAX*h, -h2, 2, 2);
+          // ellipse(degrees(4*PI/3)/app.MAX*h, -h2, 2, 2);
           curveVertex(degrees(4*PI/3)/app.MAX*h, -h2);
           curveVertex(degrees(4*PI/3)/app.MAX*h, -h2);    
 
@@ -1923,7 +1948,7 @@ var diagrams = function(processingInstance){
 
         beginShape();
         
-          ellipse(degrees(5*PI/3)/app.MAX*h, h2, 2, 2);
+          // ellipse(degrees(5*PI/3)/app.MAX*h, h2, 2, 2);
           curveVertex(degrees(5*PI/3)/app.MAX*h, h2);
           curveVertex(degrees(5*PI/3)/app.MAX*h, h2);    
           
@@ -1933,7 +1958,7 @@ var diagrams = function(processingInstance){
             y=app.data[n].sec*f;
 
             if(y>=-h2 && y<=h2){
-              ellipse(x, y, 2, 2);
+              // ellipse(x, y, 2, 2);
               curveVertex(x, y);
             }
 
@@ -1957,33 +1982,34 @@ var diagrams = function(processingInstance){
       var cotangentCurve=function(){
 
         strokeWeight(1);
-        stroke(getColor(CLRS.TAN, 10));
+        stroke(getColor(CLRS.TAN, 30));
         noFill();
 
         var x=0;
         var y=0;
         var n=0;
-        var incr=2;
+        
+        increment=6;
 
         beginShape();
         
-          ellipse(26.5/app.MAX*h, h2, 2, 2);
+          // ellipse(26.5/app.MAX*h, h2, 2, 2);
           curveVertex(26.5/app.MAX*h, h2);
           curveVertex(26.5/app.MAX*h, h2);    
           
-          for(n=2; n<180; n+=incr){
+          for(n=2; n<180; n+=increment){
 
             x=n/app.MAX*h;
             y=app.data[n].cot*f;
 
             if(y>=-h2 && y<=h2){
-              ellipse(x, y, 2, 2);
+              // ellipse(x, y, 2, 2);
               curveVertex(x, y);
             }
 
           }
 
-          ellipse(153.5/app.MAX*h, -h2, 2, 2);
+          // ellipse(153.5/app.MAX*h, -h2, 2, 2);
           curveVertex(153.5/app.MAX*h, -h2);
           curveVertex(153.5/app.MAX*h, -h2);    
         
@@ -1991,23 +2017,23 @@ var diagrams = function(processingInstance){
         
         beginShape();
 
-          ellipse(206.5/app.MAX*h, h2, 2, 2);
+          // ellipse(206.5/app.MAX*h, h2, 2, 2);
           curveVertex(206.5/app.MAX*h, h2);
           curveVertex(206.5/app.MAX*h, h2);    
           
-          for(n=181; n<=app.MAX; n+=incr){
+          for(n=181; n<=app.MAX; n+=increment){
 
             x=n/app.MAX*h;
             y=app.data[n].cot*f;
 
             if(y>=-h2 && y<=h2){
-              ellipse(x, y, 2, 2);
+              // ellipse(x, y, 2, 2);
               curveVertex(x, y);
             }
 
           }
 
-          ellipse(333.5/app.MAX*h, -h2, 2, 2);
+          // ellipse(333.5/app.MAX*h, -h2, 2, 2);
           curveVertex(333.5/app.MAX*h, -h2);
           curveVertex(333.5/app.MAX*h, -h2);    
           
@@ -2064,12 +2090,12 @@ var diagrams = function(processingInstance){
 
             translate(30, -285);
 
-              if(this.gridOn)    { grid();           }
-              if(this.axesOn)    { axes();           }
-              if(this.originOn)  { origin();         }
-              if(this.arrowsOn)  { arrows();         }
-              if(this.ticksOn)   { ticks();          }
-              if(this.labelsOn)  { labels();         }
+              if(this.gridOn    ){ grid();           }
+              if(this.axesOn    ){ axes();           }
+              if(this.originOn  ){ origin();         }
+              if(this.arrowsOn  ){ arrows();         }
+              if(this.ticksOn   ){ ticks();          }
+              if(this.labelsOn  ){ labels();         }
 
               if(app.quadrantsOn){ quadrants();      }
 
@@ -2136,16 +2162,13 @@ var diagrams = function(processingInstance){
 
   }
 
-  // Initialize ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  /* Initialize ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
   var initialize=function(){
-
-    // var control=function(id, parent, controls, x coordindate, y coordinate, width, height,
-    //  params - eg: txt, execute, tag, retrieve, clr){
 
     // Background --------------------------------------------------
     {
       /* root control       */
-      var bk=new root(11, null, 0, 0, 599, 599,                         
+      var bk=new root(100, null, 0, 0, 599, 599,                         
         {text:    "root",
          color:   CLRS.TEAL_2,
          cursor:  ARROW,
@@ -2154,12 +2177,12 @@ var diagrams = function(processingInstance){
       app.controls.push(bk);
 
         /* graph              */
-        bk.controls.push(new graph(12, bk, 0, 30, 600, 570,
+        bk.controls.push(new graph(110, bk, 0, 30, 600, 570,
           {color:   CLRS.BLUE,
            cursor:  ARROW}));
 
         /* unit circle        */
-        bk.controls.push(new unitCircle(2, bk, 129, 447, 61.5, 61.5,      
+        bk.controls.push(new unitCircle(120, bk, 129, 447, 61.5, 61.5,      
           {color:   CLRS.ORANGE,
            cursor:  ARROW}));
     }
@@ -2167,7 +2190,7 @@ var diagrams = function(processingInstance){
     // Toolbar --------------------------------------------------
     {
       /* toolbar            */
-      var toolb=new toolbar(3, bk, 0, 0, 600, 30,                       
+      var toolb=new toolbar(200, bk, 0, 0, 600, 30,                       
         {text:    "Trig Curves",
          color:   CLRS.TEAL_1,
          cursor:  ARROW});
@@ -2175,14 +2198,14 @@ var diagrams = function(processingInstance){
       bk.controls.push(toolb);
 
         /* auto-run           */
-        toolb.controls.push(new onOff(4, toolb, 17, 15, 13, 13,           
+        toolb.controls.push(new onOff(210, toolb, 17, 15, 13, 13,           
           {execute:   checkboxAuto,
            retrieve:  getAuto,
            color:     CLRS.BLACK,
            cursor:    HAND}));
            
         /* display settings   */
-        toolb.controls.push(new settings(5, toolb, 575, 5, 22, 22,        
+        toolb.controls.push(new settings(220, toolb, 575, 5, 22, 22,        
           {execute:   checkboxLegend,
            retrieve:  getLegend,
            color:     CLRS.BLACK,
@@ -2193,7 +2216,7 @@ var diagrams = function(processingInstance){
     // Index --------------------------------------------------
     {
       /* index              */
-      var idx=new index(6, bk, 170, 55, 250, 70,                        
+      var idx=new index(300, bk, 170, 55, 250, 70,                        
         {radius:  5,
          color:   CLRS.WHITE,
          cursor:  ARROW})
@@ -2201,7 +2224,7 @@ var diagrams = function(processingInstance){
       bk.controls.push(idx);
         
         /* Sine button        */
-        idx.controls.push(new button(20, idx, 5, 5, 110, 20,              
+        idx.controls.push(new button(310, idx, 5, 5, 110, 20,              
           {text:     "Sin "+CONSTANTS.THETA,
            execute:  toggleSin,
            tag:      getSine,
@@ -2210,7 +2233,7 @@ var diagrams = function(processingInstance){
            cursor:   HAND}));
          
         /* Cosine button      */
-        idx.controls.push(new button(21, idx, 5, 25, 110, 20,             
+        idx.controls.push(new button(320, idx, 5, 25, 110, 20,             
           {text:     "Cos "+CONSTANTS.THETA,
            execute:  toggleCos,
            tag:      getCosine,
@@ -2219,7 +2242,7 @@ var diagrams = function(processingInstance){
            cursor:   HAND}));
         
         /* Tangent button     */
-        idx.controls.push(new button(22, idx, 5, 45, 110, 20,             
+        idx.controls.push(new button(330, idx, 5, 45, 110, 20,             
           {text:     "Tan "+CONSTANTS.THETA,
            execute:  toggleTan,
            tag:      getTangent,
@@ -2228,7 +2251,7 @@ var diagrams = function(processingInstance){
            cursor:   HAND}));
 
         /* Cosecant button    */
-        idx.controls.push(new button(23, idx, 135, 5, 110, 20,            
+        idx.controls.push(new button(340, idx, 135, 5, 110, 20,            
           {text:     "Csc "+CONSTANTS.THETA,
            execute:  toggleCsc,
            tag:      getCosecant,
@@ -2237,7 +2260,7 @@ var diagrams = function(processingInstance){
            cursor:   HAND}));
         
         /* Secant button      */
-        idx.controls.push(new button(24, idx, 135, 25, 110, 20,           
+        idx.controls.push(new button(350, idx, 135, 25, 110, 20,           
           {text:     "Sec "+CONSTANTS.THETA,
            execute:  toggleSec,
            tag:      getSecant,
@@ -2246,7 +2269,7 @@ var diagrams = function(processingInstance){
            cursor:   HAND}));
            
         /* Cotangent button   */
-        idx.controls.push(new button(25, idx, 135, 45, 110, 20,           
+        idx.controls.push(new button(360, idx, 135, 45, 110, 20,           
           {text:     "Cot "+CONSTANTS.THETA,
            execute:  toggleCot,
            tag:      getCotangent,
@@ -2257,17 +2280,17 @@ var diagrams = function(processingInstance){
     }
     
     // Telemetry --------------------------------------------------
-    if(app.debug){
+    // if(app.debug){
 
       /* Telemetry          */
-      var telem=new legend(26, bk, 600, 30, 200, 570,                   
+      var telem=new legend(400, bk, 600, 30, 200, 570,                   
         {color:    CLRS.BLUE,
          cursor:   ARROW});
 
       bk.controls.push(telem);
               
         /* Sine Checkbox      */
-        telem.controls.push(new checkbox(27, telem, 30, 360,  50,  15,         
+        telem.controls.push(new checkbox(410, telem, 30, 360,  50,  15,         
           {text:     "Sine Curve",
            execute:  toggleSin,
            retrieve: getSineOn,
@@ -2275,7 +2298,7 @@ var diagrams = function(processingInstance){
            cursor:   HAND}));
 
         /* Cosine Checkbox    */
-        telem.controls.push(new checkbox(28, telem, 30, 380,  50,  15,    
+        telem.controls.push(new checkbox(420, telem, 30, 380,  50,  15,    
           {text:     "Cosine Curve",
            execute:  toggleCos,
            retrieve: getCosineOn,
@@ -2283,7 +2306,7 @@ var diagrams = function(processingInstance){
            cursor:   HAND}));
 
         /* Tangent Checkbox   */
-        telem.controls.push(new checkbox(29, telem, 30, 400,  50,  15,    
+        telem.controls.push(new checkbox(430, telem, 30, 400,  50,  15,    
           {text:     "Tangent Curve",
            execute:  toggleTan,
            retrieve: getTangentOn,
@@ -2291,7 +2314,7 @@ var diagrams = function(processingInstance){
            cursor:   HAND}));
 
         /* Cosecant Checkbox  */
-        telem.controls.push(new checkbox(30, telem, 30, 420,  50,  15,    
+        telem.controls.push(new checkbox(440, telem, 30, 420,  50,  15,    
           {text:     "Cosecent Curve",
            execute:  toggleCsc,
            retrieve: getCosecantOn,
@@ -2299,7 +2322,7 @@ var diagrams = function(processingInstance){
            cursor:   HAND}));
 
         /* Secant Checkbox    */
-        telem.controls.push(new checkbox(31, telem, 30, 440,  50,  15,    
+        telem.controls.push(new checkbox(450, telem, 30, 440,  50,  15,    
           {text:     "Secant Curve",
            execute:  toggleSec,
            retrieve: getSecantOn,
@@ -2307,14 +2330,14 @@ var diagrams = function(processingInstance){
            cursor:   HAND}));
 
         /* Cotangent Checkbox */
-        telem.controls.push(new checkbox(32, telem, 30, 460,  50,  15,    
+        telem.controls.push(new checkbox(460, telem, 30, 460,  50,  15,    
           {text:     "Cotangent Curve",
            execute:  toggleCot,
            retrieve: getCotangentOn,
            color:    CLRS.TAN_LT,
            cursor:   HAND}));
 
-    }
+    // }
 
   };
 
@@ -2346,7 +2369,7 @@ var diagrams = function(processingInstance){
 
   };
 
-  // Keyboard Events ==================================================
+  /* Keyboard Events ================================================== */
   {
 
     var keyPressed=function(){
@@ -2364,12 +2387,19 @@ var diagrams = function(processingInstance){
 
   }
 
-  // Mouse Events ==================================================
+  /* Mouse Events ================================================== */
   {
 
     var mouseClicked=function(){
 
-      for(var c in app.controls){ app.controls[c].clicked(); }
+      switch(true){
+        
+        case mouseButton===LEFT:    for(var c in app.controls){ app.controls[c].clicked();  break; }
+        // case mouseButton===RIGHT:   for(var c in app.controls){ app.controls[c].rClicked(); break; }
+        // case mouseButton===CENTEr:  for(var c in app.controls){ app.controls[c].cClicked(); break; }
+        default: // Do nothing
+        
+      }
 
     };
     var mousePressed=function(){
