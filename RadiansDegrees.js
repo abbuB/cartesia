@@ -2,77 +2,20 @@
 
     TO DO:
         
-        - mouseOut/mouseOver twitchyness
-        
-        - page focus on mouseOver possible?????
-
-        - tooltips?
-        
-      Implemented but ***** NEEDS WORK *****
-        
-        - dashed line for secondary trig ratios
-        
-        - graph large cross hair cursor 
-
-        - update on mouseMove
+        - test a version of without the subs in the draw function (use ifs instead)
+        - convert to mouseMove for execute (accomodate the Debug Trigonometry menu)
+        - use concantanation and /n to build left
+          and right text columns for debug telemetry
+        - theta degrees
+        - theta radians
+        - autoRun
 
     Research:
 
-        - ask question on Khan to determine trig ratios for given values.
-          In other words, when is tan(theta)=2, etc.
-          
-        - question list
-        - Addition and subtraction trig identities
-        - Law of cosines
-        - Pythagorean identities        
+
 
     TO DONE:
-        
-        - differentiate left/right/center mouse clicks
-        
-        - optimize graph display (ellipses vs curves...)
-        
-        - tidy up controls to accomodate arbitrary positions
-        
-        - add focus cursor to control params
-    
-        - create checkbox object for graph features, etc.
-        
-        - create props object that contains arbitrary number of named props
 
-        - defocus all controls after parent has lost focus
-        - cursor remains after leaving control boundary
-        
-        - nest controls
-
-        - fix boundary conditions on all trig ratios above 2 and below -2        
-        - create toolbar object
-        - onOff control
-        - fix cursor/theta correlation        
-        - create a container object
-        - legend button
-        - disable arrows while autoRun is on
-
-        - ***** Find out how to handle Infinity and -Infinity *****
-                  Asymtotes
-                    - Tangent
-                    - Cotangent
-                    - Cosecant
-                    - Secant
-
-        - convert to new menus
-        - control theta from within the unit circle
-        - convert menu hit to dist()
-        - Unit circle on/off (glide)
-        - right/left arrows to increment/decrement theta +-=1
-        - index on/off (glide)
-        - handle single control clicks
-        - Z-Order for controls
-        - keyboard controls
-
-    Decided Against:
-
-        - set theta by clicking the scale
 
 *
 +stackoverflow.com
@@ -1405,7 +1348,7 @@ var diagrams = function(processingInstance){
 
               offset=p.w+30;              
               textAlign(LEFT,CENTER);
-              println(offset);
+              
               text("0 & 2"+CONSTANTS.PI,
                    cos(radians(0))*offset,
                    sin(radians(0))*offset);
@@ -1413,21 +1356,7 @@ var diagrams = function(processingInstance){
             popMatrix();
 
           };
-          var quadrants=function(){
 
-            textAlign(CENTER, CENTER);
-            textSize(16);
-            noStroke();
-            fill(getColor(CLRS.BLACK, 25));
-
-            var w=r*0.15;  // Distance along radius
-
-            text("I",   w*cos(radians( -45)),  w*sin(radians( -45)));
-            text("II",  w*cos(radians(-135)),  w*sin(radians(-135)));
-            text("III", w*cos(radians( 135 )), w*sin(radians( 135)));
-            text("IV",  w*cos(radians(  45)),  w*sin(radians(  45)));
-
-          };
           var theta=function(){
 
             // Hypotenuse
@@ -1477,8 +1406,131 @@ var diagrams = function(processingInstance){
 
             scale(1,-1);
 
-              text(((app.theta*PI/180).toFixed(2)) + CONSTANTS.RADIANS, 0, r*1.2);
-              text(app.theta + CONSTANTS.DEGREES, 0, r*1.35);
+              text(((app.theta*PI/180).toFixed(2)) + CONSTANTS.RADIANS, 200, r*1.2);
+              text(app.theta + CONSTANTS.DEGREES, 200, r*1.35);
+
+          };
+          var quadrants=function(){
+
+            textAlign(LEFT, CENTER);
+            textSize(16);
+            noStroke();
+            fill(getColor(CLRS.BLACK, 25));
+
+            var w=r*0.03;  // Distance along radius
+
+            textAlign(LEFT, BOTTOM);
+            text("I",   w*cos(radians( -45)),  w*sin(radians( -45)));
+            
+            textAlign(RIGHT, BOTTOM);
+            text("II",  w*cos(radians(-135)),  w*sin(radians(-135)));
+            
+            textAlign(RIGHT, TOP);
+            text("III", w*cos(radians( 135 )), w*sin(radians( 135)));
+            
+            textAlign(LEFT, TOP);
+            text("IV",  w*cos(radians(  45)),  w*sin(radians(  45)));
+
+          };
+          var quadrantValues=function(){
+
+            textFont(createFont("monospace", 14));
+            //
+
+            noStroke();
+            fill(getColor(CLRS.BLACK, 50));
+
+            var x_offset=30;
+
+            // Quadrant I            
+            textAlign(LEFT, CENTER);
+            
+            text("sin +", x_offset,-100);
+            text("cos +", x_offset, -85);
+            text("tan +", x_offset, -70);
+            text("csc +", x_offset, -55);
+            text("sec +", x_offset, -40);
+            text("cot +", x_offset, -25);
+            
+            // Quadrant II
+            textAlign(RIGHT, CENTER);
+            
+            text("sin +", -x_offset,-100);
+            text("cos -", -x_offset, -85);
+            text("tan -", -x_offset, -70);
+            text("csc -", -x_offset, -55);
+            text("sec -", -x_offset, -40);
+            text("cot +", -x_offset, -25);
+            
+            // Quadrant III
+            textAlign(RIGHT, CENTER);
+            
+            text("sin -", -x_offset, 100);
+            text("cos -", -x_offset,  85);
+            text("tan +", -x_offset,  70);
+            text("csc +", -x_offset,  55);
+            text("sec -", -x_offset,  40);
+            text("cot -", -x_offset,  25);
+            
+            // Quadrant IV
+            textAlign(LEFT, CENTER);
+            
+            text("sin -", x_offset, 100);
+            text("cos +", x_offset,  85);
+            text("tan -", x_offset,  70);
+            text("csc -", x_offset,  55);
+            text("sec +", x_offset,  40);
+            text("cot -", x_offset,  25);
+
+          };
+          var labels=function(){
+
+            textAlign(CENTER,CENTER);
+
+            text("DEGREES", 0, -130);
+
+            pushMatrix();
+
+              translate(cos(radians(-15))*r*1.3,
+                        sin(radians(-15))*r*1.3);
+
+              rotate(radians(77));
+
+                text("RADIANS", 0, 0);
+
+            popMatrix();
+
+          };
+          var specialValues=function(){
+            
+            // π/2
+            textAlign(CENTER,CENTER);
+            textSize(12);
+            var coef=1.3;
+            
+            text("π/2", 0, -r*coef);
+            
+            // π
+            text("π", -r*coef, 0);
+            
+            // 3π/4
+            text("3π/4", 0, r*coef);
+            
+            // 2π
+            text("2π", r*coef, 0);
+
+            // π/6
+            text("π/6", cos(PI/6)*r*coef, -sin(PI/6)*r*coef);
+
+            // π/4
+            text("π/4", cos(PI/4)*r*coef, -sin(PI/4)*r*coef);
+
+            // π/3
+            text("π/3", r*coef, 0);
+            
+          };
+          var conversion=function(){
+
 
           };
 
@@ -1496,12 +1548,17 @@ var diagrams = function(processingInstance){
 
               }
 
+              textFont(createFont("serif", 20));
+
               axes();
               circle();
               drawDegrees();
               drawRadians();
               theta();
               quadrants();
+              quadrantValues();
+              labels();
+              specialValues();
 
           popMatrix();
 
@@ -1765,6 +1822,7 @@ var diagrams = function(processingInstance){
 
         };
 
+        
         var thetaMap=function(t){
           return map(t, 0, 360, 0, 530);
         };
