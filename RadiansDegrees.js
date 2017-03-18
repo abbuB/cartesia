@@ -1502,32 +1502,126 @@ var diagrams = function(processingInstance){
 
           };
           var specialValues=function(){
-            
-            // π/2
+
             textAlign(CENTER,CENTER);
             textSize(12);
             var coef=1.3;
+            var lcoef=1.23;
             
+            // π/2
             text("π/2", 0, -r*coef);
             
+            stroke(CLRS.BLUE);
+            strokeWeight(0.5);
+            
+            line(0, -r, 0, -r*lcoef);
+                       
             // π
             text("π", -r*coef, 0);
+
+            line(cos(PI)*r,       -sin(PI)*r,
+                 cos(PI)*r*lcoef, -sin(PI)*r*lcoef);
             
-            // 3π/4
+            // 4π/3
             text("3π/4", 0, r*coef);
-            
+
+            line(cos(4*PI/3)*r,       -sin(4*PI/3)*r,
+                 cos(4*PI/3)*r*lcoef, -sin(4*PI/3)*r*lcoef);
+                 
             // 2π
             text("2π", r*coef, 0);
 
+            line(cos(2*PI)*r,       -sin(2*PI)*r,
+                 cos(2*PI)*r*lcoef, -sin(2*PI)*r*lcoef);
+                 
+            /* Quadrant I */
             // π/6
-            text("π/6", cos(PI/6)*r*coef, -sin(PI/6)*r*coef);
-
-            // π/4
-            text("π/4", cos(PI/4)*r*coef, -sin(PI/4)*r*coef);
-
-            // π/3
-            text("π/3", r*coef, 0);
+            text("π/6", cos(PI/6)*r*coef,
+                       -sin(PI/6)*r*coef);
             
+            line(cos(PI/6)*r,       -sin(PI/6)*r,
+                 cos(PI/6)*r*lcoef, -sin(PI/6)*r*lcoef);
+                 
+            // π/4
+            text("π/4", cos(PI/4)*r*coef,
+                       -sin(PI/4)*r*coef);
+
+            line(cos(PI/4)*r,       -sin(PI/4)*r,
+                 cos(PI/4)*r*lcoef, -sin(PI/4)*r*lcoef);
+                 
+            // π/3
+            text("π/3", cos(PI/3)*r*coef,
+                       -sin(PI/3)*r*coef);
+                       
+            line(cos(PI/3)*r,       -sin(PI/3)*r,
+                 cos(PI/3)*r*lcoef, -sin(PI/3)*r*lcoef);                       
+
+            /* Quadrant II */
+            // 2π/3
+            text("2π/3", cos(2*PI/3)*r*coef,
+                        -sin(2*PI/3)*r*coef);
+
+            line(cos(2*PI/3)*r,       -sin(2*PI/3)*r,
+                 cos(2*PI/3)*r*lcoef, -sin(2*PI/3)*r*lcoef);
+                 
+            // 3π/4
+            text("3π/4", cos(3*PI/4)*r*coef,
+                        -sin(3*PI/4)*r*coef);
+                        
+            line(cos(3*PI/4)*r,       -sin(3*PI/4)*r,
+                 cos(3*PI/4)*r*lcoef, -sin(3*PI/4)*r*lcoef);
+                 
+            // 5π/6
+            text("5π/6", cos(5*PI/6)*r*coef,
+                        -sin(5*PI/6)*r*coef);
+                        
+            line(cos(5*PI/6)*r,       -sin(5*PI/6)*r,
+                 cos(5*PI/6)*r*lcoef, -sin(5*PI/6)*r*lcoef);
+
+            /* Quadrant III */
+            // 7π/6
+            text("7π/6", cos(7*PI/6)*r*coef,
+                        -sin(7*PI/6)*r*coef);
+                        
+            line(cos(7*PI/6)*r,       -sin(7*PI/6)*r,
+                 cos(7*PI/6)*r*lcoef, -sin(7*PI/6)*r*lcoef);
+                 
+            // 5π/4
+            text("5π/4", cos(5*PI/4)*r*coef,
+                        -sin(5*PI/4)*r*coef);
+                        
+            line(cos(5*PI/4)*r,       -sin(5*PI/4)*r,
+                 cos(5*PI/4)*r*lcoef, -sin(5*PI/4)*r*lcoef);
+                 
+            // 4π/3
+            text("4π/3", cos(4*PI/3)*r*coef,
+                        -sin(4*PI/3)*r*coef);
+                        
+            line(cos(4*PI/3)*r,       -sin(4*PI/3)*r,
+                 cos(4*PI/3)*r*lcoef, -sin(4*PI/3)*r*lcoef);
+
+            /* Quadrant IV */
+            // 5π/3
+            text("5π/3", cos(5*PI/3)*r*coef,
+                        -sin(5*PI/3)*r*coef);
+                        
+            line(cos(5*PI/3)*r,       -sin(5*PI/3)*r,
+                 cos(5*PI/3)*r*lcoef, -sin(5*PI/3)*r*lcoef);
+                 
+            // 7π/4
+            text("7π/4", cos(7*PI/4)*r*coef,
+                        -sin(7*PI/4)*r*coef);
+                        
+            line(cos(5*PI/4)*r,       -sin(5*PI/4)*r,
+                 cos(5*PI/4)*r*lcoef, -sin(5*PI/4)*r*lcoef);
+                 
+            // 11π/6
+            text("11π/6", cos(11*PI/6)*r*coef,
+                         -sin(11*PI/6)*r*coef);
+
+            line(cos(11*PI/6)*r,       -sin(11*PI/6)*r,
+                 cos(11*PI/6)*r*lcoef, -sin(11*PI/6)*r*lcoef);                         
+
           };
           var conversion=function(){
 
@@ -2358,7 +2452,7 @@ var diagrams = function(processingInstance){
              // cursor:  ARROW}));
 
           /* unit circle        */
-          bk.controls.push(new unitCircle(120, bk, 300, 300, 200, 150,      
+          bk.controls.push(new unitCircle(120, bk, 300, 310, 200, 1501,      
             {color:   CLRS.GRAY2,
              cursor:  ARROW}));
       
