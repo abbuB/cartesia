@@ -135,15 +135,15 @@ var diagrams = function(processingInstance){
       this.unitCircle=true;     //  Is the unit circle displayed
       this.quadrants=true;      //  Display the quadrants
 
-      this.autoRun=true;        //  Alpha changes automatically
+      this.autoRun=false;        //  Alpha changes automatically
 
       this.theta=0;             //   Current angle
 
       this.MIN=0;
       this.MAX=360;
 
-      this.sinOn=true;          //  Display the sine curve
-      this.cosOn=true;          //  Display the cosine curve
+      this.sinOn=false;          //  Display the sine curve
+      this.cosOn=false;          //  Display the cosine curve
       this.tanOn=true;          //  Display the tangent curve
 
       this.cscOn=true;          //  Display the cosecant curve
@@ -1430,6 +1430,10 @@ var diagrams = function(processingInstance){
 
         var gridHit=false;  //  Is the mouse cursor over the grid proper
 
+        var convert=function(n){
+          return n/app.MAX*h;
+        };
+
         var border=function(){
           
           noFill();
@@ -1704,6 +1708,11 @@ var diagrams = function(processingInstance){
           var x=0;
           var y=0;
           var n=0;
+          
+          var val0=convert(degrees(atan(2)));
+          var val1=convert(90) + (convert(90) - (convert(degrees(atan(2)))));
+          var val2=convert(180)+val0;
+          var val3=convert(270)+(convert(90)-convert(degrees(atan(2))));
 
           increment=6;
           
@@ -1713,73 +1722,65 @@ var diagrams = function(processingInstance){
 
             for(n=app.MIN; n<90; n+=increment){
 
-              x=n/app.MAX*h;
+              x=convert(n);
               y=app.data[n].tan*f;
 
-              if(y>=-h2 && y<=h2){
-                curveVertex(x, y);
-              }
+              if(y>=-h2 && y<= h2){ curveVertex(x, y); }
 
             }
             
-            curveVertex(degrees(atan(2))/app.MAX*h, h2);
-            curveVertex(degrees(atan(2))/app.MAX*h, h2);
+            curveVertex(val0, h2);
+            curveVertex(val0, h2);
 
           endShape();
 
           beginShape();
 
-            curveVertex(116.56/app.MAX*h, -h2);
-            curveVertex(116.56/app.MAX*h, -h2);
+            curveVertex(val1, -h2);
+            curveVertex(val1, -h2);
 
             for(n=91; n<270; n+=increment){
 
               x=n/app.MAX*h;
               y=app.data[n].tan*f;
 
-              if(y>=-h2 && y<=h2){
-                curveVertex(x, y);
-              }
+              if(y>=-h2 && y<= h2){ curveVertex(x, y); }
 
             }
 
-            curveVertex(243.44/app.MAX*h, h2);
-            curveVertex(243.44/app.MAX*h, h2);
+            curveVertex(val2, h2);
+            curveVertex(val2, h2);
             
           endShape();
 
           beginShape();
 
-            curveVertex(296.56/app.MAX*h, -h2);
-            curveVertex(296.56/app.MAX*h, -h2);
+            curveVertex(val3, -h2);
+            curveVertex(val3, -h2);
             
             for(n=271; n<app.MAX; n+=increment){
 
               x=n/app.MAX*h;
               y=app.data[n].tan*f;
 
-              if(y>=-h2 && y<=h2){
-                curveVertex(x, y);
-              }
+              if(y>=-h2 && y<= h2){ curveVertex(x, y); }
 
             }
 
-            // curveVertex(x,y);
-            
-            curveVertex(n/app.MAX*h,0);
-            curveVertex(n/app.MAX*h,0);
+            curveVertex(convert(n),0);
+            curveVertex(convert(n),0);
 
           endShape();
 
           // Current Value
           var val=app.data[app.theta].tan*f;
 
-          if(val>=-h2 && val<=h2){
+          if(val>=-h2 && val<= h2){
 
             stroke(CLRS.TAN);
             fill(CLRS.TAN);
 
-            ellipse(thetaMap(app.theta), val, 5, 5);
+              ellipse(thetaMap(app.theta), val, 5, 5);
 
           }
 
@@ -1798,49 +1799,39 @@ var diagrams = function(processingInstance){
           
           beginShape();
 
-            // ellipse(degrees(PI/6)/app.MAX*h, h2, 2, 2);
-            curveVertex(degrees(PI/6)/app.MAX*h, h2);
-            curveVertex(degrees(PI/6)/app.MAX*h, h2);
+            curveVertex(convert(degrees(PI/6)), h2);
+            curveVertex(convert(degrees(PI/6)), h2);
             
             for(n=1; n<180; n+=increment){
 
               x=n/app.MAX*h;
               y=app.data[n].csc*f;
 
-              if(y>=-h2 && y<=h2){
-                // ellipse(x, y, 2, 2);
-                curveVertex(x, y);
-              }
+              if(y>=-h2 && y<= h2){ curveVertex(x, y); }
 
             }
-            
-            // ellipse(degrees(5*PI/6)/app.MAX*h, h2, 2, 2);
-            curveVertex(degrees(5*PI/6)/app.MAX*h, h2);
-            curveVertex(degrees(5*PI/6)/app.MAX*h, h2);
+
+            curveVertex(convert(degrees(5*PI/6)), h2);
+            curveVertex(convert(degrees(5*PI/6)), h2);
 
           endShape();
           
           beginShape();
 
-            // ellipse(degrees(7*PI/6)/app.MAX*h, -h2, 2, 2);
-            curveVertex(degrees(7*PI/6)/app.MAX*h, -h2);
-            curveVertex(degrees(7*PI/6)/app.MAX*h, -h2);
+            curveVertex(convert(degrees(7*PI/6)), -h2);
+            curveVertex(convert(degrees(7*PI/6)), -h2);
 
             for(n=181; n<app.MAX; n+=increment){
 
               x=n/app.MAX*h;
               y=app.data[n].csc*f;
 
-              if(y>=-h2 && y<=h2){
-                // ellipse(x, y, 2, 2);
-                curveVertex(x, y);
-              }
+              if(y>=-h2 && y<=h2){ curveVertex(x, y); }
 
             }
 
-            // ellipse(degrees(11*PI/6)/app.MAX*h, -h2, 2, 2);
-            curveVertex(degrees(11*PI/6)/app.MAX*h, -h2);
-            curveVertex(degrees(11*PI/6)/app.MAX*h, -h2);
+            curveVertex(convert(degrees(11*PI/6)), -h2);
+            curveVertex(convert(degrees(11*PI/6)), -h2);
             
           endShape();
 
@@ -1851,7 +1842,7 @@ var diagrams = function(processingInstance){
 
             stroke(CLRS.SIN_LT);
 
-            ellipse(thetaMap(app.theta), val, 5, 5);
+              ellipse(thetaMap(app.theta), val, 5, 5);
 
           }
 
@@ -1872,64 +1863,49 @@ var diagrams = function(processingInstance){
 
             for(n=1; n<90; n+=increment){
 
-              x=n/app.MAX*h;
+              x=convert(n);
               y=app.data[n].sec*f;
 
-              if(y>=-h2 && y<=h2){
-                
-                // ellipse(x, y, 2, 2);
-                curveVertex(x, y);
-
-              }
+              if(y>=-h2 && y<= h2){ curveVertex(x, y); }
 
             }
 
-            // ellipse(degrees(PI/3)/app.MAX*h, h2, 2, 2);
-            curveVertex(degrees(PI/3)/app.MAX*h, h2);
-            curveVertex(degrees(PI/3)/app.MAX*h, h2);    
+            curveVertex(convert(degrees(PI/3)), h2);
+            curveVertex(convert(degrees(PI/3)), h2);    
             
           endShape();
           
           beginShape();
-          
-            // ellipse(degrees(2*PI/3)/app.MAX*h, -h2, 2, 2);
-            curveVertex(degrees(2*PI/3)/app.MAX*h, -h2);
-            curveVertex(degrees(2*PI/3)/app.MAX*h, -h2);    
+
+            curveVertex(convert(degrees(2*PI/3)), -h2);
+            curveVertex(convert(degrees(2*PI/3)), -h2);    
             
             
             for(n=91; n<270; n+=increment){
 
-              x=n/app.MAX*h;
+              x=convert(n);
               y=app.data[n].sec*f;
 
-              if(y>=-h2 && y<=h2){
-                // ellipse(x, y, 2, 2);
-                curveVertex(x, y);
-              }
+              if(y>=-h2 && y<=h2){ curveVertex(x, y); }
 
             }
-          
-            // ellipse(degrees(4*PI/3)/app.MAX*h, -h2, 2, 2);
-            curveVertex(degrees(4*PI/3)/app.MAX*h, -h2);
-            curveVertex(degrees(4*PI/3)/app.MAX*h, -h2);    
+
+            curveVertex(convert(degrees(4*PI/3)), -h2);
+            curveVertex(convert(degrees(4*PI/3)), -h2);    
 
           endShape();
 
           beginShape();
-          
-            // ellipse(degrees(5*PI/3)/app.MAX*h, h2, 2, 2);
+
             curveVertex(degrees(5*PI/3)/app.MAX*h, h2);
             curveVertex(degrees(5*PI/3)/app.MAX*h, h2);    
             
             for(n=271; n<=app.MAX; n+=2){
 
-              x=n/app.MAX*h;
+              x=convert(n);
               y=app.data[n].sec*f;
 
-              if(y>=-h2 && y<=h2){
-                // ellipse(x, y, 2, 2);
-                curveVertex(x, y);
-              }
+              if(y>=-h2 && y<=h2){ curveVertex(x, y); }
 
             }
 
@@ -1943,7 +1919,7 @@ var diagrams = function(processingInstance){
             stroke(CLRS.COS_LT);
             fill(CLRS.COS_LT);
 
-            ellipse(thetaMap(app.theta), val, 5, 5);
+              ellipse(thetaMap(app.theta), val, 5, 5);
 
           }
 
@@ -1958,53 +1934,49 @@ var diagrams = function(processingInstance){
           var y=0;
           var n=0;
           
+          var c90=convert(90);
+          var val0=convert(degrees(atan(1/2)));
+          var val1=c90  + (c90 - val0);
+          var val2=convert(180) + val0;
+          var val3=convert(270) + (c90 - val0);
+
           increment=6;
 
           beginShape();
-          
-            // ellipse(26.5/app.MAX*h, h2, 2, 2);
-            curveVertex(26.5/app.MAX*h, h2);
-            curveVertex(26.5/app.MAX*h, h2);    
+
+            curveVertex(val0, h2);
+            curveVertex(val0, h2);    
             
             for(n=2; n<180; n+=increment){
 
-              x=n/app.MAX*h;
+              x=convert(n);
               y=app.data[n].cot*f;
 
-              if(y>=-h2 && y<=h2){
-                // ellipse(x, y, 2, 2);
-                curveVertex(x, y);
-              }
+              if(y>=-h2 && y<=h2){ curveVertex(x, y); }
 
             }
 
-            // ellipse(153.5/app.MAX*h, -h2, 2, 2);
-            curveVertex(153.5/app.MAX*h, -h2);
-            curveVertex(153.5/app.MAX*h, -h2);    
-          
+            curveVertex(val1, -h2);
+            curveVertex(val1, -h2);    
+
           endShape();
-          
+
           beginShape();
 
-            // ellipse(206.5/app.MAX*h, h2, 2, 2);
-            curveVertex(206.5/app.MAX*h, h2);
-            curveVertex(206.5/app.MAX*h, h2);    
+            curveVertex(val2, h2);
+            curveVertex(val2, h2);
             
             for(n=181; n<=app.MAX; n+=increment){
 
-              x=n/app.MAX*h;
+              x=convert(n);
               y=app.data[n].cot*f;
 
-              if(y>=-h2 && y<=h2){
-                // ellipse(x, y, 2, 2);
-                curveVertex(x, y);
-              }
+              if(y>=-h2 && y<=h2){ curveVertex(x, y); }
 
             }
 
-            // ellipse(333.5/app.MAX*h, -h2, 2, 2);
-            curveVertex(333.5/app.MAX*h, -h2);
-            curveVertex(333.5/app.MAX*h, -h2);    
+            curveVertex(val3, -h2);
+            curveVertex(val3, -h2);    
             
           endShape();
           
@@ -2186,66 +2158,66 @@ var diagrams = function(processingInstance){
       
       // Index --------------------------------------------------
 
-        /* index              */
-        var idx=new index(300, bk, 170, 55, 250, 70,{radius:  5,
-            color:   CLRS.WHITE,
-            cursor:  ARROW});
+        // /* index              */
+        // var idx=new index(300, bk, 170, 55, 250, 70,{radius:  5,
+            // color:   CLRS.WHITE,
+            // cursor:  ARROW});
 
-        bk.controls.push(idx);
+        // bk.controls.push(idx);
           
-          /* Sine button        */
-          idx.controls.push(new button(310, idx, 5, 5, 110, 20,              
-            {text:     "Sin "+CONSTANTS.THETA,
-             execute:  toggleSin,
-             tag:      getSine,
-             retrieve: getSineOn,
-             color:    CLRS.SIN,
-             cursor:   HAND}));
+          // /* Sine button        */
+          // idx.controls.push(new button(310, idx, 5, 5, 110, 20,              
+            // {text:     "Sin "+CONSTANTS.THETA,
+             // execute:  toggleSin,
+             // tag:      getSine,
+             // retrieve: getSineOn,
+             // color:    CLRS.SIN,
+             // cursor:   HAND}));
            
-          /* Cosine button      */
-          idx.controls.push(new button(320, idx, 5, 25, 110, 20,             
-            {text:     "Cos "+CONSTANTS.THETA,
-             execute:  toggleCos,
-             tag:      getCosine,
-             retrieve: getCosineOn,
-             color:    CLRS.COS,
-             cursor:   HAND}));
+          // /* Cosine button      */
+          // idx.controls.push(new button(320, idx, 5, 25, 110, 20,             
+            // {text:     "Cos "+CONSTANTS.THETA,
+             // execute:  toggleCos,
+             // tag:      getCosine,
+             // retrieve: getCosineOn,
+             // color:    CLRS.COS,
+             // cursor:   HAND}));
           
-          /* Tangent button     */
-          idx.controls.push(new button(330, idx, 5, 45, 110, 20,             
-            {text:     "Tan "+CONSTANTS.THETA,
-             execute:  toggleTan,
-             tag:      getTangent,
-             retrieve: getTangentOn,
-             color:    CLRS.TAN,
-             cursor:   HAND}));
+          // /* Tangent button     */
+          // idx.controls.push(new button(330, idx, 5, 45, 110, 20,             
+            // {text:     "Tan "+CONSTANTS.THETA,
+             // execute:  toggleTan,
+             // tag:      getTangent,
+             // retrieve: getTangentOn,
+             // color:    CLRS.TAN,
+             // cursor:   HAND}));
 
-          /* Cosecant button    */
-          idx.controls.push(new button(340, idx, 135, 5, 110, 20,            
-            {text:     "Csc "+CONSTANTS.THETA,
-             execute:  toggleCsc,
-             tag:      getCosecant,
-             retrieve: getCosecantOn,
-             color:    CLRS.SIN_LT,
-             cursor:   HAND}));
+          // /* Cosecant button    */
+          // idx.controls.push(new button(340, idx, 135, 5, 110, 20,            
+            // {text:     "Csc "+CONSTANTS.THETA,
+             // execute:  toggleCsc,
+             // tag:      getCosecant,
+             // retrieve: getCosecantOn,
+             // color:    CLRS.SIN_LT,
+             // cursor:   HAND}));
           
-          /* Secant button      */
-          idx.controls.push(new button(350, idx, 135, 25, 110, 20,           
-            {text:     "Sec "+CONSTANTS.THETA,
-             execute:  toggleSec,
-             tag:      getSecant,
-             retrieve: getSecantOn,
-             color:    CLRS.COS_LT,
-             cursor:   HAND}));
+          // /* Secant button      */
+          // idx.controls.push(new button(350, idx, 135, 25, 110, 20,           
+            // {text:     "Sec "+CONSTANTS.THETA,
+             // execute:  toggleSec,
+             // tag:      getSecant,
+             // retrieve: getSecantOn,
+             // color:    CLRS.COS_LT,
+             // cursor:   HAND}));
              
-          /* Cotangent button   */
-          idx.controls.push(new button(360, idx, 135, 45, 110, 20,           
-            {text:     "Cot "+CONSTANTS.THETA,
-             execute:  toggleCot,
-             tag:      getCotangent,
-             retrieve: getCotangentOn,
-             color:    CLRS.TAN_LT,
-             cursor:   HAND}));
+          // /* Cotangent button   */
+          // idx.controls.push(new button(360, idx, 135, 45, 110, 20,           
+            // {text:     "Cot "+CONSTANTS.THETA,
+             // execute:  toggleCot,
+             // tag:      getCotangent,
+             // retrieve: getCotangentOn,
+             // color:    CLRS.TAN_LT,
+             // cursor:   HAND}));
 
       
       // Telemetry --------------------------------------------------
