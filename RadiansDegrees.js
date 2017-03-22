@@ -1,30 +1,5 @@
 /*  TBD
 
-    TO DO:
-
-        - test a version of without the subs in the draw function (use ifs instead)
-        - convert to mouseMove for execute (accomodate the Debug Trigonometry menu)
-        - use concantanation and /n to build left
-          and right text columns for debug telemetry
-
-    Research:
-
-
-
-    TO DONE:
-
-        - find available fonts (Khan Academy)    
-        - curved text for RADIANS and DEGREES
-        - alternate light/heavy for radian values
-        - add control/alt/shift to telemetry
-        - background focus and unfocussed colors
-
-        - conversion ellipse
-        - theta degrees
-        - theta radians
-        - autoRun
-
-
 *
 +stackoverflow.com
 +khanacademy.org
@@ -59,6 +34,43 @@
 var diagrams = function(processingInstance){
   with (processingInstance){
 
+/*  TBD
+
+    TO DO:
+
+        - convert to mouseMove for execute (accomodate the Debug menu)
+
+    Research:
+
+      ***** Completed and no discernible difference *****
+      - test a version of without the subs in the draw function (use ifs instead)
+
+    TO DONE:
+
+        - use concantanation and /n to build left
+          and right text columns for debug telemetry
+
+        - find available fonts (Khan Academy)
+        - curved text for RADIANS and DEGREES
+        - alternate light/heavy for radian values
+        - add control/alt/shift to telemetry
+        - background focus and unfocussed colors
+
+        - conversion ellipse
+        - theta degrees
+        - theta radians
+        - autoRun
+
+        textFont(createFont("sans-serif", 14));
+        textFont(createFont("monospace", 14));
+        textFont(createFont("serif", 14));
+        textFont(createFont("fantasy", 14));
+        textFont(createFont("cursive", 14));
+
+        println( typeof this.color );
+
+*/
+
   var application=function(){
 
       this.debug=true;          //  mode that displays enhanced debugging tools
@@ -81,65 +93,20 @@ var diagrams = function(processingInstance){
       /* App Specific */
       this.data=[];             //  Values of each trig function from 0 (zero) to 360
 
-      this.legend=false;         //  Is the legend displayed
-      this.index=true;          //  Is the Index displayed
-      this.unitCircle=true;     //  Is the unit circle displayed
-      this.quadrants=true;      //  Display the quadrants
-
-      this.autoRun=false;       //  Alpha changes automatically
+      this.autoRun=true;        //  Alpha changes automatically
 
       this.theta=0;             //   Current angle
 
-      this.MIN=0;
-      this.MAX=360;
-
-      this.sinOn=true;          //  Display the sine curve
-      this.cosOn=true;          //  Display the cosine curve
-      this.tanOn=true;          //  Display the tangent curve
-
-      this.cscOn=true;          //  Display the cosecant curve
-      this.secOn=true;          //  Display the secant curve
-      this.cotOn=true;          //  Display the cotangent curve
-
-      this.loadData=function(){
-
-          var sinN, cosN, tanN, secN, cscN, cotN;
-
-          for (var n=this.MIN; n<=this.MAX; n++){
-
-              sinN=sin(radians(n)).toFixed(4);
-              cscN=       (1/sinN).toFixed(4);
-              cosN=cos(radians(n)).toFixed(4);
-              secN=       (1/cosN).toFixed(4);
-              tanN=tan(radians(n)).toFixed(4);
-              cotN=       (1/tanN).toFixed(4);
-
-              this.data.push({  sin:  sinN, csc:  cscN,
-                                cos:  cosN, sec:  secN,
-                                tan:  tanN, cot:  cotN });
-          }
-
-      };
-
+      // Initialize
       frameRate(0);
-
       cursor(WAIT);
-
       angleMode="radians";
 
-      this.loadData();
-
-      size(600, 600); // set size of canvas
-
-      this.keys[KEYCODES.CONTROL]=false;
-      this.keys[KEYCODES.ALT]=false;
-      this.keys[KEYCODES.SHIFT]=false;
+      size(600, 600);           // set size of canvas
 
     };
 
-
-
-  // app.initialize();
+  var app=new application();
 
   /* Constants ======================================================= */
   {
@@ -184,9 +151,11 @@ var diagrams = function(processingInstance){
     };
     var CLRS={
 
-      ACTIVE1:      color(220,226,240,255),
+      TOOLBARA:     color( 41,171,202,255),
+      TOOLBARI:     color( 69,174,200,255),
 
-      ACTIVE:       color( 28,117,138,255),
+      INACTIVE:     color(230,230,230,255),
+      ACTIVE:       color(235,235,235,255),
 
       CYAN:         color( 49,204,167,255),
 
@@ -197,15 +166,14 @@ var diagrams = function(processingInstance){
 
       TRANSPARENT:  color(-1,-1,-1),
 
+      WHITE:        color(255,255,255,255),
+      BLACK:        color(  0,  0,  0,255),
+
       RED:          color(170, 29, 29),     GREEN:        color(158,182, 58),
       BLUE:         color( 29, 86,170),     YELLOW:       color(238,214, 15),
       ORANGE:       color(238,136, 15),     GRAY:         color(128,128,128),
 
       BROWN:        color(155,145,135),
-
-      control:      color(128,128,128),     controlF:     color(242,242,242),
-
-      TEXT:         color(255,255,255),
 
       Red:          color(255,  0,  0),     RedOrange:    color(255, 81,  0),
       Orange:       color(255,127,  0),     YellowOrange: color(255,190,  0),
@@ -217,38 +185,6 @@ var diagrams = function(processingInstance){
 
       Violet:       color(127,  0,255),     RedViolet:    color(191,  0,127),
 
-      GRAY1:        color(255*10/11),       GRAY2:        color(255*9/11),
-      GRAY3:        color(255*8/11),        GRAY4:        color(255*7/11),
-      GRAY5:        color(255*6/11),        GRAY6:        color(255*5/11),
-      GRAY7:        color(255*4/11),        GRAY8:        color(255*3/11),
-      GRAY9:        color(255*2/11),        GRAY10:       color(255*1/11),
-      WHITE:        color(255,255,255),     BLACK:        color(0,0,0),
-
-      BUTTONH:      color( 16, 16, 16),     BUTTON:       color( 24, 24, 24),
-
-      GRID:         color( 33, 40, 48),
-
-      VERTEX:       color(255,255,  0),
-      VERTEXA:      color(255*6/11),
-      LINE:         color(255*6/11),
-      LINEA:        color(170,29,29),
-      FILL:         color(255*7/11),
-      FILLA:        color(255*7/11),
-
-      RULER:        color(231,189, 33),
-
-      SELECTED:     color(  0,  0,255),
-      HIT:          color(255,  0,  0),
-
-      ARROWS:       color( 32, 32, 32),
-      AXES:         color( 64, 64, 64),
-      TICKS_LT:     color(128,128,128),     TICKS_DARK:       color( 32, 32, 32),
-      GRID_LINES_LT:color(192,192,192),     GRID_LINES_DARK:  color(128,128,128),
-      LABELS:       color(128,128,128),
-      ORIGIN:       color(128,128,128),
-
-      BORDER:       color(128,  0,  0),
-
       SIN:          color(170, 29, 29,255), SIN_LT:       color(170, 29, 29,128),
       COS:          color( 29, 86,170,255), COS_LT:       color( 29, 86,170,128),
       TAN:          color(158,182, 58,255), TAN_LT:       color(158,182,58,192),
@@ -256,19 +192,6 @@ var diagrams = function(processingInstance){
       CSC:          color(238,136, 15,255), CSC_LT:       color(238,136, 15,128),
       SEC:          color(158,182, 58,255), SEC_LT:       color(158,182, 58,128),
       COT:          color(128,128,128,255), COT_LT:       color(128,128,128,128)
-
-    };
-    var COMMANDS={
-
-      right:  80,
-      left:   72,
-      sin:    84,
-      cos:    70,
-      tan:    83,
-      csc:    38,
-      sec:    40,
-      cot:    39,
-      ctrl:   17
 
     };
     var QUADRANTS={
@@ -287,14 +210,6 @@ var diagrams = function(processingInstance){
       THETA:    "θ",
       RADIANS:  "ᶜ"
 
-    };
-    var TRIG_INDEX={
-      SIN:  0,
-      CSC:  1,
-      COS:  2,
-      SEC:  3,
-      TAN:  4,
-      COT:  5
     };
 
   }
@@ -319,48 +234,11 @@ var diagrams = function(processingInstance){
 
     };
 
-    var getSine=function()     { return app.data[app.theta].sin; };
-    var getCosine=function()   { return app.data[app.theta].cos; };
-    var getTangent=function()  { return app.data[app.theta].tan; };
-    var getCosecant=function() { return app.data[app.theta].csc; };
-    var getSecant=function()   { return app.data[app.theta].sec; };
-    var getCotangent=function(){ return app.data[app.theta].cot; };
-
     var getAuto=function()     { return app.autoRun;  };
     var getLegend=function()   { return app.legend;   };
 
-    var getSineOn=function()     { return app.sinOn; };
-    var getCosineOn=function()   { return app.cosOn; };
-    var getTangentOn=function()  { return app.tanOn; };
-    var getCosecantOn=function() { return app.cscOn; };
-    var getSecantOn=function()   { return app.secOn; };
-    var getCotangentOn=function(){ return app.cotOn; };
-
-    var toggleSin=function(){ app.sinOn=!app.sinOn; };
-    var toggleCos=function(){ app.cosOn=!app.cosOn; };
-    var toggleTan=function(){ app.tanOn=!app.tanOn; };
-    var toggleCsc=function(){ app.cscOn=!app.cscOn; };
-    var toggleSec=function(){ app.secOn=!app.secOn; };
-    var toggleCot=function(){ app.cotOn=!app.cotOn; };
-
-    var checkboxAuto=function()  {
-
-      app.autoRun=!app.autoRun;
-
-      // if(app.autoRun){ loop();   }
-      // else           { noLoop(); }
-
-    };
+    var checkboxAuto=function()  { app.autoRun=!app.autoRun; };
     var checkboxLegend=function(){ app.legend=!app.legend;   };
-
-    var drawOrigin=function(){
-
-      fill(CLRS.RED);
-      noStroke();
-
-      ellipse(0,0,20,20);
-
-    };
 
   }
 
@@ -386,20 +264,11 @@ var diagrams = function(processingInstance){
         this.controls=[];           /* array of child controls */
 
         this.on=false;              /* Is the control on or off */
-
-        // this.value=0;               /* generic property */
-        // this.zOrder=0;              /* z-order - in front or behind value */
-
         this.hit=false;             /* mouse is over the control */
-        // this.visible=true;          /* is the control currently being displayed */
 
 
       };
-      control.prototype.draw=function(){
-
-        // for(var c in this.controls){ this.controls[c].draw(); }
-
-      };
+      control.prototype.draw=function(){};
       control.prototype.clicked=function(){
 
         if(this.hit){
@@ -409,17 +278,8 @@ var diagrams = function(processingInstance){
         }
 
       };
-      control.prototype.rClicked=function(){
-        // if(this.hit){
-          // for(var c in this.controls){ this.controls[c].clickedR(); }
-        // }
-
-      };
-      control.prototype.cClicked=function(){
-        // if(this.hit){
-          // for(var c in this.controls){ this.controls[c].clickedR(); }
-        // }
-      };
+      control.prototype.rClicked=function(){};
+      control.prototype.cClicked=function(){};
       control.prototype.moved=function(x,y){
 
         if(mouseX>(this.x+x) &&
@@ -439,31 +299,11 @@ var diagrams = function(processingInstance){
         }
 
       };
-      control.prototype.dragged=function(){
-
-        // for(var c in this.controls){ this.controls[c].dragged(); }
-
-      };
-      control.prototype.pressed=function(){
-
-        // for(var c in this.controls){ this.controls[c].pressed(); }
-
-      };
-      control.prototype.released=function(){
-
-        // for(var c in this.controls){ this.controls[c].released(); }
-
-      };
-      control.prototype.typed=function(){
-
-        // for(var c in this.controls){ this.controls[c].typed(); }
-
-      };
-      control.prototype.over=function(){
-
-        // for(var c in this.controls){ this.controls[c].over(); }
-
-      };
+      control.prototype.dragged=function(){};
+      control.prototype.pressed=function(){};
+      control.prototype.released=function(){};
+      control.prototype.typed=function(){};
+      control.prototype.over=function(){};
       control.prototype.out=function(){
 
         this.hit=false;
@@ -481,15 +321,15 @@ var diagrams = function(processingInstance){
 
         control.call(this, id, parent, x, y, w, h);
 
-        this.text=params.text;
+        this.text   = params.text;
 
-        this.color=params.color;
-        this.activeColor=params.activeColor;
+        this.acolor = params.acolor;
+        this.icolor = params.icolor;
 
-        this.cursor=params.cursor;
-        this.border=params.border;
+        this.cursor = params.cursor;
+        this.border = params.border;
 
-        this.left=0;
+        this.left   = 0;
 
       };
       root.prototype=Object.create(control.prototype);
@@ -501,23 +341,23 @@ var diagrams = function(processingInstance){
 
             noStroke();
 
-            fill(getColor(this.color, 5));
+            fill(this.icolor);
 
             if(this.hit){
 
               app.focus=this.id;
               cursor(this.cursor);
 
-              fill(this.activeColor);
+              fill(this.acolor);
 
             }
 
             if(this.border){
               strokeWeight(1);
-              stroke(this.color);
+              stroke(this.acolor);
             }
 
-            rect(0, 0, this.w, this.h);
+              rect(0, 0, this.w, this.h);
 
             // Draw child controls
             for(var c in this.controls){ this.controls[c].draw(); }
@@ -551,7 +391,8 @@ var diagrams = function(processingInstance){
             noStroke();
             fill(getColor(this.color, 5));
 
-            if(this.hit){
+            if(this.hit &&
+               this.parent.hit){
 
               app.focus=this.id;
               cursor(this.cursor);
@@ -601,7 +442,8 @@ var diagrams = function(processingInstance){
             stroke(getColor(CLRS.BLACK, 20));
             fill(getColor(this.color, 50));
 
-            if(this.hit){
+            if(this.hit &&
+               this.parent.hit){
 
               app.focus=this.id;
               cursor(this.cursor);
@@ -622,16 +464,17 @@ var diagrams = function(processingInstance){
 
     }
 
-    // Toolbar ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // toolbar ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
 
       var toolbar=function(id, parent, x, y, w, h, params){
 
         control.call(this, id, parent, x, y, w, h);
 
-        this.text=params.text;
-        this.color=params.color;
-        this.cursor=params.cursor;
+        this.text   = params.text;
+        this.acolor = params.acolor;
+        this.icolor = params.icolor;
+        this.cursor = params.cursor;
 
       };
       toolbar.prototype=Object.create(control.prototype);
@@ -642,25 +485,26 @@ var diagrams = function(processingInstance){
           translate(this.x, this.y);
 
             noStroke();
-            fill(getColor(this.color, 75));
+            fill(this.icolor);
 
-            if(this.hit){
+            if(this.hit &&
+               this.parent.hit){
 
               app.focus=this.id;
               cursor(this.cursor);
 
-              fill(getColor(this.color, 100));
+              fill(this.acolor);
 
             }
 
-            rect(0, 0, this.w, this.h);
+              rect(0, 0, this.w, this.h);
 
             // Caption
             fill(CLRS.WHITE);
             textSize(16);
             textAlign(CENTER,CENTER);
 
-            text(this.text, this.w/2, this.h/2);
+              text(this.text, this.w/2, this.h/2);
 
             // Draw child controls
             for(var c in this.controls){ this.controls[c].draw(); }
@@ -678,21 +522,17 @@ var diagrams = function(processingInstance){
 
         control.call(this, id, parent, x, y, w, h);
 
-        this.color=params.color;
-        this.cursor=params.cursor;
+        this.color  = params.color;
+        this.cursor = params.cursor;
 
-        this.offset=0;      /*  Dynamic x-coordinate */
+        /*  Dynamic x-coordinate */
+        this.offset = 0;
 
       };
       legend.prototype=Object.create(control.prototype);
       legend.prototype.draw=function(){
-        
-        // "sans-serif", "serif", "monospace", "fantasy", or "cursive"
-        // textFont(createFont("monospace", 14));
+
         textFont(createFont("sans-serif", 14));
-        // textFont(createFont("serif", 14));
-        // textFont(createFont("fantasy", 14));
-        // textFont(createFont("cursive", 14));
 
         var p=this;
 
@@ -702,8 +542,8 @@ var diagrams = function(processingInstance){
           strokeWeight(1);
           stroke(getColor(p.clr,100));
 
-          if(p.hit){ fill(getColor(p.clr, 75)); }
-          else     { fill(getColor(p.clr, 70)); }
+          if(p.hit){ fill(getColor(p.color, 75)); }
+          else     { fill(getColor(p.color, 70)); }
 
           rect(p.offset, 0, p.w, p.h);
 
@@ -796,7 +636,8 @@ var diagrams = function(processingInstance){
 
           translate(this.x, this.y);
 
-            if(this.hit){
+            if(this.hit &&
+               this.parent.hit){
 
               app.focus=this.id;
               cursor(this.cursor);
@@ -869,7 +710,8 @@ var diagrams = function(processingInstance){
 
             ellipseMode(CENTER);
 
-            if(this.hit){
+            if(this.hit &&
+               this.parent.hit){
 
               app.focus=this.id;
               cursor(this.cursor);
@@ -889,9 +731,9 @@ var diagrams = function(processingInstance){
             strokeWeight(2);
             noFill();
 
-            arc(0, 0, this.w, this.h, -PI/4, 3*PI/2-PI/4);
+              arc(0, 0, this.w, this.h, -PI/4, 3*PI/2-PI/4);
 
-            line(0, 1, 0, -9);
+              line(0, 1, 0, -9);
 
         popMatrix();
 
@@ -950,7 +792,8 @@ var diagrams = function(processingInstance){
             noStroke();
             noFill();
 
-            if(this.hit){
+            if(this.hit &&
+               this.parent.hit){
 
               if(app.left){ offset=1; }
 
@@ -962,15 +805,15 @@ var diagrams = function(processingInstance){
             }
 
             //  Background
-            rect(offset, offset, this.w, this.h, 2);
+              rect(offset, offset, this.w, this.h, 2);
 
             // Icon
             fill(getColor(this.color, 65));
             noStroke();
 
-            ellipse(this.w/2+offset, this.h/2-6+offset, 3, 3);
-            ellipse(this.w/2+offset, this.h/2,          3, 3);
-            ellipse(this.w/2+offset, this.h/2+6+offset, 3, 3);
+              ellipse(this.w/2+offset, this.h/2-6+offset, 3, 3);
+              ellipse(this.w/2+offset, this.h/2,          3, 3);
+              ellipse(this.w/2+offset, this.h/2+6+offset, 3, 3);
 
         popMatrix();
 
@@ -991,187 +834,6 @@ var diagrams = function(processingInstance){
 
     }
 
-    // Button ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    {
-
-      var button=function(id, parent, x, y, w, h, params){
-
-        control.call(this, id, parent, x, y, w, h);
-
-        this.execute=params.execute;
-        this.retrieve=params.retrieve;
-        this.tag=params.tag;
-        this.text=params.text;
-        this.color=params.color;
-        this.cursor=params.cursor;
-
-      };
-      button.prototype=Object.create(control.prototype);
-      button.prototype.draw=function(){
-
-          var offset=0;
-
-          pushMatrix();
-
-            translate(this.x, this.y);
-            scale(1,-1);
-
-              // Border
-              strokeWeight(0.75);
-
-              if(this.hit){
-
-                if(app.left){ offset=1; }
-
-                app.focus=this.id;
-                cursor(this.cursor);
-
-                fill(getColor(this.parent.color,25));
-
-                if(this.on){ stroke(this.clr);                }
-                else       { stroke(getColor(this.color,50)); }
-
-              }
-              else{
-
-                fill(getColor(CLRS.ACTIVE, 5));
-                noFill();
-                noStroke();
-
-              }
-
-              rect(offset, -this.h-offset, this.w, this.h, 3);
-
-              // Caption
-              if(this.retrieve()){ fill(this.color);              }
-              else               { fill(getColor(this.color,50)); }
-
-              scale(1,-1);
-
-              textAlign(LEFT,CENTER);
-
-              textSize(12);
-              text(this.text, 10+offset, this.h/2+offset);
-
-              textAlign(RIGHT,CENTER);
-
-              var txt=this.tag();
-
-              if(txt!==""){
-
-                if      (txt> 100){ text( "Infinity", this.w-10+offset, this.h/2+offset); }
-                else if (txt<-100){ text("-Infinity", this.w-10+offset, this.h/2+offset); }
-                else              { text( txt,        this.w-10+offset, this.h/2+offset); }
-
-              }
-
-          popMatrix();
-
-      };
-      button.prototype.clicked=function(){
-      /* Overridden to maintain on/off value */
-
-        if(this.hit){
-
-          this.execute();
-          this.on=!this.on;
-
-          for(var c in this.controls){ this.controls[c].clicked(); }
-
-        }
-
-      };
-
-    }
-
-    // Checkbox ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    {
-
-      var checkbox=function(id, parent, x, y, w, h, params){
-
-        control.call(this, id, parent, x, y, w, h);
-
-        this.text=params.text;
-        this.execute=params.execute;
-        this.retrieve=params.retrieve;
-        this.color=params.color;
-        this.cursor=params.cursor;
-
-      };
-      checkbox.prototype=Object.create(control.prototype);
-      checkbox.prototype.draw=function(){
-
-        pushMatrix();
-
-          //  Required because of dynamic parent location
-          translate(this.x + this.parent.offset, this.y);
-
-            this.on=this.retrieve();
-
-            stroke(CLRS.BLACK);
-            strokeWeight(1);
-            fill(getColor(CLRS.WHITE, 10));
-
-            if(this.hit){
-
-              cursor(this.cursor);
-              app.focus=this.id;
-
-              fill(getColor(this.color, 15));
-
-            }
-
-            //  Determine how wide the text is
-            textSize(11);
-            textAlign(LEFT,CENTER);
-
-            this.w=40+textWidth(this.text);  /*  Add 40 pixels to accommodate the slider */
-
-            //  Control border
-            if(app.debug){
-               rect(-3, -3, this.w+6, this.h+6);
-            }
-
-            //  Outer checkbox circle
-            strokeWeight(0.5);
-            stroke(getColor(CLRS.BLACK,100));
-
-            if(this.on){ fill(getColor(CLRS.WHITE, 45)); }
-            else       { fill(getColor(CLRS.WHITE, 20)); }
-
-            rect(0, 0, 30, this.h, this.h/2);
-
-            //  Inner checkbox circle
-            fill(this.color);
-            stroke(CLRS.GRAY);
-            strokeWeight(0.5);
-
-            if(this.on){ ellipse(this.h/2+1,  this.h/2+0.5, this.h-5, this.h-5); }
-            else       { ellipse(this.h/2+15, this.h/2+0.5, this.h-5, this.h-5); }
-
-            //  Text
-            fill(getColor(CLRS.WHITE, 65));
-
-            text(this.text, 35, this.h/2);
-
-        popMatrix();
-
-      };
-      checkbox.prototype.clicked=function(){
-      /* Overridden to maintain on/off value */
-
-        if(this.hit){
-
-          this.execute();
-
-          for(var c in this.controls){ this.controls[c].clicked(); }
-
-        }
-
-      };
-
-    }
-
     // Unit Circle * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
 
@@ -1179,9 +841,10 @@ var diagrams = function(processingInstance){
 
         control.call(this, id, parent, x, y, w, h);
 
-        this.color=params.color;
-        this.activeColor=params.activeColor;
-        this.cursor=params.cursor;
+        this.color  = params.color;
+        this.acolor = params.acolor;
+        this.icolor = params.icolor;
+        this.cursor = params.cursor;
 
       };
       unitCircle.prototype=Object.create(control.prototype);
@@ -1193,13 +856,10 @@ var diagrams = function(processingInstance){
 
           var p=this;         //  object reference
 
-        textFont(createFont("sans-serif", 14));
-        // textFont(createFont("serif", 14));
-        // textFont(createFont("fantasy", 14));
-        // textFont(createFont("cursive", 14));
-        
+          textFont(createFont("sans-serif", 14));
+
           var axes=function(){
-            
+
             // axes();
             strokeWeight(1);
             stroke(p.color);
@@ -1207,7 +867,7 @@ var diagrams = function(processingInstance){
             var w=p.w*0.55;
 
             line(-w, 0, w, 0);
-            line( 0,-w, 0, w); 
+            line( 0,-w, 0, w);
 
           };
           var circle=function(){
@@ -1216,7 +876,7 @@ var diagrams = function(processingInstance){
 
             if(p.hit){
 
-              // fill(getColor(CLRS.WHITE, p.value));
+              // fill(p.acolor);
               stroke(getColor(p.color, 50));
               strokeWeight(1.5);
 
@@ -1225,7 +885,6 @@ var diagrams = function(processingInstance){
             }
             else{
 
-              noFill();
               stroke(getColor(p.color, 75));
               strokeWeight(1);
 
@@ -1250,12 +909,12 @@ var diagrams = function(processingInstance){
 
                 stroke(getColor(p.color, 75));
 
-                if(n%10==0){
+                if(n%10===0){
 
                   line(p.w-35, 0, p.w, 0);
 
                 }
-                else if(n%5==0){
+                else if(n%5===0){
 
                   stroke(getColor(p.color, 50));
 
@@ -1298,16 +957,16 @@ var diagrams = function(processingInstance){
 
               offset=p.w-44;
 
-              text("0 & 360",
-                   cos(radians(0))*offset,
-                   sin(radians(0))*offset);
+                text("0 & 360",
+                     cos(radians(0))*offset,
+                     sin(radians(0))*offset);
 
             popMatrix();
 
           };
           var drawRadians=function(){
 
-            noFill()
+            noFill();
             stroke(getColor(p.color, 90));
             strokeWeight(0.5);
 
@@ -1315,13 +974,13 @@ var diagrams = function(processingInstance){
 
               for(var n=0; n<TWO_PI*100; n++){
 
-                if(n%10==0){
+                if(n%10===0){
 
                   stroke(getColor(p.color, 90));
                   line(p.w+25, 0, p.w, 0);
 
                 }
-                else if ( n%5==0){
+                else if ( n%5===0){
 
                   stroke(getColor(p.color, 90));
                   line(p.w+15, 0, p.w, 0);
@@ -1374,37 +1033,27 @@ var diagrams = function(processingInstance){
 
           };
           var theta=function(){
+            
+            // Dial
+            pushMatrix();
+              
+              translate(0.25,0.25);
+              rotate(rTheta);
 
-            // Hypotenuse
-            strokeWeight(0.5);
-            stroke(p.color);
+                strokeWeight(0.4);
+                stroke(CLRS.BLACK);
+                fill(getColor(CLRS.BLACK,50));
 
-              line(0, 0, cos(rTheta)*r, sin(rTheta)*r);
+                beginShape();
+                
+                  vertex(-50,  0);
+                  vertex(0, 10);
+                  vertex(r,    0);
+                  vertex(0,-10);
 
-            // Cos: Vertical
-            stroke(CLRS.SIN);
-
-              line(cos(rTheta)*r, 0, cos(rTheta)*r, sin(rTheta)*r);
-
-            // Sin: Horizontal
-            stroke(CLRS.COS);
-
-              line(0, 0, cos(rTheta)*r, 0);
-
-            // Triangle
-            noStroke();
-            fill(getColor(p.color, 10));
-
-              triangle(            0,             0,
-                       cos(rTheta)*r, sin(rTheta)*r,
-                       cos(rTheta)*r, 0);
-
-            noStroke();
-            fill(getColor(p.color, 100));
-
-              ellipse(cos(rTheta)*r, sin(rTheta)*r, cs, cs);
-              ellipse(cos(rTheta)*r, 0,             cs, cs);
-              ellipse(0,             0,             cs, cs);
+                endShape(CLOSE);
+          
+            popMatrix();
 
             // Theta Text  ----------
             textSize(20);
@@ -1458,58 +1107,64 @@ var diagrams = function(processingInstance){
             var x_offset=30;
 
             // Quadrant I
-            textAlign(LEFT, CENTER);
+            textAlign(LEFT, TOP);
 
-            text("sin +", x_offset,-100);
-            text("cos +", x_offset, -85);
-            text("tan +", x_offset, -70);
-            text("csc +", x_offset, -55);
-            text("sec +", x_offset, -40);
-            text("cot +", x_offset, -25);
+            var txt="sin + \n" +
+                    "cos + \n" +
+                    "tan + \n" +
+                    "csc + \n" +
+                    "sec + \n" +
+                    "cot + \n";
+
+              text(txt, x_offset, -110);
 
             // Quadrant II
-            textAlign(RIGHT, CENTER);
+            textAlign(RIGHT, TOP);
 
-            text("sin +", -x_offset,-100);
-            text("cos -", -x_offset, -85);
-            text("tan -", -x_offset, -70);
-            text("csc -", -x_offset, -55);
-            text("sec -", -x_offset, -40);
-            text("cot +", -x_offset, -25);
+            txt="sin + \n" +
+                "cos - \n" +
+                "tan - \n" +
+                "csc - \n" +
+                "sec - \n" +
+                "cot + \n";
+
+              text(txt, -x_offset+5, -110);
 
             // Quadrant III
-            textAlign(RIGHT, CENTER);
+            textAlign(RIGHT, TOP);
 
-            text("sin -", -x_offset, 100);
-            text("cos -", -x_offset,  85);
-            text("tan +", -x_offset,  70);
-            text("csc +", -x_offset,  55);
-            text("sec -", -x_offset,  40);
-            text("cot -", -x_offset,  25);
+            txt="sin - \n" +
+                "cos - \n" +
+                "tan + \n" +
+                "csc + \n" +
+                "sec - \n" +
+                "cot - \n";
+
+              text(txt, -x_offset+5, 15);
 
             // Quadrant IV
-            textAlign(LEFT, CENTER);
+            textAlign(LEFT, TOP);
 
-            text("sin -", x_offset, 100);
-            text("cos +", x_offset,  85);
-            text("tan -", x_offset,  70);
-            text("csc -", x_offset,  55);
-            text("sec +", x_offset,  40);
-            text("cot -", x_offset,  25);
+            txt="sin - \n" +
+                "cos + \n" +
+                "tan - \n" +
+                "csc - \n" +
+                "sec + \n" +
+                "cot - \n";
 
-            textFont(createFont("sans-serif", 14));
-                    
+              text(txt, x_offset, 15);
+
           };
           var labels=function(){
 
-            fill(getColor(p.color),90);
-            textAlign(CENTER,CENTER);
+            fill(getColor(p.color, 90));
+            textAlign(CENTER,TOP);
             textFont(createFont("sans-serif", 16));
-              
+
             pushMatrix();
-              
-              var y=-133;
-              
+
+              var y=-145;
+
               rotate(radians(-15));
                 text("D", 0, y);
               rotate(radians(5));
@@ -1524,14 +1179,14 @@ var diagrams = function(processingInstance){
                 text("E", 0, y);
               rotate(radians(5));
                 text("S", 0, y);
-                
+
             popMatrix();
-            
+
             pushMatrix();
-            
-              y=-260;
-              
-              rotate(radians(66));
+
+              y=-270;
+
+              rotate(radians(67));
                 text("R", 0, y);
               rotate(radians(2.75));
                 text("A", 0, y);
@@ -1681,11 +1336,11 @@ var diagrams = function(processingInstance){
             // textFont(createFont("serif", 14));
             // textFont(createFont("fantasy", 14));
             textFont(createFont("cursive", 12));
-            
-            fill(p.activeColor);
-            
-            if(!p.hit){ fill(p.color); }
-            
+
+            fill(p.icolor);
+
+            if(p.parent.hit){ fill(p.acolor); }
+
             noStroke();
 
             pushMatrix();
@@ -1696,14 +1351,14 @@ var diagrams = function(processingInstance){
 
                   rect(-80,-40,160,80);
 
-                noFill();
+                // noFill();
                 stroke(CLRS.BLUE);
                 strokeWeight(0.5);
 
                   ellipse(0, 0, 100, 50);
 
                 //  Background rectangles
-                fill(p.activeColor);
+                // fill(p.acolor);
                 noStroke();
 
                 var w=textWidth("Degrees")+10;
@@ -1739,7 +1394,7 @@ var diagrams = function(processingInstance){
                   fill(CLRS.BLUE);
                   noStroke();
 
-                  translate(-22,-22);
+                  translate(-24,-22);
                   rotate(radians(-10));
 
                     triangle( -7, -4,
@@ -1751,7 +1406,7 @@ var diagrams = function(processingInstance){
 
                   // ------------------------------
 
-                  translate(-50,14);
+                  translate(-48,14);
                   rotate(radians(-140));
 
                     triangle( -7, -4,
@@ -1773,7 +1428,7 @@ var diagrams = function(processingInstance){
                   translate(-22,-26);
 
                   // ------------------------------
-                  translate(44,-4);
+                  translate(46,-3);
                   rotate(radians(45));
 
                     triangle( -7, -4,
@@ -1794,6 +1449,7 @@ var diagrams = function(processingInstance){
             scale(1, -1);
 
               if(this.hit &&
+                 this.parent.hit &&
                  !app.autoRun){
 
                 app.focus=this.id;
@@ -1801,53 +1457,18 @@ var diagrams = function(processingInstance){
 
               }
 
-              // textFont(createFont("serif", 20));
-
-              /* Axes */
-              {
-                axes();
-              }
-              /* Circle */
-              {
-                circle();
-              }
-              /* drawDegrees */
-              {
-                drawDegrees();  
-              }
-              /* drawRadians */
-              {
-                drawRadians();
-              }
-              /* theta */
-              {
-                theta();
-              }
-              /* quadrants */
-              {
-                quadrants();
-              }
-              /* quadrantValues */
-              {
-                quadrantValues();
-              }
-              /* labels */
-              {
-                labels();
-              }
-              /* specialValues */
-              {
-                specialValues();
-              }
-              /* conversion */
-              {
-                conversion();
-              }
+              axes();
+              circle();
+              drawDegrees();
+              drawRadians();
+              theta();
+              quadrants();
+              quadrantValues();
+              labels();
+              specialValues();
               conversion();
 
           popMatrix();
-
-           // println( typeof this.color );
 
       };
       unitCircle.prototype.moved=function(x,y){
@@ -1890,39 +1511,41 @@ var diagrams = function(processingInstance){
 
         /* root control       */
         var bk=new root(100, null, 0, 0, 599, 599,
-          {text:          "root",
-           color:         getColor(CLRS.RED,15),
-           activeColor:   CLRS.ACTIVE1,
-           cursor:        ARROW,
-           border:        false});
+          {text:      "root",
+           acolor:    CLRS.ACTIVE,
+           icolor:    CLRS.INACTIVE,
+           cursor:    ARROW,
+           border:    false});
 
         app.controls.push(bk);
 
         /* unit circle        */
-        bk.controls.push(new unitCircle(120, bk, 280, 310, 200, 1501,
-          {color:       CLRS.BLACK,
-           activeColor: CLRS.ACTIVE1,
-           cursor:      ARROW}));
+        bk.controls.push(new unitCircle(110, bk, 280, 310, 200, 1501,
+          {color:     CLRS.BLACK,
+           acolor:    CLRS.ACTIVE,
+           icolor:    CLRS.INACTIVE,
+           cursor:    ARROW}));
 
-      // Toolbar --------------------------------------------------
+      // toolbar --------------------------------------------------
 
-        /* toolbar            */
-        var toolb=new toolbar(200, bk, 0, 0, 600, 30,
-          {text:    "Degrees and Radians",
-           color:   CLRS.TEAL_1,
-           cursor:  ARROW});
+        /* tlbar            */
+        var tlbar=new toolbar(200, bk, 0, 0, 600, 30,
+          {text:      "Degrees and Radians",
+           acolor:    CLRS.TOOLBARA,
+           icolor:    CLRS.TOOLBARI,
+           cursor:    ARROW});
 
-        bk.controls.push(toolb);
+        bk.controls.push(tlbar);
 
           /* auto-run           */
-          toolb.controls.push(new onOff(210, toolb, 17, 15, 13, 13,
+          tlbar.controls.push(new onOff(210, tlbar, 15, 15, 13, 13,
             {execute:   checkboxAuto,
              retrieve:  getAuto,
              color:     CLRS.BLACK,
              cursor:    HAND}));
 
           /* display settings   */
-          toolb.controls.push(new settings(220, toolb, 575, 5, 22, 22,
+          tlbar.controls.push(new settings(220, tlbar, 575, 5, 22, 22,
             {execute:   checkboxLegend,
              retrieve:  getLegend,
              color:     CLRS.BLACK,
@@ -1931,8 +1554,9 @@ var diagrams = function(processingInstance){
 
       // Telemetry --------------------------------------------------
         /* Telemetry          */
-        var telem=new legend(400, bk, 600, 30, 200, 570,
-          {color:   CLRS.BLUE, cursor:   ARROW});
+        var telem=new legend(300, bk, 600, 30, 200, 570,
+          {color:     CLRS.BLACK,
+           cursor:    ARROW});
 
         bk.controls.push(telem);
 
@@ -1954,13 +1578,15 @@ var diagrams = function(processingInstance){
 
     };
 
-    var app=new application();
-
     var execute;
 
     execute=update;
 
     initialize();
+
+    app.keys[KEYCODES.CONTROL]=false;
+    app.keys[KEYCODES.ALT]=false;
+    app.keys[KEYCODES.SHIFT]=false;
 
     var draw=function(){
 
@@ -2000,9 +1626,10 @@ var diagrams = function(processingInstance){
       switch(mouseButton){
 
         case LEFT:   for(var c in app.controls){ app.controls[c].clicked();  } break;
-        case RIGHT:  for(var c in app.controls){ app.controls[c].rClicked(); } break;
-        case CENTER: for(var c in app.controls){ app.controls[c].cClicked(); } break;
+        // case RIGHT:  for(var c in app.controls){ app.controls[c].rClicked(); } break;
+        // case CENTER: for(var c in app.controls){ app.controls[c].cClicked(); } break;
 
+        default:     break;
       }
 
     };
@@ -2038,7 +1665,7 @@ var diagrams = function(processingInstance){
     };
     var mouseOut=function(){
 
-      for(var c in app.controls){ app.controls[c].out(0,0); }
+      for(var c in app.controls){ app.controls[c].out(); }
       app.focus=-1;
 
     };
@@ -2051,7 +1678,6 @@ var diagrams = function(processingInstance){
 
   }
 
-}};
 
 
 
@@ -2122,3 +1748,4 @@ var diagrams = function(processingInstance){
 
 
 // 1729 = 10^3+9^3 = 12^3+1^3
+}};
