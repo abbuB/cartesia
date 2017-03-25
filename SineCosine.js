@@ -135,7 +135,7 @@ var diagrams = function(processingInstance){
       this.unitCircle=true;     //  Is the unit circle displayed
       this.quadrants=true;      //  Display the quadrants
 
-      this.autoRun=false;        //  Alpha changes automatically
+      this.autoRun=true;        //  Alpha changes automatically
 
       this.theta=0;             //   Current angle
 
@@ -152,25 +152,11 @@ var diagrams = function(processingInstance){
       
       this.loadData=function(){
 
-          // var sinN, cosN, tanN, secN, cscN, cotN;
-
-          for (var n=this.MIN; n<=this.MAX; n++){
+          for (var n=this.MIN; n<this.MAX; n++){
             
             p.sineData[n]=sin(radians(n)).toFixed(4);
             p.cosineData[n]=cos(radians(n)).toFixed(4);
 
-            // println(p.sineData[n]);
-            
-              // sinN=sin(radians(n)).toFixed(4);
-              // cscN=       (1/sinN).toFixed(4);
-              // cosN=cos(radians(n)).toFixed(4);
-              // secN=       (1/cosN).toFixed(4);
-              // tanN=tan(radians(n)).toFixed(4);
-              // cotN=       (1/tanN).toFixed(4);
-
-              // this.data.push({  sin:  sinN, csc:  cscN,
-                                // cos:  cosN, sec:  secN,
-                                // tan:  tanN, cot:  cotN });
           }
 
       };
@@ -276,37 +262,7 @@ var diagrams = function(processingInstance){
 
       Violet:       color(127,  0,255),     RedViolet:    color(191,  0,127),
 
-      GRAY1:        color(255*10/11),       GRAY2:        color(255*9/11),
-      GRAY3:        color(255*8/11),        GRAY4:        color(255*7/11),
-      GRAY5:        color(255*6/11),        GRAY6:        color(255*5/11),
-      GRAY7:        color(255*4/11),        GRAY8:        color(255*3/11),
-      GRAY9:        color(255*2/11),        GRAY10:       color(255*1/11),
       WHITE:        color(255,255,255),     BLACK:        color(0,0,0),
-
-      BUTTONH:      color( 16, 16, 16),     BUTTON:       color( 24, 24, 24),
-
-      GRID:         color( 33, 40, 48),
-
-      VERTEX:       color(255,255,  0),
-      VERTEXA:      color(255*6/11),
-      LINE:         color(255*6/11),
-      LINEA:        color(170,29,29),
-      FILL:         color(255*7/11),
-      FILLA:        color(255*7/11),
-
-      RULER:        color(231,189, 33),
-
-      SELECTED:     color(  0,  0,255),
-      HIT:          color(255,  0,  0),
-
-      ARROWS:       color( 32, 32, 32),
-      AXES:         color( 64, 64, 64),
-      TICKS_LT:     color(128,128,128),     TICKS_DARK:       color( 32, 32, 32),
-      GRID_LINES_LT:color(192,192,192),     GRID_LINES_DARK:  color(128,128,128),
-      LABELS:       color(128,128,128),
-      ORIGIN:       color(128,128,128),
-
-      BORDER:       color(128,  0,  0),
 
       SIN:          color(170, 29, 29,255), SIN_LT:       color(170, 29, 29,128),
       COS:          color( 29, 86,170,255), COS_LT:       color( 29, 86,170,128),
@@ -346,18 +302,11 @@ var diagrams = function(processingInstance){
       THETA:    "θ"
 
     };
-    var TRIG_INDEX={
-      SIN:  0,
-      CSC:  1,
-      COS:  2,
-      SEC:  3,
-      TAN:  4,
-      COT:  5
-    };
+
 
   }
     
-  /* Helper Functions ========================================================= */
+  /* Utility Functions ========================================================= */
   {
     
     var getColor=function(clr, alpha){ return color(red(clr), green(clr), blue(clr), alpha/100*255); };
@@ -379,27 +328,15 @@ var diagrams = function(processingInstance){
     
     var getSine=function()     { return app.data[app.theta].sin; };
     var getCosine=function()   { return app.data[app.theta].cos; };
-    var getTangent=function()  { return app.data[app.theta].tan; };
-    var getCosecant=function() { return app.data[app.theta].csc; };
-    var getSecant=function()   { return app.data[app.theta].sec; };
-    var getCotangent=function(){ return app.data[app.theta].cot; };
 
     var getAuto=function()     { return app.autoRun;  };
     var getLegend=function()   { return app.legend;   };
 
     var getSineOn=function()     { return app.sinOn; };
     var getCosineOn=function()   { return app.cosOn; };
-    var getTangentOn=function()  { return app.tanOn; };
-    var getCosecantOn=function() { return app.cscOn; };
-    var getSecantOn=function()   { return app.secOn; };
-    var getCotangentOn=function(){ return app.cotOn; };
     
     var toggleSin=function(){ app.sinOn=!app.sinOn; };
     var toggleCos=function(){ app.cosOn=!app.cosOn; };
-    var toggleTan=function(){ app.tanOn=!app.tanOn; };
-    var toggleCsc=function(){ app.cscOn=!app.cscOn; };
-    var toggleSec=function(){ app.secOn=!app.secOn; };
-    var toggleCot=function(){ app.cotOn=!app.cotOn; };
 
     var checkboxAuto=function()  { 
 
@@ -590,51 +527,6 @@ var diagrams = function(processingInstance){
             // Draw child controls
             for(var c in this.controls){ this.controls[c].draw(); }
                     
-        popMatrix();
-
-      };
-      
-    }
-
-    // Index ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    {
-
-      var index=function(id, parent, x, y, w, h, params){
-
-        control.call(this, id, parent, x, y, w, h);
-
-        this.radius=params.radius;
-        this.color=params.color;
-        this.cursor=params.cursor;
-        
-      };
-      index.prototype=Object.create(control.prototype);
-      index.prototype.draw=function(){
-
-        pushMatrix();
-
-          translate(this.x, this.y);
-
-            strokeWeight(1);
-            stroke(getColor(CLRS.BLACK, 20));
-            fill(getColor(this.color, 50));
-
-            if(this.hit &&
-               this.parent.hit){
-
-              app.focus=this.id;
-              cursor(this.cursor);
-
-              stroke(getColor(CLRS.BLACK, 40));
-              fill(getColor(this.color, 75));
-
-            }
-
-            rect(0, 0, this.w, this.h, this.radius);
-
-            // Draw child controls          
-            for(var c in this.controls){ this.controls[c].draw(); }
-      
         popMatrix();
 
       };
@@ -1339,7 +1231,7 @@ var diagrams = function(processingInstance){
 
             scale(1,-1);
 
-              text(app.theta+CONSTANTS.DEGREES, 0, -r*1.45);
+              text(app.theta+CONSTANTS.DEGREES, -r*1, -r*1);
 
           };
           var sineLine=function(){
@@ -1348,7 +1240,7 @@ var diagrams = function(processingInstance){
             strokeWeight(0);
             fill(CLRS.SIN);
 
-            d=round(dist(cos(rTheta)*r, sin(rTheta)*r,
+            var d=round(dist(cos(rTheta)*r, sin(rTheta)*r,
                               p.w*1.25, sin(rTheta)*r));
 
             var x=cos(rTheta)*r;
@@ -1370,7 +1262,7 @@ var diagrams = function(processingInstance){
             strokeWeight(0);
             fill(CLRS.COS);
 
-            d=round(dist(cos(rTheta)*r, -sin(rTheta)*r,
+            var d=round(dist(cos(rTheta)*r, -sin(rTheta)*r,
                          cos(rTheta)*r,       p.w*1.25));
 
             var x=cos(rTheta)*r;
@@ -1452,10 +1344,15 @@ var diagrams = function(processingInstance){
 
         this.activecolor=params.activecolor;
         this.inactivecolor=params.inactivecolor;
+        
+        this.title=params.title;
+        this.xaxis=params.xaxis;
+        this.yaxis=params.yaxis;
+        this.data=params.data;
+        this.retrieve=params.retrieve;
+        this.rotation=params.rotation;
         this.cursor=params.cursor;
-
-        this.gridHit=false;
-
+  
         this.gridOn=true;
         this.axesOn=true;
         this.originOn=true;
@@ -1473,9 +1370,9 @@ var diagrams = function(processingInstance){
         var p=this;
 
         var min=0;
-        var max=360;
-
-        var increment=0;
+        var max=this.data.length;
+        
+        var increment=1;
 
         var borderColor=CLRS.BORDER;
 
@@ -1487,145 +1384,110 @@ var diagrams = function(processingInstance){
           
           if(p.hit){ fill(getColor(CLRS.BLUE,10)); }
           
-          stroke(CLRS.BLUE);
+          stroke(p.inactivecolor);
           strokeWeight(0.25);
 
-          rect(0.5, 0.5, p.w, p.h);
+          rect(0, 0, p.w, p.h);
 
         };
         var labels=function(){
 
-          fill(getColor(CLRS.BLACK,50));
-          textSize(16);
-          textAlign(CENTER,TOP);
+          fill(getColor(CLRS.BLACK,75));
+          textSize(12);
+          textAlign(CENTER,BOTTOM);
 
-            text("y=sin("+CONSTANTS.THETA+")",150,-25);
-            text("x=cos("+CONSTANTS.THETA+")", 25,350);
-
+            text(p.title, p.w/2, -10);
+            
+          textAlign(LEFT,BOTTOM);
+            
+            text(p.xaxis, p.w+5,   p.h/2-5);
+            
+          textAlign(LEFT,BOTTOM);
+            
+            text(p.yaxis, 7, -3);
+            
         };
         var axes=function(){
-          
+
           stroke(CLRS.BLACK);
           strokeWeight(1);
-            
-            
-            line(4, p.h/2-1, p.w, p.h/2-1);     /* x-axes */            
-            line(1, -10, 1, p.h+10);            /* y-axes */
 
-            /* arrows */
-            fill(CLRS.BLACK);
-            
-            pushMatrix();
-              
-              translate(1,-15);
-              
-                quad( 0, 0,
-                     -3, 9,
-                      0, 6,
-                      3, 9);
-            
-            popMatrix();
-
-            pushMatrix();
-              
-              scale(1,-1);
-              translate(1,-155);
-              
-                quad( 0, 0,
-                     -3, 9,
-                      0, 6,
-                      3, 9);
-            
-            popMatrix();    
-          
-            pushMatrix();
-
-              translate(371, 69);
-              rotate(PI/2);
-              
-                quad( 0, 0,
-                     -3, 9,
-                      0, 6,
-                      3, 9);
-            
-            popMatrix();   
-            
-            line(-86, 158, -86, 153+p.w);       /* x-axes */            
-            line(-170, 157, -170+p.h+20, 157);  /* y-axes */
-
-            pushMatrix();
-              
-              translate(-17,156);
-              rotate(PI/2);
-
-                pushMatrix();
-                  
-                  translate(1,-15);
-                  
-                    quad( 0, 0,
-                         -3, 9,
-                          0, 6,
-                          3, 9);
-                
-                popMatrix();
-
-                pushMatrix();
-                  
-                  scale(1,-1);
-                  translate(1,-155);
-
-                    quad( 0, 0,
-                         -3, 9,
-                          0, 6,
-                          3, 9);
-
-                popMatrix();
-
-                pushMatrix();
-
-                  translate(371, 69);
-                  rotate(PI/2);
-
-                    quad( 0, 0,
-                         -3, 9,
-                          0, 6,
-                          3, 9);
-
-                popMatrix();
-
-            popMatrix();
+            line(0, p.h/2, p.w+10, p.h/2);    /* x-axes */
+            line(0,   -10,      0, p.h+10);   /* y-axes */
 
         };
+        var arrows=function(){
 
-        var sineCurve=function(){
+          /* arrows */
+          fill(CLRS.BLACK);
+          noStroke();
+
+          pushMatrix();
+            
+            translate(0,-15);
+            
+              quad( 0, 0,
+                   -3, 9,
+                    0, 6,
+                    3, 9);
+
+          popMatrix();
+
+          pushMatrix();
+            
+            scale(1,-1);
+            translate(0,-155);
+            
+              quad( 0, 0,
+                   -3, 9,
+                    0, 6,
+                    3, 9);
+
+          popMatrix();    
+
+          pushMatrix();
+
+            translate(375, 70);
+            rotate(PI/2);
+            
+              quad( 0, 0,
+                   -3, 9,
+                    0, 6,
+                    3, 9);
+
+          popMatrix();   
+
+        };        
+        var drawCurve=function(){
 
           pushMatrix();
 
             translate(0.5, 0.5);
 
               strokeWeight(0.25);
-              stroke(CLRS.SIN);
+              stroke(p.activecolor);
               noFill();
-
-              increment=1;
 
               var back=[];
               var front=[];
 
-              for(var n=0; n<361-app.theta; n++){ back[n]=0;  }
+              for(var n=0; n<max-app.theta; n++){ back[n]=0;  }
               for(var n=0; n<app.theta;     n++){ front[n]=0; }
 
-              arrayCopy(app.sineData, app.theta, back, 0, 360-app.theta);
-              arrayCopy(app.sineData, front, app.theta);
+              (arrayCopy)(p.data, app.theta, back, 0, 360-app.theta);
+              (arrayCopy)(p.data, front, app.theta);
 
               var arr=concat(back, front);
 
               beginShape();
+              
+                var n=0;
+                var x=convert(n);
+                var y=-arr[n]*p.h/2+p.h/2;
+                
+                  curveVertex(x,y);
 
-                var x=0;
-                var y=0;
-
-                  for(var n=0; n<arr.length; n+=increment){
+                  for(n=0; n<arr.length; n+=increment){
 
                     x=convert(n);
                     y=-arr[n]*p.h/2+p.h/2;
@@ -1633,50 +1495,7 @@ var diagrams = function(processingInstance){
                     curveVertex(x, y);
 
                   }
-
-              endShape();
-
-          popMatrix();
-
-        };
-        var cosineCurve=function(){
-
-          pushMatrix();
-          
-            translate(-15, 155);
-            rotate(radians(90));
-            
-              strokeWeight(0.25);
-              stroke(CLRS.COS);
-              noFill();
-
-              increment=1;
-
-              var back=[];
-              var front=[];
-
-              for(var n=0; n<360-app.theta; n++){ back[n]=0;  }
-              for(var n=0; n<app.theta;     n++){ front[n]=0; }
-
-              arrayCopy(app.cosineData, app.theta, back, 0, 360-app.theta);
-              arrayCopy(app.cosineData, front, app.theta);
-
-              var arr=concat(back, front);
-
-              beginShape();
-
-                var x=0;
-                var y=0;
-
-                  for(var n=0; n<arr.length; n+=increment){
-
-                    x=convert(n);
-                    y=-arr[n]*p.h/2+p.h/2;
-
-                    curveVertex(x, y);
-
-                  }
-
+                  
               endShape();
 
           popMatrix();
@@ -1687,10 +1506,10 @@ var diagrams = function(processingInstance){
         pushMatrix();
 
           translate(this.x+0.5, this.y+0.5);
-          // scale(1,-1);
-
+          rotate(this.rotation);
+            
             noFill();
-    
+
             if(this.hit &&
                this.parent.hit){
 
@@ -1699,18 +1518,12 @@ var diagrams = function(processingInstance){
 
             }
 
-            pushMatrix();
-                
-                // border();
-                labels();
-                axes();
-
-                if(app.sinOn      ){ sineCurve();   }
-                if(app.cosOn      ){ cosineCurve(); }
-
-            popMatrix();
-
-            if(this.borderOn){ border(); }
+            labels();
+            axes();
+            arrows();
+            
+            if(this.retrieve()){ drawCurve();   }
+            if(this.borderOn  ){ border();  }
               
         popMatrix();
         
@@ -1735,22 +1548,39 @@ var diagrams = function(processingInstance){
         app.controls.push(bk);
 
           /* unit circle        */
-          bk.controls.push(new unitCircle(120, bk, 100, 150, 70, 70,
+          bk.controls.push(new unitCircle(120, bk, 100, 130, 70, 70,
             {color:   CLRS.TEAL_2,
              cursor:  ARROW}));
              
-          /* graph              */
-          bk.controls.push(new graph(110, bk, 185, 80, 360, 140,
-            {activecolor:     CLRS.GRAPHA,
-             inactivecolor:   CLRS.GRAPHI,
+          /* sine graph              */
+          bk.controls.push(new graph(110, bk, 186, 59, 360, 140,
+            {activecolor:     CLRS.SIN,
+             inactivecolor:   CLRS.SIN_LT,
+             retrieve:        getSineOn,
+             data:            app.sineData,
+             title:           "y=sin(" + CONSTANTS.THETA + ")",
+             xaxis:           CONSTANTS.THETA,
+             yaxis:           "y",             
+             rotation:        0,
              cursor:          ARROW}));
 
-
+          /* cosine graph              */
+          bk.controls.push(new graph(110, bk, 169, 216, 360, 140,
+            {activecolor:     CLRS.COS,
+             inactivecolor:   CLRS.COS_LT,
+             retrieve:        getCosineOn,
+             data:            app.cosineData,
+             title:           "x=cos(" + CONSTANTS.THETA + ")",
+             xaxis:           CONSTANTS.THETA,
+             yaxis:           "x",
+             rotation:        PI/2,
+             cursor:          ARROW}));
+             
       // Toolbar --------------------------------------------------
 
         /* toolbar            */
         var toolb=new toolbar(200, bk, 0, 0, 600, 30,  
-          {text:    "Sine Cosine",
+          {text:            "Sine Cosine",
            activecolor:     CLRS.TOOLBARA,
            inactivecolor:   CLRS.TOOLBARI,
            cursor:          ARROW});
@@ -1910,70 +1740,4 @@ var diagrams = function(processingInstance){
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// 1729 = 10^3+9^3 = 12^3+1^3
+/* 1729 = 10^3+9^3 = 12^3+1^3 */
