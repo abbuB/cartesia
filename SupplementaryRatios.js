@@ -40,7 +40,7 @@ var diagrams = function(processingInstance){
 
       - only draw telemetry if it's visible
       - optional degrees radians
-
+      - versine, coversine, exsecant, excosecant
 
     Research:
 
@@ -84,47 +84,50 @@ var diagrams = function(processingInstance){
 
       this.theta=0;             //   Current angle
 
-      this.sineOn         = true;
-      this.cosineOn       = true;
-      this.tangentOn      = true;
-      this.cosecantOn     = true;
-      this.secantOn       = true;
-      this.cotangentOn    = true;
+      this.sineOn       = true;
+      this.cosineOn     = true;
+      this.tangentOn    = true;
+      this.cosecantOn   = true;
+      this.secantOn     = true;
+      this.cotangentOn  = true;
       
-      this.versineOn      = true;
-      this.coversineOn    = true;
-      this.exversineOn    = true;
-      this.excoversineon  = true;
-      
+      this.versineOn    = true;
+      this.coversineOn  = true;
+      this.exsecantOn   = true;
+      this.excosecantOn = true;
+
+      this.thetaOn      = true;
+      this.quadrantsOn  = true;
+
       this.MIN=0;
       this.MAX=360;
-      
+
       var sineN, cosineN, tangentN,
           secantN, cosecantN, cotangentN,
           versineN, coversineN,
-          exversineN, excoversineN;
+          exsecantN, excosecantN;
 
       /* Load Data */
         
       for (var n=this.MIN; n<=this.MAX; n++){
 
-          sineN      = sin(radians(n)).toFixed(4);
-          cosecantN  =       (1/sineN).toFixed(4);
-          cosineN    = cos(radians(n)).toFixed(4);
-          secantN    =     (1/cosineN).toFixed(4);
-          tangentN   = tan(radians(n)).toFixed(4);
-          cotangentN =    (1/tangentN).toFixed(4);
-          versineN=1;
-          coversineN=1;
-          exversineN=1;
-          coexversineN=1;
-          
-          this.data.push({  sine:      sineN,      cosecant:    cosecantN,
-                            cosine:    cosineN,    secant:      secantN,
-                            tangent:   tangentN,   cotangent:   cotangentN,
+          sineN       = sin(radians(n)).toFixed(4);
+          cosecantN   =       (1/sineN).toFixed(4);
+          cosineN     = cos(radians(n)).toFixed(4);
+          secantN     =     (1/cosineN).toFixed(4);
+          tangentN    = tan(radians(n)).toFixed(4);
+          cotangentN  =    (1/tangentN).toFixed(4);
+          versineN    =     (1-cosineN).toFixed(4);
+          coversineN  =       (1-sineN).toFixed(4);
+          exsecantN   =   (cosecantN-1).toFixed(4);
+          excosecantN =     (secantN-1).toFixed(4);
 
-                            versine:   versineN,   coversine:   coversineN,
-                            exversine: exversineN, coexversine: coexversineN });
+          this.data.push({  sine:     sineN,      cosecant:   cosecantN,
+                            cosine:   cosineN,    secant:     secantN,
+                            tangent:  tangentN,   cotangent:  cotangentN,
+
+                            versine:  versineN,   coversine:  coversineN,
+                            exsecant: exsecantN,  excosecant: excosecantN });
       }
 
       frameRate(0);
@@ -224,9 +227,12 @@ var diagrams = function(processingInstance){
       COS:          color( 29, 86,170,255), COS_LT:       color( 29, 86,170,128),
       TAN:          color(158,182, 58,255), TAN_LT:       color(158,182,58,192),
 
-      CSC:          color(238,136, 15,255), CSC_LT:       color(238,136, 15,128),
-      SEC:          color(158,182, 58,255), SEC_LT:       color(158,182, 58,128),
-      COT:          color(128,128,128,255), COT_LT:       color(128,128,128,128),
+      CSC:          color(170, 29, 29,128), CSC_LT:       color(238,136, 15,128),
+      SEC:          color( 29, 86,170,128), SEC_LT:       color(158,182, 58,128),
+      COT:          color(158,182, 58,128), COT_LT:       color(128,128,128,128),
+      
+      VERSINE:      color(255,127,  0,192), COVERSINE:    color(255,127,  0,192),
+      EXSEC:        color(255, 20,147,128), EXCSC:        color(255, 20,147,128),
       
       PINK:         color(255, 20,147,255)
       
@@ -285,45 +291,45 @@ var diagrams = function(processingInstance){
     };
     var checkboxLegend=function(){ app.legend=!app.legend;   };
 
-    var getSine=function()      { return app.data[app.theta].sine;       };
-    var getCosine=function()    { return app.data[app.theta].cosine;     };
-    var getTangent=function()   { return app.data[app.theta].tangent;    };
+    var getSine=function()          { return app.data[app.theta].sine;       };
+    var getCosine=function()        { return app.data[app.theta].cosine;     };
+    var getTangent=function()       { return app.data[app.theta].tangent;    };
 
-    var getCosecant=function()  { return app.data[app.theta].cosecant;   };
-    var getSecant=function()    { return app.data[app.theta].secant;     };
-    var getCotangent=function() { return app.data[app.theta].cotangent;  };
+    var getCosecant=function()      { return app.data[app.theta].cosecant;   };
+    var getSecant=function()        { return app.data[app.theta].secant;     };
+    var getCotangent=function()     { return app.data[app.theta].cotangent;  };
 
-    var getVersine=function()   { return app.data[app.theta].versine;    };
-    var getCoversine=function() { return app.data[app.theta].coversine;  };
+    var getVersine=function()       { return app.data[app.theta].versine;    };
+    var getCoversine=function()     { return app.data[app.theta].coversine;  };
 
-    var getExsecant=function()  { return app.data[app.theta].exsecant;   };
-    var getExcosecant=function(){ return app.data[app.theta].excosecant; };
+    var getExsecant=function()      { return app.data[app.theta].exsecant;   };
+    var getExcosecant=function()    { return app.data[app.theta].excosecant; };
     
-    var getSineOn=function()       { return app.sineOn;      };
-    var getCosineOn=function()     { return app.cosineOn;    };
-    var getTangentOn=function()    { return app.tangentOn;   };
+    var getSineOn=function()        { return app.sineOn;                     };
+    var getCosineOn=function()      { return app.cosineOn;                   };
+    var getTangentOn=function()     { return app.tangentOn;                  };
 
-    var getCosecantOn=function()   { return app.cosecantOn;  };
-    var getSecantOn=function()     { return app.secantOn;    };
-    var getCotangentOn=function()  { return app.cotangentOn; };
+    var getCosecantOn=function()    { return app.cosecantOn;                 };
+    var getSecantOn=function()      { return app.secantOn;                   };
+    var getCotangentOn=function()   { return app.cotangentOn;                };
 
-    var getVersineOn=function()    { return app.data[app.theta].versineOn;    };
-    var getCoversineOn=function()  { return app.data[app.theta].coversineOn;  };
+    var getVersineOn=function()     { return app.versineOn;                  };
+    var getCoversineOn=function()   { return app.coversineOn;                };
     
-    var getExsecantOn=function()   { return app.data[app.theta].exsecantOn;   };
-    var getExcosecantOn=function() { return app.data[app.theta].excosecantOn; };
+    var getExsecantOn=function()    { return app.exsecantOn;                 };
+    var getExcosecantOn=function()  { return app.excosecantOn;               };
 
-    var toggleSine=function()      { app.sineOn       =! app.sineOn;       };
-    var toggleCosine=function()    { app.cosineOn     =! app.cosineOn;     };
-    var toggleTangent=function()   { app.tangentOn    =! app.tangentOn;    };
-    var toggleCosecant=function()  { app.cosecantOn   =! app.cosecantOn;   };
-    var toggleSecant=function()    { app.secantOn     =! app.secantOn;     };
-    var toggleCotangent=function() { app.cotangentOn  =! app.cotangentOn;  };
+    var toggleSine=function()       { app.sineOn       =! app.sineOn;        };
+    var toggleCosine=function()     { app.cosineOn     =! app.cosineOn;      };
+    var toggleTangent=function()    { app.tangentOn    =! app.tangentOn;     };
+    var toggleCosecant=function()   { app.cosecantOn   =! app.cosecantOn;    };
+    var toggleSecant=function()     { app.secantOn     =! app.secantOn;      };
+    var toggleCotangent=function()  { app.cotangentOn  =! app.cotangentOn;   };
 
-    var toggleVersine=function()   { app.versineOn    =! app.versineOn;    };
-    var toggleCoversine=function() { app.coversineOn  =! app.coversineOn;  };
-    var toggleExsecant=function()  { app.exsecantOn   =! app.exsecantOn;   };
-    var toggleExcosecant=function(){ app.excosecantOn =! app.excosecantOn; };
+    var toggleVersine=function()    { app.versineOn    =! app.versineOn;     };
+    var toggleCoversine=function()  { app.coversineOn  =! app.coversineOn;   };
+    var toggleExsecant=function()   { app.exsecantOn   =! app.exsecantOn;    };
+    var toggleExcosecant=function() { app.excosecantOn =! app.excosecantOn;  };
 
   }
 
@@ -1030,8 +1036,7 @@ var diagrams = function(processingInstance){
       };
 
     }
-    
-    
+        
     // Unit Circle * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
 
@@ -1043,7 +1048,9 @@ var diagrams = function(processingInstance){
         this.acolor = params.acolor;
         this.icolor = params.icolor;
         this.cursor = params.cursor;
-
+        
+        this.value=0;
+        
       };
       unitCircle.prototype=Object.create(control.prototype);
       unitCircle.prototype.draw=function(){
@@ -1053,7 +1060,9 @@ var diagrams = function(processingInstance){
           var cs=3.5;         //  crossing size
 
           var p=this;         //  object reference
-
+          
+          var sw=2.5;           // strokeWeight;
+          
           var sinValue=sin(radians(app.theta))*r;
           var cscValue=1/sin(radians(app.theta))*r;
 
@@ -1085,11 +1094,11 @@ var diagrams = function(processingInstance){
 
             if(p.hit){
 
-              // fill(p.acolor);
+              fill(getColor(p.acolor, p.value));
               stroke(getColor(p.color, 50));
               strokeWeight(1.5);
 
-              // if(p.value<100){ p.value+=2; }
+              if(p.value<20){ p.value+=2; }
 
             }
             else{
@@ -1111,11 +1120,9 @@ var diagrams = function(processingInstance){
 
             noFill();
             stroke(getColor(CLRS.BLACK,50));
-
             strokeWeight(2);
 
-              line(cosValue, sinValue,
-                   0, 0);
+              line(cosValue, sinValue, 0, 0);
 
           };
 
@@ -1123,26 +1130,20 @@ var diagrams = function(processingInstance){
 
             noFill();
             stroke(CLRS.SIN);
+            strokeWeight(sw);
 
-            strokeWeight(2);
-
-              line(0, sinValue, 0, 0);
-
-              line(cosValue, sinValue,
-                   cosValue,        0);
+              line(0,        sinValue,        0, 0);
+              line(cosValue, sinValue, cosValue, 0);
 
           };
           var drawCosine=function(){
 
             noFill();
             stroke(CLRS.COS);
+            strokeWeight(sw);
 
-            strokeWeight(2);
-
-              line(cosValue, 0, 0, 0);
-
-              line(       0, sinValue,
-                   cosValue, sinValue);
+              line(cosValue,        0,        0,        0);
+              line(       0, sinValue, cosValue, sinValue);
 
 
           };
@@ -1150,19 +1151,16 @@ var diagrams = function(processingInstance){
 
             noFill();
             stroke(CLRS.TAN);
+            strokeWeight(sw);
 
-            strokeWeight(2);
-
-              line(secValue,        0,
-                   cosValue, sinValue);
+              line(secValue, 0, cosValue, sinValue);
 
           };
           var drawCosecant=function(){
 
             noFill();
             stroke(CLRS.CSC);
-
-            strokeWeight(2);
+            strokeWeight(sw);
 
               if(cosValue<0){ line( 20, 0,  20, cscValue); }
               else          { line(-20, 0, -20, cscValue); }
@@ -1174,8 +1172,7 @@ var diagrams = function(processingInstance){
             
             noFill();
             stroke(CLRS.SEC);
-
-            strokeWeight(2);
+            strokeWeight(sw);
               
               if(sinValue<0){ line(0,  20, secValue,  20); }
               else          { line(0, -20, secValue, -20); }
@@ -1185,55 +1182,49 @@ var diagrams = function(processingInstance){
 
             noFill();
             stroke(CLRS.COT);
+            strokeWeight(sw);
 
-            strokeWeight(2);
-
-              line(       0, cscValue,
-                   cosValue, sinValue);
+              line(0, cscValue, cosValue, sinValue);
 
           };
 
-          drawVersine=function(){
+          var drawVersine=function(){
 
             noFill();
-            stroke(CLRS.CYAN);
-
-            strokeWeight(2);
+            stroke(CLRS.VERSINE);
+            strokeWeight(sw);
 
               if(cosValue>0){ line( r, 0, cosValue, 0); }
               else          { line(-r, 0, cosValue, 0); }
 
           };
-          drawCoversine=function(){
+          var drawCoversine=function(){
 
             noFill();
-            stroke(CLRS.PINK);
-
-            strokeWeight(2);
+            stroke(CLRS.COVERSINE);
+            strokeWeight(sw);
 
               if(sinValue>0){ line(0, r, 0, sinValue); }
               else          { line(0,-r, 0, sinValue); }
 
           };
-          drawExSecant=function(){
+          var drawExsecant=function(){
             /* Exterior Secant */
 
             noFill();
-            stroke(CLRS.PINK);
-
-            strokeWeight(2);
+            stroke(CLRS.EXSEC);
+            strokeWeight(sw);
 
               if(cosValue>0){ line( r, 0,  secValue, 0); }
               else          { line(-r, 0,  secValue, 0); }
 
           };
-          drawExCosecant=function(){
+          var drawExcosecant=function(){
             /* Exterior Cosecant */  
 
             noFill();
-            stroke(CLRS.RED1);
-
-            strokeWeight(2);
+            stroke(CLRS.EXCSC);
+            strokeWeight(sw);
 
               if(sinValue>0){ line(0,  r, 0,  cscValue); }
               else          { line(0, -r, 0,  cscValue); }
@@ -1414,8 +1405,8 @@ var diagrams = function(processingInstance){
             textSize(36);
             scale(1,-1);
 
-              text((app.theta*PI/180).toFixed(2) + CONSTANTS.RADIANS, 260, r*1);
-              text(app.theta + CONSTANTS.DEGREES,                     260, r*1.2);
+              text((app.theta*PI/180).toFixed(2) + CONSTANTS.RADIANS, -260, r*1);
+              text(app.theta + CONSTANTS.DEGREES,                     -260, r*1.2);
 
           };
           var quadrants=function(){
@@ -1428,16 +1419,11 @@ var diagrams = function(processingInstance){
             var w=r*0.5;  // Distance along radius
 
             textAlign(CENTER, CENTER);
-            text("I",   w*cos(radians( -45)),  w*sin(radians( -45)));
-
-            // textAlign(RIGHT, BOTTOM);
-            text("II",  w*cos(radians(-135)),  w*sin(radians(-135)));
-
-            // textAlign(RIGHT, TOP);
-            text("III", w*cos(radians( 135 )), w*sin(radians( 135)));
-
-            // textAlign(LEFT, TOP);
-            text("IV",  w*cos(radians(  45)),  w*sin(radians(  45)));
+            
+              text("I",   w*cos(radians( -45)),  w*sin(radians( -45)));
+              text("II",  w*cos(radians(-135)),  w*sin(radians(-135)));
+              text("III", w*cos(radians( 135 )), w*sin(radians( 135)));
+              text("IV",  w*cos(radians(  45)),  w*sin(radians(  45)));
 
           };
           var quadrantValues=function(){
@@ -1817,13 +1803,13 @@ var diagrams = function(processingInstance){
               if(app.tangentOn)   { drawTangent();    }
               if(app.cotangentOn) { drawCotangent();  }
 
-              if(app.exsecantOn)  { drawExSecant();   }
-              if(app.excosecantOn){ drawExCosecant(); }
+              if(app.exsecantOn)  { drawExsecant();   }
+              if(app.excosecantOn){ drawExcosecant(); }
 
               // drawDegrees();
               // drawRadians();
-              if(app.sineOn){ theta();      }
-              if(app.sineOn){ quadrants();  }
+              if(app.thetaOn)     { theta();          }
+              if(app.quadrantsOn) { quadrants();      }
               // quadrantValues();
               // labels();
               // specialValues();
@@ -1881,9 +1867,9 @@ var diagrams = function(processingInstance){
         app.controls.push(bk);
 
         /* unit circle        */
-        bk.controls.push(new unitCircle(110, bk, 280, 310, 160, 160,
+        bk.controls.push(new unitCircle(110, bk, 360, 310, 160, 160,
           {color:     CLRS.BLACK,
-           acolor:    CLRS.ACTIVE,
+           acolor:    CLRS.TEAL_2,
            icolor:    CLRS.INACTIVE,
            cursor:    ARROW}));
 
@@ -1917,14 +1903,14 @@ var diagrams = function(processingInstance){
       // Index --------------------------------------------------
 
         /* index              */
-        var idx=new index(300, bk, 10, 35, 110, 200,{radius:  5,
+        var idx=new index(300, bk, 10, 40, 120, 225,{radius:  5,
             color:   CLRS.WHITE,
             cursor:  ARROW});
 
         bk.controls.push(idx);
           
           /* Sine button        */
-          bk.controls.push(new button(310, bk, 5, 40, 110, 20,              
+          bk.controls.push(new button(310, bk, 15, 45, 110, 20,              
             {text:     "Sin "+CONSTANTS.THETA,
              execute:  toggleSine,
              tag:      getSine,
@@ -1933,7 +1919,7 @@ var diagrams = function(processingInstance){
              cursor:   HAND}));
            
           /* Cosine button      */
-          bk.controls.push(new button(320, bk, 5, 60, 110, 20,             
+          bk.controls.push(new button(320, bk, 15, 65, 110, 20,             
             {text:     "Cos "+CONSTANTS.THETA,
              execute:  toggleCosine,
              tag:      getCosine,
@@ -1942,7 +1928,7 @@ var diagrams = function(processingInstance){
              cursor:   HAND}));
           
           /* Tangent button     */
-          bk.controls.push(new button(330, bk, 5, 80, 110, 20,             
+          bk.controls.push(new button(330, bk, 15, 85, 110, 20,             
             {text:     "Tan "+CONSTANTS.THETA,
              execute:  toggleTangent,
              tag:      getTangent,
@@ -1951,7 +1937,7 @@ var diagrams = function(processingInstance){
              cursor:   HAND}));
 
           /* Cosecant button    */
-          bk.controls.push(new button(340, bk, 5, 105, 110, 20,            
+          bk.controls.push(new button(340, bk, 15, 110, 110, 20,            
             {text:     "Cos "+CONSTANTS.THETA,
              execute:  toggleCosecant,
              tag:      getCosecant,
@@ -1960,7 +1946,7 @@ var diagrams = function(processingInstance){
              cursor:   HAND}));
           
           /* Secant button      */
-          bk.controls.push(new button(350, bk, 5, 125, 110, 20,           
+          bk.controls.push(new button(350, bk, 15, 130, 110, 20,           
             {text:     "Sec "+CONSTANTS.THETA,
              execute:  toggleSecant,
              tag:      getSecant,
@@ -1969,7 +1955,7 @@ var diagrams = function(processingInstance){
              cursor:   HAND}));
              
           /* Cotangent button   */
-          bk.controls.push(new button(360, bk, 5, 145, 110, 20,           
+          bk.controls.push(new button(360, bk, 15, 150, 110, 20,           
             {text:     "Cot "+CONSTANTS.THETA,
              execute:  toggleCotangent,
              tag:      getCotangent,
@@ -1978,39 +1964,39 @@ var diagrams = function(processingInstance){
              cursor:   HAND}));
 
           /* Excosecant button   */
-          bk.controls.push(new button(360, bk, 5, 500, 110, 20,           
-            {text:     "Exosc "+CONSTANTS.THETA,
+          bk.controls.push(new button(360, bk, 15, 175, 110, 20,           
+            {text:     "Excsc "+CONSTANTS.THETA,
              execute:  toggleExcosecant,
              tag:      getExcosecant,
              retrieve: getExcosecantOn,
-             color:    CLRS.TAN_LT,
+             color:    CLRS.EXCSC,
              cursor:   HAND}));
              
           /* Coversine button   */
-          bk.controls.push(new button(360, bk, 5, 520, 110, 20,           
+          bk.controls.push(new button(360, bk, 15, 195, 110, 20,           
             {text:     "Cvs "+CONSTANTS.THETA,
              execute:  toggleCoversine,
              tag:      getCoversine,
              retrieve: getCoversineOn,
-             color:    CLRS.TAN_LT,
+             color:    CLRS.COVERSINE,
              cursor:   HAND}));
 
           /* Versine button   */
-          bk.controls.push(new button(360, bk, 5, 540, 110, 20,           
+          bk.controls.push(new button(360, bk, 15, 220, 110, 20,           
             {text:     "Ver "+CONSTANTS.THETA,
              execute:  toggleVersine,
              tag:      getVersine,
              retrieve: getVersineOn,
-             color:    CLRS.TAN_LT,
+             color:    CLRS.VERSINE,
              cursor:   HAND}));
 
           /* Exsecant button   */
-          bk.controls.push(new button(360, bk, 5, 560, 110, 20,           
+          bk.controls.push(new button(360, bk, 15, 240, 110, 20,           
             {text:     "Exsec "+CONSTANTS.THETA,
              execute:  toggleExsecant,
              tag:      getExsecant,
              retrieve: getExsecantOn,
-             color:    CLRS.TAN_LT,
+             color:    CLRS.EXSEC,
              cursor:   HAND}));
              
       // Telemetry --------------------------------------------------
