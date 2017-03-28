@@ -184,7 +184,38 @@ var diagrams = function(processingInstance){
       Z:          90
     };
     var CLRS={
+      
+      K_TEAL_0:     color( 24, 99,117,255),
+      K_TEAL_1:     color( 28,117,138,255),
+      K_TEAL_2:     color( 41,171,202,255),
+      K_TEAL_3:     color( 88,196,221,255),
+      K_TEAL_4:     color(156,220,235,255),
+      K_TEAL_5:     color( 17,172,205,255),
+      
+      K_GREEN_0:    color( 31,171, 84,255),
+      K_GREEN_1:    color( 56,182, 92,255),
+      K_GREEN_2:    color( 116,207,112,255),
 
+      K_PINK_0:     color(202, 51,124,255),
+      K_PINK_1:     color(218, 79,146,255),
+      K_PINK_2:     color(255,146,198,255),
+
+      K_ORANGE_0:   color(232, 77, 57,255),
+      K_ORANGE_1:   color(255,132,130,255),
+      K_ORANGE_2:   color(234,145, 22,255),
+
+      K_BROWN_0:    color(224,125, 16,255),
+      K_BROWN_1:    color(255,188, 37,255),
+      K_BROWN_2:    color(255,132,130,255),
+
+      K_PURPLE_0:   color(120, 83,171,255),
+      K_PURPLE_1:   color(155,119,229,255),
+
+      K_BLUE_0:     color( 19, 78,163,255),
+      K_BLUE_1:     color( 60,145,229,255),
+      
+      K_GRAY_0:     color(221,221,221,255),
+      
       RED0:         color(153,  0,  0,255),
       RED1:         color(204,  0,  0,255),
       RED2:         color(255, 51, 51,255),
@@ -207,21 +238,21 @@ var diagrams = function(processingInstance){
       WHITE:        color(255,255,255,255),
       BLACK:        color(  0,  0,  0,255),
 
-      RED:          color(170, 29, 29),     GREEN:        color(158,182, 58),
-      BLUE:         color( 29, 86,170),     YELLOW:       color(238,214, 15),
-      ORANGE:       color(238,136, 15),     GRAY:         color(128,128,128),
+      RED:          color(170, 29, 29,255), GREEN:        color(158,182, 58,255),
+      BLUE:         color( 29, 86,170,255), YELLOW:       color(238,214, 15,255),
+      ORANGE:       color(238,136, 15,255), GRAY:         color(128,128,128,255),
 
-      BROWN:        color(155,145,135),
+      BROWN:        color(155,145,135,255),
 
-      Red:          color(255,  0,  0),     RedOrange:    color(255, 81,  0),
-      Orange:       color(255,127,  0),     YellowOrange: color(255,190,  0),
-      Yellow:       color(255,255,  0),
+      Red:          color(255,  0,  0,255),     RedOrange:    color(255, 81,  0,255),
+      Orange:       color(255,127,  0,255),     YellowOrange: color(255,190,  0,255),
+      Yellow:       color(255,255,  0,255),
 
-      YellowGreen:  color(192,255,  0),
-      Green:        color(  0,255,  0),     BlueGreen:    color(  0,127,127),
-      Blue:         color(  0,  0,255),     BlueViolet:   color( 92,  0,255),
+      YellowGreen:  color(192,255,  0,255),
+      Green:        color(  0,255,  0,255), BlueGreen:    color(  0,127,127,255),
+      Blue:         color(  0,  0,255,255), BlueViolet:   color( 92,  0,255,255),
 
-      Violet:       color(127,  0,255),     RedViolet:    color(191,  0,127),
+      Violet:       color(127,  0,255,255), RedViolet:    color(191,  0,127,255),
 
       SIN:          color(170, 29, 29,255), SIN_LT:       color(170, 29, 29,128),
       COS:          color( 29, 86,170,255), COS_LT:       color( 29, 86,170,128),
@@ -1150,7 +1181,7 @@ var diagrams = function(processingInstance){
           var drawTangent=function(){
 
             noFill();
-            stroke(CLRS.TAN);
+            stroke(CLRS.K_GREEN_0);
             strokeWeight(sw);
 
               line(secValue, 0, cosValue, sinValue);
@@ -1159,7 +1190,7 @@ var diagrams = function(processingInstance){
           var drawCosecant=function(){
 
             noFill();
-            stroke(CLRS.CSC);
+            stroke(CLRS.K_PINK_0);
             strokeWeight(sw);
 
               if(cosValue<0){ line( 20, 0,  20, cscValue); }
@@ -1171,7 +1202,7 @@ var diagrams = function(processingInstance){
           var drawSecant=function(){
             
             noFill();
-            stroke(CLRS.SEC);
+            stroke(CLRS.K_PINK_2);
             strokeWeight(sw);
               
               if(sinValue<0){ line(0,  20, secValue,  20); }
@@ -1181,7 +1212,7 @@ var diagrams = function(processingInstance){
           var drawCotangent=function(){
 
             noFill();
-            stroke(CLRS.COT);
+            stroke(CLRS.K_GREEN_2);
             strokeWeight(sw);
 
               line(0, cscValue, cosValue, sinValue);
@@ -1191,7 +1222,7 @@ var diagrams = function(processingInstance){
           var drawVersine=function(){
 
             noFill();
-            stroke(CLRS.VERSINE);
+            stroke(CLRS.K_BROWN_1);
             strokeWeight(sw);
 
               if(cosValue>0){ line( r, 0, cosValue, 0); }
@@ -1201,7 +1232,7 @@ var diagrams = function(processingInstance){
           var drawCoversine=function(){
 
             noFill();
-            stroke(CLRS.COVERSINE);
+            stroke(CLRS.K_TEAL_2);
             strokeWeight(sw);
 
               if(sinValue>0){ line(0, r, 0, sinValue); }
@@ -1212,7 +1243,7 @@ var diagrams = function(processingInstance){
             /* Exterior Secant */
 
             noFill();
-            stroke(CLRS.EXSEC);
+            stroke(CLRS.K_ORANGE_0);
             strokeWeight(sw);
 
               if(cosValue>0){ line( r, 0,  secValue, 0); }
@@ -1223,7 +1254,7 @@ var diagrams = function(processingInstance){
             /* Exterior Cosecant */  
 
             noFill();
-            stroke(CLRS.EXCSC);
+            stroke(CLRS.K_TEAL_0);
             strokeWeight(sw);
 
               if(sinValue>0){ line(0,  r, 0,  cscValue); }
@@ -1938,11 +1969,11 @@ var diagrams = function(processingInstance){
 
           /* Cosecant button    */
           bk.controls.push(new button(340, bk, 15, 110, 110, 20,            
-            {text:     "Cos "+CONSTANTS.THETA,
+            {text:     "Csc "+CONSTANTS.THETA,
              execute:  toggleCosecant,
              tag:      getCosecant,
              retrieve: getCosecantOn,
-             color:    CLRS.SIN_LT,
+             color:    CLRS.K_PINK_0,
              cursor:   HAND}));
           
           /* Secant button      */
@@ -1951,7 +1982,7 @@ var diagrams = function(processingInstance){
              execute:  toggleSecant,
              tag:      getSecant,
              retrieve: getSecantOn,
-             color:    CLRS.COS_LT,
+             color:    CLRS.K_PINK_2,
              cursor:   HAND}));
              
           /* Cotangent button   */
@@ -1969,7 +2000,7 @@ var diagrams = function(processingInstance){
              execute:  toggleExcosecant,
              tag:      getExcosecant,
              retrieve: getExcosecantOn,
-             color:    CLRS.EXCSC,
+             color:    CLRS.K_TEAL_0,
              cursor:   HAND}));
              
           /* Coversine button   */
@@ -1978,7 +2009,7 @@ var diagrams = function(processingInstance){
              execute:  toggleCoversine,
              tag:      getCoversine,
              retrieve: getCoversineOn,
-             color:    CLRS.COVERSINE,
+             color:    CLRS.K_TEAL_2,
              cursor:   HAND}));
 
           /* Versine button   */
@@ -1987,7 +2018,7 @@ var diagrams = function(processingInstance){
              execute:  toggleVersine,
              tag:      getVersine,
              retrieve: getVersineOn,
-             color:    CLRS.VERSINE,
+             color:    CLRS.K_BROWN_1,
              cursor:   HAND}));
 
           /* Exsecant button   */
@@ -1996,7 +2027,7 @@ var diagrams = function(processingInstance){
              execute:  toggleExsecant,
              tag:      getExsecant,
              retrieve: getExsecantOn,
-             color:    CLRS.EXSEC,
+             color:    CLRS.K_ORANGE_1,
              cursor:   HAND}));
              
       // Telemetry --------------------------------------------------
