@@ -227,12 +227,12 @@ var diagrams = function(processingInstance){
       COS:          color( 29, 86,170,255), COS_LT:       color( 29, 86,170,128),
       TAN:          color(158,182, 58,255), TAN_LT:       color(158,182,58,192),
 
-      CSC:          color(170, 29, 29,128), CSC_LT:       color(238,136, 15,128),
-      SEC:          color( 29, 86,170,128), SEC_LT:       color(158,182, 58,128),
-      COT:          color(158,182, 58,128), COT_LT:       color(128,128,128,128),
+      CSC:          color(170, 29, 29,255), CSC_LT:       color(238,136, 15,128),
+      SEC:          color( 29, 86,170,255), SEC_LT:       color(158,182, 58,128),
+      COT:          color(158,182, 58,255), COT_LT:       color(128,128,128,128),
       
-      VERSINE:      color(255,127,  0,192), COVERSINE:    color(255,127,  0,192),
-      EXSEC:        color(255, 20,147,128), EXCSC:        color(255, 20,147,128),
+      VERSINE:      color(255,127,  0,255), COVERSINE:    color(255,127,  0,255),
+      EXSEC:        color(255, 20,147,255), EXCSC:        color(255, 20,147,255),
       
       PINK:         color(255, 20,147,255)
       
