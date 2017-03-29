@@ -185,6 +185,11 @@ var diagrams = function(processingInstance){
     };
     var CLRS={
       
+      K_STEEL_0:     color( 48, 68, 82,255),
+      K_STEEL_1:     color(132,177,208,255),
+      K_STEEL_2:     color(106,141,166,255),
+      K_STEEL_3:     color(136,164,184,255),
+      
       K_TEAL_0:     color( 24, 99,117,255),
       K_TEAL_1:     color( 28,117,138,255),
       K_TEAL_2:     color( 41,171,202,255),
@@ -1273,7 +1278,72 @@ var diagrams = function(processingInstance){
                   text(txt, x, y);
 
             popMatrix();
+              
+            var xOffset=-45;;
+            
+            if(sinValue>0){
+              
+              if(cosValue<0){ xOffset=45; }
+              
+              // Bottom Arrow
+              pushMatrix();
+                
+                translate(xOffset, 0);
+                rotate(radians(90));
+                
+                  quad(0, 0,
+                       8, 2,
+                       5, 0,
+                       8,-2);
+              
+              popMatrix();
+              
+              // Top Arrow              
+              pushMatrix();
 
+                translate(xOffset, cscValue);
+                rotate(radians(90));
+                
+                  quad( 0, 0,
+                       -8, 2,
+                       -5, 0,
+                       -8,-3);
+
+              popMatrix();
+              
+            }
+            else{
+
+              if(cosValue<0){ xOffset=45; }
+              
+              // Bottom Arrow
+              pushMatrix();
+                
+                translate(xOffset, cscValue);
+                rotate(radians(90));
+
+                  quad(0, 0,
+                       8, 2,
+                       5, 0,
+                       8,-2);
+              
+              popMatrix();
+              
+              // Bottom Arrow              
+              pushMatrix();
+                
+                translate(xOffset, 0);
+                rotate(radians(90));
+
+                  quad( 0, 0,
+                       -8, 2,
+                       -5, 0,
+                       -8,-3);
+
+              popMatrix();
+
+            }
+              
           };
           var drawSecant=function(){
 
@@ -1283,22 +1353,68 @@ var diagrams = function(processingInstance){
 
               if(sinValue<0){ line(0,  45, secValue,  45); }
               else          { line(0, -45, secValue, -45); }
-
-              // Arrows
-              quad(0,-45,
-                   8,-43,
-                   5,-45,
-                   8,-48);
-
-              pushMatrix();
-
-                quad(secValue,  -45,
-                     secValue-8,-43,
-                     secValue-5,-45,
-                     secValue-8,-48);
-
-              popMatrix();
               
+              var yOffset=-45;;
+              
+              if(cosValue>0){
+                
+                if(sinValue<0){ yOffset=45; }
+                
+                // Left Arrow
+                pushMatrix();
+                  
+                  translate(0, yOffset);
+                  
+                    quad(0, 0,
+                         8, 2,
+                         5, 0,
+                         8,-2);
+                
+                popMatrix();
+                
+                // Right Arrow              
+                pushMatrix();
+                  
+                  translate(secValue, yOffset);
+                  
+                    quad( 0, 0,
+                         -8, 2,
+                         -5, 0,
+                         -8,-3);
+
+                popMatrix();
+                
+              }
+              else{
+
+                if(sinValue<0){ yOffset=45; }
+                
+                // Left Arrow
+                pushMatrix();
+                  
+                  translate(secValue, yOffset);
+                  
+                    quad(0, 0,
+                         8, 2,
+                         5, 0,
+                         8,-2);
+                
+                popMatrix();
+                
+                // Right Arrow              
+                pushMatrix();
+                  
+                  translate(0, yOffset);
+                  
+                    quad( 0, 0,
+                         -8, 2,
+                         -5, 0,
+                         -8,-3);
+
+                popMatrix();
+
+              }
+
             pushMatrix();
 
               scale(1,-1);
