@@ -1105,6 +1105,8 @@ var diagrams = function(processingInstance){
 
           var m=sinValue/cosValue;
 
+// println(m);
+          
           textFont(createFont("sans-serif", 14));
 
           var axes=function(){
@@ -1172,7 +1174,7 @@ var diagrams = function(processingInstance){
 
                 var x=0;
                 var y=sinValue/2;
-                var txt="sec";
+                var txt="sin";
 
                 if(cosValue>0){ x=-2; textAlign(RIGHT,CENTER); }
                 else          { x= 2; textAlign(LEFT, CENTER); }
@@ -1180,7 +1182,7 @@ var diagrams = function(processingInstance){
                 translate(x,y);
                 scale(1,-1);
                 
-                  text("sin", 0, 0);
+                  text(txt, 0, 0);
 
             popMatrix();
             
@@ -1200,7 +1202,7 @@ var diagrams = function(processingInstance){
 
                 var x=cosValue/2;
                 var y=0;
-                var txt="sec";
+                var txt="cos";
 
                 if(sinValue>0){ y=-2; textAlign(CENTER,TOP);    }
                 else          { y= 2; textAlign(CENTER,BOTTOM); }
@@ -1208,7 +1210,7 @@ var diagrams = function(processingInstance){
                 translate(x,y);
                 scale(1,-1);
                 
-                  text("cos", 0, 0);
+                  text(txt, 0, 0);
 
             popMatrix();
             
@@ -1224,21 +1226,19 @@ var diagrams = function(processingInstance){
 
             pushMatrix();
 
-              scale(1,-1);
+              fill(CLRS.K_GREEN_0);
 
-              fill(CLRS.K_PINK_2);
+                var x=(cosValue+(secValue-cosValue)/2)*1.05;
+                var y=(sinValue/2)*1.05;
+                var txt="tan";
 
-                var x=0;
-                var y=0;
-                var txt="sec";
+                if(cosValue>0){ textAlign(LEFT, CENTER); }
+                else          { textAlign(RIGHT,CENTER); }
 
-                if(sinValue>0){ y= 30; textAlign(CENTER,TOP); }
-                else          { y=-30; textAlign(CENTER,BOTTOM); }
+                translate(x,y);
+                scale(1,-1);
 
-                if(cosValue>0){ x= p.w/2; }
-                else          { x=-p.w/2; }
-
-                  text("sec", x, y);
+                  text(txt, 0, 0);
 
             popMatrix();
             
@@ -1249,8 +1249,8 @@ var diagrams = function(processingInstance){
             stroke(CLRS.K_PINK_0);
             strokeWeight(sw);
 
-              if(cosValue<0){ line( 25, 0,  25, cscValue); }
-              else          { line(-25, 0, -25, cscValue); }
+              if(cosValue<0){ line( 45, 0,  45, cscValue); }
+              else          { line(-45, 0, -45, cscValue); }
 
             pushMatrix();
 
@@ -1265,25 +1265,40 @@ var diagrams = function(processingInstance){
                 if(sinValue>0){ y=-p.h/2; }
                 else          { y= p.h/2; }
 
-                if(cosValue>0){ x=-30;
+                if(cosValue>0){ x=-50;
                                 textAlign(RIGHT,CENTER); }
-                else          { x= 30;
+                else          { x= 50;
                                 textAlign(LEFT, CENTER); }
 
-                  text("csc", x, y);
+                  text(txt, x, y);
 
             popMatrix();
-                   
+
           };
           var drawSecant=function(){
-            
+
             noFill();
             stroke(CLRS.K_PINK_2);
             strokeWeight(sw);
-              
-              if(sinValue<0){ line(0,  25, secValue,  25); }
-              else          { line(0, -25, secValue, -25); }
 
+              if(sinValue<0){ line(0,  45, secValue,  45); }
+              else          { line(0, -45, secValue, -45); }
+
+              // Arrows
+              quad(0,-45,
+                   8,-43,
+                   5,-45,
+                   8,-48);
+
+              pushMatrix();
+
+                quad(secValue,  -45,
+                     secValue-8,-43,
+                     secValue-5,-45,
+                     secValue-8,-48);
+
+              popMatrix();
+              
             pushMatrix();
 
               scale(1,-1);
@@ -1294,13 +1309,13 @@ var diagrams = function(processingInstance){
                 var y=0;
                 var txt="sec";
 
-                if(sinValue>0){ y= 30; textAlign(CENTER,TOP); }
-                else          { y=-30; textAlign(CENTER,BOTTOM); }
+                if(sinValue>0){ y= 50; textAlign(CENTER,TOP); }
+                else          { y=-50; textAlign(CENTER,BOTTOM); }
 
                 if(cosValue>0){ x= p.w/2; }
                 else          { x=-p.w/2; }
 
-                  text("sec", x, y);
+                  text(txt, x, y);
 
             popMatrix();
             
@@ -1313,6 +1328,24 @@ var diagrams = function(processingInstance){
 
               line(0, cscValue, cosValue, sinValue);
 
+            pushMatrix();
+
+              fill(CLRS.K_GREEN_2);
+
+                var x=(cosValue/2)*1.05;
+                var y=(sinValue+(cscValue-sinValue)/2)*1.05;
+                var txt="cot";
+
+                if(cosValue>0){ textAlign(LEFT,CENTER); }
+                else          { textAlign(RIGHT,CENTER); }
+
+                translate(x,y);
+                scale(1,-1);
+
+                  text(txt, 0, 0);
+
+            popMatrix();
+            
           };
 
           var drawVersine=function(){
@@ -1324,6 +1357,27 @@ var diagrams = function(processingInstance){
               if(cosValue>0){ line( r, 0, cosValue, 0); }
               else          { line(-r, 0, cosValue, 0); }
 
+            pushMatrix();
+
+              fill(CLRS.K_BROWN_1);
+
+                var x=0;
+                var y=0;
+                var txt="ver";
+
+                if(cosValue>0){ x=cosValue+(r-cosValue)/2; }
+                else          { x=cosValue-(r+cosValue)/2; }
+                
+                if(sinValue>0){ textAlign(CENTER,TOP);    y=-3; }
+                else          { textAlign(CENTER,BOTTOM); y= 3; }
+
+                translate(x,y);
+                scale(1,-1);
+
+                  text(txt, 0, 0);
+
+            popMatrix();
+            
           };
           var drawCoversine=function(){
 
@@ -1333,6 +1387,27 @@ var diagrams = function(processingInstance){
 
               if(sinValue>0){ line(0, r, 0, sinValue); }
               else          { line(0,-r, 0, sinValue); }
+
+            pushMatrix();
+
+              fill(CLRS.K_TEAL_2);
+
+                var x=0;
+                var y=0;
+                var txt="cvs";
+
+                if(cosValue>0){ x=-3; textAlign(RIGHT,CENTER); }
+                else          { x= 3; textAlign(LEFT, CENTER); }
+
+                if(sinValue>0){ y=sinValue+(r-sinValue)/2; }
+                else          { y=sinValue-(r+sinValue)/2; }
+
+                translate(x,y);
+                scale(1,-1);
+
+                  text(txt, 0, 0);
+
+            popMatrix();
 
           };
           var drawExsecant=function(){
@@ -1344,7 +1419,28 @@ var diagrams = function(processingInstance){
 
               if(cosValue>0){ line( r, 0,  secValue, 0); }
               else          { line(-r, 0,  secValue, 0); }
+            
+            pushMatrix();
 
+              fill(CLRS.K_ORANGE_0);
+
+                var x=0;
+                var y=0;
+                var txt="exsec";
+
+                if(cosValue>0){ x= r+(secValue-r)/2; }
+                else          { x=-r+(secValue+r)/2; }
+                
+                if(sinValue>0){ textAlign(CENTER,TOP);    y=-3; }
+                else          { textAlign(CENTER,BOTTOM); y= 3; }
+
+                translate(x,y);
+                scale(1,-1);
+
+                  text(txt, 0, 0);
+
+            popMatrix();
+            
           };
           var drawExcosecant=function(){
             /* Exterior Cosecant */  
@@ -1356,6 +1452,26 @@ var diagrams = function(processingInstance){
               if(sinValue>0){ line(0,  r, 0,  cscValue); }
               else          { line(0, -r, 0,  cscValue); }
 
+            pushMatrix();
+
+              fill(CLRS.K_TEAL_0);
+
+                var x=0;
+                var y=0;
+                var txt="excsc";
+
+                if(cosValue>0){ x=-3; textAlign(RIGHT,CENTER); }
+                else          { x= 3; textAlign(LEFT, CENTER); }
+
+                if(sinValue>0){ y= r+(r-sinValue)/2; }
+                else          { y=-r-abs(cscValue+r)/2; }
+
+                translate(x,y);
+                scale(1,-1);
+
+                  text(txt, 0, 0);
+
+            popMatrix();
           };
           
           var drawDegrees=function(){
