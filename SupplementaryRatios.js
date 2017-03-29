@@ -80,7 +80,7 @@ var diagrams = function(processingInstance){
       /* App Specific */
       this.data=[];             //  Values of each trig function from 0 (zero) to 360
 
-      this.autoRun=true;        //  Alpha changes automatically
+      this.autoRun=false;        //  Alpha changes automatically
 
       this.theta=0;             //   Current angle
 
@@ -1092,7 +1092,7 @@ var diagrams = function(processingInstance){
 
           var p=this;         //  object reference
           
-          var sw=2.5;           // strokeWeight;
+          var sw=1.5;           // strokeWeight;
           
           var sinValue=sin(radians(app.theta))*r;
           var cscValue=1/sin(radians(app.theta))*r;
@@ -1166,16 +1166,52 @@ var diagrams = function(processingInstance){
               line(0,        sinValue,        0, 0);
               line(cosValue, sinValue, cosValue, 0);
 
+            pushMatrix();
+
+              fill(CLRS.SIN);
+
+                var x=0;
+                var y=sinValue/2;
+                var txt="sec";
+
+                if(cosValue>0){ x=-2; textAlign(RIGHT,CENTER); }
+                else          { x= 2; textAlign(LEFT, CENTER); }
+
+                translate(x,y);
+                scale(1,-1);
+                
+                  text("sin", 0, 0);
+
+            popMatrix();
+            
           };
           var drawCosine=function(){
 
             noFill();
             stroke(CLRS.COS);
             strokeWeight(sw);
-
+              
               line(cosValue,        0,        0,        0);
               line(       0, sinValue, cosValue, sinValue);
+            
+            pushMatrix();
 
+              fill(CLRS.COS);
+
+                var x=cosValue/2;
+                var y=0;
+                var txt="sec";
+
+                if(sinValue>0){ y=-2; textAlign(CENTER,TOP);    }
+                else          { y= 2; textAlign(CENTER,BOTTOM); }
+
+                translate(x,y);
+                scale(1,-1);
+                
+                  text("cos", 0, 0);
+
+            popMatrix();
+            
 
           };
           var drawTangent=function(){
@@ -1186,6 +1222,26 @@ var diagrams = function(processingInstance){
 
               line(secValue, 0, cosValue, sinValue);
 
+            pushMatrix();
+
+              scale(1,-1);
+
+              fill(CLRS.K_PINK_2);
+
+                var x=0;
+                var y=0;
+                var txt="sec";
+
+                if(sinValue>0){ y= 30; textAlign(CENTER,TOP); }
+                else          { y=-30; textAlign(CENTER,BOTTOM); }
+
+                if(cosValue>0){ x= p.w/2; }
+                else          { x=-p.w/2; }
+
+                  text("sec", x, y);
+
+            popMatrix();
+            
           };
           var drawCosecant=function(){
 
@@ -1193,10 +1249,30 @@ var diagrams = function(processingInstance){
             stroke(CLRS.K_PINK_0);
             strokeWeight(sw);
 
-              if(cosValue<0){ line( 20, 0,  20, cscValue); }
-              else          { line(-20, 0, -20, cscValue); }
-              
-              
+              if(cosValue<0){ line( 25, 0,  25, cscValue); }
+              else          { line(-25, 0, -25, cscValue); }
+
+            pushMatrix();
+
+              scale(1,-1);
+
+              fill(CLRS.K_PINK_0);
+
+                var x=0;
+                var y=0;
+                var txt="csc";
+
+                if(sinValue>0){ y=-p.h/2; }
+                else          { y= p.h/2; }
+
+                if(cosValue>0){ x=-30;
+                                textAlign(RIGHT,CENTER); }
+                else          { x= 30;
+                                textAlign(LEFT, CENTER); }
+
+                  text("csc", x, y);
+
+            popMatrix();
                    
           };
           var drawSecant=function(){
@@ -1205,9 +1281,29 @@ var diagrams = function(processingInstance){
             stroke(CLRS.K_PINK_2);
             strokeWeight(sw);
               
-              if(sinValue<0){ line(0,  20, secValue,  20); }
-              else          { line(0, -20, secValue, -20); }
+              if(sinValue<0){ line(0,  25, secValue,  25); }
+              else          { line(0, -25, secValue, -25); }
 
+            pushMatrix();
+
+              scale(1,-1);
+
+              fill(CLRS.K_PINK_2);
+
+                var x=0;
+                var y=0;
+                var txt="sec";
+
+                if(sinValue>0){ y= 30; textAlign(CENTER,TOP); }
+                else          { y=-30; textAlign(CENTER,BOTTOM); }
+
+                if(cosValue>0){ x= p.w/2; }
+                else          { x=-p.w/2; }
+
+                  text("sec", x, y);
+
+            popMatrix();
+            
           };
           var drawCotangent=function(){
 
