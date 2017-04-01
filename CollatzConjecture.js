@@ -1154,7 +1154,7 @@ var diagrams = function(processingInstance){
 
         var txt="";
         var total=0;
-        var offset=2000;
+        var offset=0;
         
         //  Load data
         for(var n=offset; n<=offset+560; n++){
@@ -1176,7 +1176,26 @@ var diagrams = function(processingInstance){
       graph.prototype.draw=function(){
 
         var p=this;
-        
+
+        var convertLength=function(n){
+
+            return n/p.max*p.h*0.5;
+
+        };
+        var convertPath=function(n,max){
+    
+            var retval=n/max*p.h*0.75;
+
+            return retval;
+
+        };
+        var convertX=function(x, length){
+            
+            
+          return x/length*p.w;
+
+        };
+
         var border=function(){
           
           if(p.hit){ fill(getColor(this.color,5)); }
@@ -1208,22 +1227,29 @@ var diagrams = function(processingInstance){
           
             translate(p.x, p.y);
             scale(1,-1);
-            
-              // println(p.data[app.dCursor].path);
-              
+
+              strokeWeight(1);
               fill(getColor(CLRS.GREEN,25));
-              strokeWeight(2);
-              stroke(CLRS.GREEN);
+              stroke(getColor(CLRS.GREEN,50));
 
               beginShape();
+                
+                vertex(0,-500);
               
                 for(var n=0; n<app.data[app.dCursor].path.length; n++){
+                  
+                  var x=convertX(n, app.data[app.dCursor].length);
+                  var y=convertPath(app.data[app.dCursor].path[n],
+                                    app.data[app.dCursor].max)-500;
+              
+                    vertex(x,y);
 
-                  vertex(n*5, app.data[app.dCursor].path[n]*0.05-500);
+                    ellipse(x,y,1,1);
 
                 };
                 
-                vertex(0,-500);
+                vertex(p.w-20,-500);
+                vertex(     0,-500);
 
               endShape(CLOSE);
               
@@ -1232,14 +1258,7 @@ var diagrams = function(processingInstance){
         };
         
         var drawLines=function(){
-          
-          var convert=function(n){
-              
-              // return n;
-              return n/p.max*p.h*0.5;
 
-          };
-          
           pushMatrix();
             
             var sw=1;
@@ -1253,7 +1272,7 @@ var diagrams = function(processingInstance){
               if(n%2===0){ stroke(getColor(CLRS.RED,  75)); }
               else       { stroke(getColor(CLRS.BLACK,25)); }
 
-              line(n*sw, 2, n*sw, convert(app.data[n].path.length));
+              line(n*sw, 2, n*sw, convertLength(app.data[n].path.length));
 
             };
 
@@ -1307,9 +1326,6 @@ var diagrams = function(processingInstance){
                  app.data[app.dCursor].down,
                  110, 10);
 
-            // text("Path:    \n",
-                 // 150, 10);
-            
             textAlign(LEFT,TOP);
             
             text(app.data[app.dCursor].path,
