@@ -1192,73 +1192,135 @@ var diagrams = function(processingInstance){
         var convertX=function(x, length){
             
             
-          return x/length*p.w;
+          return x/length*(p.w-20);
 
         };
 
         var border=function(){
           
-          if(p.hit){ fill(getColor(this.color,5)); }
-          else     { fill(getColor(this.color,10)); }
-
-          rect(0, 0, p.w, p.h, 3);
+          pushMatrix();
+            
+            translate(0.5,0.5);
+            
+              strokeWeight(1);
+              stroke(getColor(CLRS.BLACK,50));
               
+              if(p.hit){ fill(getColor(this.color,5)); }
+              else     { fill(getColor(this.color,7)); }
+
+                rect(0, 0, p.w, p.h, 3);
+          
+          popMatrix();
+          
         };
         var axes=function(){
           
           pushMatrix();
           
             translate(10, p.h-10);
-              
-              fill(CLRS.GRAY);
-              ellipse(0,0,5,5);
+            scale(1,-1);
 
+              fill(getColor(CLRS.K_TEAL_0,100));
+              stroke(getColor(CLRS.K_TEAL_0,100));
+
+                //  Origin
+                // ellipse(0,0,5,5);
+
+              fill(CLRS.BLACK);
               stroke(CLRS.BLACK);
 
-              line(0, 0,      0, -p.h+20);
-              line(0, 0, p.w-20,       0);
+                //  Axes
+                line(0, 0,      0, p.h-20);   //  Y-axis
+                line(0, 0, p.w-20,      0);   //  X-axis
 
           popMatrix();
-          
+
         };
         var displayCollatz=function(){
           
           pushMatrix();
           
-            translate(p.x, p.y);
+            translate(10, p.h-10);
             scale(1,-1);
 
               strokeWeight(1);
-              fill(getColor(CLRS.GREEN,25));
-              stroke(getColor(CLRS.GREEN,50));
+              fill(  getColor(CLRS.K_TEAL_2, 50));
+              stroke(getColor(CLRS.BLACK,    50));
 
               beginShape();
                 
-                vertex(0,-500);
+                vertex(0,0);
               
                 for(var n=0; n<app.data[app.dCursor].path.length; n++){
                   
                   var x=convertX(n, app.data[app.dCursor].length);
                   var y=convertPath(app.data[app.dCursor].path[n],
-                                    app.data[app.dCursor].max)-500;
+                                    app.data[app.dCursor].max);
               
                     vertex(x,y);
 
-                    ellipse(x,y,1,1);
+                    ellipse(x,y,0.5,0.5);
 
                 };
                 
-                vertex(p.w-20,-500);
-                vertex(     0,-500);
+                vertex(p.w-20,0);
 
               endShape(CLOSE);
               
           popMatrix();
           
         };
-        
-        var drawLines=function(){
+        var currentData=function(){
+          
+          //  Data cursor
+          fill(getColor(CLRS.K_TEAL_0,100));
+          textAlign(LEFT,TOP);
+          textSize(20);
+          
+            text(app.data[app.dCursor].i, 20,10);
+               
+          fill(getColor(CLRS.BLACK,75));
+          textAlign(LEFT,TOP);
+          textSize(12);
+          textLeading(16);
 
+            text("Max:     \n" +
+                 "Sum:     \n" +
+                 "Length:  \n" +
+                 "Up:      \n" +
+                 "Down:    \n",
+                 20, 35);
+          
+          textAlign(RIGHT,TOP);
+          
+          fill(getColor(CLRS.K_TEAL_2,100));
+          
+            text(app.data[app.dCursor].max        + "\n" +
+                 app.data[app.dCursor].sum        + "\n" +
+                 (app.data[app.dCursor].length-1) + "\n" +
+                 app.data[app.dCursor].up         + "\n" +
+                 app.data[app.dCursor].down,
+                 110, 35);
+
+          textAlign(LEFT,TOP);
+          fill(getColor(CLRS.BLACK,50));
+          
+            text(app.data[app.dCursor].path,
+                 160, 10, 400,10000);
+                 
+        };         
+        var drawLines=function(){
+          
+          //  Data Cursor
+          stroke(getColor(CLRS.RED,75));
+          strokeWeight(3);
+            
+            var d=convertLength(app.data[app.dCursor].path.length);
+            
+            // line(app.dCursor+6.5, p.h*0.25, app.dCursor+6.5, p.h-12);
+            
+            line(app.dCursor+6.5, p.h-12-d, app.dCursor+6.5, p.h-12);
+            
           pushMatrix();
             
             var sw=1;
@@ -1269,8 +1331,8 @@ var diagrams = function(processingInstance){
             
             for(var n=1; n<app.data.length; n++){
               
-              if(n%2===0){ stroke(getColor(CLRS.RED,  75)); }
-              else       { stroke(getColor(CLRS.BLACK,25)); }
+              if(n%2===0){ stroke(getColor(CLRS.BLACK, 25)); }
+              else       { stroke(getColor(CLRS.BLACK, 50)); }
 
               line(n*sw, 2, n*sw, convertLength(app.data[n].path.length));
 
@@ -1278,11 +1340,14 @@ var diagrams = function(processingInstance){
 
           popMatrix();
           
-          stroke(getColor(CLRS.BLUE,100));
-          strokeWeight(1.5);
-          
-            line(app.dCursor+8, 2, app.dCursor+8, p.h-10);
 
+
+        };
+        
+        var dataSummary=function(){
+
+          
+          
         };
 
         pushMatrix();
@@ -1299,38 +1364,10 @@ var diagrams = function(processingInstance){
             
             border();
             axes();
-            drawLines();
             displayCollatz();
+            drawLines();
+            currentData();
 
-            //  Data cursor
-            fill(CLRS.BLACK);
-            textAlign(LEFT,TOP);
-            textSize(12);
-            textLeading(16);
-
-            text("Integer: \n" +                 
-                 "Max:     \n" +
-                 "Sum:     \n" +
-                 "Length:  \n" +
-                 "Up:      \n" +
-                 "Down:    \n",
-                 20, 10);
-            
-            textAlign(RIGHT,TOP);
-
-            text(app.data[app.dCursor].i          + "\n" +
-                 app.data[app.dCursor].max        + "\n" +
-                 app.data[app.dCursor].sum        + "\n" +
-                 (app.data[app.dCursor].length-1) + "\n" +
-                 app.data[app.dCursor].up         + "\n" +
-                 app.data[app.dCursor].down,
-                 110, 10);
-
-            textAlign(LEFT,TOP);
-            
-            text(app.data[app.dCursor].path,
-                 160, 10, 400,10000);
-                 
         popMatrix();
 
       };
@@ -1347,12 +1384,12 @@ var diagrams = function(processingInstance){
 
       this.hit=true;
       
-      if(mouseX>this.x-8 &&
+      if(mouseX>this.x-7 &&
          mouseX<this.x+this.w){
         // println(this.data[mouseX-this.x-8].path);
-        if(mouseX-this.x-8>0 &&
-           mouseX-this.x-8<app.data.length-1){
-          app.dCursor=mouseX-this.x-8;
+        if(mouseX-this.x-7>0 &&
+           mouseX-this.x-7<app.data.length-1){
+          app.dCursor=mouseX-this.x-7;
         }
         
       }
@@ -1386,7 +1423,7 @@ var diagrams = function(processingInstance){
         app.controls.push(bk);
 
         /* bar graph        */
-        bk.controls.push(new graph(110, bk, 10, 40, 580, 550,
+        bk.controls.push(new graph(110, bk, 10, 40, 580, 500,
           {color:     CLRS.GRAY,
            acolor:    CLRS.BLUE,
            icolor:    CLRS.RED,
