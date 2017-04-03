@@ -35,11 +35,25 @@ var diagrams = function(processingInstance){
   with (processingInstance){
 
 /*
+      https://xkcd.com/710/
+
+      https://en.wikipedia.org/wiki/Collatz_conjecture
 
     TO DO:
+
+      - click graph to set integer
+      - mouse move over data tracker changes cursor
+      - color coded line based on height
+      - color coded shape based on area
+      - color code greatest total area
+      - color code longest path
+      - number format integer details
+      - right left arrow to increment data by a screen width
+
+      - toggle mouse tracking of data
       
       - collatz data type including
-      
+
         - number
         - path
         - size
@@ -51,7 +65,7 @@ var diagrams = function(processingInstance){
       - increment button
       - decrement button
       - detail based on mouseX position
-      
+
       - only draw telemetry if it's visible
 
     Research:
@@ -85,7 +99,7 @@ var diagrams = function(processingInstance){
     this.center=false;        //  Is the center mouse button pressed
 
     this.focus=0;             //  The ID of the control with focus
-    
+
     this.controls=[];         //  collection of controls in the app
     this.keys=[];             //  Array holding the value of all keycodes
 
@@ -96,9 +110,11 @@ var diagrams = function(processingInstance){
     this.infoOn=false;        //  Is the info frame displayed
 
     this.dCursor=0;           //  position of the cursor in data
-    
-    this.MIN=0;
-    this.MAX=360;
+    this.dOffset=2;           //  How far from 0 is the data cursor
+
+    this.dHighest=0;          //  The index of the greatest number reached
+    this.dArea=0;             //  The index of the greatest area of the path
+    this.dLongest=0;          //  The index of the longest path
 
     /* Initialize -------------------- */
     {
@@ -116,7 +132,7 @@ var diagrams = function(processingInstance){
   };
 
   var app=new application();
-  
+
   /* Constants ======================================================= */
   {
 
@@ -159,19 +175,19 @@ var diagrams = function(processingInstance){
       Z:          90
     };
     var CLRS={
-      
+
       K_STEEL_0:     color( 48, 68, 82,255),
       K_STEEL_1:     color(132,177,208,255),
       K_STEEL_2:     color(106,141,166,255),
       K_STEEL_3:     color(136,164,184,255),
-      
+
       K_TEAL_0:     color( 24, 99,117,255),
       K_TEAL_1:     color( 28,117,138,255),
       K_TEAL_2:     color( 41,171,202,255),
       K_TEAL_3:     color( 88,196,221,255),
       K_TEAL_4:     color(156,220,235,255),
       K_TEAL_5:     color( 17,172,205,255),
-      
+
       K_GREEN_0:    color( 31,171, 84,255),
       K_GREEN_1:    color( 56,182, 92,255),
       K_GREEN_2:    color( 116,207,112,255),
@@ -193,9 +209,9 @@ var diagrams = function(processingInstance){
 
       K_BLUE_0:     color( 19, 78,163,255),
       K_BLUE_1:     color( 60,145,229,255),
-      
+
       K_GRAY_0:     color(221,221,221,255),
-      
+
       RED0:         color(153,  0,  0,255),
       RED1:         color(204,  0,  0,255),
       RED2:         color(255, 51, 51,255),
@@ -241,13 +257,13 @@ var diagrams = function(processingInstance){
       CSC:          color(170, 29, 29,255), CSC_LT:       color(238,136, 15,128),
       SEC:          color( 29, 86,170,255), SEC_LT:       color(158,182, 58,128),
       COT:          color(158,182, 58,255), COT_LT:       color(128,128,128,128),
-      
+
       VERSINE:      color(255,127,  0,255), COVERSINE:    color(255,127,  0,255),
       EXSEC:        color(255, 20,147,255), EXCSC:        color(255, 20,147,255),
-      
+
       PINK:         color(255, 20,147,255)
-      
-      
+
+
     };
     var QUADRANTS={
       NONE:   0,
@@ -265,6 +281,12 @@ var diagrams = function(processingInstance){
       THETA:    "θ",
       RADIANS:  "ᶜ"
 
+    };
+    var NAVIGATION={
+      PREVIOUS: 0,
+      FIRST:    1,
+      NEXT:     2,
+      LAST:     3
     };
 
   }
@@ -300,16 +322,29 @@ var diagrams = function(processingInstance){
       else           { app.frameRate=30; }
 
     };
-    var checkboxLegend=function(){ app.legend=!app.legend;   };
+    var checkboxLegend=function() { app.legend=!app.legend;           };
 
-    var getInfo=function()       { return app.infoOn;        };
-    var toggleInfo=function()    { app.infoOn =! app.infoOn; };
+    var getInfo=function()        { return app.infoOn;                };
+    var toggleInfo=function()     { app.infoOn =! app.infoOn;         };
+
+    var previous=function()       { decrement();                      };
+    var start=function()          { app.dCursor=0;                    };
+    var next=function()           { increment();                      };
+    var last=function()           { app.dCursor=app.data.length-1;    };
+
+    var navCursor=function()      { return app.dCursor+1;             };
+    var navRecordCount=function() { return app.data.length;           };
+    var navSetCursor=function(n)  {
+      
+      app.dCursor=floor(n/app.data.length*app.data.length);
+      
+      };
 
   }
 
   /* Data types ================================================ */
   var collatz=function(i){
-    
+
     this.i=i;
     this.path=[];
     this.max=0;
@@ -317,25 +352,26 @@ var diagrams = function(processingInstance){
     this.length=0;
     this.up=0;
     this.down=0;
-    
+    this.area=0;
+
     var p=this;
-    
+
     var load=function(n){
-      
+
       p.sum+=n;
 
       p.path.push(n)
-      
+
       if(n>p.max){ p.max=n; }
       
       if(n===1){ return; }
       else {
-        
+
         if(n%2===0){
-          
+
           n/=2;
           p.down++;
-        
+
         }
         else{
 
@@ -343,7 +379,7 @@ var diagrams = function(processingInstance){
           p.up++;
 
         }
-      
+
         load(n);
 
       }
@@ -356,7 +392,7 @@ var diagrams = function(processingInstance){
 // println(this.i);
 
   }
-    
+
   /* Controls ================================================ */
   {
 
@@ -579,6 +615,138 @@ var diagrams = function(processingInstance){
 
     }
 
+    // navScroll ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    {
+
+      var navScroll=function(id, parent, x, y, w, h, params){
+
+        control.call(this, id, parent, x, y, w, h);
+
+        this.text     = params.text;
+        this.color    = params.color;
+        this.cursor   = params.cursor;
+        this.border   = params.border;
+        this.execute  = params.execute;
+
+      };
+      navScroll.prototype=Object.create(control.prototype);
+      navScroll.prototype.draw=function(){
+
+        pushMatrix();
+
+          translate(this.x, this.y);
+
+            noStroke();
+            fill(getColor(this.color, 5));
+
+            if(this.hit &&
+               this.parent.hit){
+
+              app.focus=this.id;
+              cursor(this.cursor);
+
+              fill(getColor(this.color, 10));
+
+            }
+
+            if(this.border){
+
+              strokeWeight(1);
+              stroke(getColor(this.color, 50));
+
+            }
+
+            rect(0, 0, this.w, this.h, this.execute);
+
+            // Draw child controls
+            for(var c in this.controls){ this.controls[c].draw(); }
+
+        popMatrix();
+
+      };
+      navScroll.prototype.moved=function(x,y){
+
+        if(mouseX>(this.x+x) &&
+           mouseX<(this.x+x) + this.w &&
+           mouseY>(this.y+y) &&
+           mouseY<(this.y+y) + this.h){
+
+          this.hit=true;
+
+          this.execute((mouseX-this.x)/this.w*this.w);
+
+          for(var c in this.controls){ this.controls[c].moved((this.x+x), (this.y+y)); }
+
+        }
+        else{
+
+          this.hit=false;
+
+        }
+
+      };
+
+    }
+    
+    // Navigation Bar ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    {
+
+      var navbar=function(id, parent, x, y, w, h, params){
+
+        control.call(this, id, parent, x, y, w, h);
+
+        this.text        = params.text;
+        this.acolor      = params.acolor;
+        this.icolor      = params.icolor;
+        this.cursor      = params.cursor;
+        this.position    = params.position;
+        this.recordCount = params.recordCount;
+        this.execute     = params.execute;
+        
+      };
+      navbar.prototype=Object.create(control.prototype);
+      navbar.prototype.draw=function(){
+
+        pushMatrix();
+
+          translate(this.x, this.y);
+
+            noStroke();
+            fill(this.icolor);
+
+            if(this.hit &&
+               this.parent.hit){
+
+              app.focus=this.id;
+              cursor(this.cursor);
+
+              fill(this.acolor);
+
+            }
+
+              rect(0, 0, this.w, this.h);
+
+            // Caption
+            fill(getColor(CLRS.BLACK, 50));
+            
+            if(this.hit){ fill(getColor(CLRS.WHITE,100)); }
+            
+            textSize(16);
+            textAlign(CENTER,CENTER);
+            var txt=this.position() + " of " + this.recordCount();
+            
+              text(txt, this.w/2, this.h/2);
+
+            // Draw child controls
+            for(var c in this.controls){ this.controls[c].draw(); }
+
+        popMatrix();
+
+      };
+
+      
+    }
+
     // toolbar ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
 
@@ -586,10 +754,12 @@ var diagrams = function(processingInstance){
 
         control.call(this, id, parent, x, y, w, h);
 
-        this.text   = params.text;
-        this.acolor = params.acolor;
-        this.icolor = params.icolor;
-        this.cursor = params.cursor;
+        this.text        = params.text;
+        this.acolor      = params.acolor;
+        this.icolor      = params.icolor;
+        this.cursor      = params.cursor;
+        this.position    = params.position;
+        this.recordCount = params.recordCount;
 
       };
       toolbar.prototype=Object.create(control.prototype);
@@ -884,6 +1054,87 @@ var diagrams = function(processingInstance){
 
     }
 
+    // Navigation Buttons * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    {
+
+      var navButton=function(id, parent, x, y, w, h, params){
+
+        control.call(this, id, parent, x, y, w, h);
+
+        this.execute=params.execute;
+        this.type=params.type;
+        this.retrieve=params.retrieve;
+        this.color=params.color;
+        this.cursor=params.cursor;
+
+      };
+      navButton.prototype=Object.create(control.prototype);
+      navButton.prototype.draw=function(){
+
+        var offset=0;
+
+        pushMatrix();
+
+          translate(this.x, this.y);
+
+            noStroke();
+            noFill();
+
+            if(this.hit &&
+               this.parent.hit){
+
+              if(app.left){ offset=1; }
+
+              app.focus=this.id;
+              cursor(this.cursor);
+
+              fill(getColor(this.color,10));
+
+            }
+
+            //  Background
+              rect(offset, offset, this.w, this.h, 2);
+
+
+            // Icon
+            fill(getColor(this.color, 65));
+
+            if(this.hit){ fill(getColor(this.color, 100)); };
+
+            noStroke();
+            textAlign(CENTER,CENTER)
+            textSize(16);
+
+              switch(this.type){
+
+                case NAVIGATION.FIRST:    text("|<", this.w/2+offset, this.h/2+offset); break;
+                case NAVIGATION.PREVIOUS: text("<",  this.w/2+offset, this.h/2+offset); break;
+                case NAVIGATION.NEXT:     text(">",  this.w/2+offset, this.h/2+offset); break;
+                case NAVIGATION.LAST:     text(">|", this.w/2+offset, this.h/2+offset); break;
+
+                default:  break;
+
+              }
+
+        popMatrix();
+
+      };
+      navButton.prototype.clicked=function(){
+      /* Overridden to maintain on/off value */
+
+        if(this.hit){
+
+          this.execute();
+          this.on=!this.on;
+
+          for(var c in this.controls){ this.controls[c].clicked(); }
+
+        }
+
+      };
+
+    }
+
     // Settings * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
 
@@ -957,7 +1208,7 @@ var diagrams = function(processingInstance){
       var info=function(id, parent, x, y, w, h, params){
 
         control.call(this, id, parent, x, y, w, h);
-        
+
         this.text=params.text;
         this.execute=params.execute;
         this.retrieve=params.retrieve;
@@ -1004,7 +1255,7 @@ var diagrams = function(processingInstance){
             textFont(createFont("monospace", 20));
             // textFont(createFont("fantasy", 24));
             // textFont(createFont("cursive", 24));
-            
+
               text(this.text, this.w/2, this.h/2);
 
         popMatrix();
@@ -1025,7 +1276,7 @@ var diagrams = function(processingInstance){
       };
 
     }
-    
+
     // Button ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
 
@@ -1039,9 +1290,9 @@ var diagrams = function(processingInstance){
         this.text=params.text;
         this.color=params.color;
         this.cursor=params.cursor;
-        
+
         this.on=false;
-        
+
       };
       button.prototype=Object.create(control.prototype);
       button.prototype.draw=function(){
@@ -1060,7 +1311,7 @@ var diagrams = function(processingInstance){
               fill(getColor(CLRS.ACTIVE, 5));
               noFill();
               noStroke();
-                
+
               if(this.hit &&
                  this.parent.hit){
 
@@ -1070,9 +1321,9 @@ var diagrams = function(processingInstance){
                 cursor(this.cursor);
 
                 // stroke(getColor(this.parent.color,0));
-                
+
                 noStroke();
-                
+
                 if(this.on){ fill(getColor(this.color,100)); }
                 else       { fill(getColor(this.color, 50)); }
 
@@ -1100,11 +1351,11 @@ var diagrams = function(processingInstance){
 
               textSize(12);
               text(this.text, 10+offset, this.h/2+offset);
-              
+
               if(this.on){
 
                 textAlign(RIGHT,CENTER);
-                
+
                 var txt=this.tag();
 
                 if(txt!==""){
@@ -1124,12 +1375,12 @@ var diagrams = function(processingInstance){
       /* Overridden to maintain on/off value */
 
         if(this.hit){
-          
+
           this.execute();
           this.on=!this.on;
-          
+
           for(var c in this.controls){ this.controls[c].clicked(); }
-                  
+
         }
 
       };
@@ -1143,32 +1394,38 @@ var diagrams = function(processingInstance){
 
         control.call(this, id, parent, x, y, w, h);
 
-        // this.execute=params.execute;
-        // this.retrieve=params.retrieve;
-        // this.tag=params.tag;
-        // this.text=params.text;
         this.color=params.color;
         this.cursor=params.cursor;
-        // this.data=[];
-        this.max=0;
 
+        this.max=0;
+        this.area=0;
+        
         var txt="";
         var total=0;
-        var offset=0;
-        
+
         //  Load data
-        for(var n=offset; n<=offset+560; n++){
+        for(var n=app.dOffset; n<=app.dOffset+this.w-22; n++){
 
-          app.data.push(new collatz(n+2));
+          app.data.push(new collatz(n));
 
-          if(app.data[n-offset].path.length>this.max){
-
-            this.max=app.data[n-offset].length;
-
+          if(app.data[n-app.dOffset].path.length>this.max){
+            
+            this.max=app.data[n-app.dOffset].length;
+            
           }
 
-// println(this.data[n-2].path.length);
+          if(app.data[n-app.dOffset].max>app.dHighest){
+            app.dHighest=app.data[n-app.dOffset].max;
+          }
+          
+          if(app.data[n-app.dOffset].sum>app.dArea){
+            app.dArea=app.data[n-app.dOffset].sum;
+          }
 
+          if(app.data[n-app.dOffset].length>app.dLongest){
+            app.dLongest=app.data[n-app.dOffset].length;
+          }
+          
         }
 
       };
@@ -1179,44 +1436,44 @@ var diagrams = function(processingInstance){
 
         var convertLength=function(n){
 
-            return n/p.max*p.h*0.5;
+            return (n-1)/p.max*p.h*0.5;
 
         };
         var convertPath=function(n,max){
-    
-            var retval=n/max*p.h*0.75;
+
+            var retval=(n-1)/max*p.h*0.75;
 
             return retval;
 
         };
         var convertX=function(x, length){
-            
-            
+
+
           return x/length*(p.w-20);
 
         };
 
         var border=function(){
-          
+
           pushMatrix();
-            
+
             translate(0.5,0.5);
-            
+
               strokeWeight(1);
               stroke(getColor(CLRS.BLACK,50));
-              
+
               if(p.hit){ fill(getColor(this.color,5)); }
               else     { fill(getColor(this.color,7)); }
 
                 rect(0, 0, p.w, p.h, 3);
-          
+
           popMatrix();
-          
+
         };
         var axes=function(){
-          
+
           pushMatrix();
-          
+
             translate(10, p.h-10);
             scale(1,-1);
 
@@ -1237,9 +1494,9 @@ var diagrams = function(processingInstance){
 
         };
         var displayCollatz=function(){
-          
+
           pushMatrix();
-          
+
             translate(10, p.h-10);
             scale(1,-1);
 
@@ -1248,37 +1505,37 @@ var diagrams = function(processingInstance){
               stroke(getColor(CLRS.BLACK,    50));
 
               beginShape();
-                
+
                 vertex(0,0);
-              
+
                 for(var n=0; n<app.data[app.dCursor].path.length; n++){
-                  
+
                   var x=convertX(n, app.data[app.dCursor].length);
                   var y=convertPath(app.data[app.dCursor].path[n],
                                     app.data[app.dCursor].max);
-              
+
                     vertex(x,y);
 
                     ellipse(x,y,0.5,0.5);
 
                 };
-                
+
                 vertex(p.w-20,0);
 
               endShape(CLOSE);
-              
+
           popMatrix();
-          
+
         };
         var currentData=function(){
-          
+
           //  Data cursor
           fill(getColor(CLRS.K_TEAL_0,100));
           textAlign(LEFT,TOP);
           textSize(20);
-          
+
             text(app.data[app.dCursor].i, 20,10);
-               
+
           fill(getColor(CLRS.BLACK,75));
           textAlign(LEFT,TOP);
           textSize(12);
@@ -1290,47 +1547,47 @@ var diagrams = function(processingInstance){
                  "Up:      \n" +
                  "Down:    \n",
                  20, 35);
-          
+
           textAlign(RIGHT,TOP);
-          
+
           fill(getColor(CLRS.K_TEAL_2,100));
-          
-            text(app.data[app.dCursor].max        + "\n" +
-                 app.data[app.dCursor].sum        + "\n" +
-                 (app.data[app.dCursor].length-1) + "\n" +
-                 app.data[app.dCursor].up         + "\n" +
-                 app.data[app.dCursor].down,
-                 110, 35);
+
+            text(nfc(app.data[app.dCursor].max)        + "\n" +
+                 nfc(app.data[app.dCursor].sum)        + "\n" +
+                 nfc((app.data[app.dCursor].length-1)) + "\n" +
+                 nfc(app.data[app.dCursor].up)         + "\n" +
+                 nfc(app.data[app.dCursor].down),
+                 120, 35);
 
           textAlign(LEFT,TOP);
           fill(getColor(CLRS.BLACK,50));
-          
+
             text(app.data[app.dCursor].path,
                  160, 10, 400,10000);
-                 
-        };         
+
+        };
         var drawLines=function(){
-          
+
           //  Data Cursor
           stroke(getColor(CLRS.RED,75));
           strokeWeight(3);
-            
+
             var d=convertLength(app.data[app.dCursor].path.length);
-            
+
             // line(app.dCursor+6.5, p.h*0.25, app.dCursor+6.5, p.h-12);
-            
+
             line(app.dCursor+6.5, p.h-12-d, app.dCursor+6.5, p.h-12);
-            
+
           pushMatrix();
-            
+
             var sw=1;
-            
+
             translate(10,p.h-10);
             scale(1,-1);
             strokeWeight(sw);
-            
+
             for(var n=1; n<app.data.length; n++){
-              
+
               if(n%2===0){ stroke(getColor(CLRS.BLACK, 25)); }
               else       { stroke(getColor(CLRS.BLACK, 50)); }
 
@@ -1339,21 +1596,19 @@ var diagrams = function(processingInstance){
             };
 
           popMatrix();
-          
-
 
         };
-        
+
         var dataSummary=function(){
 
-          
-          
+
+
         };
 
         pushMatrix();
 
           translate(this.x+0.5, this.y+0.5);
-              
+
             if(this.hit &&
                this.parent.hit){
 
@@ -1361,51 +1616,75 @@ var diagrams = function(processingInstance){
               cursor(this.cursor);
 
             }
-            
+
             border();
             axes();
             displayCollatz();
             drawLines();
             currentData();
 
+            text(app.dHighest, 50, 200);
+            text(app.dArea,    50, 220);
+            text(app.dLongest, 50, 240);
+
         popMatrix();
 
       };
 
     }
-    
-  }
-  graph.prototype.moved=function(x,y){
 
-    if(mouseX>(this.x+x) &&
-       mouseX<(this.x+x) + this.w &&
-       mouseY>(this.y+y) &&
-       mouseY<(this.y+y) + this.h){
+    graph.prototype.moved=function(x,y){
 
-      this.hit=true;
-      
-      if(mouseX>this.x-7 &&
-         mouseX<this.x+this.w){
-        // println(this.data[mouseX-this.x-8].path);
-        if(mouseX-this.x-7>0 &&
-           mouseX-this.x-7<app.data.length-1){
-          app.dCursor=mouseX-this.x-7;
+      if(mouseX>(this.x+x) &&
+         mouseX<(this.x+x) + this.w &&
+         mouseY>(this.y+y) &&
+         mouseY<(this.y+y) + this.h){
+
+        this.hit=true;
+
+        if(mouseX>this.x-7 &&
+           mouseX<this.x+this.w){
+          // println(this.data[mouseX-this.x-8].path);
+          if(mouseX-this.x-7>0 &&
+             mouseX-this.x-7<app.data.length-1){
+            // app.dCursor=mouseX-this.x-7;
+          }
+
         }
-        
+
+        for(var c in this.controls){ this.controls[c].moved((this.x+x), (this.y+y)); }
+
+      }
+      else{
+
+        this.hit=false;
+
       }
 
-      for(var c in this.controls){ this.controls[c].moved((this.x+x), (this.y+y)); }
+    };
+    graph.prototype.clicked=function(x,y){
 
-    }
-    else{
+      if(this.hit){
 
-      this.hit=false;
+        if(mouseX>this.x-7 &&
+           mouseX<this.x+this.w){
+          
+          if(mouseX-this.x-7>0 &&
+             mouseX-this.x-7<app.data.length-1){
+            app.dCursor=mouseX-this.x-7;
+          }
 
-    }
+        }
 
-  };
+        for(var c in this.controls){ this.controls[c].clicked((this.x+x), (this.y+y)); }
 
-  
+      }
+
+    };
+
+  }
+
+
   /* Initialize ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
     var initialize=function(){
 
@@ -1457,14 +1736,68 @@ var diagrams = function(processingInstance){
              cursor:    HAND}));
 
           /* information   */
-          tlbar.controls.push(new info(230, tlbar, width-52, 5, 22, 22,              
+          tlbar.controls.push(new info(230, tlbar, width-52, 5, 22, 22,
             {text:     "i",
              execute:  toggleInfo,
              retrieve: getInfo,
              color:    CLRS.SIN,
              cursor:   HAND}));
       }
-      
+
+      // Navigation --------------------------------------------------
+      {
+        /* Navbar            */
+        var nvbar=new navbar(200, bk, 0, 570, width, 30,
+          {text:        "Navigation",
+           icolor:      CLRS.K_TEAL_4,
+           acolor:      CLRS.K_TEAL_3,
+           cursor:      ARROW,
+           position:    navCursor,
+           recordCount: navRecordCount,
+           execute:     navSetCursor});
+
+        bk.controls.push(nvbar);
+
+          /* Previous           */
+          nvbar.controls.push(new navButton(210, nvbar, 0, 0, 25, 30,
+            {execute:   start,
+             type:      NAVIGATION.FIRST,
+             retrieve:  navCursor,
+             color:     CLRS.BLACK,
+             cursor:    HAND}));
+
+          /* Beginning   */
+          nvbar.controls.push(new navButton(220, nvbar, 25, 0, 25, 30,
+            {execute:   previous,
+             type:      NAVIGATION.PREVIOUS,
+             retrieve:  navCursor,
+             color:     CLRS.BLACK,
+             cursor:    HAND}));
+
+          /* Next   */
+          nvbar.controls.push(new navButton(230, nvbar, width-50, 0, 25, 30,
+            {execute:  next,
+             type:     NAVIGATION.NEXT,
+             retrieve: navCursor,
+             color:    CLRS.BLACK,
+             cursor:   HAND}));
+
+          /* Last   */
+          nvbar.controls.push(new navButton(230, nvbar, width-25, 0, 25, 30,
+            {execute:  last,
+             type:     NAVIGATION.LAST,
+             retrieve: navCursor,
+             color:    CLRS.BLACK,
+             cursor:   HAND}));
+
+          /* Previous           */
+          nvbar.controls.push(new navScroll(210, nvbar, 50, 0, 500, 30,
+            {execute:   navSetCursor,
+             color:     CLRS.BLACK,
+             cursor:    MOVE}));
+             
+      }
+
       // Index --------------------------------------------------
       {
         // /* index              */
@@ -1473,27 +1806,27 @@ var diagrams = function(processingInstance){
             // cursor:  ARROW});
 
         // bk.controls.push(idx);
-          
+
           // /* Sine button        */
-          // bk.controls.push(new button(310, bk, 15, 45, 120, 20,              
+          // bk.controls.push(new button(310, bk, 15, 45, 120, 20,
             // {text:     "Sin "+CONSTANTS.THETA,
              // execute:  toggleSine,
              // tag:      getSine,
              // retrieve: getSineOn,
              // color:    CLRS.SIN,
              // cursor:   HAND}));
-           
+
           // /* Cosine button      */
-          // bk.controls.push(new button(320, bk, 15, 65, 120, 20,             
+          // bk.controls.push(new button(320, bk, 15, 65, 120, 20,
             // {text:     "Cos "+CONSTANTS.THETA,
              // execute:  toggleCosine,
              // tag:      getCosine,
              // retrieve: getCosineOn,
              // color:    CLRS.COS,
              // cursor:   HAND}));
-          
+
           // /* Tangent button     */
-          // bk.controls.push(new button(330, bk, 15, 85, 120, 20,             
+          // bk.controls.push(new button(330, bk, 15, 85, 120, 20,
             // {text:     "Tan "+CONSTANTS.THETA,
              // execute:  toggleTangent,
              // tag:      getTangent,
@@ -1502,25 +1835,25 @@ var diagrams = function(processingInstance){
              // cursor:   HAND}));
 
           // /* Cosecant button    */
-          // bk.controls.push(new button(340, bk, 15, 110, 120, 20,            
+          // bk.controls.push(new button(340, bk, 15, 110, 120, 20,
             // {text:     "Csc "+CONSTANTS.THETA,
              // execute:  toggleCosecant,
              // tag:      getCosecant,
              // retrieve: getCosecantOn,
              // color:    CLRS.K_PINK_0,
              // cursor:   HAND}));
-          
+
           // /* Secant button      */
-          // bk.controls.push(new button(350, bk, 15, 130, 120, 20,           
+          // bk.controls.push(new button(350, bk, 15, 130, 120, 20,
             // {text:     "Sec "+CONSTANTS.THETA,
              // execute:  toggleSecant,
              // tag:      getSecant,
              // retrieve: getSecantOn,
              // color:    CLRS.K_PINK_2,
              // cursor:   HAND}));
-             
+
           // /* Cotangent button   */
-          // bk.controls.push(new button(360, bk, 15, 150, 120, 20,           
+          // bk.controls.push(new button(360, bk, 15, 150, 120, 20,
             // {text:     "Cot "+CONSTANTS.THETA,
              // execute:  toggleCotangent,
              // tag:      getCotangent,
@@ -1529,16 +1862,16 @@ var diagrams = function(processingInstance){
              // cursor:   HAND}));
 
           // /* Excosecant button   */
-          // bk.controls.push(new button(360, bk, 15, 175, 120, 20,           
+          // bk.controls.push(new button(360, bk, 15, 175, 120, 20,
             // {text:     "Excsc "+CONSTANTS.THETA,
              // execute:  toggleExcosecant,
              // tag:      getExcosecant,
              // retrieve: getExcosecantOn,
              // color:    CLRS.K_TEAL_0,
              // cursor:   HAND}));
-             
+
           // /* Coversine button   */
-          // bk.controls.push(new button(360, bk, 15, 195, 120, 20,           
+          // bk.controls.push(new button(360, bk, 15, 195, 120, 20,
             // {text:     "Cvs "+CONSTANTS.THETA,
              // execute:  toggleCoversine,
              // tag:      getCoversine,
@@ -1547,7 +1880,7 @@ var diagrams = function(processingInstance){
              // cursor:   HAND}));
 
           // /* Versine button   */
-          // bk.controls.push(new button(360, bk, 15, 220, 120, 20,           
+          // bk.controls.push(new button(360, bk, 15, 220, 120, 20,
             // {text:     "Ver "+CONSTANTS.THETA,
              // execute:  toggleVersine,
              // tag:      getVersine,
@@ -1556,7 +1889,7 @@ var diagrams = function(processingInstance){
              // cursor:   HAND}));
 
           // /* Exsecant button   */
-          // bk.controls.push(new button(360, bk, 15, 240, 120, 20,           
+          // bk.controls.push(new button(360, bk, 15, 240, 120, 20,
             // {text:     "Exsec "+CONSTANTS.THETA,
              // execute:  toggleExsecant,
              // tag:      getExsecant,
@@ -1564,7 +1897,7 @@ var diagrams = function(processingInstance){
              // color:    CLRS.K_ORANGE_1,
              // cursor:   HAND}));
     }
-      
+
       // Telemetry --------------------------------------------------
         /* Telemetry          */
         var telem=new telemetry(300, bk, width, 30, 200, 570,
@@ -1574,22 +1907,15 @@ var diagrams = function(processingInstance){
         bk.controls.push(telem);
 
 
-             
-    };
-
-    var incrementTheta=function(){
-
-      app.theta+=1;
-      if(app.theta>360){ app.theta=0; }
 
     };
     var update=function(){
-      
+
       frameRate(app.frameRate);
 
       background(242);
 
-      if(app.autoRun){ incrementTheta(); }
+      // if(app.autoRun){ incrementTheta(); }
 
       for(var c in app.controls){ app.controls[c].draw(); }
 
