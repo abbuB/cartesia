@@ -283,10 +283,12 @@ var diagrams = function(processingInstance){
 
     };
     var NAVIGATION={
-      PREVIOUS: 0,
-      FIRST:    1,
-      NEXT:     2,
-      LAST:     3
+      DECREMENT:      0,
+      FIRST:          1,
+      INCREMENT:      2,
+      LAST:           3,
+      DECREMENTPAGE:  4,
+      INCREMENTPAGE:  5
     };
 
   }
@@ -294,16 +296,49 @@ var diagrams = function(processingInstance){
   /* Utility Functions ========================================================= */
   {
 
+    var loadData=function(){
+      
+      app.data=[];
+
+      var _highest=0;
+      var _sum=0;
+      var _longest=0;
+    
+      for(var n=app.dOffset; n<=app.dOffset+500; n++){
+
+      // println(n);
+      
+        app.data.push(new collatz(n));
+
+        if(app.data[app.data.length-1].max>_highest){
+          app.dHighest=app.data.length-1;
+          _highest=app.data[app.data.length-1].max;
+        }
+        
+        if(app.data[app.data.length-1].sum>_sum){
+          app.dSum=app.data.length-1;
+          _sum=app.data[app.data.length-1].sum;
+        }
+
+        if(app.data[app.data.length-1].path.length>_longest){
+          app.dLongest=app.data.length-1;
+          _longest=app.data[app.data.length-1].path.length;
+        }
+
+      }
+    
+    };
+        
     var getColor=function(clr, alpha){ return color(red(clr), green(clr), blue(clr), alpha/100*255); };
 
-    var increment=function(){
+    var incrementRecord=function(){
 
       app.dCursor++;
 
       if(app.dCursor>app.data.length-1){ app.dCursor=0; }
 
     };
-    var decrement=function(){
+    var decrementRecord=function(){
 
       app.dCursor--;
 
@@ -327,16 +362,36 @@ var diagrams = function(processingInstance){
     var getInfo=function()        { return app.infoOn;                };
     var toggleInfo=function()     { app.infoOn =! app.infoOn;         };
 
-    var previous=function()       { decrement();                      };
-    var start=function()          { app.dCursor=0;                    };
-    var next=function()           { increment();                      };
+    var decrement=function()      { decrementRecord();                };
+    var first=function()          { app.dCursor=0;                    };
+    var increment=function()      { incrementRecord();                };
     var last=function()           { app.dCursor=app.data.length-1;    };
+    var incrementPage=function()  {
+      
+      if(app.dOffset>2){ app.dOffset+=500; }
+      else             { app.dOffset+=498; }
+      
+      loadData();
+      
+    };
+    var decrementPage=function()  {
 
+      if(app.dOffset>2){
+
+        if(app.dOffset>500){ app.dOffset-=500; }
+        else               { app.dOffset-=498; }
+
+        loadData();     
+
+      }
+      
+    };
+    var incrementCursor=function(){ app.dCursor++;                    };
     var navCursor=function()      { return app.dCursor+1;             };
     var navRecordCount=function() { return app.data.length;           };
     var navSetCursor=function(n)  {
       
-      app.dCursor=floor(n/app.data.length*app.data.length);
+      app.dCursor=floor(n/500*app.data.length);
       
       };
 
@@ -346,7 +401,9 @@ var diagrams = function(processingInstance){
   var collatz=function(i){
 
     this.i=i;
+    
     this.path=[];
+    
     this.max=0;
     this.sum=0;
     this.length=0;
@@ -367,18 +424,10 @@ var diagrams = function(processingInstance){
       if(n===1){ return; }
       else {
 
-        if(n%2===0){
-
-          n/=2;
-          p.down++;
-
-        }
-        else{
-
-          n=n*3+1;
-          p.up++;
-
-        }
+        if(n%2===0){  n/=2;
+                      p.down++; }
+        else       {  n=n*3+1;
+                      p.up++;   }
 
         load(n);
 
@@ -746,7 +795,89 @@ var diagrams = function(processingInstance){
 
       
     }
+    // Navigation Buttons * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    {
 
+      var navButton=function(id, parent, x, y, w, h, params){
+
+        control.call(this, id, parent, x, y, w, h);
+
+        this.execute=params.execute;
+        this.type=params.type;
+        this.retrieve=params.retrieve;
+        this.color=params.color;
+        this.cursor=params.cursor;
+
+      };
+      navButton.prototype=Object.create(control.prototype);
+      navButton.prototype.draw=function(){
+
+        var offset=0;
+
+        pushMatrix();
+
+          translate(this.x, this.y);
+
+            noStroke();
+            noFill();
+
+            if(this.hit &&
+               this.parent.hit){
+
+              if(app.left){ offset=1; }
+
+              app.focus=this.id;
+              cursor(this.cursor);
+
+              fill(getColor(this.color,10));
+
+            }
+
+            //  Background
+              rect(offset, offset, this.w, this.h, 2);
+
+
+            // Icon
+            fill(getColor(this.color, 65));
+
+            if(this.hit){ fill(getColor(this.color, 100)); };
+
+            noStroke();
+            textAlign(CENTER,CENTER)
+            textSize(16);
+
+              switch(this.type){
+
+                case NAVIGATION.FIRST:          text("|<", this.w/2+offset, this.h/2+offset); break;
+                case NAVIGATION.DECREMENT:      text("<",  this.w/2+offset, this.h/2+offset); break;
+                case NAVIGATION.INCREMENT:      text(">",  this.w/2+offset, this.h/2+offset); break;
+                case NAVIGATION.LAST:           text(">|", this.w/2+offset, this.h/2+offset); break;
+                case NAVIGATION.INCREMENTPAGE:  text(">>", this.w/2+offset, this.h/2+offset); break;
+                case NAVIGATION.DECREMENTPAGE:  text("<<", this.w/2+offset, this.h/2+offset); break;
+
+                default:  break;
+
+              }
+
+        popMatrix();
+
+      };
+      navButton.prototype.clicked=function(){
+      /* Overridden to maintain on/off value */
+
+        if(this.hit){
+
+          this.execute();
+          this.on=!this.on;
+
+          for(var c in this.controls){ this.controls[c].clicked(); }
+
+        }
+
+      };
+
+    }
+    
     // toolbar ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
 
@@ -910,7 +1041,7 @@ var diagrams = function(processingInstance){
                  app.frameRate,
                  col2, row0+15);
 
-          var txt="Press the left and right arrow keys to increment and decrement theta.";
+          var txt="Press the left and right arrow keys to increment and decrement integer.";
 
           textSize(11);
           textAlign(LEFT,BOTTOM);
@@ -1054,86 +1185,7 @@ var diagrams = function(processingInstance){
 
     }
 
-    // Navigation Buttons * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    {
 
-      var navButton=function(id, parent, x, y, w, h, params){
-
-        control.call(this, id, parent, x, y, w, h);
-
-        this.execute=params.execute;
-        this.type=params.type;
-        this.retrieve=params.retrieve;
-        this.color=params.color;
-        this.cursor=params.cursor;
-
-      };
-      navButton.prototype=Object.create(control.prototype);
-      navButton.prototype.draw=function(){
-
-        var offset=0;
-
-        pushMatrix();
-
-          translate(this.x, this.y);
-
-            noStroke();
-            noFill();
-
-            if(this.hit &&
-               this.parent.hit){
-
-              if(app.left){ offset=1; }
-
-              app.focus=this.id;
-              cursor(this.cursor);
-
-              fill(getColor(this.color,10));
-
-            }
-
-            //  Background
-              rect(offset, offset, this.w, this.h, 2);
-
-
-            // Icon
-            fill(getColor(this.color, 65));
-
-            if(this.hit){ fill(getColor(this.color, 100)); };
-
-            noStroke();
-            textAlign(CENTER,CENTER)
-            textSize(16);
-
-              switch(this.type){
-
-                case NAVIGATION.FIRST:    text("|<", this.w/2+offset, this.h/2+offset); break;
-                case NAVIGATION.PREVIOUS: text("<",  this.w/2+offset, this.h/2+offset); break;
-                case NAVIGATION.NEXT:     text(">",  this.w/2+offset, this.h/2+offset); break;
-                case NAVIGATION.LAST:     text(">|", this.w/2+offset, this.h/2+offset); break;
-
-                default:  break;
-
-              }
-
-        popMatrix();
-
-      };
-      navButton.prototype.clicked=function(){
-      /* Overridden to maintain on/off value */
-
-        if(this.hit){
-
-          this.execute();
-          this.on=!this.on;
-
-          for(var c in this.controls){ this.controls[c].clicked(); }
-
-        }
-
-      };
-
-    }
 
     // Settings * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
@@ -1396,38 +1448,8 @@ var diagrams = function(processingInstance){
 
         this.color=params.color;
         this.cursor=params.cursor;
-
-        this.max=0;
-        this.area=0;
-        
-        var txt="";
-        var total=0;
-
-        //  Load data
-        for(var n=app.dOffset; n<=app.dOffset+this.w-22; n++){
-
-          app.data.push(new collatz(n));
-
-          if(app.data[n-app.dOffset].path.length>this.max){
-            
-            this.max=app.data[n-app.dOffset].length;
-            
-          }
-
-          if(app.data[n-app.dOffset].max>app.dHighest){
-            app.dHighest=app.data[n-app.dOffset].max;
-          }
-          
-          if(app.data[n-app.dOffset].sum>app.dArea){
-            app.dArea=app.data[n-app.dOffset].sum;
-          }
-
-          if(app.data[n-app.dOffset].length>app.dLongest){
-            app.dLongest=app.data[n-app.dOffset].length;
-          }
-          
-        }
-
+      var txt="";
+      var total=0;
       };
       graph.prototype=Object.create(control.prototype);
       graph.prototype.draw=function(){
@@ -1436,8 +1458,9 @@ var diagrams = function(processingInstance){
 
         var convertLength=function(n){
 
-            return (n-1)/p.max*p.h*0.5;
-
+            // return (n-1)/p._longest*p.h*0.5;
+        return (n-1)/app.data[app.dLongest].path.length*p.h*0.5;
+          
         };
         var convertPath=function(n,max){
 
@@ -1563,7 +1586,7 @@ var diagrams = function(processingInstance){
           fill(getColor(CLRS.BLACK,50));
 
             text(app.data[app.dCursor].path,
-                 160, 10, 400,10000);
+                 140, 10, 360,10000);
 
         };
         var drawLines=function(){
@@ -1576,13 +1599,13 @@ var diagrams = function(processingInstance){
 
             // line(app.dCursor+6.5, p.h*0.25, app.dCursor+6.5, p.h-12);
 
-            line(app.dCursor+6.5, p.h-12-d, app.dCursor+6.5, p.h-12);
+            line(app.dCursor+10, p.h-12-d, app.dCursor+10, p.h-12);
 
           pushMatrix();
 
             var sw=1;
 
-            translate(10,p.h-10);
+            translate(10, p.h-10);
             scale(1,-1);
             strokeWeight(sw);
 
@@ -1623,9 +1646,17 @@ var diagrams = function(processingInstance){
             drawLines();
             currentData();
 
-            text(app.dHighest, 50, 200);
-            text(app.dArea,    50, 220);
-            text(app.dLongest, 50, 240);
+// println(typeof app.dSum);
+
+            text("Highest: " + app.data[app.dHighest].i + ": " + 
+                               app.data[app.dHighest].max,
+                               20, 200);
+            text("Sum: "     + app.data[app.dSum].i + " : " +
+                               app.data[app.dSum].sum,
+                               20, 220);
+            text("Longest: " + app.data[app.dLongest].i + " : " +
+                               app.data[app.dLongest].length,
+                               20, 240);
 
         popMatrix();
 
@@ -1633,45 +1664,45 @@ var diagrams = function(processingInstance){
 
     }
 
-    graph.prototype.moved=function(x,y){
+    // graph.prototype.moved=function(x,y){
 
-      if(mouseX>(this.x+x) &&
-         mouseX<(this.x+x) + this.w &&
-         mouseY>(this.y+y) &&
-         mouseY<(this.y+y) + this.h){
+      // if(mouseX>(this.x+x) &&
+         // mouseX<(this.x+x) + this.w &&
+         // mouseY>(this.y+y) &&
+         // mouseY<(this.y+y) + this.h){
 
-        this.hit=true;
+        // this.hit=true;
 
-        if(mouseX>this.x-7 &&
-           mouseX<this.x+this.w){
+        // if(mouseX>this.x-7 &&
+           // mouseX<this.x+this.w){
           // println(this.data[mouseX-this.x-8].path);
-          if(mouseX-this.x-7>0 &&
-             mouseX-this.x-7<app.data.length-1){
+          // if(mouseX-this.x-7>0 &&
+             // mouseX-this.x-7<app.data.length-1){
             // app.dCursor=mouseX-this.x-7;
-          }
+          // }
 
-        }
+        // }
 
-        for(var c in this.controls){ this.controls[c].moved((this.x+x), (this.y+y)); }
+        // for(var c in this.controls){ this.controls[c].moved((this.x+x), (this.y+y)); }
 
-      }
-      else{
+      // }
+      // else{
 
-        this.hit=false;
+        // this.hit=false;
 
-      }
+      // }
 
-    };
+    // };
     graph.prototype.clicked=function(x,y){
 
       if(this.hit){
 
-        if(mouseX>this.x-7 &&
-           mouseX<this.x+this.w){
+        if(mouseX>this.x+10 &&
+           mouseX<this.x+this.w+10){
           
-          if(mouseX-this.x-7>0 &&
-             mouseX-this.x-7<app.data.length-1){
-            app.dCursor=mouseX-this.x-7;
+          if(mouseX-this.x>0 &&
+             mouseX-this.x<app.data.length-1){
+            app.dCursor=mouseX-this.x-10;
           }
 
         }
@@ -1701,8 +1732,8 @@ var diagrams = function(processingInstance){
 
         app.controls.push(bk);
 
-        /* bar graph        */
-        bk.controls.push(new graph(110, bk, 10, 40, 580, 500,
+        /* graph        */
+        bk.controls.push(new graph(110, bk, 57, 40, 520, 500,
           {color:     CLRS.GRAY,
            acolor:    CLRS.BLUE,
            icolor:    CLRS.RED,
@@ -1747,7 +1778,7 @@ var diagrams = function(processingInstance){
       // Navigation --------------------------------------------------
       {
         /* Navbar            */
-        var nvbar=new navbar(200, bk, 0, 570, width, 30,
+        var nvbar=new navbar(400, bk, 0, 570, width, 30,
           {text:        "Navigation",
            icolor:      CLRS.K_TEAL_4,
            acolor:      CLRS.K_TEAL_3,
@@ -1758,40 +1789,56 @@ var diagrams = function(processingInstance){
 
         bk.controls.push(nvbar);
 
-          /* Previous           */
-          nvbar.controls.push(new navButton(210, nvbar, 0, 0, 25, 30,
-            {execute:   start,
+          /* Decrement Page        */
+          nvbar.controls.push(new navButton(410, nvbar, 0, 0, 50, 30,
+            {execute:   decrementPage,
+             type:      NAVIGATION.DECREMENTPAGE,
+             retrieve:  navCursor,
+             color:     CLRS.BLACK,
+             cursor:    HAND}));
+
+          /* Increment Page       */
+          nvbar.controls.push(new navButton(440, nvbar, width-50, 0, 50, 30,
+            {execute:  incrementPage,
+             type:     NAVIGATION.INCREMENTPAGE,
+             retrieve: navCursor,
+             color:    CLRS.BLACK,
+             cursor:   HAND}));
+
+          /* First Record         */
+          nvbar.controls.push(new navButton(410, nvbar, 50, 0, 25, 30,
+            {execute:   first,
              type:      NAVIGATION.FIRST,
              retrieve:  navCursor,
              color:     CLRS.BLACK,
              cursor:    HAND}));
 
-          /* Beginning   */
-          nvbar.controls.push(new navButton(220, nvbar, 25, 0, 25, 30,
-            {execute:   previous,
-             type:      NAVIGATION.PREVIOUS,
+          /* Decrement Record     */
+          nvbar.controls.push(new navButton(420, nvbar, 75, 0, 25, 30,
+            {execute:   decrement,
+             type:      NAVIGATION.DECREMENT,
              retrieve:  navCursor,
              color:     CLRS.BLACK,
              cursor:    HAND}));
 
-          /* Next   */
-          nvbar.controls.push(new navButton(230, nvbar, width-50, 0, 25, 30,
-            {execute:  next,
-             type:     NAVIGATION.NEXT,
+          /* Increment Record     */
+          nvbar.controls.push(new navButton(430, nvbar, width-100, 0, 25, 30,
+            {execute:  increment,
+             type:     NAVIGATION.INCREMENT,
              retrieve: navCursor,
              color:    CLRS.BLACK,
              cursor:   HAND}));
 
-          /* Last   */
-          nvbar.controls.push(new navButton(230, nvbar, width-25, 0, 25, 30,
+          /* Last Record          */
+          nvbar.controls.push(new navButton(440, nvbar, width-75, 0, 25, 30,
             {execute:  last,
              type:     NAVIGATION.LAST,
              retrieve: navCursor,
              color:    CLRS.BLACK,
              cursor:   HAND}));
 
-          /* Previous           */
-          nvbar.controls.push(new navScroll(210, nvbar, 50, 0, 500, 30,
+          /* Scroll               */
+          nvbar.controls.push(new navScroll(450, nvbar, 100, 0, 400, 30,
             {execute:   navSetCursor,
              color:     CLRS.BLACK,
              cursor:    MOVE}));
@@ -1906,21 +1953,26 @@ var diagrams = function(processingInstance){
 
         bk.controls.push(telem);
 
-
-
     };
+    
     var update=function(){
 
       frameRate(app.frameRate);
 
       background(242);
 
-      // if(app.autoRun){ incrementTheta(); }
+      if(app.autoRun && 
+         (frameCount%app.frameRate===0)){           
+           incrementCursor();
+           app.dCursor%=app.data.length-1;
+      };
 
       for(var c in app.controls){ app.controls[c].draw(); }
 
     };
 
+    loadData();
+    
     var execute;
 
     execute=update;
