@@ -110,7 +110,7 @@ var diagrams = function(processingInstance){
     this.infoOn=false;        //  Is the info frame displayed
 
     this.dCursor=0;           //  position of the cursor in data
-    this.dOffset=2;           //  How far from 0 is the data cursor
+    this.dOffset=2; //9749626154;           //  How far from 0 is the data cursor
 
     this.dHighest=0;          //  The index of the greatest number reached
     this.dArea=0;             //  The index of the greatest area of the path
@@ -346,10 +346,10 @@ var diagrams = function(processingInstance){
 
     };
 
-    var getAuto=function()      { return app.autoRun;        };
-    var getLegend=function()    { return app.legend;         };
+    var getAuto=function()        { return app.autoRun;               };
+    var getLegend=function()      { return app.legend;                };
 
-    var checkboxAuto=function() {
+    var checkboxAuto=function()   {
 
       app.autoRun=!app.autoRun;
 
@@ -393,7 +393,7 @@ var diagrams = function(processingInstance){
       
       app.dCursor=floor(n/500*app.data.length);
       
-      };
+    };
 
   }
 
@@ -499,8 +499,24 @@ var diagrams = function(processingInstance){
         }
 
       };
-      control.prototype.dragged=function(){};
-      control.prototype.pressed=function(){};
+      control.prototype.dragged=function(){
+        
+        if(this.hit){
+
+          for(var c in this.controls){ this.controls[c].dragged(); }
+
+        }
+        
+      };
+      control.prototype.pressed=function(){
+        
+        if(this.hit){
+
+          for(var c in this.controls){ this.controls[c].pressed(); }
+
+        }
+        
+      };
       control.prototype.released=function(){};
       control.prototype.typed=function(){};
       control.prototype.over=function(){};
@@ -671,10 +687,8 @@ var diagrams = function(processingInstance){
 
         control.call(this, id, parent, x, y, w, h);
 
-        this.text     = params.text;
         this.color    = params.color;
         this.cursor   = params.cursor;
-        this.border   = params.border;
         this.execute  = params.execute;
 
       };
@@ -686,7 +700,8 @@ var diagrams = function(processingInstance){
           translate(this.x, this.y);
 
             noStroke();
-            fill(getColor(this.color, 5));
+            noFill();
+            // fill(getColor(this.color, 5));
 
             if(this.hit &&
                this.parent.hit){
@@ -694,18 +709,21 @@ var diagrams = function(processingInstance){
               app.focus=this.id;
               cursor(this.cursor);
 
-              fill(getColor(this.color, 10));
-
-            }
-
-            if(this.border){
-
-              strokeWeight(1);
+              fill(getColor(this.color, 5));
+              strokeWeight(0.5);
               stroke(getColor(this.color, 50));
 
             }
 
-            rect(0, 0, this.w, this.h, this.execute);
+              rect(1, 1, this.w-2, this.h-2);
+
+            var xPos=floor(app.dCursor/app.data.length*this.w);
+
+            stroke(getColor(CLRS.RED,100));
+            strokeWeight(0.5);
+            
+// println(xPos);
+              line(xPos,0,xPos,30);
 
             // Draw child controls
             for(var c in this.controls){ this.controls[c].draw(); }
@@ -713,31 +731,26 @@ var diagrams = function(processingInstance){
         popMatrix();
 
       };
-      navScroll.prototype.moved=function(x,y){
+      navScroll.prototype.dragged=function(x,y){
 
-        if(mouseX>(this.x+x) &&
-           mouseX<(this.x+x) + this.w &&
-           mouseY>(this.y+y) &&
-           mouseY<(this.y+y) + this.h){
+        if(this.hit){
+          
+          var X=floor((mouseX-this.x)/this.w*500);
+          
+          if(X>=0 && X<500){
+            this.execute(X);
+            // println(X);
+          }
 
-          this.hit=true;
-
-          this.execute((mouseX-this.x)/this.w*this.w);
-
-          for(var c in this.controls){ this.controls[c].moved((this.x+x), (this.y+y)); }
-
-        }
-        else{
-
-          this.hit=false;
-
+          for(var c in this.controls){ this.controls[c].dragged(); }
+  
         }
 
       };
 
     }
     
-    // Navigation Bar ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // NavBar ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
 
       var navbar=function(id, parent, x, y, w, h, params){
@@ -795,6 +808,7 @@ var diagrams = function(processingInstance){
 
       
     }
+    
     // Navigation Buttons * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
 
@@ -1185,8 +1199,6 @@ var diagrams = function(processingInstance){
 
     }
 
-
-
     // Settings * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
 
@@ -1464,7 +1476,7 @@ var diagrams = function(processingInstance){
         };
         var convertPath=function(n,max){
 
-            var retval=(n-1)/max*p.h*0.75;
+            var retval=(n-1)/max*p.h*0.7;
 
             return retval;
 
@@ -1557,7 +1569,7 @@ var diagrams = function(processingInstance){
           textAlign(LEFT,TOP);
           textSize(20);
 
-            text(app.data[app.dCursor].i, 20,10);
+            text(nfc(app.data[app.dCursor].i), 20,10);
 
           fill(getColor(CLRS.BLACK,75));
           textAlign(LEFT,TOP);
@@ -1566,7 +1578,7 @@ var diagrams = function(processingInstance){
 
             text("Max:     \n" +
                  "Sum:     \n" +
-                 "Length:  \n" +
+                 "Length:  \n\n" +
                  "Up:      \n" +
                  "Down:    \n",
                  20, 35);
@@ -1577,16 +1589,16 @@ var diagrams = function(processingInstance){
 
             text(nfc(app.data[app.dCursor].max)        + "\n" +
                  nfc(app.data[app.dCursor].sum)        + "\n" +
-                 nfc((app.data[app.dCursor].length-1)) + "\n" +
+                 nfc((app.data[app.dCursor].length-1)) + "\n\n" +
                  nfc(app.data[app.dCursor].up)         + "\n" +
                  nfc(app.data[app.dCursor].down),
-                 120, 35);
+                 140, 35);
 
           textAlign(LEFT,TOP);
-          fill(getColor(CLRS.BLACK,50));
+          fill(getColor(CLRS.K_TEAL_4,75));
 
             text(app.data[app.dCursor].path,
-                 140, 10, 360,10000);
+                 20, 140, 480,10000);
 
         };
         var drawLines=function(){
@@ -1624,7 +1636,33 @@ var diagrams = function(processingInstance){
 
         var dataSummary=function(){
 
+          fill(getColor(CLRS.BLACK,75));
+          textSize(12);
+          textAlign(LEFT,TOP);
+          
+            text("Range:    \n\n" +
+                 "Max Peak: \n" + 
+                 "Max Sum:  \n" +
+                 "Longest Path:",
+                 200, 35);
 
+          fill(getColor(CLRS.GRAY,100));
+          textAlign(LEFT,TOP);
+          
+            text(nfc(app.data[0].i) + " to " +  nfc(app.data[app.data.length-1].i) + "\n\n" +
+                 nfc(app.data[app.dHighest].i) +"\n" +
+                 nfc(app.data[app.dSum].i) + "\n" +
+                 nfc(app.data[app.dLongest].i),
+                 300, 35);
+          
+          fill(getColor(CLRS.K_TEAL_2,75));
+          textAlign(RIGHT,TOP);
+          
+            text("\n\n" +
+                 nfc(app.data[app.dHighest].max) + "\n" +
+                 nfc(app.data[app.dSum].sum) + "\n" +
+                 nfc(app.data[app.dLongest].length),
+                 440, 35);
 
         };
 
@@ -1640,59 +1678,20 @@ var diagrams = function(processingInstance){
 
             }
 
-            border();
+            // border();
             axes();
+            currentData();
+            dataSummary();
             displayCollatz();
             drawLines();
-            currentData();
 
 // println(typeof app.dSum);
-
-            text("Highest: " + app.data[app.dHighest].i + ": " + 
-                               app.data[app.dHighest].max,
-                               20, 200);
-            text("Sum: "     + app.data[app.dSum].i + " : " +
-                               app.data[app.dSum].sum,
-                               20, 220);
-            text("Longest: " + app.data[app.dLongest].i + " : " +
-                               app.data[app.dLongest].length,
-                               20, 240);
 
         popMatrix();
 
       };
 
-    }
-
-    // graph.prototype.moved=function(x,y){
-
-      // if(mouseX>(this.x+x) &&
-         // mouseX<(this.x+x) + this.w &&
-         // mouseY>(this.y+y) &&
-         // mouseY<(this.y+y) + this.h){
-
-        // this.hit=true;
-
-        // if(mouseX>this.x-7 &&
-           // mouseX<this.x+this.w){
-          // println(this.data[mouseX-this.x-8].path);
-          // if(mouseX-this.x-7>0 &&
-             // mouseX-this.x-7<app.data.length-1){
-            // app.dCursor=mouseX-this.x-7;
-          // }
-
-        // }
-
-        // for(var c in this.controls){ this.controls[c].moved((this.x+x), (this.y+y)); }
-
-      // }
-      // else{
-
-        // this.hit=false;
-
-      // }
-
-    // };
+    };
     graph.prototype.clicked=function(x,y){
 
       if(this.hit){
@@ -1733,7 +1732,7 @@ var diagrams = function(processingInstance){
         app.controls.push(bk);
 
         /* graph        */
-        bk.controls.push(new graph(110, bk, 57, 40, 520, 500,
+        bk.controls.push(new graph(110, bk, 30, 30, 540, 540,
           {color:     CLRS.GRAY,
            acolor:    CLRS.BLUE,
            icolor:    CLRS.RED,
@@ -1798,7 +1797,7 @@ var diagrams = function(processingInstance){
              cursor:    HAND}));
 
           /* Increment Page       */
-          nvbar.controls.push(new navButton(440, nvbar, width-50, 0, 50, 30,
+          nvbar.controls.push(new navButton(420, nvbar, width-50, 0, 50, 30,
             {execute:  incrementPage,
              type:     NAVIGATION.INCREMENTPAGE,
              retrieve: navCursor,
@@ -1806,7 +1805,7 @@ var diagrams = function(processingInstance){
              cursor:   HAND}));
 
           /* First Record         */
-          nvbar.controls.push(new navButton(410, nvbar, 50, 0, 25, 30,
+          nvbar.controls.push(new navButton(430, nvbar, 50, 0, 25, 30,
             {execute:   first,
              type:      NAVIGATION.FIRST,
              retrieve:  navCursor,
@@ -1814,7 +1813,7 @@ var diagrams = function(processingInstance){
              cursor:    HAND}));
 
           /* Decrement Record     */
-          nvbar.controls.push(new navButton(420, nvbar, 75, 0, 25, 30,
+          nvbar.controls.push(new navButton(440, nvbar, 75, 0, 25, 30,
             {execute:   decrement,
              type:      NAVIGATION.DECREMENT,
              retrieve:  navCursor,
@@ -1822,7 +1821,7 @@ var diagrams = function(processingInstance){
              cursor:    HAND}));
 
           /* Increment Record     */
-          nvbar.controls.push(new navButton(430, nvbar, width-100, 0, 25, 30,
+          nvbar.controls.push(new navButton(450, nvbar, width-100, 0, 25, 30,
             {execute:  increment,
              type:     NAVIGATION.INCREMENT,
              retrieve: navCursor,
@@ -1830,7 +1829,7 @@ var diagrams = function(processingInstance){
              cursor:   HAND}));
 
           /* Last Record          */
-          nvbar.controls.push(new navButton(440, nvbar, width-75, 0, 25, 30,
+          nvbar.controls.push(new navButton(460, nvbar, width-75, 0, 25, 30,
             {execute:  last,
              type:     NAVIGATION.LAST,
              retrieve: navCursor,
@@ -1838,7 +1837,7 @@ var diagrams = function(processingInstance){
              cursor:   HAND}));
 
           /* Scroll               */
-          nvbar.controls.push(new navScroll(450, nvbar, 100, 0, 400, 30,
+          nvbar.controls.push(new navScroll(470, nvbar, 100, 0, 400, 30,
             {execute:   navSetCursor,
              color:     CLRS.BLACK,
              cursor:    MOVE}));
@@ -1993,15 +1992,34 @@ var diagrams = function(processingInstance){
   {
 
       var keyPressed=function(){
+        
+        app.keys[keyCode]=true;
 
         if(app.autoRun===false){
 
-          if     (keyCode===KEYCODES.RIGHT){ increment(); }
-          else if(keyCode===KEYCODES.LEFT) { decrement(); }
+          switch(true){
 
+            case app.keys[KEYCODES.LEFT] &&
+                 app.keys[KEYCODES.SHIFT]:    decrementPage();  break;
+            case app.keys[KEYCODES.RIGHT] &&
+                 app.keys[KEYCODES.SHIFT]:    incrementPage();  break;
+
+            case app.keys[KEYCODES.LEFT] &&
+                 app.keys[KEYCODES.CONTROL]:  first();          break;
+            case app.keys[KEYCODES.RIGHT] &&
+                 app.keys[KEYCODES.CONTROL]:  last();           break;
+                 
+            case app.keys[KEYCODES.LEFT]:     decrement();      break;
+            
+            case app.keys[KEYCODES.RIGHT]:    increment();      break;
+
+            default:                                            break;
+
+          }
+          
         }
-
-        app.keys[keyCode]=true;
+        
+        
 
       };
       var keyTyped=function(){
@@ -2042,6 +2060,8 @@ var diagrams = function(processingInstance){
 
       }
 
+      for(var c in app.controls){ app.controls[c].pressed();  }
+      
     };
     var mouseReleased=function(){
 
@@ -2059,6 +2079,20 @@ var diagrams = function(processingInstance){
 
       for(var c in app.controls){ app.controls[c].moved(0,0); }
 
+    };
+    var mouseDragged=function(){
+
+      // for(var c in app.controls){ app.controls[c].dragged();  }
+
+      switch(mouseButton){
+
+        case LEFT:   for(var c in app.controls){ app.controls[c].dragged();  } break;
+        // case RIGHT:  for(var c in app.controls){ app.controls[c].rClicked(); } break;
+        // case CENTER: for(var c in app.controls){ app.controls[c].cClicked(); } break;
+
+        default:     break;
+      }
+      
     };
     var mouseOut=function(){
 
