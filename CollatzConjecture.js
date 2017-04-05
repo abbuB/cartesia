@@ -107,10 +107,10 @@ var diagrams = function(processingInstance){
     this.data=[];             //  Array of collatz objects
 
     this.autoRun=false;        //  Alpha changes automatically
-    this.infoOn=false;        //  Is the info frame displayed
+    this.infoOn=true;        //  Is the info frame displayed
 
     this.dCursor=0;           //  position of the cursor in data
-    this.dOffset=2; //9749626154;           //  How far from 0 is the data cursor
+    this.dOffset=2; //pow(2,52)+1; //9749626154;           //  How far from 0 is the data cursor
 
     this.dHighest=0;          //  The index of the greatest number reached
     this.dArea=0;             //  The index of the greatest area of the path
@@ -274,12 +274,13 @@ var diagrams = function(processingInstance){
     };
     var CONSTANTS={
 
-      DEGREES:  "°",
-      PI:       "π",
-      UP_ARROW: "▲",
-      INFINITY: "∞",
-      THETA:    "θ",
-      RADIANS:  "ᶜ"
+      DEGREES:    "°",
+      PI:         "π",
+      UP_ARROW:   "▲",
+      INFINITY:   "∞",
+      THETA:      "θ",
+      RADIANS:    "ᶜ",
+      IDENTICAL:  "	≡"
 
     };
     var NAVIGATION={
@@ -635,6 +636,110 @@ var diagrams = function(processingInstance){
 
     }
 
+    // Splash Screen ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    {
+
+      var splash=function(id, parent, x, y, w, h, params){
+
+        control.call(this, id, parent, x, y, w, h);
+
+        this.color=params.color;
+        this.cursor=params.cursor;
+        this.retrieve=params.retrieve;
+
+      };
+      splash.prototype=Object.create(control.prototype);
+      splash.prototype.draw=function(){
+        
+        if(this.retrieve()){        
+        
+          pushMatrix();
+
+            translate(this.x, this.y);
+
+              strokeWeight(1);
+              stroke(getColor(this.color, 40));
+              fill(getColor(this.color, 90));
+              
+              if(this.hit &&
+                 this.parent.hit){
+
+                app.focus=this.id;
+                cursor(this.cursor);
+
+                fill(getColor(this.color, 100));
+
+              }
+
+                rect(0, 0, this.w, this.h, 20);
+
+              textSize(16);
+              textAlign(CENTER,BOTTOM);
+              fill(getColor(CLRS.YELLOW,75));
+              
+                text("The Collatz Conjecture", this.w/2, 30);
+              
+              var txt0="A conjecture in mathematics named after Lothar Collatz also known as the 3n + 1 conjecture or the hailstone sequence."              
+              var txt1="Take any positive integer n.  If n is even, divide it by 2 to get n / 2.  If n is odd, multiply it by 3 and add 1 to obtain 3n + 1.  Repeat the process indefinitely.  The conjecture is that no matter what number you start with, you will always eventually reach 1.";
+              var txt2="For instance, starting with n = 12, one gets the sequence 12, 6, 3, 10, 5, 16, 8, 4, 2, 1.";
+              var txt3="If the conjecture is false, it can only be because there is some starting number which gives rise to a sequence that does not contain 1. Such a sequence might enter a repeating cycle that excludes 1, or increase without bound. No such sequence has been found.";
+              var txt4="https://en.wikipedia.org/wiki/Collatz_conjecture";
+              
+              var txt5="f(n)";
+              var txt6="n/2";
+              var txt7="if n" + CONSTANTS.IDENTICAL + "0 (mod 2)";
+              var txt8="3n+1";
+              var txt9="if n" + CONSTANTS.IDENTICAL + "1 (mod 2)";
+              var txt10="{";
+              
+              textSize(11);
+              textAlign(LEFT,TOP);
+              fill(getColor(CLRS.WHITE,75));
+
+                text(txt0 + "\n\n" +
+                     txt1 + "\n\n" +
+                     txt2 + "\n\n" +
+                     txt3,
+                     20, 40,
+                     this.w-30, this.h-40);
+                
+              textAlign(LEFT,CENTER);
+              fill(getColor(CLRS.K_TEAL_2,100));  
+                
+                text(txt4, this.w/2-textWidth(txt4)/2, 330);
+              
+              var txtX=65;
+              var txtY=-30;
+              
+              // Formulas
+              textAlign(LEFT,TOP);
+              textSize(16);
+              fill(getColor(CLRS.YELLOW,90));
+
+                text(txt5,  30+txtX, 300+txtY);
+
+                text(txt6,  85+txtX, 290+txtY);
+                text(txt7, 135+txtX, 290+txtY);
+
+                text(txt8,  85+txtX, 310+txtY);
+                text(txt9, 135+txtX, 310+txtY);
+              
+              textSize(48);
+              textAlign(CENTER,CENTER);
+
+                text(txt10, 70+txtX, 305+txtY);
+
+              // Draw child controls
+              for(var c in this.controls){ this.controls[c].draw(); }
+
+          popMatrix();
+          
+        }
+        
+      };
+
+    }
+    
     // Index ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
 
@@ -733,7 +838,8 @@ var diagrams = function(processingInstance){
       };
       navScroll.prototype.dragged=function(x,y){
 
-        if(this.hit){
+        if(this.hit &&
+           app.focus===this.id){
           
           var X=floor((mouseX-this.x)/this.w*500);
           
@@ -879,10 +985,11 @@ var diagrams = function(processingInstance){
       navButton.prototype.clicked=function(){
       /* Overridden to maintain on/off value */
 
-        if(this.hit){
+        if(this.hit &&
+           app.focus===this.id){
 
           this.execute();
-          this.on=!this.on;
+          // this.on=!this.on;
 
           for(var c in this.controls){ this.controls[c].clicked(); }
 
@@ -1019,40 +1126,42 @@ var diagrams = function(processingInstance){
 
           fill(getColor(CLRS.WHITE,75));
 
-            text("         \n" +
-                 "x:       \n" +
-                 "y:       \n\n\n" +
-                 "Left:    \n" +
-                 "Right:   \n" +
-                 "Center:  \n\n\n" +
-                 "Focus:   \n" +
-                 "Focused: \n\n\n" +
-                 "Alt:     \n" +
-                 "Control: \n" +
-                 "Shift:   \n\n\n" +
-                 "Legend:  \n" +
-                 "Autorun: \n" +
-                 "Cursor:   \n" +
-                 "Frame Rate:",
+            text("            \n" +
+                 "x:          \n" +
+                 "y:          \n\n\n" +
+                 "Left:       \n" +
+                 "Right:      \n" +
+                 "Center:     \n\n\n" +
+                 "Focus:      \n" +
+                 "Focused:    \n\n\n" +
+                 "Alt:        \n" +
+                 "Control:    \n" +
+                 "Shift:      \n\n\n" +
+                 "Legend:     \n" +
+                 "Autorun:    \n" +
+                 "Cursor:     \n" +
+                 "Frame Rate: \n" +
+                 "Info:",
                  col1, row0+15);
 
           fill(getColor(CLRS.YELLOW,75));
 
             text("\n" +
-                 mouseX      + "\n" +
-                 mouseY      + "\n\n\n" +
-                 app.left    + "\n" +
-                 app.right   + "\n" +
-                 app.center  + "\n\n\n" +
-                 app.focus   + "\n" +
-                 focused     + "\n\n\n" +
+                 mouseX                     + "\n" +
+                 mouseY                     + "\n\n\n" +
+                 app.left                   + "\n" +
+                 app.right                  + "\n" +
+                 app.center                 + "\n\n\n" +
+                 app.focus                  + "\n" +
+                 focused                    + "\n\n\n" +
                  app.keys[KEYCODES.ALT]     + "\n" +
                  app.keys[KEYCODES.CONTROL] + "\n" +
                  app.keys[KEYCODES.SHIFT]   + "\n\n\n" +
-                 app.legend  + "\n" +
-                 app.autoRun + "\n" +
-                 app.dCursor + "\n" +
-                 app.frameRate,
+                 app.legend                 + "\n" +
+                 app.autoRun                + "\n" +
+                 app.dCursor                + "\n" +
+                 app.frameRate              + "\n" +
+                 app.infoOn,
                  col2, row0+15);
 
           var txt="Press the left and right arrow keys to increment and decrement integer.";
@@ -1350,7 +1459,6 @@ var diagrams = function(processingInstance){
 
         this.execute=params.execute;
         this.retrieve=params.retrieve;
-        this.tag=params.tag;
         this.text=params.text;
         this.color=params.color;
         this.cursor=params.cursor;
@@ -1362,7 +1470,6 @@ var diagrams = function(processingInstance){
       button.prototype.draw=function(){
 
           var offset=0;
-          this.on=this.retrieve();
 
           pushMatrix();
 
@@ -1373,7 +1480,6 @@ var diagrams = function(processingInstance){
               strokeWeight(0.75);
 
               fill(getColor(CLRS.ACTIVE, 5));
-              noFill();
               noStroke();
 
               if(this.hit &&
@@ -1384,12 +1490,7 @@ var diagrams = function(processingInstance){
                 app.focus=this.id;
                 cursor(this.cursor);
 
-                // stroke(getColor(this.parent.color,0));
-
-                noStroke();
-
-                if(this.on){ fill(getColor(this.color,100)); }
-                else       { fill(getColor(this.color, 50)); }
+                fill(getColor(CLRS.ACTIVE, 50));
 
               }
 
@@ -1397,40 +1498,16 @@ var diagrams = function(processingInstance){
 
               // Caption
               if(this.hit &&
-                 this.parent.hit){
-
-                fill(255,255,255);
-
-              }
-              else{
-
-                if(this.on){ fill(this.color);              }
-                else       { fill(getColor(this.color,50)); }
-
-              }
+                 this.parent.hit){  fill(255,255,255); }
+              else               {  fill(128,128,128); }
 
               scale(1,-1);
 
-              textAlign(LEFT,CENTER);
-
+              textAlign(CENTER,CENTER);
               textSize(12);
-              text(this.text, 10+offset, this.h/2+offset);
-
-              if(this.on){
-
-                textAlign(RIGHT,CENTER);
-
-                var txt=this.tag();
-
-                if(txt!==""){
-
-                  if      (txt> 100){ text( "Infinity", this.w-10+offset, this.h/2+offset); }
-                  else if (txt<-100){ text("-Infinity", this.w-10+offset, this.h/2+offset); }
-                  else              { text( txt,        this.w-10+offset, this.h/2+offset); }
-
-                }
-
-              }
+              this.w=textWidth(this.text)+10;
+              
+                text(this.text, this.w/2+offset, this.h/2+offset);
 
           popMatrix();
 
@@ -1438,10 +1515,10 @@ var diagrams = function(processingInstance){
       button.prototype.clicked=function(){
       /* Overridden to maintain on/off value */
 
-        if(this.hit){
+        if(this.hit &&
+           app.focus===this.id){
 
           this.execute();
-          this.on=!this.on;
 
           for(var c in this.controls){ this.controls[c].clicked(); }
 
@@ -1690,27 +1767,27 @@ var diagrams = function(processingInstance){
         popMatrix();
 
       };
+      graph.prototype.clicked=function(x,y){
 
-    };
-    graph.prototype.clicked=function(x,y){
+        if(this.hit){
 
-      if(this.hit){
+          if(mouseX>this.x+10 &&
+             mouseX<this.x+this.w+10){
+            
+            if(mouseX-this.x>0 &&
+               mouseX-this.x<app.data.length-1){
+              app.dCursor=mouseX-this.x-10;
+            }
 
-        if(mouseX>this.x+10 &&
-           mouseX<this.x+this.w+10){
-          
-          if(mouseX-this.x>0 &&
-             mouseX-this.x<app.data.length-1){
-            app.dCursor=mouseX-this.x-10;
           }
+
+          for(var c in this.controls){ this.controls[c].clicked((this.x+x), (this.y+y)); }
 
         }
 
-        for(var c in this.controls){ this.controls[c].clicked((this.x+x), (this.y+y)); }
-
-      }
-
-    };
+      };
+    
+    }
 
   }
 
@@ -1777,7 +1854,7 @@ var diagrams = function(processingInstance){
       // Navigation --------------------------------------------------
       {
         /* Navbar            */
-        var nvbar=new navbar(400, bk, 0, 570, width, 30,
+        var nvbar=new navbar(300, bk, 0, 570, width, 30,
           {text:        "Navigation",
            icolor:      CLRS.K_TEAL_4,
            acolor:      CLRS.K_TEAL_3,
@@ -1789,7 +1866,7 @@ var diagrams = function(processingInstance){
         bk.controls.push(nvbar);
 
           /* Decrement Page        */
-          nvbar.controls.push(new navButton(410, nvbar, 0, 0, 50, 30,
+          nvbar.controls.push(new navButton(310, nvbar, 0, 0, 50, 30,
             {execute:   decrementPage,
              type:      NAVIGATION.DECREMENTPAGE,
              retrieve:  navCursor,
@@ -1797,7 +1874,7 @@ var diagrams = function(processingInstance){
              cursor:    HAND}));
 
           /* Increment Page       */
-          nvbar.controls.push(new navButton(420, nvbar, width-50, 0, 50, 30,
+          nvbar.controls.push(new navButton(320, nvbar, width-50, 0, 50, 30,
             {execute:  incrementPage,
              type:     NAVIGATION.INCREMENTPAGE,
              retrieve: navCursor,
@@ -1805,7 +1882,7 @@ var diagrams = function(processingInstance){
              cursor:   HAND}));
 
           /* First Record         */
-          nvbar.controls.push(new navButton(430, nvbar, 50, 0, 25, 30,
+          nvbar.controls.push(new navButton(330, nvbar, 50, 0, 25, 30,
             {execute:   first,
              type:      NAVIGATION.FIRST,
              retrieve:  navCursor,
@@ -1813,7 +1890,7 @@ var diagrams = function(processingInstance){
              cursor:    HAND}));
 
           /* Decrement Record     */
-          nvbar.controls.push(new navButton(440, nvbar, 75, 0, 25, 30,
+          nvbar.controls.push(new navButton(340, nvbar, 75, 0, 25, 30,
             {execute:   decrement,
              type:      NAVIGATION.DECREMENT,
              retrieve:  navCursor,
@@ -1821,7 +1898,7 @@ var diagrams = function(processingInstance){
              cursor:    HAND}));
 
           /* Increment Record     */
-          nvbar.controls.push(new navButton(450, nvbar, width-100, 0, 25, 30,
+          nvbar.controls.push(new navButton(350, nvbar, width-100, 0, 25, 30,
             {execute:  increment,
              type:     NAVIGATION.INCREMENT,
              retrieve: navCursor,
@@ -1829,7 +1906,7 @@ var diagrams = function(processingInstance){
              cursor:   HAND}));
 
           /* Last Record          */
-          nvbar.controls.push(new navButton(460, nvbar, width-75, 0, 25, 30,
+          nvbar.controls.push(new navButton(360, nvbar, width-75, 0, 25, 30,
             {execute:  last,
              type:     NAVIGATION.LAST,
              retrieve: navCursor,
@@ -1837,7 +1914,7 @@ var diagrams = function(processingInstance){
              cursor:   HAND}));
 
           /* Scroll               */
-          nvbar.controls.push(new navScroll(470, nvbar, 100, 0, 400, 30,
+          nvbar.controls.push(new navScroll(370, nvbar, 100, 0, 400, 30,
             {execute:   navSetCursor,
              color:     CLRS.BLACK,
              cursor:    MOVE}));
@@ -1946,12 +2023,29 @@ var diagrams = function(processingInstance){
 
       // Telemetry --------------------------------------------------
         /* Telemetry          */
-        var telem=new telemetry(300, bk, width, 30, 200, 570,
+        var telem=new telemetry(400, bk, width, 30, 200, 570,
           {color:     CLRS.BLACK,
            cursor:    ARROW});
 
         bk.controls.push(telem);
 
+      // Loading --------------------------------------------------
+      
+        /* Splash Screen      */
+        var splashScreen=new splash(500, bk, 100, 100, 400, 400,
+          {color:     CLRS.BLACK,
+           retrieve:  getInfo,
+           cursor:    CROSS});
+
+        bk.controls.push(splashScreen);
+        
+          /* Close              */
+          splashScreen.controls.push(new button(510, splashScreen, 180, 360, 120, 20,
+            {text:      "Close",
+             execute:   toggleInfo,           
+             color:     CLRS.WHITE,
+             cursor:    HAND}));
+           
     };
     
     var update=function(){
