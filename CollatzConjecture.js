@@ -33,23 +33,36 @@
 
 var diagrams = function(processingInstance){
   with (processingInstance){
-
 /*
       https://xkcd.com/710/
 
       https://en.wikipedia.org/wiki/Collatz_conjecture
 
     TO DO:
-
-      - click graph to set integer
-      - mouse move over data tracker changes cursor
+      
+      - buttons to toggle
+        
+          - path display
+          - path integers
+          - line display
+      
       - color coded line based on height
       - color coded shape based on area
       - color code greatest total area
       - color code longest path
-      - number format integer details
-      - right left arrow to increment data by a screen width
 
+      - only draw telemetry if it's visible
+
+    Research:
+
+
+    TO DONE:
+
+      - right left arrow to increment data by a screen width
+          
+      - number format integer details
+      - click graph to set integer
+      - mouse move over data tracker changes cursor
       - toggle mouse tracking of data
       
       - collatz data type including
@@ -65,16 +78,7 @@ var diagrams = function(processingInstance){
       - increment button
       - decrement button
       - detail based on mouseX position
-
-      - only draw telemetry if it's visible
-
-    Research:
-
-
-    TO DONE:
-
-
-
+      
         textFont(createFont("sans-serif", 14));
         textFont(createFont("monospace", 14));
         textFont(createFont("serif", 14));
@@ -107,12 +111,13 @@ var diagrams = function(processingInstance){
     this.data=[];             //  Array of collatz objects
 
     this.autoRun=false;        //  Alpha changes automatically
-    this.infoOn=true;        //  Is the info frame displayed
+    this.infoOn=false;        //  Is the info frame displayed
 
-    this.dCursor=0;           //  position of the cursor in data
-    this.dOffset=2; //pow(2,52)+1; //9749626154;           //  How far from 0 is the data cursor
+    this.dCursor=25;           //  position of the cursor in data
+    this.dOffset=2; //9749626154;  //pow(2,52)+1         //  How far from 0 is the data cursor
 
     this.dHighest=0;          //  The index of the greatest number reached
+    this.dHighestIndex=0;     
     this.dArea=0;             //  The index of the greatest area of the path
     this.dLongest=0;          //  The index of the longest path
 
@@ -294,6 +299,55 @@ var diagrams = function(processingInstance){
 
   }
 
+  /* Data types ================================================ */
+  {
+  
+    var collatz=function(i){
+
+      this.i=i;
+      
+      this.path=[];
+      
+      this.max=0;
+      this.sum=0;
+      this.length=0;
+      this.up=0;
+      this.down=0;
+      this.area=0;
+
+      var p=this;
+
+      var load=function(n){
+
+        p.sum+=n;
+
+        p.path.push(n);
+
+        if(n>p.max){ p.max=n; }
+        
+        if(n===1){ return; }
+        else {
+
+          if(n%2===0){  n/=2;
+                        p.down++; }
+          else       {  n=n*3+1;
+                        p.up++;   }
+
+          load(n);
+
+        }
+
+      };
+
+      load(i);
+
+      this.length=this.path.length;
+  // println(this.i);
+
+    };
+  
+  }
+  
   /* Utility Functions ========================================================= */
   {
 
@@ -304,8 +358,12 @@ var diagrams = function(processingInstance){
       var _highest=0;
       var _sum=0;
       var _longest=0;
-    
-      for(var n=app.dOffset; n<=app.dOffset+500; n++){
+      var max=0;
+      
+      if(app.dOffset===2){ max=498; }
+      else               { max=500; }
+      
+      for(var n=app.dOffset; n<=app.dOffset+max; n++){
 
       // println(n);
       
@@ -323,7 +381,7 @@ var diagrams = function(processingInstance){
 
         if(app.data[app.data.length-1].path.length>_longest){
           app.dLongest=app.data.length-1;
-          _longest=app.data[app.data.length-1].path.length;
+          _longest=app.data[app.data.length-1].path.length-1;
         }
 
       }
@@ -335,8 +393,10 @@ var diagrams = function(processingInstance){
     var incrementRecord=function(){
 
       app.dCursor++;
-
-      if(app.dCursor>app.data.length-1){ app.dCursor=0; }
+      
+      app.dCursor%=(app.data.length-1);
+      
+      // if(app.dCursor>app.data.length-1){ app.dCursor=0; }
 
     };
     var decrementRecord=function(){
@@ -363,6 +423,17 @@ var diagrams = function(processingInstance){
     var getInfo=function()        { return app.infoOn;                };
     var toggleInfo=function()     { app.infoOn =! app.infoOn;         };
 
+    var setDataCursor=function(n) {
+
+      if(n>=0 &&
+         n<app.data.length){
+
+        app.dCursor=round(n);
+
+      }
+
+    };
+    
     var decrement=function()      { decrementRecord();                };
     var first=function()          { app.dCursor=0;                    };
     var increment=function()      { incrementRecord();                };
@@ -392,54 +463,14 @@ var diagrams = function(processingInstance){
     var navRecordCount=function() { return app.data.length;           };
     var navSetCursor=function(n)  {
       
-      app.dCursor=floor(n/500*app.data.length);
+      var setValue=round(n/app.data.length*app.data.length);
       
-    };
-
-  }
-
-  /* Data types ================================================ */
-  var collatz=function(i){
-
-    this.i=i;
-    
-    this.path=[];
-    
-    this.max=0;
-    this.sum=0;
-    this.length=0;
-    this.up=0;
-    this.down=0;
-    this.area=0;
-
-    var p=this;
-
-    var load=function(n){
-
-      p.sum+=n;
-
-      p.path.push(n)
-
-      if(n>p.max){ p.max=n; }
-      
-      if(n===1){ return; }
-      else {
-
-        if(n%2===0){  n/=2;
-                      p.down++; }
-        else       {  n=n*3+1;
-                      p.up++;   }
-
-        load(n);
-
+      if(setValue>=0 &&
+         setValue<app.data.length){
+        app.dCursor=setValue;
       }
 
     };
-
-    load(i);
-
-    this.length=this.path.length;
-// println(this.i);
 
   }
 
@@ -679,7 +710,7 @@ var diagrams = function(processingInstance){
               
                 text("The Collatz Conjecture", this.w/2, 30);
               
-              var txt0="A conjecture in mathematics named after Lothar Collatz also known as the 3n + 1 conjecture or the hailstone sequence."              
+              var txt0="A conjecture in mathematics named after Lothar Collatz also known as the 3n + 1 conjecture or the hailstone sequence.";              
               var txt1="Take any positive integer n.  If n is even, divide it by 2 to get n / 2.  If n is odd, multiply it by 3 and add 1 to obtain 3n + 1.  Repeat the process indefinitely.  The conjecture is that no matter what number you start with, you will always eventually reach 1.";
               var txt2="For instance, starting with n = 12, one gets the sequence 12, 6, 3, 10, 5, 16, 8, 4, 2, 1.";
               var txt3="If the conjecture is false, it can only be because there is some starting number which gives rise to a sequence that does not contain 1. Such a sequence might enter a repeating cycle that excludes 1, or increase without bound. No such sequence has been found.";
@@ -841,11 +872,10 @@ var diagrams = function(processingInstance){
         if(this.hit &&
            app.focus===this.id){
           
-          var X=floor((mouseX-this.x)/this.w*500);
+          var X=round((mouseX-this.x)/this.w*app.data.length);
           
-          if(X>=0 && X<500){
+          if(X>=0 && X<=app.data.length){
             this.execute(X);
-            // println(X);
           }
 
           for(var c in this.controls){ this.controls[c].dragged(); }
@@ -853,7 +883,22 @@ var diagrams = function(processingInstance){
         }
 
       };
+      navScroll.prototype.clicked=function(x,y){
 
+        if(this.hit &&
+           app.focus===this.id){
+          
+          var X=round((mouseX-this.x)/this.w*app.data.length);
+          
+          if(X>=0 && X<=app.data.length){
+            this.execute(X);
+          }
+
+          for(var c in this.controls){ this.controls[c].dragged(); }
+  
+        }
+
+      };
     }
     
     // NavBar ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -877,7 +922,7 @@ var diagrams = function(processingInstance){
 
         pushMatrix();
 
-          translate(this.x, this.y);
+          translate(this.x+0.5, this.y+0.5);
 
             noStroke();
             fill(this.icolor);
@@ -893,18 +938,23 @@ var diagrams = function(processingInstance){
             }
 
               rect(0, 0, this.w, this.h);
+              
+            stroke(getColor(CLRS.BLACK,25));
+            strokeWeight(0.25);
+
+              line(0, 0, this.w,      0); // Top Border
 
             // Caption
             fill(getColor(CLRS.BLACK, 50));
             
-            if(this.hit){ fill(getColor(CLRS.WHITE,100)); }
+            if(this.hit){ fill(getColor(CLRS.K_TEAL_0,100)); }
             
             textSize(16);
             textAlign(CENTER,CENTER);
             var txt=this.position() + " of " + this.recordCount();
             
               text(txt, this.w/2, this.h/2);
-
+            
             // Draw child controls
             for(var c in this.controls){ this.controls[c].draw(); }
 
@@ -960,10 +1010,10 @@ var diagrams = function(processingInstance){
             // Icon
             fill(getColor(this.color, 65));
 
-            if(this.hit){ fill(getColor(this.color, 100)); };
+            if(this.hit){ fill(getColor(this.color, 100)); }
 
             noStroke();
-            textAlign(CENTER,CENTER)
+            textAlign(CENTER,CENTER);
             textSize(16);
 
               switch(this.type){
@@ -1537,18 +1587,26 @@ var diagrams = function(processingInstance){
 
         this.color=params.color;
         this.cursor=params.cursor;
-      var txt="";
-      var total=0;
+        
+        this.displaySummary=true;
+        this.displayPath=true;
+        this.displayLines=true;
+        this.displayCollatz=true;
+        
+        this.sw=1;
+
+        var txt="";
+        var total=0;
+        
       };
       graph.prototype=Object.create(control.prototype);
       graph.prototype.draw=function(){
 
         var p=this;
 
-        var convertLength=function(n){
+        var convertHeight=function(n){
 
-            // return (n-1)/p._longest*p.h*0.5;
-        return (n-1)/app.data[app.dLongest].path.length*p.h*0.5;
+          return (n-1)/app.data[app.dLongest].path.length*p.h*0.5;
           
         };
         var convertPath=function(n,max){
@@ -1560,8 +1618,8 @@ var diagrams = function(processingInstance){
         };
         var convertX=function(x, length){
 
-
-          return x/length*(p.w-20);
+        return x/length*(p.w-20);
+          // return (x+1)/length*(app.data.length);
 
         };
 
@@ -1586,7 +1644,7 @@ var diagrams = function(processingInstance){
 
           pushMatrix();
 
-            translate(10, p.h-10);
+            translate(p.x, p.h-10);
             scale(1,-1);
 
               fill(getColor(CLRS.K_TEAL_0,100));
@@ -1605,7 +1663,7 @@ var diagrams = function(processingInstance){
           popMatrix();
 
         };
-        var displayCollatz=function(){
+        var drawCollatz=function(){
 
           pushMatrix();
 
@@ -1613,31 +1671,53 @@ var diagrams = function(processingInstance){
             scale(1,-1);
 
               strokeWeight(1);
-              fill(  getColor(CLRS.K_TEAL_2, 50));
+              fill(  getColor(CLRS.K_TEAL_2, 25));
               stroke(getColor(CLRS.BLACK,    50));
 
               beginShape();
 
                 vertex(0,0);
-
-                for(var n=0; n<app.data[app.dCursor].path.length; n++){
+                vertex(0,convertPath(app.data[app.dCursor].path[0],
+                                     app.data[app.dCursor].max));
+                
+                for(var n=1; n<app.data[app.dCursor].path.length; n++){
 
                   var x=convertX(n, app.data[app.dCursor].length);
                   var y=convertPath(app.data[app.dCursor].path[n],
                                     app.data[app.dCursor].max);
 
                     vertex(x,y);
+                    ellipse(x,y,0.25,0.25);
 
-                    ellipse(x,y,0.5,0.5);
+                }
 
-                };
-
-                vertex(p.w-20,0);
+                // vertex(500, 0);
+                // ellipse(500, 0, 0.25, 0.25);
 
               endShape(CLOSE);
 
           popMatrix();
 
+        };
+        var drawPath=function(){
+          
+          var path="";
+          
+          for(var n=0; n<app.data[app.dCursor].path.length; n++){
+            
+            path+=app.data[app.dCursor].path[n];
+
+            if(n!==app.data[app.dCursor].path.length-1){
+              path+= ", ";
+            }
+
+          }
+          
+          textAlign(LEFT,TOP);
+          fill(getColor(CLRS.GRAY,50));
+          
+            text(path, 20, 140, p.w-30, 10000);
+  
         };
         var currentData=function(){
 
@@ -1671,46 +1751,62 @@ var diagrams = function(processingInstance){
                  nfc(app.data[app.dCursor].down),
                  140, 35);
 
-          textAlign(LEFT,TOP);
-          fill(getColor(CLRS.K_TEAL_4,75));
-
-            text(app.data[app.dCursor].path,
-                 20, 140, 480,10000);
-
         };
         var drawLines=function(){
 
-          //  Data Cursor
-          stroke(getColor(CLRS.RED,75));
-          strokeWeight(3);
+          p.sw=(p.w-20)/app.data.length;
 
-            var d=convertLength(app.data[app.dCursor].path.length);
-
-            // line(app.dCursor+6.5, p.h*0.25, app.dCursor+6.5, p.h-12);
-
-            line(app.dCursor+10, p.h-12-d, app.dCursor+10, p.h-12);
-
+          var dLength=app.data.length;
+          var pLength=app.data[app.dCursor].path.length;
+// sw=1;          
           pushMatrix();
-
-            var sw=1;
 
             translate(10, p.h-10);
             scale(1,-1);
-            strokeWeight(sw);
+            strokeWeight(p.sw);
 
-            for(var n=1; n<app.data.length; n++){
+            for(var n=0; n<dLength; n++){
+
+              pLength=app.data[n].path.length;
 
               if(n%2===0){ stroke(getColor(CLRS.BLACK, 25)); }
               else       { stroke(getColor(CLRS.BLACK, 50)); }
 
-              line(n*sw, 2, n*sw, convertLength(app.data[n].path.length));
+              strokeWeight(1);
 
-            };
+              if(n===app.dHighest){
+
+                stroke(getColor(CLRS.ORANGE,75));
+                strokeWeight(2);
+
+              }
+              if(n===app.dSum){
+
+                stroke(getColor(CLRS.GREEN,75));
+                strokeWeight(2);
+
+              }
+              if(n===app.dLongest){
+
+                stroke(getColor(CLRS.BLUE,75));
+                strokeWeight(2);
+
+              }              
+              if(n===app.dCursor){
+                
+                stroke(getColor(CLRS.RED,75));
+                strokeWeight(2);
+                
+              }
+
+              line(convertX(n, dLength), 2,
+                   convertX(n, dLength), convertHeight(pLength));
+
+            }
 
           popMatrix();
 
         };
-
         var dataSummary=function(){
 
           fill(getColor(CLRS.BLACK,75));
@@ -1738,7 +1834,7 @@ var diagrams = function(processingInstance){
             text("\n\n" +
                  nfc(app.data[app.dHighest].max) + "\n" +
                  nfc(app.data[app.dSum].sum) + "\n" +
-                 nfc(app.data[app.dLongest].length),
+                 nfc(app.data[app.dLongest].length-1),
                  440, 35);
 
         };
@@ -1758,9 +1854,11 @@ var diagrams = function(processingInstance){
             // border();
             axes();
             currentData();
-            dataSummary();
-            displayCollatz();
-            drawLines();
+            // if(this.displaySummary){ border(); }
+            if(this.displaySummary){ dataSummary(); }
+            if(this.displayPath)   { drawPath();    }
+            if(this.displayLines)  { drawLines();   }
+            if(this.displayCollatz){ drawCollatz(); }
 
 // println(typeof app.dSum);
 
@@ -1771,22 +1869,30 @@ var diagrams = function(processingInstance){
 
         if(this.hit){
 
-          if(mouseX>this.x+10 &&
-             mouseX<this.x+this.w+10){
-            
-            if(mouseX-this.x>0 &&
-               mouseX-this.x<app.data.length-1){
-              app.dCursor=mouseX-this.x-10;
-            }
-
-          }
+          setDataCursor((mouseX-this.x-10)/this.sw);
 
           for(var c in this.controls){ this.controls[c].clicked((this.x+x), (this.y+y)); }
 
         }
 
       };
-    
+      graph.prototype.dragged=function(x,y){
+
+        if(this.hit){
+          
+          if(mouseX>=this.x+10 &&
+             mouseX<=this.x+this.w+10){
+          
+            setDataCursor((mouseX-this.x-10)/this.sw);
+          
+          }
+
+          for(var c in this.controls){ this.controls[c].dragged((this.x+x), (this.y+y)); }
+
+        }
+
+      };
+      
     }
 
   }
@@ -1796,7 +1902,6 @@ var diagrams = function(processingInstance){
     var initialize=function(){
 
       // Background --------------------------------------------------
-      {
 
         /* root control       */
         var bk=new root(100, null, 0, 0, width, height,
@@ -1809,13 +1914,11 @@ var diagrams = function(processingInstance){
         app.controls.push(bk);
 
         /* graph        */
-        bk.controls.push(new graph(110, bk, 30, 30, 540, 540,
+        bk.controls.push(new graph(110, bk, 10, 30, 575, 540,
           {color:     CLRS.GRAY,
            acolor:    CLRS.BLUE,
            icolor:    CLRS.RED,
            cursor:    ARROW}));
-
-      }
 
       // toolbar --------------------------------------------------
       {
@@ -1853,11 +1956,13 @@ var diagrams = function(processingInstance){
 
       // Navigation --------------------------------------------------
       {
+        var h=25;
+        
         /* Navbar            */
-        var nvbar=new navbar(300, bk, 0, 570, width, 30,
+        var nvbar=new navbar(300, bk, 0, 575, width, h,
           {text:        "Navigation",
-           icolor:      CLRS.K_TEAL_4,
-           acolor:      CLRS.K_TEAL_3,
+           icolor:      CLRS.INACTIVE,
+           acolor:      CLRS.K_TEAL_4,
            cursor:      ARROW,
            position:    navCursor,
            recordCount: navRecordCount,
@@ -1866,7 +1971,7 @@ var diagrams = function(processingInstance){
         bk.controls.push(nvbar);
 
           /* Decrement Page        */
-          nvbar.controls.push(new navButton(310, nvbar, 0, 0, 50, 30,
+          nvbar.controls.push(new navButton(310, nvbar, 0, 0, 50, h,
             {execute:   decrementPage,
              type:      NAVIGATION.DECREMENTPAGE,
              retrieve:  navCursor,
@@ -1874,7 +1979,7 @@ var diagrams = function(processingInstance){
              cursor:    HAND}));
 
           /* Increment Page       */
-          nvbar.controls.push(new navButton(320, nvbar, width-50, 0, 50, 30,
+          nvbar.controls.push(new navButton(320, nvbar, width-50, 0, 50, h,
             {execute:  incrementPage,
              type:     NAVIGATION.INCREMENTPAGE,
              retrieve: navCursor,
@@ -1882,7 +1987,7 @@ var diagrams = function(processingInstance){
              cursor:   HAND}));
 
           /* First Record         */
-          nvbar.controls.push(new navButton(330, nvbar, 50, 0, 25, 30,
+          nvbar.controls.push(new navButton(330, nvbar, 50, 0, 25, h,
             {execute:   first,
              type:      NAVIGATION.FIRST,
              retrieve:  navCursor,
@@ -1890,7 +1995,7 @@ var diagrams = function(processingInstance){
              cursor:    HAND}));
 
           /* Decrement Record     */
-          nvbar.controls.push(new navButton(340, nvbar, 75, 0, 25, 30,
+          nvbar.controls.push(new navButton(340, nvbar, 75, 0, 25, h,
             {execute:   decrement,
              type:      NAVIGATION.DECREMENT,
              retrieve:  navCursor,
@@ -1898,7 +2003,7 @@ var diagrams = function(processingInstance){
              cursor:    HAND}));
 
           /* Increment Record     */
-          nvbar.controls.push(new navButton(350, nvbar, width-100, 0, 25, 30,
+          nvbar.controls.push(new navButton(350, nvbar, width-100, 0, 25, h,
             {execute:  increment,
              type:     NAVIGATION.INCREMENT,
              retrieve: navCursor,
@@ -1906,7 +2011,7 @@ var diagrams = function(processingInstance){
              cursor:   HAND}));
 
           /* Last Record          */
-          nvbar.controls.push(new navButton(360, nvbar, width-75, 0, 25, 30,
+          nvbar.controls.push(new navButton(360, nvbar, width-75, 0, 25, h,
             {execute:  last,
              type:     NAVIGATION.LAST,
              retrieve: navCursor,
@@ -1914,7 +2019,7 @@ var diagrams = function(processingInstance){
              cursor:   HAND}));
 
           /* Scroll               */
-          nvbar.controls.push(new navScroll(370, nvbar, 100, 0, 400, 30,
+          nvbar.controls.push(new navScroll(370, nvbar, 100, 0, 400, h,
             {execute:   navSetCursor,
              color:     CLRS.BLACK,
              cursor:    MOVE}));
@@ -2058,7 +2163,7 @@ var diagrams = function(processingInstance){
          (frameCount%app.frameRate===0)){           
            incrementCursor();
            app.dCursor%=app.data.length-1;
-      };
+      }
 
       for(var c in app.controls){ app.controls[c].draw(); }
 
