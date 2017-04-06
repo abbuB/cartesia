@@ -33,14 +33,39 @@
 
 var diagrams = function(processingInstance){
   with (processingInstance){
-
 /*
+      https://xkcd.com/710/
+
+      https://en.wikipedia.org/wiki/Collatz_conjecture
 
     TO DO:
 
+      - click graph to set integer
+      - mouse move over data tracker changes cursor
+      - color coded line based on height
+      - color coded shape based on area
+      - color code greatest total area
+      - color code longest path
+      - number format integer details
+      - right left arrow to increment data by a screen width
+
+      - toggle mouse tracking of data
+      
+      - collatz data type including
+
+        - number
+        - path
+        - size
+        - max
+        - sum
+        ...
+
+      - run button
+      - increment button
+      - decrement button
+      - detail based on mouseX position
+
       - only draw telemetry if it's visible
-      - optional degrees radians
-      - versine, coversine, exsecant, excosecant
 
     Research:
 
@@ -61,87 +86,52 @@ var diagrams = function(processingInstance){
 
   var application=function(){
 
-      this.debug=true;          //  mode that displays enhanced debugging tools
+    this.debug=true;          //  mode that displays enhanced debugging tools
 
-      this.frameRate=30;        //  refresh speed
+    this.frameRate=30;        //  refresh speed
 
-      this.mouseX=0;            //  current mouseX location
-      this.mouseY=0;            //  current mouseY location
+    this.mouseX=0;            //  current mouseX location
+    this.mouseY=0;            //  current mouseY location
 
-      this.left=false;          //  Is the left mouse button pressed
-      this.right=false;         //  Is the right mouse button pressed
-      this.center=false;        //  Is the center mouse button pressed
+    this.left=false;          //  Is the left mouse button pressed
+    this.right=false;         //  Is the right mouse button pressed
+    this.center=false;        //  Is the center mouse button pressed
 
-      this.focus=0;             //  The ID of the control with focus
-      
-      this.controls=[];         //  collection of controls in the app
-      this.keys=[];             //  Array holding the value of all keycodes
+    this.focus=0;             //  The ID of the control with focus
 
-      /* App Specific */
-      this.data=[];             //  Values of each trig function from 0 (zero) to 360
+    this.controls=[];         //  collection of controls in the app
+    this.keys=[];             //  Array holding the value of all keycodes
 
-      this.autoRun=false;        //  Alpha changes automatically
+    /* App Specific ------------------ */
+    this.data=[];             //  Array of collatz objects
 
-      this.theta=0;             //   Current angle
+    this.autoRun=false;        //  Alpha changes automatically
+    this.infoOn=false;        //  Is the info frame displayed
 
-      this.sineOn       = true;
-      this.cosineOn     = true;
-      this.tangentOn    = true;
-      this.cosecantOn   = true;
-      this.secantOn     = true;
-      this.cotangentOn  = true;
-      
-      this.versineOn    = true;
-      this.coversineOn  = true;
-      this.exsecantOn   = true;
-      this.excosecantOn = true;
+    this.dCursor=25;           //  position of the cursor in data
+    this.dOffset=2; //9749626154;  //pow(2,52)+1         //  How far from 0 is the data cursor
 
-      this.thetaOn      = true;
-      this.quadrantsOn  = true;
+    this.dHighest=0;          //  The index of the greatest number reached
+    this.dArea=0;             //  The index of the greatest area of the path
+    this.dLongest=0;          //  The index of the longest path
 
-      this.MIN=0;
-      this.MAX=360;
-
-      var sineN, cosineN, tangentN,
-          secantN, cosecantN, cotangentN,
-          versineN, coversineN,
-          exsecantN, excosecantN;
-
-      /* Load Data */
-        
-      for (var n=this.MIN; n<=this.MAX; n++){
-
-          sineN       = sin(radians(n)).toFixed(4);
-          cosecantN   =       (1/sineN).toFixed(4);
-          cosineN     = cos(radians(n)).toFixed(4);
-          secantN     =     (1/cosineN).toFixed(4);
-          tangentN    = tan(radians(n)).toFixed(4);
-          cotangentN  =    (1/tangentN).toFixed(4);
-          versineN    =     (1-cosineN).toFixed(4);
-          coversineN  =       (1-sineN).toFixed(4);
-          exsecantN   =   (cosecantN-1).toFixed(4);
-          excosecantN =     (secantN-1).toFixed(4);
-
-          this.data.push({  sine:     sineN,      cosecant:   cosecantN,
-                            cosine:   cosineN,    secant:     secantN,
-                            tangent:  tangentN,   cotangent:  cotangentN,
-
-                            versine:  versineN,   coversine:  coversineN,
-                            exsecant: exsecantN,  excosecant: excosecantN });
-      }
+    /* Initialize -------------------- */
+    {
 
       frameRate(0);
-    
+
       cursor(WAIT);
 
       angleMode="radians";
 
       size(600, 600); // set size of canvas
-      
-    };
+
+    }
+
+  };
 
   var app=new application();
-  
+
   /* Constants ======================================================= */
   {
 
@@ -184,19 +174,19 @@ var diagrams = function(processingInstance){
       Z:          90
     };
     var CLRS={
-      
+
       K_STEEL_0:     color( 48, 68, 82,255),
       K_STEEL_1:     color(132,177,208,255),
       K_STEEL_2:     color(106,141,166,255),
       K_STEEL_3:     color(136,164,184,255),
-      
+
       K_TEAL_0:     color( 24, 99,117,255),
       K_TEAL_1:     color( 28,117,138,255),
       K_TEAL_2:     color( 41,171,202,255),
       K_TEAL_3:     color( 88,196,221,255),
       K_TEAL_4:     color(156,220,235,255),
       K_TEAL_5:     color( 17,172,205,255),
-      
+
       K_GREEN_0:    color( 31,171, 84,255),
       K_GREEN_1:    color( 56,182, 92,255),
       K_GREEN_2:    color( 116,207,112,255),
@@ -218,9 +208,9 @@ var diagrams = function(processingInstance){
 
       K_BLUE_0:     color( 19, 78,163,255),
       K_BLUE_1:     color( 60,145,229,255),
-      
+
       K_GRAY_0:     color(221,221,221,255),
-      
+
       RED0:         color(153,  0,  0,255),
       RED1:         color(204,  0,  0,255),
       RED2:         color(255, 51, 51,255),
@@ -266,13 +256,13 @@ var diagrams = function(processingInstance){
       CSC:          color(170, 29, 29,255), CSC_LT:       color(238,136, 15,128),
       SEC:          color( 29, 86,170,255), SEC_LT:       color(158,182, 58,128),
       COT:          color(158,182, 58,255), COT_LT:       color(128,128,128,128),
-      
+
       VERSINE:      color(255,127,  0,255), COVERSINE:    color(255,127,  0,255),
       EXSEC:        color(255, 20,147,255), EXCSC:        color(255, 20,147,255),
-      
+
       PINK:         color(255, 20,147,255)
-      
-      
+
+
     };
     var QUADRANTS={
       NONE:   0,
@@ -283,41 +273,132 @@ var diagrams = function(processingInstance){
     };
     var CONSTANTS={
 
-      DEGREES:  "°",
-      PI:       "π",
-      UP_ARROW: "▲",
-      INFINITY: "∞",
-      THETA:    "θ",
-      RADIANS:  "ᶜ"
+      DEGREES:    "°",
+      PI:         "π",
+      UP_ARROW:   "▲",
+      INFINITY:   "∞",
+      THETA:      "θ",
+      RADIANS:    "ᶜ",
+      IDENTICAL:  "	≡"
 
+    };
+    var NAVIGATION={
+      DECREMENT:      0,
+      FIRST:          1,
+      INCREMENT:      2,
+      LAST:           3,
+      DECREMENTPAGE:  4,
+      INCREMENTPAGE:  5
     };
 
   }
 
+  /* Data types ================================================ */
+  {
+  
+    var collatz=function(i){
+
+      this.i=i;
+      
+      this.path=[];
+      
+      this.max=0;
+      this.sum=0;
+      this.length=0;
+      this.up=0;
+      this.down=0;
+      this.area=0;
+
+      var p=this;
+
+      var load=function(n){
+
+        p.sum+=n;
+
+        p.path.push(n);
+
+        if(n>p.max){ p.max=n; }
+        
+        if(n===1){ return; }
+        else {
+
+          if(n%2===0){  n/=2;
+                        p.down++; }
+          else       {  n=n*3+1;
+                        p.up++;   }
+
+          load(n);
+
+        }
+
+      };
+
+      load(i);
+
+      this.length=this.path.length;
+  // println(this.i);
+
+    };
+  
+  }
+  
   /* Utility Functions ========================================================= */
   {
 
+    var loadData=function(){
+      
+      app.data=[];
+
+      var _highest=0;
+      var _sum=0;
+      var _longest=0;
+    
+      for(var n=app.dOffset; n<=app.dOffset+500; n++){
+
+      // println(n);
+      
+        app.data.push(new collatz(n));
+
+        if(app.data[app.data.length-1].max>_highest){
+          app.dHighest=app.data.length-1;
+          _highest=app.data[app.data.length-1].max;
+        }
+        
+        if(app.data[app.data.length-1].sum>_sum){
+          app.dSum=app.data.length-1;
+          _sum=app.data[app.data.length-1].sum;
+        }
+
+        if(app.data[app.data.length-1].path.length>_longest){
+          app.dLongest=app.data.length-1;
+          _longest=app.data[app.data.length-1].path.length;
+        }
+
+      }
+    
+    };
+        
     var getColor=function(clr, alpha){ return color(red(clr), green(clr), blue(clr), alpha/100*255); };
 
-    var increment=function(){
+    var incrementRecord=function(){
 
-      app.theta++;
+      app.dCursor++;
 
-      if(app.theta>360){ app.theta=0; }
-
-    };
-    var decrement=function(){
-
-      app.theta--;
-
-      if(app.theta<0){ app.theta=360; }
+      if(app.dCursor>app.data.length-1){ app.dCursor=0; }
 
     };
+    var decrementRecord=function(){
 
-    var getAuto=function()     { return app.autoRun;  };
-    var getLegend=function()   { return app.legend;   };
+      app.dCursor--;
 
-    var checkboxAuto=function(){
+      if(app.dCursor<0){ app.dCursor=app.data.length-1; }
+
+    };
+
+    var getAuto=function()        { return app.autoRun;               };
+    var getLegend=function()      { return app.legend;                };
+
+    var checkboxAuto=function()   {
 
       app.autoRun=!app.autoRun;
 
@@ -325,47 +406,43 @@ var diagrams = function(processingInstance){
       else           { app.frameRate=30; }
 
     };
-    var checkboxLegend=function(){ app.legend=!app.legend;   };
+    var checkboxLegend=function() { app.legend=!app.legend;           };
 
-    var getSine=function()          { return app.data[app.theta].sine;       };
-    var getCosine=function()        { return app.data[app.theta].cosine;     };
-    var getTangent=function()       { return app.data[app.theta].tangent;    };
+    var getInfo=function()        { return app.infoOn;                };
+    var toggleInfo=function()     { app.infoOn =! app.infoOn;         };
 
-    var getCosecant=function()      { return app.data[app.theta].cosecant;   };
-    var getSecant=function()        { return app.data[app.theta].secant;     };
-    var getCotangent=function()     { return app.data[app.theta].cotangent;  };
+    var decrement=function()      { decrementRecord();                };
+    var first=function()          { app.dCursor=0;                    };
+    var increment=function()      { incrementRecord();                };
+    var last=function()           { app.dCursor=app.data.length-1;    };
+    var incrementPage=function()  {
+      
+      if(app.dOffset>2){ app.dOffset+=500; }
+      else             { app.dOffset+=498; }
+      
+      loadData();
+      
+    };
+    var decrementPage=function()  {
 
-    var getVersine=function()       { return app.data[app.theta].versine;    };
-    var getCoversine=function()     { return app.data[app.theta].coversine;  };
+      if(app.dOffset>2){
 
-    var getExsecant=function()      { return app.data[app.theta].exsecant;   };
-    var getExcosecant=function()    { return app.data[app.theta].excosecant; };
-    
-    var getSineOn=function()        { return app.sineOn;                     };
-    var getCosineOn=function()      { return app.cosineOn;                   };
-    var getTangentOn=function()     { return app.tangentOn;                  };
+        if(app.dOffset>500){ app.dOffset-=500; }
+        else               { app.dOffset-=498; }
 
-    var getCosecantOn=function()    { return app.cosecantOn;                 };
-    var getSecantOn=function()      { return app.secantOn;                   };
-    var getCotangentOn=function()   { return app.cotangentOn;                };
+        loadData();     
 
-    var getVersineOn=function()     { return app.versineOn;                  };
-    var getCoversineOn=function()   { return app.coversineOn;                };
-    
-    var getExsecantOn=function()    { return app.exsecantOn;                 };
-    var getExcosecantOn=function()  { return app.excosecantOn;               };
-
-    var toggleSine=function()       { app.sineOn       =! app.sineOn;        };
-    var toggleCosine=function()     { app.cosineOn     =! app.cosineOn;      };
-    var toggleTangent=function()    { app.tangentOn    =! app.tangentOn;     };
-    var toggleCosecant=function()   { app.cosecantOn   =! app.cosecantOn;    };
-    var toggleSecant=function()     { app.secantOn     =! app.secantOn;      };
-    var toggleCotangent=function()  { app.cotangentOn  =! app.cotangentOn;   };
-
-    var toggleVersine=function()    { app.versineOn    =! app.versineOn;     };
-    var toggleCoversine=function()  { app.coversineOn  =! app.coversineOn;   };
-    var toggleExsecant=function()   { app.exsecantOn   =! app.exsecantOn;    };
-    var toggleExcosecant=function() { app.excosecantOn =! app.excosecantOn;  };
+      }
+      
+    };
+    var incrementCursor=function(){ app.dCursor++;                    };
+    var navCursor=function()      { return app.dCursor+1;             };
+    var navRecordCount=function() { return app.data.length;           };
+    var navSetCursor=function(n)  {
+      
+      app.dCursor=floor(n/500*app.data.length);
+      
+    };
 
   }
 
@@ -426,8 +503,24 @@ var diagrams = function(processingInstance){
         }
 
       };
-      control.prototype.dragged=function(){};
-      control.prototype.pressed=function(){};
+      control.prototype.dragged=function(){
+        
+        if(this.hit){
+
+          for(var c in this.controls){ this.controls[c].dragged(); }
+
+        }
+        
+      };
+      control.prototype.pressed=function(){
+        
+        if(this.hit){
+
+          for(var c in this.controls){ this.controls[c].pressed(); }
+
+        }
+        
+      };
       control.prototype.released=function(){};
       control.prototype.typed=function(){};
       control.prototype.over=function(){};
@@ -546,6 +639,110 @@ var diagrams = function(processingInstance){
 
     }
 
+    // Splash Screen ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    {
+
+      var splash=function(id, parent, x, y, w, h, params){
+
+        control.call(this, id, parent, x, y, w, h);
+
+        this.color=params.color;
+        this.cursor=params.cursor;
+        this.retrieve=params.retrieve;
+
+      };
+      splash.prototype=Object.create(control.prototype);
+      splash.prototype.draw=function(){
+        
+        if(this.retrieve()){        
+        
+          pushMatrix();
+
+            translate(this.x, this.y);
+
+              strokeWeight(1);
+              stroke(getColor(this.color, 40));
+              fill(getColor(this.color, 90));
+              
+              if(this.hit &&
+                 this.parent.hit){
+
+                app.focus=this.id;
+                cursor(this.cursor);
+
+                fill(getColor(this.color, 100));
+
+              }
+
+                rect(0, 0, this.w, this.h, 20);
+
+              textSize(16);
+              textAlign(CENTER,BOTTOM);
+              fill(getColor(CLRS.YELLOW,75));
+              
+                text("The Collatz Conjecture", this.w/2, 30);
+              
+              var txt0="A conjecture in mathematics named after Lothar Collatz also known as the 3n + 1 conjecture or the hailstone sequence.";              
+              var txt1="Take any positive integer n.  If n is even, divide it by 2 to get n / 2.  If n is odd, multiply it by 3 and add 1 to obtain 3n + 1.  Repeat the process indefinitely.  The conjecture is that no matter what number you start with, you will always eventually reach 1.";
+              var txt2="For instance, starting with n = 12, one gets the sequence 12, 6, 3, 10, 5, 16, 8, 4, 2, 1.";
+              var txt3="If the conjecture is false, it can only be because there is some starting number which gives rise to a sequence that does not contain 1. Such a sequence might enter a repeating cycle that excludes 1, or increase without bound. No such sequence has been found.";
+              var txt4="https://en.wikipedia.org/wiki/Collatz_conjecture";
+              
+              var txt5="f(n)";
+              var txt6="n/2";
+              var txt7="if n" + CONSTANTS.IDENTICAL + "0 (mod 2)";
+              var txt8="3n+1";
+              var txt9="if n" + CONSTANTS.IDENTICAL + "1 (mod 2)";
+              var txt10="{";
+              
+              textSize(11);
+              textAlign(LEFT,TOP);
+              fill(getColor(CLRS.WHITE,75));
+
+                text(txt0 + "\n\n" +
+                     txt1 + "\n\n" +
+                     txt2 + "\n\n" +
+                     txt3,
+                     20, 40,
+                     this.w-30, this.h-40);
+                
+              textAlign(LEFT,CENTER);
+              fill(getColor(CLRS.K_TEAL_2,100));  
+                
+                text(txt4, this.w/2-textWidth(txt4)/2, 330);
+              
+              var txtX=65;
+              var txtY=-30;
+              
+              // Formulas
+              textAlign(LEFT,TOP);
+              textSize(16);
+              fill(getColor(CLRS.YELLOW,90));
+
+                text(txt5,  30+txtX, 300+txtY);
+
+                text(txt6,  85+txtX, 290+txtY);
+                text(txt7, 135+txtX, 290+txtY);
+
+                text(txt8,  85+txtX, 310+txtY);
+                text(txt9, 135+txtX, 310+txtY);
+              
+              textSize(48);
+              textAlign(CENTER,CENTER);
+
+                text(txt10, 70+txtX, 305+txtY);
+
+              // Draw child controls
+              for(var c in this.controls){ this.controls[c].draw(); }
+
+          popMatrix();
+          
+        }
+        
+      };
+
+    }
+    
     // Index ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
 
@@ -591,6 +788,225 @@ var diagrams = function(processingInstance){
 
     }
 
+    // navScroll ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    {
+
+      var navScroll=function(id, parent, x, y, w, h, params){
+
+        control.call(this, id, parent, x, y, w, h);
+
+        this.color    = params.color;
+        this.cursor   = params.cursor;
+        this.execute  = params.execute;
+
+      };
+      navScroll.prototype=Object.create(control.prototype);
+      navScroll.prototype.draw=function(){
+
+        pushMatrix();
+
+          translate(this.x, this.y);
+
+            noStroke();
+            noFill();
+            // fill(getColor(this.color, 5));
+
+            if(this.hit &&
+               this.parent.hit){
+
+              app.focus=this.id;
+              cursor(this.cursor);
+
+              fill(getColor(this.color, 5));
+              strokeWeight(0.5);
+              stroke(getColor(this.color, 50));
+
+            }
+
+              rect(1, 1, this.w-2, this.h-2);
+
+            var xPos=floor(app.dCursor/app.data.length*this.w);
+
+            stroke(getColor(CLRS.RED,100));
+            strokeWeight(0.5);
+            
+// println(xPos);
+              line(xPos,0,xPos,30);
+
+            // Draw child controls
+            for(var c in this.controls){ this.controls[c].draw(); }
+
+        popMatrix();
+
+      };
+      navScroll.prototype.dragged=function(x,y){
+
+        if(this.hit &&
+           app.focus===this.id){
+          
+          var X=floor((mouseX-this.x)/this.w*500);
+          
+          if(X>=0 && X<500){
+            this.execute(X);
+            // println(X);
+          }
+
+          for(var c in this.controls){ this.controls[c].dragged(); }
+  
+        }
+
+      };
+
+    }
+    
+    // NavBar ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    {
+
+      var navbar=function(id, parent, x, y, w, h, params){
+
+        control.call(this, id, parent, x, y, w, h);
+
+        this.text        = params.text;
+        this.acolor      = params.acolor;
+        this.icolor      = params.icolor;
+        this.cursor      = params.cursor;
+        this.position    = params.position;
+        this.recordCount = params.recordCount;
+        this.execute     = params.execute;
+        
+      };
+      navbar.prototype=Object.create(control.prototype);
+      navbar.prototype.draw=function(){
+
+        pushMatrix();
+
+          translate(this.x+0.5, this.y+0.5);
+
+            noStroke();
+            fill(this.icolor);
+
+            if(this.hit &&
+               this.parent.hit){
+
+              app.focus=this.id;
+              cursor(this.cursor);
+
+              fill(this.acolor);
+
+            }
+
+              rect(0, 0, this.w, this.h);
+              
+            stroke(getColor(CLRS.BLACK,25));
+            strokeWeight(0.25);
+
+              line(0, 0, this.w,      0); // Top Border
+
+            // Caption
+            fill(getColor(CLRS.BLACK, 50));
+            
+            if(this.hit){ fill(getColor(CLRS.K_TEAL_0,100)); }
+            
+            textSize(16);
+            textAlign(CENTER,CENTER);
+            var txt=this.position() + " of " + this.recordCount();
+            
+              text(txt, this.w/2, this.h/2);
+            
+            // Draw child controls
+            for(var c in this.controls){ this.controls[c].draw(); }
+
+        popMatrix();
+
+      };
+
+      
+    }
+    
+    // Navigation Buttons * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    {
+
+      var navButton=function(id, parent, x, y, w, h, params){
+
+        control.call(this, id, parent, x, y, w, h);
+
+        this.execute=params.execute;
+        this.type=params.type;
+        this.retrieve=params.retrieve;
+        this.color=params.color;
+        this.cursor=params.cursor;
+
+      };
+      navButton.prototype=Object.create(control.prototype);
+      navButton.prototype.draw=function(){
+
+        var offset=0;
+
+        pushMatrix();
+
+          translate(this.x, this.y);
+
+            noStroke();
+            noFill();
+
+            if(this.hit &&
+               this.parent.hit){
+
+              if(app.left){ offset=1; }
+
+              app.focus=this.id;
+              cursor(this.cursor);
+
+              fill(getColor(this.color,10));
+
+            }
+
+            //  Background
+              rect(offset, offset, this.w, this.h, 2);
+
+
+            // Icon
+            fill(getColor(this.color, 65));
+
+            if(this.hit){ fill(getColor(this.color, 100)); }
+
+            noStroke();
+            textAlign(CENTER,CENTER);
+            textSize(16);
+
+              switch(this.type){
+
+                case NAVIGATION.FIRST:          text("|<", this.w/2+offset, this.h/2+offset); break;
+                case NAVIGATION.DECREMENT:      text("<",  this.w/2+offset, this.h/2+offset); break;
+                case NAVIGATION.INCREMENT:      text(">",  this.w/2+offset, this.h/2+offset); break;
+                case NAVIGATION.LAST:           text(">|", this.w/2+offset, this.h/2+offset); break;
+                case NAVIGATION.INCREMENTPAGE:  text(">>", this.w/2+offset, this.h/2+offset); break;
+                case NAVIGATION.DECREMENTPAGE:  text("<<", this.w/2+offset, this.h/2+offset); break;
+
+                default:  break;
+
+              }
+
+        popMatrix();
+
+      };
+      navButton.prototype.clicked=function(){
+      /* Overridden to maintain on/off value */
+
+        if(this.hit &&
+           app.focus===this.id){
+
+          this.execute();
+          // this.on=!this.on;
+
+          for(var c in this.controls){ this.controls[c].clicked(); }
+
+        }
+
+      };
+
+    }
+    
     // toolbar ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
 
@@ -598,10 +1014,12 @@ var diagrams = function(processingInstance){
 
         control.call(this, id, parent, x, y, w, h);
 
-        this.text   = params.text;
-        this.acolor = params.acolor;
-        this.icolor = params.icolor;
-        this.cursor = params.cursor;
+        this.text        = params.text;
+        this.acolor      = params.acolor;
+        this.icolor      = params.icolor;
+        this.cursor      = params.cursor;
+        this.position    = params.position;
+        this.recordCount = params.recordCount;
 
       };
       toolbar.prototype=Object.create(control.prototype);
@@ -642,10 +1060,10 @@ var diagrams = function(processingInstance){
 
     }
 
-    // Legend ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Telemetry ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
 
-      var legend=function(id, parent, x, y, w, h, params){
+      var telemetry=function(id, parent, x, y, w, h, params){
 
         control.call(this, id, parent, x, y, w, h);
 
@@ -656,8 +1074,8 @@ var diagrams = function(processingInstance){
         this.offset = 0;
 
       };
-      legend.prototype=Object.create(control.prototype);
-      legend.prototype.draw=function(){
+      telemetry.prototype=Object.create(control.prototype);
+      telemetry.prototype.draw=function(){
 
         textFont(createFont("sans-serif", 14));
 
@@ -716,43 +1134,45 @@ var diagrams = function(processingInstance){
 
           fill(getColor(CLRS.WHITE,75));
 
-            text("         \n" +
-                 "x:       \n" +
-                 "y:       \n\n\n" +
-                 "Left:    \n" +
-                 "Right:   \n" +
-                 "Center:  \n\n\n" +
-                 "Focus:   \n" +
-                 "Focused: \n\n\n" +
-                 "Alt:     \n" +
-                 "Control: \n" +
-                 "Shift:   \n\n\n" +
-                 "Legend:  \n" +
-                 "Autorun: \n" +
-                 "Theta:   \n" +
-                 "Frame Rate:",
+            text("            \n" +
+                 "x:          \n" +
+                 "y:          \n\n\n" +
+                 "Left:       \n" +
+                 "Right:      \n" +
+                 "Center:     \n\n\n" +
+                 "Focus:      \n" +
+                 "Focused:    \n\n\n" +
+                 "Alt:        \n" +
+                 "Control:    \n" +
+                 "Shift:      \n\n\n" +
+                 "Legend:     \n" +
+                 "Autorun:    \n" +
+                 "Cursor:     \n" +
+                 "Frame Rate: \n" +
+                 "Info:",
                  col1, row0+15);
 
           fill(getColor(CLRS.YELLOW,75));
 
             text("\n" +
-                 mouseX      + "\n" +
-                 mouseY      + "\n\n\n" +
-                 app.left    + "\n" +
-                 app.right   + "\n" +
-                 app.center  + "\n\n\n" +
-                 app.focus   + "\n" +
-                 focused     + "\n\n\n" +
+                 mouseX                     + "\n" +
+                 mouseY                     + "\n\n\n" +
+                 app.left                   + "\n" +
+                 app.right                  + "\n" +
+                 app.center                 + "\n\n\n" +
+                 app.focus                  + "\n" +
+                 focused                    + "\n\n\n" +
                  app.keys[KEYCODES.ALT]     + "\n" +
                  app.keys[KEYCODES.CONTROL] + "\n" +
                  app.keys[KEYCODES.SHIFT]   + "\n\n\n" +
-                 app.legend  + "\n" +
-                 app.autoRun + "\n" +
-                 app.theta   + "\n" +
-                 app.frameRate,
+                 app.legend                 + "\n" +
+                 app.autoRun                + "\n" +
+                 app.dCursor                + "\n" +
+                 app.frameRate              + "\n" +
+                 app.infoOn,
                  col2, row0+15);
 
-          var txt="Press the left and right arrow keys to increment and decrement theta.";
+          var txt="Press the left and right arrow keys to increment and decrement integer.";
 
           textSize(11);
           textAlign(LEFT,BOTTOM);
@@ -794,7 +1214,7 @@ var diagrams = function(processingInstance){
         popMatrix();
 
       };
-      legend.prototype.moved=function(x,y){
+      telemetry.prototype.moved=function(x,y){
       /* Overridden because of the dynamic x-coordinate offset */
 
         if(mouseX>this.x+x+this.offset &&
@@ -817,7 +1237,7 @@ var diagrams = function(processingInstance){
 
     }
 
-    // OnOff * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // OnOff ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
 
       var onOff=function(id, parent, x, y, w, h, params){
@@ -963,6 +1383,81 @@ var diagrams = function(processingInstance){
 
     }
 
+    // Info ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    {
+
+      var info=function(id, parent, x, y, w, h, params){
+
+        control.call(this, id, parent, x, y, w, h);
+
+        this.text=params.text;
+        this.execute=params.execute;
+        this.retrieve=params.retrieve;
+        this.color=params.color;
+        this.cursor=params.cursor;
+
+      };
+      info.prototype=Object.create(control.prototype);
+      info.prototype.draw=function(){
+
+        var offset=0;
+
+        pushMatrix();
+
+          translate(this.x, this.y);
+
+            noStroke();
+            noFill();
+
+            if(this.hit &&
+               this.parent.hit){
+
+              if(app.left){ offset=1; }
+
+              app.focus=this.id;
+              cursor(this.cursor);
+
+              fill(getColor(this.color,10));
+
+            }
+
+            //  Background
+            rect(offset, offset, this.w, this.h, 2);
+
+            // Icon
+            textSize(24);
+            textAlign(CENTER,CENTER);
+
+            fill(getColor(CLRS.BLACK,50));
+
+            if(this.hit &&
+               this.parent.hit){ fill(getColor(CLRS.BLACK,75)); }
+
+            textFont(createFont("monospace", 20));
+            // textFont(createFont("fantasy", 24));
+            // textFont(createFont("cursive", 24));
+
+              text(this.text, this.w/2, this.h/2);
+
+        popMatrix();
+
+      };
+      info.prototype.clicked=function(){
+      /* Overridden to maintain on/off value */
+
+        if(this.hit){
+
+          this.execute();
+          this.on=!this.on;
+
+          for(var c in this.controls){ this.controls[c].clicked(); }
+
+        }
+
+      };
+
+    }
+
     // Button ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
 
@@ -972,19 +1467,17 @@ var diagrams = function(processingInstance){
 
         this.execute=params.execute;
         this.retrieve=params.retrieve;
-        this.tag=params.tag;
         this.text=params.text;
         this.color=params.color;
         this.cursor=params.cursor;
-        
+
         this.on=false;
-        
+
       };
       button.prototype=Object.create(control.prototype);
       button.prototype.draw=function(){
 
           var offset=0;
-          this.on=this.retrieve();
 
           pushMatrix();
 
@@ -995,9 +1488,8 @@ var diagrams = function(processingInstance){
               strokeWeight(0.75);
 
               fill(getColor(CLRS.ACTIVE, 5));
-              noFill();
               noStroke();
-                
+
               if(this.hit &&
                  this.parent.hit){
 
@@ -1006,12 +1498,7 @@ var diagrams = function(processingInstance){
                 app.focus=this.id;
                 cursor(this.cursor);
 
-                // stroke(getColor(this.parent.color,0));
-                
-                noStroke();
-                
-                if(this.on){ fill(getColor(this.color,100)); }
-                else       { fill(getColor(this.color, 50)); }
+                fill(getColor(CLRS.ACTIVE, 50));
 
               }
 
@@ -1019,40 +1506,16 @@ var diagrams = function(processingInstance){
 
               // Caption
               if(this.hit &&
-                 this.parent.hit){
-
-                fill(255,255,255);
-
-              }
-              else{
-
-                if(this.on){ fill(this.color);              }
-                else       { fill(getColor(this.color,50)); }
-
-              }
+                 this.parent.hit){  fill(255,255,255); }
+              else               {  fill(128,128,128); }
 
               scale(1,-1);
 
-              textAlign(LEFT,CENTER);
-
+              textAlign(CENTER,CENTER);
               textSize(12);
-              text(this.text, 10+offset, this.h/2+offset);
+              this.w=textWidth(this.text)+10;
               
-              if(this.on){
-
-                textAlign(RIGHT,CENTER);
-                
-                var txt=this.tag();
-
-                if(txt!==""){
-
-                  if      (txt> 100){ text( "Infinity", this.w-10+offset, this.h/2+offset); }
-                  else if (txt<-100){ text("-Infinity", this.w-10+offset, this.h/2+offset); }
-                  else              { text( txt,        this.w-10+offset, this.h/2+offset); }
-
-                }
-
-              }
+                text(this.text, this.w/2+offset, this.h/2+offset);
 
           popMatrix();
 
@@ -1060,1188 +1523,307 @@ var diagrams = function(processingInstance){
       button.prototype.clicked=function(){
       /* Overridden to maintain on/off value */
 
-        if(this.hit){
-          
+        if(this.hit &&
+           app.focus===this.id){
+
           this.execute();
-          this.on=!this.on;
-          
+
           for(var c in this.controls){ this.controls[c].clicked(); }
-                  
+
         }
 
       };
 
     }
-        
-    // Unit Circle * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    // Graph ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
 
-      var unitCircle=function(id, parent, x, y, w, h, params){
+      var graph=function(id, parent, x, y, w, h, params){
 
         control.call(this, id, parent, x, y, w, h);
 
-        this.color  = params.color;
-        this.acolor = params.acolor;
-        this.icolor = params.icolor;
-        this.cursor = params.cursor;
+        this.color=params.color;
+        this.cursor=params.cursor;
         
-        this.value=0;
+        this.displaySummary=true;
+        this.displayPath=true;
+        this.displayLines=true;
+        this.displayCollatz=true;
         
+        
+        var txt="";
+        var total=0;
+      
       };
-      unitCircle.prototype=Object.create(control.prototype);
-      unitCircle.prototype.draw=function(){
+      graph.prototype=Object.create(control.prototype);
+      graph.prototype.draw=function(){
 
-          var rTheta=0;       //  angle in radians
-          var r=this.w;       //  radius
-          var cs=3.5;         //  crossing size
+        var p=this;
 
-          var p=this;         //  object reference
+        var convertLength=function(n){
+
+            // return (n-1)/p._longest*p.h*0.5;
+          return (n-1)/app.data[app.dLongest].path.length*p.h*0.5;
           
-          var sw=1.5;           // strokeWeight;
-          
-          var sinValue=sin(radians(app.theta))*r;
-          var cscValue=1/sin(radians(app.theta))*r;
+        };
+        var convertPath=function(n,max){
 
-          var cosValue=cos(radians(app.theta))*r;          
-          var secValue=1/cos(radians(app.theta))*r;
-          
-          var tanValue=sin(radians(app.theta))/cos(radians(app.theta));
-          var cotValue=1/tanValue;
+            var retval=(n-1)/max*p.h*0.7;
 
-          var m=sinValue/cosValue;
+            return retval;
 
-// println(m);
-          
-          textFont(createFont("sans-serif", 14));
+        };
+        var convertX=function(x, length){
 
-          var axes=function(){
 
-            // axes();
-            strokeWeight(1);
-            stroke(p.color);
+          return (x+1)/length*(app.data.length);
 
-            var w=p.w*1.1;
+        };
 
-            line(-w, 0, w, 0);
-            line( 0,-w, 0, w);
-
-          };
-          var circle=function(){
-
-            noFill();
-
-            if(p.hit){
-
-              fill(getColor(p.acolor, p.value));
-              stroke(getColor(p.color, 50));
-              strokeWeight(1.5);
-
-              if(p.value<20){ p.value+=2; }
-
-            }
-            else{
-
-              stroke(getColor(p.color, 75));
-              strokeWeight(1);
-
-              p.value=5;
-
-            }
-
-            rTheta=radians(app.theta);
-
-            ellipse(0, 0, 2*r, 2*r);
-
-          };
-
-          var drawRadius=function(){
-
-            noFill();
-            stroke(getColor(CLRS.BLACK,50));
-            strokeWeight(2);
-
-              line(cosValue, sinValue, 0, 0);
-
-          };
-
-          var drawSine=function(){
-
-            noFill();
-            stroke(CLRS.SIN);
-            strokeWeight(sw);
-
-              line(0,        sinValue,        0, 0);
-              line(cosValue, sinValue, cosValue, 0);
-
-            pushMatrix();
-
-              fill(CLRS.SIN);
-
-                var x=0;
-                var y=sinValue/2;
-                var txt="sin";
-
-                if(cosValue>0){ x=-2; textAlign(RIGHT,CENTER); }
-                else          { x= 2; textAlign(LEFT, CENTER); }
-
-                translate(x,y);
-                scale(1,-1);
-                
-                  text(txt, 0, 0);
-
-            popMatrix();
-            
-          };
-          var drawCosine=function(){
-
-            noFill();
-            stroke(CLRS.COS);
-            strokeWeight(sw);
-              
-              line(cosValue,        0,        0,        0);
-              line(       0, sinValue, cosValue, sinValue);
-            
-            pushMatrix();
-
-              fill(CLRS.COS);
-
-                var x=cosValue/2;
-                var y=0;
-                var txt="cos";
-
-                if(sinValue>0){ y=-2; textAlign(CENTER,TOP);    }
-                else          { y= 2; textAlign(CENTER,BOTTOM); }
-
-                translate(x,y);
-                scale(1,-1);
-                
-                  text(txt, 0, 0);
-
-            popMatrix();
-            
-
-          };
-          var drawTangent=function(){
-
-            noFill();
-            stroke(CLRS.K_GREEN_0);
-            strokeWeight(sw);
-
-              line(secValue, 0, cosValue, sinValue);
-
-            pushMatrix();
-
-              fill(CLRS.K_GREEN_0);
-
-                var x=(cosValue+(secValue-cosValue)/2)*1.05;
-                var y=(sinValue/2)*1.05;
-                var txt="tan";
-
-                if(cosValue>0){ textAlign(LEFT, CENTER); }
-                else          { textAlign(RIGHT,CENTER); }
-
-                translate(x,y);
-                scale(1,-1);
-
-                  text(txt, 0, 0);
-
-            popMatrix();
-            
-          };
-          var drawCosecant=function(){
-
-            noFill();
-            stroke(CLRS.K_PINK_0);
-            strokeWeight(sw);
-
-              if(cosValue<0){
-
-                line( 45, 0,  45, cscValue);
-                
-                // Dimension lines
-                line( 0, cscValue, 45, cscValue); //  Top
-                line( 45,       0,  0,        0); //  Bottom
-
-
-              }
-              else{
-
-                line(-45, 0, -45, cscValue);
-
-                // Dimension lines
-                line( 0,   cscValue, -45, cscValue); //  Top
-                line( -45,        0,   0,        0); //  Bottom
-
-              }
-
-            pushMatrix();
-
-              scale(1,-1);
-
-              fill(CLRS.K_PINK_0);
-
-                var x=0;
-                var y=0;
-                var txt="csc";
-
-                if(sinValue>0){ y=-p.h/2; }
-                else          { y= p.h/2; }
-
-                if(cosValue>0){ x=-50;
-                                textAlign(RIGHT,CENTER); }
-                else          { x= 50;
-                                textAlign(LEFT, CENTER); }
-
-                  text(txt, x, y);
-
-            popMatrix();
-              
-            var xOffset=-45;;
-            
-            if(sinValue>0){
-              
-              if(cosValue<0){ xOffset=45; }
-              
-              // Bottom Arrow
-              pushMatrix();
-                
-                translate(xOffset, 0);
-                rotate(radians(90));
-                
-                  quad(0, 0,
-                       8, 2,
-                       5, 0,
-                       8,-2);
-              
-              popMatrix();
-              
-              // Top Arrow              
-              pushMatrix();
-
-                translate(xOffset, cscValue);
-                rotate(radians(90));
-                
-                  quad( 0, 0,
-                       -8, 2,
-                       -5, 0,
-                       -8,-3);
-
-              popMatrix();
-              
-            }
-            else{
-
-              if(cosValue<0){ xOffset=45; }
-              
-              // Bottom Arrow
-              pushMatrix();
-                
-                translate(xOffset, cscValue);
-                rotate(radians(90));
-
-                  quad(0, 0,
-                       8, 2,
-                       5, 0,
-                       8,-2);
-              
-              popMatrix();
-              
-              // Bottom Arrow              
-              pushMatrix();
-                
-                translate(xOffset, 0);
-                rotate(radians(90));
-
-                  quad( 0, 0,
-                       -8, 2,
-                       -5, 0,
-                       -8,-3);
-
-              popMatrix();
-
-            }
-              
-          };
-          var drawSecant=function(){
-
-            noFill();
-            stroke(CLRS.K_PINK_2);
-            strokeWeight(sw);
-
-              if(sinValue<0){
-
-                line(0,  45, secValue,  45);
-
-                // Dimension Lines
-                line(       0, 0,        0,  45); // Left
-                line(secValue, 0, secValue,  45); // Right
-
-              }
-              else{
-                
-                line(0, -45, secValue, -45);
-
-                // Dimension Lines
-                line(       0, 0,        0, -45); // Left
-                line(secValue, 0, secValue, -45); // Right
-
-              }
-
-              var yOffset=-45;;
-
-              if(cosValue>0){
-                
-                if(sinValue<0){ yOffset=45; }
-                
-                // Left Arrow
-                pushMatrix();
-                  
-                  translate(0, yOffset);
-                  
-                    quad(0, 0,
-                         8, 2,
-                         5, 0,
-                         8,-2);
-                
-                popMatrix();
-                
-                // Right Arrow              
-                pushMatrix();
-                  
-                  translate(secValue, yOffset);
-                  
-                    quad( 0, 0,
-                         -8, 2,
-                         -5, 0,
-                         -8,-3);
-
-                popMatrix();
-                
-              }
-              else{
-
-                if(sinValue<0){ yOffset=45; }
-                
-                // Left Arrow
-                pushMatrix();
-                  
-                  translate(secValue, yOffset);
-                  
-                    quad(0, 0,
-                         8, 2,
-                         5, 0,
-                         8,-2);
-                
-                popMatrix();
-                
-                // Right Arrow              
-                pushMatrix();
-                  
-                  translate(0, yOffset);
-                  
-                    quad( 0, 0,
-                         -8, 2,
-                         -5, 0,
-                         -8,-3);
-
-                popMatrix();
-
-              }
-
-            pushMatrix();
-
-              scale(1,-1);
-
-              fill(CLRS.K_PINK_2);
-
-                var x=0;
-                var y=0;
-                var txt="sec";
-
-                if(sinValue>0){ y= 50; textAlign(CENTER,TOP); }
-                else          { y=-50; textAlign(CENTER,BOTTOM); }
-
-                if(cosValue>0){ x= p.w/2; }
-                else          { x=-p.w/2; }
-
-                  text(txt, x, y);
-
-            popMatrix();
-            
-          };
-          var drawCotangent=function(){
-
-            noFill();
-            stroke(CLRS.K_GREEN_2);
-            strokeWeight(sw);
-
-              line(0, cscValue, cosValue, sinValue);
-
-            pushMatrix();
-
-              fill(CLRS.K_GREEN_2);
-
-                var x=(cosValue/2)*1.05;
-                var y=(sinValue+(cscValue-sinValue)/2)*1.05;
-                var txt="cot";
-
-                if(cosValue>0){ textAlign(LEFT,CENTER); }
-                else          { textAlign(RIGHT,CENTER); }
-
-                translate(x,y);
-                scale(1,-1);
-
-                  text(txt, 0, 0);
-
-            popMatrix();
-            
-          };
-
-          var drawVersine=function(){
-
-            noFill();
-            stroke(CLRS.K_BROWN_1);
-            strokeWeight(sw);
-
-              if(cosValue>0){ line( r, 0, cosValue, 0); }
-              else          { line(-r, 0, cosValue, 0); }
-
-            pushMatrix();
-
-              fill(CLRS.K_BROWN_1);
-
-                var x=0;
-                var y=0;
-                var txt="ver";
-
-                if(cosValue>0){ x=cosValue+(r-cosValue)/2; }
-                else          { x=cosValue-(r+cosValue)/2; }
-                
-                if(sinValue>0){ textAlign(CENTER,TOP);    y=-3; }
-                else          { textAlign(CENTER,BOTTOM); y= 3; }
-
-                translate(x,y);
-                scale(1,-1);
-
-                  text(txt, 0, 0);
-
-            popMatrix();
-            
-          };
-          var drawCoversine=function(){
-
-            noFill();
-            stroke(CLRS.K_TEAL_2);
-            strokeWeight(sw);
-
-              if(sinValue>0){ line(0, r, 0, sinValue); }
-              else          { line(0,-r, 0, sinValue); }
-
-            pushMatrix();
-
-              fill(CLRS.K_TEAL_2);
-
-                var x=0;
-                var y=0;
-                var txt="cvs";
-
-                if(cosValue>0){ x=-3; textAlign(RIGHT,CENTER); }
-                else          { x= 3; textAlign(LEFT, CENTER); }
-
-                if(sinValue>0){ y=sinValue+(r-sinValue)/2; }
-                else          { y=sinValue-(r+sinValue)/2; }
-
-                translate(x,y);
-                scale(1,-1);
-
-                  text(txt, 0, 0);
-
-            popMatrix();
-
-          };
-          var drawExsecant=function(){
-            /* Exterior Secant */
-
-            noFill();
-            stroke(CLRS.K_ORANGE_0);
-            strokeWeight(sw);
-
-              if(cosValue>0){ line( r, 0,  secValue, 0); }
-              else          { line(-r, 0,  secValue, 0); }
-            
-            pushMatrix();
-
-              fill(CLRS.K_ORANGE_0);
-
-                var x=0;
-                var y=0;
-                var txt="exsec";
-
-                if(cosValue>0){ x= r+(secValue-r)/2; }
-                else          { x=-r+(secValue+r)/2; }
-                
-                if(sinValue>0){ textAlign(CENTER,TOP);    y=-3; }
-                else          { textAlign(CENTER,BOTTOM); y= 3; }
-
-                translate(x,y);
-                scale(1,-1);
-
-                  text(txt, 0, 0);
-
-            popMatrix();
-            
-          };
-          var drawExcosecant=function(){
-            /* Exterior Cosecant */  
-
-            noFill();
-            stroke(CLRS.K_TEAL_0);
-            strokeWeight(sw);
-
-              if(sinValue>0){ line(0,  r, 0,  cscValue); }
-              else          { line(0, -r, 0,  cscValue); }
-
-            pushMatrix();
-
-              fill(CLRS.K_TEAL_0);
-
-                var x=0;
-                var y=0;
-                var txt="excsc";
-
-                if(cosValue>0){ x=-3; textAlign(RIGHT,CENTER); }
-                else          { x= 3; textAlign(LEFT, CENTER); }
-
-                if(sinValue>0){ y= r+(r-sinValue)/2; }
-                else          { y=-r-abs(cscValue+r)/2; }
-
-                translate(x,y);
-                scale(1,-1);
-
-                  text(txt, 0, 0);
-
-            popMatrix();
-          };
-          
-          var drawDegrees=function(){
-
-            fill(p.color);
-            stroke(getColor(p.color, 90));
-            strokeWeight(0.5);
-
-            pushMatrix();
-
-              for(var n=0; n<360; n++){
-
-                stroke(getColor(p.color, 75));
-
-                if(n%10===0){
-
-                  line(p.w-35, 0, p.w, 0);
-
-                }
-                else if(n%5===0){
-
-                  stroke(getColor(p.color, 50));
-
-                  line(p.w-25, 0, p.w, 0);
-
-                }
-                else{
-
-                  if(n%10<5){ stroke(getColor(p.color, 50)); }
-                  else      { stroke(getColor(p.color, 25)); }
-
-                  line(p.w-15, 0, p.w, 0);
-
-                }
-
-                rotate(radians(1));
-
-              }
-
-            popMatrix();
-
-            // /* Labels */
-            textSize(10);
-
-            pushMatrix();
-
-              resetMatrix();
-              translate(p.x, p.y);
-              textAlign(CENTER,CENTER);
-              var offset=p.w-45;
-
-                for(var n=10; n<360; n+=10){
-
-                  text(n,
-                       cos(-radians(n))*offset,
-                       sin(-radians(n))*offset);
-                }
-
-              textAlign(RIGHT,CENTER);
-
-              offset=p.w-44;
-
-                text("0 & 360",
-                     cos(radians(0))*offset,
-                     sin(radians(0))*offset);
-
-            popMatrix();
-
-          };
-          var drawRadians=function(){
-
-            noFill();
-            stroke(getColor(p.color, 90));
-            strokeWeight(0.5);
-
-            pushMatrix();
-
-              for(var n=0; n<TWO_PI*100; n++){
-
-                if(n%10===0){
-
-                  stroke(getColor(p.color, 90));
-                  line(p.w+25, 0, p.w, 0);
-
-                }
-                else if ( n%5===0){
-
-                  stroke(getColor(p.color, 90));
-                  line(p.w+15, 0, p.w, 0);
-
-                }
-                else{
-
-                  if(n%10<5){ stroke(getColor(p.color, 70)); }
-                  else      { stroke(getColor(p.color, 40)); }
-
-                  line(p.w+10, 0, p.w, 0);
-
-                }
-
-                rotate(0.01);
-
-              }
-
-            popMatrix();
-
-            // Labels
-            textSize(9);
-
-            pushMatrix();
-
-              resetMatrix();
-              translate(p.x, p.y);
-              textAlign(CENTER,CENTER);
-
-              fill(getColor(p.color, 90));
-
-              var offset=p.w+37;
-
-              for(var n=0.1; n<TWO_PI; n+=0.1){
-
-                text(n.toFixed(1),
-                     cos(-radians(180*n/PI))*offset,
-                     sin(-radians(180*n/PI))*offset);
-
-              }
-
-              offset=p.w+30;
-              textAlign(LEFT,CENTER);
-
-              text("0 & 6.28",
-                   cos(radians(0))*offset,
-                   sin(radians(0))*offset);
-
-            popMatrix();
-
-          };
-          var theta=function(){
-
-            // Dial
-            pushMatrix();
-
-              translate(0.25,0.25);
-              rotate(rTheta);
-
-                strokeWeight(0.4);
-                stroke(CLRS.BLACK);
-                fill(getColor(CLRS.BLACK,50));
-
-                // beginShape();
-
-                  // vertex(-50,  0);
-                  // vertex(0, 10);
-                  // vertex(r,    0);
-                  // vertex(0,-10);
-
-                // endShape(CLOSE);
-
-            popMatrix();
-
-            // Theta Text  ----------
-            textSize(20);
-            textAlign(CENTER,CENTER);
-
-            var tw=textWidth(app.theta+CONSTANTS.DEGREES);
-
-            noStroke();
-
-            fill(p.parent.color);
-
-              // rect(-tw/2, -r*1.35-7.5, tw+2, 15);
-
-            fill(CLRS.BLACK);
-            textSize(36);
-            scale(1,-1);
-
-              text((app.theta*PI/180).toFixed(2) + CONSTANTS.RADIANS, -260, r*1);
-              text(app.theta + CONSTANTS.DEGREES,                     -260, r*1.2);
-
-          };
-          var quadrants=function(){
-
-            textAlign(LEFT, CENTER);
-            textSize(24);
-            noStroke();
-            fill(getColor(p.color, 25));
-
-            var w=r*0.5;  // Distance along radius
-
-            textAlign(CENTER, CENTER);
-            
-              text("I",   w*cos(radians( -45)),  w*sin(radians( -45)));
-              text("II",  w*cos(radians(-135)),  w*sin(radians(-135)));
-              text("III", w*cos(radians( 135 )), w*sin(radians( 135)));
-              text("IV",  w*cos(radians(  45)),  w*sin(radians(  45)));
-
-          };
-          var quadrantValues=function(){
-
-            textFont(createFont("monospace", 14));
-
-            noStroke();
-            fill(getColor(p.color, 50));
-
-            var x_offset=30;
-
-            // Quadrant I
-            textAlign(LEFT, TOP);
-
-            var txt="sin + \n" +
-                    "cos + \n" +
-                    "tan + \n" +
-                    "csc + \n" +
-                    "sec + \n" +
-                    "cot + \n";
-
-              text(txt, x_offset, -110);
-
-            // Quadrant II
-            textAlign(RIGHT, TOP);
-
-            txt="sin + \n" +
-                "cos - \n" +
-                "tan - \n" +
-                "csc - \n" +
-                "sec - \n" +
-                "cot + \n";
-
-              text(txt, -x_offset+5, -110);
-
-            // Quadrant III
-            textAlign(RIGHT, TOP);
-
-            txt="sin - \n" +
-                "cos - \n" +
-                "tan + \n" +
-                "csc + \n" +
-                "sec - \n" +
-                "cot - \n";
-
-              text(txt, -x_offset+5, 15);
-
-            // Quadrant IV
-            textAlign(LEFT, TOP);
-
-            txt="sin - \n" +
-                "cos + \n" +
-                "tan - \n" +
-                "csc - \n" +
-                "sec + \n" +
-                "cot - \n";
-
-              text(txt, x_offset, 15);
-
-          };
-          var labels=function(){
-
-            fill(getColor(p.color, 90));
-            textAlign(CENTER,TOP);
-            textFont(createFont("sans-serif", 16));
-
-            pushMatrix();
-
-              var y=-r*0.7;
-
-              rotate(radians(-15));
-                text("D", 0, y);
-              rotate(radians(5));
-                text("E", 0, y);
-              rotate(radians(5));
-                text("G", 0, y);
-              rotate(radians(5));
-                text("R", 0, y);
-              rotate(radians(5));
-                text("E", 0, y);
-              rotate(radians(5));
-                text("E", 0, y);
-              rotate(radians(5));
-                text("S", 0, y);
-
-            popMatrix();
-
-            pushMatrix();
-
-              y=-r*1.38;
-
-              rotate(radians(67));
-                text("R", 0, y);
-              rotate(radians(2.75));
-                text("A", 0, y);
-              rotate(radians(2.75));
-                text("D", 0, y);
-              rotate(radians(2.25));
-                text("I", 0, y);
-              rotate(radians(2.25));
-                text("A", 0, y);
-              rotate(radians(2.75));
-                text("N", 0, y);
-              rotate(radians(2.75));
-                text("S", 0, y);
-
-            popMatrix();
-
-          };
-          var specialValues=function(){
-
-            textFont(createFont("cursive", 14));
-            textAlign(CENTER,CENTER);
-            textSize(11);
-
-            var coef=1.35;
-            var lcoef=1.28;
-            var scoef=1.22;
-
-            // π/2
-            text("π/2", 0, -r*coef);
-
-            stroke(p.color);
-            strokeWeight(0.5);
-
-              line(cos(PI/2)*r*scoef, -sin(PI/2)*r*scoef,
-                   cos(PI/2)*r*lcoef, -sin(PI/2)*r*lcoef);
-
-            // π
-            text("π", -r*coef, 0);
-
-              line(cos(PI)*r*scoef, -sin(PI)*r*scoef,
-                   cos(PI)*r*lcoef, -sin(PI)*r*lcoef);
-
-            // 3π/2
-            text("3π/2", 0, r*coef);
-
-              line(cos(3*PI/2)*r*scoef, -sin(3*PI/2)*r*scoef,
-                   cos(3*PI/2)*r*lcoef, -sin(3*PI/2)*r*lcoef);
-
-            // 2π
-            text("2π", r*1.38, 0);
-
-            // line(cos(2*PI)*r*scoef, -sin(2*PI)*r*scoef,
-                 // cos(2*PI)*r*lcoef, -sin(2*PI)*r*lcoef);
-
-            /* Quadrant I */
-            // π/6
-            text("π/6", cos(PI/6)*r*coef,
-                       -sin(PI/6)*r*coef);
-
-              line(cos(PI/6)*r*scoef, -sin(PI/6)*r*scoef,
-                   cos(PI/6)*r*lcoef, -sin(PI/6)*r*lcoef);
-
-            // π/4
-            text("π/4", cos(PI/4)*r*coef,
-                       -sin(PI/4)*r*coef);
-
-              line(cos(PI/4)*r*scoef, -sin(PI/4)*r*scoef,
-                   cos(PI/4)*r*lcoef, -sin(PI/4)*r*lcoef);
-
-            // π/3
-            text("π/3", cos(PI/3)*r*coef,
-                       -sin(PI/3)*r*coef);
-
-              line(cos(PI/3)*r*scoef, -sin(PI/3)*r*scoef,
-                   cos(PI/3)*r*lcoef, -sin(PI/3)*r*lcoef);
-
-            /* Quadrant II */
-            // 2π/3
-            text("2π/3", cos(2*PI/3)*r*coef,
-                        -sin(2*PI/3)*r*coef);
-
-              line(cos(2*PI/3)*r*scoef, -sin(2*PI/3)*r*scoef,
-                   cos(2*PI/3)*r*lcoef, -sin(2*PI/3)*r*lcoef);
-
-            // 3π/4
-            text("3π/4", cos(3*PI/4)*r*coef,
-                        -sin(3*PI/4)*r*coef);
-
-              line(cos(3*PI/4)*r*scoef, -sin(3*PI/4)*r*scoef,
-                   cos(3*PI/4)*r*lcoef, -sin(3*PI/4)*r*lcoef);
-
-            // 5π/6
-            text("5π/6", cos(5*PI/6)*r*coef,
-                        -sin(5*PI/6)*r*coef);
-
-              line(cos(5*PI/6)*r*scoef, -sin(5*PI/6)*r*scoef,
-                   cos(5*PI/6)*r*lcoef, -sin(5*PI/6)*r*lcoef);
-
-            /* Quadrant III */
-            // 7π/6
-            text("7π/6", cos(7*PI/6)*r*coef,
-                        -sin(7*PI/6)*r*coef);
-
-              line(cos(7*PI/6)*r*scoef, -sin(7*PI/6)*r*scoef,
-                   cos(7*PI/6)*r*lcoef, -sin(7*PI/6)*r*lcoef);
-
-            // 5π/4
-            text("5π/4", cos(5*PI/4)*r*coef,
-                        -sin(5*PI/4)*r*coef);
-
-              line(cos(5*PI/4)*r*scoef, -sin(5*PI/4)*r*scoef,
-                   cos(5*PI/4)*r*lcoef, -sin(5*PI/4)*r*lcoef);
-
-            // 4π/3
-            text("4π/3", cos(4*PI/3)*r*coef,
-                        -sin(4*PI/3)*r*coef);
-
-              line(cos(4*PI/3)*r*scoef, -sin(4*PI/3)*r*scoef,
-                   cos(4*PI/3)*r*lcoef, -sin(4*PI/3)*r*lcoef);
-
-            /* Quadrant IV */
-            // 5π/3
-            text("5π/3", cos(5*PI/3)*r*coef,
-                        -sin(5*PI/3)*r*coef);
-
-              line(cos(5*PI/3)*r*scoef, -sin(5*PI/3)*r*scoef,
-                   cos(5*PI/3)*r*lcoef, -sin(5*PI/3)*r*lcoef);
-
-            // 7π/4
-            text("7π/4", cos(7*PI/4)*r*coef,
-                        -sin(7*PI/4)*r*coef);
-
-              line(cos(7*PI/4)*r*scoef, -sin(7*PI/4)*r*scoef,
-                   cos(7*PI/4)*r*lcoef, -sin(7*PI/4)*r*lcoef);
-
-            // 11π/6
-            text("11π/6", cos(11*PI/6)*r*coef,
-                         -sin(11*PI/6)*r*coef);
-
-              line(cos(11*PI/6)*r*scoef, -sin(11*PI/6)*r*scoef,
-                   cos(11*PI/6)*r*lcoef, -sin(11*PI/6)*r*lcoef);
-
-          };
-          var conversion=function(){
-
-            textFont(createFont("sans-serif", 14));
-            // textFont(createFont("serif", 14));
-            // textFont(createFont("fantasy", 14));
-            textFont(createFont("cursive", 12));
-
-            fill(p.icolor);
-
-            if(p.parent.hit){ fill(p.acolor); }
-
-            noStroke();
-
-            pushMatrix();
-
-              translate(230,-240);
-
-                strokeWeight(0.5);
-
-                  rect(-80,-40,160,80);
-
-                // noFill();
-                stroke(CLRS.BLUE);
-                strokeWeight(0.5);
-
-                  ellipse(0, 0, 100, 50);
-
-                //  Background rectangles
-                // fill(p.acolor);
-                noStroke();
-
-                var w=textWidth("Degrees")+10;
-
-                  rect(-w/2-50, -7.5, w, 15);
-
-                w=textWidth("Radians")+10;
-
-                  rect(50-w/2, -7.5, w, 15);
-
-                w=textWidth("x "+CONSTANTS.PI+"/180")+10;
-
-                  rect(-w/2, -32.5, w, 15);
-
-                w=textWidth("x "+"180/"+CONSTANTS.PI)+10;
-
-                  rect(-w/2,  18.5, w, 15);
-
-                // Labels
-                fill(getColor(CLRS.BLACK, 75));
-
-                textAlign(CENTER,CENTER);
-
-                  text("Degrees", -50, 0);
-                  text("Radians",  50, 0);
-
-                  text("x "+CONSTANTS.PI+"/180", 0, -25);
-                  text("x "+"180/"+CONSTANTS.PI, 0,  25);
-
-                // Arrows
-                pushMatrix();
-
-                  fill(CLRS.BLUE);
-                  noStroke();
-
-                  translate(-24,-22);
-                  rotate(radians(-10));
-
-                    triangle( -7, -4,
-                              -7,  4,
-                               0,  0);
-
-                  translate(22,22);         //  Reset to center of the ellipse
-                  rotate(radians(10));
-
-                  // ------------------------------
-
-                  translate(-48,14);
-                  rotate(radians(-140));
-
-                    triangle( -7, -4,
-                              -7,  4,
-                               0,  0);
-
-                  rotate(radians(140));     //  Reset to center of the ellipse
-                  translate(50,-14);
-
-                  // ------------------------------
-                  translate(22,26);
-                  rotate(radians(155));
-
-                    triangle( -7, -4,
-                              -7,  4,
-                               0,  0);
-
-                  rotate(radians(-155));    //  Reset to center of the ellipse
-                  translate(-22,-26);
-
-                  // ------------------------------
-                  translate(46,-3);
-                  rotate(radians(45));
-
-                    triangle( -7, -4,
-                              -7,  4,
-                               0,  0);
-
-                  // ellipse(0,0,3,3);
-
-                popMatrix();
-
-            popMatrix();
-
-          };
+        var border=function(){
 
           pushMatrix();
 
-            translate(this.x+0.5, this.y+0.5);
-            scale(1, -1);
+            translate(0.5,0.5);
 
-              if(this.hit &&
-                 this.parent.hit &&
-                 !app.autoRun){
+              strokeWeight(1);
+              stroke(getColor(CLRS.BLACK,50));
 
-                app.focus=this.id;
-                cursor(this.cursor);
+              if(p.hit){ fill(getColor(this.color,5)); }
+              else     { fill(getColor(this.color,7)); }
 
-              }
-
-              axes();
-              circle();
-
-              drawRadius();
-
-              if(app.sineOn)      { drawSine();       }
-              if(app.cosecantOn)  { drawCosecant();   }
-
-              if(app.cosineOn)    { drawCosine();     }
-              if(app.secantOn)    { drawSecant();     }
-
-              if(app.versineOn)   { drawVersine();    }
-              if(app.coversineOn) { drawCoversine();  }
-
-              if(app.tangentOn)   { drawTangent();    }
-              if(app.cotangentOn) { drawCotangent();  }
-
-              if(app.exsecantOn)  { drawExsecant();   }
-              if(app.excosecantOn){ drawExcosecant(); }
-
-              // drawDegrees();
-              // drawRadians();
-              if(app.thetaOn)     { theta();          }
-              if(app.quadrantsOn) { quadrants();      }
-              // quadrantValues();
-              // labels();
-              // specialValues();
-              // conversion();
+                rect(0, 0, p.w, p.h, 3);
 
           popMatrix();
 
+        };
+        var axes=function(){
+
+          pushMatrix();
+
+            translate(10, p.h-10);
+            scale(1,-1);
+
+              fill(getColor(CLRS.K_TEAL_0,100));
+              stroke(getColor(CLRS.K_TEAL_0,100));
+
+                //  Origin
+                // ellipse(0,0,5,5);
+
+              fill(CLRS.BLACK);
+              stroke(CLRS.BLACK);
+
+                //  Axes
+                line(0, 0,      0, p.h-20);   //  Y-axis
+                line(0, 0, p.w-20,      0);   //  X-axis
+
+          popMatrix();
+
+        };
+        var drawCollatz=function(){
+
+          pushMatrix();
+
+            translate(10, p.h-10);
+            scale(1,-1);
+
+              strokeWeight(1);
+              fill(  getColor(CLRS.K_TEAL_2, 25));
+              stroke(getColor(CLRS.BLACK,    50));
+
+              beginShape();
+
+                vertex(0,0);
+                vertex(0,convertPath(app.data[app.dCursor].path[0],
+                                     app.data[app.dCursor].max));
+                
+                for(var n=1; n<app.data[app.dCursor].path.length; n++){
+
+                  var x=convertX(n, app.data[app.dCursor].length);
+                  var y=convertPath(app.data[app.dCursor].path[n],
+                                    app.data[app.dCursor].max);
+
+                    vertex(x,y);
+                    ellipse(x,y,0.25,0.25);
+
+                }
+
+                // vertex(500, 0);
+                // ellipse(500, 0, 0.25, 0.25);
+
+              endShape(CLOSE);
+
+          popMatrix();
+
+        };
+        var drawPath=function(){
+          
+          var path="";
+          
+          for(var n=0; n<app.data[app.dCursor].path.length; n++){
+            
+            path+=app.data[app.dCursor].path[n];
+
+            if(n!==app.data[app.dCursor].path.length-1){
+              path+= ", ";
+            }
+
+          }
+          
+          textAlign(LEFT,TOP);
+          fill(getColor(CLRS.GRAY,50));
+          
+            text(path, 20, 140, 480, 10000);
+  
+        };
+        var currentData=function(){
+
+          //  Data cursor
+          fill(getColor(CLRS.K_TEAL_0,100));
+          textAlign(LEFT,TOP);
+          textSize(20);
+
+            text(nfc(app.data[app.dCursor].i), 20,10);
+
+          fill(getColor(CLRS.BLACK,75));
+          textAlign(LEFT,TOP);
+          textSize(12);
+          textLeading(16);
+
+            text("Max:     \n" +
+                 "Sum:     \n" +
+                 "Length:  \n\n" +
+                 "Up:      \n" +
+                 "Down:    \n",
+                 20, 35);
+
+          textAlign(RIGHT,TOP);
+
+          fill(getColor(CLRS.K_TEAL_2,100));
+
+            text(nfc(app.data[app.dCursor].max)        + "\n" +
+                 nfc(app.data[app.dCursor].sum)        + "\n" +
+                 nfc((app.data[app.dCursor].length-1)) + "\n\n" +
+                 nfc(app.data[app.dCursor].up)         + "\n" +
+                 nfc(app.data[app.dCursor].down),
+                 140, 35);
+
+        };
+        var drawLines=function(){
+
+          //  Data Cursor
+          stroke(getColor(CLRS.RED,75));
+          strokeWeight(3);
+
+            var d=convertLength(app.data[app.dCursor].path.length);
+
+            // line(app.dCursor+6.5, p.h*0.25, app.dCursor+6.5, p.h-12);
+
+            line(app.dCursor+10, p.h-12-d, app.dCursor+10, p.h-12);
+
+          pushMatrix();
+
+            var sw=1;
+
+            translate(10, p.h-10);
+            scale(1,-1);
+            strokeWeight(sw);
+
+            for(var n=1; n<app.data.length; n++){
+
+              if(n%2===0){ stroke(getColor(CLRS.BLACK, 25)); }
+              else       { stroke(getColor(CLRS.BLACK, 50)); }
+
+              line(n*sw, 2, n*sw, convertLength(app.data[n].path.length));
+
+            }
+
+          popMatrix();
+
+        };
+        var dataSummary=function(){
+
+          fill(getColor(CLRS.BLACK,75));
+          textSize(12);
+          textAlign(LEFT,TOP);
+          
+            text("Range:    \n\n" +
+                 "Max Peak: \n" + 
+                 "Max Sum:  \n" +
+                 "Longest Path:",
+                 200, 35);
+
+          fill(getColor(CLRS.GRAY,100));
+          textAlign(LEFT,TOP);
+          
+            text(nfc(app.data[0].i) + " to " +  nfc(app.data[app.data.length-1].i) + "\n\n" +
+                 nfc(app.data[app.dHighest].i) +"\n" +
+                 nfc(app.data[app.dSum].i) + "\n" +
+                 nfc(app.data[app.dLongest].i),
+                 300, 35);
+          
+          fill(getColor(CLRS.K_TEAL_2,75));
+          textAlign(RIGHT,TOP);
+          
+            text("\n\n" +
+                 nfc(app.data[app.dHighest].max) + "\n" +
+                 nfc(app.data[app.dSum].sum) + "\n" +
+                 nfc(app.data[app.dLongest].length),
+                 440, 35);
+
+        };
+
+        pushMatrix();
+
+          translate(this.x+0.5, this.y+0.5);
+
+            if(this.hit &&
+               this.parent.hit){
+
+              app.focus=this.id;
+              cursor(this.cursor);
+
+            }
+
+            // border();
+            axes();
+            currentData();
+            // if(this.displaySummary){ border(); }
+            if(this.displaySummary){ dataSummary(); }
+            if(this.displayPath)   { drawPath();    }
+            if(this.displayLines)  { drawLines();   }
+            if(this.displayCollatz){ drawCollatz(); }
+
+// println(typeof app.dSum);
+
+        popMatrix();
+
       };
-      unitCircle.prototype.moved=function(x,y){
-      /* Overridden because of the shape - round */
+      graph.prototype.clicked=function(x,y){
 
-        if(dist(mouseX, mouseY,
-                this.x+x, this.y+y)<this.w){
+        if(this.hit){
 
-          this.hit=true;
-
-          if(!app.autoRun){
-
-            var d=round(degrees(atan2(mouseY-this.y+y, mouseX-this.x+x)));
-
-            if(d<0){ d+=360; }
-
-            app.theta=360-d;
+          if(mouseX>this.x+10 &&
+             mouseX<this.x+this.w+10){
+            
+            if(mouseX-this.x>0 &&
+               mouseX-this.x<app.data.length-1){
+              app.dCursor=mouseX-this.x-10;
+            }
 
           }
 
-          for(var c in this.controls){ this.controls[c].moved(this.x+x, this.y+y); }
-
-        }
-        else{
-
-          this.hit=false;
+          for(var c in this.controls){ this.controls[c].clicked((this.x+x), (this.y+y)); }
 
         }
 
       };
-
+    
     }
 
   }
+
 
   /* Initialize ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
     var initialize=function(){
@@ -2249,7 +1831,7 @@ var diagrams = function(processingInstance){
       // Background --------------------------------------------------
 
         /* root control       */
-        var bk=new root(100, null, 0, 0, 599, 599,
+        var bk=new root(100, null, 0, 0, width, height,
           {text:      "root",
            acolor:    CLRS.ACTIVE,
            icolor:    CLRS.INACTIVE,
@@ -2258,19 +1840,18 @@ var diagrams = function(processingInstance){
 
         app.controls.push(bk);
 
-        /* unit circle        */
-        bk.controls.push(new unitCircle(110, bk, 360, 310, 160, 160,
-          {color:     CLRS.BLACK,
-           acolor:    CLRS.TEAL_2,
-           icolor:    CLRS.INACTIVE,
+        /* graph        */
+        bk.controls.push(new graph(110, bk, 30, 30, 540, 540,
+          {color:     CLRS.GRAY,
+           acolor:    CLRS.BLUE,
+           icolor:    CLRS.RED,
            cursor:    ARROW}));
 
-           
       // toolbar --------------------------------------------------
-
+      {
         /* tlbar            */
-        var tlbar=new toolbar(200, bk, 0, 0, 600, 30,
-          {text:      "Supplementary Ratios",
+        var tlbar=new toolbar(200, bk, 0, 0, width, 30,
+          {text:      "Collatz Conjecture",
            acolor:    CLRS.TOOLBARA,
            icolor:    CLRS.TOOLBARI,
            cursor:    ARROW});
@@ -2284,143 +1865,237 @@ var diagrams = function(processingInstance){
              color:     CLRS.BLACK,
              cursor:    HAND}));
 
-          /* display settings   */
-          tlbar.controls.push(new settings(220, tlbar, 575, 5, 22, 22,
+          /* settings   */
+          tlbar.controls.push(new settings(220, tlbar, width-25, 5, 22, 22,
             {execute:   checkboxLegend,
              retrieve:  getLegend,
              color:     CLRS.BLACK,
              cursor:    HAND}));
 
-             
-      // Index --------------------------------------------------
-
-        /* index              */
-        var idx=new index(300, bk, 10, 40, 120, 225,{radius:  5,
-            color:   CLRS.WHITE,
-            cursor:  ARROW});
-
-        bk.controls.push(idx);
-          
-          /* Sine button        */
-          bk.controls.push(new button(310, bk, 15, 45, 110, 20,              
-            {text:     "Sin "+CONSTANTS.THETA,
-             execute:  toggleSine,
-             tag:      getSine,
-             retrieve: getSineOn,
+          /* information   */
+          tlbar.controls.push(new info(230, tlbar, width-52, 5, 22, 22,
+            {text:     "i",
+             execute:  toggleInfo,
+             retrieve: getInfo,
              color:    CLRS.SIN,
              cursor:   HAND}));
-           
-          /* Cosine button      */
-          bk.controls.push(new button(320, bk, 15, 65, 110, 20,             
-            {text:     "Cos "+CONSTANTS.THETA,
-             execute:  toggleCosine,
-             tag:      getCosine,
-             retrieve: getCosineOn,
-             color:    CLRS.COS,
-             cursor:   HAND}));
-          
-          /* Tangent button     */
-          bk.controls.push(new button(330, bk, 15, 85, 110, 20,             
-            {text:     "Tan "+CONSTANTS.THETA,
-             execute:  toggleTangent,
-             tag:      getTangent,
-             retrieve: getTangentOn,
-             color:    CLRS.TAN,
+      }
+
+      // Navigation --------------------------------------------------
+      {
+        /* Navbar            */
+        var nvbar=new navbar(300, bk, 0, 570, width, 30,
+          {text:        "Navigation",
+           icolor:      CLRS.INACTIVE,
+           acolor:      CLRS.K_TEAL_4,
+           cursor:      ARROW,
+           position:    navCursor,
+           recordCount: navRecordCount,
+           execute:     navSetCursor});
+
+        bk.controls.push(nvbar);
+
+          /* Decrement Page        */
+          nvbar.controls.push(new navButton(310, nvbar, 0, 0, 50, 30,
+            {execute:   decrementPage,
+             type:      NAVIGATION.DECREMENTPAGE,
+             retrieve:  navCursor,
+             color:     CLRS.BLACK,
+             cursor:    HAND}));
+
+          /* Increment Page       */
+          nvbar.controls.push(new navButton(320, nvbar, width-50, 0, 50, 30,
+            {execute:  incrementPage,
+             type:     NAVIGATION.INCREMENTPAGE,
+             retrieve: navCursor,
+             color:    CLRS.BLACK,
              cursor:   HAND}));
 
-          /* Cosecant button    */
-          bk.controls.push(new button(340, bk, 15, 110, 110, 20,            
-            {text:     "Csc "+CONSTANTS.THETA,
-             execute:  toggleCosecant,
-             tag:      getCosecant,
-             retrieve: getCosecantOn,
-             color:    CLRS.K_PINK_0,
+          /* First Record         */
+          nvbar.controls.push(new navButton(330, nvbar, 50, 0, 25, 30,
+            {execute:   first,
+             type:      NAVIGATION.FIRST,
+             retrieve:  navCursor,
+             color:     CLRS.BLACK,
+             cursor:    HAND}));
+
+          /* Decrement Record     */
+          nvbar.controls.push(new navButton(340, nvbar, 75, 0, 25, 30,
+            {execute:   decrement,
+             type:      NAVIGATION.DECREMENT,
+             retrieve:  navCursor,
+             color:     CLRS.BLACK,
+             cursor:    HAND}));
+
+          /* Increment Record     */
+          nvbar.controls.push(new navButton(350, nvbar, width-100, 0, 25, 30,
+            {execute:  increment,
+             type:     NAVIGATION.INCREMENT,
+             retrieve: navCursor,
+             color:    CLRS.BLACK,
              cursor:   HAND}));
-          
-          /* Secant button      */
-          bk.controls.push(new button(350, bk, 15, 130, 110, 20,           
-            {text:     "Sec "+CONSTANTS.THETA,
-             execute:  toggleSecant,
-             tag:      getSecant,
-             retrieve: getSecantOn,
-             color:    CLRS.K_PINK_2,
+
+          /* Last Record          */
+          nvbar.controls.push(new navButton(360, nvbar, width-75, 0, 25, 30,
+            {execute:  last,
+             type:     NAVIGATION.LAST,
+             retrieve: navCursor,
+             color:    CLRS.BLACK,
              cursor:   HAND}));
+
+          /* Scroll               */
+          nvbar.controls.push(new navScroll(370, nvbar, 100, 0, 400, 30,
+            {execute:   navSetCursor,
+             color:     CLRS.BLACK,
+             cursor:    MOVE}));
              
-          /* Cotangent button   */
-          bk.controls.push(new button(360, bk, 15, 150, 110, 20,           
-            {text:     "Cot "+CONSTANTS.THETA,
-             execute:  toggleCotangent,
-             tag:      getCotangent,
-             retrieve: getCotangentOn,
-             color:    CLRS.TAN_LT,
-             cursor:   HAND}));
+      }
 
-          /* Excosecant button   */
-          bk.controls.push(new button(360, bk, 15, 175, 110, 20,           
-            {text:     "Excsc "+CONSTANTS.THETA,
-             execute:  toggleExcosecant,
-             tag:      getExcosecant,
-             retrieve: getExcosecantOn,
-             color:    CLRS.K_TEAL_0,
-             cursor:   HAND}));
-             
-          /* Coversine button   */
-          bk.controls.push(new button(360, bk, 15, 195, 110, 20,           
-            {text:     "Cvs "+CONSTANTS.THETA,
-             execute:  toggleCoversine,
-             tag:      getCoversine,
-             retrieve: getCoversineOn,
-             color:    CLRS.K_TEAL_2,
-             cursor:   HAND}));
+      // Index --------------------------------------------------
+      {
+        // /* index              */
+        // var idx=new index(300, bk, 10, 40, 130, 225,{radius:  5,
+            // color:   CLRS.WHITE,
+            // cursor:  ARROW});
 
-          /* Versine button   */
-          bk.controls.push(new button(360, bk, 15, 220, 110, 20,           
-            {text:     "Ver "+CONSTANTS.THETA,
-             execute:  toggleVersine,
-             tag:      getVersine,
-             retrieve: getVersineOn,
-             color:    CLRS.K_BROWN_1,
-             cursor:   HAND}));
+        // bk.controls.push(idx);
 
-          /* Exsecant button   */
-          bk.controls.push(new button(360, bk, 15, 240, 110, 20,           
-            {text:     "Exsec "+CONSTANTS.THETA,
-             execute:  toggleExsecant,
-             tag:      getExsecant,
-             retrieve: getExsecantOn,
-             color:    CLRS.K_ORANGE_1,
-             cursor:   HAND}));
-             
+          // /* Sine button        */
+          // bk.controls.push(new button(310, bk, 15, 45, 120, 20,
+            // {text:     "Sin "+CONSTANTS.THETA,
+             // execute:  toggleSine,
+             // tag:      getSine,
+             // retrieve: getSineOn,
+             // color:    CLRS.SIN,
+             // cursor:   HAND}));
+
+          // /* Cosine button      */
+          // bk.controls.push(new button(320, bk, 15, 65, 120, 20,
+            // {text:     "Cos "+CONSTANTS.THETA,
+             // execute:  toggleCosine,
+             // tag:      getCosine,
+             // retrieve: getCosineOn,
+             // color:    CLRS.COS,
+             // cursor:   HAND}));
+
+          // /* Tangent button     */
+          // bk.controls.push(new button(330, bk, 15, 85, 120, 20,
+            // {text:     "Tan "+CONSTANTS.THETA,
+             // execute:  toggleTangent,
+             // tag:      getTangent,
+             // retrieve: getTangentOn,
+             // color:    CLRS.TAN,
+             // cursor:   HAND}));
+
+          // /* Cosecant button    */
+          // bk.controls.push(new button(340, bk, 15, 110, 120, 20,
+            // {text:     "Csc "+CONSTANTS.THETA,
+             // execute:  toggleCosecant,
+             // tag:      getCosecant,
+             // retrieve: getCosecantOn,
+             // color:    CLRS.K_PINK_0,
+             // cursor:   HAND}));
+
+          // /* Secant button      */
+          // bk.controls.push(new button(350, bk, 15, 130, 120, 20,
+            // {text:     "Sec "+CONSTANTS.THETA,
+             // execute:  toggleSecant,
+             // tag:      getSecant,
+             // retrieve: getSecantOn,
+             // color:    CLRS.K_PINK_2,
+             // cursor:   HAND}));
+
+          // /* Cotangent button   */
+          // bk.controls.push(new button(360, bk, 15, 150, 120, 20,
+            // {text:     "Cot "+CONSTANTS.THETA,
+             // execute:  toggleCotangent,
+             // tag:      getCotangent,
+             // retrieve: getCotangentOn,
+             // color:    CLRS.TAN_LT,
+             // cursor:   HAND}));
+
+          // /* Excosecant button   */
+          // bk.controls.push(new button(360, bk, 15, 175, 120, 20,
+            // {text:     "Excsc "+CONSTANTS.THETA,
+             // execute:  toggleExcosecant,
+             // tag:      getExcosecant,
+             // retrieve: getExcosecantOn,
+             // color:    CLRS.K_TEAL_0,
+             // cursor:   HAND}));
+
+          // /* Coversine button   */
+          // bk.controls.push(new button(360, bk, 15, 195, 120, 20,
+            // {text:     "Cvs "+CONSTANTS.THETA,
+             // execute:  toggleCoversine,
+             // tag:      getCoversine,
+             // retrieve: getCoversineOn,
+             // color:    CLRS.K_TEAL_2,
+             // cursor:   HAND}));
+
+          // /* Versine button   */
+          // bk.controls.push(new button(360, bk, 15, 220, 120, 20,
+            // {text:     "Ver "+CONSTANTS.THETA,
+             // execute:  toggleVersine,
+             // tag:      getVersine,
+             // retrieve: getVersineOn,
+             // color:    CLRS.K_BROWN_1,
+             // cursor:   HAND}));
+
+          // /* Exsecant button   */
+          // bk.controls.push(new button(360, bk, 15, 240, 120, 20,
+            // {text:     "Exsec "+CONSTANTS.THETA,
+             // execute:  toggleExsecant,
+             // tag:      getExsecant,
+             // retrieve: getExsecantOn,
+             // color:    CLRS.K_ORANGE_1,
+             // cursor:   HAND}));
+    }
+
       // Telemetry --------------------------------------------------
         /* Telemetry          */
-        var telem=new legend(300, bk, 600, 30, 200, 570,
+        var telem=new telemetry(400, bk, width, 30, 200, 570,
           {color:     CLRS.BLACK,
            cursor:    ARROW});
 
         bk.controls.push(telem);
 
-
-             
-    };
-
-    var incrementTheta=function(){
-
-      app.theta+=1;
-      if(app.theta>360){ app.theta=0; }
-
-    };
-    var update=function(){
+      // Loading --------------------------------------------------
       
+        /* Splash Screen      */
+        var splashScreen=new splash(500, bk, 100, 100, 400, 400,
+          {color:     CLRS.BLACK,
+           retrieve:  getInfo,
+           cursor:    CROSS});
+
+        bk.controls.push(splashScreen);
+        
+          /* Close              */
+          splashScreen.controls.push(new button(510, splashScreen, 180, 360, 120, 20,
+            {text:      "Close",
+             execute:   toggleInfo,           
+             color:     CLRS.WHITE,
+             cursor:    HAND}));
+           
+    };
+    
+    var update=function(){
+
       frameRate(app.frameRate);
 
       background(242);
 
-      if(app.autoRun){ incrementTheta(); }
+      if(app.autoRun && 
+         (frameCount%app.frameRate===0)){           
+           incrementCursor();
+           app.dCursor%=app.data.length-1;
+      }
 
       for(var c in app.controls){ app.controls[c].draw(); }
 
     };
 
+    loadData();
+    
     var execute;
 
     execute=update;
@@ -2441,18 +2116,39 @@ var diagrams = function(processingInstance){
   {
 
       var keyPressed=function(){
+        
+        app.keys[keyCode]=true;
 
         if(app.autoRun===false){
 
-          if     (keyCode===KEYCODES.RIGHT){ increment(); }
-          else if(keyCode===KEYCODES.LEFT) { decrement(); }
+          switch(true){
 
+            case app.keys[KEYCODES.LEFT] &&
+                 app.keys[KEYCODES.SHIFT]:    decrementPage();  break;
+            case app.keys[KEYCODES.RIGHT] &&
+                 app.keys[KEYCODES.SHIFT]:    incrementPage();  break;
+
+            case app.keys[KEYCODES.LEFT] &&
+                 app.keys[KEYCODES.CONTROL]:  first();          break;
+            case app.keys[KEYCODES.RIGHT] &&
+                 app.keys[KEYCODES.CONTROL]:  last();           break;
+                 
+            case app.keys[KEYCODES.LEFT]:     decrement();      break;
+            
+            case app.keys[KEYCODES.RIGHT]:    increment();      break;
+
+            default:                                            break;
+
+          }
+          
         }
-
-        app.keys[keyCode]=true;
+        
+        
 
       };
-      var keyTyped=function(){/* println("typed " + (key) + " " + keyCode); */};
+      var keyTyped=function(){
+        /* println("typed " + (key) + " " + keyCode); */
+      };
       var keyReleased=function(){
 
         app.keys[keyCode]=false;
@@ -2488,6 +2184,8 @@ var diagrams = function(processingInstance){
 
       }
 
+      for(var c in app.controls){ app.controls[c].pressed();  }
+      
     };
     var mouseReleased=function(){
 
@@ -2505,6 +2203,20 @@ var diagrams = function(processingInstance){
 
       for(var c in app.controls){ app.controls[c].moved(0,0); }
 
+    };
+    var mouseDragged=function(){
+
+      // for(var c in app.controls){ app.controls[c].dragged();  }
+
+      switch(mouseButton){
+
+        case LEFT:   for(var c in app.controls){ app.controls[c].dragged();  } break;
+        // case RIGHT:  for(var c in app.controls){ app.controls[c].rClicked(); } break;
+        // case CENTER: for(var c in app.controls){ app.controls[c].cClicked(); } break;
+
+        default:     break;
+      }
+      
     };
     var mouseOut=function(){
 
