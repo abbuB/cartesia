@@ -46,10 +46,7 @@ var diagrams = function(processingInstance){
           - path integers
           - line display
       
-      - color coded line based on height
-      - color coded shape based on area
-      - color code greatest total area
-      - color code longest path
+
 
       - only draw telemetry if it's visible
 
@@ -58,6 +55,11 @@ var diagrams = function(processingInstance){
 
     TO DONE:
 
+      - color coded line based on height
+      - color coded shape based on area
+      - color code greatest total area
+      - color code longest path
+      
       - right left arrow to increment data by a screen width
           
       - number format integer details
@@ -109,15 +111,21 @@ var diagrams = function(processingInstance){
 
     /* App Specific ------------------ */
     this.data=[];             //  Array of collatz objects
-
+    this.buckets=[];          //  Array of values in the current range
+    
+    this.bucketsMax=0;        //  The greatest value in the buckets array
+        
     this.autoRun=false;        //  Alpha changes automatically
-    this.infoOn=false;        //  Is the info frame displayed
+    this.infoOn=true;        //  Is the info frame displayed
 
     this.dCursor=25;           //  position of the cursor in data
-    this.dOffset=2; //9749626154;  //pow(2,52)+1         //  How far from 0 is the data cursor
+    this.dOffset=2;//9749626154;  //pow(2,52)+1         //  How far from 0 is the data cursor
+
+    this.dMax0=398;           // Range length if it begins at 2
+    this.dMax1=400;           // Range length if it begins above 2
 
     this.dHighest=0;          //  The index of the greatest number reached
-    this.dHighestIndex=0;     
+    this.dHighestIndex=0;
     this.dArea=0;             //  The index of the greatest area of the path
     this.dLongest=0;          //  The index of the longest path
 
@@ -343,51 +351,115 @@ var diagrams = function(processingInstance){
 
       this.length=this.path.length;
   // println(this.i);
+    
+    };
+
+    var bucket=function(n){
+
+      this.n=n;         //  The integer value of the bucket
+      this.total=1;     //  The total # of values in the current range
+
+      this.increment=function(){ this.total++; }; //  Increase the bucket count by 1
 
     };
-  
+
   }
   
   /* Utility Functions ========================================================= */
   {
-
-    var loadData=function(){
+    var setBucketsMax=function(){
       
-      app.data=[];
+      var max=0;
+
+      for(var n=0; n<app.buckets.length; n++){
+
+        if(app.buckets[n].total>max){
+          app.bucketsMax=app.buckets[n].total;
+          max=app.bucketsMax;
+        }
+
+      }
+
+    };    
+    var printBuckets=function(){
+      
+      var txt="";
+
+      for(var n=0; n<app.buckets.length; n++){
+
+        txt=txt+app.buckets[n].n + ": " + app.buckets[n].total + " | ";
+
+      }
+
+      println(txt);
+
+    };
+    
+    
+    var exists=function(n){
+      
+      var retVal=-1;
+      
+      for(var i=0; i<app.buckets.length; i++){
+        if(app.buckets[i].n===n){
+          retVal=i;
+          break;
+        }
+      }
+// println(retVal);
+      return retVal;
+
+    };
+    
+    var loadData=function(){
+
+      app.data=[];        //  Erase app.data
+      app.buckets=[];     //  Erase app.buckets
 
       var _highest=0;
       var _sum=0;
       var _longest=0;
       var max=0;
-      
-      if(app.dOffset===2){ max=498; }
-      else               { max=500; }
-      
+
+      if(app.dOffset===2){ max=app.dMax0; }
+      else               { max=app.dMax1; }
+
       for(var n=app.dOffset; n<=app.dOffset+max; n++){
 
-      // println(n);
-      
+        //  Data point
         app.data.push(new collatz(n));
 
+        //  Greatest max number reached in the range
         if(app.data[app.data.length-1].max>_highest){
           app.dHighest=app.data.length-1;
           _highest=app.data[app.data.length-1].max;
         }
         
+        //  Greatest path sum in the range
         if(app.data[app.data.length-1].sum>_sum){
           app.dSum=app.data.length-1;
           _sum=app.data[app.data.length-1].sum;
         }
-
+        
+        //  Longest path in the range
         if(app.data[app.data.length-1].path.length>_longest){
           app.dLongest=app.data.length-1;
           _longest=app.data[app.data.length-1].path.length-1;
         }
+        
+        //  Buckets
+        var len=app.data[app.data.length-1].path.length;
+        var index=exists(len);
+
+        if(index===-1){ app.buckets.push(new bucket(len)); }
+        else          { app.buckets[index].increment();    }
 
       }
-    
+
+      setBucketsMax();
+
     };
-        
+
     var getColor=function(clr, alpha){ return color(red(clr), green(clr), blue(clr), alpha/100*255); };
 
     var incrementRecord=function(){
@@ -440,21 +512,21 @@ var diagrams = function(processingInstance){
     var last=function()           { app.dCursor=app.data.length-1;    };
     var incrementPage=function()  {
       
-      if(app.dOffset>2){ app.dOffset+=500; }
-      else             { app.dOffset+=498; }
+      if(app.dOffset>2){ app.dOffset+=app.dMax1; }
+      else             { app.dOffset+=app.dMax0; }
       
       loadData();
-      
+
     };
     var decrementPage=function()  {
 
       if(app.dOffset>2){
 
-        if(app.dOffset>500){ app.dOffset-=500; }
-        else               { app.dOffset-=498; }
+        if(app.dOffset>app.dMax1){ app.dOffset-=app.dMax1; }
+        else                     { app.dOffset-=app.dMax0; }
 
         loadData();     
-
+        
       }
       
     };
@@ -1588,16 +1660,16 @@ var diagrams = function(processingInstance){
         this.color=params.color;
         this.cursor=params.cursor;
         
+        this.displayBorder=false;
         this.displaySummary=true;
         this.displayPath=true;
         this.displayLines=true;
         this.displayCollatz=true;
+        this.displayBuckets=false;
+        this.displayCurrent=true;
         
         this.sw=1;
 
-        var txt="";
-        var total=0;
-        
       };
       graph.prototype=Object.create(control.prototype);
       graph.prototype.draw=function(){
@@ -1617,7 +1689,7 @@ var diagrams = function(processingInstance){
 
         };
         var convertX=function(x, length){
-
+// println(x/length*(p.w-20));
         return x/length*(p.w-20);
           // return (x+1)/length*(app.data.length);
 
@@ -1630,7 +1702,7 @@ var diagrams = function(processingInstance){
             translate(0.5,0.5);
 
               strokeWeight(1);
-              stroke(getColor(CLRS.BLACK,50));
+              stroke(getColor(CLRS.WHITE,50));
 
               if(p.hit){ fill(getColor(this.color,5)); }
               else     { fill(getColor(this.color,7)); }
@@ -1653,8 +1725,8 @@ var diagrams = function(processingInstance){
                 //  Origin
                 // ellipse(0,0,5,5);
 
-              fill(CLRS.BLACK);
-              stroke(CLRS.BLACK);
+              // fill(CLRS.WHITE);
+              // stroke(CLRS.WHITE);
 
                 //  Axes
                 line(0, 0,      0, p.h-20);   //  Y-axis
@@ -1687,7 +1759,7 @@ var diagrams = function(processingInstance){
                                     app.data[app.dCursor].max);
 
                     vertex(x,y);
-                    ellipse(x,y,0.25,0.25);
+                    // ellipse(x,y,0.25,0.25);
 
                 }
 
@@ -1716,41 +1788,8 @@ var diagrams = function(processingInstance){
           textAlign(LEFT,TOP);
           fill(getColor(CLRS.GRAY,50));
           
-            text(path, 20, 140, p.w-30, 10000);
+            text(path, 20, 100, p.w-30, 10000);
   
-        };
-        var currentData=function(){
-
-          //  Data cursor
-          fill(getColor(CLRS.K_TEAL_0,100));
-          textAlign(LEFT,TOP);
-          textSize(20);
-
-            text(nfc(app.data[app.dCursor].i), 20,10);
-
-          fill(getColor(CLRS.BLACK,75));
-          textAlign(LEFT,TOP);
-          textSize(12);
-          textLeading(16);
-
-            text("Max:     \n" +
-                 "Sum:     \n" +
-                 "Length:  \n\n" +
-                 "Up:      \n" +
-                 "Down:    \n",
-                 20, 35);
-
-          textAlign(RIGHT,TOP);
-
-          fill(getColor(CLRS.K_TEAL_2,100));
-
-            text(nfc(app.data[app.dCursor].max)        + "\n" +
-                 nfc(app.data[app.dCursor].sum)        + "\n" +
-                 nfc((app.data[app.dCursor].length-1)) + "\n\n" +
-                 nfc(app.data[app.dCursor].up)         + "\n" +
-                 nfc(app.data[app.dCursor].down),
-                 140, 35);
-
         };
         var drawLines=function(){
 
@@ -1758,7 +1797,7 @@ var diagrams = function(processingInstance){
 
           var dLength=app.data.length;
           var pLength=app.data[app.dCursor].path.length;
-// sw=1;          
+
           pushMatrix();
 
             translate(10, p.h-10);
@@ -1772,32 +1811,16 @@ var diagrams = function(processingInstance){
               if(n%2===0){ stroke(getColor(CLRS.BLACK, 25)); }
               else       { stroke(getColor(CLRS.BLACK, 50)); }
 
-              strokeWeight(1);
+              strokeWeight(p.sw);
 
-              if(n===app.dHighest){
-
-                stroke(getColor(CLRS.ORANGE,75));
-                strokeWeight(2);
-
-              }
-              if(n===app.dSum){
-
-                stroke(getColor(CLRS.GREEN,75));
-                strokeWeight(2);
-
-              }
-              if(n===app.dLongest){
-
-                stroke(getColor(CLRS.BLUE,75));
-                strokeWeight(2);
-
-              }              
-              if(n===app.dCursor){
-                
-                stroke(getColor(CLRS.RED,75));
-                strokeWeight(2);
-                
-              }
+              if(n===app.dHighest){ stroke(getColor(CLRS.ORANGE,75));
+                                    strokeWeight(p.sw*1.5);           }
+              if(n===app.dSum)    { stroke(getColor(CLRS.GREEN,75));
+                                    strokeWeight(p.sw*1.5);           }
+              if(n===app.dLongest){ stroke(getColor(CLRS.BLUE,75));
+                                    strokeWeight(p.sw*1.5);           }              
+              if(n===app.dCursor) { stroke(getColor(CLRS.RED,75));
+                                    strokeWeight(p.sw*1.5);           }
 
               line(convertX(n, dLength), 2,
                    convertX(n, dLength), convertHeight(pLength));
@@ -1807,35 +1830,118 @@ var diagrams = function(processingInstance){
           popMatrix();
 
         };
+        var drawBuckets=function(){
+
+          pushMatrix();
+
+            translate(10.5, p.h-10.5);
+            scale(1,-1);
+
+              var sw=(p.w-20)/app.buckets.length;
+
+              fill(getColor(CLRS.BLUE,25));
+              stroke(getColor(CLRS.BLUE,50));
+              strokeWeight(1);
+
+              for(var n=0; n<app.buckets.length; n++){
+
+                rect(n*sw, 0, sw, app.buckets[n].total/app.bucketsMax*0.5*p.h);
+
+              }
+
+          popMatrix();
+
+        };
+        var currentData=function(){
+
+          //  Data cursor
+          fill(getColor(CLRS.K_TEAL_0,100));
+          textAlign(LEFT,TOP);
+          textSize(20);
+
+            text((nfc)(app.data[app.dCursor].i), 20, 10);
+
+          fill(getColor(CLRS.BLACK,100));
+          textAlign(LEFT,TOP);
+          textSize(12);
+          textLeading(16);
+
+            text("Max:     \n" +
+                 "Sum:     \n" +
+                 "Length:",
+                 20, 35);
+
+            text("Up:      \n" +
+                 "Down:    \n",
+                 170, 35);
+                 
+          textAlign(RIGHT,TOP);
+
+          fill(getColor(CLRS.K_TEAL_2,100));
+
+            text((nfc)(app.data[app.dCursor].max)        + "\n" +
+                 (nfc)(app.data[app.dCursor].sum)        + "\n" +
+                 (nfc)((app.data[app.dCursor].length-1)),
+                 140, 35);
+
+             text((nfc)(app.data[app.dCursor].up)         + "\n" +
+                  (nfc)(app.data[app.dCursor].down),
+                  240, 35);
+
+                 
+        };
         var dataSummary=function(){
 
-          fill(getColor(CLRS.BLACK,75));
-          textSize(12);
+          fill(getColor(CLRS.K_TEAL_0,100));
+          textSize(16);
           textAlign(LEFT,TOP);
+
+            text("Range:", 300, 10);
+
+          textSize(12);
+          textLeading(16);
+          fill(getColor(CLRS.BLACK,75));
           
-            text("Range:    \n\n" +
-                 "Max Peak: \n" + 
+            text("Max Peak: \n" + 
                  "Max Sum:  \n" +
                  "Longest Path:",
-                 200, 35);
-
-          fill(getColor(CLRS.GRAY,100));
-          textAlign(LEFT,TOP);
-          
-            text(nfc(app.data[0].i) + " to " +  nfc(app.data[app.data.length-1].i) + "\n\n" +
-                 nfc(app.data[app.dHighest].i) +"\n" +
-                 nfc(app.data[app.dSum].i) + "\n" +
-                 nfc(app.data[app.dLongest].i),
                  300, 35);
+          
+          fill(getColor(CLRS.ORANGE,75));
+          noStroke();
+          
+            ellipse(293,43,6,6);
+
+          fill(getColor(CLRS.GREEN,75));
+          
+            ellipse(293,58,6,6);
+
+          fill(getColor(CLRS.BLUE,75));
+          
+            ellipse(293,73,6,6);
+            
+          fill(getColor(CLRS.K_TEAL_2,100));
+          textAlign(LEFT,BOTTOM);
+
+            text((nfc)(app.data[0].i) + " - " +
+                 (nfc)(app.data[app.data.length-1].i) + "\n\n",
+                 400, 60);
+          
+          fill(getColor(CLRS.K_TEAL_0,50));
+          textAlign(LEFT,TOP);
+            
+            text((nfc)(app.data[app.dHighest].i) +"\n" +
+                 (nfc)(app.data[app.dSum].i) + "\n" +
+                 (nfc)(app.data[app.dLongest].i),
+                 400, 35);
           
           fill(getColor(CLRS.K_TEAL_2,75));
           textAlign(RIGHT,TOP);
           
-            text("\n\n" +
-                 nfc(app.data[app.dHighest].max) + "\n" +
-                 nfc(app.data[app.dSum].sum) + "\n" +
-                 nfc(app.data[app.dLongest].length-1),
-                 440, 35);
+            text((nfc)(app.data[app.dHighest].max) + "\n" +
+                 (nfc)(app.data[app.dSum].sum) + "\n" +
+                 (nfc)(app.data[app.dLongest].length-1),
+                 540, 35);
 
         };
 
@@ -1853,14 +1959,13 @@ var diagrams = function(processingInstance){
 
             // border();
             axes();
-            currentData();
-            // if(this.displaySummary){ border(); }
+            if(this.displayBorder) { border();      }            
+            if(this.displayCurrent){ currentData(); }            
             if(this.displaySummary){ dataSummary(); }
             if(this.displayPath)   { drawPath();    }
             if(this.displayLines)  { drawLines();   }
+            if(this.displayBuckets){ drawBuckets(); }
             if(this.displayCollatz){ drawCollatz(); }
-
-// println(typeof app.dSum);
 
         popMatrix();
 
@@ -1914,7 +2019,7 @@ var diagrams = function(processingInstance){
         app.controls.push(bk);
 
         /* graph        */
-        bk.controls.push(new graph(110, bk, 10, 30, 575, 540,
+        bk.controls.push(new graph(110, bk, 10, 30, width-25, height-60,
           {color:     CLRS.GRAY,
            acolor:    CLRS.BLUE,
            icolor:    CLRS.RED,
@@ -1959,7 +2064,7 @@ var diagrams = function(processingInstance){
         var h=25;
         
         /* Navbar            */
-        var nvbar=new navbar(300, bk, 0, 575, width, h,
+        var nvbar=new navbar(300, bk, 0, height-25, width, h,
           {text:        "Navigation",
            icolor:      CLRS.INACTIVE,
            acolor:      CLRS.K_TEAL_4,
@@ -2019,7 +2124,7 @@ var diagrams = function(processingInstance){
              cursor:   HAND}));
 
           /* Scroll               */
-          nvbar.controls.push(new navScroll(370, nvbar, 100, 0, 400, h,
+          nvbar.controls.push(new navScroll(370, nvbar, 100, 0, width-200, h,
             {execute:   navSetCursor,
              color:     CLRS.BLACK,
              cursor:    MOVE}));
