@@ -28,7 +28,7 @@
 +alssndro.github.io/trianglify-background-generator
 +p5js.org
 +google.ca
-
++projecteuler.net
 */
 
 var diagrams = function(processingInstance){
@@ -111,27 +111,17 @@ var diagrams = function(processingInstance){
 
     /* App Specific ------------------ */
     this.data=[];             //  Array of collatz objects
-    this.buckets=[];          //  Array of values in the current range
-    this.max=[];              //  Array of the max values for each collatz object
-    this.sum=[];              //  Array of the sum values for each collatz object
-    
-    this.bucketsMax=0;        //  The greatest value in the buckets array
-    this.maxMax=0;            //  The greatest value in the max array
-    this.sumMax=0;            //  The greatest value in the sum array
-    
+
     this.autoRun=false;        //  Alpha changes automatically
     this.infoOn=false;        //  Is the info frame displayed
 
     this.dCursor=25;           //  position of the cursor in data
-    this.dOffset=2;//9749626154;  //pow(2,52)+1         //  How far from 0 is the data cursor
+    this.dOffset=0;
 
-    this.dMax0=398;           // Range length if it begins at 2
-    this.dMax1=400;           // Range length if it begins above 2
-
-    this.dHighest=0;          //  The index of the greatest number reached
-    this.dHighestIndex=0;
-    this.dArea=0;             //  The index of the greatest area of the path
-    this.dLongest=0;          //  The index of the longest path
+    this.min=0;
+    this.max=249;
+    
+    this.sw=560/250;
 
     /* Initialize -------------------- */
     {
@@ -312,63 +302,7 @@ var diagrams = function(processingInstance){
 
   }
 
-  /* Data types ================================================ */
-  {
 
-    var collatz=function(i){
-
-      this.i=i;
-
-      this.path=[];
-
-      this.max=0;
-      this.sum=0;
-      this.length=0;
-      this.up=0;
-      this.down=0;
-      this.area=0;
-
-      var p=this;
-
-      var load=function(n){
-
-        p.sum+=n;
-
-        p.path.push(n);
-
-        if(n>p.max){ p.max=n; }
-
-        if(n===1){ return; }
-        else {
-
-          if(n%2===0){  n/=2;
-                        p.down++; }
-          else       {  n=n*3+1;
-                        p.up++;   }
-
-          load(n);
-
-        }
-
-      };
-
-      load(i);
-
-      this.length=this.path.length;
-  // println(this.i);
-
-    };
-
-    var bucket=function(n){
-
-      this.n=n;         //  The integer value of the bucket
-      this.total=1;     //  The total # of values in the current range
-
-      this.increment=function(){ this.total++; }; //  Increase the bucket count by 1
-
-    };
-
-  }
 
   /* Utility Functions ========================================================= */
   {
@@ -414,13 +348,13 @@ var diagrams = function(processingInstance){
       }
 
     };        
-    var printBuckets=function(){
+    var printArray=function(arr){
 
       var txt="";
 
-      for(var n=0; n<app.buckets.length; n++){
+      for(var n=0; n<arr.length; n++){
 
-        txt=txt+app.buckets[n].n + ": " + app.buckets[n].total + " | ";
+        txt=txt+arr[n] + " | ";
 
       }
 
@@ -447,58 +381,16 @@ var diagrams = function(processingInstance){
     var loadData=function(){
 
       app.data=[];        //  Erase app.data
-      app.buckets=[];     //  Erase app.buckets
-      app.max=[];         //  Erase app.max
-      app.sum=[];         //  Erase app.sum
-      
-      var _highest=0;
-      var _sum=0;
-      var _longest=0;
-      var max=0;
 
-      if(app.dOffset===2){ max=app.dMax0; }
-      else               { max=app.dMax1; }
-
-      for(var n=app.dOffset; n<=app.dOffset+max; n++){
+      for(var n=app.min; n<=app.max; n++){
 
         //  Data point
-        app.data.push(new collatz(n));
-
-        app.max.push(app.data[app.data.length-1].max);
-        app.sum.push(app.data[app.data.length-1].sum);
-
-        //  Greatest max number reached in the range
-        if(app.data[app.data.length-1].max>_highest){
-          app.dHighest=app.data.length-1;
-          _highest=app.data[app.data.length-1].max;
-        }
-
-        //  Greatest path sum in the range
-        if(app.data[app.data.length-1].sum>_sum){
-          app.dSum=app.data.length-1;
-          _sum=app.data[app.data.length-1].sum;
-        }
-
-        //  Longest path in the range
-        if(app.data[app.data.length-1].path.length>_longest){
-          app.dLongest=app.data.length-1;
-          _longest=app.data[app.data.length-1].path.length-1;
-        }
-
-        //  Buckets
-        var len=app.data[app.data.length-1].path.length;
-        var index=exists(len);
-
-        if(index===-1){ app.buckets.push(new bucket(len)); }
-        else          { app.buckets[index].increment();    }
+        app.data.push(new Integer(n+app.dOffset));
+println(app.data[n].n);
 
       }
       
-      // println(app.max);
-
-      setBucketsMax();
-      setMaxMax();
-      setSumMax();
+      println(app.data);
 
     };
 
@@ -508,9 +400,9 @@ var diagrams = function(processingInstance){
 
       app.dCursor++;
 
-      app.dCursor%=(app.data.length-1);
+      // app.dCursor%=(app.data.length-1);
 
-      // if(app.dCursor>app.data.length-1){ app.dCursor=0; }
+      if(app.dCursor>app.data.length-1){ app.dCursor=0; }
 
     };
     var decrementRecord=function(){
@@ -540,9 +432,9 @@ var diagrams = function(processingInstance){
     var setDataCursor=function(n) {
 
       if(n>=0 &&
-         n<app.data.length){
+         n<app.data.length*app.sw){
 
-        app.dCursor=round(n);
+        app.dCursor=floor(n/app.sw);
 
       }
 
@@ -553,23 +445,27 @@ var diagrams = function(processingInstance){
     var increment=function()      { incrementRecord();                };
     var last=function()           { app.dCursor=app.data.length-1;    };
     var incrementPage=function()  {
-
-      if(app.dOffset>2){ app.dOffset+=app.dMax1; }
-      else             { app.dOffset+=app.dMax0; }
+      
+      var accel=1;
+      
+      if(app.keys[KEYCODES.CONTROL]){ accel= 10; }
+      if(app.keys[KEYCODES.ALT])    { accel=100; }
+      
+      app.dOffset=constrain(app.dOffset+=250*accel, 0);
 
       loadData();
 
     };
     var decrementPage=function()  {
+      
+      var accel=1;
+      
+      if(app.keys[KEYCODES.CONTROL]){ accel= 10; }
+      if(app.keys[KEYCODES.ALT])    { accel=100; }
+      
+      app.dOffset=constrain(app.dOffset-=250*accel, 0);
 
-      if(app.dOffset>2){
-
-        if(app.dOffset>app.dMax1){ app.dOffset-=app.dMax1; }
-        else                     { app.dOffset-=app.dMax0; }
-
-        loadData();
-
-      }
+      loadData();
 
     };
     var incrementCursor=function(){ app.dCursor++;                    };
@@ -587,14 +483,67 @@ var diagrams = function(processingInstance){
     };
     
     
-    /* Maths utility methods */
+    /* Maths utility methods ===================================== */
     {
+
+      /* sumDivisibleBy -------------------*/
+      var sumDivisibleBy=function(n, limit){
+        
+        var p = floor(limit / n);
+        
+        return (n*(p*(p+1))) / 2;
+      
+      };
 
     }
 
   }
 
-  /* Controls ================================================ */
+  
+  /* Data types ================================================ */
+  {
+
+    var Integer=function(n){
+
+      this.n=n;                                 //  The Integer #
+      
+      this.primeFactors=[];                     //  Prime Factorization
+      
+      this.divisors=[1,2,3,4];                         //  Array of all divisors      
+      
+      this.divisorCount=this.divisors.length;   //  # of Divisors
+      this.sumOfDivisors=0;                     //  Sum of all the divisorCount
+
+      this.isPrime=(this.factors<3);            //  Is the Integer prime?
+
+      this.previousPrime=0;
+      this.nextPrime=0;
+
+      this.isFibonacci=false;
+      this.isFactorial=false;
+
+      this.isPerfect=false;
+      this.isBell=false;
+      this.isRegular=false;
+
+      this.binary=binary(n);
+
+      this.square=sq(n);
+      this.squareRoot=sqrt(n);
+      
+      this.naturalLog=log(n);
+      this.decimalLog=(log(n)/log(10));
+      
+      this.sine=sin(n);
+      this.cos=cos(n);
+      this.tan=tan(n);
+
+    };
+
+  }
+  
+  
+  /* Controls ==================================================== */
   {
 
     // Control ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1716,7 +1665,7 @@ var diagrams = function(processingInstance){
         this.displayBuckets=false;
         this.displayCurrent=true;
 
-        this.sw=1;
+        this.sw=app.sw;
 
       };
       graph.prototype=Object.create(control.prototype);
@@ -1783,39 +1732,38 @@ var diagrams = function(processingInstance){
           popMatrix();
 
         };
-        var drawCollatz=function(){
+        var drawData=function(){
 
           pushMatrix();
 
             translate(10, p.h-10);
             scale(1,-1);
 
-              strokeWeight(1);
+              strokeWeight(app.sw);
               fill(  getColor(CLRS.K_TEAL_2, 25));
               stroke(getColor(CLRS.BLACK,    50));
 
-              beginShape();
+              for(var n=1; n<app.data.length; n++){
 
-                vertex(0,0);
-                vertex(0,convertPath(app.data[app.dCursor].path[0],
-                                     app.data[app.dCursor].max));
+                var x=n*p.sw;
+                var y=app.data[n].naturalLog*30;
 
-                for(var n=1; n<app.data[app.dCursor].path.length; n++){
+                  stroke(getColor(CLRS.BLACK, 100));
 
-                  var x=convertX(n, app.data[app.dCursor].length);
-                  var y=convertPath(app.data[app.dCursor].path[n],
-                                    app.data[app.dCursor].max);
+                  if(n%13===0){ stroke(getColor(CLRS.ORANGE, 75)); }
+                  if(n%15===0){ stroke(getColor(CLRS.BLUE,   75)); }
+                  if(n%25===0){ stroke(getColor(CLRS.GREEN,  75)); }
 
-                    vertex(x,y);
-                    // ellipse(x,y,0.25,0.25);
+                  line(x, 2, x, y);
 
-                }
-
-                // vertex(500, 0);
-                // ellipse(500, 0, 0.25, 0.25);
-
-              endShape(CLOSE);
-
+              }
+              
+              stroke(getColor(CLRS.RED,100));
+              strokeWeight(2);
+              
+              line(app.data[app.dCursor].n*p.sw, 2,
+                   app.data[app.dCursor].n*p.sw, y);
+              
           popMatrix();
 
         };
@@ -1959,35 +1907,46 @@ var diagrams = function(processingInstance){
           textAlign(LEFT,TOP);
           textSize(20);
 
-            text((nfc)(app.data[app.dCursor].i), 20, 10);
+            text((nfc)(app.data[app.dCursor].n), 20, 10);
 
           fill(getColor(CLRS.BLACK,100));
           textAlign(LEFT,TOP);
           textSize(12);
           textLeading(16);
 
-            text("Max:     \n" +
-                 "Sum:     \n" +
-                 "Length:",
+            text("Factorization:    \n" +
+                 "Divisors:         \n" +
+                 "Divisor Count:    \n" +
+                 "Sum of Divisors   \n" +
+                 "Is Prime?         \n" +
+                 "Previous Prime    \n" +
+                 "Next Prime        \n" +
+                 "Is Fibonacci?     \n" +
+                 "Is Bell?          \n" +
+                 "Is Factorial?     \n" +
+                 "Is Regular?       \n" +
+                 "Is Perfect?       \n" +
+                 "Binary            \n" +
+                 "Square            \n" +
+                 "Square Root       \n" +
+                 "Natural Logarithm \n" +
+                 "Decimal Logarithm \n" +
+                 "Sine              \n" +
+                 "Cosine            \n" +
+                 "Tangent",
                  20, 35);
-
-            text("Up:      \n" +
-                 "Down:    \n",
-                 170, 35);
 
           textAlign(RIGHT,TOP);
 
           fill(getColor(CLRS.K_TEAL_2,100));
 
-            text((nfc)(app.data[app.dCursor].max)        + "\n" +
-                 (nfc)(app.data[app.dCursor].sum)        + "\n" +
-                 (nfc)((app.data[app.dCursor].length-1)),
+            text((nfc)(app.data[app.dCursor].factorization) + "\n" +
+                 (nfc)(app.data[app.dCursor].divisors)      + "\n" +
+                 (nfc)(app.data[app.dCursor].divisorCount)  + "\n" +
+                 (nfc)(app.data[app.dCursor].divisors)      + "\n" +
+                 (nfc)(app.data[app.dCursor].sumOfDivisors)
+                 ,
                  140, 35);
-
-             text((nfc)(app.data[app.dCursor].up)         + "\n" +
-                  (nfc)(app.data[app.dCursor].down),
-                  240, 35);
-
 
         };
         var dataSummary=function(){
@@ -2061,13 +2020,13 @@ var diagrams = function(processingInstance){
             axes();
             if(this.displayBorder) { border();      }
             if(this.displayCurrent){ currentData(); }
-            if(this.displaySummary){ dataSummary(); }
-            if(this.displayPath)   { drawPath();    }
-            if(this.displayLines)  { drawLines();   }
+            // if(this.displaySummary){ dataSummary(); }
+            // if(this.displayPath)   { drawPath();    }
+            // if(this.displayLines)  { drawLines();   }
             // drawMax();
             // drawSum();
-            if(this.displayBuckets){ drawBuckets(); }
-            if(this.displayCollatz){ drawCollatz(); }
+            // if(this.displayBuckets){ drawBuckets(); }
+            if(this.displayCollatz){ drawData(); }
 
         popMatrix();
 
@@ -2090,7 +2049,7 @@ var diagrams = function(processingInstance){
           if(mouseX>=this.x+10 &&
              mouseX<=this.x+this.w+10){
 
-            setDataCursor((mouseX-this.x-10)/this.sw);
+            setDataCursor((mouseX-this.x-10));
 
           }
 
@@ -2393,6 +2352,10 @@ var diagrams = function(processingInstance){
       execute();
 
     };
+
+    println(sumDivisibleBy( 3, 999) +
+            sumDivisibleBy( 5, 999) -
+            sumDivisibleBy(15, 999));
 
   /* Keyboard Events ================================================== */
   {
