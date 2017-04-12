@@ -29,24 +29,19 @@
 +p5js.org
 +google.ca
 +projecteuler.net
++www.numberempire.com
+
 */
 
 var diagrams = function(processingInstance){
   with (processingInstance){
 /*
-      https://xkcd.com/710/
-
-      https://en.wikipedia.org/wiki/Collatz_conjecture
 
     TO DO:
 
       - buttons to toggle
 
-          - path display
-          - path integers
-          - line display
-
-
+          - # of factors
 
       - only draw telemetry if it's visible
 
@@ -55,31 +50,6 @@ var diagrams = function(processingInstance){
 
     TO DONE:
 
-      - color coded line based on height
-      - color coded shape based on area
-      - color code greatest total area
-      - color code longest path
-
-      - right left arrow to increment data by a screen width
-
-      - number format integer details
-      - click graph to set integer
-      - mouse move over data tracker changes cursor
-      - toggle mouse tracking of data
-
-      - collatz data type including
-
-        - number
-        - path
-        - size
-        - max
-        - sum
-        ...
-
-      - run button
-      - increment button
-      - decrement button
-      - detail based on mouseX position
 
         textFont(createFont("sans-serif", 14));
         textFont(createFont("monospace", 14));
@@ -112,16 +82,18 @@ var diagrams = function(processingInstance){
     /* App Specific ------------------ */
     this.data=[];             //  Array of collatz objects
 
-    this.autoRun=false;        //  Alpha changes automatically
+    this.autoRun=false;       //  Alpha changes automatically
     this.infoOn=false;        //  Is the info frame displayed
 
-    this.dCursor=25;           //  position of the cursor in data
+    this.dCursor=54;          //  position of the cursor in data
     this.dOffset=0;
 
-    this.min=0;
-    this.max=249;
+    this.min=1;
+    this.max=500;
     
-    this.sw=560/250;
+    this.sw=560/this.max;
+
+    this.fibs=[];
 
     /* Initialize -------------------- */
     {
@@ -358,10 +330,23 @@ var diagrams = function(processingInstance){
 
       }
 
-      println(txt);
+      return(txt);
 
     };
+    var arrayToString=function(arr){
 
+      var s="";
+// println(arr);
+      for(var n=0; n<arr.length; n++){
+
+        if(n===arr.length-1){ s=s+arr[n];        }
+        else                { s=s+arr[n] + ", "; }
+
+      }
+
+      return s;
+
+    };
 
     var exists=function(n){
 
@@ -384,13 +369,11 @@ var diagrams = function(processingInstance){
 
       for(var n=app.min; n<=app.max; n++){
 
-        //  Data point
         app.data.push(new Integer(n+app.dOffset));
-println(app.data[n].n);
 
       }
       
-      println(app.data);
+      app.fibs=fibonacciUpTo(app.max);
 
     };
 
@@ -468,7 +451,7 @@ println(app.data[n].n);
       loadData();
 
     };
-    var incrementCursor=function(){ app.dCursor++;                    };
+    // var incrementCursor=function(){ app.dCursor++;                    };
     var navCursor=function()      { return app.dCursor+1;             };
     var navRecordCount=function() { return app.data.length;           };
     var navSetCursor=function(n)  {
@@ -486,7 +469,7 @@ println(app.data[n].n);
     /* Maths utility methods ===================================== */
     {
 
-      /* sumDivisibleBy -------------------*/
+      /* sumDivisibleBy ---------- */
       var sumDivisibleBy=function(n, limit){
         
         var p = floor(limit / n);
@@ -495,48 +478,232 @@ println(app.data[n].n);
       
       };
 
+      /* sumOfProperDivisors
+         returns the sum of proper divisors (not including n) ---------- */  
+      var sumOfProperDivisors=function(n){
+
+        var sum=0;
+        
+        if(n!==1){ sum=1; }
+
+        for (var f=2; f<n; f++) {
+          
+          if (n%f == 0) {
+            
+            sum+=f;
+    //        sum+=n/f;
+
+         }
+
+       }
+
+       return sum;
+
+      }
+
+      /* sumOfDivisors
+         returns the sum of proper divisors (including n) ---------- */  
+      var sumOfDivisors=function(n){
+        
+        return n+sumOfProperDivisors(n);
+
+      };
+      
+      /*  isPrime
+          returns true if n is ---------- */
+      var isPrime=function(n){
+
+        if      ( n===1      ) { return false; }   //  1 (one) is not prime
+        else if ( n<4        ) { return true;  }   //  2 and 3 are prime
+        else if ( n%2 === 0  ) { return false; }   //  even numbers
+        else if ( n<9        ) { return true;  }   //  we have already excluded 4, 6 and 8
+        else if ( n%3 === 0  ) { return false; }
+        else {
+          
+          var r = sqrt(n);           //  n rounded to the greatest long r so that r*r<=n
+          var l = 5;
+          
+          while (l<=r) {
+          
+            if (n % l === 0      ) {return false; }
+            if (n % (l+2) === 0  ) {return false; }
+            
+            l+=6;                                 //  All primes greater than 3 can be written in the form 6k +/- 1
+          
+          }
+          
+          return true;  // n is prime
+
+          
+        }
+
+      };
+
+      /*  nextPrime
+          returns the next prime after n ---------- */
+      var nextPrime=function(n) {
+        
+        while (isPrime(n+=1)===false){}
+        
+        return n;
+        
+      }
+
+      /*  previousPrime
+          returns the previous prime before n ---------- */      
+      var previousPrime=function(n) {
+        
+        while (isPrime(n-=1)===false) {}
+        
+        return n;
+        
+      }
+
+      var contains=function(n, arr){
+      
+        var retVal=false;
+        
+        for(var i=0; i<arr.length; i++){
+          
+          if(arr[i]===n){
+
+            retVal=true;
+            break;
+
+          }
+          
+        }
+        
+        return retVal;
+        
+      };
+      
+      /* Divisors
+         returns an array of proper divisors (including n) ----------*/
+      var properDivisorsArray=function(n){
+
+        var factors=[];
+
+        if(n!==1){ factors.push(1); }
+
+        factors.push(n);
+
+        var divisor=0;
+        
+        for (var f=2; f<=sqrt(n); f++) {
+
+          if (n%f === 0) {
+            
+            divisor=n/f;
+
+            if(!contains(f,factors))        { factors.push(f);        }
+            if(!contains(divisor,factors))  { factors.push(divisor);  }
+
+          }
+
+        }
+        
+        factors=sort(factors);
+
+        return factors;
+        
+      };
+      
+      /* Divisors
+         returns a list of proper divisors (including n) ----------*/
+      var divisorsList=function(n){
+
+        // ArrayList<Integer> factors = properDivisorsList(n);
+
+        // factors.add(n);
+
+        // return factors;
+
+      };      
+
+      /* primeFactors
+         returns a list of prime factors of n ---------- */
+      var primeFactors=function(n){
+
+        var factors=[];
+
+        while (n%2===0){
+          factors.push(2);
+          n=n/2;
+        }
+
+        for (var f=3; f<=n; f+=2){
+
+          while (n%f===0){
+            factors.push(f);
+            n/=f;
+          }
+
+        }
+
+        return factors;
+
+      }
+
+      /* primeFactors
+         returns a list of prime factors of n ---------- */
+      var fibonacciUpTo=function(n){
+        
+        var fibs=[];
+        
+        fibs.push(1);
+        fibs.push(1);
+        
+        while(fibs[fibs.length-1] + fibs[fibs.length-2]<n){
+
+          fibs.push(fibs[fibs.length-1] + fibs[fibs.length-2]);
+          
+        }
+
+        return(fibs);
+
+      };
+
     }
 
   }
 
-  
   /* Data types ================================================ */
   {
 
     var Integer=function(n){
 
       this.n=n;                                 //  The Integer #
-      
-      this.primeFactors=[];                     //  Prime Factorization
-      
-      this.divisors=[1,2,3,4];                         //  Array of all divisors      
-      
+
+      this.primeFactors=primeFactors(n);        //  Prime Factorization
+      this.divisors=properDivisorsArray(n);     //  Array of all divisors      
+
       this.divisorCount=this.divisors.length;   //  # of Divisors
-      this.sumOfDivisors=0;                     //  Sum of all the divisorCount
+      this.sumOfDivisors=sumOfDivisors(n);      //  Sum of all the divisors
 
-      this.isPrime=(this.factors<3);            //  Is the Integer prime?
+      this.isPrime=str(isPrime(n));
 
-      this.previousPrime=0;
-      this.nextPrime=0;
+      this.previousPrime=previousPrime(n);
+      this.nextPrime=nextPrime(n);
 
-      this.isFibonacci=false;
-      this.isFactorial=false;
+      this.isFibonacci=contains(this.n,app.fibs);
+      this.isFactorial=true;
 
       this.isPerfect=false;
       this.isBell=false;
-      this.isRegular=false;
+      this.isRegular=true;
 
       this.binary=binary(n);
 
       this.square=sq(n);
       this.squareRoot=sqrt(n);
-      
+
       this.naturalLog=log(n);
       this.decimalLog=(log(n)/log(10));
-      
-      this.sine=sin(n);
-      this.cos=cos(n);
-      this.tan=tan(n);
+
+      this.sin=sin(radians(n));
+      this.cos=cos(radians(n));
+      this.tan=tan(radians(n));
 
     };
 
@@ -1762,7 +1929,7 @@ println(app.data[n].n);
               strokeWeight(2);
               
               line(app.data[app.dCursor].n*p.sw, 2,
-                   app.data[app.dCursor].n*p.sw, y);
+                   app.data[app.dCursor].n*p.sw, 200);
               
           popMatrix();
 
@@ -1914,40 +2081,58 @@ println(app.data[n].n);
           textSize(12);
           textLeading(16);
 
-            text("Factorization:    \n" +
+            text("Prime Factors:    \n" +
                  "Divisors:         \n" +
                  "Divisor Count:    \n" +
-                 "Sum of Divisors   \n" +
+                 "Sum of Divisors   \n\n" +
                  "Is Prime?         \n" +
                  "Previous Prime    \n" +
-                 "Next Prime        \n" +
+                 "Next Prime        \n\n" +
                  "Is Fibonacci?     \n" +
                  "Is Bell?          \n" +
                  "Is Factorial?     \n" +
                  "Is Regular?       \n" +
-                 "Is Perfect?       \n" +
-                 "Binary            \n" +
+                 "Is Perfect?",
+                 20, 35);
+
+            text("Binary            \n\n" +
                  "Square            \n" +
-                 "Square Root       \n" +
+                 "Square Root       \n\n" +
                  "Natural Logarithm \n" +
-                 "Decimal Logarithm \n" +
+                 "Decimal Logarithm \n\n" +
                  "Sine              \n" +
                  "Cosine            \n" +
                  "Tangent",
-                 20, 35);
-
+                 250, 35);
+                 
           textAlign(RIGHT,TOP);
 
           fill(getColor(CLRS.K_TEAL_2,100));
+// println(app.dCursor);
+            text(      arrayToString(app.data[app.dCursor].primeFactors) + "\n" +
+                       arrayToString(app.data[app.dCursor].divisors)      + "\n" +
+                 (nfc)(app.data[app.dCursor].divisorCount)                + "\n" +
+                 (nfc)(app.data[app.dCursor].sumOfDivisors)          + "\n\n" +
+                       app.data[app.dCursor].isPrime                 + "\n" +
+                 (nfc)(app.data[app.dCursor].previousPrime)          + "\n" +
+                 (nfc)(app.data[app.dCursor].nextPrime)              + "\n\n" +
+                       app.data[app.dCursor].isFibonacci             + "\n" +
+                       app.data[app.dCursor].isBell                  + "\n" +
+                       app.data[app.dCursor].isFactorial             + "\n" +
+                       app.data[app.dCursor].isRegular               + "\n" +
+                       app.data[app.dCursor].isPerfect,
+                 200, 35);
 
-            text((nfc)(app.data[app.dCursor].factorization) + "\n" +
-                 (nfc)(app.data[app.dCursor].divisors)      + "\n" +
-                 (nfc)(app.data[app.dCursor].divisorCount)  + "\n" +
-                 (nfc)(app.data[app.dCursor].divisors)      + "\n" +
-                 (nfc)(app.data[app.dCursor].sumOfDivisors)
-                 ,
-                 140, 35);
-
+            text(      app.data[app.dCursor].binary         + "\n\n" +
+                 (nfc)(app.data[app.dCursor].square)        + "\n" +
+                 (nfc)(app.data[app.dCursor].squareRoot,4)  + "\n\n" +
+                 (nfc)(app.data[app.dCursor].naturalLog,4)  + "\n" +
+                 (nfc)(app.data[app.dCursor].decimalLog,4)  + "\n\n" +
+                 nf(app.data[app.dCursor].sin,1,4)          + "\n" +
+                 (nf)(app.data[app.dCursor].cos,1,4)        + "\n" +
+                 (nf)(app.data[app.dCursor].tan,1,4),
+                 420, 35);
+                 
         };
         var dataSummary=function(){
 
