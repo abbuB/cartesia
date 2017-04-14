@@ -30,6 +30,7 @@
 +google.ca
 +projecteuler.net
 +www.numberempire.com
++oeis.org
 
 */
 
@@ -63,6 +64,20 @@ var diagrams = function(processingInstance){
 
   var application=function(){
 
+    /* Initialize -------------------- */
+    // {
+
+      frameRate(0);
+
+      cursor(WAIT);
+      strokeCap(SQUARE);
+
+      angleMode="radians";
+
+      size(800, 600);           /* set size of canvas */
+
+    // }
+
     this.debug=true;          //  mode that displays enhanced debugging tools
 
     this.frameRate=30;        //  refresh speed
@@ -85,29 +100,16 @@ var diagrams = function(processingInstance){
     this.autoRun=false;       //  Alpha changes automatically
     this.infoOn=false;        //  Is the info frame displayed
 
-    this.dCursor=54;          //  position of the cursor in data
+    this.dCursor=10;          //  position of the cursor in data
     this.dOffset=0;
 
     this.min=1;
-    this.max=500;
-    
-    this.sw=560/this.max;
+    this.max=floor((width-40)/2);
+
+    this.sw=(width-40)/this.max;
 
     this.fibs=[];
 
-    /* Initialize -------------------- */
-    {
-
-      frameRate(0);
-
-      cursor(WAIT);
-      strokeCap(SQUARE);
-
-      angleMode="radians";
-
-      size(600, 600); // set size of canvas
-
-    }
 
   };
 
@@ -278,6 +280,8 @@ var diagrams = function(processingInstance){
 
   /* Utility Functions ========================================================= */
   {
+    var getColor=function(clr, alpha){ return color(red(clr), green(clr), blue(clr), alpha/100*255); };
+
     var setBucketsMax=function(){
 
       var max=0;
@@ -305,7 +309,7 @@ var diagrams = function(processingInstance){
 
       }
 
-    };    
+    };
     var setSumMax=function(){
 
       var max=0;
@@ -319,7 +323,7 @@ var diagrams = function(processingInstance){
 
       }
 
-    };        
+    };
     var printArray=function(arr){
 
       var txt="";
@@ -365,35 +369,63 @@ var diagrams = function(processingInstance){
 
     var loadData=function(){
 
-      app.data=[];        //  Erase app.data
-
+      app.fibs=fibonacciUpTo(app.max+app.dOffset);        //  populate the fibonacci array
+      app.factorials=factorialsUpTo(app.max+app.dOffset); //  populate the fibonacci array
+      app.data=[];                            //  Erase app.data
+// println(app.factorials);
       for(var n=app.min; n<=app.max; n++){
+println(n);
 
         app.data.push(new Integer(n+app.dOffset));
 
       }
-      
-      app.fibs=fibonacciUpTo(app.max);
 
     };
-
-    var getColor=function(clr, alpha){ return color(red(clr), green(clr), blue(clr), alpha/100*255); };
+    var addRecord=function(){
+      
+      app.data.push(new Integer(app.dOffset+1));
+      
+    };
+    var removeRecord=function(n){
+      
+      app.data=subset(app.data,1);
+      
+    };    
 
     var incrementRecord=function(){
+      
+      if(app.dCursor===app.max-1){
+        
+        addRecord();
+        removeRecord();
+println(app.data.length);
+      }
+      else{
+      
+        app.dCursor++;
 
-      app.dCursor++;
+        // app.dCursor%=(app.data.length-1);
 
-      // app.dCursor%=(app.data.length-1);
-
-      if(app.dCursor>app.data.length-1){ app.dCursor=0; }
-
+        if(app.dCursor>app.data.length-1){ app.dCursor=0; }
+      
+      }
+      
     };
     var decrementRecord=function(){
 
-      app.dCursor--;
+      if(app.dOffset!==0){
+        
+        removeRecord();
 
-      if(app.dCursor<0){ app.dCursor=app.data.length-1; }
+      }
+      else{
+        
+        app.dCursor--;
 
+        if(app.dCursor<0){ app.dCursor=app.data.length-1; }
+        
+      }
+      
     };
 
     var getAuto=function()        { return app.autoRun;               };
@@ -428,24 +460,24 @@ var diagrams = function(processingInstance){
     var increment=function()      { incrementRecord();                };
     var last=function()           { app.dCursor=app.data.length-1;    };
     var incrementPage=function()  {
-      
+
       var accel=1;
-      
+
       if(app.keys[KEYCODES.CONTROL]){ accel= 10; }
       if(app.keys[KEYCODES.ALT])    { accel=100; }
-      
+
       app.dOffset=constrain(app.dOffset+=250*accel, 0);
 
       loadData();
 
     };
     var decrementPage=function()  {
-      
+
       var accel=1;
-      
+
       if(app.keys[KEYCODES.CONTROL]){ accel= 10; }
       if(app.keys[KEYCODES.ALT])    { accel=100; }
-      
+
       app.dOffset=constrain(app.dOffset-=250*accel, 0);
 
       loadData();
@@ -464,32 +496,32 @@ var diagrams = function(processingInstance){
       }
 
     };
-    
-    
+
+
     /* Maths utility methods ===================================== */
     {
 
       /* sumDivisibleBy ---------- */
       var sumDivisibleBy=function(n, limit){
-        
+
         var p = floor(limit / n);
-        
+
         return (n*(p*(p+1))) / 2;
-      
+
       };
 
       /* sumOfProperDivisors
-         returns the sum of proper divisors (not including n) ---------- */  
+         returns the sum of proper divisors (not including n) ---------- */
       var sumOfProperDivisors=function(n){
 
         var sum=0;
-        
+
         if(n!==1){ sum=1; }
 
         for (var f=2; f<n; f++) {
-          
+
           if (n%f == 0) {
-            
+
             sum+=f;
     //        sum+=n/f;
 
@@ -502,13 +534,13 @@ var diagrams = function(processingInstance){
       }
 
       /* sumOfDivisors
-         returns the sum of proper divisors (including n) ---------- */  
+         returns the sum of proper divisors (including n) ---------- */
       var sumOfDivisors=function(n){
-        
+
         return n+sumOfProperDivisors(n);
 
       };
-      
+
       /*  isPrime
           returns true if n is ---------- */
       var isPrime=function(n){
@@ -519,22 +551,22 @@ var diagrams = function(processingInstance){
         else if ( n<9        ) { return true;  }   //  we have already excluded 4, 6 and 8
         else if ( n%3 === 0  ) { return false; }
         else {
-          
+
           var r = sqrt(n);           //  n rounded to the greatest long r so that r*r<=n
           var l = 5;
-          
+
           while (l<=r) {
-          
+
             if (n % l === 0      ) {return false; }
             if (n % (l+2) === 0  ) {return false; }
-            
+
             l+=6;                                 //  All primes greater than 3 can be written in the form 6k +/- 1
-          
+
           }
-          
+
           return true;  // n is prime
 
-          
+
         }
 
       };
@@ -542,42 +574,42 @@ var diagrams = function(processingInstance){
       /*  nextPrime
           returns the next prime after n ---------- */
       var nextPrime=function(n) {
-        
+
         while (isPrime(n+=1)===false){}
-        
+
         return n;
-        
+
       }
 
       /*  previousPrime
-          returns the previous prime before n ---------- */      
+          returns the previous prime before n ---------- */
       var previousPrime=function(n) {
-        
+
         while (isPrime(n-=1)===false) {}
-        
+
         return n;
-        
+
       }
 
       var contains=function(n, arr){
-      
+
         var retVal=false;
-        
+
         for(var i=0; i<arr.length; i++){
-          
+
           if(arr[i]===n){
 
             retVal=true;
             break;
 
           }
-          
+
         }
-        
+
         return retVal;
-        
+
       };
-      
+
       /* Divisors
          returns an array of proper divisors (including n) ----------*/
       var properDivisorsArray=function(n){
@@ -586,14 +618,12 @@ var diagrams = function(processingInstance){
 
         if(n!==1){ factors.push(1); }
 
-        factors.push(n);
-
         var divisor=0;
-        
+
         for (var f=2; f<=sqrt(n); f++) {
 
           if (n%f === 0) {
-            
+
             divisor=n/f;
 
             if(!contains(f,factors))        { factors.push(f);        }
@@ -602,24 +632,24 @@ var diagrams = function(processingInstance){
           }
 
         }
-        
+
         factors=sort(factors);
 
         return factors;
-        
+
       };
-      
+
       /* Divisors
          returns a list of proper divisors (including n) ----------*/
-      var divisorsList=function(n){
+      var divisorsArray=function(n){
 
-        // ArrayList<Integer> factors = properDivisorsList(n);
+        var factors = properDivisorsArray(n);
 
-        // factors.add(n);
+        factors.push(n);
 
-        // return factors;
+        return factors;
 
-      };      
+      };
 
       /* primeFactors
          returns a list of prime factors of n ---------- */
@@ -629,7 +659,7 @@ var diagrams = function(processingInstance){
 
         while (n%2===0){
           factors.push(2);
-          n=n/2;
+          n=n>>1;
         }
 
         for (var f=3; f<=n; f+=2){
@@ -645,22 +675,42 @@ var diagrams = function(processingInstance){
 
       }
 
-      /* primeFactors
-         returns a list of prime factors of n ---------- */
+      /* fibinacciUpTo
+         returns a list of fibonacci numbers up to n ---------- */
       var fibonacciUpTo=function(n){
-        
+
         var fibs=[];
-        
+
         fibs.push(1);
         fibs.push(1);
-        
+
         while(fibs[fibs.length-1] + fibs[fibs.length-2]<n){
 
           fibs.push(fibs[fibs.length-1] + fibs[fibs.length-2]);
-          
+
         }
 
         return(fibs);
+
+      };
+
+      /* factorialsUpTo
+         returns a list of factorial numbers up to n ---------- */
+      var factorialsUpTo=function(n){
+
+        var facts=[];
+
+        facts.push(1);
+
+        for(var i=2; i<=n; i++){
+
+          if(facts[facts.length-1]>n){ break; }
+
+          facts.push(facts[facts.length-1]*i);
+
+        }
+
+        return(facts);
 
       };
 
@@ -673,26 +723,33 @@ var diagrams = function(processingInstance){
 
     var Integer=function(n){
 
-      this.n=n;                                 //  The Integer #
+      this.n=n;                                       //  The Integer #
 
-      this.primeFactors=primeFactors(n);        //  Prime Factorization
-      this.divisors=properDivisorsArray(n);     //  Array of all divisors      
+      this.primeFactors=primeFactors(n);              //  Prime Factorization
 
-      this.divisorCount=this.divisors.length;   //  # of Divisors
-      this.sumOfDivisors=sumOfDivisors(n);      //  Sum of all the divisors
+      this.divisors=divisorsArray(n);                 //  Array of all divisors
+      this.divisorCount=this.divisors.length;         //  # of Divisors
+
+      this.properDivisors=properDivisorsArray(n);     //  Array of all divisors
+      this.properDivisorCount=this.divisors.length-1; //  # of Divisors
+
+      this.sumOfDivisors=sumOfDivisors(n);            //  Sum of all the divisors
+      this.sumOfProperDivisors=this.sumOfDivisors-this.n;
 
       this.isPrime=str(isPrime(n));
 
       this.previousPrime=previousPrime(n);
       this.nextPrime=nextPrime(n);
 
-      this.isFibonacci=contains(this.n,app.fibs);
-      this.isFactorial=true;
+      this.isFibonacci=contains(this.n, app.fibs);
+      this.isFactorial=contains(this.n, app.factorials);
 
-      this.isPerfect=false;
+      this.isPerfect=(this.sumOfProperDivisors===this.n);
+
       this.isBell=false;
       this.isRegular=true;
 
+      this.isAbundant=this.sumOfProperDivisors>=this.n;
       this.binary=binary(n);
 
       this.square=sq(n);
@@ -701,15 +758,19 @@ var diagrams = function(processingInstance){
       this.naturalLog=log(n);
       this.decimalLog=(log(n)/log(10));
 
-      this.sin=sin(radians(n));
-      this.cos=cos(radians(n));
-      this.tan=tan(radians(n));
+      // this.sin=sin(radians(n));
+      // this.cos=cos(radians(n));
+      // this.tan=tan(radians(n));
+
+      if(this.properDivisorCount>99){
+        println(n +": " + this.properDivisorCount);
+      }
 
     };
 
   }
-  
-  
+
+
   /* Controls ==================================================== */
   {
 
@@ -1913,24 +1974,37 @@ var diagrams = function(processingInstance){
               for(var n=1; n<app.data.length; n++){
 
                 var x=n*p.sw;
-                var y=app.data[n].naturalLog*30;
+                // var y=app.data[n].naturalLog*30;
+                var y=app.data[n].properDivisorCount*10;
 
                   stroke(getColor(CLRS.BLACK, 100));
+                  strokeWeight(p.sw);
 
-                  if(n%13===0){ stroke(getColor(CLRS.ORANGE, 75)); }
-                  if(n%15===0){ stroke(getColor(CLRS.BLUE,   75)); }
-                  if(n%25===0){ stroke(getColor(CLRS.GREEN,  75)); }
+                  // if(n%13===0){ stroke(getColor(CLRS.ORANGE, 75)); }
+                  // if(n%15===0){ stroke(getColor(CLRS.BLUE,   75)); }
+                  // if(n%25===0){ stroke(getColor(CLRS.GREEN,  75)); }
 
-                  line(x, 2, x, y);
+                  if(app.data[n].properDivisorCount===1){ stroke(getColor(CLRS.BLUE,     75));
+                                                          line(x, 2, x, y);                     }
+                  else                                  { 
+                  
+                    if(app.data[n].n%2===0){ stroke(getColor(CLRS.BLACK,    75)); }
+                    else                   { stroke(getColor(CLRS.BLACK,    50)); }
+                                                          line(x, 2, x, y);                     }
+                                                          
+                  if(app.data[n].isPerfect             ){ stroke(getColor(CLRS.ORANGE,   75));
+                                                          strokeWeight(2*p.sw);
+                                                          line(x, 2, x, y);                     }
+                  if(app.data[n].isAbundant            ){ stroke(getColor(CLRS.K_TEAL_3, 75));
+                                                          line(x, 2, x, y);                     }
+                  
+                  if(app.dCursor===n                   ){ stroke(getColor(CLRS.RED,100));
+                                                          strokeWeight(p.sw);
+                                                          line(app.dCursor*p.sw, -5, 
+                                                               app.dCursor*p.sw,  y);           }
 
               }
-              
-              stroke(getColor(CLRS.RED,100));
-              strokeWeight(2);
-              
-              line(app.data[app.dCursor].n*p.sw, 2,
-                   app.data[app.dCursor].n*p.sw, 200);
-              
+
           popMatrix();
 
         };
@@ -1997,7 +2071,7 @@ var diagrams = function(processingInstance){
 
           p.sw=(p.w-20)/app.max.length;
           var dLength=app.max.length;
-  
+
           pushMatrix();
 
             translate(10, p.h-10);
@@ -2010,7 +2084,7 @@ var diagrams = function(processingInstance){
               else       { stroke(getColor(CLRS.ORANGE, 50)); }
 
               if(n===app.dCursor){ stroke(getColor(CLRS.RED, 75)); }
-                            
+
               line(convertX(n, dLength), 1,
                    convertX(n, dLength), app.max[n]/app.maxMax*p.h*0.75);
 
@@ -2077,62 +2151,68 @@ var diagrams = function(processingInstance){
             text((nfc)(app.data[app.dCursor].n), 20, 10);
 
           fill(getColor(CLRS.BLACK,100));
-          textAlign(LEFT,TOP);
           textSize(12);
-          textLeading(16);
+          textLeading(10);
 
-            text("Prime Factors:    \n" +
-                 "Divisors:         \n" +
-                 "Divisor Count:    \n" +
-                 "Sum of Divisors   \n\n" +
-                 "Is Prime?         \n" +
-                 "Previous Prime    \n" +
-                 "Next Prime        \n\n" +
-                 "Is Fibonacci?     \n" +
-                 "Is Bell?          \n" +
-                 "Is Factorial?     \n" +
-                 "Is Regular?       \n" +
-                 "Is Perfect?",
+            text("Proper Divisors: (" + (nfc)(app.data[app.dCursor].properDivisorCount) + "):",
                  20, 35);
 
-            text("Binary            \n\n" +
-                 "Square            \n" +
-                 "Square Root       \n\n" +
-                 "Natural Logarithm \n" +
-                 "Decimal Logarithm \n\n" +
-                 "Sine              \n" +
-                 "Cosine            \n" +
-                 "Tangent",
+          fill(getColor(CLRS.K_TEAL_2,100));
+          textSize(10);
+
+            text(arrayToString(app.data[app.dCursor].properDivisors),
+                 30, 55, 200, 200);
+
+          fill(getColor(CLRS.BLACK,100));
+          textSize(11);
+
+            text("Prime Factors:          \n\n" +
+                 "Sum of Proper Divisors: \n\n" +
+                 "Is Prime:               \n" +
+                 "Previous Prime:         \n" +
+                 "Next Prime:             \n\n" +
+                 "Is Fibonacci?           \n" +
+                 "Is Factorial?           \n" +
+                 "Is Perfect?",
                  250, 35);
-                 
-          textAlign(RIGHT,TOP);
 
           fill(getColor(CLRS.K_TEAL_2,100));
-// println(app.dCursor);
-            text(      arrayToString(app.data[app.dCursor].primeFactors) + "\n" +
-                       arrayToString(app.data[app.dCursor].divisors)      + "\n" +
-                 (nfc)(app.data[app.dCursor].divisorCount)                + "\n" +
-                 (nfc)(app.data[app.dCursor].sumOfDivisors)          + "\n\n" +
-                       app.data[app.dCursor].isPrime                 + "\n" +
-                 (nfc)(app.data[app.dCursor].previousPrime)          + "\n" +
+          textSize(11);
+
+            text(      arrayToString(app.data[app.dCursor].primeFactors) + "\n\n" +
+                 (nfc)(app.data[app.dCursor].sumOfProperDivisors)        + "\n\n" +
+                       app.data[app.dCursor].isPrime                     + "\n" +
+                 (nfc)(app.data[app.dCursor].previousPrime)                  + "\n" +
                  (nfc)(app.data[app.dCursor].nextPrime)              + "\n\n" +
-                       app.data[app.dCursor].isFibonacci             + "\n" +
-                       app.data[app.dCursor].isBell                  + "\n" +
-                       app.data[app.dCursor].isFactorial             + "\n" +
-                       app.data[app.dCursor].isRegular               + "\n" +
+                       app.data[app.dCursor].isFibonacci                 + "\n" +
+                       app.data[app.dCursor].isFactorial                 + "\n" +
                        app.data[app.dCursor].isPerfect,
-                 200, 35);
+                 380, 35, 200, 200);
+
+            // (nfc)(app.data[app.dCursor].sumOfProperDivisors) + "):",
+
+
+          fill(getColor(CLRS.BLACK,100));
+          textSize(11);
+
+            text("Binary      \n\n" +
+                 "Square      \n" +
+                 "Square Root \n\n" +
+                 "Natural Log \n" +
+                 "Decimal Log \n\n",
+                 250,190);
+
+
+            fill(getColor(CLRS.K_TEAL_2,100));
+            textSize(11);
 
             text(      app.data[app.dCursor].binary         + "\n\n" +
                  (nfc)(app.data[app.dCursor].square)        + "\n" +
                  (nfc)(app.data[app.dCursor].squareRoot,4)  + "\n\n" +
                  (nfc)(app.data[app.dCursor].naturalLog,4)  + "\n" +
-                 (nfc)(app.data[app.dCursor].decimalLog,4)  + "\n\n" +
-                 nf(app.data[app.dCursor].sin,1,4)          + "\n" +
-                 (nf)(app.data[app.dCursor].cos,1,4)        + "\n" +
-                 (nf)(app.data[app.dCursor].tan,1,4),
-                 420, 35);
-                 
+                 (nfc)(app.data[app.dCursor].decimalLog,4),
+                 380, 190);
+
         };
         var dataSummary=function(){
 
@@ -2220,7 +2300,7 @@ var diagrams = function(processingInstance){
 
         if(this.hit){
 
-          setDataCursor((mouseX-this.x-10)/this.sw);
+          setDataCursor((mouseX-this.x-10));
 
           for(var c in this.controls){ this.controls[c].clicked((this.x+x), (this.y+y)); }
 
@@ -2535,7 +2615,7 @@ var diagrams = function(processingInstance){
     var draw=function(){
 
       execute();
-
+line(0,300,width,300);
     };
 
     println(sumDivisibleBy( 3, 999) +
