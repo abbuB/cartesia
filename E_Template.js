@@ -74,7 +74,7 @@ var diagrams = function(processingInstance){
 
       angleMode="radians";
 
-      size(800, 600);           /* set size of canvas */
+      size(900, 600);           /* set size of canvas */
 
     // }
 
@@ -96,20 +96,18 @@ var diagrams = function(processingInstance){
 
     /* App Specific ------------------ */
     this.data=[];             //  Array of collatz objects
+    this.fibs=[];
 
     this.autoRun=false;       //  Alpha changes automatically
     this.infoOn=false;        //  Is the info frame displayed
 
-    this.dCursor=10;          //  position of the cursor in data
+    this.dCursor=0;          //  position of the cursor in data
     this.dOffset=0;
 
+    this.sw=5;
+
     this.min=1;
-    this.max=floor((width-40)/2);
-
-    this.sw=(width-40)/this.max;
-
-    this.fibs=[];
-
+    this.max=floor((width-40)/this.sw);
 
   };
 
@@ -277,7 +275,6 @@ var diagrams = function(processingInstance){
   }
 
 
-
   /* Utility Functions ========================================================= */
   {
     var getColor=function(clr, alpha){ return color(red(clr), green(clr), blue(clr), alpha/100*255); };
@@ -367,65 +364,124 @@ var diagrams = function(processingInstance){
 
     };
 
+    var highlyComposite=1;
+
     var loadData=function(){
 
       app.fibs=fibonacciUpTo(app.max+app.dOffset);        //  populate the fibonacci array
       app.factorials=factorialsUpTo(app.max+app.dOffset); //  populate the fibonacci array
-      app.data=[];                            //  Erase app.data
+      app.data=[];                                        //  Erase app.data
 // println(app.factorials);
       for(var n=app.min; n<=app.max; n++){
-println(n);
 
         app.data.push(new Integer(n+app.dOffset));
 
+        if(app.data[app.data.length-1].divisorCount>highlyComposite){
+
+          app.data[app.data.length-1].isHighlyComposite=true;
+          highlyComposite=app.data[app.data.length-1].divisorCount;
+
+        }
+
       }
 
     };
-    var addRecord=function(){
-      
-      app.data.push(new Integer(app.dOffset+1));
-      
+
+    var incrementSW=function(){
+
+      if(app.sw<10){
+
+        app.sw++;
+        app.max=floor((width-40)/app.sw);
+        app.dCursor=0;
+        loadData();
+
+      }
+
+      println(app.sw);
+
     };
-    var removeRecord=function(n){
-      
+    var decrementSW=function(){
+
+      if(app.sw>1){
+
+        app.sw--;
+        app.max=floor((width-40)/app.sw);
+        app.dCursor=0;
+        loadData();
+
+      }
+
+      println(app.sw);
+
+    };
+
+    var addToFront=function(){
+
+      var temp=[];
+
+      temp.push(new Integer(app.data[0].n-1));
+
+      app.data=splice(app.data, temp);
+
+    };
+    var addToEnd=function(){
+
+      app.data.push(new Integer(app.data[app.data.length-1].n+1));
+
+        if(app.data[app.data.length-1].divisorCount>highlyComposite){
+
+          app.data[app.data.length-1].isHighlyComposite=true;
+          highlyComposite=app.data[app.data.length-1].divisorCount;
+
+        }
+
+    };
+    var removeFront=function(n){
+
       app.data=subset(app.data,1);
-      
-    };    
+
+    };
+    var removeEnd=function(){
+
+      app.data=shorten(app.data);
+
+    };
 
     var incrementRecord=function(){
-      
+
       if(app.dCursor===app.max-1){
-        
-        addRecord();
-        removeRecord();
-println(app.data.length);
+
+        removeFront();
+        addToEnd();
+
       }
       else{
-      
+
         app.dCursor++;
 
-        // app.dCursor%=(app.data.length-1);
-
         if(app.dCursor>app.data.length-1){ app.dCursor=0; }
-      
+
       }
-      
+
     };
     var decrementRecord=function(){
 
-      if(app.dOffset!==0){
-        
-        removeRecord();
+      if(app.dCursor===0 &&
+         app.data[app.dCursor].n>1){
+
+        removeEnd();
+        addToFront();
 
       }
       else{
-        
+
         app.dCursor--;
 
         if(app.dCursor<0){ app.dCursor=app.data.length-1; }
-        
+
       }
-      
+
     };
 
     var getAuto=function()        { return app.autoRun;               };
@@ -455,10 +511,10 @@ println(app.data.length);
 
     };
 
-    var decrement=function()      { decrementRecord();                };
-    var first=function()          { app.dCursor=0;                    };
-    var increment=function()      { incrementRecord();                };
-    var last=function()           { app.dCursor=app.data.length-1;    };
+    // var decrementRecord=function(){ decrementRecord();                };
+    var firstRecord=function()    { app.dCursor=0;                    };
+    // var incrementRecord=function(){ incrementRecord();                };
+    var lastRecord=function()     { app.dCursor=app.data.length-1;    };
     var incrementPage=function()  {
 
       var accel=1;
@@ -483,7 +539,7 @@ println(app.data.length);
       loadData();
 
     };
-    // var incrementCursor=function(){ app.dCursor++;                    };
+
     var navCursor=function()      { return app.dCursor+1;             };
     var navRecordCount=function() { return app.data.length;           };
     var navSetCursor=function(n)  {
@@ -723,33 +779,35 @@ println(app.data.length);
 
     var Integer=function(n){
 
-      this.n=n;                                       //  The Integer #
+      this.n=n;                                             //  The Integer #
 
-      this.primeFactors=primeFactors(n);              //  Prime Factorization
+      this.primeFactors=primeFactors(n);                    //  Prime Factorization
 
-      this.divisors=divisorsArray(n);                 //  Array of all divisors
-      this.divisorCount=this.divisors.length;         //  # of Divisors
+      // this.divisors=divisorsArray(n);                    //  Array of all divisors
 
-      this.properDivisors=properDivisorsArray(n);     //  Array of all divisors
-      this.properDivisorCount=this.divisors.length-1; //  # of Divisors
+      this.properDivisors=properDivisorsArray(n);           //  Array of all divisors
+      this.properDivisorCount=this.properDivisors.length;   //  # of Divisors
 
-      this.sumOfDivisors=sumOfDivisors(n);            //  Sum of all the divisors
-      this.sumOfProperDivisors=this.sumOfDivisors-this.n;
+      this.divisorCount=this.properDivisorsCount+1;         //  # of Divisors
+      
+      this.sumOfDivisors=sumOfDivisors(n);                  //  Sum of all the divisors
+      this.sumOfProperDivisors=this.sumOfDivisors-this.n;   //  Sum of all the divisors less n
 
       this.isPrime=str(isPrime(n));
 
       this.previousPrime=previousPrime(n);
       this.nextPrime=nextPrime(n);
 
-      this.isFibonacci=contains(this.n, app.fibs);
-      this.isFactorial=contains(this.n, app.factorials);
+      this.isFibonacci=contains(this.n, app.fibs);          //  n is in the fibonacci sequence
+      this.isFactorial=contains(this.n, app.factorials);    //  n is in the factorial sequence
 
-      this.isPerfect=(this.sumOfProperDivisors===this.n);
+      this.isPerfect=(this.sumOfProperDivisors===this.n);   //  sum of divisors = n
+      this.isHighlyComposite=false;                         // Has a greater # of factors than any lower number
+      this.isAbundant=this.sumOfProperDivisors>=this.n;     //  Sum of factors is greater than n
+      
+      this.isBell=false;                                    // # of ways to partition a set of size n
+      this.isRegular=true;                                  //  Evenly divide powers of 60
 
-      this.isBell=false;
-      this.isRegular=true;
-
-      this.isAbundant=this.sumOfProperDivisors>=this.n;
       this.binary=binary(n);
 
       this.square=sq(n);
@@ -1967,15 +2025,17 @@ println(app.data.length);
             translate(10, p.h-10);
             scale(1,-1);
 
-              strokeWeight(app.sw);
-              fill(  getColor(CLRS.K_TEAL_2, 25));
+              p.sw=app.sw;
+
+              strokeWeight(p.sw);
+              fill  (getColor(CLRS.K_TEAL_2, 25));
               stroke(getColor(CLRS.BLACK,    50));
 
               for(var n=1; n<app.data.length; n++){
 
-                var x=n*p.sw;
+                var x=n*p.sw+10;
                 // var y=app.data[n].naturalLog*30;
-                var y=app.data[n].properDivisorCount*10;
+                var y=app.data[n].properDivisorCount*5+10;
 
                   stroke(getColor(CLRS.BLACK, 100));
                   strokeWeight(p.sw);
@@ -1984,24 +2044,19 @@ println(app.data.length);
                   // if(n%15===0){ stroke(getColor(CLRS.BLUE,   75)); }
                   // if(n%25===0){ stroke(getColor(CLRS.GREEN,  75)); }
 
-                  if(app.data[n].properDivisorCount===1){ stroke(getColor(CLRS.BLUE,     75));
-                                                          line(x, 2, x, y);                     }
-                  else                                  { 
-                  
-                    if(app.data[n].n%2===0){ stroke(getColor(CLRS.BLACK,    75)); }
-                    else                   { stroke(getColor(CLRS.BLACK,    50)); }
-                                                          line(x, 2, x, y);                     }
-                                                          
-                  if(app.data[n].isPerfect             ){ stroke(getColor(CLRS.ORANGE,   75));
-                                                          strokeWeight(2*p.sw);
-                                                          line(x, 2, x, y);                     }
-                  if(app.data[n].isAbundant            ){ stroke(getColor(CLRS.K_TEAL_3, 75));
-                                                          line(x, 2, x, y);                     }
-                  
-                  if(app.dCursor===n                   ){ stroke(getColor(CLRS.RED,100));
-                                                          strokeWeight(p.sw);
-                                                          line(app.dCursor*p.sw, -5, 
-                                                               app.dCursor*p.sw,  y);           }
+                  if(app.data[n].properDivisorCount===1){ stroke(getColor(CLRS.RED,     75)); }
+                  else{
+
+                    if(app.data[n].n%2===0){ stroke(getColor(CLRS.BLACK, 50)); }
+                    else                   { stroke(getColor(CLRS.BLACK, 25)); }
+
+                  }
+
+                  if(app.data[n].isAbundant){ stroke(getColor(CLRS.K_TEAL_3, 75)); }
+                  if(app.data[n].isPerfect ){ stroke(getColor(CLRS.ORANGE,   75)); }
+                  if(app.dCursor===n       ){ stroke(getColor(CLRS.BLACK,   100)); }
+
+                    line(x, 2, x, y);
 
               }
 
@@ -2154,7 +2209,7 @@ println(app.data.length);
           textSize(12);
           textLeading(10);
 
-            text("Proper Divisors: (" + (nfc)(app.data[app.dCursor].properDivisorCount) + "):",
+            text("Proper Divisors (" + (nfc)(app.data[app.dCursor].properDivisorCount) + "):",
                  20, 35);
 
           fill(getColor(CLRS.K_TEAL_2,100));
@@ -2173,6 +2228,7 @@ println(app.data.length);
                  "Next Prime:             \n\n" +
                  "Is Fibonacci?           \n" +
                  "Is Factorial?           \n" +
+                 "Is Highly Composite:    \n" +
                  "Is Perfect?",
                  250, 35);
 
@@ -2182,10 +2238,11 @@ println(app.data.length);
             text(      arrayToString(app.data[app.dCursor].primeFactors) + "\n\n" +
                  (nfc)(app.data[app.dCursor].sumOfProperDivisors)        + "\n\n" +
                        app.data[app.dCursor].isPrime                     + "\n" +
-                 (nfc)(app.data[app.dCursor].previousPrime)                  + "\n" +
-                 (nfc)(app.data[app.dCursor].nextPrime)              + "\n\n" +
+                 (nfc)(app.data[app.dCursor].previousPrime)              + "\n" +
+                 (nfc)(app.data[app.dCursor].nextPrime)                  + "\n\n" +
                        app.data[app.dCursor].isFibonacci                 + "\n" +
                        app.data[app.dCursor].isFactorial                 + "\n" +
+                       app.data[app.dCursor].isHighlyComposite           + "\n" +
                        app.data[app.dCursor].isPerfect,
                  380, 35, 200, 200);
 
@@ -2284,6 +2341,7 @@ println(app.data.length);
             // border();
             axes();
             if(this.displayBorder) { border();      }
+            if(this.displayCollatz){ drawData(); }
             if(this.displayCurrent){ currentData(); }
             // if(this.displaySummary){ dataSummary(); }
             // if(this.displayPath)   { drawPath();    }
@@ -2291,7 +2349,7 @@ println(app.data.length);
             // drawMax();
             // drawSum();
             // if(this.displayBuckets){ drawBuckets(); }
-            if(this.displayCollatz){ drawData(); }
+
 
         popMatrix();
 
@@ -2419,7 +2477,7 @@ println(app.data.length);
 
           /* First Record         */
           nvbar.controls.push(new navButton(330, nvbar, 50, 0, 25, h,
-            {execute:   first,
+            {execute:   firstRecord,
              type:      NAVIGATION.FIRST,
              retrieve:  navCursor,
              color:     CLRS.BLACK,
@@ -2427,7 +2485,7 @@ println(app.data.length);
 
           /* Decrement Record     */
           nvbar.controls.push(new navButton(340, nvbar, 75, 0, 25, h,
-            {execute:   decrement,
+            {execute:   decrementRecord,
              type:      NAVIGATION.DECREMENT,
              retrieve:  navCursor,
              color:     CLRS.BLACK,
@@ -2435,7 +2493,7 @@ println(app.data.length);
 
           /* Increment Record     */
           nvbar.controls.push(new navButton(350, nvbar, width-100, 0, 25, h,
-            {execute:  increment,
+            {execute:  incrementRecord,
              type:     NAVIGATION.INCREMENT,
              retrieve: navCursor,
              color:    CLRS.BLACK,
@@ -2443,7 +2501,7 @@ println(app.data.length);
 
           /* Last Record          */
           nvbar.controls.push(new navButton(360, nvbar, width-75, 0, 25, h,
-            {execute:  last,
+            {execute:  lastRecord,
              type:     NAVIGATION.LAST,
              retrieve: navCursor,
              color:    CLRS.BLACK,
@@ -2634,26 +2692,26 @@ line(0,300,width,300);
           switch(true){
 
             case app.keys[KEYCODES.LEFT] &&
-                 app.keys[KEYCODES.SHIFT]:    decrementPage();  break;
+                 app.keys[KEYCODES.SHIFT]:    decrementPage();    break;
             case app.keys[KEYCODES.RIGHT] &&
-                 app.keys[KEYCODES.SHIFT]:    incrementPage();  break;
+                 app.keys[KEYCODES.SHIFT]:    incrementPage();    break;
 
             case app.keys[KEYCODES.LEFT] &&
-                 app.keys[KEYCODES.CONTROL]:  first();          break;
+                 app.keys[KEYCODES.CONTROL]:  firstRecord();      break;
             case app.keys[KEYCODES.RIGHT] &&
-                 app.keys[KEYCODES.CONTROL]:  last();           break;
+                 app.keys[KEYCODES.CONTROL]:  lastRecord();       break;
 
-            case app.keys[KEYCODES.LEFT]:     decrement();      break;
+            case app.keys[KEYCODES.LEFT]:     decrementRecord();  break;
+            case app.keys[KEYCODES.RIGHT]:    incrementRecord();  break;
 
-            case app.keys[KEYCODES.RIGHT]:    increment();      break;
+            case app.keys[KEYCODES.UP]:       incrementSW();      break;
+            case app.keys[KEYCODES.DOWN]:     decrementSW();      break;
 
-            default:                                            break;
+            default:                                              break;
 
           }
 
         }
-
-
 
       };
       var keyTyped=function(){
