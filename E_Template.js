@@ -672,24 +672,28 @@ var diagrams = function(processingInstance){
 
         var factors=[];
 
-        if(n!==1){ factors.push(1); }
+        factors.push(1);
+        
+        if(n!==1){
+          
+          var divisor=0;
 
-        var divisor=0;
+          for (var f=2; f<=sqrt(n); f++) {
 
-        for (var f=2; f<=sqrt(n); f++) {
+            if (n%f === 0) {
 
-          if (n%f === 0) {
+              divisor=n/f;
 
-            divisor=n/f;
+              if(!contains(f,factors))        { factors.push(f);        }
+              if(!contains(divisor,factors))  { factors.push(divisor);  }
 
-            if(!contains(f,factors))        { factors.push(f);        }
-            if(!contains(divisor,factors))  { factors.push(divisor);  }
+            }
 
           }
 
+          factors=sort(factors);
+        
         }
-
-        factors=sort(factors);
 
         return factors;
 
@@ -788,8 +792,8 @@ var diagrams = function(processingInstance){
       this.properDivisors=properDivisorsArray(n);           //  Array of all divisors
       this.properDivisorCount=this.properDivisors.length;   //  # of Divisors
 
-      this.divisorCount=this.properDivisorsCount+1;         //  # of Divisors
-      
+      this.divisorCount=this.properDivisorCount;            //  # of Divisors
+
       this.sumOfDivisors=sumOfDivisors(n);                  //  Sum of all the divisors
       this.sumOfProperDivisors=this.sumOfDivisors-this.n;   //  Sum of all the divisors less n
 
