@@ -81,7 +81,7 @@ var diagrams = function(processingInstance){
 
       angleMode="radians";
 
-      size(600, 600);           /* set size of canvas */
+      size(1800, 900);           /* set size of canvas */
 
     // }
 
@@ -2080,7 +2080,11 @@ var diagrams = function(processingInstance){
                     line(x, 2, x, y);
 
               }
-
+              
+              strokeWeight(1);
+              line(app.dCursor*p.sw+p.sw/2, 2,
+                   app.dCursor*p.sw+p.sw/2, 500);
+              
           popMatrix();
 
         };
@@ -2139,7 +2143,7 @@ var diagrams = function(processingInstance){
                    convertX(n, dLength), convertHeight(pLength));
 
             }
-
+                   
           popMatrix();
 
         };
@@ -2251,8 +2255,8 @@ var diagrams = function(processingInstance){
                  "Previous Prime:         \n" +
                  "Next Prime:             \n\n" +
                  "Fibonacci               \n" +
-                 "Highly Composite:       \n\n" +
                  "Factorial               \n\n" +
+                 "Highly Composite:       \n\n" +
                  "Perfect?",
                  250, 35);
 
@@ -2273,27 +2277,27 @@ var diagrams = function(processingInstance){
 
             // (nfc)(app.data[app.dCursor].sumOfProperDivisors) + "):",
 
-          fill(getColor(CLRS.BLACK,100));
-          textSize(11);
-          textLeading(13);
+          // fill(getColor(CLRS.BLACK,100));
+          // textSize(11);
+          // textLeading(13);
           
-            text("Binary      \n\n" +
-                 "Square      \n" +
-                 "Square Root \n\n" +
-                 "Natural Log \n" +
-                 "Decimal Log \n\n",
-                 250,220);
+            // text("Binary      \n\n" +
+                 // "Square      \n" +
+                 // "Square Root \n\n" +
+                 // "Natural Log \n" +
+                 // "Decimal Log \n\n",
+                 // 250,220);
 
 
-            fill(getColor(CLRS.K_TEAL_2,100));
-            textSize(11);
+            // fill(getColor(CLRS.K_TEAL_2,100));
+            // textSize(11);
 
-            text(      integer.binary           + "\n\n" +
-                 (nfc)(integer.square)          + "\n" +
-                 (nfc)(integer.squareRoot,4)    + "\n\n" +
-                 (nf) (integer.naturalLog,1,4)  + "\n" +
-                 (nf) (integer.decimalLog,1,4),
-                 380, 220);
+            // text(      integer.binary           + "\n\n" +
+                 // (nfc)(integer.square)          + "\n" +
+                 // (nfc)(integer.squareRoot,4)    + "\n\n" +
+                 // (nf) (integer.naturalLog,1,4)  + "\n" +
+                 // (nf) (integer.decimalLog,1,4),
+                 // 380, 220);
 
         };
         var dataSummary=function(){
@@ -2350,6 +2354,60 @@ var diagrams = function(processingInstance){
                  540, 35);
 
         };
+        
+        var drawArcs=function(){
+
+          stroke(getColor(CLRS.BLACK,100));
+          strokeWeight(0.5);
+          noFill();
+          
+          var incr=0;
+          var bool=1;
+          
+          pushMatrix();
+          
+            translate(10, p.h/2);
+            scale(1,-1);
+line(0,0,500,0);
+              for(var n=1; n<(width*10)/n; n++){
+                
+                incr=n*p.sw;
+                
+                beginShape();
+
+                  curveVertex(0,0);
+                  curveVertex(0,0);
+                  
+                  if(contains(n, app.data[app.dCursor].properDivisors)){
+                  
+                    stroke(getColor(CLRS.RED, 50));
+                    strokeWeight(1);
+
+                  }
+                  else{
+
+                    stroke(getColor(CLRS.BLACK, 25));
+                    strokeWeight(0.5);
+
+                  }
+
+                  for(var x=incr; x<incr*100; x+=incr*2){
+      
+                    curveVertex(x/2,  bool*incr/2);
+                    
+                    bool*=-1;
+
+                  }
+                  
+                  curveVertex(incr*20, 0);
+
+                endShape();
+
+              }
+
+          popMatrix();
+
+        };
 
         pushMatrix();
 
@@ -2366,8 +2424,10 @@ var diagrams = function(processingInstance){
             // border();
             axes();
             if(this.displayBorder) { border();      }
-            if(this.displayCollatz){ drawData(); }
+            if(this.displayCollatz){ drawData();    }
             if(this.displayCurrent){ currentData(); }
+            drawArcs();
+
             // if(this.displaySummary){ dataSummary(); }
             // if(this.displayPath)   { drawPath();    }
             // if(this.displayLines)  { drawLines();   }
@@ -2698,7 +2758,7 @@ var diagrams = function(processingInstance){
     var draw=function(){
 
       execute();
-line(0,300,width,300);
+// line(0,300,width,300);
     };
 
     println(sumDivisibleBy( 3, 999) +
