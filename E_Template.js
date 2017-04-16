@@ -31,6 +31,7 @@
 +projecteuler.net
 +www.numberempire.com
 +oeis.org
++math.stackexchange.com
 
 */
 
@@ -39,8 +40,14 @@ var diagrams = function(processingInstance){
 /*
 
     TO DO:
+      
+      - separate formatting for #1
+      - explanations for each type of #
+      - tooltips?
 
-      - buttons to toggle
+      - circular divisors display
+      
+      - buttons to toggle bar graph display
 
           - # of factors
 
@@ -74,7 +81,7 @@ var diagrams = function(processingInstance){
 
       angleMode="radians";
 
-      size(900, 600);           /* set size of canvas */
+      size(600, 600);           /* set size of canvas */
 
     // }
 
@@ -107,7 +114,7 @@ var diagrams = function(processingInstance){
     this.sw=5;
 
     this.min=1;
-    this.max=floor((width-40)/this.sw);
+    this.max=floor(width-40)/this.sw-1;
 
   };
 
@@ -364,22 +371,25 @@ var diagrams = function(processingInstance){
 
     };
 
-    var highlyComposite=1;
+    var highlyComposite=0;
 
     var loadData=function(){
 
       app.fibs=fibonacciUpTo(app.max+app.dOffset);        //  populate the fibonacci array
       app.factorials=factorialsUpTo(app.max+app.dOffset); //  populate the fibonacci array
       app.data=[];                                        //  Erase app.data
-// println(app.factorials);
+      
+      var i;
+      
       for(var n=app.min; n<=app.max; n++){
 
         app.data.push(new Integer(n+app.dOffset));
+        i=app.data[app.data.length-1];
+        
+        if(i.divisorCount>highlyComposite){
 
-        if(app.data[app.data.length-1].divisorCount>highlyComposite){
-
-          app.data[app.data.length-1].isHighlyComposite=true;
-          highlyComposite=app.data[app.data.length-1].divisorCount;
+          i.isHighlyComposite=true;
+          highlyComposite=i.divisorCount;
 
         }
 
@@ -475,10 +485,14 @@ var diagrams = function(processingInstance){
 
       }
       else{
+        
+        if(app.dCursor>0){ app.dCursor--; }
 
-        app.dCursor--;
-
-        if(app.dCursor<0){ app.dCursor=app.data.length-1; }
+        // if(app.dCursor<0){
+          // app.dCursor===1;
+          // app.dCursor=app.data.length-1;
+          
+        // }
 
       }
 
@@ -670,9 +684,9 @@ var diagrams = function(processingInstance){
          returns an array of proper divisors (including n) ----------*/
       var properDivisorsArray=function(n){
 
-        var factors=[];
-
-        factors.push(1);
+        var factors=[1];
+  
+        // factors.push(1);
         
         if(n!==1){
           
@@ -714,6 +728,8 @@ var diagrams = function(processingInstance){
       /* primeFactors
          returns a list of prime factors of n ---------- */
       var primeFactors=function(n){
+        
+        if(n===1){ return ["-"]; }
 
         var factors=[];
 
@@ -823,10 +839,6 @@ var diagrams = function(processingInstance){
       // this.sin=sin(radians(n));
       // this.cos=cos(radians(n));
       // this.tan=tan(radians(n));
-
-      if(this.properDivisorCount>99){
-        println(n +": " + this.properDivisorCount);
-      }
 
     };
 
@@ -2034,12 +2046,16 @@ var diagrams = function(processingInstance){
               strokeWeight(p.sw);
               fill  (getColor(CLRS.K_TEAL_2, 25));
               stroke(getColor(CLRS.BLACK,    50));
-
-              for(var n=1; n<app.data.length; n++){
-
-                var x=n*p.sw+10;
+              
+              var integer=0;
+              
+              for(var n=0; n<app.data.length; n++){
+                
+                integer=app.data[n];
+                
+                var x=n*p.sw+p.sw/2;
                 // var y=app.data[n].naturalLog*30;
-                var y=app.data[n].properDivisorCount*5+10;
+                var y=integer.properDivisorCount*5+10;
 
                   stroke(getColor(CLRS.BLACK, 100));
                   strokeWeight(p.sw);
@@ -2048,17 +2064,18 @@ var diagrams = function(processingInstance){
                   // if(n%15===0){ stroke(getColor(CLRS.BLUE,   75)); }
                   // if(n%25===0){ stroke(getColor(CLRS.GREEN,  75)); }
 
-                  if(app.data[n].properDivisorCount===1){ stroke(getColor(CLRS.RED,     75)); }
+                  if(integer.properDivisorCount===1 &&
+                     integer.n!==1){ stroke(getColor(CLRS.RED,     75)); }
                   else{
 
-                    if(app.data[n].n%2===0){ stroke(getColor(CLRS.BLACK, 50)); }
-                    else                   { stroke(getColor(CLRS.BLACK, 25)); }
+                    if(integer.n%2===0){ stroke(getColor(CLRS.BLACK, 50)); }
+                    else               { stroke(getColor(CLRS.BLACK, 25)); }
 
                   }
 
-                  if(app.data[n].isAbundant){ stroke(getColor(CLRS.K_TEAL_3, 75)); }
-                  if(app.data[n].isPerfect ){ stroke(getColor(CLRS.ORANGE,   75)); }
-                  if(app.dCursor===n       ){ stroke(getColor(CLRS.BLACK,   100)); }
+                  if(integer.isAbundant){ stroke(getColor(CLRS.K_TEAL_3, 75)); }
+                  if(integer.isPerfect ){ stroke(getColor(CLRS.ORANGE,   75)); }
+                  if(app.dCursor===n   ){ stroke(getColor(CLRS.BLACK,   100)); }
 
                     line(x, 2, x, y);
 
@@ -2201,7 +2218,9 @@ var diagrams = function(processingInstance){
 
         };
         var currentData=function(){
-
+          
+          var integer=app.data[app.dCursor];
+          
           //  Data cursor
           fill(getColor(CLRS.K_TEAL_0,100));
           textAlign(LEFT,TOP);
@@ -2211,68 +2230,70 @@ var diagrams = function(processingInstance){
 
           fill(getColor(CLRS.BLACK,100));
           textSize(12);
-          textLeading(10);
+          textLeading(2);
 
-            text("Proper Divisors (" + (nfc)(app.data[app.dCursor].properDivisorCount) + "):",
+            text("Proper Divisors (" + (nfc)(integer.properDivisorCount) + "):",
                  20, 35);
 
           fill(getColor(CLRS.K_TEAL_2,100));
-          textSize(10);
+          textSize(11);
 
-            text(arrayToString(app.data[app.dCursor].properDivisors),
+            text(arrayToString(integer.properDivisors),
                  30, 55, 200, 200);
 
           fill(getColor(CLRS.BLACK,100));
           textSize(11);
-
+          textLeading(13);
+          
             text("Prime Factors:          \n\n" +
                  "Sum of Proper Divisors: \n\n" +
                  "Is Prime:               \n" +
                  "Previous Prime:         \n" +
                  "Next Prime:             \n\n" +
-                 "Is Fibonacci?           \n" +
-                 "Is Factorial?           \n" +
-                 "Is Highly Composite:    \n" +
-                 "Is Perfect?",
+                 "Fibonacci               \n" +
+                 "Highly Composite:       \n\n" +
+                 "Factorial               \n\n" +
+                 "Perfect?",
                  250, 35);
 
           fill(getColor(CLRS.K_TEAL_2,100));
           textSize(11);
+          textLeading(13);
 
-            text(      arrayToString(app.data[app.dCursor].primeFactors) + "\n\n" +
-                 (nfc)(app.data[app.dCursor].sumOfProperDivisors)        + "\n\n" +
-                       app.data[app.dCursor].isPrime                     + "\n" +
-                 (nfc)(app.data[app.dCursor].previousPrime)              + "\n" +
-                 (nfc)(app.data[app.dCursor].nextPrime)                  + "\n\n" +
-                       app.data[app.dCursor].isFibonacci                 + "\n" +
-                       app.data[app.dCursor].isFactorial                 + "\n" +
-                       app.data[app.dCursor].isHighlyComposite           + "\n" +
-                       app.data[app.dCursor].isPerfect,
+            text(      arrayToString(integer.primeFactors) + "\n\n" +
+                 (nfc)(integer.sumOfProperDivisors)        + "\n\n" +
+                       integer.isPrime                     + "\n" +
+                 (nfc)(integer.previousPrime)              + "\n" +
+                 (nfc)(integer.nextPrime)                  + "\n\n" +
+                       integer.isFibonacci                 + "\n" +
+                       integer.isFactorial                 + "\n\n" +
+                       integer.isHighlyComposite           + "\n\n" +
+                       integer.isPerfect,
                  380, 35, 200, 200);
 
             // (nfc)(app.data[app.dCursor].sumOfProperDivisors) + "):",
 
-
           fill(getColor(CLRS.BLACK,100));
           textSize(11);
-
+          textLeading(13);
+          
             text("Binary      \n\n" +
                  "Square      \n" +
                  "Square Root \n\n" +
                  "Natural Log \n" +
                  "Decimal Log \n\n",
-                 250,190);
+                 250,220);
 
 
             fill(getColor(CLRS.K_TEAL_2,100));
             textSize(11);
 
-            text(      app.data[app.dCursor].binary         + "\n\n" +
-                 (nfc)(app.data[app.dCursor].square)        + "\n" +
-                 (nfc)(app.data[app.dCursor].squareRoot,4)  + "\n\n" +
-                 (nfc)(app.data[app.dCursor].naturalLog,4)  + "\n" +
-                 (nfc)(app.data[app.dCursor].decimalLog,4),
-                 380, 190);
+            text(      integer.binary           + "\n\n" +
+                 (nfc)(integer.square)          + "\n" +
+                 (nfc)(integer.squareRoot,4)    + "\n\n" +
+                 (nf) (integer.naturalLog,1,4)  + "\n" +
+                 (nf) (integer.decimalLog,1,4),
+                 380, 220);
 
         };
         var dataSummary=function(){
