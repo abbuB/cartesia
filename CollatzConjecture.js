@@ -107,7 +107,7 @@ var diagrams = function(processingInstance){
 
       angleMode="radians";
 
-      size(600, 600); // set size of canvas
+      size(900, 700); // set size of canvas
 
     }
     
@@ -140,10 +140,10 @@ var diagrams = function(processingInstance){
     this.autoRun=false;       //  Alpha changes automatically
     this.infoOn=false;        //  Is the info frame displayed
 
-    this.dCursor=1;           //  position of the cursor in data
-    this.dOffset=1; //9749626154;  //pow(2,52)+1         //  How far from 0 is the data cursor
+    this.dCursor=26;           //  position of the cursor in data
+    this.dOffset=1;//9749626154;  //pow(2,52)+1         //  How far from 0 is the data cursor
 
-    this.sw=10;
+    this.sw=5;
 
     this.dMax=floor(width-40)/this.sw-1;
 
@@ -300,13 +300,16 @@ var diagrams = function(processingInstance){
     };
     var CONSTANTS={
 
-      DEGREES:    "°",
-      PI:         "π",
-      UP_ARROW:   "▲",
-      INFINITY:   "∞",
-      THETA:      "θ",
-      RADIANS:    "ᶜ",
-      IDENTICAL:  "	≡"
+      DEGREES:        "°",
+      PI:             "π",
+      TRIANGLE_UP:    "▲",
+      TRIANGLE_DOWN:  "▼",
+      INFINITY:       "∞",
+      THETA:          "θ",
+      RADIANS:        "ᶜ",
+      IDENTICAL:      "≡",
+      TRIANGLE_R:     "►",
+      TRIANGLE_L:     "◄"
 
     };
     var NAVIGATION={
@@ -512,7 +515,6 @@ max=app.dMax;
 
     var getColor=function(clr, alpha){ return color(red(clr), green(clr), blue(clr), alpha/100*255); };
 
-
     var incrementSW=function(){
 
       if(app.sw<10){
@@ -569,7 +571,7 @@ max=app.dMax;
 
     var incrementRecord=function(){
 
-println(app.dCursor + " : " + app.dMax);
+// println(app.dCursor + " : " + app.dMax);
 
       if(app.dCursor===app.dMax){
 
@@ -619,7 +621,7 @@ println(app.dCursor + " : " + app.dMax);
       if(app.keys[KEYCODES.CONTROL]){ accel= 10; }
       if(app.keys[KEYCODES.ALT])    { accel=100; }
 
-      app.dOffset=constrain(app.dOffset+=app.data.length*accel, 0);
+      app.dOffset=(constrain)(app.dOffset+=app.data.length*accel, 0);
 
       loadData();
 
@@ -631,7 +633,7 @@ println(app.dCursor + " : " + app.dMax);
       if(app.keys[KEYCODES.CONTROL]){ accel= 10; }
       if(app.keys[KEYCODES.ALT])    { accel=100; }
 
-      app.dOffset=constrain(app.dOffset-=app.data.length*accel, 2);
+      app.dOffset=(constrain)(app.dOffset-=app.data.length*accel, 1);
 
       loadData();
 
@@ -655,12 +657,12 @@ println(app.dCursor + " : " + app.dMax);
 
     var setDataCursor=function(n) {
 
-      if(n>=0 &&
-         n<app.data.length){
+      // if(n>=0 &&
+         // n<app.data.length){
 
-        app.dCursor=constrain(round(n), 0, app.data.length-1);
+        app.dCursor=(constrain)(floor(n), 0, app.data.length-1);
 
-      }
+      // }
 
     };
     
@@ -670,10 +672,10 @@ println(app.dCursor + " : " + app.dMax);
 
       var setValue=round(n/app.data.length*app.data.length);
 
-      if(setValue>=0 &&
-         setValue<app.data.length){
-        app.dCursor=setValue;
-      }
+      // if(setValue>=0 &&
+         // setValue<app.data.length){
+        app.dCursor=(constrain)(setValue,0,app.data.length-1);
+      // }
 
     };
 
@@ -915,7 +917,7 @@ println(app.dCursor + " : " + app.dMax);
 
                 text("The Collatz Conjecture", this.w/2, 30);
 
-              var txt0="A conjecture in mathematics named after Lothar Collatz tha is also known as the 3n + 1 conjecture or the hailstone sequence.";
+              var txt0="A conjecture in mathematics named after Lothar Collatz that is also known as the 3n + 1 conjecture or the hailstone sequence.";
               var txt1="Take any positive integer n.  If n is even, divide it by 2 to get n / 2.  If n is odd, multiply it by 3 and add 1 to obtain 3n + 1.  Repeat the process indefinitely.  The conjecture is that no matter what number you start with, you will always eventually reach 1.";
               var txt2="For instance, starting with n = 12, one gets the sequence 12, 6, 3, 10, 5, 16, 8, 4, 2, 1.";
               var txt3="If the conjecture is false, it can only be because there is some starting number which gives rise to a sequence that does not contain 1. Such a sequence might enter a repeating cycle that excludes 1, or increase without bound. No such sequence has been found.";
@@ -1051,8 +1053,8 @@ println(app.dCursor + " : " + app.dMax);
               cursor(this.cursor);
 
               fill(getColor(this.color, 5));
-              strokeWeight(0.5);
-              stroke(getColor(this.color, 50));
+              strokeWeight(0.25);
+              stroke(getColor(CLRS.K_TEAL_0, 50));
 
             }
 
@@ -1144,7 +1146,7 @@ println(app.dCursor + " : " + app.dMax);
 
               rect(0, 0, this.w, this.h);
 
-            stroke(getColor(CLRS.BLACK,25));
+            stroke(getColor(CLRS.K_TEAL_0,25));
             strokeWeight(0.25);
 
               line(0, 0, this.w,      0); // Top Border
@@ -1213,7 +1215,7 @@ println(app.dCursor + " : " + app.dMax);
 
 
             // Icon
-            fill(getColor(this.color, 65));
+            fill(getColor(this.color, 50));
 
             if(this.hit){ fill(getColor(this.color, 100)); }
 
@@ -1223,17 +1225,28 @@ println(app.dCursor + " : " + app.dMax);
 
               switch(this.type){
 
-                case NAVIGATION.FIRST:          text("|<", this.w/2+offset, this.h/2+offset); break;
-                case NAVIGATION.DECREMENT:      text("<",  this.w/2+offset, this.h/2+offset); break;
-                case NAVIGATION.INCREMENT:      text(">",  this.w/2+offset, this.h/2+offset); break;
-                case NAVIGATION.LAST:           text(">|", this.w/2+offset, this.h/2+offset); break;
-                case NAVIGATION.INCREMENTPAGE:  text(">>", this.w/2+offset, this.h/2+offset); break;
-                case NAVIGATION.DECREMENTPAGE:  text("<<", this.w/2+offset, this.h/2+offset); break;
+                case NAVIGATION.FIRST:          text("|"+CONSTANTS.TRIANGLE_L, this.w/2+offset, this.h/2+offset); break;
+                case NAVIGATION.DECREMENT:      text(CONSTANTS.TRIANGLE_L,  this.w/2+offset, this.h/2+offset); break;
+                case NAVIGATION.INCREMENT:      text(CONSTANTS.TRIANGLE_R,  this.w/2+offset, this.h/2+offset); break;
+                case NAVIGATION.LAST:           text(CONSTANTS.TRIANGLE_R+"|", this.w/2+offset, this.h/2+offset); break;
+                case NAVIGATION.INCREMENTPAGE:  text(CONSTANTS.TRIANGLE_R+CONSTANTS.TRIANGLE_R, this.w/2+offset, this.h/2+offset); break;
+                case NAVIGATION.DECREMENTPAGE:  text(CONSTANTS.TRIANGLE_L+CONSTANTS.TRIANGLE_L, this.w/2+offset, this.h/2+offset); break;
 
                 default:  break;
 
               }
+              // switch(this.type){
 
+                // case NAVIGATION.FIRST:          text("|<", this.w/2+offset, this.h/2+offset); break;
+                // case NAVIGATION.DECREMENT:      text("<",  this.w/2+offset, this.h/2+offset); break;
+                // case NAVIGATION.INCREMENT:      text(">",  this.w/2+offset, this.h/2+offset); break;
+                // case NAVIGATION.LAST:           text(">|", this.w/2+offset, this.h/2+offset); break;
+                // case NAVIGATION.INCREMENTPAGE:  text(">>", this.w/2+offset, this.h/2+offset); break;
+                // case NAVIGATION.DECREMENTPAGE:  text("<<", this.w/2+offset, this.h/2+offset); break;
+
+                // default:  break;
+
+              // }
         popMatrix();
 
       };
@@ -1277,7 +1290,7 @@ println(app.dCursor + " : " + app.dMax);
           translate(this.x, this.y);
 
             noStroke();
-            fill(this.icolor);
+            fill(getColor(CLRS.BLACK,5));
 
             if(this.hit &&
                this.parent.hit){
@@ -1292,10 +1305,13 @@ println(app.dCursor + " : " + app.dMax);
               rect(0, 0, this.w, this.h);
 
             // Caption
-            fill(CLRS.WHITE);
+            fill(CLRS.K_TEAL_0);
             textSize(16);
             textAlign(CENTER,CENTER);
 
+            if(this.hit &&
+               this.parent.hit){ fill(CLRS.WHITE); }
+                 
               text(this.text, this.w/2, this.h/2);
 
             // Draw child controls
@@ -1604,7 +1620,11 @@ println(app.dCursor + " : " + app.dMax);
               rect(offset, offset, this.w, this.h, 2);
 
             // Icon
-            fill(getColor(this.color, 65));
+            fill(getColor(this.color,50));
+
+            if(this.hit &&
+               this.parent.hit){ fill(getColor(CLRS.BLACK,75)); }
+               
             noStroke();
 
               ellipse(this.w/2+offset, this.h/2-6+offset, 3, 3);
@@ -1675,7 +1695,7 @@ println(app.dCursor + " : " + app.dMax);
             textSize(24);
             textAlign(CENTER,CENTER);
 
-            fill(getColor(CLRS.BLACK,50));
+            fill(getColor(this.color,50));
 
             if(this.hit &&
                this.parent.hit){ fill(getColor(CLRS.BLACK,75)); }
@@ -1801,7 +1821,7 @@ println(app.dCursor + " : " + app.dMax);
         this.displayBuckets=false;
         this.displayCurrent=true;
 
-        this.sw=1;
+        this.sw=app.sw;
 
       };
       graph.prototype=Object.create(control.prototype);
@@ -1809,14 +1829,9 @@ println(app.dCursor + " : " + app.dMax);
 
         var p=this;
 
-        var convertHeight=function(n){
-
-          return (n-1)/app.data[app.dLongest].path.length*p.h*0.5+5;
-
-        };
         var convertPath=function(n,max){
 
-            var retval=(n-1)/max*p.h*0.75;
+            var retval=(n-1)/max*p.h*0.95;
 
             return retval;
 
@@ -1826,7 +1841,12 @@ println(app.dCursor + " : " + app.dMax);
         return x/length*(p.w-20)+p.sw/2;
 
         };
+        var convertY=function(n){
 
+          return (n-1)/app.data[app.dLongest].path.length*p.h*0.85+5;
+
+        };
+        
         var border=function(){
 
           pushMatrix();
@@ -1867,6 +1887,7 @@ println(app.dCursor + " : " + app.dMax);
           popMatrix();
 
         };
+        
         var drawCollatz=function(){
 
           pushMatrix();
@@ -1875,8 +1896,8 @@ println(app.dCursor + " : " + app.dMax);
             scale(1,-1);
 
               strokeWeight(1);
-              fill(  getColor(CLRS.K_TEAL_2, 25));
-              stroke(getColor(CLRS.BLACK,    50));
+              fill(  getColor(CLRS.K_TEAL_3, 30));
+              stroke(getColor(CLRS.BLACK,    75));
 
               beginShape();
 
@@ -1903,26 +1924,7 @@ println(app.dCursor + " : " + app.dMax);
           popMatrix();
 
         };
-        var drawPath=function(){
 
-          var path="";
-
-          for(var n=0; n<app.data[app.dCursor].path.length; n++){
-
-            path+=app.data[app.dCursor].path[n];
-
-            if(n!==app.data[app.dCursor].path.length-1){
-              path+= ", ";
-            }
-
-          }
-
-          textAlign(LEFT,TOP);
-          fill(getColor(CLRS.GRAY,50));
-
-            text(path, 20, 100, p.w-30, 10000);
-
-        };
         var drawLines=function(){
 
           p.sw=(p.w-20)/app.data.length;
@@ -1940,18 +1942,18 @@ println(app.dCursor + " : " + app.dMax);
 
               pLength=app.data[n].path.length;
 
-              if(n%2===0){ stroke(getColor(CLRS.BLACK, 25)); }
+              if(n%2===0){ stroke(getColor(CLRS.K, 25)); }
               else       { stroke(getColor(CLRS.BLACK, 50)); }
 
               strokeWeight(p.sw);
 
               if(n===app.dHighest){ stroke(getColor(CLRS.ORANGE,75)); }
-              if(n===app.dSum)    { stroke(getColor(CLRS.GREEN,75));  }
-              if(n===app.dLongest){ stroke(getColor(CLRS.BLUE,75));   }
-              if(n===app.dCursor) { stroke(getColor(CLRS.RED,75));    }
+              if(n===app.dSum)    { stroke(getColor(CLRS.GREEN, 75)); }
+              if(n===app.dLongest){ stroke(getColor(CLRS.BLUE,  75)); }
+              if(n===app.dCursor) { stroke(getColor(CLRS.RED,   75)); }
 
               line(convertX(n, dLength), 1,
-                   convertX(n, dLength), convertHeight(pLength));
+                   convertX(n, dLength), convertY(pLength));
 
             }
 
@@ -2032,98 +2034,6 @@ println(app.dCursor + " : " + app.dMax);
           popMatrix();
 
         };
-        var currentData=function(){
-
-          //  Data cursor
-          fill(getColor(CLRS.K_TEAL_0,100));
-          textAlign(LEFT,TOP);
-          textSize(20);
-
-            text((nfc)(app.data[app.dCursor].i), 20, 10);
-
-          fill(getColor(CLRS.BLACK,100));
-          textAlign(LEFT,TOP);
-          textSize(12);
-          textLeading(16);
-
-            text("Max:     \n" +
-                 "Sum:     \n" +
-                 "Length:",
-                 20, 35);
-
-            text("Up:      \n" +
-                 "Down:    \n",
-                 170, 35);
-
-          textAlign(RIGHT,TOP);
-
-          fill(getColor(CLRS.K_TEAL_2,100));
-
-            text((nfc)(app.data[app.dCursor].max)        + "\n" +
-                 (nfc)(app.data[app.dCursor].sum)        + "\n" +
-                 (nfc)((app.data[app.dCursor].length-1)),
-                 140, 35);
-
-             text((nfc)(app.data[app.dCursor].up)         + "\n" +
-                  (nfc)(app.data[app.dCursor].down),
-                  240, 35);
-
-
-        };
-        var dataSummary=function(){
-
-          fill(getColor(CLRS.K_TEAL_0,100));
-          textSize(16);
-          textAlign(LEFT,TOP);
-
-            text("Range:", 300, 10);
-
-          textSize(12);
-          textLeading(16);
-          fill(getColor(CLRS.BLACK,75));
-
-            text("Max Peak: \n" +
-                 "Max Sum:  \n" +
-                 "Longest Path:",
-                 300, 35);
-
-          fill(getColor(CLRS.ORANGE,75));
-          noStroke();
-
-            ellipse(293,43,6,6);
-
-          fill(getColor(CLRS.GREEN,75));
-
-            ellipse(293,58,6,6);
-
-          fill(getColor(CLRS.BLUE,75));
-
-            ellipse(293,73,6,6);
-
-          fill(getColor(CLRS.K_TEAL_2,100));
-          textAlign(LEFT,BOTTOM);
-
-            text((nfc)(app.data[0].i) + " - " +
-                 (nfc)(app.data[app.data.length-1].i) + "\n\n",
-                 400, 60);
-
-          fill(getColor(CLRS.K_TEAL_0,50));
-          textAlign(LEFT,TOP);
-
-            text((nfc)(app.data[app.dHighest].i) +"\n" +
-                 (nfc)(app.data[app.dSum].i) + "\n" +
-                 (nfc)(app.data[app.dLongest].i),
-                 400, 35);
-
-          fill(getColor(CLRS.K_TEAL_2,75));
-          textAlign(RIGHT,TOP);
-
-            text((nfc)(app.data[app.dHighest].max) + "\n" +
-                 (nfc)(app.data[app.dSum].sum) + "\n" +
-                 (nfc)(app.data[app.dLongest].length-1),
-                 540, 35);
-
-        };
 
         pushMatrix();
 
@@ -2137,12 +2047,8 @@ println(app.dCursor + " : " + app.dMax);
 
             }
 
-            // border();
             axes();
-            if(this.displayBorder) { border();      }
-            if(this.displayCurrent){ currentData(); }
-            if(this.displaySummary){ dataSummary(); }
-            if(this.displayPath)   { drawPath();    }
+            // if(this.displayBorder) { border();      }
             if(this.displayLines)  { drawLines();   }
             // drawMax();
             // drawSum();
@@ -2156,7 +2062,7 @@ println(app.dCursor + " : " + app.dMax);
 
         if(this.hit){
 
-          setDataCursor((mouseX-this.x-10)/app.sw);
+          setDataCursor((mouseX-this.x-10+1)/app.sw);
 
           for(var c in this.controls){ this.controls[c].clicked((this.x+x), (this.y+y)); }
 
@@ -2170,7 +2076,7 @@ println(app.dCursor + " : " + app.dMax);
           if(mouseX>=this.x+10 &&
              mouseX<=this.x+this.w+10){
 
-            setDataCursor((mouseX-this.x-10)/app.sw);
+            setDataCursor((mouseX-this.x-10+1)/app.sw);
 
           }
 
@@ -2201,7 +2107,7 @@ println(app.dCursor + " : " + app.dMax);
         app.controls.push(bk);
 
         /* graph        */
-        bk.controls.push(new graph(110, bk, 10, 30, width-25, height-60,
+        bk.controls.push(new graph(110, bk, 10, 230, width-25, height-260,
           {color:     CLRS.GRAY,
            acolor:    CLRS.BLUE,
            icolor:    CLRS.RED,
@@ -2212,8 +2118,8 @@ println(app.dCursor + " : " + app.dMax);
         /* tlbar            */
         var tlbar=new toolbar(200, bk, 0, 0, width, 30,
           {text:      "Collatz Conjecture",
-           acolor:    CLRS.TOOLBARA,
-           icolor:    CLRS.TOOLBARI,
+           acolor:    CLRS.K_TEAL_3,
+           icolor:    CLRS.ACTIVE,
            cursor:    ARROW});
 
         bk.controls.push(tlbar);
@@ -2222,14 +2128,14 @@ println(app.dCursor + " : " + app.dMax);
           tlbar.controls.push(new onOff(210, tlbar, 15, 15, 13, 13,
             {execute:   checkboxAuto,
              retrieve:  getAuto,
-             color:     CLRS.BLACK,
+             color:     CLRS.K_TEAL_0,
              cursor:    HAND}));
 
           /* settings   */
           tlbar.controls.push(new settings(220, tlbar, width-25, 5, 22, 22,
             {execute:   checkboxLegend,
              retrieve:  getLegend,
-             color:     CLRS.BLACK,
+             color:     CLRS.K_TEAL_0,
              cursor:    HAND}));
 
           /* information   */
@@ -2237,7 +2143,7 @@ println(app.dCursor + " : " + app.dMax);
             {text:     "i",
              execute:  toggleInfo,
              retrieve: getInfo,
-             color:    CLRS.SIN,
+             color:    CLRS.K_TEAL_0,
              cursor:   HAND}));
       }
 
@@ -2440,6 +2346,122 @@ println(app.dCursor + " : " + app.dMax);
 
     };
 
+    
+    var currentData=function(){
+
+      //  Data cursor
+      fill(getColor(CLRS.K_TEAL_0,100));
+      textAlign(LEFT,TOP);
+      textSize(20);
+
+        text((nfc)(app.data[app.dCursor].i), 20, 40);
+
+      fill(getColor(CLRS.BLACK,100));
+      textAlign(LEFT,TOP);
+      textSize(12);
+      textLeading(16);
+
+        text("Max:     \n" +
+             "Sum:     \n" +
+             "Length:",
+             20, 70);
+
+        text(CONSTANTS.TRIANGLE_UP +"\n" +
+             CONSTANTS.TRIANGLE_DOWN + "",
+             170, 70);
+
+      textAlign(RIGHT,TOP);
+
+      fill(getColor(CLRS.K_TEAL_2,100));
+
+        text((nfc)(app.data[app.dCursor].max)        + "\n" +
+             (nfc)(app.data[app.dCursor].sum)        + "\n" +
+             (nfc)((app.data[app.dCursor].length-1)),
+             140, 70);
+
+         text((nfc)(app.data[app.dCursor].up)         + "\n" +
+              (nfc)(app.data[app.dCursor].down),
+              210, 70);
+
+
+    };
+    var dataSummary=function(){
+
+      fill(getColor(CLRS.K_TEAL_0,100));
+      textSize(16);
+      textAlign(LEFT,TOP);
+
+        text("Range:", 290, 45);
+
+      textSize(12);
+      textLeading(16);
+      fill(getColor(CLRS.BLACK,75));
+
+        text("Max Peak: \n" +
+             "Max Sum:  \n" +
+             "Longest Path:",
+             300, 70);
+
+      fill(getColor(CLRS.ORANGE,75));
+      noStroke();
+
+        rect(291,70,6,12);
+
+      fill(getColor(CLRS.GREEN,75));
+
+        rect(291,86,6,12);
+
+      fill(getColor(CLRS.BLUE,75));
+
+        rect(291,102,6,12);
+
+      fill(getColor(CLRS.K_TEAL_2,100));
+      textAlign(LEFT,TOP);
+      textSize(16);
+
+        text((nfc)(app.data[0].i) + " - " +
+             (nfc)(app.data[app.data.length-1].i) + "\n\n",
+             400, 45);
+
+      fill(getColor(CLRS.K_TEAL_0,50));
+      textAlign(LEFT,TOP);
+      textSize(12);
+
+        text((nfc)(app.data[app.dHighest].i) +"\n" +
+             (nfc)(app.data[app.dSum].i) + "\n" +
+             (nfc)(app.data[app.dLongest].i),
+             400, 70);
+
+      fill(getColor(CLRS.K_TEAL_2,75));
+      textAlign(RIGHT,TOP);
+
+        text((nfc)(app.data[app.dHighest].max) + "\n" +
+             (nfc)(app.data[app.dSum].sum) + "\n" +
+             (nfc)(app.data[app.dLongest].length-1),
+             540, 70);
+
+    };
+    var drawPath=function(){
+
+      var path="";
+
+      for(var n=0; n<app.data[app.dCursor].path.length; n++){
+
+        path+=app.data[app.dCursor].path[n];
+
+        if(n!==app.data[app.dCursor].path.length-1){
+          path+= ", ";
+        }
+
+      }
+
+      textAlign(LEFT,TOP);
+      fill(getColor(CLRS.GRAY,50));
+
+        text(path, 30, 140, width-50, 10000);
+
+    };
+        
     var update=function(){
 
       frameRate(app.frameRate);
@@ -2453,6 +2475,10 @@ println(app.dCursor + " : " + app.dMax);
       }
 
       for(var c in app.controls){ app.controls[c].draw(); }
+      
+      currentData();
+      dataSummary();
+      drawPath();
 
     };
 
