@@ -44,47 +44,20 @@ var diagrams = function(processingInstance){
       https://en.wikipedia.org/wiki/Collatz_conjecture
 
     TO DO:
-
-      - buttons to toggle
-
-          - path display
-          - path integers
-          - line display
+      
+      - reset button
+      - slow calculation to show method
+      - fix the changing fonts
 
 
-
-      - only draw telemetry if it's visible
+      
 
     Research:
 
 
     TO DONE:
 
-      - color coded line based on height
-      - color coded shape based on area
-      - color code greatest total area
-      - color code longest path
-
-      - right left arrow to increment data by a screen width
-
-      - number format integer details
-      - click graph to set integer
-      - mouse move over data tracker changes cursor
-      - toggle mouse tracking of data
-
-      - collatz data type including
-
-        - number
-        - path
-        - size
-        - max
-        - sum
-        ...
-
-      - run button
-      - increment button
-      - decrement button
-      - detail based on mouseX position
+      - only draw telemetry if it's visible    
 
         textFont(createFont("sans-serif", 14));
         textFont(createFont("monospace", 14));
@@ -147,8 +120,8 @@ var diagrams = function(processingInstance){
     this.dArea=0;             //  The index of the greatest area of the path
     this.dLongest=0;          //  The index of the longest path
 
-
-
+    this.row=8;
+    this.col=0;
 
   };
 
@@ -641,8 +614,8 @@ max=app.dMax;
 
       app.autoRun=!app.autoRun;
 
-      if(app.autoRun){ app.frameRate=10; }
-      else           { app.frameRate=30; }
+      if(app.autoRun){ app.frameRate=30; }
+      else           { app.frameRate=60; }
 
     };
     var checkboxLegend=function() { app.legend=!app.legend;           };
@@ -1335,6 +1308,9 @@ max=app.dMax;
       telemetry.prototype=Object.create(control.prototype);
       telemetry.prototype.draw=function(){
 
+        if(app.legend===false &&
+           this.offset===0){ return; }
+
         textFont(createFont("sans-serif", 14));
 
         var p=this;
@@ -1438,7 +1414,7 @@ max=app.dMax;
             text(txt, p.offset+17, row0 + 480, p.w-20, 100);
 
         };
-
+        
         pushMatrix();
 
           translate(this.x, this.y);
@@ -2119,13 +2095,16 @@ max=app.dMax;
       var hexButton=function(id, parent, x, y, w, h, params){
 
         control.call(this, id, parent, x, y, w, h);
-
+        
+        this.row=params.row;
+        this.col=params.col;
+        
         this.execute=params.execute;
         this.retrieve=params.retrieve;
         this.text=params.text;
         this.color=params.color;
         this.cursor=params.cursor;
-
+        
         this.on=false;
 
       };
@@ -2158,6 +2137,8 @@ max=app.dMax;
               }
 // Origin
 // ellipse(offset,-offset,this.w,this.w);
+
+              if(this.on){ fill(getColor(CLRS.RED,25)); }
 
               var factor=this.w/2;
               var xPos=factor;
@@ -2216,13 +2197,33 @@ max=app.dMax;
       /* Overridden to maintain on/off value */
 
         if(this.hit &&
-           app.focus===this.id){
+           app.focus===this.id &&
+           this.on===false){
 
-          this.execute(this.id + ": " + this.text);
+          this.execute(this.row + "," + this.col + "  :  " + this.text);
+          
+          var left=this.parent.controls[this.row+1][this.col].text;
+          var right=this.parent.controls[this.row+1][this.col+1].text;
+          
+          if(left<right){ this.text+=left;  }
+          else          { this.text+=right; }
 
-          for(var c in this.controls){ this.controls[c].clicked(); }
+          this.on=true;
+
+          println(left + " - " + right);
 
         }
+
+      };
+      hexButton.prototype.set=function(){
+
+        var left =this.parent.controls[this.row+1][this.col  ].text;
+        var right=this.parent.controls[this.row+1][this.col+1].text;
+
+        if(left<=right){ this.text+=left;  }
+        else           { this.text+=right; }
+
+        this.on=true;
 
       };
 
@@ -2234,7 +2235,10 @@ max=app.dMax;
       var pyramid=function(id, parent, x, y, w, h, params){
 
         control.call(this, id, parent, x, y, w, h);
-        
+
+        this.row=0;
+        this.col=0;
+
         this.levels=params.levels;
 
         var xPos=0;
@@ -2242,11 +2246,12 @@ max=app.dMax;
         var sz=48;
         var ID=0;
         var row=[];
+        var total=0;
         
         var rowOffset=(sz/2/cos(radians(30))) + sin(radians(30))*sz/2;
 
         /* Pascal buttons        */
-        for(var y=0; y<=this.levels; y++){
+        for(var y=0; y<this.levels; y++){
 
           for(var x=0; x<=y; x++){
             
@@ -2256,26 +2261,30 @@ max=app.dMax;
             yPos = this.y + y*rowOffset;
             
             row.push(new hexButton(ID, this, xPos, yPos, sz, sz,
-              {color:     CLRS.K_TEAL_0,
+              {row:       y,
+               col:       x,
+               color:     CLRS.K_TEAL_0,
                cursor:    HAND,
                text:      round(random(10,99)),
                execute:   executePascal,
                retrieve:  retrievePascal}));
 
+            total++;
+
           }
 
-          row=[];
           this.controls.push(row);
+          row=[];
 
         }
+
+        println(total);
 
       };
       pyramid.prototype=Object.create(control.prototype);
       pyramid.prototype.draw=function(){
         
         this.hit=true;
-
-println(this.controls[0].length);
 
         for(var c=0; c<this.controls.length; c++){
 
@@ -2289,7 +2298,23 @@ println(this.controls[0].length);
         
       };
 
-    }
+      pyramid.prototype.reset=function(){
+      /* Overridden because of the shape */
+
+        for(var c=0; c<this.controls.length; c++){
+
+          for(var r in this.controls[c]){
+
+            this.controls[c][r].on=false;;
+            this.controls[c][r].text=round(random(99));
+
+          }
+
+        }
+
+        this.on=false;
+        
+      };    
       pyramid.prototype.moved=function(){
       /* Overridden because of the shape */
         
@@ -2306,12 +2331,38 @@ println(this.controls[0].length);
         }
 
       };
-      pyramid.prototype.clicked=function(){
+      pyramid.prototype.calc=function(){
         
+        if(this.on===false){
+
+          for(var c=this.controls.length-2; c>-1; c--){
+
+            for(var r=this.controls[c].length-1; r>-1; r--){
+
+              this.controls[c][r].set();
+            
+            }
+
+          }
+        
+        }
+        
+        this.on=true;
+
       }
+      pyramid.prototype.step=function(col,row){
+
+        this.controls[col][row].set();
+
+        // this.on=true;
+
+      }      
       pyramid.prototype.out=function(){}
       pyramid.prototype.pressed=function(){}
       pyramid.prototype.dragged=function(){}
+      pyramid.prototype.clicked=function(){}
+
+    }
 
   }
 
@@ -2321,7 +2372,34 @@ println(this.controls[0].length);
   var retrievePascal=function(){
     println("retrieve pascal");
   };
+  var updatePascal=function(){
+    
+    app.controls[1].reset();
+
+  };
+  var calcPascal=function(){
+
+    // app.controls[1].calc();
+
+    app.controls[1].step(13,0);
+
+  };
   
+  var stepPascal=function(){
+    
+    if(app.col===0 && app.row===-1){ return; }
+    
+println(app.row+","+app.col);
+
+    app.controls[1].step(app.row,app.col);
+    
+    if(app.col>=(app.controls[1].controls[app.row].length-1)){ app.col=0; app.row--; }
+    else                                                     { app.col++;            }
+
+  };
+
+  
+
   /* Initialize ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
     var initialize=function(){
 
@@ -2337,7 +2415,7 @@ println(this.controls[0].length);
 
         app.controls.push(bk);
             
-          bk.controls.push(new pyramid(1100, bk, width/2, 75, 40, 40,
+          app.controls.push(new pyramid(1100, bk, width/2, 75, 40, 40,
             {levels: 10}));
 
         
@@ -2345,7 +2423,7 @@ println(this.controls[0].length);
       {
         /* tlbar            */
         var tlbar=new toolbar(200, bk, 0, 0, width, 30,
-          {text:      "Pascal's Triangle",
+          {text:      "Minimum Sum Triangle",
            acolor:    CLRS.K_TEAL_3,
            icolor:    CLRS.ACTIVE,
            cursor:    ARROW});
@@ -2369,7 +2447,7 @@ println(this.controls[0].length);
           /* information   */
           tlbar.controls.push(new info(230, tlbar, width-52, 5, 22, 22,
             {text:     "i",
-             execute:  toggleInfo,
+             execute:  stepPascal,
              retrieve: getInfo,
              color:    CLRS.K_TEAL_0,
              cursor:   HAND}));
@@ -2702,10 +2780,14 @@ println(this.controls[0].length);
 // println(app.frameRate);
       background(242);
 
-      if(app.autoRun &&
-         (frameCount%app.frameRate===0)){
-           incrementRecord();
-           app.dCursor%=app.data.length-1;
+      if(app.autoRun){
+           // incrementRecord();
+           // app.dCursor%=app.data.length-1;
+           
+        if(frameCount%5===0){
+           stepPascal();
+        }
+
       }
 
       for(var c in app.controls){ app.controls[c].draw(); }
