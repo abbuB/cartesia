@@ -98,8 +98,9 @@ var diagrams = function(processingInstance){
 
   var application=function(){
 
-      {
-
+    /* Initialize -------------------- */
+    {
+      
       frameRate(0);
 
       cursor(WAIT);
@@ -110,7 +111,7 @@ var diagrams = function(processingInstance){
       size(900, 700); // set size of canvas
 
     }
-    
+
     this.debug=true;          //  mode that displays enhanced debugging tools
 
     this.frameRate=60;        //  refresh speed
@@ -129,16 +130,10 @@ var diagrams = function(processingInstance){
 
     /* App Specific ------------------ */
     this.data=[];             //  Array of collatz objects
-    this.buckets=[];          //  Array of values in the current range
-    this.max=[];              //  Array of the max values for each collatz object
-    this.sum=[];              //  Array of the sum values for each collatz object
-    
-    this.bucketsMax=0;        //  The greatest value in the buckets array
-    this.maxMax=0;            //  The greatest value in the max array
-    this.sumMax=0;            //  The greatest value in the sum array
-    
+
     this.autoRun=false;       //  Alpha changes automatically
     this.infoOn=false;        //  Is the info frame displayed
+    this.legend=false;        //  Is the telemetry visible
 
     this.dCursor=26;           //  position of the cursor in data
     this.dOffset=1;//9749626154;  //pow(2,52)+1         //  How far from 0 is the data cursor
@@ -152,7 +147,7 @@ var diagrams = function(processingInstance){
     this.dArea=0;             //  The index of the greatest area of the path
     this.dLongest=0;          //  The index of the longest path
 
-    /* Initialize -------------------- */
+
 
 
   };
@@ -1916,6 +1911,7 @@ max=app.dMax;
           }
 
         };
+        
         var drawCollatz=function(){
 
           pushMatrix();
@@ -2117,10 +2113,10 @@ max=app.dMax;
 
     }
 
-        // Pascal Button ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Hexagon Button ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
 
-      var pButton=function(id, parent, x, y, w, h, params){
+      var hexButton=function(id, parent, x, y, w, h, params){
 
         control.call(this, id, parent, x, y, w, h);
 
@@ -2133,8 +2129,8 @@ max=app.dMax;
         this.on=false;
 
       };
-      pButton.prototype=Object.create(control.prototype);
-      pButton.prototype.draw=function(){
+      hexButton.prototype=Object.create(control.prototype);
+      hexButton.prototype.draw=function(){
 
           var offset=0;
 
@@ -2143,11 +2139,10 @@ max=app.dMax;
             translate(this.x, this.y);
             scale(1,-1);
 
-            
               // Border
-              strokeWeight(0.75);
+              strokeWeight(0.5);
 
-              stroke(getColor(this.color, 100));
+              stroke(getColor(this.color, 75));
               fill(  getColor(this.color, 5));
 
               if(this.hit &&
@@ -2162,7 +2157,7 @@ max=app.dMax;
 
               }
 // Origin
-// ellipse(0,0,this.w,this.w);
+// ellipse(offset,-offset,this.w,this.w);
 
               var factor=this.w/2;
               var xPos=factor;
@@ -2170,22 +2165,22 @@ max=app.dMax;
 
                 beginShape();
 
-                  vertex(  xPos,  sin(radians(30))*factor-offset );
-                  vertex(     0,  yPos-offset                    );
-                  vertex( -xPos,  sin(radians(150))*factor-offset);
-                  vertex( -xPos,  sin(radians(210))*factor-offset);
-                  vertex(     0, -yPos-offset                    );
-                  vertex(  xPos,  sin(radians(330))*factor-offset);
+                  vertex(  xPos+offset,  sin( radians(30))*factor-offset);
+                  vertex(       offset,  yPos-offset                    );
+                  vertex( -xPos+offset,  sin(radians(150))*factor-offset);
+                  vertex( -xPos+offset,  sin(radians(210))*factor-offset);
+                  vertex(       offset, -yPos-offset                    );
+                  vertex(  xPos+offset,  sin(radians(330))*factor-offset);
 
                 endShape(CLOSE);
 
                 // line(0,0, -xPos, sin(radians(210))*factor-offset);
                 // line(0,0,  xPos, sin(radians(330))*factor-offset);
                 // line(0,0,     0, yPos-offset                    );
-                
+
               // Caption
               if(this.hit &&
-                 this.parent.hit){  fill(255,255,255); }
+                 this.parent.hit){  fill(255,255,255);             }
               else               {  fill(getColor(this.color,75)); }
 
               scale(1,-1);
@@ -2194,12 +2189,12 @@ max=app.dMax;
               textSize(12);
               // this.w=textWidth(this.text)+10;
 
-                text(this.text, 0, 0);
+                text(this.text, offset, offset);
 
           popMatrix();
 
       };
-      pButton.prototype.moved=function(){
+      hexButton.prototype.moved=function(){
       /* Overridden because of the shape */
 
         if(dist(mouseX,mouseY,
@@ -2217,13 +2212,13 @@ max=app.dMax;
         }
 
       };
-      pButton.prototype.clicked=function(){
+      hexButton.prototype.clicked=function(){
       /* Overridden to maintain on/off value */
 
         if(this.hit &&
            app.focus===this.id){
 
-          this.execute(this.text);
+          this.execute(this.id + ": " + this.text);
 
           for(var c in this.controls){ this.controls[c].clicked(); }
 
@@ -2232,7 +2227,92 @@ max=app.dMax;
       };
 
     }
-    
+
+    // Pyramid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    {
+
+      var pyramid=function(id, parent, x, y, w, h, params){
+
+        control.call(this, id, parent, x, y, w, h);
+        
+        this.levels=params.levels;
+
+        var xPos=0;
+        var yPos=0;
+        var sz=48;
+        var ID=0;
+        var row=[];
+        
+        var rowOffset=(sz/2/cos(radians(30))) + sin(radians(30))*sz/2;
+
+        /* Pascal buttons        */
+        for(var y=0; y<=this.levels; y++){
+
+          for(var x=0; x<=y; x++){
+            
+            ID=x + "," + y;
+            
+            xPos = this.x + x*sz - y*sz/2;
+            yPos = this.y + y*rowOffset;
+            
+            row.push(new hexButton(ID, this, xPos, yPos, sz, sz,
+              {color:     CLRS.K_TEAL_0,
+               cursor:    HAND,
+               text:      round(random(10,99)),
+               execute:   executePascal,
+               retrieve:  retrievePascal}));
+
+          }
+
+          row=[];
+          this.controls.push(row);
+
+        }
+
+      };
+      pyramid.prototype=Object.create(control.prototype);
+      pyramid.prototype.draw=function(){
+        
+        this.hit=true;
+
+println(this.controls[0].length);
+
+        for(var c=0; c<this.controls.length; c++){
+
+          for(var r in this.controls[c]){
+
+            this.controls[c][r].draw();
+          
+          }
+
+        }
+        
+      };
+
+    }
+      pyramid.prototype.moved=function(){
+      /* Overridden because of the shape */
+        
+        this.hit=true;
+        
+        for(var c=0; c<this.controls.length; c++){
+
+          for(var r in this.controls[c]){
+
+            this.controls[c][r].moved();
+          
+          }
+
+        }
+
+      };
+      pyramid.prototype.clicked=function(){
+        
+      }
+      pyramid.prototype.out=function(){}
+      pyramid.prototype.pressed=function(){}
+      pyramid.prototype.dragged=function(){}
+
   }
 
   var executePascal=function(n){
@@ -2256,33 +2336,10 @@ max=app.dMax;
            border:    false});
 
         app.controls.push(bk);
-        
-        var xPos=0;
-        var yPos=0;
-        var sz=48;
-        var ID=0;
-        
-        var yVert=(sz/2/cos(radians(30))) + sin(radians(30))*sz/2;
-
-        /* Pascal buttons        */
-        for(var y=0; y<15; y++){
-
-          for(var x=0; x<=y; x++){
             
-            ID="P " + x + " | " + y;
-            
-            xPos = width/2 + x*sz - y*sz/2;
-            yPos = 70 + y*yVert;
-            
-            bk.controls.push(new pButton(ID, bk, xPos, yPos, sz, sz,
-              {color:     CLRS.K_TEAL_0,
-               cursor:    HAND,
-               text:      round(random(10,99)),
-               execute:   executePascal,
-               retrieve:  retrievePascal}));
-          }
+          bk.controls.push(new pyramid(1100, bk, width/2, 75, 40, 40,
+            {levels: 10}));
 
-        }
         
       // toolbar --------------------------------------------------
       {
