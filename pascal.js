@@ -44,8 +44,20 @@ var diagrams = function(processingInstance){
       https://en.wikipedia.org/wiki/Collatz_conjecture
 
     TO DO:
-      
+
+      - size
+
       - reset button
+      - data cursor
+      
+      - Navigation
+        
+        - increment/decrement
+        - last/first
+        - scroll
+        - add row
+        - remove row
+
       - slow calculation to show method
       - fix the changing fonts
 
@@ -87,7 +99,7 @@ var diagrams = function(processingInstance){
 
     this.debug=true;          //  mode that displays enhanced debugging tools
 
-    this.frameRate=60;        //  refresh speed
+    this.frameRate=0;        //  refresh speed
 
     this.mouseX=0;            //  current mouseX location
     this.mouseY=0;            //  current mouseY location
@@ -96,32 +108,31 @@ var diagrams = function(processingInstance){
     this.right=false;         //  Is the right mouse button pressed
     this.center=false;        //  Is the center mouse button pressed
 
-    this.focus=0;             //  The ID of the control with focus
+    this.focus=-1;             //  The ID of the control with focus
 
     this.controls=[];         //  collection of controls in the app
     this.keys=[];             //  Array holding the value of all keycodes
 
-    /* App Specific ------------------ */
-    this.data=[];             //  Array of collatz objects
-
     this.autoRun=false;       //  Alpha changes automatically
     this.infoOn=false;        //  Is the info frame displayed
     this.legend=false;        //  Is the telemetry visible
+    
+    /* App Specific ------------------ */
 
-    this.dCursor=26;           //  position of the cursor in data
-    this.dOffset=1;//9749626154;  //pow(2,52)+1         //  How far from 0 is the data cursor
+    this.cursor=1;           //  position of the cursor in grid
+    this.cells=0;             //  # of cells in the grid
+    
+    this.levels=10;
 
-    this.sw=5;
+    this.levelsMax=20
+    this.levelsMin=5;
 
-    this.dMax=floor(width-40)/this.sw-1;
-
-    this.dHighest=0;          //  The index of the greatest number reached
-    this.dHighestIndex=0;
-    this.dArea=0;             //  The index of the greatest area of the path
-    this.dLongest=0;          //  The index of the longest path
-
-    this.row=8;
+    this.row=this.levels-2;
     this.col=0;
+    
+    this.path=[];             //  The final path of the pyramid
+
+    this.complete=false;
 
   };
 
@@ -294,56 +305,10 @@ var diagrams = function(processingInstance){
   /* Data types ================================================ */
   {
     
-    var collatz=function(i){
+    var pt=function(row,col){
 
-      this.i=i;
-
-      this.path=[];
-
-      this.max=0;
-      this.sum=0;
-      this.length=0;
-      this.up=0;
-      this.down=0;
-      this.area=0;
-
-      var p=this;
-
-      var load=function(n){
-
-        p.sum+=n;
-
-        p.path.push(n);
-
-        if(n>p.max){ p.max=n; }
-
-        if(n===1){ return; }
-        else {
-
-          if(n%2===0){  n/=2;
-                        p.down++; }
-          else       {  n=n*3+1;
-                        p.up++;   }
-
-          load(n);
-
-        }
-
-      };
-
-      load(i);
-
-      this.length=this.path.length;
-  // println(this.i);
-
-    };
-
-    var bucket=function(n){
-
-      this.n=n;         //  The integer value of the bucket
-      this.total=1;     //  The total # of values in the current range
-
-      this.increment=function(){ this.total++; }; //  Increase the bucket count by 1
+      this.row=row;
+      this.col=col;
 
     };
 
@@ -351,261 +316,67 @@ var diagrams = function(processingInstance){
 
   /* Utility Functions ========================================================= */
   {
-    var setBucketsMax=function(){
-
-      var max=0;
-
-      for(var n=0; n<app.buckets.length; n++){
-
-        if(app.buckets[n].total>max){
-          app.bucketsMax=app.buckets[n].total;
-          max=app.bucketsMax;
-        }
-
-      }
-
-    };
-    var setMaxMax=function(){
-
-      var max=0;
-
-      for(var n=0; n<app.max.length; n++){
-
-        if(app.max[n]>max){
-          app.maxMax=app.max[n];
-          max=app.maxMax;
-        }
-
-      }
-
-    };    
-    var setSumMax=function(){
-
-      var max=0;
-
-      for(var n=0; n<app.sum.length; n++){
-
-        if(app.sum[n]>max){
-          app.sumMax=app.sum[n];
-          max=app.sumMax;
-        }
-
-      }
-
-    };        
-    var printBuckets=function(){
-
-      var txt="";
-
-      for(var n=0; n<app.buckets.length; n++){
-
-        txt=txt+app.buckets[n].n + ": " + app.buckets[n].total + " | ";
-
-      }
-
-      println(txt);
-
-    };
-
-
-    var exists=function(n){
-
-      var retVal=-1;
-
-      for(var i=0; i<app.buckets.length; i++){
-        if(app.buckets[i].n===n){
-          retVal=i;
-          break;
-        }
-      }
-// println(retVal);
-      return retVal;
-
-    };
-
-    var loadData=function(){
-
-      app.data=[];        //  Erase app.data
-      app.buckets=[];     //  Erase app.buckets
-      app.max=[];         //  Erase app.max
-      app.sum=[];         //  Erase app.sum
-      
-      var _highest=0;
-      var _sum=0;
-      var _longest=0;
-      var max=0;
-
-      if(app.dOffset===1){ max=app.dMax-1; }
-      else               { max=app.dMax; }
-max=app.dMax;
-      for(var n=app.dOffset; n<=app.dOffset+max; n++){
-
-        //  Data point
-        app.data.push(new collatz(n));
-
-        app.max.push(app.data[app.data.length-1].max);
-        app.sum.push(app.data[app.data.length-1].sum);
-
-        //  Greatest max number reached in the range
-        if(app.data[app.data.length-1].max>_highest){
-          app.dHighest=app.data.length-1;
-          _highest=app.data[app.data.length-1].max;
-        }
-
-        //  Greatest path sum in the range
-        if(app.data[app.data.length-1].sum>_sum){
-          app.dSum=app.data.length-1;
-          _sum=app.data[app.data.length-1].sum;
-        }
-
-        //  Longest path in the range
-        if(app.data[app.data.length-1].path.length>_longest){
-          app.dLongest=app.data.length-1;
-          _longest=app.data[app.data.length-1].path.length-1;
-        }
-
-        //  Buckets
-        var len=app.data[app.data.length-1].path.length;
-        var index=exists(len);
-
-        if(index===-1){ app.buckets.push(new bucket(len)); }
-        else          { app.buckets[index].increment();    }
-
-      }
-      
-      // println(app.max);
-
-      setBucketsMax();
-      setMaxMax();
-      setSumMax();
-
-    };
 
     var getColor=function(clr, alpha){ return color(red(clr), green(clr), blue(clr), alpha/100*255); };
 
-    var incrementSW=function(){
+    var reset=function(){
+      
+      app.autoRun=false;      
+      app.path=[];
+      app.complete=false;
 
-      if(app.sw<10){
+      app.controls[1].reset();
+      
+      app.cursor=0;
 
-        app.sw++;
-        app.dMax=floor((width-40)/app.sw);
-        app.dCursor=0;
-        loadData();
-
-      }
-
-      println(app.sw);
-
+      println(app.levels);
+      
     };
-    var decrementSW=function(){
+    
+    var incrementRows=function(){
+      
+      if(app.levels<app.levelsMax){
 
-      if(app.sw>1){
+        app.levels++;
 
-        app.sw--;
-        app.dMax=floor((width-40)/app.sw);
-        app.dCursor=0;
-        loadData();
+        app.levels=(constrain)(app.levels, app.levelsMin, app.levelsMax);
 
-      }
-
-      println(app.sw);
-
-    };
-
-    var addToFront=function(){
-
-      var temp=[];
-
-      temp.push(new collatz(app.data[0].i-1));
-
-      app.data=(splice)(app.data, temp);
-
-    };
-    var addToEnd=function(){
-
-      app.data.push(new collatz(app.data[app.data.length-1].i+1));
-
-    };
-    var removeFront=function(n){
-
-      app.data=(subset)(app.data,1);
-
-    };
-    var removeEnd=function(){
-
-      app.data=shorten(app.data);
-
-    };
-
-    var incrementRecord=function(){
-
-// println(app.dCursor + " : " + app.dMax);
-
-      if(app.dCursor===app.dMax){
-
-        removeFront();
-        addToEnd();
-
-        app.dOffset++;
-
-        loadData();
-
-      }
-      else{
-
-        app.dCursor++;
-
-        if(app.dCursor>app.data.length-1){ app.dCursor=0; }
+        reset();
 
       }
 
     };
-    var decrementRecord=function(){
-
-      if(app.dCursor===0 &&
-         app.data[app.dCursor].i>1){
-
-        removeEnd();
-        addToFront();
+    var decrementRows=function(){
+      
+      if(app.levels>app.levelsMin){
         
-        app.dOffset--;
+        app.levels--;
         
-        loadData();
-        
-      }
-      else{
-        
-        if(app.dCursor>0){ app.dCursor--; }
+        app.levels=(constrain)(app.levels, app.levelsMin, app.levelsMax);
 
+        reset();
+      
       }
 
     };
-    var firstRecord=function()    { app.dCursor=0;                    };
-    var lastRecord=function()     { app.dCursor=app.data.length-1;    };
-    var incrementPage=function()  {
 
-      var accel=1;
+    var incrementCursor=function(){
 
-      if(app.keys[KEYCODES.CONTROL]){ accel= 10; }
-      if(app.keys[KEYCODES.ALT])    { accel=100; }
+      app.cursor++;
+      
+      app.cursor=(constrain)(app.cursor, 0, app.cells-1);
 
-      app.dOffset=(constrain)(app.dOffset+=app.data.length*accel, 0);
-
-      loadData();
 
     };
-    var decrementPage=function()  {
+    var decrementCursor=function(){
 
-      var accel=1;
-
-      if(app.keys[KEYCODES.CONTROL]){ accel= 10; }
-      if(app.keys[KEYCODES.ALT])    { accel=100; }
-
-      app.dOffset=(constrain)(app.dOffset-=app.data.length*accel, 1);
-
-      loadData();
-
+      app.cursor--;
+      
+      app.cursor=(constrain)(app.cursor, 0, app.cells-1);
+      
     };
+    var firstRecord=function()    { app.cursor=0;                     };
+    var lastRecord=function()     { app.cursor=app.cells-1;           };
 
     var getAuto=function()        { return app.autoRun;               };
     var getLegend=function()      { return app.legend;                };
@@ -614,8 +385,8 @@ max=app.dMax;
 
       app.autoRun=!app.autoRun;
 
-      if(app.autoRun){ app.frameRate=30; }
-      else           { app.frameRate=60; }
+      // if(app.autoRun){ app.frameRate=30; }
+      // else           { app.frameRate=60; }
 
     };
     var checkboxLegend=function() { app.legend=!app.legend;           };
@@ -623,27 +394,42 @@ max=app.dMax;
     var getInfo=function()        { return app.infoOn;                };
     var toggleInfo=function()     { app.infoOn =! app.infoOn;         };
 
-    var setDataCursor=function(n) {
+    // var setDataCursor=function(n) {
 
-      // if(n>=0 &&
-         // n<app.data.length){
+      // app.cursor=(constrain)(floor(n), 0, app.cells-1);
 
-        app.dCursor=(constrain)(floor(n), 0, app.data.length-1);
-
-      // }
-
-    };
+    // };
     
-    var navCursor=function()      { return app.dCursor+1;             };
-    var navRecordCount=function() { return app.data.length;           };
+    var navCursor=function()      { return app.cursor+1;              };
+    var navRecordCount=function() { return app.cells;                 };
     var navSetCursor=function(n)  {
 
-      var setValue=round(n/app.data.length*app.data.length);
+      var setValue=round(n/app.cells*app.cells);
 
-      // if(setValue>=0 &&
-         // setValue<app.data.length){
-        app.dCursor=(constrain)(setValue,0,app.data.length-1);
-      // }
+      if(setValue>=0 &&
+         setValue<app.cells){
+        app.cursor=(constrain)(setValue,0,app.cells-1);
+      }
+
+    };
+
+    var inPath=function(row,col){
+
+      var retVal=false;
+      
+      for(var n=0; n<app.path.length; n++){
+          
+        if(app.path[n].row===row &&
+           app.path[n].col===col){
+// println(retVal);               
+          retVal=true;
+          break;
+
+        }
+
+      }
+      
+      return retVal;
 
     };
 
@@ -1028,7 +814,7 @@ max=app.dMax;
 
               rect(1, 1, this.w-2, this.h-2);
 
-            var xPos=floor(app.dCursor/app.data.length*this.w);
+            var xPos=floor(app.cursor/app.cells*this.w);
 
             stroke(getColor(CLRS.RED,100));
             strokeWeight(0.5);
@@ -1047,9 +833,9 @@ max=app.dMax;
         if(this.hit &&
            app.focus===this.id){
 
-          var X=round((mouseX-this.x)/this.w*app.data.length);
+          var X=round((mouseX-this.x)/this.w*app.cells);
 
-          if(X>=0 && X<=app.data.length){
+          if(X>=0 && X<=app.cells){
             this.execute(X);
           }
 
@@ -1063,13 +849,13 @@ max=app.dMax;
         if(this.hit &&
            app.focus===this.id){
 
-          var X=round((mouseX-this.x)/this.w*app.data.length);
+          var X=round((mouseX-this.x)/this.w*app.cells);
 
-          if(X>=0 && X<=app.data.length){
+          if(X>=0 && X<=app.cells){
             this.execute(X);
           }
 
-          for(var c in this.controls){ this.controls[c].dragged(); }
+          for(var c in this.controls){ this.controls[c].clicked(); }
 
         }
 
@@ -1401,7 +1187,7 @@ max=app.dMax;
                  app.keys[KEYCODES.SHIFT]   + "\n\n\n" +
                  app.legend                 + "\n" +
                  app.autoRun                + "\n" +
-                 app.dCursor                + "\n" +
+                 app.cursor                + "\n" +
                  app.frameRate              + "\n" +
                  app.infoOn,
                  col2, row0+15);
@@ -1774,338 +1560,28 @@ max=app.dMax;
 
     }
 
-    // Graph ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    {
-
-      var graph=function(id, parent, x, y, w, h, params){
-
-        control.call(this, id, parent, x, y, w, h);
-
-        this.color=params.color;
-        this.cursor=params.cursor;
-
-        this.displayBorder=true;
-        this.displaySummary=true;
-        this.displayPath=true;
-        this.displayLines=true;
-        this.displayCollatz=true;
-        this.displayBuckets=false;
-        this.displayCurrent=true;
-
-        this.sw=app.sw;
-
-      };
-      graph.prototype=Object.create(control.prototype);
-      graph.prototype.draw=function(){
-
-        var p=this;
-
-        var convertPath=function(n,max){
-
-            var retval=(n-1)/max*p.h*0.9;
-
-            return retval;
-
-        };
-        var convertX=function(x, length){
-
-        return x/length*(p.w-20)+p.sw/2;
-
-        };
-        var convertY=function(n){
-
-          return (n-1)/app.data[app.dLongest].path.length*p.h*0.85+5;
-
-        };
-        
-        var border=function(){
-
-          pushMatrix();
-
-            translate(0.5,0.5);
-
-              strokeWeight(1);
-              stroke(getColor(CLRS.WHITE,50));
-
-              if(p.hit){ fill(getColor(this.color,5)); }
-              else     { fill(getColor(this.color,7)); }
-
-                rect(0, 0, p.w, p.h, 3);
-
-          popMatrix();
-
-        };
-        var axes=function(){
-
-          pushMatrix();
-
-            translate(p.x, p.h-10);
-            scale(1,-1);
-
-              fill(getColor(CLRS.K_TEAL_0,100));
-              stroke(getColor(CLRS.K_TEAL_0,100));
-
-                //  Origin
-                // ellipse(0,0,5,5);
-
-              // fill(CLRS.WHITE);
-              // stroke(CLRS.WHITE);
-
-                //  Axes
-                line(0, 0,      0, p.h-20);   //  Y-axis
-                line(0, 0, p.w-20,      0);   //  X-axis
-
-          popMatrix();
-
-        };
-        var grid=function(){
-          
-          var incr=p.sw*10;
-          var left=10;
-          var pos=0;
-          
-          stroke(getColor(CLRS.BLACK,10));
-          noFill();
-          
-          for(var x=1; x<(width-20)/incr; x++){
-                
-            pos=x*incr+left;
-            
-            if(pos<(p.w-10)){
-
-              line(pos, 10, pos, p.h-10);
-
-            }
-
-          }
-
-          for(var y=1; y<height/incr; y++){
-
-            line(    left, y*incr+left,
-                 p.w-left, y*incr+left);
-
-          }
-
-        };
-        
-        var drawCollatz=function(){
-
-          pushMatrix();
-
-            translate(10, p.h-10);
-            scale(1,-1);
-
-              strokeWeight(1);
-              fill(  getColor(CLRS.K_TEAL_3, 30));
-              stroke(getColor(CLRS.BLACK,    75));
-
-              beginShape();
-
-                vertex(0,0);
-                vertex(0,convertPath(app.data[app.dCursor].path[0],
-                                     app.data[app.dCursor].max));
-
-                for(var n=1; n<app.data[app.dCursor].path.length; n++){
-
-                  var x=convertX(n, app.data[app.dCursor].length);
-                  var y=convertPath(app.data[app.dCursor].path[n],
-                                    app.data[app.dCursor].max);
-
-                    vertex(x,y);
-                    // ellipse(x,y,0.25,0.25);
-
-                }
-
-                // vertex(500, 0);
-                // ellipse(500, 0, 0.25, 0.25);
-
-              endShape(CLOSE);
-
-          popMatrix();
-
-        };
-
-        var drawLines=function(){
-
-          p.sw=(p.w-20)/app.data.length;
-
-          var dLength=app.data.length;
-          var pLength=app.data[app.dCursor].path.length;
-
-          pushMatrix();
-
-            translate(10, p.h-10);
-            scale(1,-1);
-            strokeWeight(p.sw);
-
-            for(var n=0; n<dLength; n++){
-
-              pLength=app.data[n].path.length;
-
-              if(n%2===0){ stroke(getColor(CLRS.K, 25)); }
-              else       { stroke(getColor(CLRS.BLACK, 50)); }
-
-              strokeWeight(p.sw);
-
-              if(n===app.dHighest){ stroke(getColor(CLRS.ORANGE,75)); }
-              if(n===app.dSum)    { stroke(getColor(CLRS.GREEN, 75)); }
-              if(n===app.dLongest){ stroke(getColor(CLRS.BLUE,  75)); }
-              if(n===app.dCursor) { stroke(getColor(CLRS.RED,   75)); }
-
-              line(convertX(n, dLength), 1,
-                   convertX(n, dLength), convertY(pLength));
-
-            }
-
-          popMatrix();
-
-        };
-        var drawMax=function(){
-
-          p.sw=(p.w-20)/app.max.length;
-          var dLength=app.max.length;
-  
-          pushMatrix();
-
-            translate(10, p.h-10);
-            scale(1,-1);
-            strokeWeight(p.sw);
-
-            for(var n=0; n<app.max.length; n++){
-
-              if(n%2===0){ stroke(getColor(CLRS.ORANGE, 25)); }
-              else       { stroke(getColor(CLRS.ORANGE, 50)); }
-
-              if(n===app.dCursor){ stroke(getColor(CLRS.RED, 75)); }
-                            
-              line(convertX(n, dLength), 1,
-                   convertX(n, dLength), app.max[n]/app.maxMax*p.h*0.75);
-
-            }
-
-          popMatrix();
-
-        };
-        var drawSum=function(){
-
-          p.sw=(p.w-20)/app.sum.length;
-          var dLength=app.sum.length;
-  
-          pushMatrix();
-
-            translate(10, p.h-10);
-            scale(1,-1);
-            strokeWeight(p.sw);
-
-            for(var n=0; n<app.sum.length; n++){
-
-              if(n%2===0){ stroke(getColor(CLRS.BLACK, 25)); }
-              else       { stroke(getColor(CLRS.BLACK, 50)); }
-
-              if(n===app.dCursor){ stroke(getColor(CLRS.RED, 75)); }
-
-              line(convertX(n, dLength), 1,
-                   convertX(n, dLength), app.sum[n]/app.sumMax*p.h*0.75);
-
-            }
-
-          popMatrix();
-
-        };
-        var drawBuckets=function(){
-
-          pushMatrix();
-
-            translate(10.5, p.h-10.5);
-            scale(1,-1);
-
-              var sw=(p.w-20)/app.buckets.length;
-
-              fill(getColor(CLRS.BLUE,25));
-              stroke(getColor(CLRS.BLUE,50));
-              strokeWeight(1);
-
-              for(var n=0; n<app.buckets.length; n++){
-
-                rect(n*sw, 0, sw, app.buckets[n].total/app.bucketsMax*0.5*p.h);
-
-              }
-
-          popMatrix();
-
-        };
-
-        pushMatrix();
-
-          translate(this.x+0.5, this.y+0.5);
-
-            if(this.hit &&
-               this.parent.hit){
-
-              app.focus=this.id;
-              cursor(this.cursor);
-
-            }
-
-            axes();
-            grid();
-            // if(this.displayBorder) { border();      }
-            if(this.displayLines)  { drawLines();   }
-            // drawMax();
-            // drawSum();
-            if(this.displayBuckets){ drawBuckets(); }
-            if(this.displayCollatz){ drawCollatz(); }
-
-        popMatrix();
-
-      };
-      graph.prototype.clicked=function(x,y){
-
-        if(this.hit){
-
-          setDataCursor((mouseX-this.x-10+1)/app.sw);
-
-          for(var c in this.controls){ this.controls[c].clicked((this.x+x), (this.y+y)); }
-
-        }
-
-      };
-      graph.prototype.dragged=function(x,y){
-
-        if(this.hit){
-
-          if(mouseX>=this.x+10 &&
-             mouseX<=this.x+this.w+10){
-
-            setDataCursor((mouseX-this.x-10+1)/app.sw);
-
-          }
-
-          for(var c in this.controls){ this.controls[c].dragged((this.x+x), (this.y+y)); }
-
-        }
-
-      };
-
-    }
-
     // Hexagon Button ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
 
       var hexButton=function(id, parent, x, y, w, h, params){
 
         control.call(this, id, parent, x, y, w, h);
-        
-        this.row=params.row;
-        this.col=params.col;
-        
-        this.execute=params.execute;
-        this.retrieve=params.retrieve;
-        this.text=params.text;
-        this.color=params.color;
-        this.cursor=params.cursor;
-        
-        this.on=false;
+
+        this.path=[];
+
+        this.row      = params.row;
+        this.col      = params.col;
+      
+        this.integer  = params.integer;
+
+        this.execute  = params.execute;
+        this.retrieve = params.retrieve;
+        this.text     = params.text;
+        this.color    = params.color;
+        this.cursor   = params.cursor;
+
+        this.active   = false;
+        this.on       = false;
 
       };
       hexButton.prototype=Object.create(control.prototype);
@@ -2121,8 +1597,8 @@ max=app.dMax;
               // Border
               strokeWeight(0.5);
 
-              stroke(getColor(this.color, 75));
-              fill(  getColor(this.color, 5));
+              stroke(getColor(this.color, 25));
+              fill(  getColor(this.color,  5));
 
               if(this.hit &&
                  this.parent.hit){
@@ -2138,7 +1614,14 @@ max=app.dMax;
 // Origin
 // ellipse(offset,-offset,this.w,this.w);
 
-              if(this.on){ fill(getColor(CLRS.RED,25)); }
+              if(this.on    ){ fill(getColor(CLRS.GREEN,25));     }
+              if(app.complete===true &&
+                 inPath(this.row,this.col)===true){
+                fill(getColor(CLRS.BLUE,25));
+                stroke(getColor(CLRS.BLUE, 50));
+              }
+              
+              if(app.cursor===this.integer){ fill(getColor(CLRS.RED,25)); }
 
               var factor=this.w/2;
               var xPos=factor;
@@ -2175,15 +1658,17 @@ max=app.dMax;
           popMatrix();
 
       };
-      hexButton.prototype.moved=function(){
+      hexButton.prototype.moved=function(x,y){
       /* Overridden because of the shape */
 
-        if(dist(mouseX,mouseY,
-                this.x,this.y)<this.w/2){
+        if(dist(mouseX, mouseY,
+                this.x+x, 
+                this.y+y)<this.w/2){
 
           this.hit=true;
 
-          for(var c in this.controls){ this.controls[c].moved(); }
+          // for(var c in this.controls){ this.controls[c].moved(); }
+// println(this.integer);
 
         }
         else{
@@ -2196,150 +1681,291 @@ max=app.dMax;
       hexButton.prototype.clicked=function(){
       /* Overridden to maintain on/off value */
 
-        if(this.hit &&
-           app.focus===this.id &&
-           this.on===false){
-
-          this.execute(this.row + "," + this.col + "  :  " + this.text);
+        if(this.hit){
           
-          var left=this.parent.controls[this.row+1][this.col].text;
-          var right=this.parent.controls[this.row+1][this.col+1].text;
+          for(var n=0; n<this.path.length; n++){
+            println(this.path[n].row + ", " + this.path[n].col);
+          }
           
-          if(left<right){ this.text+=left;  }
-          else          { this.text+=right; }
+          // this.execute(this.row + "," + this.col + "  :  " + this.text);
+          
+          // var left=this.parent.controls[this.row+1][this.col].text;
+          // var right=this.parent.controls[this.row+1][this.col+1].text;
+          
+          // if(left<right){ this.text+=left;  }
+          // else          { this.text+=right; }
 
-          this.on=true;
-
-          println(left + " - " + right);
-
+          // this.on=true;
+          
+          app.cursor=this.integer;
+println(app.cursor);
         }
+
+      };
+      hexButton.prototype.calc=function(){
+        
+        this.active=true;
+          
+          var x=this.parent.x;
+          var y=this.parent.y;
+
+          var left =this.parent.controls[this.row+1][this.col  ].text;
+          var right=this.parent.controls[this.row+1][this.col+1].text;
+
+          // strokeWeight(2);        
+          // stroke(CLRS.BLUE);
+
+          // line(this.x+x,this.y+y,
+               // this.parent.controls[this.row+1][this.col].x+x,
+               // this.parent.controls[this.row+1][this.col].y+y);
+
+          // stroke(CLRS.GREEN);
+          // line(this.x+x,this.y+y,
+               // this.parent.controls[this.row+1][this.col+1].x+x,
+               // this.parent.controls[this.row+1][this.col+1].y+y);
+            
+
+            
+          if(left<=right){
+
+            this.text+=left;
+
+            var arr=this.parent.controls[this.row+1][this.col].path;
+
+            for(var n=0; n<arr.length; n++){
+              this.path.push(new pt(arr[n].row,
+                                    arr[n].col));
+            }
+
+            this.path.push(new pt(this.row+1,
+                                  this.col));
+
+          }
+          else{
+
+            this.text+=right;
+
+            var arr=this.parent.controls[this.row+1][this.col+1].path;
+
+            for(var n=0; n<arr.length; n++){
+              this.path.push(new pt(arr[n].row,
+                                    arr[n].col));
+            }
+
+            this.path.push(new pt(this.row+1,
+                                  this.col+1));
+
+          }
+
+          this.set
+
+        // this.active=false;
 
       };
       hexButton.prototype.set=function(){
 
-        var left =this.parent.controls[this.row+1][this.col  ].text;
-        var right=this.parent.controls[this.row+1][this.col+1].text;
-
-        if(left<=right){ this.text+=left;  }
-        else           { this.text+=right; }
-
         this.on=true;
 
       };
-
+      
     }
 
+    var printPath=function(){
+    
+      for(var n=0; n<app.path.length; n++){
+        println(app.path[n].row + ", " + app.path[n].col);
+      }
+          
+    };
+    
     // Pyramid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
 
       var pyramid=function(id, parent, x, y, w, h, params){
 
         control.call(this, id, parent, x, y, w, h);
-
+        
+        this.levels=params.levels;
+        this.size=params.size;
+        
         this.row=0;
         this.col=0;
 
-        this.levels=params.levels;
+        // Initialize
+        this.load=function(){
+          
+          var xPos=0;
+          var yPos=0;
+          var ID=0;
+          var row=[];
+          var total=0;
+          
+          var rowOffset=(this.size/2/cos(radians(30))) + sin(radians(30))*this.size/2;
 
-        var xPos=0;
-        var yPos=0;
-        var sz=48;
-        var ID=0;
-        var row=[];
-        var total=0;
-        
-        var rowOffset=(sz/2/cos(radians(30))) + sin(radians(30))*sz/2;
+          /* Pascal buttons        */
+          for(var y=0; y<this.levels; y++){
 
-        /* Pascal buttons        */
-        for(var y=0; y<this.levels; y++){
+            for(var x=0; x<=y; x++){
+              
+              ID=x + "," + y;
+              
+              xPos = this.x + x*this.size - y*this.size/2;
+              yPos = this.y + y*rowOffset+30;
+              
+              row.push(new hexButton(ID, this, xPos+width/2, yPos, this.size, this.size,
+                {row:       y,
+                 col:       x,
+                 integer:   total,
+                 color:     CLRS.K_TEAL_0,
+                 cursor:    HAND,
+                 text:      round(random(10,99)),
+                 execute:   executePascal,
+                 retrieve:  retrievePascal}));
 
-          for(var x=0; x<=y; x++){
-            
-            ID=x + "," + y;
-            
-            xPos = this.x + x*sz - y*sz/2;
-            yPos = this.y + y*rowOffset;
-            
-            row.push(new hexButton(ID, this, xPos, yPos, sz, sz,
-              {row:       y,
-               col:       x,
-               color:     CLRS.K_TEAL_0,
-               cursor:    HAND,
-               text:      round(random(10,99)),
-               execute:   executePascal,
-               retrieve:  retrievePascal}));
+              total++;
 
-            total++;
+            }
+
+            this.controls.push(row);
+            row=[];
 
           }
 
-          this.controls.push(row);
-          row=[];
+          println(total);
+          
+          app.cells=total;
 
-        }
+        };
 
-        println(total);
-
+        this.load();
+        
       };
       pyramid.prototype=Object.create(control.prototype);
       pyramid.prototype.draw=function(){
-        
-        this.hit=true;
 
-        for(var c=0; c<this.controls.length; c++){
+        pushMatrix();
 
-          for(var r in this.controls[c]){
+          translate(this.x+0.5,this.y+0.5);
 
-            this.controls[c][r].draw();
-          
-          }
+            noFill();            
+            noStroke();
+            
+            if(this.hit){
 
-        }
+              // fill(getColor(CLRS.YELLOW,5));
+              // stroke(CLRS.GREEN);  
+              // strokeWeight(0.5);
+              app.focus=this.id;
+
+            }
+            
+            rect(0,0,this.w-1,this.h-1);
+
+            for(var c=0; c<this.controls.length; c++){
+
+              for(var r in this.controls[c]){
+
+                this.controls[c][r].draw(this.x,this.y);
+
+              }
+
+            }
+
+        popMatrix();
         
       };
-
       pyramid.prototype.reset=function(){
-      /* Overridden because of the shape */
 
-        for(var c=0; c<this.controls.length; c++){
+        this.levels=app.levels;
+        this.size=height/app.levels;
+      
+        this.controls=[];
+        this.load();
 
-          for(var r in this.controls[c]){
+        for(var r=0; r<this.controls.length; r++){
 
-            this.controls[c][r].on=false;;
-            this.controls[c][r].text=round(random(99));
+          for(var c in this.controls[r]){
+
+            this.controls[r][c].on=false;;
+            this.controls[r][c].text=round(random(99));
 
           }
 
         }
 
+        app.row=app.levels-2;
+        app.col=0;
+        
         this.on=false;
         
       };    
       pyramid.prototype.moved=function(){
       /* Overridden because of the shape */
-        
-        this.hit=true;
-        
-        for(var c=0; c<this.controls.length; c++){
-
-          for(var r in this.controls[c]){
-
-            this.controls[c][r].moved();
+      
+        if(mouseX>this.x &&
+           mouseX<this.x+this.w &&
+           mouseY>this.y &&
+           mouseY<this.y+this.h){
+             
+          this.hit=true;
           
+          for(var r=0; r<this.controls.length; r++){
+
+            for(var c in this.controls[r]){
+
+              this.controls[r][c].moved(this.x,this.y);
+            
+            }
+
           }
-
+          
         }
-
+        else{
+          
+          this.hit=false;
+          
+        }
+             
       };
       pyramid.prototype.calc=function(){
         
-        if(this.on===false){
+        // if(this.on===false){
 
-          for(var c=this.controls.length-2; c>-1; c--){
+          // for(var r=this.controls.length-2; r>-1; r--){
 
-            for(var r=this.controls[c].length-1; r>-1; r--){
+            // for(var c=this.controls[r].length-1; c>-1; c--){
 
-              this.controls[c][r].set();
+              // this.controls[r][c].set();
+            
+            // }
+
+          // }
+        
+        // }
+        
+        // this.on=true;
+
+      }
+      pyramid.prototype.step=function(row,col){
+
+        this.controls[row][col].calc();
+        
+        this.controls[row+1][col  ].set();
+        this.controls[row+1][col+1].set();
+
+      }      
+      pyramid.prototype.out=function(){ this.hit=false; }
+      pyramid.prototype.pressed=function(){}
+      pyramid.prototype.dragged=function(){}
+      pyramid.prototype.clicked=function(){
+        
+        if(this.hit){
+
+          for(var r=this.controls.length-1; r>-1; r--){
+
+            for(var c=this.controls[r].length-1; c>-1; c--){
+
+              this.controls[r][c].clicked();
             
             }
 
@@ -2347,20 +1973,7 @@ max=app.dMax;
         
         }
         
-        this.on=true;
-
       }
-      pyramid.prototype.step=function(col,row){
-
-        this.controls[col][row].set();
-
-        // this.on=true;
-
-      }      
-      pyramid.prototype.out=function(){}
-      pyramid.prototype.pressed=function(){}
-      pyramid.prototype.dragged=function(){}
-      pyramid.prototype.clicked=function(){}
 
     }
 
@@ -2384,17 +1997,32 @@ max=app.dMax;
     app.controls[1].step(13,0);
 
   };
+  var pyramidReset=function(){
+    
+    app.controls[1].reset();
+    
+  };
   
   var stepPascal=function(){
-    
-    if(app.col===0 && app.row===-1){ return; }
-    
-println(app.row+","+app.col);
 
-    app.controls[1].step(app.row,app.col);
-    
-    if(app.col>=(app.controls[1].controls[app.row].length-1)){ app.col=0; app.row--; }
-    else                                                     { app.col++;            }
+    if(app.col===0 &&
+       app.row===-1){ return; }
+
+    var pyramid=app.controls[1];
+
+    pyramid.step(app.row, app.col);
+
+    if(app.col>=(pyramid.controls[app.row].length-1)){ app.col=0; app.row--; }
+    else                                             { app.col++;            }
+
+    if(app.row===-1 &&
+       app.col===0){
+
+      app.path=(splice)(app.path, pyramid.controls[0][0].path);
+
+      app.complete=true;
+
+    }
 
   };
 
@@ -2415,15 +2043,17 @@ println(app.row+","+app.col);
 
         app.controls.push(bk);
             
-          app.controls.push(new pyramid(1100, bk, width/2, 75, 40, 40,
-            {levels: 10}));
+          app.controls.push(new pyramid(1111, bk, 0, 30, width, height-55,
+            {levels:  app.levels,
+             size:    height/app.levels}));
 
         
       // toolbar --------------------------------------------------
       {
         /* tlbar            */
         var tlbar=new toolbar(200, bk, 0, 0, width, 30,
-          {text:      "Minimum Sum Triangle",
+          {execute:   pyramidReset,
+           text:      "Minimum Sum Triangle",
            acolor:    CLRS.K_TEAL_3,
            icolor:    CLRS.ACTIVE,
            cursor:    ARROW});
@@ -2471,7 +2101,7 @@ println(app.row+","+app.col);
 
           /* Decrement Page        */
           nvbar.controls.push(new navButton(310, nvbar, 0, 0, 50, h,
-            {execute:   decrementPage,
+            {execute:   decrementRows,
              type:      NAVIGATION.DECREMENTPAGE,
              retrieve:  navCursor,
              color:     CLRS.BLACK,
@@ -2479,7 +2109,7 @@ println(app.row+","+app.col);
 
           /* Increment Page       */
           nvbar.controls.push(new navButton(320, nvbar, width-50, 0, 50, h,
-            {execute:  incrementPage,
+            {execute:  incrementRows,
              type:     NAVIGATION.INCREMENTPAGE,
              retrieve: navCursor,
              color:    CLRS.BLACK,
@@ -2495,7 +2125,7 @@ println(app.row+","+app.col);
 
           /* Decrement Record     */
           nvbar.controls.push(new navButton(340, nvbar, 75, 0, 25, h,
-            {execute:   decrementRecord,
+            {execute:   decrementCursor,
              type:      NAVIGATION.DECREMENT,
              retrieve:  navCursor,
              color:     CLRS.BLACK,
@@ -2503,7 +2133,7 @@ println(app.row+","+app.col);
 
           /* Increment Record     */
           nvbar.controls.push(new navButton(350, nvbar, width-100, 0, 25, h,
-            {execute:  incrementRecord,
+            {execute:  incrementCursor,
              type:     NAVIGATION.INCREMENT,
              retrieve: navCursor,
              color:    CLRS.BLACK,
@@ -2636,22 +2266,21 @@ println(app.row+","+app.col);
       // Loading --------------------------------------------------
 
         /* Splash Screen      */
-        var splashScreen=new splash(500, bk, 100, 100, 400, 400,
-          {color:     CLRS.BLACK,
-           retrieve:  getInfo,
-           cursor:    CROSS});
+        // var splashScreen=new splash(500, bk, 100, 100, 400, 400,
+          // {color:     CLRS.BLACK,
+           // retrieve:  getInfo,
+           // cursor:    CROSS});
 
-        bk.controls.push(splashScreen);
+        // bk.controls.push(splashScreen);
 
-          /* Close              */
-          splashScreen.controls.push(new button(510, splashScreen, 180, 360, 120, 20,
-            {text:      "Close",
-             execute:   toggleInfo,
-             color:     CLRS.WHITE,
-             cursor:    HAND}));
+          // /* Close              */
+          // splashScreen.controls.push(new button(510, splashScreen, 180, 360, 120, 20,
+            // {text:      "Close",
+             // execute:   toggleInfo,
+             // color:     CLRS.WHITE,
+             // cursor:    HAND}));
 
     };
-
     
     var currentData=function(){
 
@@ -2660,7 +2289,7 @@ println(app.row+","+app.col);
       textAlign(LEFT,TOP);
       textSize(20);
 
-        text((nfc)(app.data[app.dCursor].i), 20, 40);
+        text((nfc)(app.data[app.cursor].i), 20, 40);
 
       fill(getColor(CLRS.BLACK,100));
       textAlign(LEFT,TOP);
@@ -2680,13 +2309,13 @@ println(app.row+","+app.col);
 
       fill(getColor(CLRS.K_TEAL_2,100));
 
-        text((nfc)(app.data[app.dCursor].max)        + "\n" +
-             (nfc)(app.data[app.dCursor].sum)        + "\n" +
-             (nfc)((app.data[app.dCursor].length-1)),
+        text((nfc)(app.data[app.cursor].max)        + "\n" +
+             (nfc)(app.data[app.cursor].sum)        + "\n" +
+             (nfc)((app.data[app.cursor].length-1)),
              140, 70);
 
-         text((nfc)(app.data[app.dCursor].up)         + "\n" +
-              (nfc)(app.data[app.dCursor].down),
+         text((nfc)(app.data[app.cursor].up)         + "\n" +
+              (nfc)(app.data[app.cursor].down),
               210, 70);
 
 
@@ -2726,7 +2355,7 @@ println(app.row+","+app.col);
       textSize(16);
 
         text((nfc)(app.data[0].i) + " - " +
-             (nfc)(app.data[app.data.length-1].i) + "\n\n",
+             (nfc)(app.data[app.cells-1].i) + "\n\n",
              400, 45);
 
       fill(getColor(CLRS.K_TEAL_0,50));
@@ -2751,11 +2380,11 @@ println(app.row+","+app.col);
 
       var path="";
 
-      for(var n=0; n<app.data[app.dCursor].path.length; n++){
+      for(var n=0; n<app.data[app.cursor].path.length; n++){
 
-        path+=app.data[app.dCursor].path[n];
+        path+=app.data[app.cursor].path[n];
 
-        if(n!==app.data[app.dCursor].path.length-1){
+        if(n!==app.data[app.cursor].path.length-1){
           path+= ", ";
         }
 
@@ -2776,31 +2405,30 @@ println(app.row+","+app.col);
     };
     var update=function(){
 
-      frameRate(app.frameRate);
-// println(app.frameRate);
-      background(242);
+      pushMatrix();
+        
+        translate(0,0);
+        
+          frameRate(app.frameRate);
 
-      if(app.autoRun){
-           // incrementRecord();
-           // app.dCursor%=app.data.length-1;
-           
-        if(frameCount%5===0){
-           stepPascal();
-        }
+          background(242);
 
-      }
+          if(app.autoRun){
+               
+            // if(frameCount%app.frameRate===0){
+              
+              for(var n=0; n<app.levels/2; n++){
+               stepPascal();
+              }
+            // }
 
-      for(var c in app.controls){ app.controls[c].draw(); }
-      
-      pascalsTriangle();
-      
-      // currentData();
-      // dataSummary();
-      // drawPath();
+          }
+
+          for(var c in app.controls){ app.controls[c].draw(); }
+
+      popMatrix();
 
     };
-
-    loadData();
 
     var execute;
 
@@ -2825,34 +2453,34 @@ println(app.row+","+app.col);
 
         app.keys[keyCode]=true;
 
-        if(app.autoRun===false){
+        // if(app.autoRun===false){
 
           switch(true){
 
-            case app.keys[KEYCODES.PGUP]:     incrementPage();    break;
-            case app.keys[KEYCODES.PGDN]:     decrementPage();    break;
+            case app.keys[KEYCODES.PGUP]:     incrementRows();    break;
+            case app.keys[KEYCODES.PGDN]:     decrementRows();    break;
 
-            case app.keys[KEYCODES.LEFT] &&
-                 app.keys[KEYCODES.SHIFT]:    decrementPage();    break;
-            case app.keys[KEYCODES.RIGHT] &&
-                 app.keys[KEYCODES.SHIFT]:    incrementPage();    break;
+            // case app.keys[KEYCODES.LEFT] &&
+                 // app.keys[KEYCODES.SHIFT]:    decrementCursor();    break;
+            // case app.keys[KEYCODES.RIGHT] &&
+                 // app.keys[KEYCODES.SHIFT]:    incrementCursor();    break;
 
             case app.keys[KEYCODES.LEFT] &&
                  app.keys[KEYCODES.CONTROL]:  firstRecord();      break;
             case app.keys[KEYCODES.RIGHT] &&
                  app.keys[KEYCODES.CONTROL]:  lastRecord();       break;
 
-            case app.keys[KEYCODES.LEFT]:     decrementRecord();  break;
-            case app.keys[KEYCODES.RIGHT]:    incrementRecord();  break;
+            case app.keys[KEYCODES.LEFT]:     decrementCursor();  break;
+            case app.keys[KEYCODES.RIGHT]:    incrementCursor();  break;
 
-            case app.keys[KEYCODES.UP]:       incrementSW();      break;
-            case app.keys[KEYCODES.DOWN]:     decrementSW();      break;
+            case app.keys[KEYCODES.UP]:       incrementRows();    break;
+            case app.keys[KEYCODES.DOWN]:     decrementRows();    break;
 
             default:                                              break;
 
           }
 
-        }
+        // }
 
       };
       var keyTyped=function(){
