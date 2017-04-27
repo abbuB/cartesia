@@ -44,12 +44,27 @@ var diagrams = function(processingInstance){
       https://en.wikipedia.org/wiki/Collatz_conjecture
 
     TO DO:
+      
+      - calculate the pyramid completely on load
+      - display ideal path on mouseOver of hexButton
+
+      - center the pyramid vertically
 
       - size
 
-      - reset button
+      - slow calculation to show method
+
+      - fix the changing fonts
+
+    Research:
+
+
+    TO DONE:
+
       - data cursor
-      
+    
+      - reset button
+    
       - Navigation
         
         - increment/decrement
@@ -57,17 +72,6 @@ var diagrams = function(processingInstance){
         - scroll
         - add row
         - remove row
-
-      - slow calculation to show method
-      - fix the changing fonts
-
-
-      
-
-    Research:
-
-
-    TO DONE:
 
       - only draw telemetry if it's visible    
 
@@ -93,7 +97,7 @@ var diagrams = function(processingInstance){
 
       angleMode="radians";
 
-      size(900, 700); // set size of canvas
+      size(600, 600); // set size of canvas
 
     }
 
@@ -113,12 +117,13 @@ var diagrams = function(processingInstance){
     this.controls=[];         //  collection of controls in the app
     this.keys=[];             //  Array holding the value of all keycodes
 
-    this.autoRun=false;       //  Alpha changes automatically
     this.infoOn=false;        //  Is the info frame displayed
     this.legend=false;        //  Is the telemetry visible
     
     /* App Specific ------------------ */
 
+    this.calculating=false;
+    
     this.cursor=1;           //  position of the cursor in grid
     this.cells=0;             //  # of cells in the grid
     
@@ -133,6 +138,8 @@ var diagrams = function(processingInstance){
     this.path=[];             //  The final path of the pyramid
 
     this.complete=false;
+    
+    this.pyramid=0;
 
   };
 
@@ -321,14 +328,14 @@ var diagrams = function(processingInstance){
 
     var reset=function(){
       
-      app.autoRun=false;      
+      app.calculating=false;      
       app.path=[];
       app.complete=false;
 
-      app.controls[1].reset();
-      
       app.cursor=0;
-
+      
+      app.pyramid.reset();
+      
       println(app.levels);
       
     };
@@ -375,15 +382,16 @@ var diagrams = function(processingInstance){
       app.cursor=(constrain)(app.cursor, 0, app.cells-1);
       
     };
+
     var firstRecord=function()    { app.cursor=0;                     };
     var lastRecord=function()     { app.cursor=app.cells-1;           };
 
-    var getAuto=function()        { return app.autoRun;               };
+    var getCalculate=function()   { return app.calculating;           };
     var getLegend=function()      { return app.legend;                };
+    
+    var calculate=function()   {
 
-    var checkboxAuto=function()   {
-
-      app.autoRun=!app.autoRun;
+      app.calculating=!app.calculating;
 
       // if(app.autoRun){ app.frameRate=30; }
       // else           { app.frameRate=60; }
@@ -432,7 +440,14 @@ var diagrams = function(processingInstance){
       return retVal;
 
     };
-
+    var printPath=function(){
+    
+      for(var n=0; n<app.path.length; n++){
+        println(app.path[n].row + ", " + app.path[n].col);
+      }
+          
+    };
+    
   }
 
   /* Controls ================================================ */
@@ -1021,7 +1036,7 @@ var diagrams = function(processingInstance){
 
     }
 
-    // toolbar ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Toolbar ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
 
       var toolbar=function(id, parent, x, y, w, h, params){
@@ -1166,7 +1181,7 @@ var diagrams = function(processingInstance){
                  "Control:    \n" +
                  "Shift:      \n\n\n" +
                  "Legend:     \n" +
-                 "Autorun:    \n" +
+                 "Calculating:\n" +
                  "Cursor:     \n" +
                  "Frame Rate: \n" +
                  "Info:",
@@ -1186,7 +1201,7 @@ var diagrams = function(processingInstance){
                  app.keys[KEYCODES.CONTROL] + "\n" +
                  app.keys[KEYCODES.SHIFT]   + "\n\n\n" +
                  app.legend                 + "\n" +
-                 app.autoRun                + "\n" +
+                 app.calculating            + "\n" +
                  app.cursor                + "\n" +
                  app.frameRate              + "\n" +
                  app.infoOn,
@@ -1336,6 +1351,103 @@ var diagrams = function(processingInstance){
 
     }
 
+    // Reset ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    {
+
+      var resetButton=function(id, parent, x, y, w, h, params){
+
+        control.call(this, id, parent, x, y, w, h);
+
+        this.execute=params.execute;
+        this.retrieve=params.retrieve;
+        this.color=params.color;
+        this.cursor=params.cursor;
+
+      };
+      resetButton.prototype=Object.create(control.prototype);
+      resetButton.prototype.draw=function(){
+
+        pushMatrix();
+
+          translate(this.x, this.y);
+          
+            ellipseMode(CENTER);
+            
+            if(this.hit &&
+               this.parent.hit){
+
+              app.focus=this.id;
+              cursor(this.cursor);
+
+              stroke(getColor(this.color, 75));
+              
+
+            }
+            else{
+
+              stroke(getColor(this.color, 50));
+
+            }
+
+            strokeWeight(1.5);
+            noFill();
+
+            if(app.left &&
+               this.hit &&
+               this.parent.hit){
+                 
+                 rotate(radians(45));
+                 
+            }
+            
+              arc(0, 0, this.w, this.h, radians(60), 2*PI-radians(22.5));
+              
+            if(app.left &&
+               this.hit &&
+               this.parent.hit){
+                 
+              fill(  getColor(this.color, 75));   
+               
+            }
+            else{fill(  getColor(this.color, 50));
+            }
+              
+              triangle( 5,  2,
+                        2, -2,
+                        8, -2);
+
+        popMatrix();
+
+      };
+      resetButton.prototype.moved=function(x,y){
+      /* Overridden because the control is round */
+        if(dist(mouseX, mouseY,
+                this.x+x, this.y+y)<this.w){
+
+          this.hit=true;
+
+          for(var c in this.controls){ this.controls[c].moved(this.x+x, this.y+y); }
+
+        }
+        else{
+
+          this.hit=false;
+
+        }
+
+      };
+      resetButton.prototype.clicked=function(){
+      /* Overridden to maintain on/off value */
+
+        if(this.hit){
+          this.execute();
+          // this.on=!this.on;
+        }
+
+      };
+
+    }
+    
     // Settings * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
 
@@ -1481,6 +1593,78 @@ var diagrams = function(processingInstance){
       };
 
     }
+    
+    // Play ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    {
+      var play=function(id, parent, x, y, w, h, params){
+
+        control.call(this, id, parent, x, y, w, h);
+
+        this.text=params.text;
+        this.execute=params.execute;
+        this.retrieve=params.retrieve;
+        this.color=params.color;
+        this.cursor=params.cursor;
+
+      };
+      play.prototype=Object.create(control.prototype);
+      play.prototype.draw=function(){
+
+        var offset=0;
+
+        pushMatrix();
+
+          translate(this.x, this.y);
+
+            noStroke();
+            noFill();
+
+            if(this.hit &&
+               this.parent.hit){
+
+              if(app.left){ offset=1; }
+
+              app.focus=this.id;
+              cursor(this.cursor);
+
+              fill(getColor(this.color,10));
+
+            }
+
+            //  Background
+            rect(offset, offset, this.w, this.h, 2);
+
+            // Icon
+            textSize(24);
+            textAlign(CENTER,CENTER);
+
+            fill(getColor(this.color,50));
+
+            if(this.hit &&
+               this.parent.hit){ fill(getColor(CLRS.BLACK,75)); }
+            
+            triangle( 15+offset, 10+offset,
+                       5+offset,  5+offset,
+                       5+offset, 15+offset);
+
+        popMatrix();
+
+      };
+      play.prototype.clicked=function(){
+      /* Overridden to maintain on/off value */
+
+        if(this.hit){
+
+          this.execute();
+          this.on=!this.on;
+
+          for(var c in this.controls){ this.controls[c].clicked(); }
+
+        }
+
+      };
+
+    }    
 
     // Button ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
@@ -1571,12 +1755,13 @@ var diagrams = function(processingInstance){
 
         this.row      = params.row;
         this.col      = params.col;
-      
-        this.integer  = params.integer;
+        
+        this.ordinal  = params.ordinal;   //  Counting #
+        this.integer  = params.integer;   //  display #
+        this.total    = params.integer;   //  path total to this point
 
         this.execute  = params.execute;
         this.retrieve = params.retrieve;
-        this.text     = params.text;
         this.color    = params.color;
         this.cursor   = params.cursor;
 
@@ -1645,15 +1830,16 @@ var diagrams = function(processingInstance){
               // Caption
               if(this.hit &&
                  this.parent.hit){  fill(255,255,255);             }
-              else               {  fill(getColor(this.color,75)); }
+              else               {  fill(getColor(this.color,50)); }
 
               scale(1,-1);
 
               textAlign(CENTER,CENTER);
-              textSize(12);
-              // this.w=textWidth(this.text)+10;
-
-                text(this.text, offset, offset);
+              textSize(this.w/2.5);
+              // textWidth(this.w);
+              
+              if(app.complete){ text(this.total,   offset, offset); }
+              else            { text(this.integer, offset, offset); }
 
           popMatrix();
 
@@ -1667,8 +1853,9 @@ var diagrams = function(processingInstance){
 
           this.hit=true;
 
+println(this.path.length);
+          // app.path=this.path;
           // for(var c in this.controls){ this.controls[c].moved(); }
-// println(this.integer);
 
         }
         else{
@@ -1698,7 +1885,7 @@ var diagrams = function(processingInstance){
           // this.on=true;
           
           app.cursor=this.integer;
-println(app.cursor);
+// println(app.cursor);
         }
 
       };
@@ -1709,8 +1896,8 @@ println(app.cursor);
           var x=this.parent.x;
           var y=this.parent.y;
 
-          var left =this.parent.controls[this.row+1][this.col  ].text;
-          var right=this.parent.controls[this.row+1][this.col+1].text;
+          var left =this.parent.controls[this.row+1][this.col  ].total;
+          var right=this.parent.controls[this.row+1][this.col+1].total;
 
           // strokeWeight(2);        
           // stroke(CLRS.BLUE);
@@ -1728,7 +1915,7 @@ println(app.cursor);
             
           if(left<=right){
 
-            this.text+=left;
+            this.total+=left;
 
             var arr=this.parent.controls[this.row+1][this.col].path;
 
@@ -1743,7 +1930,7 @@ println(app.cursor);
           }
           else{
 
-            this.text+=right;
+            this.total+=right;
 
             var arr=this.parent.controls[this.row+1][this.col+1].path;
 
@@ -1770,13 +1957,7 @@ println(app.cursor);
       
     }
 
-    var printPath=function(){
-    
-      for(var n=0; n<app.path.length; n++){
-        println(app.path[n].row + ", " + app.path[n].col);
-      }
-          
-    };
+
     
     // Pyramid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
@@ -1810,15 +1991,16 @@ println(app.cursor);
               ID=x + "," + y;
               
               xPos = this.x + x*this.size - y*this.size/2;
-              yPos = this.y + y*rowOffset+30;
+              yPos = this.y + y*rowOffset+this.size/4;
               
               row.push(new hexButton(ID, this, xPos+width/2, yPos, this.size, this.size,
                 {row:       y,
                  col:       x,
-                 integer:   total,
+                 ordinal:   total,
+                 integer:   round(random(10,99)),
+                 total:     0,
                  color:     CLRS.K_TEAL_0,
                  cursor:    HAND,
-                 text:      round(random(10,99)),
                  execute:   executePascal,
                  retrieve:  retrievePascal}));
 
@@ -1838,7 +2020,9 @@ println(app.cursor);
         };
 
         this.load();
-        
+        this.calc();
+        app.complete=true;
+
       };
       pyramid.prototype=Object.create(control.prototype);
       pyramid.prototype.draw=function(){
@@ -1931,15 +2115,18 @@ println(app.cursor);
         
         // if(this.on===false){
 
-          // for(var r=this.controls.length-2; r>-1; r--){
+          for(var row=this.controls.length-2; row>-1; row--){
 
-            // for(var c=this.controls[r].length-1; c>-1; c--){
+            for(var col=this.controls[row].length-1; col>-1; col--){
 
-              // this.controls[r][c].set();
+              this.controls[row][col].calc();
+              
+              this.controls[row+1][col  ].set();
+              this.controls[row+1][col+1].set();
             
-            // }
+            }
 
-          // }
+          }
         
         // }
         
@@ -1987,46 +2174,37 @@ println(app.cursor);
   };
   var updatePascal=function(){
     
-    app.controls[1].reset();
+    app.pyramid.reset();
 
   };
   var calcPascal=function(){
 
-    // app.controls[1].calc();
+    // app.pyramid.calc();
 
-    app.controls[1].step(13,0);
+    app.pyramid.step(13,0);
 
   };
-  var pyramidReset=function(){
-    
-    app.controls[1].reset();
-    
-  };
-  
+
   var stepPascal=function(){
 
     if(app.col===0 &&
        app.row===-1){ return; }
 
-    var pyramid=app.controls[1];
+      app.pyramid.step(app.row, app.col);
 
-    pyramid.step(app.row, app.col);
+      if(app.col>=(app.pyramid.controls[app.row].length-1)){ app.col=0; app.row--; }
+      else                                                 { app.col++;            }
 
-    if(app.col>=(pyramid.controls[app.row].length-1)){ app.col=0; app.row--; }
-    else                                             { app.col++;            }
+      if(app.row===-1 &&
+         app.col===0){
 
-    if(app.row===-1 &&
-       app.col===0){
+        app.path=(splice)(app.path, app.pyramid.controls[0][0].path);
 
-      app.path=(splice)(app.path, pyramid.controls[0][0].path);
+        app.complete=true;
 
-      app.complete=true;
-
-    }
+      }
 
   };
-
-  
 
   /* Initialize ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
     var initialize=function(){
@@ -2050,32 +2228,38 @@ println(app.cursor);
         
       // toolbar --------------------------------------------------
       {
-        /* tlbar            */
+        /* tlbar             */
         var tlbar=new toolbar(200, bk, 0, 0, width, 30,
-          {execute:   pyramidReset,
-           text:      "Minimum Sum Triangle",
+          {text:      "Minimum Sum Triangle",
            acolor:    CLRS.K_TEAL_3,
            icolor:    CLRS.ACTIVE,
            cursor:    ARROW});
 
         bk.controls.push(tlbar);
 
-          /* auto-run           */
-          tlbar.controls.push(new onOff(210, tlbar, 15, 15, 13, 13,
-            {execute:   checkboxAuto,
-             retrieve:  getAuto,
+          /* play            */
+          tlbar.controls.push(new play(210, tlbar, 5, 5, 20, 20,
+            {execute:   calculate,
+             retrieve:  getCalculate,
              color:     CLRS.K_TEAL_0,
              cursor:    HAND}));
 
-          /* settings   */
-          tlbar.controls.push(new settings(220, tlbar, width-25, 5, 22, 22,
+          /* reset           */
+          tlbar.controls.push(new resetButton(220, tlbar, 40, 15, 13, 13,
+            {execute:   reset,
+             retrieve:  getCalculate,
+             color:     CLRS.K_TEAL_0,
+             cursor:    HAND}));
+             
+          /* settings        */
+          tlbar.controls.push(new settings(230, tlbar, width-25, 5, 22, 22,
             {execute:   checkboxLegend,
              retrieve:  getLegend,
              color:     CLRS.K_TEAL_0,
              cursor:    HAND}));
 
-          /* information   */
-          tlbar.controls.push(new info(230, tlbar, width-52, 5, 22, 22,
+          /* information     */
+          tlbar.controls.push(new info(240, tlbar, width-52, 5, 22, 22,
             {text:     "i",
              execute:  stepPascal,
              retrieve: getInfo,
@@ -2413,11 +2597,11 @@ println(app.cursor);
 
           background(242);
 
-          if(app.autoRun){
+          if(app.calculating){
                
             // if(frameCount%app.frameRate===0){
               
-              for(var n=0; n<app.levels/2; n++){
+              for(var n=0; n<app.levels/1; n++){
                stepPascal();
               }
             // }
@@ -2440,6 +2624,8 @@ println(app.cursor);
     app.keys[KEYCODES.ALT]=false;
     app.keys[KEYCODES.SHIFT]=false;
 
+    app.pyramid=app.controls[1];
+
     var draw=function(){
 
       execute();
@@ -2459,11 +2645,6 @@ println(app.cursor);
 
             case app.keys[KEYCODES.PGUP]:     incrementRows();    break;
             case app.keys[KEYCODES.PGDN]:     decrementRows();    break;
-
-            // case app.keys[KEYCODES.LEFT] &&
-                 // app.keys[KEYCODES.SHIFT]:    decrementCursor();    break;
-            // case app.keys[KEYCODES.RIGHT] &&
-                 // app.keys[KEYCODES.SHIFT]:    incrementCursor();    break;
 
             case app.keys[KEYCODES.LEFT] &&
                  app.keys[KEYCODES.CONTROL]:  firstRecord();      break;
