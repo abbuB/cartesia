@@ -124,7 +124,7 @@ var diagrams = function(processingInstance){
 
     this.calculating=false;
 
-    this.cursor=1;            //  position of the cursor in grid
+    this.cursor=0;            //  position of the cursor in grid
     this.cells=0;             //  # of cells in the grid
 
     this.levels=10;
@@ -1755,15 +1755,13 @@ println(this.excecute);
 
       var totals=area1+area2+area3;
 
-// println(areaTotal + " : " + area1 + " : " + area2 + " : " + area3 + " : " + totals);
-
       if(abs(areaTotal-totals)<1){ retVal=true; }
 
       return retVal;
 
     };
     var rectangleHit=function(p1,p2,p3){
-// println(p1.y + " : " + p3.y);
+
       var retVal=false;
 
       if(mouseX>p2.x &&
@@ -1843,18 +1841,17 @@ println(this.excecute);
 
               };
 
-              // };
-
-              // if(this.on){ fill(getColor(CLRS.GREEN,25)); }
-
-              if(app.complete===true){
-                if(inPath(this.row,this.col)===true ||
-                   this.ordinal===0){
-                  fill(  getColor(CLRS.BLUE, 25));
-                }
-              }
-
               stroke(this.color);
+              
+              // if(app.complete===true){
+                if(inPath(this.row,this.col)===true ||
+                   this.ordinal===app.cursor){
+                  fill(getColor(this.color, 25));
+                  strokeWeight(1);
+                }
+              // }
+
+              
 
                 beginShape();
 
@@ -1869,9 +1866,9 @@ println(this.excecute);
 
               // Caption
               fill(getColor(this.color,50));
-                
+
               if(app.cursor===this.ordinal){
-                fill(getColor(CLRS.RED,75));
+                fill(getColor(this.color,100));
               }
 
               scale(1,-1);
@@ -1880,8 +1877,12 @@ println(this.excecute);
               textSize(this.w/2.5);
               // textWidth(this.w);
 
-              if(app.complete){ text(this.total,   this.offset, this.offset); }
-              else            { text(this.integer, this.offset, this.offset); }
+              if(app.complete){
+                text(this.total,   this.offset, this.offset);
+              }
+              else{
+                text(this.integer, this.offset, this.offset);
+              }
 
           popMatrix();
 
@@ -1934,12 +1935,10 @@ println(this.excecute);
       hexButton.prototype.clicked=function(){
       /* Overridden to maintain on/off value */
 
-        if(this.hit){
-
-          // for(var n=0; n<this.path.length; n++){
-            // println(this.path[n].row + ", " + this.path[n].col);
-          // }
-
+        if(this.hit &&
+           this.parent.hit){
+          
+          app.path=this.path;
           app.cursor=this.ordinal;
 
         }
