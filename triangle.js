@@ -45,19 +45,20 @@ var diagrams = function(processingInstance){
 
     TO DO:
 
+      - display path when cursor changes
       - slow calculation to show method
 
     Research:
 
 
     TO DONE:
-      
+
       - center the pyramid vertically
 
       - display ideal path on click of hexButton
-    
+
       - calculate the pyramid completely on load
-    
+
       - fix the changing fonts
 
       - data cursor
@@ -138,7 +139,8 @@ var diagrams = function(processingInstance){
 
     this.complete=false;
 
-    this.pyramid=0;
+    this.pyramid=0;           //  reference to the pyramid control
+    this.current=0;           //  reference to teh current hex cell in the pyramid
 
   };
 
@@ -334,7 +336,7 @@ var diagrams = function(processingInstance){
 
       app.pyramid.reset();
 
-println(app.levels);
+// println(app.levels);
 
     };
 
@@ -377,16 +379,22 @@ println(app.levels);
     var incrementCursor=function(){
 
       app.cursor++;
-
+      
+      app.cursor%=(app.cells)
       app.cursor=(constrain)(app.cursor, 0, app.cells-1);
-
+      
+      // app.path=app.pyramid.controls[app.cursor].path;
 
     };
     var decrementCursor=function(){
 
       app.cursor--;
+      
+      if(app.cursor===-1){ app.cursor=app.cells; }
 
       app.cursor=(constrain)(app.cursor, 0, app.cells-1);
+
+      // app.path=app.pyramid.controls[app.cursor].path;
 
     };
 
@@ -658,6 +666,7 @@ println(app.levels);
                 cursor(this.cursor);
 
                 fill(getColor(this.color, 100));
+                fill(this.color);
 
               }
 
@@ -924,7 +933,7 @@ println(app.levels);
 
     }
 
-    // Navigation Buttons * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Navigation Buttons ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
 
       var navButton=function(id, parent, x, y, w, h, params){
@@ -1431,7 +1440,7 @@ println(app.levels);
 
     }
 
-    // Settings * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Settings ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
 
       var settings=function(id, parent, x, y, w, h, params){
@@ -1819,7 +1828,7 @@ println(this.excecute);
 
             translate(this.x, this.y);
             scale(1,-1);
-            
+
               this.offset=0;
 
               // Border
@@ -1828,7 +1837,7 @@ println(this.excecute);
               stroke(getColor(this.color, 25));
               fill(  getColor(this.color,  5));
 
-              if(this.hit && 
+              if(this.hit &&
                  this.parent.hit){
 
                 if(app.left){ this.offset=1; }
@@ -1841,7 +1850,7 @@ println(this.excecute);
               };
 
               stroke(this.color);
-              
+
               // if(app.complete===true){
                 if(inPath(this.row,this.col)===true ||
                    this.ordinal===app.cursor){
@@ -1850,6 +1859,37 @@ println(this.excecute);
                 }
               // }
 
+              if(app.cursor===this.ordinal){
+
+                fill(getColor(this.color,50));
+                
+                app.current=app.pyramid.controls[this.row][this.col];
+
+                // strokeWeight(2);
+                // stroke(CLRS.RED);
+
+                  line((this.p5.x+this.p6.xc)/2, this.p6.y,
+                        this.p3.x,              -this.h/2);
+
+                // stroke(CLRS.GREEN);
+
+                  line((this.p5.x+this.p6.xc)/2, this.p6.y,
+                        this.p1.x,              -this.h/2);
+
+              }
+              else if(app.current.row===this.row-1 &&
+                      app.current.col===this.col){
+                
+                fill(getColor(CLRS.RED,25));
+                
+              }
+              else if(app.current.row===this.row-1 &&
+                      app.current.col===this.col-1){
+                
+                fill(getColor(CLRS.GREEN,25));
+                
+              }
+              
                 beginShape();
 
                   vertex(this.p1.x+this.offset, this.p1.y-this.offset);
@@ -1862,10 +1902,11 @@ println(this.excecute);
                 endShape(CLOSE);
 
               // Caption
-              fill(getColor(this.color,50));
-
               if(app.cursor===this.ordinal){
-                fill(getColor(this.color,100));
+                fill(getColor(CLRS.WHITE,100));
+              }
+              else{
+                fill(getColor(this.color,50));
               }
 
               scale(1,-1);
@@ -1912,7 +1953,7 @@ println(this.excecute);
 
             // app.path=this.path;
             // for(var c in this.controls){ this.controls[c].moved(); }
-
+println(app.pyramid.controls[this.row][this.col].path.length);
             }
             else{
 
@@ -1928,13 +1969,14 @@ println(this.excecute);
 
         }
 
+
       };
       hexButton.prototype.clicked=function(){
       /* Overridden to maintain on/off value */
 
         if(this.hit &&
            this.parent.hit){
-          
+
           app.path=this.path;
           app.cursor=this.ordinal;
 
