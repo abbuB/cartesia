@@ -42,9 +42,11 @@ var diagrams = function(processingInstance){
 
       en.wikipedia.org/wiki/Triangular_number
       oeis.org/A000217
-      
+
     TO DO:
 
+      - n k choose formulas option for each cell
+      - interesting patterns - triangular #'s, etc.
       
 
     Research:
@@ -126,7 +128,7 @@ var diagrams = function(processingInstance){
     this.cursor=0;            //  position of the cursor in grid
     this.cells=0;             //  # of cells in the grid
 
-    this.levels=16;
+    this.levels=5;
 
     this.levelsMax=16;
     this.levelsMin=5;
@@ -136,13 +138,11 @@ var diagrams = function(processingInstance){
 
     this.path=[];             //  The final path of the pyramid
 
-    this.complete=false;
-
     this.pyramid;             //  Reference to the pyramid control
     this.currentCell;         //  Reference to the currently selected cell in the pyramid
 
     this.pascal=[];
-    this.serpinskiOn=false;
+    this.SierpinskiOn=false;
     
     this.text="";
     
@@ -343,8 +343,9 @@ var diagrams = function(processingInstance){
 
       app.calculating=false;
       app.path=[];
-      app.complete=false;
       app.cursor=0;
+      app.row=0;
+      app.col=0;
 
       app.pyramid.levels=app.levels;
       loadPascal();
@@ -364,12 +365,12 @@ println(app.levels);
     var toggleInfo=function()     { app.info=!app.info;               };
 
     var constrainCurrent=function(){
-      
+
       app.row=(constrain)(app.row, 0, app.pyramid.controls.length-1);
       app.col=(constrain)(app.col, 0, app.pyramid.controls[app.row].length-1);
-      
+
       app.currentCell=app.pyramid.controls[app.row][app.col];
-      
+
     };
     
     var incrementRows=function(){
@@ -500,6 +501,8 @@ println(app.levels);
 
         this.on       = false;    /* Is the control on or off */
         this.hit      = false;    /* mouse is over the control */
+        
+        this.font     = "Hello";
 
       };
       control.prototype.draw=function(){};
@@ -580,7 +583,9 @@ println(app.levels);
         this.border = params.border;
 
         this.left   = 0;
-
+        
+        this.font   = params.font;
+        
       };
       root.prototype=Object.create(control.prototype);
       root.prototype.draw=function(){
@@ -591,7 +596,8 @@ println(app.levels);
 
             noStroke();
             fill(this.icolor);
-
+            textFont(this.font);
+            
             if(this.hit){
 
               app.focus=this.id;
@@ -631,6 +637,8 @@ println(app.levels);
         this.cursor = params.cursor;
         this.border = params.border;
 
+        this.font   = params.font;
+                
       };
       container.prototype=Object.create(control.prototype);
       container.prototype.draw=function(){
@@ -641,7 +649,8 @@ println(app.levels);
 
             noStroke();
             fill(getColor(this.color, 5));
-
+            textFont(this.font);
+    
             if(this.hit &&
                this.parent.hit){
 
@@ -680,6 +689,38 @@ println(app.levels);
         this.color    = params.color;
         this.cursor   = params.cursor;
         this.retrieve = params.retrieve;
+        this.font     = params.font;
+        
+        this.controls.push(new hexButton(520, this, this.w/2-35, 170, 75, 75,
+          {row:       -1,
+           col:       -1,
+           ordinal:   -1,
+           integer:   3,
+           font:      "monospace",
+           total:     0,
+           color:     CLRS.K_TEAL_1,
+           cursor:    HAND,
+           on:        true}));
+        this.controls.push(new hexButton(530, this, this.w/2+35, 170, 75, 75,
+          {row:       -1,
+           col:       -1,
+           ordinal:   -1,
+           integer:   3,
+           font:      "monospace",
+           total:     0,
+           color:     CLRS.K_TEAL_1,
+           cursor:    HAND,
+           on:        true}));
+        this.controls.push(new hexButton(540, this, this.w/2, 230, 75, 75,
+          {row:       -1,
+           col:       -1,
+           ordinal:   -1,
+           integer:   6,
+           font:      "monospace",
+           total:     0,
+           color:     CLRS.K_TEAL_1,
+           cursor:    HAND,
+           on:        true}));
 
       };
       splash.prototype=Object.create(control.prototype);
@@ -693,38 +734,32 @@ println(app.levels);
 
               strokeWeight(1);
               stroke(getColor(this.color, 40));
-              fill(getColor(this.color, 90));
-
+              fill(getColor(this.color, 100));
+              
               if(this.hit &&
                  this.parent.hit){
 
                 app.focus=this.id;
                 cursor(this.cursor);
 
-                fill(getColor(this.color, 100));
+                // fill(getColor(this.color, 80));
 
               }
 
                 rect(0, 0, this.w, this.h, 20);
 
-              textSize(16);
+              textFont(createFont(this.font, 16));
               textAlign(CENTER,BOTTOM);
               fill(getColor(CLRS.YELLOW,75));
 
-                text("The Collatz Conjecture", this.w/2, 30);
+                text("Pascal's Triangle", this.w/2, 30);
 
-              var txt0="A conjecture in mathematics named after Lothar Collatz that is also known as the 3n + 1 conjecture or the hailstone sequence.";
-              var txt1="Take any positive integer n.  If n is even, divide it by 2 to get n / 2.  If n is odd, multiply it by 3 and add 1 to obtain 3n + 1.  Repeat the process indefinitely.  The conjecture is that no matter what number you start with, you will always eventually reach 1.";
-              var txt2="For instance, starting with n = 12, one gets the sequence 12, 6, 3, 10, 5, 16, 8, 4, 2, 1.";
-              var txt3="If the conjecture is false, it can only be because there is some starting number which gives rise to a sequence that does not contain 1. Such a sequence might enter a repeating cycle that excludes 1, or increase without bound. No such sequence has been found.";
-              var txt4="https://en.wikipedia.org/wiki/Collatz_conjecture";
-
-              var txt5="f(n)";
-              var txt6="n/2";
-              var txt7="if n" + CONSTANTS.IDENTICAL + "0 (mod 2)";
-              var txt8="3n+1";
-              var txt9="if n" + CONSTANTS.IDENTICAL + "1 (mod 2)";
-              var txt10="{";
+              var txt0="In mathematics, Pascal's triangle is a triangular array of the binomial coefficients.";
+              var txt1="The first and last cell in each row contains 1 (one) and every other cell is sum of the two adjacent cells above.";
+              var txt2="";
+              var txt3="";
+              var txt4="en.wikipedia.org/wiki/Pascal%27s_triangle";
+              var txt5="oeis.org/A007318";
 
               textSize(11);
               textAlign(LEFT,TOP);
@@ -738,34 +773,27 @@ println(app.levels);
                      this.w-30, this.h-40);
 
               textAlign(LEFT,CENTER);
-              fill(getColor(CLRS.K_TEAL_2,100));
+              fill(getColor(CLRS.K_TEAL_3,100));
 
-                text(txt4, this.w/2-textWidth(txt4)/2, 330);
+                text(txt4, this.w/2-textWidth(txt4)/2, 320);
+                
+              fill(getColor(CLRS.K_TEAL_2,100));
+              
+                text(txt5, this.w/2-textWidth(txt5)/2, 340);
 
               var txtX=65;
               var txtY=-30;
 
-              // Formulas
-              textAlign(LEFT,TOP);
-              textSize(16);
-              fill(getColor(CLRS.YELLOW,90));
+              var centerX=this.w/2;
+              
+              pushMatrix();
+              
+                translate(centerX, 130);
 
-                text(txt5,  30+txtX, 300+txtY);
-
-                text(txt6,  85+txtX, 290+txtY);
-                text(txt7, 135+txtX, 290+txtY);
-
-                text(txt8,  85+txtX, 310+txtY);
-                text(txt9, 135+txtX, 310+txtY);
-
-              textSize(48);
-              textAlign(CENTER,CENTER);
-
-                text(txt10, 70+txtX, 305+txtY);
-
-              // Draw child controls
-              for(var c in this.controls){ this.controls[c].draw(); }
-
+              popMatrix();
+                // Draw child controls
+                for(var c in this.controls){ this.controls[c].draw(); }
+                
           popMatrix();
 
         }
@@ -781,10 +809,11 @@ println(app.levels);
 
         control.call(this, id, parent, x, y, w, h);
 
-        this.radius=params.radius;
-        this.color=params.color;
-        this.cursor=params.cursor;
-
+        this.radius = params.radius;
+        this.color  = params.color;
+        this.cursor = params.cursor;
+        this.font   = params.font;
+        
       };
       index.prototype=Object.create(control.prototype);
       index.prototype.draw=function(){
@@ -796,6 +825,7 @@ println(app.levels);
             strokeWeight(1);
             stroke(getColor(CLRS.BLACK, 20));
             fill(getColor(this.color, 50));
+            textFont(this.font);
 
             if(this.hit &&
                this.parent.hit){
@@ -829,7 +859,8 @@ println(app.levels);
         this.color    = params.color;
         this.cursor   = params.cursor;
         this.execute  = params.execute;
-
+        this.font     = params.font;
+        
       };
       navScroll.prototype=Object.create(control.prototype);
       navScroll.prototype.draw=function(){
@@ -841,7 +872,8 @@ println(app.levels);
             noStroke();
             noFill();
             // fill(getColor(this.color, 5));
-
+            textFont(createFont(this.font, 16));
+    
             if(this.hit &&
                this.parent.hit){
 
@@ -918,7 +950,8 @@ println(app.levels);
         this.position    = params.position;
         this.recordCount = params.recordCount;
         this.execute     = params.execute;
-
+        this.font        = params.font;
+        
       };
       navbar.prototype=Object.create(control.prototype);
       navbar.prototype.draw=function(){
@@ -929,7 +962,7 @@ println(app.levels);
 
             noStroke();
             fill(this.icolor);
-
+            
             if(this.hit &&
                this.parent.hit){
 
@@ -952,7 +985,7 @@ println(app.levels);
 
             if(this.hit){ fill(getColor(CLRS.K_TEAL_0,100)); }
 
-            textSize(16);
+            textFont(createFont(this.font, 16));
             textAlign(CENTER,CENTER);
             var txt=this.position() + " of " + this.recordCount();
 
@@ -975,11 +1008,12 @@ println(app.levels);
 
         control.call(this, id, parent, x, y, w, h);
 
-        this.execute=params.execute;
-        this.type=params.type;
-        this.retrieve=params.retrieve;
-        this.color=params.color;
-        this.cursor=params.cursor;
+        this.execute  = params.execute;
+        this.type     = params.type;
+        this.retrieve = params.retrieve;
+        this.color    = params.color;
+        this.cursor   = params.cursor;
+        this.font     = params.font;
 
       };
       navButton.prototype=Object.create(control.prototype);
@@ -993,6 +1027,7 @@ println(app.levels);
 
             noStroke();
             noFill();
+            textFont(this.font);
 
             if(this.hit &&
                this.parent.hit){
@@ -1017,20 +1052,21 @@ println(app.levels);
 
             noStroke();
             textAlign(CENTER,CENTER);
-            textSize(16);
+            textFont(createFont(this.font, 14));
 
               switch(this.type){
 
-                case NAVIGATION.FIRST:          text("|"+CONSTANTS.TRIANGLE_L, this.w/2+offset, this.h/2+offset); break;
-                case NAVIGATION.DECREMENT:      text(CONSTANTS.TRIANGLE_L,  this.w/2+offset, this.h/2+offset); break;
-                case NAVIGATION.INCREMENT:      text(CONSTANTS.TRIANGLE_R,  this.w/2+offset, this.h/2+offset); break;
-                case NAVIGATION.LAST:           text(CONSTANTS.TRIANGLE_R+"|", this.w/2+offset, this.h/2+offset); break;
+                case NAVIGATION.FIRST:          text("|"+CONSTANTS.TRIANGLE_L,                  this.w/2+offset, this.h/2+offset); break;
+                case NAVIGATION.DECREMENT:      text(CONSTANTS.TRIANGLE_L,                      this.w/2+offset, this.h/2+offset); break;
+                case NAVIGATION.INCREMENT:      text(CONSTANTS.TRIANGLE_R,                      this.w/2+offset, this.h/2+offset); break;
+                case NAVIGATION.LAST:           text(CONSTANTS.TRIANGLE_R+"|",                  this.w/2+offset, this.h/2+offset); break;
                 case NAVIGATION.INCREMENTPAGE:  text(CONSTANTS.TRIANGLE_R+CONSTANTS.TRIANGLE_R, this.w/2+offset, this.h/2+offset); break;
                 case NAVIGATION.DECREMENTPAGE:  text(CONSTANTS.TRIANGLE_L+CONSTANTS.TRIANGLE_L, this.w/2+offset, this.h/2+offset); break;
 
                 default:  break;
 
-              }
+              }             
+              
               // switch(this.type){
 
                 // case NAVIGATION.FIRST:          text("|<", this.w/2+offset, this.h/2+offset); break;
@@ -1076,7 +1112,8 @@ println(app.levels);
         this.cursor      = params.cursor;
         this.position    = params.position;
         this.recordCount = params.recordCount;
-
+        this.font        = params.font;
+        
       };
       toolbar.prototype=Object.create(control.prototype);
       toolbar.prototype.draw=function(){
@@ -1102,12 +1139,12 @@ println(app.levels);
 
             // Caption
             fill(CLRS.K_TEAL_0);
-            textSize(16);
+            textFont(createFont(this.font, 16));
             textAlign(CENTER,CENTER);
 
             if(this.hit &&
                this.parent.hit){ fill(CLRS.WHITE); }
-
+                       
               text(this.text, this.w/2, this.h/2);
 
             // Draw child controls
@@ -1128,7 +1165,8 @@ println(app.levels);
 
         this.color  = params.color;
         this.cursor = params.cursor;
-
+        this.font   = params.font;
+        
         /*  Dynamic x-coordinate */
         this.offset = 0;
 
@@ -1229,7 +1267,7 @@ println(app.levels);
                  app.keys[KEYCODES.SHIFT]   + "\n\n\n" +
                  app.legend                 + "\n" +
                  app.calculating            + "\n" +
-                 app.cursor                + "\n" +
+                 app.cursor                 + "\n" +
                  app.frameRate              + "\n" +
                  app.infoOn,
                  col2, row0+15);
@@ -1245,8 +1283,8 @@ println(app.levels);
 
         pushMatrix();
 
-          translate(this.x, this.y);
-
+          translate(this.x, this.y);            
+          
             if(this.hit &&
                this.parent.hit){
 
@@ -1258,6 +1296,8 @@ println(app.levels);
             if     ( app.legend && this.offset>-200){ this.offset-=10; }
             else if(!app.legend && this.offset<0   ){ this.offset+=10; }
 
+            textFont(createFont(this.font, 16));
+
             border();
             properties();
 
@@ -1268,6 +1308,7 @@ println(app.levels);
                it has to be done after the child controls are drawn to
                maintain proper control focus                              */
             fill(getColor(CLRS.YELLOW,75));
+            
             textSize(11);
             textAlign(RIGHT,CENTER);
 
@@ -1306,10 +1347,11 @@ println(app.levels);
 
         control.call(this, id, parent, x, y, w, h);
 
-        this.execute=params.execute;
-        this.retrieve=params.retrieve;
-        this.color=params.color;
-        this.cursor=params.cursor;
+        this.execute  = params.execute;
+        this.retrieve = params.retrieve;
+        this.color    = params.color;
+        this.cursor   = params.cursor;
+        this.font     = params.font;
 
       };
       onOff.prototype=Object.create(control.prototype);
@@ -1320,6 +1362,7 @@ println(app.levels);
           translate(this.x, this.y);
 
             ellipseMode(CENTER);
+            textFont(createFont(this.font, 16));
 
             if(this.hit &&
                this.parent.hit){
@@ -1385,10 +1428,11 @@ println(app.levels);
 
         control.call(this, id, parent, x, y, w, h);
 
-        this.execute=params.execute;
-        this.retrieve=params.retrieve;
-        this.color=params.color;
-        this.cursor=params.cursor;
+        this.execute  = params.execute;
+        this.retrieve = params.retrieve;
+        this.color    = params.color;
+        this.cursor   = params.cursor;
+        this.font     = params.font;
 
       };
       resetButton.prototype=Object.create(control.prototype);
@@ -1397,6 +1441,7 @@ println(app.levels);
         pushMatrix();
 
           translate(this.x, this.y);
+          textFont(createFont(this.font, 16));
 
             ellipseMode(CENTER);
 
@@ -1482,10 +1527,11 @@ println(app.levels);
 
         control.call(this, id, parent, x, y, w, h);
 
-        this.execute=params.execute;
-        this.retrieve=params.retrieve;
-        this.color=params.color;
-        this.cursor=params.cursor;
+        this.execute  = params.execute;
+        this.retrieve = params.retrieve;
+        this.color    = params.color;
+        this.cursor   = params.cursor;
+        this.font     = params.font;
 
       };
       settings.prototype=Object.create(control.prototype);
@@ -1516,6 +1562,7 @@ println(app.levels);
               rect(offset, offset, this.w, this.h, 2);
 
             // Icon
+            textFont(createFont(this.font, 16));
             fill(getColor(this.color,50));
 
             if(this.hit &&
@@ -1553,11 +1600,12 @@ println(app.levels);
 
         control.call(this, id, parent, x, y, w, h);
 
-        this.text=params.text;
-        this.execute=params.execute;
-        this.retrieve=params.retrieve;
-        this.color=params.color;
-        this.cursor=params.cursor;
+        this.text     = params.text;
+        this.execute  = params.execute;
+        this.retrieve = params.retrieve;
+        this.color    = params.color;
+        this.cursor   = params.cursor;
+        this.font     = params.font;
 
       };
       info.prototype=Object.create(control.prototype);
@@ -1571,6 +1619,7 @@ println(app.levels);
 
             noStroke();
             noFill();
+            
 
             if(this.hit &&
                this.parent.hit){
@@ -1588,7 +1637,7 @@ println(app.levels);
             rect(offset, offset, this.w, this.h, 2);
 
             // Icon
-            textSize(24);
+            textFont(createFont(this.font, 24));
             textAlign(CENTER,CENTER);
 
             fill(getColor(this.color,50));
@@ -1596,9 +1645,7 @@ println(app.levels);
             if(this.hit &&
                this.parent.hit){ fill(getColor(CLRS.BLACK,75)); }
 
-            textFont(createFont("monospace", 20));
-            // textFont(createFont("fantasy", 24));
-            // textFont(createFont("cursive", 24));
+            textFont(createFont(this.font, 20));
 
               text(this.text, this.w/2+offset, this.h/2+offset);
 
@@ -1627,11 +1674,12 @@ println(app.levels);
 
         control.call(this, id, parent, x, y, w, h);
 
-        this.text=params.text;
-        this.execute=params.execute;
-        this.retrieve=params.retrieve;
-        this.color=params.color;
-        this.cursor=params.cursor;
+        this.text     = params.text;
+        this.execute  = params.execute;
+        this.retrieve = params.retrieve;
+        this.color    = params.color;
+        this.cursor   = params.cursor;
+        this.font     = params.font;
 
       };
       play.prototype=Object.create(control.prototype);
@@ -1662,6 +1710,7 @@ println(app.levels);
             rect(offset, offset, this.w, this.h, 2);
 
             // Icon
+            textFont(createFont(this.font, 16));
             textSize(24);
             textAlign(CENTER,CENTER);
 
@@ -1700,11 +1749,12 @@ println(app.levels);
 
         control.call(this, id, parent, x, y, w, h);
 
-        this.execute=params.execute;
-        this.retrieve=params.retrieve;
-        this.text=params.text;
-        this.color=params.color;
-        this.cursor=params.cursor;
+        this.execute  = params.execute;
+        this.retrieve = params.retrieve;
+        this.text     = params.text;
+        this.color    = params.color;
+        this.cursor   = params.cursor;
+        this.font     = params.font;
 
         this.on=false;
 
@@ -1717,7 +1767,7 @@ println(app.levels);
           pushMatrix();
 
             translate(this.x, this.y);
-            scale(1,-1);
+            scale(1,-1);            
 
               // Border
               strokeWeight(0.75);
@@ -1746,8 +1796,8 @@ println(app.levels);
 
               scale(1,-1);
 
+              textFont(createFont(this.font, 12));
               textAlign(CENTER,CENTER);
-              textSize(12);
               this.w=textWidth(this.text)+10;
 
                 text(this.text, this.w/2+offset, this.h/2+offset);
@@ -1760,7 +1810,7 @@ println(app.levels);
 
         if(this.hit &&
            app.focus===this.id){
-println(this.excecute);
+
           this.execute();
 
           for(var c in this.controls){ this.controls[c].clicked(); }
@@ -1840,8 +1890,11 @@ println(this.excecute);
         this.color    = params.color;
         this.cursor   = params.cursor;
 
+        this.font     = params.font;
+
         this.active   = false;
-        this.on       = false;
+        this.on       = params.on;
+        this.choose   = true;
 
         /* Initialize */
         var w2=this.w/2;
@@ -1859,6 +1912,21 @@ println(this.excecute);
       hexButton.prototype=Object.create(control.prototype);
       hexButton.prototype.draw=function(){
 
+        var setTextSize=function(p){
+
+          var sz=p.w/2.5;
+
+          textSize(sz);
+          textAlign(CENTER,CENTER);
+
+          while(textWidth(p.integer)>(p.w-10)){
+            textSize(sz--);
+          }
+
+          textSize(sz);
+
+        };
+
           pushMatrix();
 
             translate(this.x, this.y);
@@ -1870,7 +1938,7 @@ println(this.excecute);
               strokeWeight(0.5);
 
               stroke(getColor(this.color, 25));
-              fill(  getColor(this.color,  5));
+              fill  (getColor(this.color,  5));
 
               if(this.hit && 
                  this.parent.hit){
@@ -1880,25 +1948,22 @@ println(this.excecute);
                 app.focus=this.id;
                 cursor(this.cursor);
 
-                fill(getColor(this.color, 25));
+                strokeWeight(1.5);
 
               };
-
-              stroke(this.color);
               
-              // if(app.complete===true){
-                if(inPath(this.row,this.col)===true){
-                  fill(getColor(this.color, 25));
-                  strokeWeight(1);
-                }
-              // }
-
-              if(app.serpinskiOn &&
-                 this.integer%2!==0){ fill(getColor(this.color, 25));             }
-              if(this.on){  fill(getColor(CLRS.RED, 25));                }
-              // if(app.cursor===this.ordinal){  fill(getColor(CLRS.K_TEAL_5, 25));  }
               if(app.row===this.row &&
-                 app.col===this.col){  fill(getColor(CLRS.K_TEAL_5, 25));  }
+                 app.col===this.col){
+                strokeWeight(2);   
+              };
+
+              stroke(getColor(this.color,75));
+              
+              //  Sierpinski grid
+              if(app.SierpinskiOn &&
+                 this.integer%2!==0){ fill(getColor(this.color, 25)); }
+              
+              if(this.on){  fill(getColor(this.color, 30));        }
 
                 beginShape();
 
@@ -1911,40 +1976,40 @@ println(this.excecute);
 
                 endShape(CLOSE);
 
-var d=cos(PI/6)*this.w;
-ellipse(0,0,d,d);
+// var d=cos(PI/6)*this.w;
+// ellipse(0,0,d,d);
 
               // Caption
               fill(getColor(this.color,50));
 
-              // if(app.cursor===this.ordinal){
-                // fill(getColor(this.color,100));                
-              // }
-
-              if(app.currentCell===this){
+              if(this.on){
                 fill(getColor(CLRS.WHITE,100));                
               }
               
               scale(1,-1);
 
-              var sz=this.w/2.5;
-              
-              textSize(sz);
-              textAlign(CENTER,CENTER);
+              textFont(createFont(this.font, 12));
+              setTextSize(this);
 
-              while(textWidth(this.integer)>(this.w-10)){
-                textSize(sz--);
-              }
+              if(!this.choose){
 
-              textSize(sz);
 
-              // if(app.complete){
-                // text(this.total,   this.offset, this.offset);
-              // }
-              // else{
                 text(this.integer, this.offset, this.offset);
-              // }
+              
+              }
+              else{
+              
+                // textSize(12);
+                
+                textAlign(CENTER,BOTTOM);
 
+                  text(this.row, this.offset, this.offset);
+
+                textAlign(CENTER,TOP);
+
+                  text(this.col, this.offset, this.offset);
+              }
+              
           popMatrix();
 
       };
@@ -1973,6 +2038,9 @@ ellipse(0,0,d,d);
                triHit2){
 
               this.hit=true;
+              
+              app.row=this.row;
+              app.col=this.col;
 
             // app.path=this.path;
             // for(var c in this.controls){ this.controls[c].moved(); }
@@ -2086,6 +2154,7 @@ ellipse(0,0,d,d);
 
         this.levels = params.levels;
         this.size   = height/this.levels;
+        this.font   = params.font;
 
 // println(params.size);
 
@@ -2115,7 +2184,7 @@ ellipse(0,0,d,d);
 
               ID=x + "," + y;
 
-              xPos = this.x + x*colOffset*2-y*colOffset;
+              xPos = x*colOffset*2-y*colOffset-this.size*this.levels/2;
               yPos = y*rowOffset+w2+top;
 
               row.push(new hexButton(ID, this, xPos+width/2, yPos, this.size, this.size,
@@ -2124,7 +2193,8 @@ ellipse(0,0,d,d);
                  ordinal:   total,
                  integer:   app.pascal[y][x],
                  total:     0,
-                 color:     CLRS.K_TEAL_0,
+                 color:     CLRS.K_TEAL_1,
+                 font:      "monospace",
                  cursor:    HAND,
                  execute:   executePascal,
                  retrieve:  retrievePascal}));
@@ -2145,8 +2215,6 @@ ellipse(0,0,d,d);
         };
 
         this.load();
-        // this.calc();
-        app.complete=true;
 
       };
       pyramid.prototype=Object.create(control.prototype);
@@ -2159,17 +2227,20 @@ ellipse(0,0,d,d);
             noFill();
             noStroke();
 
+            fill(getColor(CLRS.YELLOW,5));
+            textFont(createFont(this.font, 12));
+            
             if(this.hit &&
                this.parent.hit){
 
-              fill(getColor(CLRS.YELLOW,5));
-              // stroke(CLRS.GREEN);
-              // strokeWeight(0.5);
+              fill(getColor(CLRS.YELLOW,10));
+              stroke(CLRS.GREEN);
+              strokeWeight(0.25);
               app.focus=this.id;
 
             }
 
-            // rect(0,0,this.w-1,this.h-1);
+            rect(0, 0, this.w-1, this.h-1);
 
             for(var c=0; c<this.controls.length; c++){
 
@@ -2203,7 +2274,7 @@ ellipse(0,0,d,d);
 
         }
 
-        app.row=app.levels-2;
+        app.row=0;
         app.col=0;
 
         this.on=false;
@@ -2303,34 +2374,6 @@ ellipse(0,0,d,d);
     app.pyramid.reset();
 
   };
-  var calcPascal=function(){
-
-    // app.pyramid.calc();
-
-    app.pyramid.step(13,0);
-
-  };
-
-  // var stepPascal=function(){
-
-    // if(app.col===0 &&
-       // app.row===-1){ return; }
-
-      // app.pyramid.step(app.row, app.col);
-
-      // if(app.col>=(app.pyramid.controls[app.row].length-1)){ app.col=0; app.row--; }
-      // else                                                 { app.col++;            }
-
-      // if(app.row===-1 &&
-         // app.col===0){
-
-        // app.path=(splice)(app.path, app.pyramid.controls[0][0].path);
-
-        // app.complete=true;
-
-      // }
-
-  // };
 
   /* Initialize ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
     var initialize=function(){
@@ -2342,21 +2385,23 @@ ellipse(0,0,d,d);
           {text:      "root",
            acolor:    CLRS.ACTIVE,
            icolor:    CLRS.INACTIVE,
+           font:      "monospace",
            cursor:    ARROW,
            border:    false});
 
         app.controls.push(bk);
-
-          app.controls.push(new pyramid(1111, bk, 0, 30, width-2, height-55,
-            {levels:  app.levels,
-             size:    width/app.levels}));
-
-
+           
+        app.controls.push(new pyramid(1000, bk, bk.w/2-100, 30, 200, height-55,
+          {font:      "monospace",
+           levels:  app.levels,
+           size:    0,}));
+     
       // toolbar --------------------------------------------------
       {
         /* tlbar             */
         var tlbar=new toolbar(200, bk, 0, 0, width, 30,
           {text:      "Pascals Triangle",
+           font:      "monospace",
            acolor:    CLRS.K_TEAL_3,
            icolor:    CLRS.ACTIVE,
            cursor:    ARROW});
@@ -2367,6 +2412,7 @@ ellipse(0,0,d,d);
           tlbar.controls.push(new play(210, tlbar, 5, 5, 20, 20,
             {execute:   toggleCalculate,
              retrieve:  getCalculate,
+             font:      "monospace",
              color:     CLRS.K_TEAL_0,
              cursor:    HAND}));
 
@@ -2374,6 +2420,7 @@ ellipse(0,0,d,d);
           tlbar.controls.push(new resetButton(220, tlbar, 40, 15, 13, 13,
             {execute:   reset,
              retrieve:  getCalculate,
+             font:      "monospace",
              color:     CLRS.K_TEAL_0,
              cursor:    HAND}));
 
@@ -2381,16 +2428,18 @@ ellipse(0,0,d,d);
           tlbar.controls.push(new settings(230, tlbar, width-25, 5, 22, 22,
             {execute:   toggleLegend,
              retrieve:  getLegend,
+             font:      "monospace",
              color:     CLRS.K_TEAL_0,
              cursor:    HAND}));
 
           /* information     */
           tlbar.controls.push(new info(240, tlbar, width-52, 5, 22, 22,
-            {text:     "i",
-             execute:  toggleInfo,
-             retrieve: getInfo,
-             color:    CLRS.K_TEAL_0,
-             cursor:   HAND}));
+            {text:      "i",
+             font:      "monospace",
+             execute:   toggleInfo,
+             retrieve:  getInfo,
+             color:     CLRS.K_TEAL_0,
+             cursor:    HAND}));
       }
 
       // Navigation --------------------------------------------------
@@ -2400,6 +2449,7 @@ ellipse(0,0,d,d);
         /* Navbar            */
         var nvbar=new navbar(300, bk, 0, height-25, width, h,
           {text:        "Navigation",
+           font:        "sans-serif",
            icolor:      CLRS.INACTIVE,
            acolor:      CLRS.K_TEAL_4,
            cursor:      ARROW,
@@ -2411,7 +2461,8 @@ ellipse(0,0,d,d);
 
           /* Decrement Page        */
           nvbar.controls.push(new navButton(310, nvbar, 0, 0, 50, h,
-            {execute:   decrementRows,
+            {font:      "sans-serif",
+             execute:   decrementRows,
              type:      NAVIGATION.DECREMENTPAGE,
              retrieve:  navCursor,
              color:     CLRS.BLACK,
@@ -2419,15 +2470,17 @@ ellipse(0,0,d,d);
 
           /* Increment Page       */
           nvbar.controls.push(new navButton(320, nvbar, width-50, 0, 50, h,
-            {execute:  incrementRows,
-             type:     NAVIGATION.INCREMENTPAGE,
-             retrieve: navCursor,
-             color:    CLRS.BLACK,
-             cursor:   HAND}));
+            {font:      "sans-serif",
+             execute:   incrementRows,
+             type:      NAVIGATION.INCREMENTPAGE,
+             retrieve:  navCursor,
+             color:     CLRS.BLACK,
+             cursor:    HAND}));
 
           /* First Record         */
           nvbar.controls.push(new navButton(330, nvbar, 50, 0, 25, h,
-            {execute:   firstRecord,
+            {font:      "sans-serif",
+             execute:   firstRecord,
              type:      NAVIGATION.FIRST,
              retrieve:  navCursor,
              color:     CLRS.BLACK,
@@ -2435,7 +2488,8 @@ ellipse(0,0,d,d);
 
           /* Decrement Record     */
           nvbar.controls.push(new navButton(340, nvbar, 75, 0, 25, h,
-            {execute:   decrementCursor,
+            {font:      "sans-serif",
+             execute:   decrementCursor,
              type:      NAVIGATION.DECREMENT,
              retrieve:  navCursor,
              color:     CLRS.BLACK,
@@ -2443,23 +2497,26 @@ ellipse(0,0,d,d);
 
           /* Increment Record     */
           nvbar.controls.push(new navButton(350, nvbar, width-100, 0, 25, h,
-            {execute:  incrementCursor,
-             type:     NAVIGATION.INCREMENT,
-             retrieve: navCursor,
-             color:    CLRS.BLACK,
-             cursor:   HAND}));
+            {font:      "sans-serif",
+             execute:   incrementCursor,
+             type:      NAVIGATION.INCREMENT,
+             retrieve:  navCursor,
+             color:     CLRS.BLACK,
+             cursor:    HAND}));
 
           /* Last Record          */
           nvbar.controls.push(new navButton(360, nvbar, width-75, 0, 25, h,
-            {execute:  lastRecord,
-             type:     NAVIGATION.LAST,
-             retrieve: navCursor,
-             color:    CLRS.BLACK,
-             cursor:   HAND}));
+            {font:      "sans-serif",
+             execute:   lastRecord,
+             type:      NAVIGATION.LAST,
+             retrieve:  navCursor,
+             color:     CLRS.BLACK,
+             cursor:    HAND}));
 
           /* Scroll               */
           nvbar.controls.push(new navScroll(370, nvbar, 100, 0, width-200, h,
-            {execute:   navSetCursor,
+            {font:      "sans-serif",
+             execute:   navSetCursor,
              color:     CLRS.BLACK,
              cursor:    MOVE}));
 
@@ -2565,31 +2622,35 @@ ellipse(0,0,d,d);
              // cursor:   HAND}));
     }
 
-      // Telemetry --------------------------------------------------
-        /* Telemetry          */
-        var telem=new telemetry(400, bk, width, 30, 200, height-55,
-          {color:     CLRS.BLACK,
-           cursor:    ARROW});
-
-        bk.controls.push(telem);
-
-      // Loading --------------------------------------------------
+      // SplashScreen --------------------------------------------------
 
         /* Splash Screen      */
-        var splashScreen=new splash(500, bk, 100, 100, 400, 400,
+        var splashScreen=new splash(500, bk, 0, 100, 400, 400,
           {color:     CLRS.BLACK,
+           font:      "monospace",
            retrieve:  getInfo,
            cursor:    CROSS});
-
-        bk.controls.push(splashScreen);
 
           /* Close              */
           splashScreen.controls.push(new button(510, splashScreen, 180, 360, 120, 20,
             {text:      "Close",
+             font:      "monospace",
              execute:   toggleInfo,
              color:     CLRS.WHITE,
              cursor:    HAND}));
+        
+        bk.controls.push(splashScreen);
 
+      // Telemetry --------------------------------------------------
+      
+        /* Telemetry          */
+        var telem=new telemetry(400, bk, width, 30, 200, height-55,
+          {color:     CLRS.BLACK,
+           font:      "sans-serif",
+           cursor:    ARROW});
+
+        bk.controls.push(telem);
+        
     };
 
     var currentData=function(){
@@ -2768,6 +2829,8 @@ app.text=txt;
 
     var update=function(){
 
+      textFont(createFont("monospace", 16));
+                  
       pushMatrix();
 
         translate(0,0);
@@ -2775,17 +2838,6 @@ app.text=txt;
           frameRate(app.frameRate);
 
           background(242);
-
-          if(app.calculating){
-
-            // if(frameCount%app.frameRate===0){
-
-              // for(var n=0; n<app.levels/1; n++){
-               // stepPascal();
-              // }
-            // }
-
-          }
 
           for(var c in app.controls){ app.controls[c].draw(); }
 
