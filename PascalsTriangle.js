@@ -76,11 +76,11 @@ var diagrams = function(processingInstance){
 
       - only draw telemetry if it's visible
 
-        textFont(createFont("sans-serif", 14));
-        textFont(createFont("monospace", 14));
-        textFont(createFont("serif", 14));
-        textFont(createFont("fantasy", 14));
-        textFont(createFont("cursive", 14));
+        textFont(createFont('sans-serif', 14));
+        textFont(createFont('monospace', 14));
+        textFont(createFont('serif', 14));
+        textFont(createFont('fantasy', 14));
+        textFont(createFont('cursive', 14));
 
         println( typeof this.color );
 
@@ -96,7 +96,7 @@ var diagrams = function(processingInstance){
       cursor(WAIT);
       strokeCap(SQUARE);
 
-      // angleMode="degrees";
+      // angleMode='degrees';
 
       size(900, 700); // set size of canvas
 
@@ -119,7 +119,7 @@ var diagrams = function(processingInstance){
     this.keys=[];             //  Array holding the value of all keycodes
 
     this.info=false;          //  Is the info frame displayed
-    this.legend=false;        //  Is the telemetry visible
+    this.telemetry=true;        //  Is the telemetry visible
 
     /* App Specific ------------------ */
 
@@ -144,7 +144,7 @@ var diagrams = function(processingInstance){
     this.pascal=[];
     this.SierpinskiOn=false;
     
-    this.text="";
+    this.text='';
     
   };
 
@@ -284,16 +284,16 @@ var diagrams = function(processingInstance){
     };
     var CONSTANTS={
 
-      DEGREES:        "°",
-      PI:             "π",
-      TRIANGLE_UP:    "▲",
-      TRIANGLE_DOWN:  "▼",
-      INFINITY:       "∞",
-      THETA:          "θ",
-      RADIANS:        "ᶜ",
-      IDENTICAL:      "≡",
-      TRIANGLE_R:     "►",
-      TRIANGLE_L:     "◄"
+      DEGREES:        '°',
+      PI:             'π',
+      TRIANGLE_UP:    '▲',
+      TRIANGLE_DOWN:  '▼',
+      INFINITY:       '∞',
+      THETA:          'θ',
+      RADIANS:        'ᶜ',
+      IDENTICAL:      '≡',
+      TRIANGLE_R:     '►',
+      TRIANGLE_L:     '◄'
 
     };
     var NAVIGATION={
@@ -328,18 +328,20 @@ var diagrams = function(processingInstance){
 
   /* Utility Functions ========================================================= */
   {
+    
+    var isFocus=function(n){ return app.focus===n; }
 
     var getColor=function(clr, alpha){ return color(red(clr), green(clr), blue(clr), alpha/100*255); };
 
     
-    var setCell=function(){
+    var setCell=function()        {
       
       app.currentCell=app.pyramid.controls[app.row][app.col];
       app.currentCell.on=!app.currentCell.on;
       
     };
 
-    var reset=function(){
+    var reset=function()          {
 
       app.calculating=false;
       app.path=[];
@@ -356,10 +358,10 @@ println(app.levels);
     };
 
     var getCalculate=function()   { return app.calculating;           };
-    var getLegend=function()      { return app.legend;                };
+    var gettelemetry=function()   { return app.telemetry;             };
 
     var toggleCalculate=function(){ app.calculating=!app.calculating; };
-    var toggleLegend=function()   { app.legend=!app.legend;           };
+    var toggletelemetry=function(){ app.telemetry=!app.telemetry;     };
 
     var getInfo=function()        { return app.info;                  };
     var toggleInfo=function()     { app.info=!app.info;               };
@@ -373,7 +375,7 @@ println(app.levels);
 
     };
     
-    var incrementRows=function(){
+    var incrementRows=function()  {
 
       if(app.levels<app.levelsMax){
 
@@ -386,7 +388,7 @@ println(app.levels);
       }
 
     };
-    var decrementRows=function(){
+    var decrementRows=function()  {
 
       if(app.levels>app.levelsMin){
 
@@ -399,14 +401,14 @@ println(app.levels);
       }
 
     };    
-    var incrementRow=function(){
+    var incrementRow=function()   {
 
       app.row++;
       
       constrainCurrent();
 
     };
-    var decrementRow=function(){
+    var decrementRow=function()   {
 
       app.row--;
 
@@ -451,7 +453,7 @@ println(app.levels);
 
     };
 
-    var inPath=function(row,col){
+    var inPath=function(row,col)  {
 
       for(var n=0; n<app.path.length; n++){
 
@@ -468,10 +470,10 @@ println(app.levels);
       return false;
 
     };
-    var printPath=function(){
+    var printPath=function()      {
 
       for(var n=0; n<app.path.length; n++){
-        println(app.path[n].row + ", " + app.path[n].col);
+        println(app.path[n].row + ', ' + app.path[n].col);
       }
 
     };
@@ -501,11 +503,37 @@ println(app.levels);
 
         this.on       = false;    /* Is the control on or off */
         this.hit      = false;    /* mouse is over the control */
-        
-        this.font     = "Hello";
+
+        this.font     = 'Hello';
 
       };
       control.prototype.draw=function(){};
+      control.prototype.moved=function(x,y){
+        
+        if(this.parent.hit){
+
+          if(mouseX>(this.x+x) &&
+             mouseX<(this.x+x) + this.w &&
+             mouseY>(this.y+y) &&
+             mouseY<(this.y+y) + this.h){
+
+            this.hit=true;
+            app.focus=this.id;
+            cursor(this.cursor);
+
+            for(var c in this.controls){ this.controls[c].moved((this.x+x), (this.y+y)); }
+
+            
+          }
+          else{
+
+            this.hit=false;
+
+          }
+
+        }
+      
+      };
       control.prototype.clicked=function(){
 
         if(this.hit){
@@ -515,33 +543,14 @@ println(app.levels);
         }
 
       };
-      control.prototype.rClicked=function(){};
-      control.prototype.cClicked=function(){};
-      control.prototype.moved=function(x,y){
-
-        if(mouseX>(this.x+x) &&
-           mouseX<(this.x+x) + this.w &&
-           mouseY>(this.y+y) &&
-           mouseY<(this.y+y) + this.h){
-
-          this.hit=true;
-
-          for(var c in this.controls){ this.controls[c].moved((this.x+x), (this.y+y)); }
-
-        }
-        else{
-
-          this.hit=false;
-
-        }
-
-      };
+      // control.prototype.rClicked=function(){};
+      // control.prototype.cClicked=function(){};      
       control.prototype.dragged=function(){
 
         if(this.hit){
 
           for(var c in this.controls){ this.controls[c].dragged(); }
-
+          
         }
 
       };
@@ -550,17 +559,18 @@ println(app.levels);
         if(this.hit){
 
           for(var c in this.controls){ this.controls[c].pressed(); }
-
+          
         }
 
       };
-      control.prototype.released=function(){};
-      control.prototype.typed=function(){};
+      // control.prototype.released=function(){};
+      // control.prototype.typed=function(){};
       control.prototype.over=function(){};
       control.prototype.out=function(){
 
         this.hit=false;
         app.focus=-1;
+
         for(var c in this.controls){ this.controls[c].out(); }
 
       };
@@ -598,21 +608,9 @@ println(app.levels);
             fill(this.icolor);
             textFont(this.font);
             
-            if(this.hit){
-
-              app.focus=this.id;
-              cursor(this.cursor);
-
-              fill(this.acolor);
-
-            }
-
-            if(this.border){
-
-              strokeWeight(1);
-              stroke(this.acolor);
-
-            }
+            if(this.hit)   { fill(this.acolor); }
+            if(this.border){ strokeWeight(1);
+                             stroke(CLRS.BLUE); }
 
               rect(0, 0, this.w, this.h);
 
@@ -622,7 +620,28 @@ println(app.levels);
         popMatrix();
 
       };
+      root.prototype.moved=function(x,y){
 
+        if(mouseX>(this.x+x) &&
+           mouseX<(this.x+x) + this.w &&
+           mouseY>(this.y+y) &&
+           mouseY<(this.y+y) + this.h){
+
+          this.hit=true;
+          app.focus=this.id;
+          cursor(this.cursor);
+              
+          for(var c in this.controls){ this.controls[c].moved((this.x+x), (this.y+y)); }
+          
+        }
+        else{
+
+          this.hit=false;
+
+        }
+
+      };
+      
     }
 
     // Container ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -651,16 +670,7 @@ println(app.levels);
             fill(getColor(this.color, 5));
             textFont(this.font);
     
-            if(this.hit &&
-               this.parent.hit){
-
-              app.focus=this.id;
-              cursor(this.cursor);
-
-              fill(getColor(this.color, 10));
-
-            }
-
+            if(this.hit)   { fill(getColor(this.color, 10)); }
             if(this.border){
 
               strokeWeight(1);
@@ -690,33 +700,35 @@ println(app.levels);
         this.cursor   = params.cursor;
         this.retrieve = params.retrieve;
         this.font     = params.font;
-        
+
         this.controls.push(new hexButton(520, this, this.w/2-35, 170, 75, 75,
           {row:       -1,
            col:       -1,
            ordinal:   -1,
            integer:   3,
-           font:      "monospace",
+           font:      'monospace',
            total:     0,
            color:     CLRS.K_TEAL_1,
            cursor:    HAND,
            on:        true}));
+
         this.controls.push(new hexButton(530, this, this.w/2+35, 170, 75, 75,
           {row:       -1,
            col:       -1,
            ordinal:   -1,
            integer:   3,
-           font:      "monospace",
+           font:      'monospace',
            total:     0,
            color:     CLRS.K_TEAL_1,
            cursor:    HAND,
            on:        true}));
+
         this.controls.push(new hexButton(540, this, this.w/2, 230, 75, 75,
           {row:       -1,
            col:       -1,
            ordinal:   -1,
            integer:   6,
-           font:      "monospace",
+           font:      'monospace',
            total:     0,
            color:     CLRS.K_TEAL_1,
            cursor:    HAND,
@@ -736,11 +748,7 @@ println(app.levels);
               stroke(getColor(this.color, 40));
               fill(getColor(this.color, 100));
               
-              if(this.hit &&
-                 this.parent.hit){
-
-                app.focus=this.id;
-                cursor(this.cursor);
+              if(this.hit){
 
                 // fill(getColor(this.color, 80));
 
@@ -756,18 +764,18 @@ println(app.levels);
 
               var txt0="In mathematics, Pascal's triangle is a triangular array of the binomial coefficients.";
               var txt1="The first and last cell in each row contains 1 (one) and every other cell is sum of the two adjacent cells above.";
-              var txt2="";
-              var txt3="";
-              var txt4="en.wikipedia.org/wiki/Pascal%27s_triangle";
-              var txt5="oeis.org/A007318";
+              var txt2='';
+              var txt3='';
+              var txt4='en.wikipedia.org/wiki/Pascal%27s_triangle';
+              var txt5='oeis.org/A007318';
 
               textSize(11);
               textAlign(LEFT,TOP);
               fill(getColor(CLRS.WHITE,75));
 
-                text(txt0 + "\n\n" +
-                     txt1 + "\n\n" +
-                     txt2 + "\n\n" +
+                text(txt0 + '\n\n' +
+                     txt1 + '\n\n' +
+                     txt2 + '\n\n' +
                      txt3,
                      20, 40,
                      this.w-30, this.h-40);
@@ -791,17 +799,57 @@ println(app.levels);
                 translate(centerX, 130);
 
               popMatrix();
-                // Draw child controls
-                for(var c in this.controls){ this.controls[c].draw(); }
+
+              for(var c in this.controls){ this.controls[c].draw(); }
                 
           popMatrix();
 
         }
 
       };
+      splash.prototype.moved=function(x,y){
+      /* Overridden to maintain on/off value */
+      
+        if(this.retrieve()){
+
+          if(this.parent.hit){
+
+            if(mouseX>this.x+x &&
+               mouseX<this.x+x+this.w &&
+               mouseY>this.y+y &&
+               mouseY<this.y+y + this.h){
+
+              this.hit=true;
+              app.focus=this.id;
+              cursor(this.cursor);
+
+              for(var c in this.controls){ this.controls[c].moved(this.x+x+this.offset, this.y+y); }
+
+            }
+            else{
+
+              this.hit=false;
+
+            }
+
+          }
+        
+        }
+        
+      };      
+      splash.prototype.clicked=function(){
+      /* Overridden to maintain on/off value */
+
+        if(this.hit){
+
+          for(var c in this.controls){ this.controls[c].clicked(); }
+
+        }
+        
+      };
 
     }
-
+        
     // Index ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
 
@@ -827,11 +875,7 @@ println(app.levels);
             fill(getColor(this.color, 50));
             textFont(this.font);
 
-            if(this.hit &&
-               this.parent.hit){
-
-              app.focus=this.id;
-              cursor(this.cursor);
+            if(this.hit){
 
               stroke(getColor(CLRS.BLACK, 40));
               fill(getColor(this.color, 75));
@@ -874,11 +918,7 @@ println(app.levels);
             // fill(getColor(this.color, 5));
             textFont(createFont(this.font, 16));
     
-            if(this.hit &&
-               this.parent.hit){
-
-              app.focus=this.id;
-              cursor(this.cursor);
+            if(this.hit){
 
               fill(getColor(this.color, 5));
               strokeWeight(0.25);
@@ -893,7 +933,6 @@ println(app.levels);
             stroke(getColor(CLRS.RED,100));
             strokeWeight(0.5);
 
-// println(xPos);
               line(xPos,0,xPos,30);
 
             // Draw child controls
@@ -904,8 +943,7 @@ println(app.levels);
       };
       navScroll.prototype.dragged=function(x,y){
 
-        if(this.hit &&
-           app.focus===this.id){
+        if(this.hit){
 
           var X=round((mouseX-this.x)/this.w*app.cells);
 
@@ -918,10 +956,9 @@ println(app.levels);
         }
 
       };
-      navScroll.prototype.clicked=function(x,y){
+      navScroll.prototype.clicked=function(){
 
-        if(this.hit &&
-           app.focus===this.id){
+        if(this.hit){
 
           var X=round((mouseX-this.x)/this.w*app.cells);
 
@@ -934,6 +971,7 @@ println(app.levels);
         }
 
       };
+    
     }
 
     // NavBar ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -963,15 +1001,7 @@ println(app.levels);
             noStroke();
             fill(this.icolor);
             
-            if(this.hit &&
-               this.parent.hit){
-
-              app.focus=this.id;
-              cursor(this.cursor);
-
-              fill(this.acolor);
-
-            }
+            if(this.hit){ fill(this.acolor); }
 
               rect(0, 0, this.w, this.h);
 
@@ -987,7 +1017,7 @@ println(app.levels);
 
             textFont(createFont(this.font, 16));
             textAlign(CENTER,CENTER);
-            var txt=this.position() + " of " + this.recordCount();
+            var txt=this.position() + ' of ' + this.recordCount();
 
               text(txt, this.w/2, this.h/2);
 
@@ -1027,15 +1057,10 @@ println(app.levels);
 
             noStroke();
             noFill();
-            textFont(this.font);
 
-            if(this.hit &&
-               this.parent.hit){
+            if(app.focus===this.id){
 
               if(app.left){ offset=1; }
-
-              app.focus=this.id;
-              cursor(this.cursor);
 
               fill(getColor(this.color,10));
 
@@ -1047,8 +1072,7 @@ println(app.levels);
 
             // Icon
             fill(getColor(this.color, 50));
-
-            if(this.hit){ fill(getColor(this.color, 100)); }
+            if(app.focus===this.id){ fill(getColor(this.color, 100)); }
 
             noStroke();
             textAlign(CENTER,CENTER);
@@ -1056,10 +1080,10 @@ println(app.levels);
 
               switch(this.type){
 
-                case NAVIGATION.FIRST:          text("|"+CONSTANTS.TRIANGLE_L,                  this.w/2+offset, this.h/2+offset); break;
+                case NAVIGATION.FIRST:          text('|'+CONSTANTS.TRIANGLE_L,                  this.w/2+offset, this.h/2+offset); break;
                 case NAVIGATION.DECREMENT:      text(CONSTANTS.TRIANGLE_L,                      this.w/2+offset, this.h/2+offset); break;
                 case NAVIGATION.INCREMENT:      text(CONSTANTS.TRIANGLE_R,                      this.w/2+offset, this.h/2+offset); break;
-                case NAVIGATION.LAST:           text(CONSTANTS.TRIANGLE_R+"|",                  this.w/2+offset, this.h/2+offset); break;
+                case NAVIGATION.LAST:           text(CONSTANTS.TRIANGLE_R+'|',                  this.w/2+offset, this.h/2+offset); break;
                 case NAVIGATION.INCREMENTPAGE:  text(CONSTANTS.TRIANGLE_R+CONSTANTS.TRIANGLE_R, this.w/2+offset, this.h/2+offset); break;
                 case NAVIGATION.DECREMENTPAGE:  text(CONSTANTS.TRIANGLE_L+CONSTANTS.TRIANGLE_L, this.w/2+offset, this.h/2+offset); break;
 
@@ -1069,12 +1093,12 @@ println(app.levels);
               
               // switch(this.type){
 
-                // case NAVIGATION.FIRST:          text("|<", this.w/2+offset, this.h/2+offset); break;
-                // case NAVIGATION.DECREMENT:      text("<",  this.w/2+offset, this.h/2+offset); break;
-                // case NAVIGATION.INCREMENT:      text(">",  this.w/2+offset, this.h/2+offset); break;
-                // case NAVIGATION.LAST:           text(">|", this.w/2+offset, this.h/2+offset); break;
-                // case NAVIGATION.INCREMENTPAGE:  text(">>", this.w/2+offset, this.h/2+offset); break;
-                // case NAVIGATION.DECREMENTPAGE:  text("<<", this.w/2+offset, this.h/2+offset); break;
+                // case NAVIGATION.FIRST:          text('|<', this.w/2+offset, this.h/2+offset); break;
+                // case NAVIGATION.DECREMENT:      text('<',  this.w/2+offset, this.h/2+offset); break;
+                // case NAVIGATION.INCREMENT:      text('>',  this.w/2+offset, this.h/2+offset); break;
+                // case NAVIGATION.LAST:           text('>|', this.w/2+offset, this.h/2+offset); break;
+                // case NAVIGATION.INCREMENTPAGE:  text('>>', this.w/2+offset, this.h/2+offset); break;
+                // case NAVIGATION.DECREMENTPAGE:  text('<<', this.w/2+offset, this.h/2+offset); break;
 
                 // default:  break;
 
@@ -1085,8 +1109,7 @@ println(app.levels);
       navButton.prototype.clicked=function(){
       /* Overridden to maintain on/off value */
 
-        if(this.hit &&
-           app.focus===this.id){
+        if(app.focus===this.id){
 
           this.execute();
           // this.on=!this.on;
@@ -1125,15 +1148,7 @@ println(app.levels);
             noStroke();
             fill(getColor(CLRS.BLACK,5));
 
-            if(this.hit &&
-               this.parent.hit){
-
-              app.focus=this.id;
-              cursor(this.cursor);
-
-              fill(this.acolor);
-
-            }
+            if(this.hit){ fill(this.acolor); }
 
               rect(0, 0, this.w, this.h);
 
@@ -1142,12 +1157,10 @@ println(app.levels);
             textFont(createFont(this.font, 16));
             textAlign(CENTER,CENTER);
 
-            if(this.hit &&
-               this.parent.hit){ fill(CLRS.WHITE); }
+            if(app.focus===this.id){ fill(CLRS.WHITE); }
                        
               text(this.text, this.w/2, this.h/2);
 
-            // Draw child controls
             for(var c in this.controls){ this.controls[c].draw(); }
 
         popMatrix();
@@ -1174,15 +1187,11 @@ println(app.levels);
       telemetry.prototype=Object.create(control.prototype);
       telemetry.prototype.draw=function(){
 
-        if(app.legend===false &&
+        if(app.telemetry===false &&
            this.offset===0){ return; }
 
-        // textFont(createFont("sans-serif", 14));
-
-        var p=this;
-
         // Border
-        var border=function(){
+        var border=function(p){
 
           strokeWeight(1);
           stroke(getColor(p.clr,100));
@@ -1195,7 +1204,7 @@ println(app.levels);
         };
 
         //  Properties
-        var properties=function(){
+        var properties=function(p){
 
           var row0=30;
 
@@ -1203,8 +1212,8 @@ println(app.levels);
           var col1=p.offset+30;
           var col2=p.offset+130;
 
-          if     ( app.legend && p.offset>-200){ p.offset-=10; }
-          else if(!app.legend && p.offset<0   ){ p.offset+=10; }
+          if     ( app.telemetry && p.offset>-200){ p.offset-=10; }
+          else if(!app.telemetry && p.offset<0   ){ p.offset+=10; }
 
           if(this.hit){ fill(getColor(CLRS.WHITE,80)); }
           else        { fill(getColor(CLRS.WHITE,60)); }
@@ -1214,7 +1223,7 @@ println(app.levels);
           textSize(12);
           fill(CLRS.WHITE);
 
-            text("Debug Telemetry",     p.w/2+p.offset, 20);
+            text('Debug Telemetry',     p.w/2+p.offset, 20);
 
           /* Mouse Coordinates ------------------------- */
           textSize(10);
@@ -1223,56 +1232,56 @@ println(app.levels);
 
           fill(getColor(CLRS.TEAL_2,75));
 
-            text("Mouse Coordinates \n\n\n\n" +
-                 "Mouse Buttons     \n\n\n\n\n" +
-                 "Controls          \n\n\n\n" +
-                 "Keys              \n\n\n\n\n" +
-                 "App               \n\n\n\n",
+            text('Mouse Coordinates \n\n\n\n' +
+                 'Mouse Buttons     \n\n\n\n\n' +
+                 'Controls          \n\n\n\n' +
+                 'Keys              \n\n\n\n\n' +
+                 'App               \n\n\n\n',
                  col1, row0+15);
 
           /* app.focus is required to be done after control update in main draw sub */
 
           fill(getColor(CLRS.WHITE,75));
 
-            text("            \n" +
-                 "x:          \n" +
-                 "y:          \n\n\n" +
-                 "Left:       \n" +
-                 "Right:      \n" +
-                 "Center:     \n\n\n" +
-                 "Focus:      \n" +
-                 "Focused:    \n\n\n" +
-                 "Alt:        \n" +
-                 "Control:    \n" +
-                 "Shift:      \n\n\n" +
-                 "Legend:     \n" +
-                 "Calculating:\n" +
-                 "Cursor:     \n" +
-                 "Frame Rate: \n" +
-                 "Info:",
+            text('            \n' +
+                 'x:          \n' +
+                 'y:          \n\n\n' +
+                 'Left:       \n' +
+                 'Right:      \n' +
+                 'Center:     \n\n\n' +
+                 'Focus:      \n' +
+                 'Focused:    \n\n\n' +
+                 'Alt:        \n' +
+                 'Control:    \n' +
+                 'Shift:      \n\n\n' +
+                 'telemetry:     \n' +
+                 'Calculating:\n' +
+                 'Cursor:     \n' +
+                 'Frame Rate: \n' +
+                 'Info:',
                  col1, row0+15);
 
           fill(getColor(CLRS.YELLOW,75));
 
-            text("\n" +
-                 mouseX                     + "\n" +
-                 mouseY                     + "\n\n\n" +
-                 app.left                   + "\n" +
-                 app.right                  + "\n" +
-                 app.center                 + "\n\n\n" +
-                 app.focus                  + "\n" +
-                 focused                    + "\n\n\n" +
-                 app.keys[KEYCODES.ALT]     + "\n" +
-                 app.keys[KEYCODES.CONTROL] + "\n" +
-                 app.keys[KEYCODES.SHIFT]   + "\n\n\n" +
-                 app.legend                 + "\n" +
-                 app.calculating            + "\n" +
-                 app.cursor                 + "\n" +
-                 app.frameRate              + "\n" +
+            text('\n' +
+                 mouseX                     + '\n' +
+                 mouseY                     + '\n\n\n' +
+                 app.left                   + '\n' +
+                 app.right                  + '\n' +
+                 app.center                 + '\n\n\n' +
+                 app.focus                  + '\n' +
+                 focused                    + '\n\n\n' +
+                 app.keys[KEYCODES.ALT]     + '\n' +
+                 app.keys[KEYCODES.CONTROL] + '\n' +
+                 app.keys[KEYCODES.SHIFT]   + '\n\n\n' +
+                 app.telemetry                 + '\n' +
+                 app.calculating            + '\n' +
+                 app.cursor                 + '\n' +
+                 app.frameRate              + '\n' +
                  app.infoOn,
                  col2, row0+15);
 
-          var txt="Press the left and right arrow keys to increment and decrement integer.";
+          var txt='Press the left and right arrow keys to increment and decrement integer.';
 
           textSize(11);
           textAlign(LEFT,BOTTOM);
@@ -1285,34 +1294,28 @@ println(app.levels);
 
           translate(this.x, this.y);            
           
-            if(this.hit &&
-               this.parent.hit){
-
-              app.focus=this.id;
-              cursor(this.cursor);
+            if(this.hit){
 
             }
 
-            if     ( app.legend && this.offset>-200){ this.offset-=10; }
-            else if(!app.legend && this.offset<0   ){ this.offset+=10; }
+            if     ( app.telemetry && this.offset>-200){ this.offset-=10; }
+            else if(!app.telemetry && this.offset<0   ){ this.offset+=10; }
 
             textFont(createFont(this.font, 16));
 
-            border();
-            properties();
+            border(this);
+            properties(this);
 
             // Draw child controls
             for(var c in this.controls){ this.controls[c].draw(); }
 
-            /* The following is outside the properties function because
-               it has to be done after the child controls are drawn to
-               maintain proper control focus                              */
-            fill(getColor(CLRS.YELLOW,75));
+            // /* The following is outside the properties function because
+               // it has to be done after the child controls are drawn to
+               // maintain proper control focus                              */
+            // fill(getColor(CLRS.YELLOW,75));
             
-            textSize(11);
-            textAlign(RIGHT,CENTER);
-
-            // text(app.focus, this.offset+130, 495);
+            // textSize(11);
+            // textAlign(RIGHT,CENTER);
 
         popMatrix();
 
@@ -1320,21 +1323,30 @@ println(app.levels);
       telemetry.prototype.moved=function(x,y){
       /* Overridden because of the dynamic x-coordinate offset */
 
-        if(mouseX>this.x+x+this.offset &&
-           mouseX<this.x+x+this.offset + this.w &&
-           mouseY>this.y+y &&
-           mouseY<this.y+y + this.h){
+        if(app.telemetry===false &&
+           this.offset===0){ return; }
+           
+          if(this.parent.hit){
 
-          this.hit=true;
+            if(mouseX>this.x+x+this.offset &&
+               mouseX<this.x+x+this.offset + this.w &&
+               mouseY>this.y+y &&
+               mouseY<this.y+y + this.h){
 
-          for(var c in this.controls){ this.controls[c].moved(this.x+x+this.offset, this.y+y); }
+              this.hit=true;
+              app.focus=this.id;
+              cursor(this.cursor);
 
-        }
-        else{
+              for(var c in this.controls){ this.controls[c].moved(this.x+x+this.offset, this.y+y); }
 
-          this.hit=false;
+            }
+            else{
 
-        }
+              this.hit=false;
+
+            }
+
+          }
 
       };
 
@@ -1364,20 +1376,8 @@ println(app.levels);
             ellipseMode(CENTER);
             textFont(createFont(this.font, 16));
 
-            if(this.hit &&
-               this.parent.hit){
-
-              app.focus=this.id;
-              cursor(this.cursor);
-
-              stroke(getColor(this.color, 75));
-
-            }
-            else{
-
-              stroke(getColor(this.color, 50));
-
-            }
+            if(this.hit){ stroke(getColor(this.color, 75)); }
+            else        { stroke(getColor(this.color, 50)); }
 
             if(this.on){ rotate(-PI/2); }
             else       { this.value=0;  }
@@ -1394,17 +1394,24 @@ println(app.levels);
       };
       onOff.prototype.moved=function(x,y){
       /* Overridden because the control is round */
-        if(dist(mouseX, mouseY,
-                this.x+x, this.y+y)<this.w){
 
-          this.hit=true;
+        if(this.parent.hit){
+          
+          if(dist(mouseX, mouseY,
+                  this.x+x, this.y+y)<this.w){
 
-          for(var c in this.controls){ this.controls[c].moved(this.x+x, this.y+y); }
+            this.hit=true;
+            app.focus=this.id;
+            cursor(this.cursor);
 
-        }
-        else{
+            for(var c in this.controls){ this.controls[c].moved(this.x+x, this.y+y); }
 
-          this.hit=false;
+          }
+          else{
+
+            this.hit=false;
+
+          }
 
         }
 
@@ -1413,8 +1420,10 @@ println(app.levels);
       /* Overridden to maintain on/off value */
 
         if(this.hit){
+          
           this.execute();
           this.on=!this.on;
+
         }
 
       };
@@ -1445,44 +1454,20 @@ println(app.levels);
 
             ellipseMode(CENTER);
 
-            if(this.hit &&
-               this.parent.hit){
-
-              app.focus=this.id;
-              cursor(this.cursor);
-
-              stroke(getColor(this.color, 75));
-
-
-            }
-            else{
-
-              stroke(getColor(this.color, 50));
-
-            }
+            if(this.hit){ stroke(getColor(this.color, 75)); }
+            else        { stroke(getColor(this.color, 50)); }
 
             strokeWeight(1.5);
             noFill();
 
-            if(app.left &&
-               this.hit &&
-               this.parent.hit){
-
-                 rotate(radians(45));
-
-            }
+            if(this.hit &&
+               app.left){ rotate(radians(45)); }
 
               arc(0, 0, this.w, this.h, radians(60), 2*PI-radians(22.5));
 
             if(app.left &&
-               this.hit &&
-               this.parent.hit){
-
-              fill(  getColor(this.color, 75));
-
-            }
-            else{fill(  getColor(this.color, 50));
-            }
+               app.left){ fill(getColor(this.color, 75)); }
+            else        { fill(getColor(this.color, 50)); }
 
               triangle( 5,  2,
                         2, -2,
@@ -1493,17 +1478,24 @@ println(app.levels);
       };
       resetButton.prototype.moved=function(x,y){
       /* Overridden because the control is round */
-        if(dist(mouseX, mouseY,
-                this.x+x, this.y+y)<this.w){
 
-          this.hit=true;
+        if(this.parent.hit){
+        
+          if(dist(mouseX, mouseY,
+                  this.x+x, this.y+y)<this.w){
 
-          for(var c in this.controls){ this.controls[c].moved(this.x+x, this.y+y); }
+            this.hit=true;
+            app.focus=this.id;
+            cursor(this.cursor);
 
-        }
-        else{
+            for(var c in this.controls){ this.controls[c].moved(this.x+x, this.y+y); }
 
-          this.hit=false;
+          }
+          else{
+
+            this.hit=false;
+
+          }
 
         }
 
@@ -1511,10 +1503,7 @@ println(app.levels);
       resetButton.prototype.clicked=function(){
       /* Overridden to maintain on/off value */
 
-        if(this.hit){
-          this.execute();
-          // this.on=!this.on;
-        }
+        if(this.hit){ this.execute(); }
 
       };
 
@@ -1546,8 +1535,7 @@ println(app.levels);
             noStroke();
             noFill();
 
-            if(this.hit &&
-               this.parent.hit){
+            if(this.hit){
 
               if(app.left){ offset=1; }
 
@@ -1565,8 +1553,7 @@ println(app.levels);
             textFont(createFont(this.font, 16));
             fill(getColor(this.color,50));
 
-            if(this.hit &&
-               this.parent.hit){ fill(getColor(CLRS.BLACK,75)); }
+            if(this.hit){ fill(getColor(CLRS.BLACK,75)); }
 
             noStroke();
 
@@ -1619,15 +1606,10 @@ println(app.levels);
 
             noStroke();
             noFill();
-            
 
-            if(this.hit &&
-               this.parent.hit){
+            if(this.hit){
 
               if(app.left){ offset=1; }
-
-              app.focus=this.id;
-              cursor(this.cursor);
 
               fill(getColor(this.color,10));
 
@@ -1637,14 +1619,11 @@ println(app.levels);
             rect(offset, offset, this.w, this.h, 2);
 
             // Icon
-            textFont(createFont(this.font, 24));
-            textAlign(CENTER,CENTER);
-
             fill(getColor(this.color,50));
 
-            if(this.hit &&
-               this.parent.hit){ fill(getColor(CLRS.BLACK,75)); }
-
+            if(this.hit){ fill(getColor(CLRS.BLACK,75)); }
+            
+            textAlign(CENTER,CENTER);
             textFont(createFont(this.font, 20));
 
               text(this.text, this.w/2+offset, this.h/2+offset);
@@ -1680,7 +1659,7 @@ println(app.levels);
         this.color    = params.color;
         this.cursor   = params.cursor;
         this.font     = params.font;
-
+        
       };
       play.prototype=Object.create(control.prototype);
       play.prototype.draw=function(){
@@ -1694,13 +1673,9 @@ println(app.levels);
             noStroke();
             noFill();
 
-            if(this.hit &&
-               this.parent.hit){
+            if(this.hit){
 
               if(app.left){ offset=1; }
-
-              app.focus=this.id;
-              cursor(this.cursor);
 
               fill(getColor(this.color,10));
 
@@ -1710,18 +1685,13 @@ println(app.levels);
             rect(offset, offset, this.w, this.h, 2);
 
             // Icon
-            textFont(createFont(this.font, 16));
-            textSize(24);
-            textAlign(CENTER,CENTER);
-
             fill(getColor(this.color,50));
 
-            if(this.hit &&
-               this.parent.hit){ fill(getColor(CLRS.BLACK,75)); }
+            if(this.hit){ fill(getColor(CLRS.BLACK,75)); }
 
-            triangle( 15+offset, 10+offset,
-                       5+offset,  5+offset,
-                       5+offset, 15+offset);
+              triangle( 15+offset, 10+offset,
+                         5+offset,  5+offset,
+                         5+offset, 15+offset);
 
         popMatrix();
 
@@ -1771,17 +1741,12 @@ println(app.levels);
 
               // Border
               strokeWeight(0.75);
-
               fill(getColor(CLRS.ACTIVE, 5));
               noStroke();
 
-              if(this.hit &&
-                 this.parent.hit){
+              if(this.hit){
 
                 if(app.left){ offset=1; }
-
-                app.focus=this.id;
-                cursor(this.cursor);
 
                 fill(getColor(CLRS.ACTIVE, 50));
 
@@ -1790,9 +1755,8 @@ println(app.levels);
               rect(offset, -this.h-offset, this.w, this.h, 3);
 
               // Caption
-              if(this.hit &&
-                 this.parent.hit){  fill(255,255,255); }
-              else               {  fill(128,128,128); }
+              if(this.hit){ fill(255,255,255); }
+              else        { fill(128,128,128); }
 
               scale(1,-1);
 
@@ -1808,8 +1772,7 @@ println(app.levels);
       button.prototype.clicked=function(){
       /* Overridden to maintain on/off value */
 
-        if(this.hit &&
-           app.focus===this.id){
+        if(this.hit){
 
           this.execute();
 
@@ -1940,13 +1903,9 @@ println(app.levels);
               stroke(getColor(this.color, 25));
               fill  (getColor(this.color,  5));
 
-              if(this.hit && 
-                 this.parent.hit){
+              if(this.hit){
 
                 if(app.left){ this.offset=1; }
-
-                app.focus=this.id;
-                cursor(this.cursor);
 
                 strokeWeight(1.5);
 
@@ -1993,7 +1952,6 @@ println(app.levels);
 
               if(!this.choose){
 
-
                 text(this.integer, this.offset, this.offset);
               
               }
@@ -2008,6 +1966,7 @@ println(app.levels);
                 textAlign(CENTER,TOP);
 
                   text(this.col, this.offset, this.offset);
+
               }
               
           popMatrix();
@@ -2015,57 +1974,63 @@ println(app.levels);
       };
       hexButton.prototype.moved=function(x,y){
       /* Overridden because of the shape */
+          
+        if(this.parent.hit){
+          
+          if(dist(mouseX, mouseY,
+                  this.x+x,
+                  this.y+y)<this.w/2){
 
-        if(dist(mouseX, mouseY,
-                this.x+x,
-                this.y+y)<this.w/2){
+            this.outerHit=true;
 
-          this.outerHit=true;
+              var rectHit=rectangleHit(new pnt(this.x+this.p1.x+x, this.y+this.p1.y+y),
+                                       new pnt(this.x+this.p3.x+x, this.y+this.p3.y+y),
+                                       new pnt(this.x+this.p6.x+x, this.y+this.p6.y+y));
 
-            var rectHit=rectangleHit(new pnt(this.x+this.p1.x+x, this.y+this.p1.y+y),
-                                     new pnt(this.x+this.p3.x+x, this.y+this.p3.y+y),
-                                     new pnt(this.x+this.p6.x+x, this.y+this.p6.y+y));
+              var triHit1=triangleHit(new pnt(this.x+this.p1.x+x, this.y+this.p1.y+y),
+                                      new pnt(this.x+this.p2.x+x, this.y+this.p2.y+y),
+                                      new pnt(this.x+this.p3.x+x, this.y+this.p3.y+y));
 
-            var triHit1=triangleHit(new pnt(this.x+this.p1.x+x, this.y+this.p1.y+y),
-                                    new pnt(this.x+this.p2.x+x, this.y+this.p2.y+y),
-                                    new pnt(this.x+this.p3.x+x, this.y+this.p3.y+y));
+              var triHit2=triangleHit(new pnt(this.x+this.p4.x+x, this.y+this.p4.y+y),
+                                      new pnt(this.x+this.p5.x+x, this.y+this.p5.y+y),
+                                      new pnt(this.x+this.p6.x+x, this.y+this.p6.y+y));
+              if(rectHit ||
+                 triHit1 ||
+                 triHit2){
 
-            var triHit2=triangleHit(new pnt(this.x+this.p4.x+x, this.y+this.p4.y+y),
-                                    new pnt(this.x+this.p5.x+x, this.y+this.p5.y+y),
-                                    new pnt(this.x+this.p6.x+x, this.y+this.p6.y+y));
-            if(rectHit ||
-               triHit1 ||
-               triHit2){
+                this.hit=true;
+                
+                app.row=this.row;
+                app.col=this.col;
 
-              this.hit=true;
-              
-              app.row=this.row;
-              app.col=this.col;
+                app.focus=this.id;
+                cursor(this.cursor);
 
-            // app.path=this.path;
-            // for(var c in this.controls){ this.controls[c].moved(); }
+              // app.path=this.path;
+              // for(var c in this.controls){ this.controls[c].moved(); }
 
-            }
-            else{
+              }
+              else{
 
-              this.hit=false;
+                this.hit=false;
 
-            }
+              }
 
+          }
+          else{
+
+            this.outerHit=false;
+            this.hit=false;
+
+          }
+          
         }
-        else{
-
-          this.outerHit=false;
-          this.hit=false;
-
-        }
-
+        
       };
       hexButton.prototype.clicked=function(){
       /* Overridden to maintain on/off value */
 
-        if(this.hit &&
-           this.parent.hit){
+        if(this.hit){
           
           app.path=this.path;
           app.cursor=this.ordinal;
@@ -2156,8 +2121,6 @@ println(app.levels);
         this.size   = height/this.levels;
         this.font   = params.font;
 
-// println(params.size);
-
         this.row    = 0;
         this.col    = 0;
 
@@ -2173,16 +2136,16 @@ println(app.levels);
           var w2=this.size/2;
 
           // PI/6 radians = 30 degrees
-          var rowOffset=this.size-(w2*cos(PI/3));
-          var colOffset=cos(PI/6)*w2;
-          var top=this.h-(this.levels*this.size+this.levels*(rowOffset-1))/2;
+          var rowOffset = this.size-(w2*cos(PI/3));
+          var colOffset = cos(PI/6)*w2;
+          var top       = this.h-(this.levels*this.size+this.levels*(rowOffset-1))/2;
 
           /* Pascal buttons        */
           for(var y=0; y<this.levels; y++){
 
             for(var x=0; x<=y; x++){
 
-              ID=x + "," + y;
+              ID=y + ',' + x;
 
               xPos = x*colOffset*2-y*colOffset-this.size*this.levels/2;
               yPos = y*rowOffset+w2+top;
@@ -2194,7 +2157,7 @@ println(app.levels);
                  integer:   app.pascal[y][x],
                  total:     0,
                  color:     CLRS.K_TEAL_1,
-                 font:      "monospace",
+                 font:      'monospace',
                  cursor:    HAND,
                  execute:   executePascal,
                  retrieve:  retrievePascal}));
@@ -2208,8 +2171,6 @@ println(app.levels);
 
           }
 
-// println(total);
-
           app.cells=total;
 
         };
@@ -2218,29 +2179,27 @@ println(app.levels);
 
       };
       pyramid.prototype=Object.create(control.prototype);
-      pyramid.prototype.draw=function(){
+      pyramid.prototype.draw    = function(){
 
         pushMatrix();
 
-          translate(this.x+0.5,this.y+0.5);
+          translate(this.x-0.5,this.y-0.5);
 
             noFill();
             noStroke();
 
-            fill(getColor(CLRS.YELLOW,5));
+            fill(getColor(CLRS.YELLOW,10));
             textFont(createFont(this.font, 12));
-            
-            if(this.hit &&
-               this.parent.hit){
 
-              fill(getColor(CLRS.YELLOW,10));
+            if(this.hit){
+
+              fill(getColor(CLRS.YELLOW,20));
               stroke(CLRS.GREEN);
               strokeWeight(0.25);
-              app.focus=this.id;
 
             }
 
-            rect(0, 0, this.w-1, this.h-1);
+              rect(0, 0, this.w-1, this.h-1);
 
             for(var c=0; c<this.controls.length; c++){
 
@@ -2255,7 +2214,7 @@ println(app.levels);
         popMatrix();
 
       };
-      pyramid.prototype.reset=function(){
+      pyramid.prototype.reset   = function(){
 
         this.levels=app.levels;
         this.size=height/app.levels;
@@ -2280,35 +2239,41 @@ println(app.levels);
         this.on=false;
 
       };
-      pyramid.prototype.moved=function(){
+      pyramid.prototype.moved   = function(){
       /* Overridden because of the shape */
 
-        if(mouseX>this.x &&
-           mouseX<this.x+this.w &&
-           mouseY>this.y &&
-           mouseY<this.y+this.h){
+        if(this.parent.hit){
 
-          this.hit=true;
+          if(mouseX>this.x &&
+             mouseX<this.x+this.w &&
+             mouseY>this.y &&
+             mouseY<this.y+this.h){
 
-          for(var r=0; r<this.controls.length; r++){
+            this.hit=true;
+            app.focus=this.id;
+            cursor(this.cursor);
 
-            for(var c in this.controls[r]){
+            for(var r=0; r<this.controls.length; r++){
 
-              this.controls[r][c].moved(this.x,this.y);
+              for(var c in this.controls[r]){
+
+                this.controls[r][c].moved(this.x,this.y);
+
+              }
 
             }
+          
+          }
+          else{
+
+            this.hit=false;
 
           }
 
         }
-        else{
-
-          this.hit=false;
-
-        }
 
       };
-      pyramid.prototype.calc=function(){
+      pyramid.prototype.calc    = function(){
 
         // if(this.on===false){
 
@@ -2330,7 +2295,7 @@ println(app.levels);
         this.on=true;
 
       }
-      pyramid.prototype.step=function(row,col){
+      pyramid.prototype.step    = function(row,col){
 
         this.controls[row][col].calc();
 
@@ -2338,10 +2303,10 @@ println(app.levels);
         this.controls[row+1][col+1].set();
 
       }
-      pyramid.prototype.out=function(){ this.hit=false; }
-      pyramid.prototype.pressed=function(){}
-      pyramid.prototype.dragged=function(){}
-      pyramid.prototype.clicked=function(){
+      pyramid.prototype.out     = function(){ this.hit=false; }
+      pyramid.prototype.pressed = function(){}
+      pyramid.prototype.dragged = function(){}
+      pyramid.prototype.clicked = function(){
 
         if(this.hit){
 
@@ -2367,7 +2332,7 @@ println(app.levels);
     println(n);
   };
   var retrievePascal=function(){
-    println("retrieve pascal");
+    println('retrieve pascal');
   };
   var updatePascal=function(){
 
@@ -2381,27 +2346,27 @@ println(app.levels);
       // Background --------------------------------------------------
 
         /* root control       */
-        var bk=new root(100, null, 0, 0, width, height,
-          {text:      "root",
+        var bk=new root(100, null, 0, 0, width-1, height-1,
+          {text:      'root',
            acolor:    CLRS.ACTIVE,
            icolor:    CLRS.INACTIVE,
-           font:      "monospace",
+           font:      'monospace',
            cursor:    ARROW,
-           border:    false});
+           border:    true});
 
         app.controls.push(bk);
            
-        app.controls.push(new pyramid(1000, bk, bk.w/2-100, 30, 200, height-55,
-          {font:      "monospace",
-           levels:  app.levels,
-           size:    0,}));
+          app.controls.push(new pyramid(1234, bk, bk.x, bk.y+40, width-200, height-100,
+            {font:      'monospace',
+             levels:    app.levels,
+             size:      0,}));
      
       // toolbar --------------------------------------------------
       {
         /* tlbar             */
         var tlbar=new toolbar(200, bk, 0, 0, width, 30,
-          {text:      "Pascals Triangle",
-           font:      "monospace",
+          {text:      'Pascals Triangle',
+           font:      'monospace',
            acolor:    CLRS.K_TEAL_3,
            icolor:    CLRS.ACTIVE,
            cursor:    ARROW});
@@ -2412,7 +2377,7 @@ println(app.levels);
           tlbar.controls.push(new play(210, tlbar, 5, 5, 20, 20,
             {execute:   toggleCalculate,
              retrieve:  getCalculate,
-             font:      "monospace",
+             font:      'monospace',
              color:     CLRS.K_TEAL_0,
              cursor:    HAND}));
 
@@ -2420,26 +2385,28 @@ println(app.levels);
           tlbar.controls.push(new resetButton(220, tlbar, 40, 15, 13, 13,
             {execute:   reset,
              retrieve:  getCalculate,
-             font:      "monospace",
-             color:     CLRS.K_TEAL_0,
-             cursor:    HAND}));
-
-          /* settings        */
-          tlbar.controls.push(new settings(230, tlbar, width-25, 5, 22, 22,
-            {execute:   toggleLegend,
-             retrieve:  getLegend,
-             font:      "monospace",
+             font:      'monospace',
              color:     CLRS.K_TEAL_0,
              cursor:    HAND}));
 
           /* information     */
-          tlbar.controls.push(new info(240, tlbar, width-52, 5, 22, 22,
-            {text:      "i",
-             font:      "monospace",
+          tlbar.controls.push(new info(230, tlbar, width-52, 5, 22, 22,
+            {text:      'i',
+             font:      'monospace',
              execute:   toggleInfo,
              retrieve:  getInfo,
              color:     CLRS.K_TEAL_0,
              cursor:    HAND}));
+             
+          /* settings        */
+          tlbar.controls.push(new settings(240, tlbar, width-25, 5, 22, 22,
+            {execute:   toggletelemetry,
+             retrieve:  gettelemetry,
+             font:      'monospace',
+             color:     CLRS.K_TEAL_0,
+             cursor:    HAND}));
+
+
       }
 
       // Navigation --------------------------------------------------
@@ -2448,8 +2415,8 @@ println(app.levels);
 
         /* Navbar            */
         var nvbar=new navbar(300, bk, 0, height-25, width, h,
-          {text:        "Navigation",
-           font:        "sans-serif",
+          {text:        'Navigation',
+           font:        'sans-serif',
            icolor:      CLRS.INACTIVE,
            acolor:      CLRS.K_TEAL_4,
            cursor:      ARROW,
@@ -2461,7 +2428,7 @@ println(app.levels);
 
           /* Decrement Page        */
           nvbar.controls.push(new navButton(310, nvbar, 0, 0, 50, h,
-            {font:      "sans-serif",
+            {font:      'sans-serif',
              execute:   decrementRows,
              type:      NAVIGATION.DECREMENTPAGE,
              retrieve:  navCursor,
@@ -2470,7 +2437,7 @@ println(app.levels);
 
           /* Increment Page       */
           nvbar.controls.push(new navButton(320, nvbar, width-50, 0, 50, h,
-            {font:      "sans-serif",
+            {font:      'sans-serif',
              execute:   incrementRows,
              type:      NAVIGATION.INCREMENTPAGE,
              retrieve:  navCursor,
@@ -2479,7 +2446,7 @@ println(app.levels);
 
           /* First Record         */
           nvbar.controls.push(new navButton(330, nvbar, 50, 0, 25, h,
-            {font:      "sans-serif",
+            {font:      'sans-serif',
              execute:   firstRecord,
              type:      NAVIGATION.FIRST,
              retrieve:  navCursor,
@@ -2488,7 +2455,7 @@ println(app.levels);
 
           /* Decrement Record     */
           nvbar.controls.push(new navButton(340, nvbar, 75, 0, 25, h,
-            {font:      "sans-serif",
+            {font:      'sans-serif',
              execute:   decrementCursor,
              type:      NAVIGATION.DECREMENT,
              retrieve:  navCursor,
@@ -2497,7 +2464,7 @@ println(app.levels);
 
           /* Increment Record     */
           nvbar.controls.push(new navButton(350, nvbar, width-100, 0, 25, h,
-            {font:      "sans-serif",
+            {font:      'sans-serif',
              execute:   incrementCursor,
              type:      NAVIGATION.INCREMENT,
              retrieve:  navCursor,
@@ -2506,7 +2473,7 @@ println(app.levels);
 
           /* Last Record          */
           nvbar.controls.push(new navButton(360, nvbar, width-75, 0, 25, h,
-            {font:      "sans-serif",
+            {font:      'sans-serif',
              execute:   lastRecord,
              type:      NAVIGATION.LAST,
              retrieve:  navCursor,
@@ -2515,7 +2482,7 @@ println(app.levels);
 
           /* Scroll               */
           nvbar.controls.push(new navScroll(370, nvbar, 100, 0, width-200, h,
-            {font:      "sans-serif",
+            {font:      'sans-serif',
              execute:   navSetCursor,
              color:     CLRS.BLACK,
              cursor:    MOVE}));
@@ -2533,7 +2500,7 @@ println(app.levels);
 
           // /* Sine button        */
           // bk.controls.push(new button(310, bk, 15, 45, 120, 20,
-            // {text:     "Sin "+CONSTANTS.THETA,
+            // {text:     'Sin '+CONSTANTS.THETA,
              // execute:  toggleSine,
              // tag:      getSine,
              // retrieve: getSineOn,
@@ -2542,7 +2509,7 @@ println(app.levels);
 
           // /* Cosine button      */
           // bk.controls.push(new button(320, bk, 15, 65, 120, 20,
-            // {text:     "Cos "+CONSTANTS.THETA,
+            // {text:     'Cos '+CONSTANTS.THETA,
              // execute:  toggleCosine,
              // tag:      getCosine,
              // retrieve: getCosineOn,
@@ -2551,7 +2518,7 @@ println(app.levels);
 
           // /* Tangent button     */
           // bk.controls.push(new button(330, bk, 15, 85, 120, 20,
-            // {text:     "Tan "+CONSTANTS.THETA,
+            // {text:     'Tan '+CONSTANTS.THETA,
              // execute:  toggleTangent,
              // tag:      getTangent,
              // retrieve: getTangentOn,
@@ -2560,7 +2527,7 @@ println(app.levels);
 
           // /* Cosecant button    */
           // bk.controls.push(new button(340, bk, 15, 110, 120, 20,
-            // {text:     "Csc "+CONSTANTS.THETA,
+            // {text:     'Csc '+CONSTANTS.THETA,
              // execute:  toggleCosecant,
              // tag:      getCosecant,
              // retrieve: getCosecantOn,
@@ -2569,7 +2536,7 @@ println(app.levels);
 
           // /* Secant button      */
           // bk.controls.push(new button(350, bk, 15, 130, 120, 20,
-            // {text:     "Sec "+CONSTANTS.THETA,
+            // {text:     'Sec '+CONSTANTS.THETA,
              // execute:  toggleSecant,
              // tag:      getSecant,
              // retrieve: getSecantOn,
@@ -2578,7 +2545,7 @@ println(app.levels);
 
           // /* Cotangent button   */
           // bk.controls.push(new button(360, bk, 15, 150, 120, 20,
-            // {text:     "Cot "+CONSTANTS.THETA,
+            // {text:     'Cot '+CONSTANTS.THETA,
              // execute:  toggleCotangent,
              // tag:      getCotangent,
              // retrieve: getCotangentOn,
@@ -2587,7 +2554,7 @@ println(app.levels);
 
           // /* Excosecant button   */
           // bk.controls.push(new button(360, bk, 15, 175, 120, 20,
-            // {text:     "Excsc "+CONSTANTS.THETA,
+            // {text:     'Excsc '+CONSTANTS.THETA,
              // execute:  toggleExcosecant,
              // tag:      getExcosecant,
              // retrieve: getExcosecantOn,
@@ -2596,7 +2563,7 @@ println(app.levels);
 
           // /* Coversine button   */
           // bk.controls.push(new button(360, bk, 15, 195, 120, 20,
-            // {text:     "Cvs "+CONSTANTS.THETA,
+            // {text:     'Cvs '+CONSTANTS.THETA,
              // execute:  toggleCoversine,
              // tag:      getCoversine,
              // retrieve: getCoversineOn,
@@ -2605,7 +2572,7 @@ println(app.levels);
 
           // /* Versine button   */
           // bk.controls.push(new button(360, bk, 15, 220, 120, 20,
-            // {text:     "Ver "+CONSTANTS.THETA,
+            // {text:     'Ver '+CONSTANTS.THETA,
              // execute:  toggleVersine,
              // tag:      getVersine,
              // retrieve: getVersineOn,
@@ -2614,7 +2581,7 @@ println(app.levels);
 
           // /* Exsecant button   */
           // bk.controls.push(new button(360, bk, 15, 240, 120, 20,
-            // {text:     "Exsec "+CONSTANTS.THETA,
+            // {text:     'Exsec '+CONSTANTS.THETA,
              // execute:  toggleExsecant,
              // tag:      getExsecant,
              // retrieve: getExsecantOn,
@@ -2627,26 +2594,28 @@ println(app.levels);
         /* Splash Screen      */
         var splashScreen=new splash(500, bk, 0, 100, 400, 400,
           {color:     CLRS.BLACK,
-           font:      "monospace",
+           font:      'monospace',
            retrieve:  getInfo,
            cursor:    CROSS});
 
+           bk.controls.push(splashScreen);
+           
           /* Close              */
           splashScreen.controls.push(new button(510, splashScreen, 180, 360, 120, 20,
-            {text:      "Close",
-             font:      "monospace",
+            {text:      'Close',
+             font:      'monospace',
              execute:   toggleInfo,
              color:     CLRS.WHITE,
              cursor:    HAND}));
         
-        bk.controls.push(splashScreen);
+        
 
       // Telemetry --------------------------------------------------
       
         /* Telemetry          */
         var telem=new telemetry(400, bk, width, 30, 200, height-55,
           {color:     CLRS.BLACK,
-           font:      "sans-serif",
+           font:      'sans-serif',
            cursor:    ARROW});
 
         bk.controls.push(telem);
@@ -2667,25 +2636,25 @@ println(app.levels);
       textSize(12);
       textLeading(16);
 
-        text("Max:     \n" +
-             "Sum:     \n" +
-             "Length:",
+        text('Max:     \n' +
+             'Sum:     \n' +
+             'Length:',
              20, 70);
 
-        text(CONSTANTS.TRIANGLE_UP +"\n" +
-             CONSTANTS.TRIANGLE_DOWN + "",
+        text(CONSTANTS.TRIANGLE_UP +'\n' +
+             CONSTANTS.TRIANGLE_DOWN + '',
              170, 70);
 
       textAlign(RIGHT,TOP);
 
       fill(getColor(CLRS.K_TEAL_2,100));
 
-        text((nfc)(app.data[app.cursor].max)        + "\n" +
-             (nfc)(app.data[app.cursor].sum)        + "\n" +
+        text((nfc)(app.data[app.cursor].max)        + '\n' +
+             (nfc)(app.data[app.cursor].sum)        + '\n' +
              (nfc)((app.data[app.cursor].length-1)),
              140, 70);
 
-         text((nfc)(app.data[app.cursor].up)         + "\n" +
+         text((nfc)(app.data[app.cursor].up)         + '\n' +
               (nfc)(app.data[app.cursor].down),
               210, 70);
 
@@ -2697,15 +2666,15 @@ println(app.levels);
       textSize(16);
       textAlign(LEFT,TOP);
 
-        text("Range:", 290, 45);
+        text('Range:', 290, 45);
 
       textSize(12);
       textLeading(16);
       fill(getColor(CLRS.BLACK,75));
 
-        text("Max Peak: \n" +
-             "Max Sum:  \n" +
-             "Longest Path:",
+        text('Max Peak: \n' +
+             'Max Sum:  \n' +
+             'Longest Path:',
              300, 70);
 
       fill(getColor(CLRS.ORANGE,75));
@@ -2725,38 +2694,38 @@ println(app.levels);
       textAlign(LEFT,TOP);
       textSize(16);
 
-        text((nfc)(app.data[0].i) + " - " +
-             (nfc)(app.data[app.cells-1].i) + "\n\n",
+        text((nfc)(app.data[0].i) + ' - ' +
+             (nfc)(app.data[app.cells-1].i) + '\n\n',
              400, 45);
 
       fill(getColor(CLRS.K_TEAL_0,50));
       textAlign(LEFT,TOP);
       textSize(12);
 
-        text((nfc)(app.data[app.dHighest].i) +"\n" +
-             (nfc)(app.data[app.dSum].i) + "\n" +
+        text((nfc)(app.data[app.dHighest].i) +'\n' +
+             (nfc)(app.data[app.dSum].i) + '\n' +
              (nfc)(app.data[app.dLongest].i),
              400, 70);
 
       fill(getColor(CLRS.K_TEAL_2,75));
       textAlign(RIGHT,TOP);
 
-        text((nfc)(app.data[app.dHighest].max) + "\n" +
-             (nfc)(app.data[app.dSum].sum) + "\n" +
+        text((nfc)(app.data[app.dHighest].max) + '\n' +
+             (nfc)(app.data[app.dSum].sum) + '\n' +
              (nfc)(app.data[app.dLongest].length-1),
              540, 70);
 
     };
     var drawPath=function(){
 
-      var path="";
+      var path='';
 
       for(var n=0; n<app.data[app.cursor].path.length; n++){
 
         path+=app.data[app.cursor].path[n];
 
         if(n!==app.data[app.cursor].path.length-1){
-          path+= ", ";
+          path+= ', ';
         }
 
       }
@@ -2770,11 +2739,11 @@ println(app.levels);
 
     var ArrayToText=function(arr){
 
-      var txt="";
+      var txt='';
 
       for(var n=0; n<arr.length; n++){
 
-        txt=txt+arr[n] + " | ";
+        txt=txt+arr[n] + ' | ';
 
       }
 
@@ -2788,7 +2757,7 @@ println(app.levels);
       
       for(var row=0; row<arr.length; row++){
           
-        txt+=arr[row]+"\n";
+        txt+=arr[row]+'\n';
         // println(arr[row]);
         // for(var col=0; col<arr[row].length; col++){
 
@@ -2825,11 +2794,11 @@ app.text=txt;
 
     loadPascal();
 
-    println(ArrayToText2D(app.pascal));
+    // println(ArrayToText2D(app.pascal));
 
     var update=function(){
 
-      textFont(createFont("monospace", 16));
+      textFont(createFont('monospace', 16));
                   
       pushMatrix();
 
@@ -2906,7 +2875,7 @@ app.text=txt;
 
       };
       var keyTyped=function(){
-        /* println("typed " + (key) + " " + keyCode); */
+        /* println('typed ' + (key) + ' ' + keyCode); */
       };
       var keyReleased=function(){
 
