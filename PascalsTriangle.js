@@ -87,6 +87,9 @@ var diagrams = function(processingInstance){
 */
 
   var global=this;
+  
+  const MY_FAV = 7;
+  println(MY_FAV);
 
   function application(){
 
@@ -323,7 +326,7 @@ var diagrams = function(processingInstance){
       this.y = y;
     };
     pnt.prototype.toString=function(){ return this.x +  ", " + this.y; }
-    
+
   }
 
   /* Utility Functions ========================================================= */
@@ -333,7 +336,7 @@ var diagrams = function(processingInstance){
     function forEach(arr, func, props){
 
       for(var c=0; c<arr.length; c++){
-        
+
         arr[c][func](props);
 
       }
@@ -493,7 +496,7 @@ println(app.levels);
 
   /* Containers/Controls ======================================================= */
   {
-    
+
     // Default ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
 
@@ -514,6 +517,9 @@ println(app.levels);
 
         this.on       = false;    /* Is the control on or off */
         this.hit      = false;    /* mouse is over the control */
+        
+        this.active   = false;
+        this.offset   = 0;
 
         this.font     = 'Hello';
 
@@ -527,10 +533,9 @@ println(app.levels);
            mouseY<(this.y+y) + this.h){
 
           if(this.parent.hit){
-             
+
             this.hit=true;
             app.focus=this.id;
-            cursor(this.cursor);
 
             for(var c in this.controls){ this.controls[c].moved((this.x+x), (this.y+y)); }
 
@@ -542,16 +547,16 @@ println(app.levels);
           this.hit=false;
 
           for(var c in this.controls){ this.controls[c].hit=false; }
-          
+
         }
-                    
+
       };
       control.prototype.clicked=function(){
 
         if(this.hit){
 
           forEach(this.controls, 'clicked');
-          
+
         }
 
       };
@@ -582,7 +587,7 @@ println(app.levels);
     }
 
     /* Containers ================================================ */
-    
+
     // root ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
       /* Identical to a container control except is doesn't have a parent */
@@ -611,7 +616,13 @@ println(app.levels);
             noStroke();
             fill(this.icolor);
 
-            if(this.hit)   { fill(this.acolor); }
+            if(this.hit){
+              
+              fill(this.acolor);              
+              
+              cursor(this.cursor);
+          
+            }
             if(this.border){ strokeWeight(1);
                              stroke(CLRS.BLUE); }
 
@@ -624,7 +635,7 @@ println(app.levels);
       };
       root.prototype.moved=function(x,y){
       /* Required because root control doesn't have a parent */
-      
+
         if(mouseX>(this.x+x) &&
            mouseX<(this.x+x) + this.w &&
            mouseY>(this.y+y) &&
@@ -632,7 +643,6 @@ println(app.levels);
 
           this.hit=true;
           app.focus=this.id;
-          cursor(this.cursor);
 
           for(var c in this.controls){ this.controls[c].moved((this.x+x), (this.y+y)); }
 
@@ -642,7 +652,7 @@ println(app.levels);
           this.hit=false;
 
           for(var c in this.controls){ this.controls[c].hit=false; }
-                    
+
         }
 
       };
@@ -675,7 +685,12 @@ println(app.levels);
             fill(getColor(this.color, 5));
             textFont(this.font);
 
-            if(this.hit)   { fill(getColor(this.color, 10)); }
+            if(this.hit){
+
+              fill(getColor(this.color, 10));
+              cursor(this.cursor);
+
+            }
             if(this.border){
 
               strokeWeight(1);
@@ -686,7 +701,7 @@ println(app.levels);
               rect(0, 0, this.w, this.h, this.execute);
 
             forEach(this.controls, 'draw');
-            
+
         popMatrix();
 
       };
@@ -753,7 +768,8 @@ println(app.levels);
               fill(getColor(this.color, 100));
 
               if(this.hit){
-
+                
+                cursor(this.cursor);
                 // fill(getColor(this.color, 80));
 
               }
@@ -824,10 +840,9 @@ println(app.levels);
                mouseY<this.y+y + this.h){
 
               this.hit=true;
-              app.focus=this.id;
-              cursor(this.cursor);
+              app.focus=this.id;              
 
-              for(var c in this.controls){ this.controls[c].moved(this.x+x+this.offset, this.y+y); }
+              for(var c in this.controls){ this.controls[c].moved(this.x+x, this.y+y); }
 
             }
             else{
@@ -835,7 +850,7 @@ println(app.levels);
               this.hit=false;
 
               for(var c in this.controls){ this.controls[c].hit=false; }
-                        
+
             }
 
           }
@@ -845,8 +860,10 @@ println(app.levels);
       };
       splash.prototype.clicked=function(){
       /* Overridden to maintain on/off value */
-
-        if(this.hit){ forEach(this.controls, 'clicked'); }
+        
+        if(this.retrieve()){
+          if(this.hit){ forEach(this.controls, 'clicked'); }
+        }
 
       };
 
@@ -879,7 +896,13 @@ println(app.levels);
             noStroke();
             fill(this.icolor);
 
-            if(this.hit){ fill(this.acolor); }
+            if(this.hit){
+              
+              fill(this.acolor);
+                    
+              cursor(this.cursor);
+
+            }
 
               rect(0, 0, this.w, this.h);
 
@@ -904,9 +927,9 @@ println(app.levels);
         popMatrix();
 
       };
-      
+
     }
-    
+
     // Toolbar ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
 
@@ -933,7 +956,13 @@ println(app.levels);
             noStroke();
             fill(getColor(CLRS.BLACK,5));
 
-            if(this.hit){ fill(this.acolor); }
+            if(this.hit){
+              
+              fill(this.acolor);
+              
+              cursor(this.cursor);
+
+            }
 
               rect(0, 0, this.w, this.h);
 
@@ -947,7 +976,7 @@ println(app.levels);
               text(this.text, this.w/2, this.h/2);
 
             forEach(this.controls, 'draw');
-            
+
         popMatrix();
 
       };
@@ -1081,6 +1110,8 @@ println(app.levels);
 
             if(this.hit){
 
+              cursor(this.cursor);
+
             }
 
             if     ( app.telemetry && this.offset>-200){ this.offset-=10; }
@@ -1119,7 +1150,6 @@ println(app.levels);
 
               this.hit=true;
               app.focus=this.id;
-              cursor(this.cursor);
 
               for(var c in this.controls){ this.controls[c].moved(this.x+x+this.offset, this.y+y); }
 
@@ -1129,7 +1159,7 @@ println(app.levels);
               this.hit=false;
 
               for(var c in this.controls){ this.controls[c].hit=false; }
-                        
+
             }
 
           }
@@ -1148,6 +1178,7 @@ println(app.levels);
         this.levels = props.levels;
         this.size   = height/this.levels;
         this.font   = props.font;
+        this.cursor = props.cursor;
 
         this.row    = 0;
         this.col    = 0;
@@ -1185,7 +1216,7 @@ println(app.levels);
                  integer:   app.pascal[y][x],
                  total:     0,
                  color:     CLRS.K_TEAL_1,
-                 font:      'monospace',
+                 font:      props.font,
                  cursor:    HAND,
                  execute:   executePascal,
                  retrieve:  retrievePascal}));
@@ -1224,6 +1255,8 @@ println(app.levels);
               fill(getColor(CLRS.YELLOW,20));
               stroke(CLRS.GREEN);
               strokeWeight(0.25);
+              
+              cursor(this.cursor);
 
             }
 
@@ -1278,8 +1311,7 @@ println(app.levels);
              mouseY<this.y+this.h){
 
             this.hit=true;
-            app.focus=this.id;
-            cursor(this.cursor);
+            app.focus=this.id;            
 
             for(var r=0; r<this.controls.length; r++){
 
@@ -1305,7 +1337,7 @@ println(app.levels);
               }
 
             }
-                      
+
           }
 
         }
@@ -1327,7 +1359,7 @@ println(app.levels);
 
         }
 
-      }      
+      }
       pyramid.prototype.calc    = function(){
 
         // if(this.on===false){
@@ -1364,9 +1396,9 @@ println(app.levels);
 
     }
 
-    
+
     /* Controls ================================================ */
-    
+
     // Index ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
 
@@ -1383,6 +1415,9 @@ println(app.levels);
       index.prototype=Object.create(control.prototype);
       index.prototype.draw=function(){
 
+        this.active=this.hit && app.focus===this.id;
+        this.offset=0;      
+
         pushMatrix();
 
           translate(this.x, this.y);
@@ -1392,10 +1427,12 @@ println(app.levels);
             fill(getColor(this.color, 50));
             textFont(this.font);
 
-            if(this.hit){
+            if(this.active){
 
               stroke(getColor(CLRS.BLACK, 40));
               fill(getColor(this.color, 75));
+              
+              cursor(this.cursor);
 
             }
 
@@ -1423,6 +1460,9 @@ println(app.levels);
       navScroll.prototype=Object.create(control.prototype);
       navScroll.prototype.draw=function(){
 
+        this.active=this.hit && app.focus===this.id;
+        this.offset=0;
+
         pushMatrix();
 
           translate(this.x, this.y);
@@ -1432,11 +1472,13 @@ println(app.levels);
             // fill(getColor(this.color, 5));
             textFont(createFont(this.font, 16));
 
-            if(this.hit){
+            if(this.active){
 
               fill(getColor(this.color, 5));
               strokeWeight(0.25);
               stroke(getColor(CLRS.K_TEAL_0, 50));
+              
+              cursor(this.cursor);
 
             }
 
@@ -1456,20 +1498,20 @@ println(app.levels);
       };
       navScroll.prototype.dragged=function(x,y){
 
-        if(this.hit){
+        if(this.active){
 
           var X=round((mouseX-this.x)/this.w*app.cells);
 
           if(X>=0 && X<=app.cells){
             this.execute(X);
           }
-            
+
         }
 
       };
       navScroll.prototype.clicked=function(){
 
-        if(this.hit){
+        if(this.active){
 
           var X=round((mouseX-this.x)/this.w*app.cells);
 
@@ -1500,8 +1542,9 @@ println(app.levels);
       };
       navButton.prototype=Object.create(control.prototype);
       navButton.prototype.draw=function(){
-
-        var offset=0;
+        
+        this.active=this.hit && app.focus===this.id;
+        this.offset=0;
 
         pushMatrix();
 
@@ -1510,16 +1553,18 @@ println(app.levels);
             noStroke();
             noFill();
 
-            if(this.hit){
+            if(this.active){
 
-              if(app.left){ offset=1; }
+              if(app.left){ this.offset=1; }
 
               fill(getColor(this.color,10));
+              
+              cursor(this.cursor);
 
             }
 
             //  Background
-              rect(offset, offset, this.w, this.h, 2);
+              rect(this.offset, this.offset, this.w, this.h, 2);
 
 
             // Icon
@@ -1532,12 +1577,12 @@ println(app.levels);
 
               switch(this.type){
 
-                case NAVIGATION.FIRST:          text('|'+CONSTANTS.TRIANGLE_L,                  this.w/2+offset, this.h/2+offset); break;
-                case NAVIGATION.DECREMENT:      text(CONSTANTS.TRIANGLE_L,                      this.w/2+offset, this.h/2+offset); break;
-                case NAVIGATION.INCREMENT:      text(CONSTANTS.TRIANGLE_R,                      this.w/2+offset, this.h/2+offset); break;
-                case NAVIGATION.LAST:           text(CONSTANTS.TRIANGLE_R+'|',                  this.w/2+offset, this.h/2+offset); break;
-                case NAVIGATION.INCREMENTPAGE:  text(CONSTANTS.TRIANGLE_R+CONSTANTS.TRIANGLE_R, this.w/2+offset, this.h/2+offset); break;
-                case NAVIGATION.DECREMENTPAGE:  text(CONSTANTS.TRIANGLE_L+CONSTANTS.TRIANGLE_L, this.w/2+offset, this.h/2+offset); break;
+                case NAVIGATION.FIRST:          text('|'+CONSTANTS.TRIANGLE_L,                  this.w/2+this.offset, this.h/2+this.offset); break;
+                case NAVIGATION.DECREMENT:      text(CONSTANTS.TRIANGLE_L,                      this.w/2+this.offset, this.h/2+this.offset); break;
+                case NAVIGATION.INCREMENT:      text(CONSTANTS.TRIANGLE_R,                      this.w/2+this.offset, this.h/2+this.offset); break;
+                case NAVIGATION.LAST:           text(CONSTANTS.TRIANGLE_R+'|',                  this.w/2+this.offset, this.h/2+this.offset); break;
+                case NAVIGATION.INCREMENTPAGE:  text(CONSTANTS.TRIANGLE_R+CONSTANTS.TRIANGLE_R, this.w/2+this.offset, this.h/2+this.offset); break;
+                case NAVIGATION.DECREMENTPAGE:  text(CONSTANTS.TRIANGLE_L+CONSTANTS.TRIANGLE_L, this.w/2+this.offset, this.h/2+this.offset); break;
 
                 default:  break;
 
@@ -1549,11 +1594,7 @@ println(app.levels);
       navButton.prototype.clicked=function(){
       /* Overridden to maintain on/off value */
 
-        if(this.hit){
-
-          this.execute();
-
-        }
+        if(this.active){ this.execute(); }
 
       };
 
@@ -1575,7 +1616,10 @@ println(app.levels);
       };
       onOff.prototype=Object.create(control.prototype);
       onOff.prototype.draw=function(){
-
+        
+        this.active=this.hit && app.focus===this.id;
+        this.offset=0;
+        
         pushMatrix();
 
           translate(this.x, this.y);
@@ -1583,8 +1627,9 @@ println(app.levels);
             ellipseMode(CENTER);
             textFont(createFont(this.font, 16));
 
-            if(this.hit){ stroke(getColor(this.color, 75)); }
-            else        { stroke(getColor(this.color, 50)); }
+            if(this.active){ stroke(getColor(this.color, 75));
+                             cursor(this.cursor);              }
+            else           { stroke(getColor(this.color, 50)); }
 
             if(this.on){ rotate(-PI/2); }
             else       { this.value=0;  }
@@ -1609,13 +1654,12 @@ println(app.levels);
 
             this.hit=true;
             app.focus=this.id;
-            cursor(this.cursor);
 
           }
           else{
 
             this.hit=false;
-                      
+
           }
 
         }
@@ -1624,7 +1668,7 @@ println(app.levels);
       onOff.prototype.clicked=function(){
       /* Overridden to maintain on/off value */
 
-        if(this.hit){
+        if(this.active){
 
           this.execute();
           this.on=!this.on;
@@ -1652,6 +1696,9 @@ println(app.levels);
       resetButton.prototype=Object.create(control.prototype);
       resetButton.prototype.draw=function(){
 
+        this.active=this.hit && app.focus===this.id;
+        this.offset=0;
+        
         pushMatrix();
 
           translate(this.x, this.y);
@@ -1659,13 +1706,14 @@ println(app.levels);
 
             ellipseMode(CENTER);
 
-            if(this.hit){ stroke(getColor(this.color, 75)); }
-            else        { stroke(getColor(this.color, 50)); }
+            if(this.active){ cursor(this.cursor);
+                             stroke(getColor(this.color, 75)); }
+            else           { stroke(getColor(this.color, 50)); }
 
             strokeWeight(1.5);
             noFill();
 
-            if(this.hit &&
+            if(this.active &&
                app.left){ rotate(radians(45)); }
 
               arc(0, 0, this.w, this.h, radians(60), 2*PI-radians(22.5));
@@ -1691,7 +1739,6 @@ println(app.levels);
 
             this.hit=true;
             app.focus=this.id;
-            cursor(this.cursor);
 
           }
           else{
@@ -1706,7 +1753,7 @@ println(app.levels);
       resetButton.prototype.clicked=function(){
       /* Overridden to maintain on/off value */
 
-        if(this.hit){ this.execute(); }
+        if(this.active){ this.execute(); }
 
       };
 
@@ -1729,8 +1776,9 @@ println(app.levels);
       settings.prototype=Object.create(control.prototype);
       settings.prototype.draw=function(){
 
-        var offset=0;
-
+        this.active=this.hit && app.focus===this.id;
+        this.offset=0;
+        
         pushMatrix();
 
           translate(this.x, this.y);
@@ -1738,9 +1786,9 @@ println(app.levels);
             noStroke();
             noFill();
 
-            if(this.hit){
+            if(this.active){
 
-              if(app.left){ offset=1; }
+              if(app.left){ this.offset=1; }
 
               app.focus=this.id;
               cursor(this.cursor);
@@ -1750,19 +1798,19 @@ println(app.levels);
             }
 
             //  Background
-              rect(offset, offset, this.w, this.h, 2);
+              rect(this.offset, this.offset, this.w, this.h, 2);
 
             // Icon
             textFont(createFont(this.font, 16));
             fill(getColor(this.color,50));
 
-            if(this.hit){ fill(getColor(CLRS.BLACK,75)); }
+            if(this.active){ fill(getColor(CLRS.BLACK,75)); }
 
             noStroke();
 
-              ellipse(this.w/2+offset, this.h/2-6+offset, 3, 3);
-              ellipse(this.w/2+offset, this.h/2,          3, 3);
-              ellipse(this.w/2+offset, this.h/2+6+offset, 3, 3);
+              ellipse(this.w/2+this.offset, this.h/2-6+this.offset, 3, 3);
+              ellipse(this.w/2+this.offset, this.h/2,          3, 3);
+              ellipse(this.w/2+this.offset, this.h/2+6+this.offset, 3, 3);
 
         popMatrix();
 
@@ -1770,7 +1818,7 @@ println(app.levels);
       settings.prototype.clicked=function(){
       /* Overridden to maintain on/off value */
 
-        if(this.hit){
+        if(this.active){
 
           this.execute();
           this.on=!this.on;
@@ -1799,7 +1847,8 @@ println(app.levels);
       info.prototype=Object.create(control.prototype);
       info.prototype.draw=function(){
 
-        var offset=0;
+        this.active=this.hit && app.focus===this.id;
+        this.offset=0;
 
         pushMatrix();
 
@@ -1808,33 +1857,35 @@ println(app.levels);
             noStroke();
             noFill();
 
-            if(this.hit){
+            if(this.active){
 
-              if(app.left){ offset=1; }
+              if(app.left){ this.offset=1; }
 
               fill(getColor(this.color,10));
+
+              cursor(this.cursor);
 
             }
 
             //  Background
-            rect(offset, offset, this.w, this.h, 2);
+            rect(this.offset, this.offset, this.w, this.h, 2);
 
             // Icon
             fill(getColor(this.color,50));
 
-            if(this.hit){ fill(getColor(CLRS.BLACK,75)); }
+            if(this.active){ fill(getColor(CLRS.BLACK,75)); }
 
             textAlign(CENTER,CENTER);
             textFont(createFont(this.font, 20));
 
-              text(this.text, this.w/2+offset, this.h/2+offset);
+              text(this.text, this.w/2+this.offset, this.h/2+this.offset);
 
         popMatrix();
 
       };
       info.prototype.clicked=function(){
       /* Overridden to maintain on/off value */
-
+println(this.id);
         if(this.hit){
 
           this.execute();
@@ -1863,7 +1914,8 @@ println(app.levels);
       play.prototype=Object.create(control.prototype);
       play.prototype.draw=function(){
 
-        var offset=0;
+        this.active=this.hit && app.focus===this.id;
+        this.offset=0;
 
         pushMatrix();
 
@@ -1872,25 +1924,27 @@ println(app.levels);
             noStroke();
             noFill();
 
-            if(this.hit){
+            if(this.active){
 
-              if(app.left){ offset=1; }
+              if(app.left){ this.offset=1; }
 
               fill(getColor(this.color,10));
+              
+              cursor(this.cursor);
 
             }
 
             //  Background
-            rect(offset, offset, this.w, this.h, 2);
+            rect(this.offset, this.offset, this.w, this.h, 2);
 
             // Icon
             fill(getColor(this.color,50));
 
-            if(this.hit){ fill(getColor(CLRS.BLACK,75)); }
+            if(this.active){ fill(getColor(CLRS.BLACK,75)); }
 
-              triangle( 15+offset, 10+offset,
-                         5+offset,  5+offset,
-                         5+offset, 15+offset);
+              triangle( 15+this.offset, 10+this.offset,
+                         5+this.offset,  5+this.offset,
+                         5+this.offset, 15+this.offset);
 
         popMatrix();
 
@@ -1898,7 +1952,7 @@ println(app.levels);
       play.prototype.clicked=function(){
       /* Overridden to maintain on/off value */
 
-        if(this.hit){
+        if(this.active){
 
           this.execute();
           this.on=!this.on;
@@ -1929,7 +1983,8 @@ println(app.levels);
       button.prototype=Object.create(control.prototype);
       button.prototype.draw=function(){
 
-          var offset=0;
+          this.offset=0;
+          this.active=this.hit && app.focus===this.id;
 
           pushMatrix();
 
@@ -1941,19 +1996,21 @@ println(app.levels);
               fill(getColor(CLRS.ACTIVE, 5));
               noStroke();
 
-              if(this.hit){
+              if(this.active){
 
-                if(app.left){ offset=1; }
+                if(app.left){ this.offset=1; }
 
                 fill(getColor(CLRS.ACTIVE, 50));
+                
+                cursor(this.cursor);
 
               }
 
-              rect(offset, -this.h-offset, this.w, this.h, 3);
+              rect(this.offset, -this.h-this.offset, this.w, this.h, 3);
 
               // Caption
-              if(this.hit){ fill(255,255,255); }
-              else        { fill(128,128,128); }
+              if(this.active){ fill(255,255,255); }
+              else           { fill(128,128,128); }
 
               scale(1,-1);
 
@@ -1961,19 +2018,39 @@ println(app.levels);
               textAlign(CENTER,CENTER);
               this.w=textWidth(this.text)+10;
 
-                text(this.text, this.w/2+offset, this.h/2+offset);
+                text(this.text, this.w/2+this.offset, this.h/2+this.offset);
 
           popMatrix();
 
       };
+      button.prototype.moved=function(x,y){
+
+        if(this.parent.hit){
+        
+          if(mouseX>(this.x+x) &&
+             mouseX<(this.x+x) + this.w &&
+             mouseY>(this.y+y) &&
+             mouseY<(this.y+y) + this.h){
+                 
+              this.hit=true;
+              app.focus=this.id;            
+
+          }
+          else{
+            
+            this.hit=false;
+            
+          }
+        
+        }
+        
+      };
       button.prototype.clicked=function(){
       /* Overridden to maintain on/off value */
 
-        if(this.hit){
+        if(this.active){
 
           this.execute();
-          
-          forEach(this.controls, 'clicked');
 
         }
 
@@ -2066,7 +2143,7 @@ println(app.levels);
       };
       hexButton.prototype=Object.create(control.prototype);
       hexButton.prototype.draw=function(){
-
+                
         var setTextSize=function(p){
 
           var sz=p.w/2.5;
@@ -2081,7 +2158,11 @@ println(app.levels);
           textSize(sz);
 
         };
-
+          
+          
+          this.active=this.hit && app.focus===this.id;
+          this.offset=0;
+          
           pushMatrix();
 
             translate(this.x, this.y);
@@ -2095,12 +2176,13 @@ println(app.levels);
               stroke(getColor(this.color, 25));
               fill  (getColor(this.color,  5));
 
-              if(this.hit){
+              if(this.active){
 
                 if(app.left){ this.offset=1; }
 
                 strokeWeight(1.5);
-
+                cursor(this.cursor);
+                
               };
 
               if(app.row===this.row &&
@@ -2191,12 +2273,10 @@ println(app.levels);
                  triHit2){
 
                 this.hit=true;
+                app.focus=this.id;
 
                 app.row=this.row;
                 app.col=this.col;
-
-                app.focus=this.id;
-                cursor(this.cursor);
 
               // app.path=this.path;
               // for(var c in this.controls){ this.controls[c].moved(); }
@@ -2245,8 +2325,6 @@ println(app.levels);
 
     }
 
-
-
   }
 
   function executePascal(n){
@@ -2277,15 +2355,17 @@ println(app.levels);
 
       app.controls.push(bk);
 
-        app.controls.push(new pyramid(1234, bk, bk.x, bk.y+40, width-200, height-100,
-          {font:      'monospace',
+        /* pyramid */
+        app.controls.push(new pyramid(1234, bk, bk.x+300, bk.y+40, width-200, height-100,
+          {font:      'sans-serif',
            levels:    app.levels,
+           cursor:    WAIT,
            size:      0,}));
-
+           
     // toolbar --------------------------------------------------
     {
       /* tlbar             */
-      var tlbar=new toolbar(200, bk, 0, 0, width, 30,
+      var tlbar=new toolbar(200, bk, 1, 1, width-2, 30,
         {text:      'Pascals Triangle',
          font:      'monospace',
          acolor:    CLRS.K_TEAL_3,
@@ -2329,6 +2409,9 @@ println(app.levels);
 
 
     }
+
+
+
 
     // Navigation --------------------------------------------------
     {
@@ -2511,9 +2594,10 @@ println(app.levels);
   }
 
     // SplashScreen --------------------------------------------------
-
+    {
+      
       /* Splash Screen      */
-      var splashScreen=new splash(500, bk, 0, 100, 400, 400,
+      var splashScreen=new splash(500, bk, 500, 100, 400, 400,
         {color:     CLRS.BLACK,
          font:      'monospace',
          retrieve:  getInfo,
@@ -2527,8 +2611,8 @@ println(app.levels);
            font:      'monospace',
            execute:   toggleInfo,
            color:     CLRS.WHITE,
-           cursor:    HAND}));
-
+           cursor:    HAND}));    
+    }
 
 
     // Telemetry --------------------------------------------------
@@ -2752,12 +2836,14 @@ app.text=txt;
 
   app.pyramid=app.controls[1];
 
+  
+  
   draw=function(){
 
     execute();
 
     global=this.__frameRate;
-    
+
   };
 
   /* Keyboard Events =========================================================== */
