@@ -47,19 +47,19 @@ var diagrams = function(processingInstance){
 
       - n k choose formulas option for each cell
       - interesting patterns - triangular #'s, etc.
-      
+
 
     Research:
 
 
     TO DONE:
-      
+
       - center the pyramid vertically
 
       - display ideal path on click of hexButton
-    
+
       - calculate the pyramid completely on load
-    
+
       - fix the changing fonts
 
       - data cursor
@@ -143,9 +143,9 @@ var diagrams = function(processingInstance){
 
     this.pascal=[];
     this.SierpinskiOn=false;
-    
+
     this.text='';
-    
+
   };
 
   var app=new application();
@@ -328,17 +328,17 @@ var diagrams = function(processingInstance){
 
   /* Utility Functions ========================================================= */
   {
-    
+
     var isFocus=function(n){ return app.focus===n; }
 
     var getColor=function(clr, alpha){ return color(red(clr), green(clr), blue(clr), alpha/100*255); };
 
-    
+
     var setCell=function()        {
-      
+
       app.currentCell=app.pyramid.controls[app.row][app.col];
       app.currentCell.on=!app.currentCell.on;
-      
+
     };
 
     var reset=function()          {
@@ -374,7 +374,7 @@ println(app.levels);
       app.currentCell=app.pyramid.controls[app.row][app.col];
 
     };
-    
+
     var incrementRows=function()  {
 
       if(app.levels<app.levelsMax){
@@ -400,11 +400,11 @@ println(app.levels);
 
       }
 
-    };    
+    };
     var incrementRow=function()   {
 
       app.row++;
-      
+
       constrainCurrent();
 
     };
@@ -427,10 +427,10 @@ println(app.levels);
 
     };
     var decrementCursor=function(){
-      
+
       app.col--;
       constrainCurrent();
-      
+
       app.cursor--;
 
       app.cursor=(constrain)(app.cursor, 0, app.cells-1);
@@ -509,7 +509,7 @@ println(app.levels);
       };
       control.prototype.draw=function(){};
       control.prototype.moved=function(x,y){
-        
+
         if(this.parent.hit){
 
           if(mouseX>(this.x+x) &&
@@ -523,7 +523,7 @@ println(app.levels);
 
             for(var c in this.controls){ this.controls[c].moved((this.x+x), (this.y+y)); }
 
-            
+
           }
           else{
 
@@ -532,7 +532,7 @@ println(app.levels);
           }
 
         }
-      
+
       };
       control.prototype.clicked=function(){
 
@@ -544,13 +544,13 @@ println(app.levels);
 
       };
       // control.prototype.rClicked=function(){};
-      // control.prototype.cClicked=function(){};      
+      // control.prototype.cClicked=function(){};
       control.prototype.dragged=function(){
 
         if(this.hit){
 
           for(var c in this.controls){ this.controls[c].dragged(); }
-          
+
         }
 
       };
@@ -559,7 +559,7 @@ println(app.levels);
         if(this.hit){
 
           for(var c in this.controls){ this.controls[c].pressed(); }
-          
+
         }
 
       };
@@ -593,9 +593,9 @@ println(app.levels);
         this.border = params.border;
 
         this.left   = 0;
-        
+
         this.font   = params.font;
-        
+
       };
       root.prototype=Object.create(control.prototype);
       root.prototype.draw=function(){
@@ -607,7 +607,7 @@ println(app.levels);
             noStroke();
             fill(this.icolor);
             textFont(this.font);
-            
+
             if(this.hit)   { fill(this.acolor); }
             if(this.border){ strokeWeight(1);
                              stroke(CLRS.BLUE); }
@@ -630,9 +630,9 @@ println(app.levels);
           this.hit=true;
           app.focus=this.id;
           cursor(this.cursor);
-              
+
           for(var c in this.controls){ this.controls[c].moved((this.x+x), (this.y+y)); }
-          
+
         }
         else{
 
@@ -641,7 +641,7 @@ println(app.levels);
         }
 
       };
-      
+
     }
 
     // Container ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -657,7 +657,7 @@ println(app.levels);
         this.border = params.border;
 
         this.font   = params.font;
-                
+
       };
       container.prototype=Object.create(control.prototype);
       container.prototype.draw=function(){
@@ -669,7 +669,7 @@ println(app.levels);
             noStroke();
             fill(getColor(this.color, 5));
             textFont(this.font);
-    
+
             if(this.hit)   { fill(getColor(this.color, 10)); }
             if(this.border){
 
@@ -747,7 +747,7 @@ println(app.levels);
               strokeWeight(1);
               stroke(getColor(this.color, 40));
               fill(getColor(this.color, 100));
-              
+
               if(this.hit){
 
                 // fill(getColor(this.color, 80));
@@ -784,24 +784,24 @@ println(app.levels);
               fill(getColor(CLRS.K_TEAL_3,100));
 
                 text(txt4, this.w/2-textWidth(txt4)/2, 320);
-                
+
               fill(getColor(CLRS.K_TEAL_2,100));
-              
+
                 text(txt5, this.w/2-textWidth(txt5)/2, 340);
 
               var txtX=65;
               var txtY=-30;
 
               var centerX=this.w/2;
-              
+
               pushMatrix();
-              
+
                 translate(centerX, 130);
 
               popMatrix();
 
               for(var c in this.controls){ this.controls[c].draw(); }
-                
+
           popMatrix();
 
         }
@@ -809,7 +809,7 @@ println(app.levels);
       };
       splash.prototype.moved=function(x,y){
       /* Overridden to maintain on/off value */
-      
+
         if(this.retrieve()){
 
           if(this.parent.hit){
@@ -833,10 +833,10 @@ println(app.levels);
             }
 
           }
-        
+
         }
-        
-      };      
+
+      };
       splash.prototype.clicked=function(){
       /* Overridden to maintain on/off value */
 
@@ -845,11 +845,11 @@ println(app.levels);
           for(var c in this.controls){ this.controls[c].clicked(); }
 
         }
-        
+
       };
 
     }
-        
+
     // Index ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
 
@@ -861,7 +861,7 @@ println(app.levels);
         this.color  = params.color;
         this.cursor = params.cursor;
         this.font   = params.font;
-        
+
       };
       index.prototype=Object.create(control.prototype);
       index.prototype.draw=function(){
@@ -904,7 +904,7 @@ println(app.levels);
         this.cursor   = params.cursor;
         this.execute  = params.execute;
         this.font     = params.font;
-        
+
       };
       navScroll.prototype=Object.create(control.prototype);
       navScroll.prototype.draw=function(){
@@ -917,7 +917,7 @@ println(app.levels);
             noFill();
             // fill(getColor(this.color, 5));
             textFont(createFont(this.font, 16));
-    
+
             if(this.hit){
 
               fill(getColor(this.color, 5));
@@ -971,7 +971,7 @@ println(app.levels);
         }
 
       };
-    
+
     }
 
     // NavBar ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -989,7 +989,7 @@ println(app.levels);
         this.recordCount = params.recordCount;
         this.execute     = params.execute;
         this.font        = params.font;
-        
+
       };
       navbar.prototype=Object.create(control.prototype);
       navbar.prototype.draw=function(){
@@ -1000,7 +1000,7 @@ println(app.levels);
 
             noStroke();
             fill(this.icolor);
-            
+
             if(this.hit){ fill(this.acolor); }
 
               rect(0, 0, this.w, this.h);
@@ -1089,8 +1089,8 @@ println(app.levels);
 
                 default:  break;
 
-              }             
-              
+              }
+
               // switch(this.type){
 
                 // case NAVIGATION.FIRST:          text('|<', this.w/2+offset, this.h/2+offset); break;
@@ -1136,7 +1136,7 @@ println(app.levels);
         this.position    = params.position;
         this.recordCount = params.recordCount;
         this.font        = params.font;
-        
+
       };
       toolbar.prototype=Object.create(control.prototype);
       toolbar.prototype.draw=function(){
@@ -1158,7 +1158,7 @@ println(app.levels);
             textAlign(CENTER,CENTER);
 
             if(app.focus===this.id){ fill(CLRS.WHITE); }
-                       
+
               text(this.text, this.w/2, this.h/2);
 
             for(var c in this.controls){ this.controls[c].draw(); }
@@ -1179,7 +1179,7 @@ println(app.levels);
         this.color  = params.color;
         this.cursor = params.cursor;
         this.font   = params.font;
-        
+
         /*  Dynamic x-coordinate */
         this.offset = 0;
 
@@ -1292,8 +1292,8 @@ println(app.levels);
 
         pushMatrix();
 
-          translate(this.x, this.y);            
-          
+          translate(this.x, this.y);
+
             if(this.hit){
 
             }
@@ -1313,7 +1313,7 @@ println(app.levels);
                // it has to be done after the child controls are drawn to
                // maintain proper control focus                              */
             // fill(getColor(CLRS.YELLOW,75));
-            
+
             // textSize(11);
             // textAlign(RIGHT,CENTER);
 
@@ -1325,7 +1325,7 @@ println(app.levels);
 
         if(app.telemetry===false &&
            this.offset===0){ return; }
-           
+
           if(this.parent.hit){
 
             if(mouseX>this.x+x+this.offset &&
@@ -1396,7 +1396,7 @@ println(app.levels);
       /* Overridden because the control is round */
 
         if(this.parent.hit){
-          
+
           if(dist(mouseX, mouseY,
                   this.x+x, this.y+y)<this.w){
 
@@ -1420,7 +1420,7 @@ println(app.levels);
       /* Overridden to maintain on/off value */
 
         if(this.hit){
-          
+
           this.execute();
           this.on=!this.on;
 
@@ -1480,7 +1480,7 @@ println(app.levels);
       /* Overridden because the control is round */
 
         if(this.parent.hit){
-        
+
           if(dist(mouseX, mouseY,
                   this.x+x, this.y+y)<this.w){
 
@@ -1622,7 +1622,7 @@ println(app.levels);
             fill(getColor(this.color,50));
 
             if(this.hit){ fill(getColor(CLRS.BLACK,75)); }
-            
+
             textAlign(CENTER,CENTER);
             textFont(createFont(this.font, 20));
 
@@ -1659,7 +1659,7 @@ println(app.levels);
         this.color    = params.color;
         this.cursor   = params.cursor;
         this.font     = params.font;
-        
+
       };
       play.prototype=Object.create(control.prototype);
       play.prototype.draw=function(){
@@ -1737,7 +1737,7 @@ println(app.levels);
           pushMatrix();
 
             translate(this.x, this.y);
-            scale(1,-1);            
+            scale(1,-1);
 
               // Border
               strokeWeight(0.75);
@@ -1894,7 +1894,7 @@ println(app.levels);
 
             translate(this.x, this.y);
             scale(1,-1);
-            
+
               this.offset=0;
 
               // Border
@@ -1910,18 +1910,18 @@ println(app.levels);
                 strokeWeight(1.5);
 
               };
-              
+
               if(app.row===this.row &&
                  app.col===this.col){
-                strokeWeight(2);   
+                strokeWeight(2);
               };
 
               stroke(getColor(this.color,75));
-              
+
               //  Sierpinski grid
               if(app.SierpinskiOn &&
                  this.integer%2!==0){ fill(getColor(this.color, 25)); }
-              
+
               if(this.on){  fill(getColor(this.color, 30));        }
 
                 beginShape();
@@ -1942,9 +1942,9 @@ println(app.levels);
               fill(getColor(this.color,50));
 
               if(this.on){
-                fill(getColor(CLRS.WHITE,100));                
+                fill(getColor(CLRS.WHITE,100));
               }
-              
+
               scale(1,-1);
 
               textFont(createFont(this.font, 12));
@@ -1953,12 +1953,12 @@ println(app.levels);
               if(!this.choose){
 
                 text(this.integer, this.offset, this.offset);
-              
+
               }
               else{
-              
+
                 // textSize(12);
-                
+
                 textAlign(CENTER,BOTTOM);
 
                   text(this.row, this.offset, this.offset);
@@ -1968,15 +1968,15 @@ println(app.levels);
                   text(this.col, this.offset, this.offset);
 
               }
-              
+
           popMatrix();
 
       };
       hexButton.prototype.moved=function(x,y){
       /* Overridden because of the shape */
-          
+
         if(this.parent.hit){
-          
+
           if(dist(mouseX, mouseY,
                   this.x+x,
                   this.y+y)<this.w/2){
@@ -1999,7 +1999,7 @@ println(app.levels);
                  triHit2){
 
                 this.hit=true;
-                
+
                 app.row=this.row;
                 app.col=this.col;
 
@@ -2023,22 +2023,22 @@ println(app.levels);
             this.hit=false;
 
           }
-          
+
         }
-        
+
       };
       hexButton.prototype.clicked=function(){
       /* Overridden to maintain on/off value */
 
         if(this.hit){
-          
+
           app.path=this.path;
           app.cursor=this.ordinal;
           app.currentCell=this;
-          
+
           app.row=this.row;
           app.col=this.col;
-          
+
           this.on=!this.on;
 
         }
@@ -2262,7 +2262,7 @@ println(app.levels);
               }
 
             }
-          
+
           }
           else{
 
@@ -2355,12 +2355,12 @@ println(app.levels);
            border:    true});
 
         app.controls.push(bk);
-           
+
           app.controls.push(new pyramid(1234, bk, bk.x, bk.y+40, width-200, height-100,
             {font:      'monospace',
              levels:    app.levels,
              size:      0,}));
-     
+
       // toolbar --------------------------------------------------
       {
         /* tlbar             */
@@ -2397,7 +2397,7 @@ println(app.levels);
              retrieve:  getInfo,
              color:     CLRS.K_TEAL_0,
              cursor:    HAND}));
-             
+
           /* settings        */
           tlbar.controls.push(new settings(240, tlbar, width-25, 5, 22, 22,
             {execute:   toggletelemetry,
@@ -2599,7 +2599,7 @@ println(app.levels);
            cursor:    CROSS});
 
            bk.controls.push(splashScreen);
-           
+
           /* Close              */
           splashScreen.controls.push(new button(510, splashScreen, 180, 360, 120, 20,
             {text:      'Close',
@@ -2607,11 +2607,11 @@ println(app.levels);
              execute:   toggleInfo,
              color:     CLRS.WHITE,
              cursor:    HAND}));
-        
-        
+
+
 
       // Telemetry --------------------------------------------------
-      
+
         /* Telemetry          */
         var telem=new telemetry(400, bk, width, 30, 200, height-55,
           {color:     CLRS.BLACK,
@@ -2619,7 +2619,7 @@ println(app.levels);
            cursor:    ARROW});
 
         bk.controls.push(telem);
-        
+
     };
 
     var currentData=function(){
@@ -2752,11 +2752,11 @@ println(app.levels);
     };
 
     var ArrayToText2D=function(arr){
-      
+
       var txt='';
-      
+
       for(var row=0; row<arr.length; row++){
-          
+
         txt+=arr[row]+'\n';
         // println(arr[row]);
         // for(var col=0; col<arr[row].length; col++){
@@ -2772,9 +2772,9 @@ app.text=txt;
     };
 
     var loadPascal=function(){
-      
+
       app.pascal=[];
-      
+
       var cols=[1];
 
       for(var row=0; row<app.levels; row++){
@@ -2799,7 +2799,7 @@ app.text=txt;
     var update=function(){
 
       textFont(createFont('monospace', 16));
-                  
+
       pushMatrix();
 
         translate(0,0);
@@ -2814,9 +2814,9 @@ app.text=txt;
 
       fill(CLRS.BLACK);
       textAlign(LEFT,TOP);
-      
+
         // text(app.text,20,30);
-      
+
     };
 
     var execute;
@@ -2866,7 +2866,7 @@ app.text=txt;
             case app.keys[KEYCODES.DOWN]:     incrementRow();     break;
 
             case app.keys[KEYCODES.SPACE]:    setCell();          break;
-                        
+
             default:                                              break;
 
           }
