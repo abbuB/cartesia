@@ -347,7 +347,6 @@ var diagrams = function(processingInstance){
 
     function getColor(clr, alpha){ return color(red(clr), green(clr), blue(clr), alpha/100*255); };
 
-
     function setCell()        {
 
       app.currentCell=app.pyramid.controls[app.row][app.col];
@@ -595,14 +594,10 @@ var diagrams = function(processingInstance){
             noStroke();
             fill(this.icolor);
 
-            if(this.hit){
-              
-              fill(this.acolor);                            
-              cursor(this.cursor);
-          
-            }
+            if(this.hit   ){ fill(this.acolor);  }
+            if(this.active){cursor(this.cursor); }
             if(this.border){ strokeWeight(1);
-                             stroke(CLRS.BLUE); }
+                             stroke(CLRS.BLUE);  }
 
               rect(0, 0, this.w, this.h);
 
@@ -665,10 +660,10 @@ var diagrams = function(processingInstance){
             fill(getColor(this.color, 5));
             textFont(this.font);
 
-            if(this.hit)   { fill(getColor(this.color, 10));
-                             cursor(this.cursor);               }
+            if(this.hit   ){ fill(getColor(this.color, 10));   }
+            if(this.active){ cursor(this.cursor);              }
             if(this.border){ strokeWeight(1);
-                             stroke(getColor(this.color, 50));  }
+                             stroke(getColor(this.color, 50)); }
 
               rect(0, 0, this.w, this.h, this.execute);
 
@@ -739,14 +734,10 @@ var diagrams = function(processingInstance){
 
               strokeWeight(1);
               stroke(getColor(this.color, 40));
-              fill(getColor(this.color, 100));
+              fill(  getColor(this.color, 90));
 
-              if(this.active){
-                
-                cursor(this.cursor);
-                // fill(getColor(this.color, 80));
-
-              }
+              if(this.hit   ){ fill(getColor(this.color, 100)); }
+              if(this.active){ cursor(this.cursor);             }
 
                 rect(0, 0, this.w, this.h, 20);
 
@@ -863,6 +854,8 @@ var diagrams = function(processingInstance){
       navbar.prototype=Object.create(control.prototype);
       navbar.prototype.draw=function(){
 
+        this.active=this.hit && app.focus===this.id;
+                
         pushMatrix();
 
           translate(this.x+0.5, this.y+0.5);
@@ -870,13 +863,8 @@ var diagrams = function(processingInstance){
             noStroke();
             fill(this.icolor);
 
-            if(this.hit){
-              
-              fill(this.acolor);
-                    
-              cursor(this.cursor);
-
-            }
+            if(this.hit   ){ fill(this.acolor);   }
+            if(this.active){ cursor(this.cursor); }
 
               rect(0, 0, this.w, this.h);
 
@@ -923,6 +911,8 @@ var diagrams = function(processingInstance){
       toolbar.prototype=Object.create(control.prototype);
       toolbar.prototype.draw=function(){
 
+        this.active=this.hit && app.focus===this.id;
+                
         pushMatrix();
 
           translate(this.x, this.y);
@@ -930,13 +920,8 @@ var diagrams = function(processingInstance){
             noStroke();
             fill(getColor(CLRS.BLACK,5));
 
-            if(this.hit){
-              
-              fill(this.acolor);
-              
-              cursor(this.cursor);
-
-            }
+            if(this.hit   ){ fill(this.acolor);   }
+            if(this.active){ cursor(this.cursor); }
 
               rect(0, 0, this.w, this.h);
 
@@ -1084,11 +1069,7 @@ var diagrams = function(processingInstance){
 
           translate(this.x, this.y);
 
-            if(this.active){
-
-              cursor(this.cursor);
-
-            }
+            if(this.active){ cursor(this.cursor); }
 
             if     ( app.telemetry && this.offset>-200){ this.offset-=10; }
             else if(!app.telemetry && this.offset<0   ){ this.offset+=10; }
@@ -1217,7 +1198,7 @@ var diagrams = function(processingInstance){
       pyramid.prototype.draw    = function(){
 
         this.active=this.hit && app.focus===this.id;
-              
+
         pushMatrix();
 
           translate(this.x-0.5,this.y-0.5);
@@ -1228,26 +1209,20 @@ var diagrams = function(processingInstance){
             fill(getColor(CLRS.YELLOW,10));
             textFont(createFont(this.font, 12));
 
-            if(this.active){
-
-              fill(getColor(CLRS.YELLOW,20));
-              stroke(CLRS.GREEN);
-              strokeWeight(0.25);
-              
-              cursor(this.cursor);
-
-            }
+            if(this.hit   ){ fill(getColor(CLRS.YELLOW,15)); }
+            if(this.active){ cursor(this.cursor);
+                             fill(getColor(CLRS.YELLOW,25));
+                             stroke(CLRS.GREEN);
+                             strokeWeight(0.25);             }
 
               rect(0, 0, this.w-1, this.h-1);
 
             for(var c=0; c<this.controls.length; c++){
-
               for(var r in this.controls[c]){
 
                 this.controls[c][r].draw(this.x,this.y);
 
               }
-
             }
 
         popMatrix();
@@ -1262,14 +1237,12 @@ var diagrams = function(processingInstance){
         this.load();
 
         for(var r=0; r<this.controls.length; r++){
-
           for(var c in this.controls[r]){
 
             this.controls[r][c].on=false;;
             this.controls[r][c].text=round(random(99));
 
           }
-
         }
 
         app.row=0;
@@ -1292,13 +1265,11 @@ var diagrams = function(processingInstance){
             app.focus=this.id;            
 
             for(var r=0; r<this.controls.length; r++){
-
               for(var c in this.controls[r]){
 
                 this.controls[r][c].moved(this.x,this.y);
 
               }
-
             }
 
           }
@@ -1307,13 +1278,11 @@ var diagrams = function(processingInstance){
             this.hit=false;
 
             for(var r=0; r<this.controls.length; r++){
-
               for(var c in this.controls[r]){
 
                 this.controls[r][c].hit=false;
 
               }
-
             }
 
           }
@@ -1326,13 +1295,11 @@ var diagrams = function(processingInstance){
         if(this.hit){
 
           for(var r=this.controls.length-1; r>-1; r--){
-
             for(var c=this.controls[r].length-1; c>-1; c--){
 
               this.controls[r][c].clicked();
 
             }
-
           }
 
         }
@@ -1343,7 +1310,6 @@ var diagrams = function(processingInstance){
         // if(this.on===false){
 
           for(var row=this.controls.length-2; row>-1; row--){
-
             for(var col=this.controls[row].length-1; col>-1; col--){
 
               this.controls[row][col].calc();
@@ -1352,7 +1318,6 @@ var diagrams = function(processingInstance){
               this.controls[row+1][col+1].set();
 
             }
-
           }
 
         // }
@@ -1369,9 +1334,9 @@ var diagrams = function(processingInstance){
 
       }
       pyramid.prototype.out     = function(){ this.hit=false; }
-      pyramid.prototype.pressed = function(){}
-      pyramid.prototype.dragged = function(){}
-
+      pyramid.prototype.pressed = function(){};
+      pyramid.prototype.dragged = function(){};
+      
     }
 
 
@@ -1405,14 +1370,10 @@ var diagrams = function(processingInstance){
             fill(getColor(this.color, 50));
             textFont(this.font);
 
-            if(this.active){
-
-              stroke(getColor(CLRS.BLACK, 40));
-              fill(getColor(this.color, 75));
+            if(this.active){ stroke(getColor(CLRS.BLACK, 40));
+                             fill(getColor(this.color, 75));
               
-              cursor(this.cursor);
-
-            }
+                             cursor(this.cursor);               }
 
             rect(this.offset, this.offset, this.w, this.h, this.radius);
 
@@ -1535,15 +1496,13 @@ var diagrams = function(processingInstance){
 
               if(app.left){ this.offset=1; }
 
-              fill(getColor(this.color,10));
-              
+              fill(getColor(this.color,10));              
               cursor(this.cursor);
 
             }
 
             //  Background
               rect(this.offset, this.offset, this.w, this.h, 2);
-
 
             // Icon
             fill(getColor(this.color, 50));
@@ -1728,12 +1687,8 @@ var diagrams = function(processingInstance){
         }
 
       };
-      resetButton.prototype.clicked=function(){
-      /* Overridden for execute */
-
-        if(this.active){ this.execute(); }
-
-      };
+      /** Overridden for execute */
+      resetButton.prototype.clicked=function(){ if(this.active){ this.execute(); } };
 
     }
 
@@ -1764,16 +1719,9 @@ var diagrams = function(processingInstance){
             noStroke();
             noFill();
 
-            if(this.active){
-
-              if(app.left){ this.offset=1; }
-
-              app.focus=this.id;
-              cursor(this.cursor);
-
-              fill(getColor(this.color,10));
-
-            }
+            if(this.hit   ){ fill(getColor(this.color,10)); }
+            if(this.active){ if(app.left){ this.offset=1; }
+                             cursor(this.cursor);           }
 
             //  Background
               rect(this.offset, this.offset, this.w, this.h, 2);
@@ -1793,14 +1741,8 @@ var diagrams = function(processingInstance){
         popMatrix();
 
       };
-      settings.prototype.clicked=function(){
-      /* Overridden for execute */
-
-        if(this.active){
-          this.execute();
-        }
-
-      };
+      /** Overridden for execute */
+      settings.prototype.clicked=function(){ if(this.active){ this.execute(); } };
 
     }
 
@@ -1832,15 +1774,9 @@ var diagrams = function(processingInstance){
             noStroke();
             noFill();
 
-            if(this.active){
-
-              if(app.left){ this.offset=1; }
-
-              fill(getColor(this.color,10));
-
-              cursor(this.cursor);
-
-            }
+            if(this.hit   ){ fill(getColor(this.color,10)); }
+            if(this.active){ if(app.left){ this.offset=1; }
+                             cursor(this.cursor);           }
 
             //  Background
             rect(this.offset, this.offset, this.w, this.h, 2);
@@ -1858,14 +1794,8 @@ var diagrams = function(processingInstance){
         popMatrix();
 
       };
-      info.prototype.clicked=function(){
-      /* Overridden for execute */
-
-        if(this.hit){
-          this.execute();
-        }
-
-      };
+      /** Overridden for execute */
+      info.prototype.clicked=function(){ if(this.hit){ this.execute(); } };
 
     }
 
@@ -1896,15 +1826,9 @@ var diagrams = function(processingInstance){
             noStroke();
             noFill();
 
-            if(this.active){
-
-              if(app.left){ this.offset=1; }
-
-              fill(getColor(this.color,10));
-              
-              cursor(this.cursor);
-
-            }
+            if(this.hit   ){ fill(getColor(this.color,10)); }
+            if(this.active){ if(app.left){ this.offset=1; }
+                             cursor(this.cursor);           }
 
             //  Background
             rect(this.offset, this.offset, this.w, this.h, 2);
@@ -1924,7 +1848,7 @@ var diagrams = function(processingInstance){
 
       };
       play.prototype.clicked=function(){
-      /* Overridden to maintain on/off value */
+      /** Overridden to maintain on/off value */
 
         if(this.active){
 
@@ -1970,14 +1894,11 @@ var diagrams = function(processingInstance){
               fill(getColor(CLRS.ACTIVE, 5));
               noStroke();
 
-              if(this.active){
-
+              // if(this.hit   ){ fill(getColor(CLRS.ACTIVE, 50)); }
+              if(this.active && this.hit){
                 if(app.left){ this.offset=1; }
-
-                fill(getColor(CLRS.ACTIVE, 50));
-                
-                cursor(this.cursor);
-
+                              cursor(this.cursor);             
+                              fill(getColor(CLRS.ACTIVE, 50)); 
               }
 
               rect(this.offset, -this.h-this.offset, this.w, this.h, 3);
