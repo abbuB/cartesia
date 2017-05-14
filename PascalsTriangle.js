@@ -374,7 +374,7 @@ var diagrams = function(processingInstance){
     function gettelemetry()   { return app.telemetry;             };
 
     function toggleCalculate(){ app.calculating=!app.calculating; };
-    function toggletelemetry(){ app.telemetry=!app.telemetry;     };
+    function toggleTelemetry(){ app.telemetry=!app.telemetry;     };
 
     function getInfo()        { return app.info;                  };
     function toggleInfo()     { app.info=!app.info;               };
@@ -491,6 +491,48 @@ var diagrams = function(processingInstance){
 
     };
 
+    
+    function triangleArea(p1,p2,p3){
+
+      var a=dist(p1.x, p1.y, p2.x, p2.y);
+      var b=dist(p2.x, p2.y, p3.x, p3.y);
+      var c=dist(p3.x, p3.y, p1.x, p1.y);
+
+      var semi=(a+b+c)/2;
+
+      var area=sqrt(semi*(semi-a)*(semi-b)*(semi-c));
+
+      return area;
+
+    };
+    function triangleHit(p1,p2,p3){
+
+      var retVal=false;
+
+      var p=new pnt(mouseX,mouseY);
+
+      var areaTotal=triangleArea(p1,p2,p3);
+
+      var area1=triangleArea(p1, p2, p);
+      var area2=triangleArea(p2, p3, p);
+      var area3=triangleArea(p3, p1, p);
+
+      var totals=area1+area2+area3;
+
+      if(abs(areaTotal-totals)<1){ retVal=true; }
+
+      return retVal;
+
+    };
+    function rectangleHit(p1,p2,p3){
+
+      return (mouseX>p2.x &&
+              mouseX<p1.x &&
+              mouseY>p3.y &&
+              mouseY<p1.y);
+    };
+
+    
   }
 
   /* Containers/Controls ======================================================= */
@@ -1140,6 +1182,10 @@ var diagrams = function(processingInstance){
         this.row    = 0;
         this.col    = 0;
 
+        this.p0     = new pnt(this.w/2,      0);
+        this.p1     = new pnt(  this.w, this.h);
+        this.p2     = new pnt(       0, this.h);
+
         // Initialize
         this.load=function(){
 
@@ -1154,7 +1200,7 @@ var diagrams = function(processingInstance){
           // PI/6 radians = 30 degrees
           var rowOffset = this.size-(w2*cos(PI/3));
           var colOffset = cos(PI/6)*w2;
-          var top       = this.h-(this.levels*this.size+this.levels*(rowOffset-1))/2;
+          var top       = 10;
 
           /* Pascal buttons        */
           for(var y=0; y<this.levels; y++){
@@ -1163,10 +1209,10 @@ var diagrams = function(processingInstance){
 
               ID=y + ',' + x;
 
-              xPos = x*colOffset*2-y*colOffset-this.size*this.levels/2;
+              xPos = x*colOffset*2-y*colOffset+this.w/2;
               yPos = y*rowOffset+w2+top;
 
-              row.push(new hexButton(ID, this, xPos+width/2, yPos, this.size, this.size,
+              row.push(new hexButton(ID, this, xPos, yPos, this.size, this.size,
                 {row:       y,
                  col:       x,
                  ordinal:   total,
@@ -1208,14 +1254,19 @@ var diagrams = function(processingInstance){
 
             fill(getColor(CLRS.YELLOW,10));
             textFont(createFont(this.font, 12));
-
+fill(getColor(CLRS.K_TEAL_0,10));
+ellipse(0,0,10,10);
+            
             if(this.hit   ){ fill(getColor(CLRS.YELLOW,15)); }
             if(this.active){ cursor(this.cursor);
                              fill(getColor(CLRS.YELLOW,25));
                              stroke(CLRS.GREEN);
                              strokeWeight(0.25);             }
 
-              rect(0, 0, this.w-1, this.h-1);
+              // rect(0, 0, this.w-1, this.h-1);
+              triangle(this.p0.x, this.p0.y,
+                       this.p1.x, this.p1.y,
+                       this.p2.x, this.p2.y);
 
             for(var c=0; c<this.controls.length; c++){
               for(var r in this.controls[c]){
@@ -1251,18 +1302,17 @@ var diagrams = function(processingInstance){
         this.on=false;
 
       };
-      pyramid.prototype.moved   = function(){
+      pyramid.prototype.moved   = function(x,y){
       /* Overridden because of the shape */
 
         if(this.parent.hit){
 
-          if(mouseX>this.x &&
-             mouseX<this.x+this.w &&
-             mouseY>this.y &&
-             mouseY<this.y+this.h){
+          if(triangleHit(new pnt(this.p0.x+x, this.p0.y+y),
+                         new pnt(this.p1.x+x, this.p1.y+y),
+                         new pnt(this.p2.x+x, this.p2.y+y))){
 
             this.hit=true;
-            app.focus=this.id;            
+            app.focus=this.id;
 
             for(var r=0; r<this.controls.length; r++){
               for(var c in this.controls[r]){
@@ -1953,46 +2003,6 @@ var diagrams = function(processingInstance){
 
     }
 
-    function triangleArea(p1,p2,p3){
-
-      var a=dist(p1.x, p1.y, p2.x, p2.y);
-      var b=dist(p2.x, p2.y, p3.x, p3.y);
-      var c=dist(p3.x, p3.y, p1.x, p1.y);
-
-      var semi=(a+b+c)/2;
-
-      var area=sqrt(semi*(semi-a)*(semi-b)*(semi-c));
-
-      return area;
-
-    };
-    function triangleHit(p1,p2,p3){
-
-      var retVal=false;
-
-      var p=new pnt(mouseX,mouseY);
-
-      var areaTotal=triangleArea(p1,p2,p3);
-
-      var area1=triangleArea(p1, p2, p);
-      var area2=triangleArea(p2, p3, p);
-      var area3=triangleArea(p3, p1, p);
-
-      var totals=area1+area2+area3;
-
-      if(abs(areaTotal-totals)<1){ retVal=true; }
-
-      return retVal;
-
-    };
-    function rectangleHit(p1,p2,p3){
-
-      return (mouseX>p2.x &&
-              mouseX<p1.x &&
-              mouseY>p3.y &&
-              mouseY<p1.y);
-    };
-
     // Hexagon Button ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
 
@@ -2243,7 +2253,7 @@ var diagrams = function(processingInstance){
     // Background --------------------------------------------------
 
       /* root control       */
-      var bk=new root(100, null, 0, 0, width-1, height-1,
+      var rt=new root(100, null, 0, 0, width-1, height-1,
         {text:      'root',
          acolor:    CLRS.ACTIVE,
          icolor:    CLRS.INACTIVE,
@@ -2251,29 +2261,29 @@ var diagrams = function(processingInstance){
          cursor:    ARROW,
          border:    true});
 
-      app.controls.push(bk);
+      app.controls.push(rt);
 
       /* pyramid */
-      bk.controls.push(new pyramid(1234, bk, bk.x+300, bk.y+40, width-200, height-100,
+      rt.controls.push(new pyramid(1234, rt, 0, 0, width, height,
         {font:      'sans-serif',
          levels:    app.levels,
          cursor:    WAIT,
          size:      0,}));
       
       /** Requires a reference to access globally */
-      app.pyramid=bk.controls[0];
+      app.pyramid=rt.controls[0];
     
     // toolbar --------------------------------------------------
     {
       /* tlbar             */
-      var tlbar=new toolbar(200, bk, 1, 1, width-2, 30,
+      var tlbar=new toolbar(200, rt, 1, 1, width-2, 30,
         {text:      'Pascals Triangle',
          font:      'monospace',
          acolor:    CLRS.K_TEAL_3,
          icolor:    CLRS.ACTIVE,
          cursor:    ARROW});
 
-      bk.controls.push(tlbar);
+      rt.controls.push(tlbar);
 
         /* play            */
         tlbar.controls.push(new play(210, tlbar, 5, 5, 20, 20,
@@ -2302,7 +2312,7 @@ var diagrams = function(processingInstance){
 
         /* settings        */
         tlbar.controls.push(new settings(240, tlbar, width-25, 5, 22, 22,
-          {execute:   toggletelemetry,
+          {execute:   toggleTelemetry,
            retrieve:  gettelemetry,
            font:      'monospace',
            color:     CLRS.K_TEAL_0,
@@ -2316,7 +2326,7 @@ var diagrams = function(processingInstance){
       var h=25;
 
       /* Navbar            */
-      var nvbar=new navbar(300, bk, 1, height-26, width-2, h,
+      var nvbar=new navbar(300, rt, 1, height-26, width-2, h,
         {text:        'Navigation',
          font:        'sans-serif',
          icolor:      CLRS.INACTIVE,
@@ -2326,7 +2336,7 @@ var diagrams = function(processingInstance){
          recordCount: navRecordCount,
          execute:     navSetCursor});
 
-      bk.controls.push(nvbar);
+      rt.controls.push(nvbar);
 
         /* Decrement Page        */
         nvbar.controls.push(new navButton(310, nvbar, 0, 0, 50, h,
@@ -2398,10 +2408,10 @@ var diagrams = function(processingInstance){
           // color:   CLRS.WHITE,
           // cursor:  ARROW});
 
-      // bk.controls.push(idx);
+      // rt.controls.push(idx);
 
         // /* Sine button        */
-        // bk.controls.push(new button(310, bk, 15, 45, 120, 20,
+        // rt.controls.push(new button(310, bk, 15, 45, 120, 20,
           // {text:     'Sin '+CONSTANTS.THETA,
            // execute:  toggleSine,
            // tag:      getSine,
@@ -2410,7 +2420,7 @@ var diagrams = function(processingInstance){
            // cursor:   HAND}));
 
         // /* Cosine button      */
-        // bk.controls.push(new button(320, bk, 15, 65, 120, 20,
+        // rt.controls.push(new button(320, bk, 15, 65, 120, 20,
           // {text:     'Cos '+CONSTANTS.THETA,
            // execute:  toggleCosine,
            // tag:      getCosine,
@@ -2419,7 +2429,7 @@ var diagrams = function(processingInstance){
            // cursor:   HAND}));
 
         // /* Tangent button     */
-        // bk.controls.push(new button(330, bk, 15, 85, 120, 20,
+        // rt.controls.push(new button(330, bk, 15, 85, 120, 20,
           // {text:     'Tan '+CONSTANTS.THETA,
            // execute:  toggleTangent,
            // tag:      getTangent,
@@ -2428,7 +2438,7 @@ var diagrams = function(processingInstance){
            // cursor:   HAND}));
 
         // /* Cosecant button    */
-        // bk.controls.push(new button(340, bk, 15, 110, 120, 20,
+        // rt.controls.push(new button(340, bk, 15, 110, 120, 20,
           // {text:     'Csc '+CONSTANTS.THETA,
            // execute:  toggleCosecant,
            // tag:      getCosecant,
@@ -2437,7 +2447,7 @@ var diagrams = function(processingInstance){
            // cursor:   HAND}));
 
         // /* Secant button      */
-        // bk.controls.push(new button(350, bk, 15, 130, 120, 20,
+        // rt.controls.push(new button(350, bk, 15, 130, 120, 20,
           // {text:     'Sec '+CONSTANTS.THETA,
            // execute:  toggleSecant,
            // tag:      getSecant,
@@ -2446,7 +2456,7 @@ var diagrams = function(processingInstance){
            // cursor:   HAND}));
 
         // /* Cotangent button   */
-        // bk.controls.push(new button(360, bk, 15, 150, 120, 20,
+        // rt.controls.push(new button(360, bk, 15, 150, 120, 20,
           // {text:     'Cot '+CONSTANTS.THETA,
            // execute:  toggleCotangent,
            // tag:      getCotangent,
@@ -2455,7 +2465,7 @@ var diagrams = function(processingInstance){
            // cursor:   HAND}));
 
         // /* Excosecant button   */
-        // bk.controls.push(new button(360, bk, 15, 175, 120, 20,
+        // rt.controls.push(new button(360, bk, 15, 175, 120, 20,
           // {text:     'Excsc '+CONSTANTS.THETA,
            // execute:  toggleExcosecant,
            // tag:      getExcosecant,
@@ -2464,7 +2474,7 @@ var diagrams = function(processingInstance){
            // cursor:   HAND}));
 
         // /* Coversine button   */
-        // bk.controls.push(new button(360, bk, 15, 195, 120, 20,
+        // rt.controls.push(new button(360, bk, 15, 195, 120, 20,
           // {text:     'Cvs '+CONSTANTS.THETA,
            // execute:  toggleCoversine,
            // tag:      getCoversine,
@@ -2473,7 +2483,7 @@ var diagrams = function(processingInstance){
            // cursor:   HAND}));
 
         // /* Versine button   */
-        // bk.controls.push(new button(360, bk, 15, 220, 120, 20,
+        // rt.controls.push(new button(360, bk, 15, 220, 120, 20,
           // {text:     'Ver '+CONSTANTS.THETA,
            // execute:  toggleVersine,
            // tag:      getVersine,
@@ -2482,7 +2492,7 @@ var diagrams = function(processingInstance){
            // cursor:   HAND}));
 
         // /* Exsecant button   */
-        // bk.controls.push(new button(360, bk, 15, 240, 120, 20,
+        // rt.controls.push(new button(360, bk, 15, 240, 120, 20,
           // {text:     'Exsec '+CONSTANTS.THETA,
            // execute:  toggleExsecant,
            // tag:      getExsecant,
@@ -2495,7 +2505,7 @@ var diagrams = function(processingInstance){
     {
       
       /* Splash Screen      */
-      var splashScreen=new splash(500, bk, 500, 100, 400, 400,
+      var splashScreen=new splash(500, rt, 500, 100, 400, 400,
         {color:     CLRS.BLACK,
          font:      'monospace',
          retrieve:  getInfo,
@@ -2509,7 +2519,7 @@ var diagrams = function(processingInstance){
            color:     CLRS.WHITE,
            cursor:    HAND}));    
 
-      bk.controls.push(splashScreen);
+      rt.controls.push(splashScreen);
            
     }
 
@@ -2517,12 +2527,12 @@ var diagrams = function(processingInstance){
     // Telemetry --------------------------------------------------
 
       /* Telemetry          */
-      var telem=new telemetry(400, bk, width, 30, 200, height-55,
+      var telem=new telemetry(400, rt, width, 30, 200, height-55,
         {color:     CLRS.BLACK,
          font:      'sans-serif',
          cursor:    ARROW});
 
-      bk.controls.push(telem);
+      rt.controls.push(telem);
 
   };
 
@@ -2699,7 +2709,7 @@ app.text=txt;
   loadPascal();
 
   // println(ArrayToText2D(app.pascal));
-textFont(createFont('monospace', 16));
+// textFont(createFont('monospace', 16));
   function update(){
 
     pushMatrix();
@@ -2752,6 +2762,7 @@ textFont(createFont('monospace', 16));
         switch(true){
 
           case app.keys[KEYCODES.F1]:       toggleInfo();       break;
+          case app.keys[KEYCODES.F2]:       toggleTelemetry();  break;
           case app.keys[KEYCODES.F5]:       reset();            break;
           case app.keys[KEYCODES.F6]:       toggleCalculate();  break;
 
