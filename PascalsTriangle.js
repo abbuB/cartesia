@@ -103,7 +103,7 @@ var diagrams = function(processingInstance){
 
       // angleMode='degrees';
 
-      size(900, 700); // set size of canvas
+      size(700, 700); // set size of canvas
 
     }
 
@@ -1175,7 +1175,7 @@ var diagrams = function(processingInstance){
         control.call(this, id, parent, x, y, w, h);
 
         this.levels = props.levels;
-        this.size   = height/this.levels;
+        this.size   = this.h/props.levels;
         this.font   = props.font;
         this.cursor = props.cursor;
 
@@ -1200,7 +1200,7 @@ var diagrams = function(processingInstance){
           // PI/6 radians = 30 degrees
           var rowOffset = this.size-(w2*cos(PI/3));
           var colOffset = cos(PI/6)*w2;
-          var top       = 10;
+          var top       = 70;
 
           /* Pascal buttons        */
           for(var y=0; y<this.levels; y++){
@@ -1252,16 +1252,21 @@ var diagrams = function(processingInstance){
             noFill();
             noStroke();
 
-            fill(getColor(CLRS.YELLOW,10));
+            fill(getColor(CLRS.K_TEAL_0,15));
             textFont(createFont(this.font, 12));
-fill(getColor(CLRS.K_TEAL_0,10));
-ellipse(0,0,10,10);
-            
-            if(this.hit   ){ fill(getColor(CLRS.YELLOW,15)); }
-            if(this.active){ cursor(this.cursor);
-                             fill(getColor(CLRS.YELLOW,25));
-                             stroke(CLRS.GREEN);
-                             strokeWeight(0.25);             }
+
+// fill(getColor(CLRS.K_TEAL_0,10));
+// ellipse(0,0,10,10);
+
+            if(this.hit && this.active){
+
+              fill(getColor(CLRS.K_TEAL_0,10));
+              cursor(this.cursor);
+              
+              stroke(CLRS.GREEN);
+              strokeWeight(0.25);
+
+            }
 
               // rect(0, 0, this.w-1, this.h-1);
               triangle(this.p0.x, this.p0.y,
@@ -2264,7 +2269,7 @@ ellipse(0,0,10,10);
       app.controls.push(rt);
 
       /* pyramid */
-      rt.controls.push(new pyramid(1234, rt, 0, 0, width, height,
+      rt.controls.push(new pyramid(1234, rt, 0, 30, width, height-55,
         {font:      'sans-serif',
          levels:    app.levels,
          cursor:    WAIT,
@@ -2505,7 +2510,7 @@ ellipse(0,0,10,10);
     {
       
       /* Splash Screen      */
-      var splashScreen=new splash(500, rt, 500, 100, 400, 400,
+      var splashScreen=new splash(500, rt, width/2-200, 100, 400, 400,
         {color:     CLRS.BLACK,
          font:      'monospace',
          retrieve:  getInfo,
