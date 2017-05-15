@@ -103,53 +103,53 @@ var diagrams = function(processingInstance){
 
       // angleMode='degrees';
 
-      size(700, 700); // set size of canvas
+      size(600, 600); // set size of canvas
 
     }
 
-    this.debug=true;          //  mode that displays enhanced debugging tools
+    this.debug        = true;   //  mode that displays enhanced debugging tools
 
-    this.frameRate=0;        //  refresh speed
+    this.frameRate    = 0;      //  refresh speed
 
-    this.mouseX=0;            //  current mouseX location
-    this.mouseY=0;            //  current mouseY location
+    this.mouseX       = 0;      //  current mouseX location
+    this.mouseY       = 0;      //  current mouseY location
 
-    this.left=false;          //  Is the left mouse button pressed
-    this.right=false;         //  Is the right mouse button pressed
-    this.center=false;        //  Is the center mouse button pressed
+    this.left         = false;  //  Is the left mouse button pressed
+    this.right        = false;  //  Is the right mouse button pressed
+    this.center       = false;  //  Is the center mouse button pressed
 
-    this.focus=-1;            //  The ID of the control with focus
+    this.focus        = -1;     //  The ID of the control with focus
 
-    this.controls=[];         //  collection of controls in the app
-    this.keys=[];             //  Array holding the value of all keycodes
+    this.controls     = [];     //  collection of controls in the app
+    this.keys         = [];     //  Array holding the value of all keycodes
 
-    this.info=false;          //  Is the info frame displayed
-    this.telemetry=true;        //  Is the telemetry visible
+    this.info         = false;  //  Is the info frame displayed
+    this.telemetry    = true;   //  Is the telemetry visible
 
     /* App Specific ------------------ */
 
-    this.calculating=false;
+    this.calculating  = false;
 
-    this.cursor=0;            //  position of the cursor in grid
-    this.cells=0;             //  # of cells in the grid
+    this.cursor       = 0;      //  position of the cursor in grid
+    this.cells        = 0;      //  # of cells in the grid
 
-    this.levels=5;
+    this.levels       = 10;
 
-    this.levelsMax=16;
-    this.levelsMin=5;
+    this.levelsMax    = 16;
+    this.levelsMin    = 5;
 
-    this.row=0;
-    this.col=0;
+    this.row          = 0;
+    this.col          = 0;
 
-    this.path=[];             //  The final path of the pyramid
+    this.path         = [];     //  The final path of the pyramid
 
-    this.pyramid;             //  Reference to the pyramid control
-    this.currentCell;         //  Reference to the currently selected cell in the pyramid
+    this.pyramid;               //  Reference to the pyramid control
+    this.currentCell;           //  Reference to the currently selected cell in the pyramid
 
-    this.pascal=[];
-    this.SierpinskiOn=false;
-
-    this.text='';
+    this.pascal       = [];
+    this.sierpinskiOn = false;
+    this.chooseOn     = true;
+    this.text         = '';
 
   };
 
@@ -347,14 +347,14 @@ var diagrams = function(processingInstance){
 
     function getColor(clr, alpha){ return color(red(clr), green(clr), blue(clr), alpha/100*255); };
 
-    function setCell()        {
+    function setCell()         {
 
       app.currentCell=app.pyramid.controls[app.row][app.col];
       app.currentCell.on=!app.currentCell.on;
 
     };
 
-    function reset()          {
+    function reset()           {
 
       app.calculating=false;
       app.path=[];
@@ -370,15 +370,21 @@ var diagrams = function(processingInstance){
 
     };
 
-    function getCalculate()   { return app.calculating;           };
-    function gettelemetry()   { return app.telemetry;             };
+    function getCalculate()    { return app.calculating;              };
+    function gettelemetry()    { return app.telemetry;                };
 
-    function toggleCalculate(){ app.calculating=!app.calculating; };
-    function toggleTelemetry(){ app.telemetry=!app.telemetry;     };
+    function toggleCalculate() { app.calculating=!app.calculating;    };
+    function toggleTelemetry() { app.telemetry=!app.telemetry;        };
 
-    function getInfo()        { return app.info;                  };
-    function toggleInfo()     { app.info=!app.info;               };
+    function getInfo()         { return app.info;                     };
+    function toggleInfo()      { app.info=!app.info;                  };
 
+    function getChoose()       { return app.chooseOn;                 };
+    function toggleChoose()    { app.chooseOn=!app.chooseOn;          };
+
+    function getSierpinski()   { return app.sierpinskiOn;             };
+    function toggleSierpinski(){ app.sierpinskiOn=!app.sierpinskiOn;  };
+    
     function constrainCurrent(){
 
       app.row=(constrain)(app.row, 0, app.pyramid.controls.length-1);
@@ -388,7 +394,7 @@ var diagrams = function(processingInstance){
 
     };
 
-    function incrementRows()  {
+    function incrementRows()   {
 
       if(app.levels<app.levelsMax){
 
@@ -401,7 +407,7 @@ var diagrams = function(processingInstance){
       }
 
     };
-    function decrementRows()  {
+    function decrementRows()   {
 
       if(app.levels>app.levelsMin){
 
@@ -414,21 +420,21 @@ var diagrams = function(processingInstance){
       }
 
     };
-    function incrementRow()   {
+    function incrementRow()    {
 
       app.row++;
 
       constrainCurrent();
 
     };
-    function decrementRow()   {
+    function decrementRow()    {
 
       app.row--;
 
       constrainCurrent();
 
     };
-    function incrementCursor(){
+    function incrementCursor() {
 
       app.col++;
       constrainCurrent();
@@ -439,7 +445,7 @@ var diagrams = function(processingInstance){
 
 
     };
-    function decrementCursor(){
+    function decrementCursor() {
 
       app.col--;
       constrainCurrent();
@@ -450,12 +456,12 @@ var diagrams = function(processingInstance){
 
     };
 
-    function firstRecord()    { app.cursor=0;                     };
-    function lastRecord()     { app.cursor=app.cells-1;           };
+    function firstRecord()     { app.cursor=0;                        };
+    function lastRecord()      { app.cursor=app.cells-1;              };
 
-    function navCursor()      { return app.cursor+1;              };
-    function navRecordCount() { return app.cells;                 };
-    function navSetCursor(n)  {
+    function navCursor()       { return app.cursor+1;                 };
+    function navRecordCount()  { return app.cells;                    };
+    function navSetCursor(n)   {
 
       var setValue=round(n/app.cells*app.cells);
 
@@ -466,7 +472,7 @@ var diagrams = function(processingInstance){
 
     };
 
-    function inPath(row,col)  {
+    function inPath(row,col)   {
 
       for(var n=0; n<app.path.length; n++){
 
@@ -483,7 +489,7 @@ var diagrams = function(processingInstance){
       return false;
 
     };
-    function printPath()      {
+    function printPath()       {
 
       for(var n=0; n<app.path.length; n++){
         println(app.path[n].row + ', ' + app.path[n].col);
@@ -775,11 +781,11 @@ var diagrams = function(processingInstance){
             translate(this.x, this.y);
 
               strokeWeight(1);
-              stroke(getColor(this.color, 40));
-              fill(  getColor(this.color, 90));
+              stroke(getColor(CLRS.K_TEAL_0, 40));
+              fill(  getColor(this.color, 85));
 
-              if(this.hit   ){ fill(getColor(this.color, 100)); }
-              if(this.active){ cursor(this.cursor);             }
+              if(this.hit   ){ fill(getColor(this.color, 90)); }
+              if(this.active){ cursor(this.cursor);            }
 
                 rect(0, 0, this.w, this.h, 20);
 
@@ -1174,17 +1180,17 @@ var diagrams = function(processingInstance){
 
         control.call(this, id, parent, x, y, w, h);
 
-        this.levels = props.levels;
-        this.size   = this.h/props.levels;
+        this.levels = app.levels;
+        this.size   = this.h/app.levels*1.6;
         this.font   = props.font;
         this.cursor = props.cursor;
 
         this.row    = 0;
         this.col    = 0;
 
-        this.p0     = new pnt(this.w/2,      0);
-        this.p1     = new pnt(  this.w, this.h);
-        this.p2     = new pnt(       0, this.h);
+        this.p0     = new pnt(this.w*cos(radians( 30))+this.x, this.w*sin(radians( 30))+this.y);
+        this.p1     = new pnt(this.w*cos(radians(150))+this.x, this.w*sin(radians(150))+this.y);
+        this.p2     = new pnt(this.w*cos(radians(270))+this.x, this.w*sin(radians(270))+this.y);
 
         // Initialize
         this.load=function(){
@@ -1200,7 +1206,7 @@ var diagrams = function(processingInstance){
           // PI/6 radians = 30 degrees
           var rowOffset = this.size-(w2*cos(PI/3));
           var colOffset = cos(PI/6)*w2;
-          var top       = 70;
+          var top       = -this.size*app.levels/2+rowOffset/2;
 
           /* Pascal buttons        */
           for(var y=0; y<this.levels; y++){
@@ -1209,8 +1215,8 @@ var diagrams = function(processingInstance){
 
               ID=y + ',' + x;
 
-              xPos = x*colOffset*2-y*colOffset+this.w/2;
-              yPos = y*rowOffset+w2+top;
+              xPos = x*colOffset*2-y*colOffset;
+              yPos = y*rowOffset+top;
 
               row.push(new hexButton(ID, this, xPos, yPos, this.size, this.size,
                 {row:       y,
@@ -1248,30 +1254,29 @@ var diagrams = function(processingInstance){
         pushMatrix();
 
           translate(this.x-0.5,this.y-0.5);
+          
+          /** Commented out to reduce processing time */
+            // noFill();
+            // noStroke();
 
-            noFill();
-            noStroke();
-
-            fill(getColor(CLRS.K_TEAL_0,15));
-            textFont(createFont(this.font, 12));
-
-// fill(getColor(CLRS.K_TEAL_0,10));
-// ellipse(0,0,10,10);
+            // fill(getColor(CLRS.K_TEAL_0,15));
+            // textFont(createFont(this.font, 12));
 
             if(this.hit && this.active){
 
-              fill(getColor(CLRS.K_TEAL_0,10));
+              // fill(getColor(CLRS.K_TEAL_0,10));
               cursor(this.cursor);
-              
-              stroke(CLRS.GREEN);
-              strokeWeight(0.25);
+
+              // stroke(getColor(CLRS.K_TEAL_0,10));
+              // strokeWeight(0.25);
 
             }
 
-              // rect(0, 0, this.w-1, this.h-1);
-              triangle(this.p0.x, this.p0.y,
-                       this.p1.x, this.p1.y,
-                       this.p2.x, this.p2.y);
+            // fill(getColor(CLRS.K_TEAL_0, 10));
+
+              // triangle(this.p0.x-this.x, this.p0.y-this.y,
+                       // this.p1.x-this.x, this.p1.y-this.y,
+                       // this.p2.x-this.x, this.p2.y-this.y);
 
             for(var c=0; c<this.controls.length; c++){
               for(var r in this.controls[c]){
@@ -1287,7 +1292,7 @@ var diagrams = function(processingInstance){
       pyramid.prototype.reset   = function(){
 
         this.levels=app.levels;
-        this.size=height/app.levels;
+        this.size=this.h/app.levels*1.6;
 
         this.controls=[];
         this.load();
@@ -2037,6 +2042,8 @@ var diagrams = function(processingInstance){
         this.active   = false;
         this.on       = props.on;
         this.choose   = true;
+        
+        this.textSize = 0;
 
         /* Initialize */
         var w2=this.w/2;
@@ -2067,100 +2074,92 @@ var diagrams = function(processingInstance){
 
           textSize(sz);
 
+          p.textSize=sz*0.9;
+
         };
-          
-          
-          this.active=this.hit && app.focus===this.id;
-          this.offset=0;
-          
-          pushMatrix();
 
-            translate(this.x, this.y);
-            scale(1,-1);
+        this.active=this.hit && app.focus===this.id;
+        this.offset=0;
+        
+        pushMatrix();
 
-              // Border
-              strokeWeight(0.5);
+          translate(this.x, this.y);
+          scale(1,-1);
 
-              stroke(getColor(this.color, 25));
-              fill  (getColor(this.color,  5));
+            // Border
+            strokeWeight(0.5);
 
-              if(this.active){
+            stroke(getColor(this.color, 25));
+            fill  (getColor(this.color,  5));
 
-                if(app.left){ this.offset=1; }
+            if(this.active){
 
-                strokeWeight(1.5);
-                cursor(this.cursor);
-                
-                if(app.pyramid===this.parent){
+              if(app.left){ this.offset=1; }
 
-                  app.row=this.row;
-                  app.col=this.col;
-                  
-                }
-                
-              };
+              strokeWeight(1.5);
+              cursor(this.cursor);
+              
+              if(app.pyramid===this.parent){
+                app.row=this.row;
+                app.col=this.col;                
+              }
+              
+            };
 
-              if(app.row===this.row &&
-                 app.col===this.col){
-                strokeWeight(2);
-              };
+            if(app.row===this.row &&
+               app.col===this.col){
+              strokeWeight(2);
+            };
 
-              stroke(getColor(this.color,75));
+            stroke(getColor(this.color,75));
 
-              //  Sierpinski grid
-              if(app.SierpinskiOn &&
-                 this.integer%2!==0){ fill(getColor(this.color, 25)); }
+            //  Sierpinski grid
+            if(app.sierpinskiOn &&
+               this.integer%2!==0){ fill(getColor(this.color, 25)); }
 
-              if(this.on){ fill(getColor(this.color, 30)); }
-                
-                var offset=this.offset;
-                
-                beginShape();
+            if(this.on){ fill(getColor(this.color, 30)); }
+              
+              var offset=this.offset;
+              
+              beginShape();
 
-                  vertex(this.p1.x+offset, this.p1.y-offset);
-                  vertex(this.p2.x+offset, this.p2.y-offset);
-                  vertex(this.p3.x+offset, this.p3.y-offset);
-                  vertex(this.p4.x+offset, this.p4.y-offset);
-                  vertex(this.p5.x+offset, this.p5.y-offset);
-                  vertex(this.p6.x+offset, this.p6.y-offset);
+                vertex(this.p1.x+offset, this.p1.y-offset);
+                vertex(this.p2.x+offset, this.p2.y-offset);
+                vertex(this.p3.x+offset, this.p3.y-offset);
+                vertex(this.p4.x+offset, this.p4.y-offset);
+                vertex(this.p5.x+offset, this.p5.y-offset);
+                vertex(this.p6.x+offset, this.p6.y-offset);
 
-                endShape(CLOSE);
+              endShape(CLOSE);
 
 // var d=cos(PI/6)*this.w;
 // ellipse(0,0,d,d);
 
-              // Caption
-              fill(getColor(this.color,50));
+            // Caption
+            fill(getColor(this.color,50));
 
-              if(this.on){
-                fill(getColor(CLRS.WHITE,100));
-              }
+            if(this.on){ fill(getColor(CLRS.WHITE,100)); }
 
-              scale(1,-1);
+            scale(1,-1);
 
-              textFont(createFont(this.font, 12));
-              setTextSize(this);
+            textFont(createFont(this.font, 12));
+            setTextSize(this);
 
-              if(!this.choose){
+            if(!app.chooseOn){
 
-                text(this.integer, this.offset, this.offset);
+              text(this.integer, this.offset, this.offset);
 
-              }
-              else{
+            }
+            else{
 
-                // textSize(12);
+              textLeading(this.textSize);
+              textAlign(CENTER,CENTER);
 
-                textAlign(CENTER,BOTTOM);
+                text(this.row + "\n" + this.col, this.offset, this.offset);
 
-                  text(this.row, this.offset, this.offset);
+            }
 
-                textAlign(CENTER,TOP);
-
-                  text(this.col, this.offset, this.offset);
-
-              }
-
-          popMatrix();
+        popMatrix();
 
       };
       hexButton.prototype.moved=function(x,y){
@@ -2230,11 +2229,7 @@ var diagrams = function(processingInstance){
 
       };
       hexButton.prototype.calc=function(){};
-      hexButton.prototype.set=function(){
-
-        this.on=true;
-
-      };
+      hexButton.prototype.set=function(){ this.on=true; };
 
     }
 
@@ -2269,10 +2264,10 @@ var diagrams = function(processingInstance){
       app.controls.push(rt);
 
       /* pyramid */
-      rt.controls.push(new pyramid(1234, rt, 0, 30, width, height-55,
+      rt.controls.push(new pyramid(1234, rt, width/2, height/2+90, width*0.65, height*0.65,
         {font:      'sans-serif',
          levels:    app.levels,
-         cursor:    WAIT,
+         cursor:    ARROW,
          size:      0,}));
       
       /** Requires a reference to access globally */
@@ -2510,7 +2505,7 @@ var diagrams = function(processingInstance){
     {
       
       /* Splash Screen      */
-      var splashScreen=new splash(500, rt, width/2-200, 100, 400, 400,
+      var splashScreen=new splash(500, rt, width/2-200, height/2-200, 400, 400,
         {color:     CLRS.BLACK,
          font:      'monospace',
          retrieve:  getInfo,
@@ -2768,6 +2763,8 @@ app.text=txt;
 
           case app.keys[KEYCODES.F1]:       toggleInfo();       break;
           case app.keys[KEYCODES.F2]:       toggleTelemetry();  break;
+          case app.keys[KEYCODES.F3]:       toggleChoose();     break;
+          case app.keys[KEYCODES.F4]:       toggleSierpinski(); break;
           case app.keys[KEYCODES.F5]:       reset();            break;
           case app.keys[KEYCODES.F6]:       toggleCalculate();  break;
 
