@@ -86,8 +86,10 @@ var diagrams = function(processingInstance){
 
 */
 
+  var sansFont = createFont("sans", 15);
+
   var global=this;
-  
+
   const MY_FAV = 7;
   println(MY_FAV);
 
@@ -107,12 +109,12 @@ var diagrams = function(processingInstance){
 
     }
 
-    this.debug        = true;   //  mode that displays enhanced debugging tools
+    this.debug        = true;   //  Mode that displays enhanced debugging tools
 
-    this.frameRate    = 0;      //  refresh speed
+    this.frameRate    = 0;      //  Refresh speed
 
-    this.mouseX       = 0;      //  current mouseX location
-    this.mouseY       = 0;      //  current mouseY location
+    this.mouseX       = 0;      //  Current mouseX location
+    this.mouseY       = 0;      //  Current mouseY location
 
     this.left         = false;  //  Is the left mouse button pressed
     this.right        = false;  //  Is the right mouse button pressed
@@ -120,17 +122,17 @@ var diagrams = function(processingInstance){
 
     this.focus        = -1;     //  The ID of the control with focus
 
-    this.controls     = [];     //  collection of controls in the app
+    this.controls     = [];     //  Collection of controls in the app
     this.keys         = [];     //  Array holding the value of all keycodes
 
     this.info         = false;  //  Is the info frame displayed
-    this.telemetry    = true;   //  Is the telemetry visible
+    this.telemetry    = true;   //  Is telemetry visible
 
     /* App Specific ------------------ */
 
     this.calculating  = false;
 
-    this.cursor       = 0;      //  position of the cursor in grid
+    this.cursor       = 0;      //  Position of the cursor in grid
     this.cells        = 0;      //  # of cells in the grid
 
     this.levels       = 10;
@@ -158,44 +160,44 @@ var diagrams = function(processingInstance){
   /* Constants ================================================================= */
   {
 
-    var KEYCODES={
-      BACKSPACE:  8,
-      TAB:        9,
-      ENTER:      10,
-      RETURN:     13,
-      ESC:        27,
-      DELETE:     127,
-      CODED:      0xffff,
-      SHIFT:      16,
-      CONTROL:    17,
-      ALT:        18,
-      CAPSLK:     20,
-      SPACE:      32,
-      PGUP:       33,
-      PGDN:       34,
-      END:        35,
-      HOME:       36,
-      LEFT:       37,
-      UP:         38,
-      RIGHT:      39,
-      DOWN:       40,
-      F1:         112,
-      F2:         113,  //  Rename
-      F3:         114,
-      F4:         115,
-      F5:         116,
-      F6:         117,
-      stg:        118,  // F7: snap to grid
-      ORTHO:      119,  // F8:
-      F9:         120,
-      F10:        121,
-      F11:        122,
-      F12:        123,
-      NUMLK:      144,
-      META:       157,
-      INSERT:     155,
-      Z:          90
-    };
+    // var KEYCODES={
+      // BACKSPACE:  8,
+      // TAB:        9,
+      // ENTER:      10,
+      // RETURN:     13,
+      // ESC:        27,
+      // DELETE:     127,
+      // CODED:      0xffff,
+      // SHIFT:      16,
+      // CONTROL:    17,
+      // ALT:        18,
+      // CAPSLK:     20,
+      // SPACE:      32,
+      // PGUP:       33,
+      // PGDN:       34,
+      // END:        35,
+      // HOME:       36,
+      // LEFT:       37,
+      // UP:         38,
+      // RIGHT:      39,
+      // DOWN:       40,
+      // F1:         112,
+      // F2:         113,  //  Rename
+      // F3:         114,
+      // F4:         115,
+      // F5:         116,
+      // F6:         117,
+      // stg:        118,  // F7: snap to grid
+      // ORTHO:      119,  // F8:
+      // F9:         120,
+      // F10:        121,
+      // F11:        122,
+      // F12:        123,
+      // NUMLK:      144,
+      // META:       157,
+      // INSERT:     155,
+      // Z:          90
+    // };
     var CLRS={
 
       K_STEEL_0:     color( 48, 68, 82,255),
@@ -287,61 +289,61 @@ var diagrams = function(processingInstance){
 
 
     };
-    var CONSTANTS={
+    // var CONSTANTS={
 
-      DEGREES:        '°',
-      PI:             'π',
-      TRIANGLE_UP:    '▲',
-      TRIANGLE_DOWN:  '▼',
-      INFINITY:       '∞',
-      THETA:          'θ',
-      RADIANS:        'ᶜ',
-      IDENTICAL:      '≡',
-      TRIANGLE_R:     '►',
-      TRIANGLE_L:     '◄'
+      // DEGREES:        '°',
+      // PI:             'π',
+      // TRIANGLE_UP:    '▲',
+      // TRIANGLE_DOWN:  '▼',
+      // INFINITY:       '∞',
+      // THETA:          'θ',
+      // RADIANS:        'ᶜ',
+      // IDENTICAL:      '≡',
+      // TRIANGLE_R:     '►',
+      // TRIANGLE_L:     '◄'
 
-    };
-    var NAVIGATION={
-      INCREMENT:      0,
-      DECREMENT:      1,
-      FIRST:          2,
-      LAST:           3,
-      DECREMENTPAGE:  4,
-      INCREMENTPAGE:  5
-    };
-
-  }
-
-  /* Data types ================================================================ */
-  {
-
-    function pt(row,col){
-      this.row=row;
-      this.col=col;
-    };
-    pt.prototype.toString=function(){ return this.row + ", " + this.col; }
-
-    function pnt(x,y){
-      this.x = x;
-      this.y = y;
-    };
-    pnt.prototype.toString=function(){ return this.x +  ", " + this.y; }
+    // };
+    // var NAVIGATION={
+      // INCREMENT:      0,
+      // DECREMENT:      1,
+      // FIRST:          2,
+      // LAST:           3,
+      // DECREMENTPAGE:  4,
+      // INCREMENTPAGE:  5
+    // };
 
   }
+
+  // /* Data types ================================================================ */
+  // {
+
+    // function pt(row,col){
+      // this.row=row;
+      // this.col=col;
+    // };
+    // pt.prototype.toString=function(){ return this.row + ", " + this.col; }
+
+    // function pnt(x,y){
+      // this.x = x;
+      // this.y = y;
+    // };
+    // pnt.prototype.toString=function(){ return this.x +  ", " + this.y; }
+
+  // }
 
   /* Utility Functions ========================================================= */
   {
 
     /**  Thanks Peter */
-    function forEach(arr, func, props){
+    // function forEach(arr, func, props){
 
-      for(var c=0; c<arr.length; c++){
+      // for(var c=0; c<arr.length; c++){
 
-        arr[c][func](props);
+        // arr[c][func](props);
 
-      }
+      // }
 
-    };
+    // };
 
     function isFocus(n){ return app.focus===n; }
 
@@ -384,7 +386,7 @@ var diagrams = function(processingInstance){
 
     function getSierpinski()   { return app.sierpinskiOn;             };
     function toggleSierpinski(){ app.sierpinskiOn=!app.sierpinskiOn;  };
-    
+
     function constrainCurrent(){
 
       app.row=(constrain)(app.row, 0, app.pyramid.controls.length-1);
@@ -497,7 +499,7 @@ var diagrams = function(processingInstance){
 
     };
 
-    
+
     function triangleArea(p1,p2,p3){
 
       var a=dist(p1.x, p1.y, p2.x, p2.y);
@@ -538,7 +540,7 @@ var diagrams = function(processingInstance){
               mouseY<p1.y);
     };
 
-    
+
   }
 
   /* Containers/Controls ======================================================= */
@@ -564,7 +566,7 @@ var diagrams = function(processingInstance){
 
         this.on       = false;    /** Is the control on or off */
         this.hit      = false;    /** mouse is over the control */
-        
+
         this.active   = false;    /** active = hit and focus */
         this.offset   = 0;        /** offset distance when clicked */
 
@@ -699,7 +701,7 @@ var diagrams = function(processingInstance){
       container.prototype.draw=function(){
 
         this.active=this.hit && app.focus===this.id;
-              
+
         pushMatrix();
 
           translate(this.x, this.y);
@@ -775,7 +777,7 @@ var diagrams = function(processingInstance){
         if(this.retrieve()){
 
           this.active=this.hit && app.focus===this.id;
-  
+
           pushMatrix();
 
             translate(this.x, this.y);
@@ -853,7 +855,7 @@ var diagrams = function(processingInstance){
                mouseY<this.y+y + this.h){
 
               this.hit=true;
-              app.focus=this.id;              
+              app.focus=this.id;
 
               for(var c in this.controls){ this.controls[c].moved(this.x+x, this.y+y); }
 
@@ -873,7 +875,7 @@ var diagrams = function(processingInstance){
       };
       splash.prototype.clicked=function(){
       /* Overridden to maintain on/off value */
-        
+
         if(this.retrieve()){
           if(this.hit){ forEach(this.controls, 'clicked'); }
         }
@@ -903,7 +905,7 @@ var diagrams = function(processingInstance){
       navbar.prototype.draw=function(){
 
         this.active=this.hit && app.focus===this.id;
-                
+
         pushMatrix();
 
           translate(this.x+0.5, this.y+0.5);
@@ -960,7 +962,7 @@ var diagrams = function(processingInstance){
       toolbar.prototype.draw=function(){
 
         this.active=this.hit && app.focus===this.id;
-                
+
         pushMatrix();
 
           translate(this.x, this.y);
@@ -1112,7 +1114,7 @@ var diagrams = function(processingInstance){
         };
 
         this.active=this.hit && app.focus===this.id;
-                
+
         pushMatrix();
 
           translate(this.x, this.y);
@@ -1219,16 +1221,13 @@ var diagrams = function(processingInstance){
               yPos = y*rowOffset+top;
 
               row.push(new hexButton(ID, this, xPos, yPos, this.size, this.size,
-                {row:       y,
-                 col:       x,
+                {col:       x,
+                 row:       y,
                  ordinal:   total,
                  integer:   app.pascal[y][x],
-                 total:     0,
                  color:     CLRS.K_TEAL_1,
                  font:      props.font,
-                 cursor:    HAND,
-                 execute:   executePascal,
-                 retrieve:  retrievePascal}));
+                 cursor:    HAND}));
 
               total++;
 
@@ -1254,7 +1253,7 @@ var diagrams = function(processingInstance){
         pushMatrix();
 
           translate(this.x-0.5,this.y-0.5);
-          
+
           /** Commented out to reduce processing time */
             // noFill();
             // noStroke();
@@ -1396,7 +1395,7 @@ var diagrams = function(processingInstance){
       pyramid.prototype.out     = function(){ this.hit=false; }
       pyramid.prototype.pressed = function(){};
       pyramid.prototype.dragged = function(){};
-      
+
     }
 
 
@@ -1419,7 +1418,7 @@ var diagrams = function(processingInstance){
       index.prototype.draw=function(){
 
         this.active=this.hit && app.focus===this.id;
-        this.offset=0;      
+        this.offset=0;
 
         pushMatrix();
 
@@ -1432,7 +1431,7 @@ var diagrams = function(processingInstance){
 
             if(this.active){ stroke(getColor(CLRS.BLACK, 40));
                              fill(getColor(this.color, 75));
-              
+
                              cursor(this.cursor);               }
 
             rect(this.offset, this.offset, this.w, this.h, this.radius);
@@ -1476,7 +1475,7 @@ var diagrams = function(processingInstance){
               fill(getColor(this.color, 5));
               strokeWeight(0.25);
               stroke(getColor(CLRS.K_TEAL_0, 50));
-              
+
               cursor(this.cursor);
 
             }
@@ -1541,7 +1540,7 @@ var diagrams = function(processingInstance){
       };
       navButton.prototype=Object.create(control.prototype);
       navButton.prototype.draw=function(){
-        
+
         this.active=this.hit && app.focus===this.id;
         this.offset=0;
 
@@ -1556,7 +1555,7 @@ var diagrams = function(processingInstance){
 
               if(app.left){ this.offset=1; }
 
-              fill(getColor(this.color,10));              
+              fill(getColor(this.color,10));
               cursor(this.cursor);
 
             }
@@ -1613,10 +1612,10 @@ var diagrams = function(processingInstance){
       };
       onOff.prototype=Object.create(control.prototype);
       onOff.prototype.draw=function(){
-        
+
         this.active=this.hit && app.focus===this.id;
         this.offset=0;
-        
+
         pushMatrix();
 
           translate(this.x, this.y);
@@ -1695,7 +1694,7 @@ var diagrams = function(processingInstance){
 
         this.active=this.hit && app.focus===this.id;
         this.offset=0;
-        
+
         pushMatrix();
 
           translate(this.x, this.y);
@@ -1771,7 +1770,7 @@ var diagrams = function(processingInstance){
 
         this.active=this.hit && app.focus===this.id;
         this.offset=0;
-        
+
         pushMatrix();
 
           translate(this.x, this.y);
@@ -1897,9 +1896,9 @@ var diagrams = function(processingInstance){
             fill(getColor(this.color,50));
 
             if(this.active){ fill(getColor(CLRS.BLACK,75)); }
-              
+
               var offset=this.offset;
-              
+
               triangle( 15+offset, 10+offset,
                          5+offset,  5+offset,
                          5+offset, 15+offset);
@@ -1957,8 +1956,8 @@ var diagrams = function(processingInstance){
               // if(this.hit   ){ fill(getColor(CLRS.ACTIVE, 50)); }
               if(this.active && this.hit){
                 if(app.left){ this.offset=1; }
-                              cursor(this.cursor);             
-                              fill(getColor(CLRS.ACTIVE, 50)); 
+                              cursor(this.cursor);
+                              fill(getColor(CLRS.ACTIVE, 50));
               }
 
               rect(this.offset, -this.h-this.offset, this.w, this.h, 3);
@@ -1981,24 +1980,24 @@ var diagrams = function(processingInstance){
       button.prototype.moved=function(x,y){
 
         if(this.parent.hit){
-        
+
           if(mouseX>(this.x+x) &&
              mouseX<(this.x+x) + this.w &&
              mouseY>(this.y+y) &&
              mouseY<(this.y+y) + this.h){
-                 
+
               this.hit=true;
-              app.focus=this.id;            
+              app.focus=this.id;
 
           }
           else{
-            
+
             this.hit=false;
-            
+
           }
-        
+
         }
-        
+
       };
       button.prototype.clicked=function(){
       /* Overridden to maintain on/off value */
@@ -2030,10 +2029,10 @@ var diagrams = function(processingInstance){
 
         this.ordinal  = props.ordinal;   //  Counting #
         this.integer  = props.integer;   //  display #
-        this.total    = props.integer;   //  path total to this point
+        // this.total    = props.integer;   //  path total to this point
 
-        this.execute  = props.execute;
-        this.retrieve = props.retrieve;
+        // this.execute  = props.execute;
+        // this.retrieve = props.retrieve;
         this.color    = props.color;
         this.cursor   = props.cursor;
 
@@ -2042,7 +2041,7 @@ var diagrams = function(processingInstance){
         this.active   = false;
         this.on       = props.on;
         this.choose   = true;
-        
+
         this.textSize = 0;
 
         /* Initialize */
@@ -2060,7 +2059,7 @@ var diagrams = function(processingInstance){
       };
       hexButton.prototype=Object.create(control.prototype);
       hexButton.prototype.draw=function(){
-                
+
         var setTextSize=function(p){
 
           var sz=p.w/2.5;
@@ -2080,7 +2079,7 @@ var diagrams = function(processingInstance){
 
         this.active=this.hit && app.focus===this.id;
         this.offset=0;
-        
+
         pushMatrix();
 
           translate(this.x, this.y);
@@ -2098,12 +2097,12 @@ var diagrams = function(processingInstance){
 
               strokeWeight(1.5);
               cursor(this.cursor);
-              
+
               if(app.pyramid===this.parent){
                 app.row=this.row;
-                app.col=this.col;                
+                app.col=this.col;
               }
-              
+
             };
 
             if(app.row===this.row &&
@@ -2118,9 +2117,9 @@ var diagrams = function(processingInstance){
                this.integer%2!==0){ fill(getColor(this.color, 25)); }
 
             if(this.on){ fill(getColor(this.color, 30)); }
-              
+
               var offset=this.offset;
-              
+
               beginShape();
 
                 vertex(this.p1.x+offset, this.p1.y-offset);
@@ -2218,11 +2217,11 @@ var diagrams = function(processingInstance){
           app.cursor=this.ordinal;
           app.currentCell=this;
 
-          if(app.pyramid===this.parent){                           
+          if(app.pyramid===this.parent){
             app.row=this.row;
             app.col=this.col;
           }
-          
+
           this.on=!this.on;
 
         }
@@ -2235,17 +2234,17 @@ var diagrams = function(processingInstance){
 
   }
 
-  function executePascal(n){
-    println(n);
-  };
-  function retrievePascal(){
-    println('retrieve pascal');
-  };
-  function updatePascal(){
+  // function executePascal(n){
+    // println(n);
+  // };
+  // function retrievePascal(){
+    // println('retrieve pascal');
+  // };
+  // function updatePascal(){
 
-    app.pyramid.reset();
+    // app.pyramid.reset();
 
-  };
+  // };
 
   /* Initialize ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
   function initialize(){
@@ -2269,10 +2268,10 @@ var diagrams = function(processingInstance){
          levels:    app.levels,
          cursor:    ARROW,
          size:      0,}));
-      
+
       /** Requires a reference to access globally */
       app.pyramid=rt.controls[0];
-    
+
     // toolbar --------------------------------------------------
     {
       /* tlbar             */
@@ -2320,7 +2319,7 @@ var diagrams = function(processingInstance){
 
     }
 
-    
+
     // Navigation --------------------------------------------------
     {
       var h=25;
@@ -2503,7 +2502,7 @@ var diagrams = function(processingInstance){
 
     // SplashScreen --------------------------------------------------
     {
-      
+
       /* Splash Screen      */
       var splashScreen=new splash(500, rt, width/2-200, height/2-200, 400, 400,
         {color:     CLRS.BLACK,
@@ -2517,10 +2516,10 @@ var diagrams = function(processingInstance){
            font:      'monospace',
            execute:   toggleInfo,
            color:     CLRS.WHITE,
-           cursor:    HAND}));    
+           cursor:    HAND}));
 
       rt.controls.push(splashScreen);
-           
+
     }
 
 
@@ -2742,6 +2741,12 @@ app.text=txt;
   app.keys[KEYCODES.ALT]     = false;
   app.keys[KEYCODES.SHIFT]   = false;
 
+  println(sortDigitsAsc(918273645));
+  println(sortDigitsDesc(918273645));
+  println(sumOfDigits(918273645));
+  println(sqr(11));
+  println(sqrt(121));
+  
   draw=function(){
 
     execute();
