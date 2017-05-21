@@ -41,19 +41,43 @@ var diagrams = function(processingInstance){
 /*
 
       en.wikipedia.org/wiki/Triangular_number
+      en.wikipedia.org/wiki/Binomial_coefficient
+      
       oeis.org/A000217
+
+      Numberphile - www.youtube.com/watch?v=0iMtlus-afo
 
     TO DO:
 
-      - n k choose formulas option for each cell
-      - interesting patterns - triangular #'s, etc.
+      - complete info
 
+      - interesting patterns
+
+          * Hockey stick
+          * Sum of rows
+          * Sierpinski's Triangle
+          * Exponents of 11
+          * Counting #'s
+          * Triangular #'s
+          * Square #'s
+          * Tetrahedral #'s
+          * Polygonal #'s
+          * Symmetry
+          * Magix Hexagon
+          * Fibonacci Sequence
+          * Prime #'s
+          * mod 2 (even and odd numbers)
+          * sum of row (decimal and binary)
 
     Research:
 
 
     TO DONE:
 
+      - only size cells fonts on initial load (reduce processing)
+          
+      - n k choose formulas option for each cell
+    
       - center the pyramid vertically
 
       - display ideal path on click of hexButton
@@ -91,7 +115,7 @@ var diagrams = function(processingInstance){
   var global=this;
 
   const MY_FAV = 7;
-  println(MY_FAV);
+  // println(MY_FAV);
 
   function application(){
 
@@ -103,11 +127,13 @@ var diagrams = function(processingInstance){
       cursor(WAIT);
       strokeCap(SQUARE);
 
-      // angleMode='degrees';
+      angleMode='radians';
 
-      size(600, 600); // set size of canvas
+      size(900, 700); // set size of canvas
 
     }
+
+    this.dirty        = false;  //  Has a reset occurred 
 
     this.debug        = true;   //  Mode that displays enhanced debugging tools
 
@@ -126,7 +152,7 @@ var diagrams = function(processingInstance){
     this.keys         = [];     //  Array holding the value of all keycodes
 
     this.info         = false;  //  Is the info frame displayed
-    this.telemetry    = true;   //  Is telemetry visible
+    this.telemetry    = false;  //  Is telemetry visible
 
     /* App Specific ------------------ */
 
@@ -135,9 +161,9 @@ var diagrams = function(processingInstance){
     this.cursor       = 0;      //  Position of the cursor in grid
     this.cells        = 0;      //  # of cells in the grid
 
-    this.levels       = 10;
+    this.levels       = 16;
 
-    this.levelsMax    = 16;
+    this.levelsMax    = 32;
     this.levelsMin    = 5;
 
     this.row          = 0;
@@ -149,8 +175,12 @@ var diagrams = function(processingInstance){
     this.currentCell;           //  Reference to the currently selected cell in the pyramid
 
     this.pascal       = [];
-    this.sierpinskiOn = false;
-    this.chooseOn     = true;
+    this.rowTotals    = [];     //  Array of sum of the cells in each row
+
+    this.sierpinski   = false;  //  Is the Sierpinski triangle displayed
+    this.choose       = false;  //  n Choose p displayed https://en.wikipedia.org/wiki/Binomial_coefficient
+    this.sigma        = false;  //  Is the sum of the rows total displayed
+    
     this.text         = '';
 
   };
@@ -358,22 +388,24 @@ var diagrams = function(processingInstance){
 
     function reset()           {
 
-      app.calculating=false;
-      app.path=[];
-      app.cursor=0;
-      app.row=0;
-      app.col=0;
+      app.dirty = true;
 
-      app.pyramid.levels=app.levels;
-      loadPascal();
-      app.pyramid.reset();
+        app.calculating=false;
+        app.path=[];
+        app.cursor=0;
+        app.row=0;
+        app.col=0;
 
-// println(app.levels);
+        app.pyramid.levels=app.levels;
+        app.pascal=loadPascal();
+        app.pyramid.reset();
+
+      app.dirty=false;
 
     };
 
     function getCalculate()    { return app.calculating;              };
-    function gettelemetry()    { return app.telemetry;                };
+    function getTelemetry()    { return app.telemetry;                };
 
     function toggleCalculate() { app.calculating=!app.calculating;    };
     function toggleTelemetry() { app.telemetry=!app.telemetry;        };
@@ -381,11 +413,14 @@ var diagrams = function(processingInstance){
     function getInfo()         { return app.info;                     };
     function toggleInfo()      { app.info=!app.info;                  };
 
-    function getChoose()       { return app.chooseOn;                 };
-    function toggleChoose()    { app.chooseOn=!app.chooseOn;          };
+    function getChoose()       { return app.choose;                   };
+    function toggleChoose()    { app.choose=!app.choose;              };
 
-    function getSierpinski()   { return app.sierpinskiOn;             };
-    function toggleSierpinski(){ app.sierpinskiOn=!app.sierpinskiOn;  };
+    function getSierpinski()   { return app.sierpinski;               };
+    function toggleSierpinski(){ app.sierpinski=!app.sierpinski;      };
+
+    function getSigma()        { return app.sigma;                    };
+    function toggleSigma()     { app.sigma=!app.sigma;                };
 
     function constrainCurrent(){
 
@@ -407,7 +442,7 @@ var diagrams = function(processingInstance){
         reset();
 
       }
-
+      
     };
     function decrementRows()   {
 
@@ -498,48 +533,6 @@ var diagrams = function(processingInstance){
       }
 
     };
-
-
-    function triangleArea(p1,p2,p3){
-
-      var a=dist(p1.x, p1.y, p2.x, p2.y);
-      var b=dist(p2.x, p2.y, p3.x, p3.y);
-      var c=dist(p3.x, p3.y, p1.x, p1.y);
-
-      var semi=(a+b+c)/2;
-
-      var area=sqrt(semi*(semi-a)*(semi-b)*(semi-c));
-
-      return area;
-
-    };
-    function triangleHit(p1,p2,p3){
-
-      var retVal=false;
-
-      var p=new pnt(mouseX,mouseY);
-
-      var areaTotal=triangleArea(p1,p2,p3);
-
-      var area1=triangleArea(p1, p2, p);
-      var area2=triangleArea(p2, p3, p);
-      var area3=triangleArea(p3, p1, p);
-
-      var totals=area1+area2+area3;
-
-      if(abs(areaTotal-totals)<1){ retVal=true; }
-
-      return retVal;
-
-    };
-    function rectangleHit(p1,p2,p3){
-
-      return (mouseX>p2.x &&
-              mouseX<p1.x &&
-              mouseY>p3.y &&
-              mouseY<p1.y);
-    };
-
 
   }
 
@@ -644,10 +637,10 @@ var diagrams = function(processingInstance){
             noStroke();
             fill(this.icolor);
 
-            if(this.hit   ){ fill(this.acolor);  }
-            if(this.active){cursor(this.cursor); }
+            if(this.hit   ){ fill(this.acolor);   }
+            if(this.active){ cursor(this.cursor); }
             if(this.border){ strokeWeight(1);
-                             stroke(CLRS.BLUE);  }
+                             stroke(CLRS.BLUE);   }
 
               rect(0, 0, this.w, this.h);
 
@@ -738,34 +731,31 @@ var diagrams = function(processingInstance){
         this.font     = props.font;
 
         this.controls.push(new hexButton(520, this, this.w/2-35, 170, 75, 75,
-          {row:       -1,
-           col:       -1,
+          {row:       3,
+           col:       1,
            ordinal:   -1,
-           integer:   3,
+           integer:    3,
            font:      'monospace',
-           total:     0,
            color:     CLRS.K_TEAL_1,
            cursor:    HAND,
            on:        true}));
 
         this.controls.push(new hexButton(530, this, this.w/2+35, 170, 75, 75,
-          {row:       -1,
-           col:       -1,
+          {row:       3,
+           col:       2,
            ordinal:   -1,
-           integer:   3,
+           integer:    3,
            font:      'monospace',
-           total:     0,
            color:     CLRS.K_TEAL_1,
            cursor:    HAND,
            on:        true}));
 
         this.controls.push(new hexButton(540, this, this.w/2, 230, 75, 75,
-          {row:       -1,
-           col:       -1,
+          {row:       4,
+           col:       2,
            ordinal:   -1,
-           integer:   6,
+           integer:    6,
            font:      'monospace',
-           total:     0,
            color:     CLRS.K_TEAL_1,
            cursor:    HAND,
            on:        true}));
@@ -836,6 +826,15 @@ var diagrams = function(processingInstance){
               popMatrix();
 
               forEach(this.controls, 'draw');
+
+              stroke(getColor(CLRS.YELLOW,75));
+              strokeWeight(2);
+
+                line(this.w/2-30, this.h/2-15,
+                     this.w/2-8,  this.h/2+15);
+
+                line(this.w/2+30, this.h/2-15,
+                     this.w/2+8,  this.h/2+15);
 
           popMatrix();
 
@@ -911,7 +910,7 @@ var diagrams = function(processingInstance){
           translate(this.x+0.5, this.y+0.5);
 
             noStroke();
-            fill(this.icolor);
+            fill(getColor(CLRS.BLACK,10));
 
             if(this.hit   ){ fill(this.acolor);   }
             if(this.active){ cursor(this.cursor); }
@@ -921,12 +920,12 @@ var diagrams = function(processingInstance){
             stroke(getColor(CLRS.K_TEAL_0,25));
             strokeWeight(0.25);
 
-              line(0, 0, this.w,      0); // Top Border
+              // line(0, 0, this.w,      0); // Top Border
 
             // Caption
-            fill(getColor(CLRS.BLACK, 50));
+            fill(getColor(CLRS.K_TEAL_1, 75));
 
-            if(this.hit){ fill(getColor(CLRS.K_TEAL_0,100)); }
+            if(this.hit){ fill(getColor(CLRS.WHITE,75)); }
 
             textFont(createFont(this.font, 16));
             textAlign(CENTER,CENTER);
@@ -968,7 +967,7 @@ var diagrams = function(processingInstance){
           translate(this.x, this.y);
 
             noStroke();
-            fill(getColor(CLRS.BLACK,5));
+            fill(getColor(CLRS.BLACK,10));
 
             if(this.hit   ){ fill(this.acolor);   }
             if(this.active){ cursor(this.cursor); }
@@ -976,7 +975,7 @@ var diagrams = function(processingInstance){
               rect(0, 0, this.w, this.h);
 
             // Caption
-            fill(CLRS.K_TEAL_0);
+            fill(CLRS.K_TEAL_1);
             textFont(createFont(this.font, 16));
             textAlign(CENTER,CENTER);
 
@@ -1018,6 +1017,8 @@ var diagrams = function(processingInstance){
 
           strokeWeight(1);
           stroke(getColor(p.clr,100));
+
+          noStroke();
 
           if(p.hit){ fill(getColor(p.color, 75)); }
           else     { fill(getColor(p.color, 70)); }
@@ -1077,8 +1078,10 @@ var diagrams = function(processingInstance){
                  'Alt:        \n' +
                  'Control:    \n' +
                  'Shift:      \n\n\n' +
-                 'telemetry:     \n' +
-                 'Calculating:\n' +
+                 'telemetry:  \n' +
+                 'Sigma:      \n' +
+                 'Sierpinski: \n' +
+                 'Info:       \n\n' +
                  'Cursor:     \n' +
                  'Frame Rate: \n' +
                  'Info:',
@@ -1097,10 +1100,12 @@ var diagrams = function(processingInstance){
                  app.keys[KEYCODES.ALT]     + '\n' +
                  app.keys[KEYCODES.CONTROL] + '\n' +
                  app.keys[KEYCODES.SHIFT]   + '\n\n\n' +
-                 app.telemetry                 + '\n' +
-                 app.calculating            + '\n' +
+                 app.telemetry              + '\n' +
+                 app.sigma                  + '\n' +
+                 app.sierpinski             + '\n' +
+                 app.info                   + '\n\n' +
                  app.cursor                 + '\n' +
-                 nf(global,0,2)         + '\n' +
+                 nf(global,0,2)             + '\n' +
                  app.infoOn,
                  col2, row0+15);
 
@@ -1109,7 +1114,7 @@ var diagrams = function(processingInstance){
           textSize(11);
           textAlign(LEFT,BOTTOM);
 
-            text(txt, p.offset+17, row0 + 480, p.w-20, 100);
+            text(txt, p.offset+17, p.h-35, p.w-20, 100);
 
         };
 
@@ -1209,6 +1214,9 @@ var diagrams = function(processingInstance){
           var rowOffset = this.size-(w2*cos(PI/3));
           var colOffset = cos(PI/6)*w2;
           var top       = -this.size*app.levels/2+rowOffset/2;
+          var rowTotal  = 0;
+
+          app.rowTotals=[];
 
           /* Pascal buttons        */
           for(var y=0; y<this.levels; y++){
@@ -1231,10 +1239,15 @@ var diagrams = function(processingInstance){
 
               total++;
 
+              rowTotal+=app.pascal[y][x];
+
             }
 
             this.controls.push(row);
             row=[];
+            
+            app.rowTotals.push(rowTotal);
+            rowTotal=0;
 
           }
 
@@ -1242,7 +1255,7 @@ var diagrams = function(processingInstance){
 
         };
 
-        this.load();
+        // this.load();
 
       };
       pyramid.prototype=Object.create(control.prototype);
@@ -1271,21 +1284,45 @@ var diagrams = function(processingInstance){
 
             }
 
-            // fill(getColor(CLRS.K_TEAL_0, 10));
+            // fill(getColor(CLRS.BLACK, 90));
+            // noStroke();
 
               // triangle(this.p0.x-this.x, this.p0.y-this.y,
                        // this.p1.x-this.x, this.p1.y-this.y,
                        // this.p2.x-this.x, this.p2.y-this.y);
 
-            for(var c=0; c<this.controls.length; c++){
-              for(var r in this.controls[c]){
+            for(var row=0; row<this.controls.length; row++){
+              for(var col in this.controls[row]){
 
-                this.controls[c][r].draw(this.x,this.y);
+                this.controls[row][col].draw(this.x,this.y);
 
               }
+
+              if(app.sigma){  //  Display Row Totals
+
+                fill(getColor(CLRS.YELLOW,75));
+                textSize(this.controls[row][0].textSize*0.75);
+                textAlign(LEFT,CENTER);
+
+                  text(app.rowTotals[row], -width/2+25, this.controls[row][0].y);
+
+              }
+
             }
 
         popMatrix();
+
+      };
+      pyramid.prototype.selectAll   = function(){
+
+
+        for(var r=0; r<this.controls.length; r++){
+          for(var c in this.controls[r]){
+
+            this.controls[r][c].on=true;
+
+          }
+        }
 
       };
       pyramid.prototype.reset   = function(){
@@ -1318,7 +1355,9 @@ var diagrams = function(processingInstance){
 
           if(triangleHit(new pnt(this.p0.x+x, this.p0.y+y),
                          new pnt(this.p1.x+x, this.p1.y+y),
-                         new pnt(this.p2.x+x, this.p2.y+y))){
+                         new pnt(this.p2.x+x, this.p2.y+y),
+                         mouseX,
+                         mouseY)){
 
             this.hit=true;
             app.focus=this.id;
@@ -1474,7 +1513,7 @@ var diagrams = function(processingInstance){
 
               fill(getColor(this.color, 5));
               strokeWeight(0.25);
-              stroke(getColor(CLRS.K_TEAL_0, 50));
+              stroke(getColor(CLRS.K_TEAL_1, 50));
 
               cursor(this.cursor);
 
@@ -1564,8 +1603,10 @@ var diagrams = function(processingInstance){
               rect(this.offset, this.offset, this.w, this.h, 2);
 
             // Icon
-            fill(getColor(this.color, 50));
-            if(this.hit){ fill(getColor(this.color, 100)); }
+            fill(getColor(CLRS.K_TEAL_1, 50));
+            
+            if(this.parent.hit){ fill(getColor(this.color,  75)); }
+            if(this.hit)       { fill(getColor(this.color, 100)); }
 
             noStroke();
             textAlign(CENTER,CENTER);
@@ -1702,9 +1743,11 @@ var diagrams = function(processingInstance){
 
             ellipseMode(CENTER);
 
-            if(this.active){ cursor(this.cursor);
-                             stroke(getColor(this.color, 75)); }
-            else           { stroke(getColor(this.color, 50)); }
+            stroke(getColor(CLRS.K_TEAL_1, 50));
+            
+            if(this.parent.hit){ stroke(getColor(CLRS.WHITE,  75)); }
+            if(this.active)    { stroke(getColor(CLRS.WHITE, 100));  
+                                 cursor(this.cursor);                }
 
             strokeWeight(1.5);
             noFill();
@@ -1714,9 +1757,10 @@ var diagrams = function(processingInstance){
 
               arc(0, 0, this.w, this.h, radians(60), 2*PI-radians(22.5));
 
-            if(app.left &&
-               app.left){ fill(getColor(this.color, 75)); }
-            else        { fill(getColor(this.color, 50)); }
+            fill(getColor(CLRS.K_TEAL_0, 100));
+
+            if(this.parent.hit){ fill(getColor(CLRS.WHITE,  75)); }
+            if(app.active     ){ fill(getColor(CLRS.WHITE, 100)); }
 
               triangle( 5,  2,
                         2, -2,
@@ -1751,10 +1795,10 @@ var diagrams = function(processingInstance){
 
     }
 
-    // Settings * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // iconButton * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
 
-      function settings(id, parent, x, y, w, h, props){
+      function iconButton(id, parent, x, y, w, h, props){
 
         control.call(this, id, parent, x, y, w, h);
 
@@ -1765,8 +1809,8 @@ var diagrams = function(processingInstance){
         this.font     = props.font;
 
       };
-      settings.prototype=Object.create(control.prototype);
-      settings.prototype.draw=function(){
+      iconButton.prototype=Object.create(control.prototype);
+      iconButton.prototype.draw=function(){
 
         this.active=this.hit && app.focus===this.id;
         this.offset=0;
@@ -1778,37 +1822,38 @@ var diagrams = function(processingInstance){
             noStroke();
             noFill();
 
-            if(this.hit   ){ fill(getColor(this.color,10)); }
-            if(this.active){ if(app.left){ this.offset=1; }
-                             cursor(this.cursor);           }
+            if(this.active){ cursor(this.cursor);
+                             fill(getColor(CLRS.BLACK,10));
+                             if(app.left){ this.offset=1; } }
 
             //  Background
               rect(this.offset, this.offset, this.w, this.h, 2);
 
             // Icon
             textFont(createFont(this.font, 16));
-            fill(getColor(this.color,50));
-
-            if(this.active){ fill(getColor(CLRS.BLACK,75)); }
+            fill(getColor(CLRS.K_TEAL_1,50));
+                        
+            if(this.parent.hit){ fill(getColor(CLRS.WHITE, 75)); }
+            if(this.active    ){ fill(getColor(CLRS.WHITE,100)); }
 
             noStroke();
 
               ellipse(this.w/2+this.offset, this.h/2-6+this.offset, 3, 3);
-              ellipse(this.w/2+this.offset, this.h/2,          3, 3);
+              ellipse(this.w/2+this.offset, this.h/2,               3, 3);
               ellipse(this.w/2+this.offset, this.h/2+6+this.offset, 3, 3);
 
         popMatrix();
 
       };
       /** Overridden for execute */
-      settings.prototype.clicked=function(){ if(this.active){ this.execute(); } };
+      iconButton.prototype.clicked=function(){ if(this.active){ this.execute(); } };
 
     }
 
-    // Info ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // textButton ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
 
-      function info(id, parent, x, y, w, h, props){
+      function textButton(id, parent, x, y, w, h, props){
 
         control.call(this, id, parent, x, y, w, h);
 
@@ -1820,11 +1865,12 @@ var diagrams = function(processingInstance){
         this.font     = props.font;
 
       };
-      info.prototype=Object.create(control.prototype);
-      info.prototype.draw=function(){
+      textButton.prototype=Object.create(control.prototype);
+      textButton.prototype.draw=function(){
 
         this.active=this.hit && app.focus===this.id;
         this.offset=0;
+        this.on=this.retrieve();
 
         pushMatrix();
 
@@ -1833,17 +1879,20 @@ var diagrams = function(processingInstance){
             noStroke();
             noFill();
 
-            if(this.hit   ){ fill(getColor(this.color,10)); }
-            if(this.active){ if(app.left){ this.offset=1; }
-                             cursor(this.cursor);           }
+            if(this.active){ cursor(this.cursor);
+                             fill(getColor(CLRS.BLACK,10));
+                             if(app.left){ this.offset=1; } }
 
-            //  Background
-            rect(this.offset, this.offset, this.w, this.h, 2);
+            if(this.on    ){ fill(getColor(CLRS.BLACK,10)); }
+
+              //  Background
+              rect(this.offset, this.offset, this.w, this.h, 2);
 
             // Icon
-            fill(getColor(this.color,50));
+            fill(getColor(CLRS.K_TEAL_1,50));
 
-            if(this.active){ fill(getColor(CLRS.BLACK,75)); }
+            if(this.parent.hit       ){ fill(getColor(this.color, 75)); }
+            if(this.active || this.on){ fill(getColor(this.color,100)); }
 
             textAlign(CENTER,CENTER);
             textFont(createFont(this.font, 20));
@@ -1854,10 +1903,10 @@ var diagrams = function(processingInstance){
 
       };
       /** Overridden for execute */
-      info.prototype.clicked=function(){ if(this.hit){ this.execute(); } };
+      textButton.prototype.clicked=function(){ if(this.active){ this.execute(); } };
 
     }
-
+    
     // Play ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
       function play(id, parent, x, y, w, h, props){
@@ -1885,17 +1934,18 @@ var diagrams = function(processingInstance){
             noStroke();
             noFill();
 
-            if(this.hit   ){ fill(getColor(this.color,10)); }
-            if(this.active){ if(app.left){ this.offset=1; }
-                             cursor(this.cursor);           }
+            if(this.active){ cursor(this.cursor);
+                             fill(getColor(CLRS.BLACK,10));
+                             if(app.left){ this.offset=1; } }
 
             //  Background
             rect(this.offset, this.offset, this.w, this.h, 2);
 
             // Icon
-            fill(getColor(this.color,50));
-
-            if(this.active){ fill(getColor(CLRS.BLACK,75)); }
+            fill(getColor(CLRS.K_TEAL_1,50));
+                        
+            if(this.parent.hit){ fill(getColor(CLRS.WHITE, 75)); }
+            if(this.active    ){ fill(getColor(CLRS.WHITE,100)); }
 
               var offset=this.offset;
 
@@ -2029,7 +2079,7 @@ var diagrams = function(processingInstance){
 
         this.ordinal  = props.ordinal;   //  Counting #
         this.integer  = props.integer;   //  display #
-        // this.total    = props.integer;   //  path total to this point
+        this.total    = props.integer;   //  path total to this point
 
         // this.execute  = props.execute;
         // this.retrieve = props.retrieve;
@@ -2056,26 +2106,27 @@ var diagrams = function(processingInstance){
         this.p5=new pnt(    0,                  -w2);
         this.p6=new pnt( xPos, sin(radians(330))*w2);
 
-      };
-      hexButton.prototype=Object.create(control.prototype);
-      hexButton.prototype.draw=function(){
-
         var setTextSize=function(p){
 
           var sz=p.w/2.5;
 
           textSize(sz);
-          textAlign(CENTER,CENTER);
 
           while(textWidth(p.integer)>(p.w-10)){
             textSize(sz--);
           }
 
-          textSize(sz);
+          // textSize(sz);
 
           p.textSize=sz*0.9;
 
         };
+        
+        setTextSize(this);
+        
+      };
+      hexButton.prototype=Object.create(control.prototype);
+      hexButton.prototype.draw=function(){
 
         this.active=this.hit && app.focus===this.id;
         this.offset=0;
@@ -2113,13 +2164,14 @@ var diagrams = function(processingInstance){
             stroke(getColor(this.color,75));
 
             //  Sierpinski grid
-            if(app.sierpinskiOn &&
+            if(app.sierpinski &&
                this.integer%2!==0){ fill(getColor(this.color, 25)); }
 
             if(this.on){ fill(getColor(this.color, 30)); }
 
               var offset=this.offset;
-
+            
+            /** Hexagon */
               beginShape();
 
                 vertex(this.p1.x+offset, this.p1.y-offset);
@@ -2130,33 +2182,23 @@ var diagrams = function(processingInstance){
                 vertex(this.p6.x+offset, this.p6.y-offset);
 
               endShape(CLOSE);
-
-// var d=cos(PI/6)*this.w;
-// ellipse(0,0,d,d);
+            
+            /** Circle */
+            // var d=cos(PI/6)*this.w;
+            // ellipse(0,0,d,d);
 
             // Caption
-            fill(getColor(this.color,50));
+            fill(getColor(this.color,75));
 
             if(this.on){ fill(getColor(CLRS.WHITE,100)); }
 
             scale(1,-1);
+            textAlign(CENTER,CENTER);
+            textSize(this.textSize);
 
-            textFont(createFont(this.font, 12));
-            setTextSize(this);
-
-            if(!app.chooseOn){
-
-              text(this.integer, this.offset, this.offset);
-
-            }
-            else{
-
-              textLeading(this.textSize);
-              textAlign(CENTER,CENTER);
-
-                text(this.row + "\n" + this.col, this.offset, this.offset);
-
-            }
+            if(app.choose){ textLeading(this.textSize);
+                            text(this.row + "\n" + this.col, this.offset, this.offset);   }
+            else          { text(this.integer, this.offset, this.offset);                 }
 
         popMatrix();
 
@@ -2174,15 +2216,18 @@ var diagrams = function(processingInstance){
 
               var rectHit=rectangleHit(new pnt(this.x+this.p1.x+x, this.y+this.p1.y+y),
                                        new pnt(this.x+this.p3.x+x, this.y+this.p3.y+y),
-                                       new pnt(this.x+this.p6.x+x, this.y+this.p6.y+y));
+                                       new pnt(this.x+this.p6.x+x, this.y+this.p6.y+y),
+                                       mouseX,mouseY);
 
               var triHit0=triangleHit(new pnt(this.x+this.p1.x+x, this.y+this.p1.y+y),
                                       new pnt(this.x+this.p2.x+x, this.y+this.p2.y+y),
-                                      new pnt(this.x+this.p3.x+x, this.y+this.p3.y+y));
+                                      new pnt(this.x+this.p3.x+x, this.y+this.p3.y+y),
+                                      mouseX,mouseY);
 
               var triHit1=triangleHit(new pnt(this.x+this.p4.x+x, this.y+this.p4.y+y),
                                       new pnt(this.x+this.p5.x+x, this.y+this.p5.y+y),
-                                      new pnt(this.x+this.p6.x+x, this.y+this.p6.y+y));
+                                      new pnt(this.x+this.p6.x+x, this.y+this.p6.y+y),
+                                      mouseX,mouseY);
               if(rectHit ||
                  triHit0 ||
                  triHit1){
@@ -2234,18 +2279,6 @@ var diagrams = function(processingInstance){
 
   }
 
-  // function executePascal(n){
-    // println(n);
-  // };
-  // function retrievePascal(){
-    // println('retrieve pascal');
-  // };
-  // function updatePascal(){
-
-    // app.pyramid.reset();
-
-  // };
-
   /* Initialize ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
   function initialize(){
 
@@ -2254,8 +2287,8 @@ var diagrams = function(processingInstance){
       /* root control       */
       var rt=new root(100, null, 0, 0, width-1, height-1,
         {text:      'root',
-         acolor:    CLRS.ACTIVE,
-         icolor:    CLRS.INACTIVE,
+         acolor:    getColor(CLRS.BLACK,80),
+         icolor:    getColor(CLRS.BLACK,85),
          font:      'monospace',
          cursor:    ARROW,
          border:    true});
@@ -2267,7 +2300,7 @@ var diagrams = function(processingInstance){
         {font:      'sans-serif',
          levels:    app.levels,
          cursor:    ARROW,
-         size:      0,}));
+         size:      0}));
 
       /** Requires a reference to access globally */
       app.pyramid=rt.controls[0];
@@ -2278,8 +2311,8 @@ var diagrams = function(processingInstance){
       var tlbar=new toolbar(200, rt, 1, 1, width-2, 30,
         {text:      'Pascals Triangle',
          font:      'monospace',
-         acolor:    CLRS.K_TEAL_3,
-         icolor:    CLRS.ACTIVE,
+         acolor:    CLRS.K_TEAL_0,
+         icolor:    getColor(CLRS.BLACK,20),
          cursor:    ARROW});
 
       rt.controls.push(tlbar);
@@ -2300,19 +2333,37 @@ var diagrams = function(processingInstance){
            color:     CLRS.K_TEAL_0,
            cursor:    HAND}));
 
+        /* sierpinski     */
+        tlbar.controls.push(new textButton(230, tlbar, width-106, 5, 22, 22,
+          {text:      'S',
+           font:      'monospace',
+           execute:   toggleSierpinski,
+           retrieve:  getSierpinski,
+           color:     CLRS.WHITE,
+           cursor:    HAND}));
+           
+        /* sum     */
+        tlbar.controls.push(new textButton(240, tlbar, width-79, 5, 22, 22,
+          {text:      CONSTANTS.SIGMA,
+           font:      'monospace',
+           execute:   toggleSigma,
+           retrieve:  getSigma,
+           color:     CLRS.WHITE,
+           cursor:    HAND}));
+           
         /* information     */
-        tlbar.controls.push(new info(230, tlbar, width-52, 5, 22, 22,
+        tlbar.controls.push(new textButton(250, tlbar, width-52, 5, 22, 22,
           {text:      'i',
            font:      'monospace',
            execute:   toggleInfo,
            retrieve:  getInfo,
-           color:     CLRS.K_TEAL_0,
+           color:     CLRS.YELLOW,
            cursor:    HAND}));
 
         /* settings        */
-        tlbar.controls.push(new settings(240, tlbar, width-25, 5, 22, 22,
+        tlbar.controls.push(new iconButton(260, tlbar, width-25, 5, 22, 22,
           {execute:   toggleTelemetry,
-           retrieve:  gettelemetry,
+           retrieve:  getTelemetry,
            font:      'monospace',
            color:     CLRS.K_TEAL_0,
            cursor:    HAND}));
@@ -2328,8 +2379,8 @@ var diagrams = function(processingInstance){
       var nvbar=new navbar(300, rt, 1, height-26, width-2, h,
         {text:        'Navigation',
          font:        'sans-serif',
-         icolor:      CLRS.INACTIVE,
-         acolor:      CLRS.K_TEAL_4,
+         icolor:      getColor(CLRS.BLACK,20),
+         acolor:      CLRS.K_TEAL_0,
          cursor:      ARROW,
          position:    navCursor,
          recordCount: navRecordCount,
@@ -2526,7 +2577,7 @@ var diagrams = function(processingInstance){
     // Telemetry --------------------------------------------------
 
       /* Telemetry          */
-      var telem=new telemetry(400, rt, width, 30, 200, height-55,
+      var telem=new telemetry(400, rt, width, 31, 200, height-56,
         {color:     CLRS.BLACK,
          font:      'sans-serif',
          cursor:    ARROW});
@@ -2535,159 +2586,9 @@ var diagrams = function(processingInstance){
 
   };
 
-  function currentData(){
-
-    //  Data cursor
-    fill(getColor(CLRS.K_TEAL_0,100));
-    textAlign(LEFT,TOP);
-    textSize(20);
-
-      text((nfc)(app.data[app.cursor].i), 20, 40);
-
-    fill(getColor(CLRS.BLACK,100));
-    textAlign(LEFT,TOP);
-    textSize(12);
-    textLeading(16);
-
-      text('Max:     \n' +
-           'Sum:     \n' +
-           'Length:',
-           20, 70);
-
-      text(CONSTANTS.TRIANGLE_UP +'\n' +
-           CONSTANTS.TRIANGLE_DOWN + '',
-           170, 70);
-
-    textAlign(RIGHT,TOP);
-
-    fill(getColor(CLRS.K_TEAL_2,100));
-
-      text((nfc)(app.data[app.cursor].max)        + '\n' +
-           (nfc)(app.data[app.cursor].sum)        + '\n' +
-           (nfc)((app.data[app.cursor].length-1)),
-           140, 70);
-
-       text((nfc)(app.data[app.cursor].up)         + '\n' +
-            (nfc)(app.data[app.cursor].down),
-            210, 70);
-
-
-  };
-  function dataSummary(){
-
-    fill(getColor(CLRS.K_TEAL_0,100));
-    textSize(16);
-    textAlign(LEFT,TOP);
-
-      text('Range:', 290, 45);
-
-    textSize(12);
-    textLeading(16);
-    fill(getColor(CLRS.BLACK,75));
-
-      text('Max Peak: \n' +
-           'Max Sum:  \n' +
-           'Longest Path:',
-           300, 70);
-
-    fill(getColor(CLRS.ORANGE,75));
-    noStroke();
-
-      rect(291,70,6,12);
-
-    fill(getColor(CLRS.GREEN,75));
-
-      rect(291,86,6,12);
-
-    fill(getColor(CLRS.BLUE,75));
-
-      rect(291,102,6,12);
-
-    fill(getColor(CLRS.K_TEAL_2,100));
-    textAlign(LEFT,TOP);
-    textSize(16);
-
-      text((nfc)(app.data[0].i) + ' - ' +
-           (nfc)(app.data[app.cells-1].i) + '\n\n',
-           400, 45);
-
-    fill(getColor(CLRS.K_TEAL_0,50));
-    textAlign(LEFT,TOP);
-    textSize(12);
-
-      text((nfc)(app.data[app.dHighest].i) +'\n' +
-           (nfc)(app.data[app.dSum].i) + '\n' +
-           (nfc)(app.data[app.dLongest].i),
-           400, 70);
-
-    fill(getColor(CLRS.K_TEAL_2,75));
-    textAlign(RIGHT,TOP);
-
-      text((nfc)(app.data[app.dHighest].max) + '\n' +
-           (nfc)(app.data[app.dSum].sum) + '\n' +
-           (nfc)(app.data[app.dLongest].length-1),
-           540, 70);
-
-  };
-  function drawPath(){
-
-    var path='';
-
-    for(var n=0; n<app.data[app.cursor].path.length; n++){
-
-      path+=app.data[app.cursor].path[n];
-
-      if(n!==app.data[app.cursor].path.length-1){
-        path+= ', ';
-      }
-
-    }
-
-    textAlign(LEFT,TOP);
-    fill(getColor(CLRS.GRAY,50));
-
-      text(path, 30, 140, width-50, 10000);
-
-  };
-
-  function ArrayToText(arr){
-
-    var txt='';
-
-    for(var n=0; n<arr.length; n++){
-
-      txt=txt+arr[n] + ' | ';
-
-    }
-
-    return(txt);
-
-  };
-
-  function ArrayToText2D(arr){
-
-    var txt='';
-
-    for(var row=0; row<arr.length; row++){
-
-      txt+=arr[row]+'\n';
-      // println(arr[row]);
-      // for(var col=0; col<arr[row].length; col++){
-
-        // println(arr[row][col]);
-
-      // }
-
-    }
-app.text=txt;
-    return txt;
-
-  };
-
   function loadPascal(){
-
-    app.pascal=[];
-
+    
+    var rows=[];
     var cols=[1];
 
     for(var row=0; row<app.levels; row++){
@@ -2698,14 +2599,16 @@ app.text=txt;
 
       }
 
-      app.pascal.push(cols);
+      rows.push(cols);
       cols=[1];
 
     }
 
+    return rows;
+    
   };
 
-  loadPascal();
+  app.pascal=loadPascal();
 
   // println(ArrayToText2D(app.pascal));
 // textFont(createFont('monospace', 16));
@@ -2741,11 +2644,58 @@ app.text=txt;
   app.keys[KEYCODES.ALT]     = false;
   app.keys[KEYCODES.SHIFT]   = false;
 
-  println(sortDigitsAsc(918273645));
-  println(sortDigitsDesc(918273645));
-  println(sumOfDigits(918273645));
-  println(sqr(11));
-  println(sqrt(121));
+  // println(sortDigitsAsc(918273645));
+  // println(sortDigitsDesc(918273645));
+  // println(sumOfDigits(918273645));
+  // println(sqr(11));
+  // println(sqrt(121));
+
+  var n=2230;
+
+  const r=0.5;  
+  const L_SECTION=(1-pow(r,2)*PI)/4;
+  
+// println(L_SECTION);
+  
+  function calc(){
+
+    cursor(ARROW);
+
+    strokeWeight(0.5);
+    background(CLRS.WHITE);
+    
+    stroke(CLRS.BLACK);
+    fill(CLRS.BLUE);
+    
+      rect(10,10,200,200);
+    
+    fill(CLRS.WHITE);
+
+      rect(10,10,200,100);
+      rect(110,10,100,200);
+      
+    fill(CLRS.WHITE);
+    
+      ellipse(110,110,200,200);
+
+      
+      line(10,210,10+n*200,10);
+
+fill(CLRS.K_TEAL_0);
+
+text("L-Section Area:  " + L_SECTION, 10, 300);
+text("N:  " + n, 10, 320);
+text("Slope:  " + 1/n, 10, 340);
+
+// println(n + " : " + 1/n);
+
+n++;
+    
+  };
+  
+  execute=update;
+  
+  reset();
   
   draw=function(){
 
@@ -2761,35 +2711,40 @@ app.text=txt;
     keyPressed=function(){
 
       app.keys[keyCode]=true;
-
+// println(keyCode);
       // if(app.autoRun===false){
 
         switch(true){
 
-          case app.keys[KEYCODES.F1]:       toggleInfo();       break;
-          case app.keys[KEYCODES.F2]:       toggleTelemetry();  break;
-          case app.keys[KEYCODES.F3]:       toggleChoose();     break;
-          case app.keys[KEYCODES.F4]:       toggleSierpinski(); break;
-          case app.keys[KEYCODES.F5]:       reset();            break;
-          case app.keys[KEYCODES.F6]:       toggleCalculate();  break;
+          case app.keys[KEYCODES.F1]:       toggleInfo();             break;
+          case app.keys[KEYCODES.F2]:       toggleTelemetry();        break;
+          case app.keys[KEYCODES.F3]:       toggleChoose();           break;
+          case app.keys[KEYCODES.F4]:       toggleSierpinski();       break;
+          case app.keys[KEYCODES.F5]:       reset();                  break;
+          case app.keys[KEYCODES.F6]:       toggleSigma();            break;
 
-          case app.keys[KEYCODES.PGUP]:     incrementRows();    break;
-          case app.keys[KEYCODES.PGDN]:     decrementRows();    break;
+          case app.keys[KEYCODES.PGUP]:     incrementRows();          break;
+          case app.keys[KEYCODES.PGDN]:     decrementRows();          break;
 
           case app.keys[KEYCODES.LEFT] &&
-               app.keys[KEYCODES.CONTROL]:  firstRecord();      break;
+               app.keys[KEYCODES.CONTROL]:  firstRecord();            break;
           case app.keys[KEYCODES.RIGHT] &&
-               app.keys[KEYCODES.CONTROL]:  lastRecord();       break;
+               app.keys[KEYCODES.CONTROL]:  lastRecord();             break;
 
-          case app.keys[KEYCODES.LEFT]:     decrementCursor();  break;
-          case app.keys[KEYCODES.RIGHT]:    incrementCursor();  break;
+          case app.keys[KEYCODES.LEFT]:     decrementCursor();        break;
+          case app.keys[KEYCODES.RIGHT]:    incrementCursor();        break;
 
-          case app.keys[KEYCODES.UP]:       decrementRow();     break;
-          case app.keys[KEYCODES.DOWN]:     incrementRow();     break;
+          case app.keys[KEYCODES.UP]:       decrementRow();           break;
+          case app.keys[KEYCODES.DOWN]:     incrementRow();           break;
 
-          case app.keys[KEYCODES.SPACE]:    setCell();          break;
+          case app.keys[KEYCODES.SPACE]:    setCell();                break;
 
-          default:                                              break;
+          case app.keys[KEYCODES.A] ||
+               app.keys[KEYCODES.a]:        app.pyramid.selectAll();  break;
+          case app.keys[KEYCODES.R] ||
+               app.keys[KEYCODES.r]:        app.pyramid.reset();      break;
+
+          default:                                                    break;
 
         }
 
