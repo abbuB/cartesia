@@ -2,26 +2,31 @@
   {
 
     var KEYCODES={
-      BACKSPACE:  8,
-      TAB:        9,
-      ENTER:      10,
-      RETURN:     13,
-      ESC:        27,
+      BACKSPACE:    8,
+      TAB:          9,
+      ENTER:       10,
+      RETURN:      13,
+      ESC:         27,
       DELETE:     127,
-      CODED:      0xffff,
-      SHIFT:      16,
-      CONTROL:    17,
-      ALT:        18,
-      CAPSLK:     20,
-      SPACE:      32,
-      PGUP:       33,
-      PGDN:       34,
-      END:        35,
-      HOME:       36,
-      LEFT:       37,
-      UP:         38,
-      RIGHT:      39,
-      DOWN:       40,
+      CODED:       0xffff,
+      SHIFT:       16,
+      CONTROL:     17,
+      ALT:         18,
+      CAPSLK:      20,
+      SPACE:       32,
+      PGUP:        33,
+      PGDN:        34,
+      END:         35,
+      HOME:        36,
+      LEFT:        37,
+      UP:          38,
+      RIGHT:       39,
+      DOWN:        40,
+      A:           65,
+      R:           82,      
+      a:           97,
+      r:          114,
+      Z:          90,
       F1:         112,
       F2:         113,  //  Rename
       F3:         114,
@@ -36,8 +41,8 @@
       F12:        123,
       NUMLK:      144,
       META:       157,
-      INSERT:     155,
-      Z:          90
+      INSERT:     155
+      
     };
     var CLRS={
 
@@ -141,7 +146,8 @@
       RADIANS:        'ᶜ',
       IDENTICAL:      '≡',
       TRIANGLE_R:     '►',
-      TRIANGLE_L:     '◄'
+      TRIANGLE_L:     '◄',
+      SIGMA:          'Σ'
 
     };
     var NAVIGATION={
@@ -185,5 +191,81 @@
       }
 
     };
+
+    function ArrayToText(arr){
+
+      var txt='';
+
+      for(var n=0; n<arr.length; n++){
+
+        txt=txt+arr[n] + ' | ';
+
+      }
+
+      return txt;
+
+    };
+
+    function ArrayToText2D(arr){
+
+      var txt='';
+
+      for(var row=0; row<arr.length; row++){
+
+        txt+=arr[row]+'\n';
+
+      }
+
+      return txt;
+
+    };
+
+    function dist(p1,p2){
+
+      return Math.pow( Math.pow(p1.x - p2.x, 2) +
+                       Math.pow(p1.y - p2.y, 2), 0.5 );
+      
+    };
+    
+    function triangleArea(p0,p1,p2){
+
+      var a=dist(p0, p1);
+      var b=dist(p1, p2);
+      var c=dist(p2, p0);
+
+      var semi=(a+b+c)/2;
+
+      var area=Math.pow((semi*(semi-a)*(semi-b)*(semi-c)), 0.5);
+
+      return area;
+
+    };
+    function triangleHit(p0,p1,p2,mX,mY){
+
+      var retVal=false;
+
+      var p=new pnt(mX,mY);
+
+      var areaTotal=triangleArea(p0,p1,p2);
+
+      var area0=triangleArea(p0, p1, p);
+      var area1=triangleArea(p1, p2, p);
+      var area2=triangleArea(p2, p0, p);
+
+      var totals=area0+area1+area2;
+
+      if(Math.abs(areaTotal-totals)<1){ retVal=true; }
+
+      return retVal;
+
+    };
+    function rectangleHit(p0,p1,p2,mX,mY){
+
+      return (mX>p1.x &&
+              mX<p0.x &&
+              mY>p2.y &&
+              mY<p0.y);
+    };
     
   }
+  
