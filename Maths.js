@@ -11,124 +11,80 @@
 
 */
 
-  var factorial=function() { 1,
-                             1,
-                             1*2,
-                             2*3,
-                             2*3*4,
-                             2*3*4*5,
-                             2*3*4*5*6,
-                             2*3*4*5*6*7,
-                             2*3*4*5*6*7*8,
-                             2*3*4*5*6*7*8*9 };
+  function factorial() { 1,
+                         1,
+                         2,
+                         2*3,
+                         2*3*4,
+                         2*3*4*5,
+                         2*3*4*5*6,
+                         2*3*4*5*6*7,
+                         2*3*4*5*6*7*8,
+                         2*3*4*5*6*7*8*9 };
   
-  var factorialDigits(var n){
+  function factorialDigits(n){
     
-    return int ceil(Math.log10(2*Math.PI*100)/2+100*(Math.log10(100/Math.E)));
+    return ceil(log10(2*PI*100)/2+100*(log10(100/E)));
     
   }
   
   var startTime=0;
   var stopTime=0;
 
-  /*  sqr - return the square of n ---------------------------------------*/
-  var sqrvar   =function(n)       { return n*n; };
-  var sqrLong  =function(long n)  { return n*n; };
-  var sqrFloat =function(float n) { return n*n; };
-  var sqrDouble=function(double n){ return n*n; };
+  function sqr(n) { return n*n;      };
+  // function sqrt(n){ return Math.sqrt(n);  };
+  function cube(n){ return Math.pow(n,3); };
+  
+  function isPerfectSquare(n) { return (n%round(n)==0); };   /*  isPerfectSquare - return true if n is a perfect square -------------*/
+
+  // function abs(n){ return round(Math.abs(n)); }
+
+  function rem(n, m){ return n % m; };                        /*  rem - return the remainder of n/m ----------------------------------*/
+
+  // var PI(){ return PI; }
+
+  function isOdd(n){ return (n & 1) === 1; };
+  function isEven(n){ return (n & 1) === 0; };
+
+  function isInt(n) { return n - round(n) === 0; };
 
   
-  /*  sqrt - return the square root of n ---------------------------------*/
-  var sqrtInt(n)   { return sqrt(n); };
-  var sqrtLong(n)  { return sqrt(n); };
-  var sqrtDouble(n){ return sqrt(n); };
-  var sqrtDouble(n){ return sqrt(n); };
-  
-  
-  /*  isPerfectSquare - return true if n is a perfect square -------------*/
-  var  isPerfectSquare(double n) { return (n%(int)n==0); };
-  
-  
-  /*  cube - return the cube of n ----------------------------------------*/
-  var      cube(var n)     { return n*n*n;                 }
-  var    cube(long n)    { return n*n*n;                 }
-  public static float   cube(float n)   { return n*n*n;                 }
-  public static double  cube(double n)  { return n*n*n;                 }
-
-  
-  /*  abs - return the absolute value of n -------------------------------*/
-  var      abs(var n)      { return (int)Math.abs(n);      }
-  var    abs(long n)     { return (long)Math.abs(n);     }
-  public static float   abs(float n)    { return (float)Math.abs(n);    }
-  public static double  abs(double n)   { return (double)Math.abs(n);   }
-
-  /*  rem - return the remainder of n/m ----------------------------------*/
-  var rem=function(n, m){ return n % m; };
-
-  /*  PI - return the value of PI ----------------------------------------*/
-  var PI=function(){ return PI; }
-
-  /*  isOdd - return true if n is odd -----------------------------------*/
-  var isOdd=function(n){ return (n & 1) === 1; };
-
-  /*  isEven - return true if n is even ----------------------------------*/
-  var isEven=function(n){ return (n & 1) === 0; };
-
-  /*  isvar - return true if n is an integer -----------------------------*/
-  var isInt=function(n) { return n - round(n) === 0; };
-
   /* Geometric Numbers ==========================================================================*/
-
-  /*  triangular - return the nth triangular number ----------------------*/
-  var triangular=function(n){ return n*(n+1)/2; };
   
-  var isTriangular=function(n){
+  function triangular(n){ return n*(n+1)/2; };/*  triangular - return the nth triangular number ----------------------*/
+  function isTriangular(n){
     
-    var sqrt = sqrt(n * 2);                                    
+    var sqrt = sqrt(n * 2);
+
     return (sqrt * (sqrt + 1))/2 === n;
     
   };
-  
-  /*  triangular - return the nth pentagonal number ----------------------*/
-  var pentagonal=function(n){ return n*(3*n-1)/2; };
-  var isPentagonal=function(n){ return ((sqrt(24*n+1) + 1) % 6 ) === 0; };
-  
-  /*  hexagonal - return the nth hexagonal number ------------------------*/
-  var hexagonal=function(n){ return n*(2*n-1); };
-  var centeredHexagonal=function(n){ return 1+6*(0.5*n*(n-1)); };
-  var isHexagonal(n){ return ((sqrt(8*n+1) + 1) % 4 ) === 0; };
 
-  /*  heptagonal - return the nth heptagonal number ----------------------*/
-  var heptagonal=function(n){ return n*(5*n-3)/2; };
-  
-  /*  octagonal - return the nth octagonal number ------------------------*/
-  var octagonal=function(n){ return n*(3*n-2); };
+  function pentagonal(n)        { return n*(3*n-1)/2;                     };
+  function isPentagonal(n)      { return ((sqrt(24*n+1) + 1) % 6 ) === 0; };
+
+  function hexagonal(n)         { return n*(2*n-1);                       };
+  function centeredHexagonal(n) { return 1+6*(0.5*n*(n-1));               };
+  function isHexagonal(n)       { return ((sqrt(8*n+1) + 1) % 4 ) === 0;  };
+
+  function heptagonal(n)        { return n*(5*n-3)/2;                     };
+
+  function octagonal(n)         { return n*(3*n-2);                       };
 
   
   /* Digits ==========================================================================*/
 
   /* isPalindrome
      return true if n is a palindrome ----------------------------------*/
-  var  isPalindrome=function(n){ return n===reverse(n); };
-  var isPalindrome=function(n){ return n === reverse(n); };
+  function isPalindrome(n)      { return n===reverse(n);                  };
   
   /* rightDigit
      returns the right-most digit of n ---------------------------------*/
-  var rightDigit=function(n){ return n - (n/10 * 10); };
-  var rightDigit=function(n){ return n - (n/10 * 10); };
+  function rightDigit(n)        { return n - (n/10 * 10);                 };
 
   /* leftDigit
      returns the left-most digit of n ----------------------------------*/
-  var leftDigit=function(n){  
-  
-    while (n>9) {
-      n=(int)(n/10);
-    }
-    
-    return n;
-    
-  };
-  var leftDigit=function(n) {  
+  function leftDigit(n){  
     
     while (n>9) {
       n=floor(n/10);
@@ -140,7 +96,7 @@
 
   /* length
      returns the number of digits of n ---------------------------------*/
-  var length=function(n) {
+  function LENGTH(n) {
 
     var i=0;
     
@@ -155,14 +111,14 @@
   
   /* reverse
      returns the reverse of digits of n --------------------------------*/
-  var reverse=function(n) {
+  function reverse(n) {
 
     var i = 0;
 
     while (n > 0) {
 
-      i = i*10 + (n%10);      
-      n /= 10;
+      i = i*10 + Math.floor(n%10);      
+      n=Math.floor(n/10);
 
     }
 
@@ -172,13 +128,13 @@
 
   /* sumOfDigits
      returns the sum of the digits of n --------------------------------*/
-  var sumOfDigits=function(n) {
+  function sumOfDigits(n) {
 
     var sum=0;
     var digit=0;
 
     while(n>0) {
-      digit=floor(n%10);
+      digit=Math.floor(n%10);
       sum+=digit;
       n/=10;
     }
@@ -200,67 +156,67 @@
     // return sum;
 
   // }
-  var sumOfDigits=function(digitArray) {
+  // function sumOfDigits(digitArray) {
     
-    var sum=0;
+    // var sum=0;
     
-    for (var d=0; d<digits.length; d++) {
-      sum+=digits[d];
-//      System.out.print(digits[d]);
-    }
+    // for (var d=0; d<digits.length; d++) {
+      // sum+=digits[d];
+     // System.out.print(digits[d]);
+    // }
     
-    return sum;
+    // return sum;
     
-  }
+  // }
   
   /*  sortDigits - returns the digits of n sorted --------------------*/
-  var sortDigitsDesc=function(n) {
-
+  function sortDigitsDesc(n) {
+// console.log(n);
     return reverse(sortDigitsAsc(n));
     
   };
-  var sortDigitsAsc=function(n){
-    
-    var digits=[length(n)];
-    var i = 0;
-    
-    do    { digits[i++] = n%10; }
-    while ((n/=10) > 0);
-    
-    Arrays.sort(digits);
-    
+  function sortDigitsAsc(n){
+
+    var digits=[n.length];
+    var i=0;
+
+    do    { digits[i++] = parseInt(n%10); }
+    while ( parseInt(n=n/10) > 0 );
+
+    digits.sort();
+
     n=0;
     
-    for (var digit : digits) {
-      n=10*n + digit;
+    for (var digit in digits){
+      n=(10*n + digits[digit]);
     }
-    
+    // console.log(n);
     return n;
     
   };
 
-  var sortDigitsAsc=function(n) {
+  // function sortDigitsAsc(n) {
 
-    var digits=[];
-    var i = 0;
+    // var digits=[];
+    // var i = 0;
     
-    do    { digits[i++] = n%10; }
-    while ((n/=10) > 0);
+    // do    { digits[i++] = n%10; }
+    // while ((n/=10) > 0);
     
-    Arrays.sort(digits);
+    // digits.sort();
     
-    n=0;
+    // n=0;
     
-    for (var digit : digits) {
-      n=10*n + digit;
-    }
+    // for (var digit in digits) {
+      // n=10*n + digit;
+    // }
     
-    return n;
+    // return n;
 
-  };
+  // };
 
   /* digitFactorialSum - returns the sum of the factorial of the digits of n */
-  var digitFactorialSum=function(n){
+  function digitFactorialSum(n){
   
     
 //    int[] digits=new int[length(n)];
@@ -281,7 +237,7 @@
   };
   
   /* oddDigits - returns true if all the digits of n are odd -------------*/
-  var oddDigits(n){
+  function oddDigits(n){
 
     var i=0;
 
@@ -301,45 +257,45 @@
   };
 
   /*  isCircular - returns true if all rotations of the digits of n are prime */
-  var isCircular(n) {
+  function isCircular(n){
     
-    String str = String.valueOf(n);
-    var limit = str.length();
-    var val=0;
+    // var str = String.valueOf(n);
+    // var limit = str.length();
+    // var val=0;
     
-    if ( n<=11                              ) { return true;  }   //  All single digit primes are circular   
-    if ( Stringses.circularDigits(n)==false ) { return false; }   //  All digits must be odd
+    // if ( n<=11                              ) { return true;  }   //  All single digit primes are circular   
+    // if ( Stringses.circularDigits(n)==false ) { return false; }   //  All digits must be odd
     
-    for (var i=1; i<=limit; i++) {
+    // for (var i=1; i<=limit; i++) {
       
-      str = new String(str.substring(1, str.length()) + str.substring(0,1));
-      val = Integer.valueOf(str);
+      // str = new String(str.substring(1, str.length()) + str.substring(0,1));
+      // val = Integer.valueOf(str);
       
-      if (Primes.isPrime(val)==false) { return false; }
+      // if (Primes.isPrime(val)==false) { return false; }
       
-    }
+    // }
   
 //    println(n);
     
-    return true;
+    // return true;
      
   };
 
   /* truncateRight - truncates the right digit of n ----------------------*/
-  var truncateRight(var n)  { return floor(n/10); }
+  function truncateRight(n)  { return floor(n/10); }
   
   /* truncateLeft
      truncates the right digit of n ------------------------------------*/
-  var truncateLeft(n){
+  function truncateLeft(n){
     // Change to split?
     return Integer.parseInt(String.valueOf(n).substring(1));
   }
   
   /* digitArray
      returns a 1D array of the digits of n -----------------------------*/
-  var digitArray=function(n){
+  function digitArray(n){
     
-    var[] digits = new int[length(n)];
+    var digits = [length(n)];
     var i=0;
     var length = digits.length;
     
@@ -353,7 +309,7 @@
     return digits;
     
   };
-  var digitArrayString=function(s) {
+  function digitArrayString(s) {
 
     // var digits = new int[s.length()];
 
@@ -367,12 +323,12 @@
   
   /* isPandigital
      returns true if n is pandigital (1 -> n)---------------------------*/
-  var isPanDigital_1n=function(n) {
+  function isPanDigital_1n(n) {
 
     // int[] digits = digitArray(n);
     // var length = digits.length;
 
-     Sort Ascending
+     // Sort Ascending
     // Arrays.sort(digits);
     
     // if (digits[0]!=1) { return false; }
@@ -389,7 +345,7 @@
 
   /* isPandigital9
      returns true if n is pandigital (1 -> 9) --------------------------*/
-  var isPanDigital_9=function(n) {
+  function isPanDigital_9(n) {
     
     // if (sumOfDigits(n)!=45)  { return false; }
     // if (length(n)!=9)        { return false; }    
@@ -414,7 +370,7 @@
   };
   
   /* sumOfSquareOfDigits - returns the sum of the square of the digits of n */
-  var sumOfSquareOfDigits=function(n){
+  function sumOfSquareOfDigits(n){
     
     var sum=0;
     var digit=0;
@@ -431,7 +387,7 @@
   };
   
   /* isAscending - returns true if the digits of n increase in value -----*/
-  var isAscending=function(n){
+  function isAscending(n){
     
     if (n<10) { return true; }
     
@@ -451,7 +407,7 @@
   };
 
   /* isDescending - true if the digits of n decrease in value ------------*/
-  var isDescending=function(n){
+  function isDescending(n){
     
     if (n<10) { return true; }
     
@@ -471,7 +427,7 @@
   };
 
   /* isBouncy - true if the digits of n != Ascending of Descending -------*/
-  var isBouncy=function(n){
+  function isBouncy(n){
 
     if (isAscending(n) ||
         isDescending(n)) { return false; }
@@ -481,7 +437,7 @@
   };
 
   /* concatenate - returns n and m concatenated --------------------------*/
-  var concatenate=function(n, m){
+  function concatenate(n, m){
 
     return floor(n * pow(10, length(m)) + m);
 
@@ -492,7 +448,7 @@
   /* Factorial ==========================================================================*/
   
   /* factorial - returns the factorial value of n ------------------------*/
-  var factorial=function(n){
+  function factorial(n){
 
     var total = 1;
 
@@ -505,7 +461,7 @@
   };
   
   /* factorial - returns the factorial value of n ------------------------*/
-  var BigInteger factorial=function(n){
+  function factorial(n){
 
     // BigInteger total = BigInteger.valueOf(1);
 
@@ -524,9 +480,9 @@
   /* Area - Perimeter ==========================================================================*/
   
   /* triangleArea - returns the area of a triangle -----------------------*/
-  var triangleArea=function(x1, y1,
-                            x2, y2,
-                            x3, y3){
+  function triangleArea(x1, y1,
+                        x2, y2,
+                        x3, y3){
   
     /*  Heron's Formula: http://en.wikipedia.org/wiki/Heron%27s_formula
         T=sqrt(s(s-a)(s-b)(s-c)) where s = semi-perimeter (perimeter/2) */
@@ -565,7 +521,7 @@
 //
 //  }
 
-  var totient=function(n){
+  function totient(n){
 
     // long[] factors =  Primes.primeFactorArray((long)n);
 
@@ -624,7 +580,7 @@
   /* gcd
      returns the Greatest Common Divisor of n and m
      Note - recursive euclidean algorithm is twice as fast -------------*/
-  var gcd=function(n, m){
+  function gcd(n, m){
 //    var r=0;
 //    
 //    while(m!=0) {
@@ -644,14 +600,14 @@
   };
 
   /* isCoprime - returns if n and m are coprime (gcd = 1) --------------*/
-  var isCoprime=function(n, m){ return gcd(n,m)===1; };
+  function isCoprime(n, m){ return gcd(n,m)===1; };
 
   /* lcm
      returns the Least Common Multiple
      en.wikipedia.org/wiki/Least_common_multiple -----------------------*/
-  var lcm=function(a, b){ return a * (b / gcd(a, b)); };
+  function lcm(a, b){ return a * (b / gcd(a, b)); };
 
-  var lcm(input) {
+  function lcmArray(input){
 
     var result = input[0];
 
@@ -661,23 +617,23 @@
 
     return result;
 
-  }
+  };
 
   /* Sum ==========================================================================*/
 
   /*  sumOfSequence - returns the sum of the sequence --------------------*/
-  var sumOfSequence=function(start,
-                             end,
-                             difference){
+  function sumOfSequence(start,
+                         end,
+                         difference){
     
     /*  http://en.wikipedia.org/wiki/Arithmetic_progression */
     
     return floor(0.5 * end * ((start<<1) + (end - 1) * difference));
   
-  }
+  };
   
   /* sumOfList - returns the sum of the list -----------------------------*/
-  var sumOfList=function(a) {
+  function sumOfList(a) {
 
     var sum = 0;
 
@@ -692,7 +648,7 @@
   };
 
   /* sumDivisibleBy - ... ----------------*/
-  var sumDivisibleBy(n, limit) {
+  function sumDivisibleBy(n, limit) {
     
     var p = limit / n;
     
@@ -708,11 +664,11 @@
      
      en.wikipedia.org/wiki/Square_pyramidal_number
      oeis.org/A000330 --------------------------------------------------*/
-  var sumOfSquares(n){ return (((n<<1)+1)*(n+1)*n)/6; };
+  function sumOfSquares(n){ return (((n<<1)+1)*(n+1)*n)/6; };
   
   /* ??? ==========================================================================*/
 
-  var round=function(Rval, Rpl){
+  function round(Rval, Rpl){
 
     var p = pow(10,Rpl);
     Rval = Rval * p;
@@ -732,7 +688,7 @@
   
   /* Misc =====================================================================*/
   
-  var squaresBelow=function(n){
+  function squaresBelow(n){
     
     var squares=[];
     
@@ -751,7 +707,7 @@
     
   };
   
-  var pythTriplesBelow=function(limit){
+  function pythTriplesBelow(limit){
 
     var sum=0;
     
@@ -833,21 +789,21 @@
   /* properDivisors
      the smallest (closest to negative infinity) value that is greater than or
      equal to the argument and is equal to a mathematical integer. =====*/
-  var ceil=function(n){ return ceil(n); };
+  function ceil(n){ return ceil(n); };
   
   /* powers ===================================================================*/
   
-  var pow=function(a, b) {
+  // function pow(a, b){
     
-    return floor(pow(a, b));
+    // return floor(pow(a, b));
     
-  };
+  // };
 
   /* Divisors ===================================================================*/
   
   /* properDivisors
      returns the list of proper divisors (not including n) =============*/
-  var properDivisorsList=function(n) {
+  function properDivisorsList(n) {
 
     // ArrayList<Integer> factors = new ArrayList<Integer>();
 
@@ -874,7 +830,7 @@
     
   };
 
-  var properDivisorsArray=function(n){
+  function properDivisorsArray(n){
 
     // ArrayList<Integer> factors = new ArrayList<Integer>();
 
@@ -902,7 +858,7 @@
   };
   
   /* Divisors - returns a list of proper divisors (including n) ========*/
-  var divisorsList=function(n){
+  function divisorsList(n){
 
     // ArrayList<Integer> factors = properDivisorsList(n);
 
@@ -912,7 +868,7 @@
 
   };
 
-  var divisorsArray=function(n){
+  function divisorsArray(n){
 
     // ArrayList<Integer> factors = properDivisorsList(n);
 
@@ -924,7 +880,7 @@
   
   /* sumOfDivisors
      returns the sum of proper divisors (including n) ==================*/  
-  var sumOfDivisors=function(n){
+  function sumOfDivisors(n){
     
     return n+sumOfProperDivisors(n);
 
@@ -932,7 +888,7 @@
 
   /* sumOfProperDivisors
      returns the sum of proper divisors (not including n) ==============*/  
-  var sumOfProperDivisors=function(n){
+  function sumOfProperDivisors(n){
 
     var sum=1;
     
@@ -951,16 +907,16 @@
   
   }
 
-  var LIMIT=pow(10, 3)-1;
+  // var LIMIT=pow(10, 3)-1;
   
-  var sumDivisibleBy=function() {
+  function sumDivisibleBy() {
 
     return sumDivisibleBy( 3, LIMIT) + 
            sumDivisibleBy( 5, LIMIT) -
            sumDivisibleBy(15, LIMIT);
   };
 
-  var iterate=function(){
+  function iterate(){
 
     var sum=0;
 
@@ -975,13 +931,13 @@
 
 //   var main=function(){
 
-    var solution=0;
+    // var solution=0;
 
     /* ---------------------------------------------------------------- */
 
     // Maths.startTime = System.nanoTime();
 
-    solution = sumDivisibleBy();
+    // solution = sumDivisibleBy();
 
     // Maths.stopTime = System.nanoTime();
 
@@ -993,7 +949,7 @@
 
     // Maths.startTime = System.nanoTime();
 
-    solution = iterate();
+    // solution = iterate();
 
     // Maths.stopTime = System.nanoTime();
 
