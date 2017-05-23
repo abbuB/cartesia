@@ -42,7 +42,7 @@ var diagrams = function(processingInstance){
 
       en.wikipedia.org/wiki/Triangular_number
       en.wikipedia.org/wiki/Binomial_coefficient
-      
+
       oeis.org/A000217
 
       Numberphile - www.youtube.com/watch?v=0iMtlus-afo
@@ -75,9 +75,9 @@ var diagrams = function(processingInstance){
     TO DONE:
 
       - only size cells fonts on initial load (reduce processing)
-          
+
       - n k choose formulas option for each cell
-    
+
       - center the pyramid vertically
 
       - display ideal path on click of hexButton
@@ -101,7 +101,7 @@ var diagrams = function(processingInstance){
       - only draw telemetry if it's visible
 
         textFont(createFont('sans-serif', 14));
-        textFont(createFont('monospace', 14));
+        textFont(createFont(monoFont, 14));
         textFont(createFont('serif', 14));
         textFont(createFont('fantasy', 14));
         textFont(createFont('cursive', 14));
@@ -110,7 +110,9 @@ var diagrams = function(processingInstance){
 
 */
 
-  var sansFont = createFont("sans", 15);
+  var serifFont = createFont('sans-serif', 16);
+  var sansFont  = createFont('sans',       16);
+  var monoFont  = createFont('monospace',  16);
 
   var global=this;
 
@@ -133,7 +135,7 @@ var diagrams = function(processingInstance){
 
     }
 
-    this.dirty        = false;  //  Has a reset occurred 
+    this.dirty        = false;  //  Has a reset occurred
 
     this.debug        = true;   //  Mode that displays enhanced debugging tools
 
@@ -180,7 +182,7 @@ var diagrams = function(processingInstance){
     this.sierpinski   = false;  //  Is the Sierpinski triangle displayed
     this.choose       = false;  //  n Choose p displayed https://en.wikipedia.org/wiki/Binomial_coefficient
     this.sigma        = false;  //  Is the sum of the rows total displayed
-    
+
     this.text         = '';
 
   };
@@ -333,14 +335,16 @@ var diagrams = function(processingInstance){
       // TRIANGLE_L:     '◄'
 
     // };
-    // var NAVIGATION={
-      // INCREMENT:      0,
-      // DECREMENT:      1,
-      // FIRST:          2,
-      // LAST:           3,
-      // DECREMENTPAGE:  4,
-      // INCREMENTPAGE:  5
-    // };
+
+    var GLYPHS={
+      
+      TEXT:       0,
+      PLAY:       1,
+      SETTINGS:   2,
+      RESET:      3,
+      TRIFORCE:   4
+
+    };
 
   }
 
@@ -442,7 +446,7 @@ var diagrams = function(processingInstance){
         reset();
 
       }
-      
+
     };
     function decrementRows()   {
 
@@ -563,7 +567,7 @@ var diagrams = function(processingInstance){
         this.active   = false;    /** active = hit and focus */
         this.offset   = 0;        /** offset distance when clicked */
 
-        this.font     = '';       /** default font */
+        this.font     = monoFont;       /** default font */
 
       };
       control.prototype.draw    = function(){};
@@ -701,7 +705,7 @@ var diagrams = function(processingInstance){
 
             noStroke();
             fill(getColor(this.color, 5));
-            textFont(this.font);
+            // textFont(createFont(this.font,16));
 
             if(this.hit   ){ fill(getColor(this.color, 10));   }
             if(this.active){ cursor(this.cursor);              }
@@ -735,7 +739,7 @@ var diagrams = function(processingInstance){
            col:       1,
            ordinal:   -1,
            integer:    3,
-           font:      'monospace',
+           font:      monoFont,
            color:     CLRS.K_TEAL_1,
            cursor:    HAND,
            on:        true}));
@@ -745,7 +749,7 @@ var diagrams = function(processingInstance){
            col:       2,
            ordinal:   -1,
            integer:    3,
-           font:      'monospace',
+           font:      monoFont,
            color:     CLRS.K_TEAL_1,
            cursor:    HAND,
            on:        true}));
@@ -755,7 +759,7 @@ var diagrams = function(processingInstance){
            col:       2,
            ordinal:   -1,
            integer:    6,
-           font:      'monospace',
+           font:      monoFont,
            color:     CLRS.K_TEAL_1,
            cursor:    HAND,
            on:        true}));
@@ -781,7 +785,7 @@ var diagrams = function(processingInstance){
 
                 rect(0, 0, this.w, this.h, 20);
 
-              textFont(createFont(this.font, 16));
+              // textFont(this.font);
               textAlign(CENTER,BOTTOM);
               fill(getColor(CLRS.YELLOW,75));
 
@@ -927,7 +931,7 @@ var diagrams = function(processingInstance){
 
             if(this.hit){ fill(getColor(CLRS.WHITE,75)); }
 
-            textFont(createFont(this.font, 16));
+            textFont(this.font);
             textAlign(CENTER,CENTER);
             var txt=this.position() + ' of ' + this.recordCount();
 
@@ -976,7 +980,7 @@ var diagrams = function(processingInstance){
 
             // Caption
             fill(CLRS.K_TEAL_1);
-            textFont(createFont(this.font, 16));
+            textFont(this.font);
             textAlign(CENTER,CENTER);
 
             if(this.hit){ fill(CLRS.WHITE); }
@@ -1129,7 +1133,7 @@ var diagrams = function(processingInstance){
             if     ( app.telemetry && this.offset>-200){ this.offset-=10; }
             else if(!app.telemetry && this.offset<0   ){ this.offset+=10; }
 
-            textFont(createFont(this.font, 16));
+            textFont(this.font);
 
             border(this);
             properties(this);
@@ -1245,7 +1249,7 @@ var diagrams = function(processingInstance){
 
             this.controls.push(row);
             row=[];
-            
+
             app.rowTotals.push(rowTotal);
             rowTotal=0;
 
@@ -1272,7 +1276,7 @@ var diagrams = function(processingInstance){
             // noStroke();
 
             // fill(getColor(CLRS.K_TEAL_0,15));
-            // textFont(createFont(this.font, 12));
+            // textFont(this.font);
 
             if(this.hit && this.active){
 
@@ -1507,7 +1511,7 @@ var diagrams = function(processingInstance){
             noStroke();
             noFill();
             // fill(getColor(this.color, 5));
-            textFont(createFont(this.font, 16));
+            textFont(this.font);
 
             if(this.active){
 
@@ -1604,13 +1608,13 @@ var diagrams = function(processingInstance){
 
             // Icon
             fill(getColor(CLRS.K_TEAL_1, 50));
-            
+
             if(this.parent.hit){ fill(getColor(this.color,  75)); }
             if(this.hit)       { fill(getColor(this.color, 100)); }
 
             noStroke();
             textAlign(CENTER,CENTER);
-            textFont(createFont(this.font, 14));
+            textFont(this.font);
 
               switch(this.type){
 
@@ -1662,7 +1666,7 @@ var diagrams = function(processingInstance){
           translate(this.x, this.y);
 
             ellipseMode(CENTER);
-            textFont(createFont(this.font, 16));
+            textFont(this.font);
 
             if(this.active){ stroke(getColor(this.color, 75));
                              cursor(this.cursor);              }
@@ -1716,259 +1720,7 @@ var diagrams = function(processingInstance){
 
     }
 
-    // Reset ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    {
 
-      function resetButton(id, parent, x, y, w, h, props){
-
-        control.call(this, id, parent, x, y, w, h);
-
-        this.execute  = props.execute;
-        this.retrieve = props.retrieve;
-        this.color    = props.color;
-        this.cursor   = props.cursor;
-        this.font     = props.font;
-
-      };
-      resetButton.prototype=Object.create(control.prototype);
-      resetButton.prototype.draw=function(){
-
-        this.active=this.hit && app.focus===this.id;
-        this.offset=0;
-
-        pushMatrix();
-
-          translate(this.x, this.y);
-          textFont(createFont(this.font, 16));
-
-            ellipseMode(CENTER);
-
-            stroke(getColor(CLRS.K_TEAL_1, 50));
-            
-            if(this.parent.hit){ stroke(getColor(CLRS.WHITE,  75)); }
-            if(this.active)    { stroke(getColor(CLRS.WHITE, 100));  
-                                 cursor(this.cursor);                }
-
-            strokeWeight(1.5);
-            noFill();
-
-            if(this.active &&
-               app.left){ rotate(radians(45)); }
-
-              arc(0, 0, this.w, this.h, radians(60), 2*PI-radians(22.5));
-
-            fill(getColor(CLRS.K_TEAL_0, 100));
-
-            if(this.parent.hit){ fill(getColor(CLRS.WHITE,  75)); }
-            if(app.active     ){ fill(getColor(CLRS.WHITE, 100)); }
-
-              triangle( 5,  2,
-                        2, -2,
-                        8, -2);
-
-        popMatrix();
-
-      };
-      resetButton.prototype.moved=function(x,y){
-      /* Overridden because the control is round */
-
-        if(this.parent.hit){
-
-          if(dist(mouseX, mouseY,
-                  this.x+x, this.y+y)<this.w){
-
-            this.hit=true;
-            app.focus=this.id;
-
-          }
-          else{
-
-            this.hit=false;
-
-          }
-
-        }
-
-      };
-      /** Overridden for execute */
-      resetButton.prototype.clicked=function(){ if(this.active){ this.execute(); } };
-
-    }
-
-    // iconButton * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    {
-
-      function iconButton(id, parent, x, y, w, h, props){
-
-        control.call(this, id, parent, x, y, w, h);
-
-        this.execute  = props.execute;
-        this.retrieve = props.retrieve;
-        this.color    = props.color;
-        this.cursor   = props.cursor;
-        this.font     = props.font;
-
-      };
-      iconButton.prototype=Object.create(control.prototype);
-      iconButton.prototype.draw=function(){
-
-        this.active=this.hit && app.focus===this.id;
-        this.offset=0;
-
-        pushMatrix();
-
-          translate(this.x, this.y);
-
-            noStroke();
-            noFill();
-
-            if(this.active){ cursor(this.cursor);
-                             fill(getColor(CLRS.BLACK,10));
-                             if(app.left){ this.offset=1; } }
-
-            //  Background
-              rect(this.offset, this.offset, this.w, this.h, 2);
-
-            // Icon
-            textFont(createFont(this.font, 16));
-            fill(getColor(CLRS.K_TEAL_1,50));
-                        
-            if(this.parent.hit){ fill(getColor(CLRS.WHITE, 75)); }
-            if(this.active    ){ fill(getColor(CLRS.WHITE,100)); }
-
-            noStroke();
-
-              ellipse(this.w/2+this.offset, this.h/2-6+this.offset, 3, 3);
-              ellipse(this.w/2+this.offset, this.h/2,               3, 3);
-              ellipse(this.w/2+this.offset, this.h/2+6+this.offset, 3, 3);
-
-        popMatrix();
-
-      };
-      /** Overridden for execute */
-      iconButton.prototype.clicked=function(){ if(this.active){ this.execute(); } };
-
-    }
-
-    // textButton ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    {
-
-      function textButton(id, parent, x, y, w, h, props){
-
-        control.call(this, id, parent, x, y, w, h);
-
-        this.text     = props.text;
-        this.execute  = props.execute;
-        this.retrieve = props.retrieve;
-        this.color    = props.color;
-        this.cursor   = props.cursor;
-        this.font     = props.font;
-
-      };
-      textButton.prototype=Object.create(control.prototype);
-      textButton.prototype.draw=function(){
-
-        this.active=this.hit && app.focus===this.id;
-        this.offset=0;
-        this.on=this.retrieve();
-
-        pushMatrix();
-
-          translate(this.x, this.y);
-
-            noStroke();
-            noFill();
-
-            if(this.active){ cursor(this.cursor);
-                             fill(getColor(CLRS.BLACK,10));
-                             if(app.left){ this.offset=1; } }
-
-            if(this.on    ){ fill(getColor(CLRS.BLACK,10)); }
-
-              //  Background
-              rect(this.offset, this.offset, this.w, this.h, 2);
-
-            // Icon
-            fill(getColor(CLRS.K_TEAL_1,50));
-
-            if(this.parent.hit       ){ fill(getColor(this.color, 75)); }
-            if(this.active || this.on){ fill(getColor(this.color,100)); }
-
-            textAlign(CENTER,CENTER);
-            textFont(createFont(this.font, 20));
-
-              text(this.text, this.w/2+this.offset, this.h/2+this.offset);
-
-        popMatrix();
-
-      };
-      /** Overridden for execute */
-      textButton.prototype.clicked=function(){ if(this.active){ this.execute(); } };
-
-    }
-    
-    // Play ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    {
-      function play(id, parent, x, y, w, h, props){
-
-        control.call(this, id, parent, x, y, w, h);
-
-        this.text     = props.text;
-        this.execute  = props.execute;
-        this.retrieve = props.retrieve;
-        this.color    = props.color;
-        this.cursor   = props.cursor;
-        this.font     = props.font;
-
-      };
-      play.prototype=Object.create(control.prototype);
-      play.prototype.draw=function(){
-
-        this.active=this.hit && app.focus===this.id;
-        this.offset=0;
-
-        pushMatrix();
-
-          translate(this.x, this.y);
-
-            noStroke();
-            noFill();
-
-            if(this.active){ cursor(this.cursor);
-                             fill(getColor(CLRS.BLACK,10));
-                             if(app.left){ this.offset=1; } }
-
-            //  Background
-            rect(this.offset, this.offset, this.w, this.h, 2);
-
-            // Icon
-            fill(getColor(CLRS.K_TEAL_1,50));
-                        
-            if(this.parent.hit){ fill(getColor(CLRS.WHITE, 75)); }
-            if(this.active    ){ fill(getColor(CLRS.WHITE,100)); }
-
-              var offset=this.offset;
-
-              triangle( 15+offset, 10+offset,
-                         5+offset,  5+offset,
-                         5+offset, 15+offset);
-
-        popMatrix();
-
-      };
-      play.prototype.clicked=function(){
-      /** Overridden to maintain on/off value */
-
-        if(this.active){
-
-          this.execute();
-          this.on=!this.on;
-
-        }
-
-      };
-
-    }
 
     // Button ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
@@ -2018,7 +1770,7 @@ var diagrams = function(processingInstance){
 
               scale(1,-1);
 
-              textFont(createFont(this.font, 12));
+              textFont(this.font);
               textAlign(CENTER,CENTER);
               this.w=textWidth(this.text)+10;
 
@@ -2062,6 +1814,186 @@ var diagrams = function(processingInstance){
 
     }
 
+    // Icon Button ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    {
+
+      function i_Button(id, parent, x, y, w, h, props){
+
+        control.call(this, id, parent, x, y, w, h);
+        
+        this.style    = props.style;
+        this.cursor   = props.cursor;
+        
+        this.execute  = props.execute;
+        this.retrieve = props.retrieve;
+        
+        this.color    = props.color;
+        
+        if(this.style===GLYPHS.TEXT){
+          this.text     = props.text;
+          this.font     = props.font;
+        }
+        
+      };
+      i_Button.prototype=Object.create(control.prototype);
+      i_Button.prototype.draw=function(){
+
+        var p=this;
+        var offset=0;
+
+        function triforce(){
+
+          fill(getColor(CLRS.K_TEAL_1,75));
+                  
+          if(p.parent.hit){ fill(getColor(CLRS.WHITE, 75)); }
+          if(p.active    ){ fill(getColor(CLRS.WHITE,100)); }
+
+            offset=p.offset;
+
+            triangle( p.w/2 + offset, offset,
+                      p.w + offset,   p.h+offset,
+                      offset,         p.h+offset);
+
+              noStroke();
+
+          fill(getColor(p.parent.color,50));
+                  
+          if(p.parent.hit){ fill(getColor(CLRS.K_TEAL_0, 75)); }
+          if(p.active    ){ fill(getColor(CLRS.K_TEAL_0,100)); }
+
+              triangle( p.w/2 + offset,    p.h+offset,
+                        p.w*0.25 + offset, p.h/2+offset,
+                        p.w*0.75+offset,   p.h/2+offset);
+
+        };
+        function play(){
+
+          fill(getColor(CLRS.K_TEAL_1,50));
+                  
+          if(p.parent.hit){ fill(getColor(CLRS.WHITE, 75)); }
+          if(p.active    ){ fill(getColor(CLRS.WHITE,100)); }
+
+            offset=p.offset;
+
+            triangle( 15+offset, 10+offset,
+                       5+offset,  5+offset,
+                       5+offset, 15+offset);
+
+        };
+        function settings(){
+
+          fill(getColor(CLRS.K_TEAL_1,50));
+
+          if(p.parent.hit){ fill(getColor(CLRS.WHITE, 75)); }
+          if(p.active    ){ fill(getColor(CLRS.WHITE,100)); }
+
+          noStroke();
+
+            ellipse(p.w/2+p.offset, p.h/2-6+p.offset, 3, 3);
+            ellipse(p.w/2+p.offset, p.h/2,               3, 3);
+            ellipse(p.w/2+p.offset, p.h/2+6+p.offset, 3, 3);
+
+        };
+        function reset(){
+          
+          pushMatrix();
+            
+            translate(p.w/2,p.h/2);
+              
+              var sz=0.67;
+              
+              ellipseMode(CENTER);
+
+              stroke(getColor(CLRS.K_TEAL_1, 50));
+
+              if(p.parent.hit){ stroke(getColor(CLRS.WHITE,  75)); }
+              if(p.active)    { stroke(getColor(CLRS.WHITE, 100));
+                                   cursor(p.cursor);               }
+
+              strokeWeight(1.5);
+              noFill();
+
+              if(p.active &&
+                 app.left){ rotate(radians(45)); }
+
+                arc(0, 0, p.w*sz, p.h*sz, radians(60), 2*PI-radians(22.5));
+
+              fill(getColor(CLRS.K_TEAL_0, 100));
+
+              if(p.parent.hit){ fill(getColor(CLRS.WHITE,  75)); }
+              if(app.active  ){ fill(getColor(CLRS.WHITE, 100)); }
+                
+                pushMatrix();
+                  
+                  translate(2,0);
+                  
+                    triangle(0,  0,
+                             5,  0,
+                             5, -5);
+
+                popMatrix();
+
+          popMatrix();
+
+        };
+        function txt(){
+
+          fill(getColor(CLRS.K_TEAL_1,50));
+
+          if(p.parent.hit       ){ fill(getColor(p.color, 75)); }
+          if(p.active || p.on){ fill(getColor(p.color,100)); }
+
+          textAlign(CENTER,CENTER);
+          textFont(p.font);
+
+            text(p.text, p.w/2+p.offset, p.h/2+p.offset);
+            
+        };
+        
+        this.active=this.hit && app.focus===this.id;
+        this.offset=0;
+        this.on=this.retrieve();
+
+        pushMatrix();
+
+          translate(this.x, this.y);
+
+            noStroke();
+            noFill();
+
+            if(this.active){ cursor(this.cursor);
+                             if(app.left){ this.offset=1; } }
+            if(this.active ||
+               this.on    ){ fill(getColor(CLRS.BLACK,10)); }
+
+            //  Background
+              rect(this.offset, this.offset, this.w, this.h, 2);
+
+
+          // Icon
+          textFont(this.font);
+
+          switch(this.style){
+
+            case GLYPHS.PLAY:      play();      break;
+            case GLYPHS.SETTINGS:  settings();  break;
+            case GLYPHS.RESET:     reset();     break;
+            case GLYPHS.TRIFORCE:  triforce();  break;
+            case GLYPHS.TEXT:      txt();       break;
+
+            default:                            break;
+
+          };
+
+        popMatrix();
+
+      };
+      /** Overridden for execute */
+      i_Button.prototype.clicked=function(){ if(this.active){ this.execute(); } };
+
+    }
+
+    
     // Hexagon Button ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
 
@@ -2121,9 +2053,9 @@ var diagrams = function(processingInstance){
           p.textSize=sz*0.9;
 
         };
-        
+
         setTextSize(this);
-        
+
       };
       hexButton.prototype=Object.create(control.prototype);
       hexButton.prototype.draw=function(){
@@ -2170,7 +2102,7 @@ var diagrams = function(processingInstance){
             if(this.on){ fill(getColor(this.color, 30)); }
 
               var offset=this.offset;
-            
+
             /** Hexagon */
               beginShape();
 
@@ -2182,7 +2114,7 @@ var diagrams = function(processingInstance){
                 vertex(this.p6.x+offset, this.p6.y-offset);
 
               endShape(CLOSE);
-            
+
             /** Circle */
             // var d=cos(PI/6)*this.w;
             // ellipse(0,0,d,d);
@@ -2277,6 +2209,158 @@ var diagrams = function(processingInstance){
 
     }
 
+        // Icon Hexagon Button ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    {
+
+      function i_hexButton(id, parent, x, y, w, h, props){
+
+        control.call(this, id, parent, x, y, w, h);
+
+        this.outerHit=false;
+        this.offset=0;
+        
+        this.execute  = props.execute;
+        this.retrieve = props.retrieve;
+
+        this.color    = props.color;
+        this.cursor   = props.cursor;
+
+        this.font     = props.font;
+
+        this.active   = false;
+
+        this.text     = props.text;
+
+        /* Initialize */
+        var w2=this.w/2;
+        var xPos=cos(radians(30))*w2;
+        var yPos=(w2/cos(radians(30)));
+
+        this.p1=new pnt( xPos, sin(radians( 30))*w2);
+        this.p2=new pnt(    0,                   w2);
+        this.p3=new pnt(-xPos, sin(radians(150))*w2);
+        this.p4=new pnt(-xPos, sin(radians(210))*w2);
+        this.p5=new pnt(    0,                  -w2);
+        this.p6=new pnt( xPos, sin(radians(330))*w2);
+
+      };
+      i_hexButton.prototype=Object.create(control.prototype);
+      i_hexButton.prototype.draw=function(){
+
+        this.active=this.hit && app.focus===this.id;
+        this.offset=0;
+
+        pushMatrix();
+
+          translate(this.x, this.y);
+          scale(1,-1);
+
+            // Border
+            strokeWeight(0.5);
+
+            stroke(getColor(this.color, 40));
+            fill  (getColor(this.color,  15));
+
+            if(this.active){
+
+              if(app.left){ this.offset=1; }
+
+              strokeWeight(1.5);
+              cursor(this.cursor);
+
+            };
+
+            stroke(getColor(this.color,75));
+
+            var OS=this.offset;
+
+            /** Hexagon */
+              beginShape();
+
+                vertex(this.p1.x+OS, this.p1.y-OS);
+                vertex(this.p2.x+OS, this.p2.y-OS);
+                vertex(this.p3.x+OS, this.p3.y-OS);
+                vertex(this.p4.x+OS, this.p4.y-OS);
+                vertex(this.p5.x+OS, this.p5.y-OS);
+                vertex(this.p6.x+OS, this.p6.y-OS);
+
+              endShape(CLOSE);
+
+            /** Circle */
+            // var d=cos(PI/6)*this.w;
+            // ellipse(0,0,d,d);
+
+            // Caption
+            fill(getColor(this.color,75));
+
+            if(this.retrieve()){ fill(getColor(CLRS.WHITE, 50)); }
+            if(this.active    ){ fill(getColor(CLRS.WHITE,100)); }
+
+            scale(1,-1);
+            textAlign(CENTER,CENTER);
+            textSize(16);
+
+            text(this.text, this.offset, this.offset);
+
+        popMatrix();
+
+      };
+      i_hexButton.prototype.moved=function(x,y){
+      /* Overridden because of the shape */
+
+        if(this.parent.hit){
+
+          if(dist(mouseX, mouseY,
+                  this.x+x,
+                  this.y+y)<this.w/2){
+
+            this.outerHit=true;
+
+              var rectHit=rectangleHit(new pnt(this.x+this.p1.x+x, this.y+this.p1.y+y),
+                                       new pnt(this.x+this.p3.x+x, this.y+this.p3.y+y),
+                                       new pnt(this.x+this.p6.x+x, this.y+this.p6.y+y),
+                                       mouseX,mouseY);
+
+              var triHit0=triangleHit(new pnt(this.x+this.p1.x+x, this.y+this.p1.y+y),
+                                      new pnt(this.x+this.p2.x+x, this.y+this.p2.y+y),
+                                      new pnt(this.x+this.p3.x+x, this.y+this.p3.y+y),
+                                      mouseX,mouseY);
+
+              var triHit1=triangleHit(new pnt(this.x+this.p4.x+x, this.y+this.p4.y+y),
+                                      new pnt(this.x+this.p5.x+x, this.y+this.p5.y+y),
+                                      new pnt(this.x+this.p6.x+x, this.y+this.p6.y+y),
+                                      mouseX,mouseY);
+              if(rectHit ||
+                 triHit0 ||
+                 triHit1){
+
+                this.hit=true;
+                app.focus=this.id;
+
+              }
+              else{
+
+                this.hit=false;
+
+              }
+
+          }
+          else{
+
+            this.outerHit=false;
+            this.hit=false;
+
+          }
+
+        }
+
+      };
+      /* Overridden because of shape */
+      i_hexButton.prototype.clicked=function(){ if(this.active){ this.execute(); } };
+      i_hexButton.prototype.set=function(){ this.on=true; };
+
+    }
+    
   }
 
   /* Initialize ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -2289,12 +2373,12 @@ var diagrams = function(processingInstance){
         {text:      'root',
          acolor:    getColor(CLRS.BLACK,80),
          icolor:    getColor(CLRS.BLACK,85),
-         font:      'monospace',
+         font:      monoFont,
          cursor:    ARROW,
          border:    true});
 
       app.controls.push(rt);
-
+         
       /* pyramid */
       rt.controls.push(new pyramid(1234, rt, width/2, height/2+90, width*0.65, height*0.65,
         {font:      'sans-serif',
@@ -2305,12 +2389,30 @@ var diagrams = function(processingInstance){
       /** Requires a reference to access globally */
       app.pyramid=rt.controls[0];
 
+      rt.controls.push(new i_hexButton(110, rt, width-100, 100, 40, 40,
+        {execute:   toggleSigma,
+         retrieve:  getSigma,
+         style:     GLYPHS.TEXT,
+         text:      CONSTANTS.SIGMA,
+         color:     CLRS.ORANGE,
+         font:      serifFont,
+         cursor:    HAND}));
+
+      rt.controls.push(new i_hexButton(110, rt, width-82, 132, 40, 40,
+        {execute:   toggleSierpinski,
+         retrieve:  getSierpinski,
+         style:     GLYPHS.TEXT,
+         text:      'S',
+         color:     CLRS.YELLOW,
+         font:      monoFont,
+         cursor:    HAND}));
+         
     // toolbar --------------------------------------------------
     {
       /* tlbar             */
       var tlbar=new toolbar(200, rt, 1, 1, width-2, 30,
         {text:      'Pascals Triangle',
-         font:      'monospace',
+         font:      monoFont,
          acolor:    CLRS.K_TEAL_0,
          icolor:    getColor(CLRS.BLACK,20),
          cursor:    ARROW});
@@ -2318,53 +2420,59 @@ var diagrams = function(processingInstance){
       rt.controls.push(tlbar);
 
         /* play            */
-        tlbar.controls.push(new play(210, tlbar, 5, 5, 20, 20,
+        tlbar.controls.push(new i_Button(210, tlbar, 5, 5, 20, 20,
           {execute:   toggleCalculate,
            retrieve:  getCalculate,
-           font:      'monospace',
+           style:     GLYPHS.TRIFORCE,
+           font:      monoFont,
            color:     CLRS.K_TEAL_0,
            cursor:    HAND}));
 
         /* reset           */
-        tlbar.controls.push(new resetButton(220, tlbar, 40, 15, 13, 13,
+        tlbar.controls.push(new i_Button(220, tlbar, 32, 5, 20, 20,
           {execute:   reset,
            retrieve:  getCalculate,
-           font:      'monospace',
+           style:     GLYPHS.RESET,
+           font:      monoFont,
            color:     CLRS.K_TEAL_0,
            cursor:    HAND}));
 
         /* sierpinski     */
-        tlbar.controls.push(new textButton(230, tlbar, width-106, 5, 22, 22,
+        tlbar.controls.push(new i_Button(230, tlbar, width-106, 5, 22, 22,
           {text:      'S',
-           font:      'monospace',
+           font:      monoFont,
            execute:   toggleSierpinski,
            retrieve:  getSierpinski,
+           style:     GLYPHS.TEXT,
            color:     CLRS.WHITE,
            cursor:    HAND}));
-           
+
         /* sum     */
-        tlbar.controls.push(new textButton(240, tlbar, width-79, 5, 22, 22,
+        tlbar.controls.push(new i_Button(240, tlbar, width-79, 5, 22, 22,
           {text:      CONSTANTS.SIGMA,
-           font:      'monospace',
+           font:      monoFont,
            execute:   toggleSigma,
            retrieve:  getSigma,
+           style:     GLYPHS.TEXT,
            color:     CLRS.WHITE,
            cursor:    HAND}));
-           
+
         /* information     */
-        tlbar.controls.push(new textButton(250, tlbar, width-52, 5, 22, 22,
+        tlbar.controls.push(new i_Button(250, tlbar, width-52, 5, 22, 22,
           {text:      'i',
-           font:      'monospace',
+           font:      monoFont,
            execute:   toggleInfo,
            retrieve:  getInfo,
+           style:     GLYPHS.TEXT,
            color:     CLRS.YELLOW,
            cursor:    HAND}));
 
         /* settings        */
-        tlbar.controls.push(new iconButton(260, tlbar, width-25, 5, 22, 22,
+        tlbar.controls.push(new i_Button(260, tlbar, width-25, 5, 22, 22,
           {execute:   toggleTelemetry,
            retrieve:  getTelemetry,
-           font:      'monospace',
+           style:     GLYPHS.SETTINGS,
+           font:      monoFont,
            color:     CLRS.K_TEAL_0,
            cursor:    HAND}));
 
@@ -2378,7 +2486,7 @@ var diagrams = function(processingInstance){
       /* Navbar            */
       var nvbar=new navbar(300, rt, 1, height-26, width-2, h,
         {text:        'Navigation',
-         font:        'sans-serif',
+         font:        serifFont,
          icolor:      getColor(CLRS.BLACK,20),
          acolor:      CLRS.K_TEAL_0,
          cursor:      ARROW,
@@ -2390,7 +2498,7 @@ var diagrams = function(processingInstance){
 
         /* Decrement Page        */
         nvbar.controls.push(new navButton(310, nvbar, 0, 0, 50, h,
-          {font:      'sans-serif',
+          {font:      serifFont,
            execute:   decrementRows,
            type:      NAVIGATION.DECREMENTPAGE,
            retrieve:  navCursor,
@@ -2399,7 +2507,7 @@ var diagrams = function(processingInstance){
 
         /* Increment Page       */
         nvbar.controls.push(new navButton(320, nvbar, width-50, 0, 50, h,
-          {font:      'sans-serif',
+          {font:      serifFont,
            execute:   incrementRows,
            type:      NAVIGATION.INCREMENTPAGE,
            retrieve:  navCursor,
@@ -2408,7 +2516,7 @@ var diagrams = function(processingInstance){
 
         /* First Record         */
         nvbar.controls.push(new navButton(330, nvbar, 50, 0, 25, h,
-          {font:      'sans-serif',
+          {font:      serifFont,
            execute:   firstRecord,
            type:      NAVIGATION.FIRST,
            retrieve:  navCursor,
@@ -2417,7 +2525,7 @@ var diagrams = function(processingInstance){
 
         /* Decrement Record     */
         nvbar.controls.push(new navButton(340, nvbar, 75, 0, 25, h,
-          {font:      'sans-serif',
+          {font:      serifFont,
            execute:   decrementCursor,
            type:      NAVIGATION.DECREMENT,
            retrieve:  navCursor,
@@ -2426,7 +2534,7 @@ var diagrams = function(processingInstance){
 
         /* Increment Record     */
         nvbar.controls.push(new navButton(350, nvbar, width-100, 0, 25, h,
-          {font:      'sans-serif',
+          {font:      serifFont,
            execute:   incrementCursor,
            type:      NAVIGATION.INCREMENT,
            retrieve:  navCursor,
@@ -2435,7 +2543,7 @@ var diagrams = function(processingInstance){
 
         /* Last Record          */
         nvbar.controls.push(new navButton(360, nvbar, width-75, 0, 25, h,
-          {font:      'sans-serif',
+          {font:      serifFont,
            execute:   lastRecord,
            type:      NAVIGATION.LAST,
            retrieve:  navCursor,
@@ -2444,7 +2552,7 @@ var diagrams = function(processingInstance){
 
         /* Scroll               */
         nvbar.controls.push(new navScroll(370, nvbar, 100, 0, width-200, h,
-          {font:      'sans-serif',
+          {font:      serifFont,
            execute:   navSetCursor,
            color:     CLRS.BLACK,
            cursor:    MOVE}));
@@ -2557,14 +2665,14 @@ var diagrams = function(processingInstance){
       /* Splash Screen      */
       var splashScreen=new splash(500, rt, width/2-200, height/2-200, 400, 400,
         {color:     CLRS.BLACK,
-         font:      'monospace',
+         font:      monoFont,
          retrieve:  getInfo,
          cursor:    CROSS});
 
         /* Close              */
         splashScreen.controls.push(new button(510, splashScreen, 180, 360, 120, 20,
           {text:      'Close',
-           font:      'monospace',
+           font:      monoFont,
            execute:   toggleInfo,
            color:     CLRS.WHITE,
            cursor:    HAND}));
@@ -2579,7 +2687,7 @@ var diagrams = function(processingInstance){
       /* Telemetry          */
       var telem=new telemetry(400, rt, width, 31, 200, height-56,
         {color:     CLRS.BLACK,
-         font:      'sans-serif',
+         font:      serifFont,
          cursor:    ARROW});
 
       rt.controls.push(telem);
@@ -2587,7 +2695,7 @@ var diagrams = function(processingInstance){
   };
 
   function loadPascal(){
-    
+
     var rows=[];
     var cols=[1];
 
@@ -2605,13 +2713,13 @@ var diagrams = function(processingInstance){
     }
 
     return rows;
-    
+
   };
 
   app.pascal=loadPascal();
 
   // println(ArrayToText2D(app.pascal));
-// textFont(createFont('monospace', 16));
+// textFont(createFont(monoFont, 16));
   function update(){
 
     pushMatrix();
@@ -2652,33 +2760,33 @@ var diagrams = function(processingInstance){
 
   var n=2230;
 
-  const r=0.5;  
+  const r=0.5;
   const L_SECTION=(1-pow(r,2)*PI)/4;
-  
+
 // println(L_SECTION);
-  
+
   function calc(){
 
     cursor(ARROW);
 
     strokeWeight(0.5);
     background(CLRS.WHITE);
-    
+
     stroke(CLRS.BLACK);
     fill(CLRS.BLUE);
-    
+
       rect(10,10,200,200);
-    
+
     fill(CLRS.WHITE);
 
       rect(10,10,200,100);
       rect(110,10,100,200);
-      
+
     fill(CLRS.WHITE);
-    
+
       ellipse(110,110,200,200);
 
-      
+
       line(10,210,10+n*200,10);
 
 fill(CLRS.K_TEAL_0);
@@ -2690,13 +2798,13 @@ text("Slope:  " + 1/n, 10, 340);
 // println(n + " : " + 1/n);
 
 n++;
-    
+
   };
-  
+
   execute=update;
-  
+
   reset();
-  
+
   draw=function(){
 
     execute();
