@@ -23,10 +23,20 @@
       RIGHT:       39,
       DOWN:        40,
       A:           65,
-      R:           82,      
+      D:           68,
+      E:           69,
+      R:           82,
+      W:           87,
+      X:           88,
+      Z:           90,
       a:           97,
+      d:          100,
+      e:          101,
       r:          114,
-      Z:          90,
+      w:          119,
+      x:          120,
+      y:          121,
+      z:          122,
       F1:         112,
       F2:         113,  //  Rename
       F3:         114,
@@ -150,6 +160,7 @@
       SIGMA:          'Σ'
 
     };
+
     var NAVIGATION={
       INCREMENT:      0,
       DECREMENT:      1,
@@ -159,6 +170,27 @@
       INCREMENTPAGE:  5
     };
 
+    var GLYPHS={
+      
+      TEXT:       0,
+      PLAY:       1,
+      SETTINGS:   2,
+      RESET:      3,
+      TRIFORCE:   4
+
+    };
+    
+    var HEXNAV={
+
+      RIGHT:      0,
+      LEFT:       1,
+      UP_RIGHT:   2,
+      UP_LEFT:    3,
+      DOWN_RIGHT: 4,
+      DOWN_LEFT:  5
+      
+    };
+    
   }
   
     /* Data types ================================================================ */
