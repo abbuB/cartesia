@@ -176,7 +176,8 @@
       PLAY:       1,
       SETTINGS:   2,
       RESET:      3,
-      TRIFORCE:   4
+      TRIFORCE:   4,
+      CHOOSE:     5
 
     };
     
