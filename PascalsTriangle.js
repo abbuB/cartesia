@@ -49,7 +49,7 @@ var diagrams = function(processingInstance){
 
     TO DO:
 
-      - complete info
+      - toolbar
 
       - interesting patterns
 
@@ -73,7 +73,12 @@ var diagrams = function(processingInstance){
 
 
     TO DONE:
+      
+      
+      - hex navigational controls
 
+      - complete info
+    
       - only size cells fonts on initial load (reduce processing)
 
       - n k choose formulas option for each cell
@@ -163,20 +168,17 @@ var diagrams = function(processingInstance){
     this.cursor       = 0;      //  Position of the cursor in grid
     this.cells        = 0;      //  # of cells in the grid
 
-    this.levels       = 16;
+    this.rows         = 16;     //  # of rows in the grid
 
-    this.levelsMax    = 32;
-    this.levelsMin    = 5;
+    this.minRows      = 5;      //  Min # of rows permitted
+    this.maxRows      = 32;     //  Max # of rows permitted
 
-    this.row          = 0;
-    this.col          = 0;
+    this.row          = 0;      //  Current row
+    this.col          = 0;      //  Current column
 
-    this.path         = [];     //  The final path of the pyramid
+    this.pyramid;               //  Global Reference to the pyramid control
+    this.currentCell;           //  Global Reference to the currently selected cell in the pyramid
 
-    this.pyramid;               //  Reference to the pyramid control
-    this.currentCell;           //  Reference to the currently selected cell in the pyramid
-
-    this.pascal       = [];
     this.rowTotals    = [];     //  Array of sum of the cells in each row
 
     this.sierpinski   = false;  //  Is the Sierpinski triangle displayed
@@ -192,44 +194,6 @@ var diagrams = function(processingInstance){
   /* Constants ================================================================= */
   {
 
-    // var KEYCODES={
-      // BACKSPACE:  8,
-      // TAB:        9,
-      // ENTER:      10,
-      // RETURN:     13,
-      // ESC:        27,
-      // DELETE:     127,
-      // CODED:      0xffff,
-      // SHIFT:      16,
-      // CONTROL:    17,
-      // ALT:        18,
-      // CAPSLK:     20,
-      // SPACE:      32,
-      // PGUP:       33,
-      // PGDN:       34,
-      // END:        35,
-      // HOME:       36,
-      // LEFT:       37,
-      // UP:         38,
-      // RIGHT:      39,
-      // DOWN:       40,
-      // F1:         112,
-      // F2:         113,  //  Rename
-      // F3:         114,
-      // F4:         115,
-      // F5:         116,
-      // F6:         117,
-      // stg:        118,  // F7: snap to grid
-      // ORTHO:      119,  // F8:
-      // F9:         120,
-      // F10:        121,
-      // F11:        122,
-      // F12:        123,
-      // NUMLK:      144,
-      // META:       157,
-      // INSERT:     155,
-      // Z:          90
-    // };
     var CLRS={
 
       K_STEEL_0:     color( 48, 68, 82,255),
@@ -376,7 +340,7 @@ var diagrams = function(processingInstance){
         app.row=0;
         app.col=0;
 
-        app.pyramid.levels=app.levels;
+        app.pyramid.levels=app.rows;
         app.pascal=loadPascal();
         app.pyramid.reset();
 
@@ -384,10 +348,7 @@ var diagrams = function(processingInstance){
 
     };
 
-    function getCalculate()    { return app.calculating;              };
     function getTelemetry()    { return app.telemetry;                };
-
-    function toggleCalculate() { app.calculating=!app.calculating;    };
     function toggleTelemetry() { app.telemetry=!app.telemetry;        };
 
     function getInfo()         { return app.info;                     };
@@ -402,6 +363,21 @@ var diagrams = function(processingInstance){
     function getSigma()        { return app.sigma;                    };
     function toggleSigma()     { app.sigma=!app.sigma;                };
 
+    function incrementRows()   {
+      
+      app.rows++;
+      app.rows=(constrain)(app.rows, app.minRows, app.maxRows);
+      reset();
+
+    };
+    function decrementRows()   {
+
+      app.rows--;
+      app.rows=(constrain)(app.rows, app.minRows, app.maxRows);
+      reset();
+
+    };
+
     function constrainCurrent(){
 
       app.row=(constrain)(app.row, 0, app.pyramid.controls.length-1);
@@ -411,71 +387,12 @@ var diagrams = function(processingInstance){
 
     };
 
-    function right()   {
-
-      if(app.levels<app.levelsMax){
-
-        app.levels++;
-
-        app.levels=(constrain)(app.levels, app.levelsMin, app.levelsMax);
-
-        reset();
-
-      }
-
-    };
-    function left()   {
-
-      if(app.levels>app.levelsMin){
-
-        app.levels--;
-
-        app.levels=(constrain)(app.levels, app.levelsMin, app.levelsMax);
-
-        reset();
-
-      }
-
-    };
-    function right()    {
-
-      app.col++;
-      constrainCurrent();
-
-    };
-    function left()    {
-
-      app.col--;
-      constrainCurrent();
-
-    };
-    function upRight(){
-      
-      app.row--;
-      constrainCurrent();
-      
-    };
-    
-    function upLeft(){
-      
-      app.row--;
-      app.col--;
-      constrainCurrent();
-      
-    };
-    function downRight(){
-
-      app.row++;
-      app.col++;
-      constrainCurrent();
-
-    };
-    function downLeft(){
-
-      app.row++;
-      constrainCurrent();
-
-    };
+    function right()    { app.col++;              constrainCurrent(); };
+    function left()     { app.col--;              constrainCurrent(); };
+    function upRight()  { app.row--;              constrainCurrent(); };    
+    function upLeft()   { app.row--;  app.col--;  constrainCurrent(); };
+    function downRight(){ app.row++;  app.col++;  constrainCurrent(); };
+    function downLeft() { app.row++;              constrainCurrent(); };
 
   }
 
@@ -910,7 +827,7 @@ var diagrams = function(processingInstance){
           translate(this.x, this.y);
 
             noStroke();
-            fill(getColor(CLRS.BLACK,10));
+            fill(getColor(CLRS.BLACK,30));
 
             if(this.hit   ){ fill(this.acolor);   }
             if(this.active){ cursor(this.cursor); }
@@ -1001,7 +918,7 @@ var diagrams = function(processingInstance){
 
             text('Mouse Coordinates \n\n\n\n' +
                  'Mouse Buttons     \n\n\n\n\n' +
-                 'Controls          \n\n\n\n' +
+                 'Controls          \n\n\n\n\n' +
                  'Keys              \n\n\n\n\n' +
                  'App               \n\n\n\n',
                  col1, row0+15);
@@ -1017,17 +934,17 @@ var diagrams = function(processingInstance){
                  'Right:      \n' +
                  'Center:     \n\n\n' +
                  'Focus:      \n' +
-                 'Focused:    \n\n\n' +
+                 'Focused:    \n' +
+                 'Telemetry:  \n\n\n' +
                  'Alt:        \n' +
                  'Control:    \n' +
                  'Shift:      \n\n\n' +
-                 'telemetry:  \n' +
+                 'Choose:     \n' +
                  'Sigma:      \n' +
                  'Sierpinski: \n' +
                  'Info:       \n\n' +
                  'Cursor:     \n' +
-                 'Frame Rate: \n' +
-                 'Info:',
+                 'Frame Rate: \n',
                  col1, row0+15);
 
           fill(getColor(CLRS.YELLOW,75));
@@ -1039,17 +956,17 @@ var diagrams = function(processingInstance){
                  app.right                  + '\n' +
                  app.center                 + '\n\n\n' +
                  app.focus                  + '\n' +
-                 focused                    + '\n\n\n' +
+                 focused                    + '\n' +
+                 app.telemetry              + '\n\n\n' +
                  app.keys[KEYCODES.ALT]     + '\n' +
                  app.keys[KEYCODES.CONTROL] + '\n' +
                  app.keys[KEYCODES.SHIFT]   + '\n\n\n' +
-                 app.telemetry              + '\n' +
+                 app.choose                 + '\n' +
                  app.sigma                  + '\n' +
                  app.sierpinski             + '\n' +
                  app.info                   + '\n\n' +
                  app.cursor                 + '\n' +
-                 nf(global,0,2)             + '\n' +
-                 app.infoOn,
+                 nf(global,0,2)             + '\n',
                  col2, row0+15);
 
           var txt='Press the left and right arrow keys to increment and decrement integer.';
@@ -1057,7 +974,7 @@ var diagrams = function(processingInstance){
           textSize(11);
           textAlign(LEFT,BOTTOM);
 
-            text(txt, p.offset+17, p.h-35, p.w-20, 100);
+            text(txt, p.offset+17, p.h-45, p.w-20, 100);
 
         };
 
@@ -1130,8 +1047,8 @@ var diagrams = function(processingInstance){
 
         control.call(this, id, parent, x, y, w, h);
 
-        this.levels = app.levels;
-        this.size   = this.h/app.levels*1.6;
+        this.levels = app.rows;
+        this.size   = this.h/app.rows*1.6;
         this.font   = props.font;
         this.cursor = props.cursor;
 
@@ -1156,7 +1073,7 @@ var diagrams = function(processingInstance){
           // PI/6 radians = 30 degrees
           var rowOffset = this.size-(w2*cos(PI/3));
           var colOffset = cos(PI/6)*w2;
-          var top       = -this.size*app.levels/2+rowOffset/2;
+          var top       = -this.size*app.rows/2+rowOffset/2;
           var rowTotal  = 0;
 
           app.rowTotals=[];
@@ -1270,8 +1187,8 @@ var diagrams = function(processingInstance){
       };
       pyramid.prototype.reset   = function(){
 
-        this.levels=app.levels;
-        this.size=this.h/app.levels*1.6;
+        this.levels=app.rows;
+        this.size=this.h/app.rows*1.6;
 
         this.controls=[];
         this.load();
@@ -1379,7 +1296,6 @@ var diagrams = function(processingInstance){
       pyramid.prototype.dragged = function(){};
 
     }
-
 
     /* Controls ================================================ */
 
@@ -1782,25 +1698,31 @@ var diagrams = function(processingInstance){
 
           fill(getColor(CLRS.K_TEAL_1,75));
                   
-          if(p.parent.hit){ fill(getColor(CLRS.WHITE, 75)); }
-          if(p.active    ){ fill(getColor(CLRS.WHITE,100)); }
+          if(p.parent.hit    ){ fill(getColor(CLRS.WHITE, 75)); }
+          if(p.active || p.on){ fill(getColor(CLRS.WHITE,100)); }
 
             offset=p.offset;
+            
+            pushMatrix();
+            
+              scale(0.75,0.75);
+              translate(p.w*0.15,p.h*0.15);
+              
+                triangle( p.w/2 + offset, offset,
+                          p.w + offset,   p.h+offset,
+                          offset,         p.h+offset);
 
-            triangle( p.w/2 + offset, offset,
-                      p.w + offset,   p.h+offset,
-                      offset,         p.h+offset);
+                  noStroke();
 
-              noStroke();
+              fill(getColor(p.parent.color,50));
+                      
+              if(p.parent.hit    ){ fill(getColor(CLRS.K_TEAL_0, 75)); }
+              if(p.active || p.on){ fill(getColor(CLRS.K_TEAL_0,100)); }
 
-          fill(getColor(p.parent.color,50));
-                  
-          if(p.parent.hit){ fill(getColor(CLRS.K_TEAL_0, 75)); }
-          if(p.active    ){ fill(getColor(CLRS.K_TEAL_0,100)); }
-
-              triangle( p.w/2 + offset,    p.h+offset,
-                        p.w*0.25 + offset, p.h/2+offset,
-                        p.w*0.75+offset,   p.h/2+offset);
+                  triangle( p.w/2 + offset,    p.h+offset,
+                            p.w*0.25 + offset, p.h/2+offset,
+                            p.w*0.75+offset,   p.h/2+offset);
+            popMatrix();
 
         };
         function play(){
@@ -1819,7 +1741,7 @@ var diagrams = function(processingInstance){
         };
         function settings(){
 
-          fill(getColor(CLRS.K_TEAL_1,50));
+          fill(getColor(CLRS.K_TEAL_2,50));
 
           if(p.parent.hit){ fill(getColor(CLRS.WHITE, 75)); }
           if(p.active    ){ fill(getColor(CLRS.WHITE,100)); }
@@ -1875,9 +1797,9 @@ var diagrams = function(processingInstance){
         };
         function txt(){
 
-          fill(getColor(CLRS.K_TEAL_1,50));
+          fill(getColor(CLRS.K_TEAL_2,50));
 
-          if(p.parent.hit       ){ fill(getColor(p.color, 75)); }
+          if(p.parent.hit    ){ fill(getColor(p.color, 75)); }
           if(p.active || p.on){ fill(getColor(p.color,100)); }
 
           textAlign(CENTER,CENTER);
@@ -1897,7 +1819,32 @@ var diagrams = function(processingInstance){
           }
 
         };
-        
+        function choose(){
+
+          fill(getColor(CLRS.K_TEAL_2,50));
+
+          if(p.parent.hit    ){ fill(getColor(p.color, 75)); }
+          if(p.active || p.on){ fill(getColor(p.color,100)); }
+
+          textFont(p.font);
+          textSize(10);
+          textLeading(10);
+          
+          textAlign(CENTER,CENTER);
+            
+            text('n\nk', p.w/2+p.offset, p.h/2+p.offset);
+          
+          textSize(16);
+          
+          textAlign(RIGHT,CENTER);          
+          
+            text('(', p.w/2+p.offset-3, p.h/2+p.offset);
+
+          textAlign(LEFT,CENTER);
+            
+        text(')', p.w/2+p.offset+3, p.h/2+p.offset);
+            
+        };        
         this.active=this.hit && app.focus===this.id;
         this.offset=0;
         this.on=this.retrieve();
@@ -1928,6 +1875,7 @@ var diagrams = function(processingInstance){
             case GLYPHS.RESET:     reset();     break;
             case GLYPHS.TRIFORCE:  triforce();  break;
             case GLYPHS.TEXT:      txt();       break;
+            case GLYPHS.CHOOSE:    choose();    break;
 
             default:                            break;
 
@@ -1940,7 +1888,6 @@ var diagrams = function(processingInstance){
       i_Button.prototype.clicked=function(){ if(this.active){ this.execute(); } };
 
     }
-
     
     // Hexagon Button ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
@@ -2512,12 +2459,21 @@ var diagrams = function(processingInstance){
     
   }
 
-  /* Initialize ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+  /********************************************************************************
+  *
+  * Initialize
+  * 
+  ********************************************************************************/
   function initialize(){
 
-    // Background --------------------------------------------------
+    /*  Initialize the app.keys array and the values of the special keys */
+    app.keys[KEYCODES.CONTROL] = false;
+    app.keys[KEYCODES.ALT]     = false;
+    app.keys[KEYCODES.SHIFT]   = false;
+    
+    /* LOAD CONTROLS */
 
-      /* root control       */
+      /* root control      */
       var rt=new root(100, null, 0, 0, width-1, height-1,
         {text:      'root',
          acolor:    getColor(CLRS.BLACK,80),
@@ -2528,21 +2484,21 @@ var diagrams = function(processingInstance){
 
       app.controls.push(rt);
          
-      /* pyramid */
-      rt.controls.push(new pyramid(1234, rt, width/2, height/2+90, width*0.65, height*0.65,
+      /* pyramid           */
+      rt.controls.push(new pyramid(600, rt, width/2, height/2+103, width*0.65, height*0.65,
         {font:      'sans-serif',
-         levels:    app.levels,
+         levels:    app.rows,
          cursor:    ARROW,
          size:      0}));
 
       /** Requires a reference to access globally */
       app.pyramid=rt.controls[0];
 
-      /* Hexagon Navigation Buttons */
+      /* Hexagon Navigation Buttons ------------------------------- */
       {
 
-        /* Left */
-        rt.controls.push(new i_hexButton(120, rt, width-300, 150, 40, 40,
+        /* Left            */
+        rt.controls.push(new i_hexButton(110, rt, width-300, 150, 40, 40,
           {execute:   left,
            style:     GLYPHS.TEXT,
            text:      HEXNAV.LEFT,
@@ -2550,8 +2506,8 @@ var diagrams = function(processingInstance){
            font:      monoFont,
            cursor:    HAND}));
            
-        /* Right */  
-        rt.controls.push(new i_hexButton(110, rt, width-226, 150, 40, 40,
+        /* Right           */  
+        rt.controls.push(new i_hexButton(120, rt, width-226, 150, 40, 40,
           {execute:   right,
            style:     GLYPHS.TEXT,
            color:     CLRS.WHITE,
@@ -2559,7 +2515,7 @@ var diagrams = function(processingInstance){
            font:      monoFont,
            cursor:    HAND}));
 
-        /* Up Left */
+        /* Up Left         */
         rt.controls.push(new i_hexButton(130, rt, width-282, 118, 40, 40,
           {execute:   upLeft,
            style:     GLYPHS.TEXT,
@@ -2568,7 +2524,7 @@ var diagrams = function(processingInstance){
            font:      monoFont,
            cursor:    HAND}));
 
-        /* Up Right */
+        /* Up Right        */
         rt.controls.push(new i_hexButton(140, rt, width-245, 118, 40, 40,
           {execute:   upRight,
            style:     GLYPHS.TEXT,
@@ -2577,8 +2533,8 @@ var diagrams = function(processingInstance){
            font:      monoFont,
            cursor:    HAND}));
 
-        /* Down Left */
-        rt.controls.push(new i_hexButton(110, rt, width-282, 182, 40, 40,
+        /* Down Left       */
+        rt.controls.push(new i_hexButton(150, rt, width-282, 182, 40, 40,
           {execute:   downLeft,
            style:     GLYPHS.TEXT,
            text:      HEXNAV.DOWN_LEFT,
@@ -2586,8 +2542,8 @@ var diagrams = function(processingInstance){
            font:      monoFont,
            cursor:    HAND}));
            
-        /* Down Right */
-        rt.controls.push(new i_hexButton(140, rt, width-245, 182, 40, 40,
+        /* Down Right      */
+        rt.controls.push(new i_hexButton(160, rt, width-245, 182, 40, 40,
           {execute:   downRight,
            style:     GLYPHS.TEXT,
            color:     color(92),
@@ -2595,8 +2551,8 @@ var diagrams = function(processingInstance){
            font:      monoFont,
            cursor:    HAND}));
 
-        /* Reset */
-        rt.controls.push(new i_hexButton(150, rt, width-263, 150, 40, 40,
+        /* Reset           */
+        rt.controls.push(new i_hexButton(170, rt, width-263, 150, 40, 40,
           {execute:   reset,
            style:     GLYPHS.RESET,
            color:     CLRS.RED,
@@ -2608,46 +2564,28 @@ var diagrams = function(processingInstance){
     
       // toolbar --------------------------------------------------
       {
-        /* tlbar             */
+        /* tlbar           */
         var tlbar=new toolbar(200, rt, 1, 1, width-2, 30,
           {text:      'Pascals Triangle',
            font:      monoFont,
            acolor:    CLRS.K_TEAL_0,
-           icolor:    getColor(CLRS.BLACK,20),
+           icolor:    getColor(CLRS.BLACK,100),
            cursor:    ARROW});
 
         rt.controls.push(tlbar);
-    
-        /* play            */
-        tlbar.controls.push(new i_Button(210, tlbar, 5, 5, 20, 20,
-          {execute:   toggleCalculate,
-           retrieve:  getCalculate,
-           style:     GLYPHS.TRIFORCE,
-           font:      monoFont,
-           color:     CLRS.K_TEAL_0,
-           cursor:    HAND}));
 
-        /* reset           */
-        tlbar.controls.push(new i_Button(220, tlbar, 32, 5, 20, 20,
-          {execute:   reset,
-           retrieve:  getCalculate,
-           style:     GLYPHS.RESET,
+        /* choose          */
+        tlbar.controls.push(new i_Button(210, tlbar, 10, 5, 22, 22,
+          {text:      'choose',
            font:      monoFont,
-           color:     CLRS.K_TEAL_0,
-           cursor:    HAND}));
-
-        /* sierpinski     */
-        tlbar.controls.push(new i_Button(230, tlbar, width-106, 5, 22, 22,
-          {text:      'S',
-           font:      monoFont,
-           execute:   toggleSierpinski,
-           retrieve:  getSierpinski,
-           style:     GLYPHS.TEXT,
+           execute:   toggleChoose,
+           retrieve:  getChoose,
+           style:     GLYPHS.CHOOSE,
            color:     CLRS.WHITE,
            cursor:    HAND}));
 
-        /* sigma     */
-        tlbar.controls.push(new i_Button(240, tlbar, width-79, 5, 22, 22,
+        /* sigma           */
+        tlbar.controls.push(new i_Button(220, tlbar, 35, 5, 22, 22,
           {text:      CONSTANTS.SIGMA,
            font:      monoFont,
            execute:   toggleSigma,
@@ -2655,9 +2593,19 @@ var diagrams = function(processingInstance){
            style:     GLYPHS.TEXT,
            color:     CLRS.WHITE,
            cursor:    HAND}));
+           
+        /* sierpinski      */
+        tlbar.controls.push(new i_Button(230, tlbar, 60, 5, 22, 22,
+          {text:      'S',
+           font:      monoFont,
+           execute:   toggleSierpinski,
+           retrieve:  getSierpinski,
+           style:     GLYPHS.TRIFORCE,
+           color:     CLRS.WHITE,
+           cursor:    HAND}));
 
         /* information     */
-        tlbar.controls.push(new i_Button(250, tlbar, width-52, 5, 22, 22,
+        tlbar.controls.push(new i_Button(240, tlbar, 85, 5, 22, 22,
           {text:      'i',
            font:      monoFont,
            execute:   toggleInfo,
@@ -2667,7 +2615,7 @@ var diagrams = function(processingInstance){
            cursor:    HAND}));
 
         /* settings        */
-        tlbar.controls.push(new i_Button(260, tlbar, width-25, 5, 22, 22,
+        tlbar.controls.push(new i_Button(250, tlbar, width-25, 5, 22, 22,
           {execute:   toggleTelemetry,
            retrieve:  getTelemetry,
            style:     GLYPHS.SETTINGS,
@@ -2757,117 +2705,17 @@ var diagrams = function(processingInstance){
 
       }
 
-      // Index --------------------------------------------------
-      {
-        // /* index              */
-        // var idx=new index(300, bk, 10, 40, 130, 225,{radius:  5,
-            // color:   CLRS.WHITE,
-            // cursor:  ARROW});
-
-        // rt.controls.push(idx);
-
-          // /* Sine button        */
-          // rt.controls.push(new button(310, bk, 15, 45, 120, 20,
-            // {text:     'Sin '+CONSTANTS.THETA,
-             // execute:  toggleSine,
-             // tag:      getSine,
-             // retrieve: getSineOn,
-             // color:    CLRS.SIN,
-             // cursor:   HAND}));
-
-          // /* Cosine button      */
-          // rt.controls.push(new button(320, bk, 15, 65, 120, 20,
-            // {text:     'Cos '+CONSTANTS.THETA,
-             // execute:  toggleCosine,
-             // tag:      getCosine,
-             // retrieve: getCosineOn,
-             // color:    CLRS.COS,
-             // cursor:   HAND}));
-
-          // /* Tangent button     */
-          // rt.controls.push(new button(330, bk, 15, 85, 120, 20,
-            // {text:     'Tan '+CONSTANTS.THETA,
-             // execute:  toggleTangent,
-             // tag:      getTangent,
-             // retrieve: getTangentOn,
-             // color:    CLRS.TAN,
-             // cursor:   HAND}));
-
-          // /* Cosecant button    */
-          // rt.controls.push(new button(340, bk, 15, 110, 120, 20,
-            // {text:     'Csc '+CONSTANTS.THETA,
-             // execute:  toggleCosecant,
-             // tag:      getCosecant,
-             // retrieve: getCosecantOn,
-             // color:    CLRS.K_PINK_0,
-             // cursor:   HAND}));
-
-          // /* Secant button      */
-          // rt.controls.push(new button(350, bk, 15, 130, 120, 20,
-            // {text:     'Sec '+CONSTANTS.THETA,
-             // execute:  toggleSecant,
-             // tag:      getSecant,
-             // retrieve: getSecantOn,
-             // color:    CLRS.K_PINK_2,
-             // cursor:   HAND}));
-
-          // /* Cotangent button   */
-          // rt.controls.push(new button(360, bk, 15, 150, 120, 20,
-            // {text:     'Cot '+CONSTANTS.THETA,
-             // execute:  toggleCotangent,
-             // tag:      getCotangent,
-             // retrieve: getCotangentOn,
-             // color:    CLRS.TAN_LT,
-             // cursor:   HAND}));
-
-          // /* Excosecant button   */
-          // rt.controls.push(new button(360, bk, 15, 175, 120, 20,
-            // {text:     'Excsc '+CONSTANTS.THETA,
-             // execute:  toggleExcosecant,
-             // tag:      getExcosecant,
-             // retrieve: getExcosecantOn,
-             // color:    CLRS.K_TEAL_0,
-             // cursor:   HAND}));
-
-          // /* Coversine button   */
-          // rt.controls.push(new button(360, bk, 15, 195, 120, 20,
-            // {text:     'Cvs '+CONSTANTS.THETA,
-             // execute:  toggleCoversine,
-             // tag:      getCoversine,
-             // retrieve: getCoversineOn,
-             // color:    CLRS.K_TEAL_2,
-             // cursor:   HAND}));
-
-          // /* Versine button   */
-          // rt.controls.push(new button(360, bk, 15, 220, 120, 20,
-            // {text:     'Ver '+CONSTANTS.THETA,
-             // execute:  toggleVersine,
-             // tag:      getVersine,
-             // retrieve: getVersineOn,
-             // color:    CLRS.K_BROWN_1,
-             // cursor:   HAND}));
-
-          // /* Exsecant button   */
-          // rt.controls.push(new button(360, bk, 15, 240, 120, 20,
-            // {text:     'Exsec '+CONSTANTS.THETA,
-             // execute:  toggleExsecant,
-             // tag:      getExsecant,
-             // retrieve: getExsecantOn,
-             // color:    CLRS.K_ORANGE_1,
-             // cursor:   HAND}));
-      }
-
       // SplashScreen --------------------------------------------------
       {
 
-        /* Splash Screen      */
+        /* Splash Screen   */
         var splashScreen=new splash(500, rt, width/2-200, height/2-200, 400, 400,
           {color:     CLRS.BLACK,
            font:      monoFont,
            retrieve:  getInfo,
            cursor:    CROSS});
 
-          /* Close              */
+          /* Close         */
           splashScreen.controls.push(new button(510, splashScreen, 180, 360, 120, 20,
             {text:      'Close',
              font:      monoFont,
@@ -2882,8 +2730,8 @@ var diagrams = function(processingInstance){
 
       // Telemetry --------------------------------------------------
 
-      /* Telemetry          */
-      var telem=new telemetry(400, rt, width, 31, 200, height-56,
+      /* Telemetry         */
+      var telem=new telemetry(400, rt, width, 31, 200, height-30,
         {color:     color(72),
          font:      serifFont,
          cursor:    ARROW});
@@ -2897,7 +2745,7 @@ var diagrams = function(processingInstance){
     var rows=[];
     var cols=[1];
 
-    for(var row=0; row<app.levels; row++){
+    for(var row=0; row<app.rows; row++){
 
       for(var col=0; col<row; col++){
 
@@ -2916,8 +2764,6 @@ var diagrams = function(processingInstance){
 
   app.pascal=loadPascal();
 
-  // println(ArrayToText2D(app.pascal));
-// textFont(createFont(monoFont, 16));
   function update(){
 
     pushMatrix();
@@ -2945,10 +2791,7 @@ var diagrams = function(processingInstance){
 
   initialize();
 
-  /**  Initialize the app.keys array and the values of the special keys */
-  app.keys[KEYCODES.CONTROL] = false;
-  app.keys[KEYCODES.ALT]     = false;
-  app.keys[KEYCODES.SHIFT]   = false;
+
 
   // println(sortDigitsAsc(918273645));
   // println(sortDigitsDesc(918273645));
@@ -2956,48 +2799,47 @@ var diagrams = function(processingInstance){
   // println(sqr(11));
   // println(sqrt(121));
 
-  var n=2230;
+  // var n=2230;
 
-  const r=0.5;
-  const L_SECTION=(1-pow(r,2)*PI)/4;
+  // const r=0.5;
+  // const L_SECTION=(1-pow(r,2)*PI)/4;
 
 // println(L_SECTION);
 
-  function calc(){
+  // function calc(){
 
-    cursor(ARROW);
+    // cursor(ARROW);
 
-    strokeWeight(0.5);
-    background(CLRS.WHITE);
+    // strokeWeight(0.5);
+    // background(CLRS.WHITE);
 
-    stroke(CLRS.BLACK);
-    fill(CLRS.BLUE);
+    // stroke(CLRS.BLACK);
+    // fill(CLRS.BLUE);
 
-      rect(10,10,200,200);
+      // rect(10,10,200,200);
 
-    fill(CLRS.WHITE);
+    // fill(CLRS.WHITE);
 
-      rect(10,10,200,100);
-      rect(110,10,100,200);
+      // rect(10,10,200,100);
+      // rect(110,10,100,200);
 
-    fill(CLRS.WHITE);
+    // fill(CLRS.WHITE);
 
-      ellipse(110,110,200,200);
+      // ellipse(110,110,200,200);
 
+      // line(10,210,10+n*200,10);
 
-      line(10,210,10+n*200,10);
+// fill(CLRS.K_TEAL_0);
 
-fill(CLRS.K_TEAL_0);
-
-text("L-Section Area:  " + L_SECTION, 10, 300);
-text("N:  " + n, 10, 320);
-text("Slope:  " + 1/n, 10, 340);
+// text("L-Section Area:  " + L_SECTION, 10, 300);
+// text("N:  " + n, 10, 320);
+// text("Slope:  " + 1/n, 10, 340);
 
 // println(n + " : " + 1/n);
 
-n++;
+// n++;
 
-  };
+  // };
 
   execute=update;
 
@@ -3020,21 +2862,21 @@ n++;
 
         switch(true){
 
-          case app.keys[KEYCODES.F1]:         toggleInfo();             break;    /* F1               */
-          case app.keys[KEYCODES.F2]:         toggleTelemetry();        break;    /* F2               */
-          case app.keys[KEYCODES.F3]:         toggleChoose();           break;    /* F3               */
-          case app.keys[KEYCODES.F4]:         toggleSierpinski();       break;    /* F4               */
-          case app.keys[KEYCODES.F5]:         reset();                  break;    /* F5               */
-          case app.keys[KEYCODES.F6]:         toggleSigma();            break;    /* F6               */
+          case app.keys[KEYCODES.F1]:         toggleInfo();             break;    /* F1 - Info        */
+          case app.keys[KEYCODES.F2]:         toggleTelemetry();        break;    /* F2 - Telemetry   */
+          case app.keys[KEYCODES.F3]:         toggleChoose();           break;    /* F3 - Choose      */
+          case app.keys[KEYCODES.F4]:         toggleSierpinski();       break;    /* F4 - Sierpinski  */
+          case app.keys[KEYCODES.F5]:         reset();                  break;    /* F5 - Reset       */
+          case app.keys[KEYCODES.F6]:         toggleSigma();            break;    /* F6 - Sigma       */
 
-          case app.keys[KEYCODES.PGUP]:       incrementRows();          break;    /* PGUP             */
-          case app.keys[KEYCODES.PGDN]:       decrementRows();          break;    /* PGDN             */
+          case app.keys[KEYCODES.PGUP]:       incrementRows();          break;    /* PGUP - Rows++    */
+          case app.keys[KEYCODES.PGDN]:       decrementRows();          break;    /* PGDN - Rows--    */
 
           case app.keys[KEYCODES.a] &&
-               app.keys[KEYCODES.CONTROL]:    app.pyramid.selectAll();  break;    /* a+ctrl           */
+               app.keys[KEYCODES.CONTROL]:    app.pyramid.selectAll();  break;    /* CTRL+A Select All */
 
           case app.keys[KEYCODES.R] ||
-               app.keys[KEYCODES.r]:          app.pyramid.reset();      break;    /* R or r           */
+               app.keys[KEYCODES.r]:          app.pyramid.reset();      break;    /* R or r - Reset */
 
           case app.keys[KEYCODES.LEFT] ||
                app.keys[KEYCODES.A]:          left();                   break;    /* LEFT or A        */
@@ -3055,7 +2897,7 @@ n++;
           case app.keys[KEYCODES.DOWN] ||
                app.keys[KEYCODES.X]:          downRight();              break;    /* DOWN or X        */
 
-          case app.keys[KEYCODES.SPACE]:      setCell();                break;    /* SPACE            */
+          case app.keys[KEYCODES.SPACE]:      setCell();                break;    /* SPACE - Set Cell */
 
           default:                                                      break;
 
