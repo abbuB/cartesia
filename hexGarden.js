@@ -136,7 +136,7 @@ var diagrams = function(processingInstance){
 
       angleMode='radians';
 
-      size(800, 800); // set size of canvas
+      size(700, 700); // set size of canvas
 
     }
 
@@ -168,15 +168,15 @@ var diagrams = function(processingInstance){
     this.cursor       = 0;      //  Position of the cursor in grid
     this.cells        = 0;      //  # of cells in the grid
 
-    this.rows         = 16;     //  # of rows in the grid
+    this.rows         = 10;     //  # of rows in the grid
 
     this.minRows      = 5;      //  Min # of rows permitted
     this.maxRows      = 32;     //  Max # of rows permitted
 
-    this.row          = 0;      //  Current row
+    this.row          = 9;      //  Current row
     this.col          = 0;      //  Current column
 
-    this.pyramid;               //  Global Reference to the pyramid control
+    this.hexGarden;             //  Global Reference to the hexGarden control
     this.currentCell;           //  Global Reference to the currently selected cell in the pyramid
 
     this.rowTotals    = [];     //  Array of sum of the cells in each row
@@ -191,7 +191,7 @@ var diagrams = function(processingInstance){
 
   var app=new application();
 
-  /* Constants ================================================================= */
+  /* Constants ============================================================= */
   {
 
     var CLRS={
@@ -305,7 +305,7 @@ var diagrams = function(processingInstance){
 
   // }
 
-  /* Utility Functions ========================================================= */
+  /* Utility Functions ===================================================== */
   {
 
     /**  Thanks Peter */
@@ -334,15 +334,7 @@ var diagrams = function(processingInstance){
 
       app.dirty = true;
 
-        app.calculating=false;
-        app.path=[];
-        app.cursor=0;
-        app.row=0;
-        app.col=0;
-
-        app.pyramid.levels=app.rows;
-        app.pascal=loadPascal();
-        app.pyramid.reset();
+app.hexGarden.reset();
 
       app.dirty=false;
 
@@ -367,28 +359,28 @@ var diagrams = function(processingInstance){
 
       app.rows++;
       app.rows=(constrain)(app.rows, app.minRows, app.maxRows);
-      reset();
-
+      // reset();
+      
     };
     function decrementRows()   {
 
       app.rows--;
       app.rows=(constrain)(app.rows, app.minRows, app.maxRows);
-      reset();
+      // reset();
 
     };
 
     function constrainCurrent(){
 
-      app.row=(constrain)(app.row, 0, app.pyramid.controls.length-1);
-      app.col=(constrain)(app.col, 0, app.pyramid.controls[app.row].length-1);
+      app.row=(constrain)(app.row, 0, app.rows);
+      // app.col=(constrain)(app.col, 0, app.pyramid.controls[app.row].length-1);
 
-      app.currentCell=app.pyramid.controls[app.row][app.col];
+      // app.currentCell=app.pyramid.controls[app.row][app.col];
 
     };
 
-    function right()    { app.col++;              constrainCurrent(); };
-    function left()     { app.col--;              constrainCurrent(); };
+    function right()    { app.row++;              constrainCurrent(); };
+    function left()     { app.row--;              constrainCurrent(); };
     function upRight()  { app.row--;              constrainCurrent(); };
     function upLeft()   { app.row--;  app.col--;  constrainCurrent(); };
     function downRight(){ app.row++;  app.col++;  constrainCurrent(); };
@@ -396,10 +388,10 @@ var diagrams = function(processingInstance){
 
   }
 
-  /* Containers/Controls ======================================================= */
+  /* Containers/Controls =================================================== */
   {
 
-    // Default ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    /* Default              */
     {
 
       var control=function(id, parent, x, y, w, h){
@@ -465,9 +457,9 @@ var diagrams = function(processingInstance){
 
     }
 
-    /* Containers ================================================ */
+    /* Containers ========================================================== */
 
-    // root ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    /* root                 */
     {
       /* Identical to a container control except is doesn't have a parent */
       function root(id, parent, x, y, w, h, props){
@@ -535,7 +527,7 @@ var diagrams = function(processingInstance){
 
     }
 
-    // Container ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    /* Container            */
     {
 
       function container(id, parent, x, y, w, h, props){
@@ -578,7 +570,7 @@ var diagrams = function(processingInstance){
 
     }
 
-    // Splash Screen ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    /* Splash Screen        */
     {
 
       function splash(id, parent, x, y, w, h, props){
@@ -743,7 +735,7 @@ var diagrams = function(processingInstance){
 
     }
 
-    // NavBar ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    /* NavBar               */
     {
 
       function navbar(id, parent, x, y, w, h, props){
@@ -801,7 +793,7 @@ var diagrams = function(processingInstance){
 
     }
 
-    // Toolbar ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    /* Toolbar              */
     {
 
       function toolbar(id, parent, x, y, w, h, props){
@@ -851,7 +843,7 @@ var diagrams = function(processingInstance){
 
     }
 
-    // Telemetry ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    /* Telemetry            */
     {
 
       function telemetry(id, parent, x, y, w, h, props){
@@ -1040,7 +1032,7 @@ var diagrams = function(processingInstance){
 
     }
 
-    // Pyramid ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    /* Pyramid              */
     {
 
       function pyramid(id, parent, x, y, w, h, props){
@@ -1297,9 +1289,279 @@ var diagrams = function(processingInstance){
 
     }
 
-    /* Controls ================================================ */
+    /* Hex Garden           */
+    {
 
-    // Index ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      function hexGarden(id, parent, x, y, w, h, props){
+
+        control.call(this, id, parent, x, y, w, h);
+
+        this.color  = props.color;
+        this.cursor = props.cursor;
+        this.font   = props.font;        
+        this.border = true;
+
+        this.reset();
+        
+        app.currentCell=this.controls[0][0];
+    
+      };
+      hexGarden.prototype=Object.create(control.prototype);
+      hexGarden.prototype.reset=function(){
+
+        const D  = 15;    // Diameter
+        const SZ =  1.5;  // Size
+
+        var ordinal=0;
+        var count=0;
+        var p=this;
+      
+        this.controls=[];
+        
+        var ring=[];
+
+        function addPoints(p0,p1,n){
+
+          var pt0;
+          var pt1;
+
+          stroke(CLRS.WHITE);
+          strokeWeight(0.25);
+
+          for(var i=1; i<n; i++){
+
+            pt0=new pnt(lerp(p0.x, p1.x, i/n),lerp(p0.y, p1.y, i/n));
+              
+            ring.push(new hPt(p.controls.length, p, pt0.x, pt0.y, SZ, SZ,
+              {row:       n,
+               corner:    false,
+               ordinal:   ordinal,
+               count:     count,
+               color:     CLRS.RED,
+               font:      monoFont,
+               cursor:    ARROW}));
+            
+            ordinal++;
+            count++;
+            
+          }
+
+        };
+        
+        //  Origin
+        ring.push(new hPt(p.controls.length, p, 0, 0, SZ, SZ,
+            {row:       0,
+             corner:    true,
+             ordinal:   ordinal,
+             count:     count,
+             color:     CLRS.RED,
+             font:      monoFont,
+             cursor:    ARROW}));
+        
+        p.controls.push(ring);
+        ring=[];
+        count++;
+
+        var p0, p1, p2, p3, p4, p5;
+
+        for(var n=1; n<=app.rows; n++){   // Rings
+
+          noStroke();
+          fill(CLRS.RED);
+
+          p0=new pnt(n*D*cos(0),      n*D*sin(0));
+          p1=new pnt(n*D*cos(PI/3),   n*D*sin(PI/3));
+          p2=new pnt(n*D*cos(2*PI/3), n*D*sin(2*PI/3));
+          p3=new pnt(n*D*cos(PI),     n*D*sin(PI));
+          p4=new pnt(n*D*cos(4*PI/3), n*D*sin(5*PI/3));
+          p5=new pnt(n*D*cos(5*PI/3), n*D*sin(5*PI/3));
+
+          ring.push(new hPt(p.controls.length, p, p0.x, p0.y, SZ, SZ,
+            {row:       n,
+             corner:    true,
+             ordinal:   ordinal,
+             count:     count,
+             color:     CLRS.RED,
+             font:      monoFont,
+             cursor:    ARROW})); //  Point #1
+
+            ordinal++;
+            count++;
+            
+            addPoints(p0,p1,n);   //  Quadrant 0 - between pt0 and pt1
+          
+          ring.push(new hPt(p.controls.length, p, p1.x, p1.y, SZ, SZ,
+            {row:       n,
+             corner:    true,
+             ordinal:   ordinal,
+             count:     count,
+             color:     CLRS.RED,
+             font:      monoFont,
+             cursor:    ARROW})); //  Point #2
+
+            ordinal++;      
+            count++;
+            
+          addPoints(p1, p2, n); //  Quadrant 1 - between pt1 and pt2
+          
+          ring.push(new hPt(p.controls.length, p, p2.x, p2.y, SZ, SZ,
+            {row:       n,
+             corner:    true,
+             ordinal:   ordinal,
+             count:     count,
+             color:     CLRS.RED,
+             font:      monoFont,
+             cursor:    ARROW})); //  Point #3
+
+            ordinal++;
+            count++;
+            
+            addPoints(p2, p3, n); //  Quadrant 2 - between pt2 and pt3
+            
+          ring.push(new hPt(p.controls.length, p, p3.x, p3.y, SZ, SZ,
+            {row:       n,
+             corner:    true,
+             ordinal:   ordinal,
+             count:     count,
+             color:     CLRS.RED,
+             font:      monoFont,
+             cursor:    ARROW})); //  Point #4
+
+            ordinal++;
+            count++;
+            
+            addPoints(p3, p4, n); //  Quadrant 3 - between pt3 and pt4
+
+          ring.push(new hPt(p.controls.length, p, p4.x, p4.y, SZ, SZ,
+            {row:       n,
+             corner:    true,
+             ordinal:   ordinal,
+             count:     count,
+             color:     CLRS.RED,
+             font:      monoFont,
+             cursor:    ARROW})); //  Point #5
+
+            ordinal++;
+            count++;
+
+            addPoints(p4, p5, n); //  Quadrant 4 - between pt4 and pt5
+            
+          ring.push(new hPt(p.controls.length, p, p5.x, p5.y, SZ, SZ,
+            {row:       n,
+             corner:    true,
+             ordinal:   ordinal,
+             count:     count,
+             color:     CLRS.RED,
+             font:      monoFont,
+             cursor:    ARROW})); //  Point #6
+            
+            ordinal++;
+            count++;
+            
+            addPoints(p5, p0, n); //  Quadrant 5 - between pt5 and pt0
+          
+          p.controls.push(ring);
+          ring=[];
+          
+          ordinal=0;
+
+        }
+        
+      };
+      hexGarden.prototype.draw=function(){
+
+        this.active=this.hit && app.focus===this.id;
+
+        pushMatrix();
+
+          translate(this.x, this.y);
+
+            noStroke();
+            fill(getColor(this.color, 5));
+            textFont(createFont(this.font,16));
+
+            if(this.hit   ){ fill(getColor(this.color, 10));   }
+            if(this.active){ cursor(this.cursor);              }
+            if(this.border){ strokeWeight(1);
+                             stroke(getColor(this.color, 50)); }
+
+              rect(0, 0, this.w, this.h);
+
+              // forEach(this.controls, 'draw');
+            for(var r in this.controls){
+              for(var c in this.controls[r]){
+
+                this.controls[r][c].draw();
+
+              }
+            }
+            
+        popMatrix();
+
+      };
+      hexGarden.prototype.moved   = function(x,y){
+      /* Overridden because of the nested controls */
+
+        if(this.parent.hit){
+
+          if(mouseX>this.x+x &&
+             mouseX<this.x+this.w &&
+             mouseY>this.y &&
+             mouseY<this.y+this.h){
+
+            this.hit=true;
+            app.focus=this.id;
+
+            for(var r in this.controls){
+              for(var c in this.controls[r]){
+
+                this.controls[r][c].moved(this.x,this.y);
+
+              }
+            }
+
+          }
+          else{
+
+            this.hit=false;
+
+            for(var r in this.controls){
+              for(var c in this.controls[r]){
+
+                this.controls[r][c].hit=false;
+
+              }
+            }
+
+          }
+
+        }
+
+      };
+      hexGarden.prototype.clicked = function(){
+
+        if(this.hit){
+
+          for(var r in this.controls){
+            for(var c in this.controls[r]){
+
+              this.controls[r][c].clicked();
+
+            }
+          }
+
+        }
+
+      }      
+      hexGarden.prototype.out     = function(){ this.hit=false; }
+      hexGarden.prototype.pressed = function(){};
+      hexGarden.prototype.dragged = function(){};
+      
+    }
+    
+    /* Controls ============================================================ */
+
+    /* Index                */
     {
 
       function index(id, parent, x, y, w, h, props){
@@ -1340,7 +1602,7 @@ var diagrams = function(processingInstance){
 
     }
 
-    // navScroll ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    /* navScroll            */
     {
 
       function navScroll(id, parent, x, y, w, h, props){
@@ -1421,7 +1683,7 @@ var diagrams = function(processingInstance){
 
     }
 
-    // navButton ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    /* navButton            */
     {
 
       function navButton(id, parent, x, y, w, h, props){
@@ -1496,7 +1758,7 @@ var diagrams = function(processingInstance){
 
     }
 
-    // OnOff ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    /* OnOff                */
     {
 
       function onOff(id, parent, x, y, w, h, props){
@@ -1575,7 +1837,7 @@ var diagrams = function(processingInstance){
 
     }
 
-    // Button ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    /* Button               */
     {
 
       function button(id, parent, x, y, w, h, props){
@@ -1667,7 +1929,7 @@ var diagrams = function(processingInstance){
 
     }
 
-    // Icon Button ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    /* Icon Button          */
     {
 
       function i_Button(id, parent, x, y, w, h, props){
@@ -1889,7 +2151,7 @@ var diagrams = function(processingInstance){
 
     }
 
-    // Hexagon Button ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    /* Hexagon Button       */
     {
 
       function hexButton(id, parent, x, y, w, h, props){
@@ -2104,7 +2366,7 @@ var diagrams = function(processingInstance){
 
     }
 
-    // Icon Hexagon Button ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    /* Icon Hexagon Button  */
     {
 
       function i_hexButton(id, parent, x, y, w, h, props){
@@ -2457,6 +2719,78 @@ var diagrams = function(processingInstance){
 
     }
 
+    /* Hexagonal Grid Point */
+    {
+      function hPt(id, parent, x, y, w, h, props){
+
+        control.call(this, id, parent, x, y, w, h);
+
+        this.row      = props.row;
+        this.ordinal  = props.ordinal;
+        this.count    = props.count;
+        this.corner   = props.corner;
+
+        this.isPrime  = isPrime(this.count);
+
+        this.angle    = nf(degrees(atan2(y,x)),1,4);
+
+        this.color    = props.color;
+        this.cursor   = props.cursor;
+        this.font     = props.font;
+
+      };
+      hPt.prototype=Object.create(control.prototype);
+      hPt.prototype.toString=function(){ return this.x + ", " + this.y; };
+      hPt.prototype.draw=function(){
+        
+        pushMatrix();
+          
+          translate(this.parent.w/2,this.parent.h/2);          
+          scale(1,-1);
+          
+            var f=2;
+
+            noStroke();
+            fill(this.color);
+            
+            if(this.hit){
+              
+              fill(CLRS.YELLOW);
+              f=5;
+
+              if(this.id===0){ f=30; }
+
+            }
+
+            if(this.isPrime){ f=5; }
+
+            // if(this.row===app.row-1){
+              ellipse(this.x, this.y, this.w*f, this.h*f);
+            // }
+
+            strokeWeight(0.5);
+            stroke(getColor(CLRS.WHITE,50));
+
+              line(this.x,this.y,0,0);
+
+        popMatrix();
+
+      };
+      hPt.prototype.moved=function(x,y){
+
+        if(dist(mouseX,mouseY,this.x+x,-this.y+y)<5){
+          this.hit=true;
+          app.currentCell=this;
+// println(this.angle);
+        }
+        else{
+          this.hit=false;
+        }
+
+      };
+
+    }
+    
   }
 
   /********************************************************************************
@@ -2484,17 +2818,18 @@ var diagrams = function(processingInstance){
 
       app.controls.push(rt);
 
-      /* pyramid           */
-      rt.controls.push(new pyramid(600, rt, width/2, height/2+103, width*0.65, height*0.65,
+      /* hexGarden           */
+      rt.controls.push(new hexGarden(600, rt, width/2-200, height/2-100, 400, 400,
         {font:      'sans-serif',
          levels:    app.rows,
          cursor:    ARROW,
+         color:     CLRS.YELLOW,
          size:      0}));
 
       /** Requires a reference to access globally */
-      app.pyramid=rt.controls[0];
+      app.hexGarden=rt.controls[0];
 
-      /* Hexagon Navigation Buttons ------------------------------- */
+      /* Hexagon Navigation Buttons ----------------------------------- */
       {
 
         /* Left            */
@@ -2562,11 +2897,11 @@ var diagrams = function(processingInstance){
 
       }
 
-      // toolbar --------------------------------------------------
+      /* Toolbar ------------------------------------------------------ */
       {
         /* tlbar           */
         var tlbar=new toolbar(200, rt, 1, 1, width-2, 30,
-          {text:      'Pascals Triangle',
+          {text:      'Hex Garden',
            font:      monoFont,
            acolor:    CLRS.K_TEAL_0,
            icolor:    getColor(CLRS.BLACK,100),
@@ -2625,7 +2960,7 @@ var diagrams = function(processingInstance){
 
       }
 
-      // Navigation --------------------------------------------------
+      /* Navigation --------------------------------------------------- */
       {
         // var h=25;
 
@@ -2705,7 +3040,7 @@ var diagrams = function(processingInstance){
 
       }
 
-      // SplashScreen --------------------------------------------------
+      /* SplashScreen ------------------------------------------------- */
       {
 
         /* Splash Screen   */
@@ -2727,10 +3062,7 @@ var diagrams = function(processingInstance){
 
       }
 
-
-      // Telemetry --------------------------------------------------
-
-      /* Telemetry         */
+      /* Telemetry ---------------------------------------------------- */
       var telem=new telemetry(400, rt, width, 31, 200, height-30,
         {color:     color(72),
          font:      serifFont,
@@ -2740,36 +3072,42 @@ var diagrams = function(processingInstance){
 
   };
 
-  function loadPascal(){
+  function drawRings(){
 
-    var rows=[];
-    var cols=[1];
+    noFill();
+    stroke(CLRS.YELLOW);
+    strokeWeight(1);
 
-    for(var row=0; row<app.rows; row++){
+    var cell;
 
-      for(var col=0; col<row; col++){
+    // for(var ring=0; ring<app.controls.length; ring++){
 
-        cols.push(cols[col]*(row-col)/(col+1));
+      stroke(CLRS.YELLOW);
 
-      }
+      beginShape();
+      
+        for(var r=0; r<app.controls.length; r++){
 
-      rows.push(cols);
-      cols=[1];
+          cell=app.controls[r];
 
-    }
+            if(cell.row===app.row){
+              vertex(cell.x, cell.y);
+            }
 
-    return rows;
-
+        }
+          
+      endShape(CLOSE);
+      
+    // }
+    
   };
-
-  app.pascal=loadPascal();
-
+  
   function update(){
 
     pushMatrix();
 
-      translate(width/2+0.5, width/2+0.5);
-      scale(1,-1);
+      // translate(width/2+0.5, width/2+0.5);
+      // scale(1,-1);
 
         // frameRate(app.frameRate);
 
@@ -2777,12 +3115,9 @@ var diagrams = function(processingInstance){
 
         forEach(app.controls,'draw');
 
+        // drawRings();
+
     popMatrix();
-
-    fill(CLRS.BLACK);
-    textAlign(LEFT,TOP);
-
-      // text(app.text,20,30);
 
   };
 
@@ -2790,155 +3125,29 @@ var diagrams = function(processingInstance){
 
   execute=update;
 
-  // initialize();
-
-  var hexRings=[];
-
-  // Hexagonal Grid Point ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  function hPt(id, parent, x, y, w, h, props){
-
-    control.call(this, id, parent, x, y, w, h);
-
-    this.color    = props.color;
-    this.cursor   = props.cursor;
-    this.font     = props.font;
-
-  };
-  hPt.prototype=Object.create(control.prototype);
-  hPt.prototype.toString=function(){ return this.x + ", " + this.y; };
-  hPt.prototype.draw=function(){
-
-    var ring=this.x;
-    var pos=this.y;
-
-    noStroke();
-    fill(this.color);
-
-      ellipse(ring, pos, this.w, this.h);
-      
-      strokeWeight(0.25);
-      stroke(getColor(CLRS.WHITE,50));
-
-      line(ring,pos,0,0);
-      
-  };
-
-  function hexGarden(){
-
-    const D  = 20;   // Diameter
-    const SZ =  1.5;   // Size
-
-    function addPoints(p0,p1,n){
-      
-      var pt0;
-      var pt1;
-      
-      stroke(CLRS.WHITE);
-      strokeWeight(0.25);
-
-      for(var i=1; i<n; i++){
-        
-        pt0=new pnt(lerp(p0.x, p1.x, i/n),lerp(p0.y, p1.y, i/n));
-        
-        noStroke();
-        
-          // ellipse(pt0.x, pt0.y,
-                  // SZ, SZ);
-          
-          app.controls.push(new hPt(app.controls.length, null, pt0.x,pt0.y,SZ,SZ,
-            {color:     CLRS.RED,
-             font:      monoFont,
-             cursor:    ARROW}));
-
-        // stroke(CLRS.WHITE);
-        // line(0,0,pt0.x,pt0.y);
-
-      }
-
-      noStroke();
-      fill(CLRS.RED);
-
-    };
-
-    // ellipse(0,0,3*SZ,3*SZ);       //  Origin
-
-    app.controls.push(new hPt(app.controls.length, null, 0, 0, SZ, SZ,
-        {color:     CLRS.RED,
-         font:      monoFont,
-         cursor:    ARROW}));
-    
-    for(var n=1; n<D; n++){   // Rings
-
-      noStroke();
-      fill(CLRS.RED);
-
-      var p0=new pnt(n*D*cos(0),      n*D*sin(0));
-      var p1=new pnt(n*D*cos(PI/3),   n*D*sin(PI/3));
-      var p2=new pnt(n*D*cos(2*PI/3), n*D*sin(2*PI/3));
-      var p3=new pnt(n*D*cos(PI),     n*D*sin(PI));
-      var p4=new pnt(n*D*cos(4*PI/3), n*D*sin(5*PI/3));
-      var p5=new pnt(n*D*cos(5*PI/3), n*D*sin(5*PI/3));
-
-      // ellipse(p0.x, p0.y, SZ, SZ);
-      // ellipse(p1.x, p1.y, SZ, SZ);
-
-      app.controls.push(new hPt(app.controls.length, null, p0.x, p0.y, SZ, SZ,
-        {color:     CLRS.RED,
-         font:      monoFont,
-         cursor:    ARROW}));
-
-      app.controls.push(new hPt(app.controls.length, null, p1.x, p1.y, SZ, SZ,
-        {color:     CLRS.RED,
-         font:      monoFont,
-         cursor:    ARROW}));
-      
-        addPoints(p0,p1,n);   //  Quadrant 0 - between pt0 and pt1
-
-      app.controls.push(new hPt(app.controls.length, null, p2.x, p2.y, SZ, SZ,
-        {color:     CLRS.RED,
-         font:      monoFont,
-         cursor:    ARROW}));
-
-        addPoints(p1, p2, n); //  Quadrant 1 - between pt1 and pt2
-
-      app.controls.push(new hPt(app.controls.length, null, p3.x, p3.y, SZ, SZ,
-        {color:     CLRS.RED,
-         font:      monoFont,
-         cursor:    ARROW}));
-                
-        addPoints(p2, p3, n); //  Quadrant 2 - between pt2 and pt3
-
-      app.controls.push(new hPt(app.controls.length, null, p4.x, p4.y, SZ, SZ,
-        {color:     CLRS.RED,
-         font:      monoFont,
-         cursor:    ARROW}));
-
-        addPoints(p3, p4, n); //  Quadrant 3 - between pt3 and pt4
-
-      app.controls.push(new hPt(app.controls.length, null, p5.x, p5.y, SZ, SZ,
-        {color:     CLRS.RED,
-         font:      monoFont,
-         cursor:    ARROW}));
-
-        addPoints(p4, p5, n); //  Quadrant 4 - between pt4 and pt5
-        addPoints(p5, p0, n); //  Quadrant 5 - between pt5 and pt0
-
-    }
-
-  };
+  initialize();
 
   execute=update;
 
-  hexGarden();
-  
   // reset();
- cursor(ARROW);
+ // cursor(ARROW);
  
   draw=function(){
 
     execute();
 
     global=this.__frameRate;
+
+    fill(CLRS.WHITE);
+    noStroke();
+
+    // text(app.controls.length,     20,  20);
+    // text(app.currentCell.angle,   20,  40);
+    // text(app.currentCell.row + ", " +
+         // app.currentCell.ordinal, 20,  60);
+    // text(app.currentCell.count,   20,  80);
+    // text(app.rows,                20, 100);
+    // text(app.row,                 20, 120);
 
   };
 
