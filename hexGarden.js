@@ -1300,7 +1300,8 @@ app.hexGarden.reset();
         this.cursor = props.cursor;
         this.font   = props.font;        
         this.border = true;
-
+        this.count  = 0;
+        
         this.reset();
         
         app.currentCell=this.controls[0][0];
@@ -1309,16 +1310,19 @@ app.hexGarden.reset();
       hexGarden.prototype=Object.create(control.prototype);
       hexGarden.prototype.reset=function(){
 
-        const D  = 15;    // Diameter
-        const SZ =  1.5;  // Size
-
-        var ordinal=0;
-        var count=0;
-        var p=this;
+        var p=this;             //  Reference to the hexGarden control
       
-        this.controls=[];
-        
-        var ring=[];
+        this.controls=[];       //  Arary of Rings
+        var ring=[];            //  Array of nodes in each ring
+        this.count=0;           //  Running total of nodes
+
+        const D  = 35;          //  Diameter
+        const SZ =  1.5;        //  Size
+      
+        this.h=app.rows*D*2+20; //  Resize to accomodate # of rings * diameter
+        this.w=this.h;
+
+        var ordinal=0;          //  Count within the ring
 
         function addPoints(p0,p1,n){
 
@@ -1332,35 +1336,35 @@ app.hexGarden.reset();
 
             pt0=new pnt(lerp(p0.x, p1.x, i/n),lerp(p0.y, p1.y, i/n));
               
-            ring.push(new hPt(p.controls.length, p, pt0.x, pt0.y, SZ, SZ,
+            ring.push(new hPt('H'+p.count, p, pt0.x, pt0.y, SZ, SZ,
               {row:       n,
                corner:    false,
                ordinal:   ordinal,
-               count:     count,
-               color:     CLRS.RED,
+               count:     p.count,
+               color:     CLRS.K_TEAL_0,
                font:      monoFont,
-               cursor:    ARROW}));
+               cursor:    HAND}));
             
             ordinal++;
-            count++;
+            p.count++;
             
           }
 
         };
         
         //  Origin
-        ring.push(new hPt(p.controls.length, p, 0, 0, SZ, SZ,
+        ring.push(new hPt('H'+p.count, p, 0, 0, SZ, SZ,
             {row:       0,
              corner:    true,
              ordinal:   ordinal,
-             count:     count,
-             color:     CLRS.RED,
+             count:     p.count,
+             color:     CLRS.K_TEAL_0,
              font:      monoFont,
-             cursor:    ARROW}));
+             cursor:    HAND}));
         
         p.controls.push(ring);
         ring=[];
-        count++;
+        p.count++;
 
         var p0, p1, p2, p3, p4, p5;
 
@@ -1376,94 +1380,94 @@ app.hexGarden.reset();
           p4=new pnt(n*D*cos(4*PI/3), n*D*sin(5*PI/3));
           p5=new pnt(n*D*cos(5*PI/3), n*D*sin(5*PI/3));
 
-          ring.push(new hPt(p.controls.length, p, p0.x, p0.y, SZ, SZ,
+          ring.push(new hPt('H'+p.count, p, p0.x, p0.y, SZ, SZ,
             {row:       n,
              corner:    true,
              ordinal:   ordinal,
-             count:     count,
-             color:     CLRS.RED,
+             count:     p.count,
+             color:     CLRS.K_TEAL_2,
              font:      monoFont,
-             cursor:    ARROW})); //  Point #1
+             cursor:    HAND})); //  Point #1
 
             ordinal++;
-            count++;
+            p.count++;
             
             addPoints(p0,p1,n);   //  Quadrant 0 - between pt0 and pt1
           
-          ring.push(new hPt(p.controls.length, p, p1.x, p1.y, SZ, SZ,
+          ring.push(new hPt('H'+p.count, p, p1.x, p1.y, SZ, SZ,
             {row:       n,
              corner:    true,
              ordinal:   ordinal,
-             count:     count,
-             color:     CLRS.RED,
+             count:     p.count,
+             color:     CLRS.K_TEAL_2,
              font:      monoFont,
-             cursor:    ARROW})); //  Point #2
+             cursor:    HAND})); //  Point #2
 
             ordinal++;      
-            count++;
+            p.count++;
             
           addPoints(p1, p2, n); //  Quadrant 1 - between pt1 and pt2
           
-          ring.push(new hPt(p.controls.length, p, p2.x, p2.y, SZ, SZ,
+          ring.push(new hPt('H'+p.count, p, p2.x, p2.y, SZ, SZ,
             {row:       n,
              corner:    true,
              ordinal:   ordinal,
-             count:     count,
-             color:     CLRS.RED,
+             count:     p.count,
+             color:     CLRS.K_TEAL_2,
              font:      monoFont,
-             cursor:    ARROW})); //  Point #3
+             cursor:    HAND})); //  Point #3
 
             ordinal++;
-            count++;
+            p.count++;
             
             addPoints(p2, p3, n); //  Quadrant 2 - between pt2 and pt3
             
-          ring.push(new hPt(p.controls.length, p, p3.x, p3.y, SZ, SZ,
+          ring.push(new hPt('H'+p.count, p, p3.x, p3.y, SZ, SZ,
             {row:       n,
              corner:    true,
              ordinal:   ordinal,
-             count:     count,
-             color:     CLRS.RED,
+             count:     p.count,
+             color:     CLRS.K_TEAL_2,
              font:      monoFont,
-             cursor:    ARROW})); //  Point #4
+             cursor:    HAND})); //  Point #4
 
             ordinal++;
-            count++;
+            p.count++;
             
             addPoints(p3, p4, n); //  Quadrant 3 - between pt3 and pt4
 
-          ring.push(new hPt(p.controls.length, p, p4.x, p4.y, SZ, SZ,
+          ring.push(new hPt('H'+p.count, p, p4.x, p4.y, SZ, SZ,
             {row:       n,
              corner:    true,
              ordinal:   ordinal,
-             count:     count,
-             color:     CLRS.RED,
+             count:     p.count,
+             color:     CLRS.K_TEAL_2,
              font:      monoFont,
-             cursor:    ARROW})); //  Point #5
+             cursor:    HAND})); //  Point #5
 
             ordinal++;
-            count++;
+            p.count++;
 
             addPoints(p4, p5, n); //  Quadrant 4 - between pt4 and pt5
             
-          ring.push(new hPt(p.controls.length, p, p5.x, p5.y, SZ, SZ,
+          ring.push(new hPt('H'+p.count, p, p5.x, p5.y, SZ, SZ,
             {row:       n,
              corner:    true,
              ordinal:   ordinal,
-             count:     count,
-             color:     CLRS.RED,
+             count:     p.count,
+             color:     CLRS.K_TEAL_2,
              font:      monoFont,
-             cursor:    ARROW})); //  Point #6
+             cursor:    HAND})); //  Point #6
             
             ordinal++;
-            count++;
+            p.count++;
             
             addPoints(p5, p0, n); //  Quadrant 5 - between pt5 and pt0
           
-          p.controls.push(ring);
-          ring=[];
+          p.controls.push(ring);  //  Load the ring
+          ring=[];                //  Clear the ring
           
-          ordinal=0;
+          ordinal=0;              //  Reset the count
 
         }
         
@@ -1476,18 +1480,15 @@ app.hexGarden.reset();
 
           translate(this.x, this.y);
 
-            noStroke();
-            fill(getColor(this.color, 5));
-            textFont(createFont(this.font,16));
+            // noStroke();
+            // fill(getColor(this.color, 5));
 
-            if(this.hit   ){ fill(getColor(this.color, 10));   }
-            if(this.active){ cursor(this.cursor);              }
-            if(this.border){ strokeWeight(1);
-                             stroke(getColor(this.color, 50)); }
+            if(this.active){ cursor(this.cursor); }
+            // if(this.border){ strokeWeight(1);
+                             // stroke(getColor(this.color, 50)); }
 
-              rect(0, 0, this.w, this.h);
+              // ellipse(0, 0, this.w, this.h);
 
-              // forEach(this.controls, 'draw');
             for(var r in this.controls){
               for(var c in this.controls[r]){
 
@@ -1504,10 +1505,7 @@ app.hexGarden.reset();
 
         if(this.parent.hit){
 
-          if(mouseX>this.x+x &&
-             mouseX<this.x+this.w &&
-             mouseY>this.y &&
-             mouseY<this.y+this.h){
+          if(dist(mouseX,mouseY,this.x,this.y)<this.w/2){
 
             this.hit=true;
             app.focus=this.id;
@@ -2743,35 +2741,39 @@ app.hexGarden.reset();
       hPt.prototype.toString=function(){ return this.x + ", " + this.y; };
       hPt.prototype.draw=function(){
         
+        this.offset=0;
+        this.active=this.hit && app.focus===this.id;
+
         pushMatrix();
-          
-          translate(this.parent.w/2,this.parent.h/2);          
-          scale(1,-1);
+
+          scale(1,-1);  //  To accomodate cartesian coordinates
           
             var f=2;
 
             noStroke();
             fill(this.color);
-            
-            if(this.hit){
+
+            if(this.corner){ f=5; 
+                             fill(CLRS.K_TEAL_0); }
               
+            if(this.active){
+              
+              cursor(this.cursor);
               fill(CLRS.YELLOW);
               f=5;
 
               if(this.id===0){ f=30; }
 
             }
-
+            if(this.on){ fill(CLRS.RED); }
             if(this.isPrime){ f=5; }
 
-            // if(this.row===app.row-1){
               ellipse(this.x, this.y, this.w*f, this.h*f);
-            // }
 
             strokeWeight(0.5);
             stroke(getColor(CLRS.WHITE,50));
 
-              line(this.x,this.y,0,0);
+              line(this.x, this.y, 0, 0);
 
         popMatrix();
 
@@ -2779,16 +2781,23 @@ app.hexGarden.reset();
       hPt.prototype.moved=function(x,y){
 
         if(dist(mouseX,mouseY,this.x+x,-this.y+y)<5){
+          
           this.hit=true;
           app.currentCell=this;
-// println(this.angle);
+          app.focus=this.id;
+
         }
         else{
           this.hit=false;
         }
 
       };
+      hPt.prototype.clicked=function(x,y){
+      
+        if(this.active){ this.on=!this.on; }
 
+      };
+      
     }
     
   }
@@ -2819,11 +2828,11 @@ app.hexGarden.reset();
       app.controls.push(rt);
 
       /* hexGarden           */
-      rt.controls.push(new hexGarden(600, rt, width/2-200, height/2-100, 400, 400,
+      rt.controls.push(new hexGarden(600, rt, width/2, height/2, 400, 400,
         {font:      'sans-serif',
          levels:    app.rows,
          cursor:    ARROW,
-         color:     CLRS.YELLOW,
+         color:     CLRS.K_TEAL_2,
          size:      0}));
 
       /** Requires a reference to access globally */
@@ -2831,9 +2840,12 @@ app.hexGarden.reset();
 
       /* Hexagon Navigation Buttons ----------------------------------- */
       {
-
+        
+        var left  = 30;
+        var top   = 90;
+        
         /* Left            */
-        rt.controls.push(new i_hexButton(110, rt, width-300, 150, 40, 40,
+        rt.controls.push(new i_hexButton(110, rt, left, top, 40, 40,
           {execute:   left,
            style:     GLYPHS.TEXT,
            text:      HEXNAV.LEFT,
@@ -2842,7 +2854,7 @@ app.hexGarden.reset();
            cursor:    HAND}));
 
         /* Right           */
-        rt.controls.push(new i_hexButton(120, rt, width-226, 150, 40, 40,
+        rt.controls.push(new i_hexButton(120, rt, left+76, top, 40, 40,
           {execute:   right,
            style:     GLYPHS.TEXT,
            color:     CLRS.WHITE,
@@ -2850,8 +2862,17 @@ app.hexGarden.reset();
            font:      monoFont,
            cursor:    HAND}));
 
+        /* Reset           */
+        rt.controls.push(new i_hexButton(170, rt, left+38, top, 40, 40,
+          {execute:   reset,
+           style:     GLYPHS.RESET,
+           color:     CLRS.RED,
+           text:      'r',
+           font:      monoFont,
+           cursor:    HAND}));
+           
         /* Up Left         */
-        rt.controls.push(new i_hexButton(130, rt, width-282, 118, 40, 40,
+        rt.controls.push(new i_hexButton(130, rt, left+19, top-32, 40, 40,
           {execute:   upLeft,
            style:     GLYPHS.TEXT,
            color:     CLRS.GRAY,
@@ -2860,7 +2881,7 @@ app.hexGarden.reset();
            cursor:    HAND}));
 
         /* Up Right        */
-        rt.controls.push(new i_hexButton(140, rt, width-245, 118, 40, 40,
+        rt.controls.push(new i_hexButton(140, rt, left+57, top-32, 40, 40,
           {execute:   upRight,
            style:     GLYPHS.TEXT,
            color:     CLRS.GRAY,
@@ -2869,7 +2890,7 @@ app.hexGarden.reset();
            cursor:    HAND}));
 
         /* Down Left       */
-        rt.controls.push(new i_hexButton(150, rt, width-282, 182, 40, 40,
+        rt.controls.push(new i_hexButton(150, rt, left+19, top+32, 40, 40,
           {execute:   downLeft,
            style:     GLYPHS.TEXT,
            text:      HEXNAV.DOWN_LEFT,
@@ -2878,7 +2899,7 @@ app.hexGarden.reset();
            cursor:    HAND}));
 
         /* Down Right      */
-        rt.controls.push(new i_hexButton(160, rt, width-245, 182, 40, 40,
+        rt.controls.push(new i_hexButton(160, rt, left+57, top+32, 40, 40,
           {execute:   downRight,
            style:     GLYPHS.TEXT,
            color:     color(92),
@@ -2886,14 +2907,7 @@ app.hexGarden.reset();
            font:      monoFont,
            cursor:    HAND}));
 
-        /* Reset           */
-        rt.controls.push(new i_hexButton(170, rt, width-263, 150, 40, 40,
-          {execute:   reset,
-           style:     GLYPHS.RESET,
-           color:     CLRS.RED,
-           text:      'r',
-           font:      monoFont,
-           cursor:    HAND}));
+
 
       }
 
@@ -3140,9 +3154,11 @@ app.hexGarden.reset();
 
     fill(CLRS.WHITE);
     noStroke();
-
-    // text(app.controls.length,     20,  20);
-    // text(app.currentCell.angle,   20,  40);
+    
+    textSize(12);
+    textAlign(LEFT,TOP);
+    text(app.hexGarden.count,   20, 550);
+    text(app.currentCell.angle, 20, 565);
     // text(app.currentCell.row + ", " +
          // app.currentCell.ordinal, 20,  60);
     // text(app.currentCell.count,   20,  80);
