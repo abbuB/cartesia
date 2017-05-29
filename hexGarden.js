@@ -168,10 +168,14 @@ var diagrams = function(processingInstance){
     this.cursor       = 0;      //  Position of the cursor in grid
     this.cells        = 0;      //  # of cells in the grid
 
-    this.rows         = 10;     //  # of rows in the grid
+    this.rows         = 15;     //  # of rows in the grid
+    this.diameter     = 15;     //  Distance between nodes
 
-    this.minRows      = 5;      //  Min # of rows permitted
-    this.maxRows      = 32;     //  Max # of rows permitted
+    this.minDiameter  =  1;     //  Minimum allowed diamter
+    this.maxDiameter  = 20;     //  Maximum allowed diameter
+
+    this.minRows      =  1;     //  Min # of rows permitted
+    this.maxRows      = 20;     //  Max # of rows permitted
 
     this.row          = 9;      //  Current row
     this.col          = 0;      //  Current column
@@ -179,11 +183,12 @@ var diagrams = function(processingInstance){
     this.hexGarden;             //  Global Reference to the hexGarden control
     this.currentCell;           //  Global Reference to the currently selected cell in the pyramid
 
-    this.rowTotals    = [];     //  Array of sum of the cells in each row
+    this.angles       = [];     //  Array of unique angles to each node
 
     this.sierpinski   = false;  //  Is the Sierpinski triangle displayed
     this.choose       = false;  //  n Choose p displayed https://en.wikipedia.org/wiki/Binomial_coefficient
     this.sigma        = false;  //  Is the sum of the rows total displayed
+    this.ringOn       = true;   //  Is the ring displayed
 
     this.text         = '';
 
@@ -334,11 +339,13 @@ var diagrams = function(processingInstance){
 
       app.dirty = true;
 
-app.hexGarden.reset();
+        app.hexGarden.reset();
 
       app.dirty=false;
 
     };
+
+    function getDiameter()     { return app.diameter;                 };
 
     function getTelemetry()    { return app.telemetry;                };
     function toggleTelemetry() { app.telemetry=!app.telemetry;        };
@@ -355,18 +362,33 @@ app.hexGarden.reset();
     function getSigma()        { return app.sigma;                    };
     function toggleSigma()     { app.sigma=!app.sigma;                };
 
-    function incrementRows()   {
+    function incrementDiameter(){
+
+      app.diameter++;
+      app.diameter=(constrain)(app.diameter, app.minDiameter, app.maxDiameter);
+      reset();
+
+    };
+    function decrementDiameter(){
+
+      app.diameter--;
+      app.diameter=(constrain)(app.diameter, app.minDiameter, app.maxDiameter);
+      reset();
+
+    }
+
+    function incrementRows()    {
 
       app.rows++;
       app.rows=(constrain)(app.rows, app.minRows, app.maxRows);
-      // reset();
-      
+      reset();
+
     };
     function decrementRows()   {
 
       app.rows--;
       app.rows=(constrain)(app.rows, app.minRows, app.maxRows);
-      // reset();
+      reset();
 
     };
 
@@ -379,12 +401,32 @@ app.hexGarden.reset();
 
     };
 
+    function up()       { app.row++;              constrainCurrent(); };
+    function down()     { app.row--;              constrainCurrent(); };
+
     function right()    { app.row++;              constrainCurrent(); };
     function left()     { app.row--;              constrainCurrent(); };
     function upRight()  { app.row--;              constrainCurrent(); };
     function upLeft()   { app.row--;  app.col--;  constrainCurrent(); };
     function downRight(){ app.row++;  app.col++;  constrainCurrent(); };
     function downLeft() { app.row++;              constrainCurrent(); };
+
+    function exists(n)  {
+
+      var retVal=false;
+
+      for(var a in app.angles){
+
+          if(app.angles[a]===n){
+            retVal=true;
+            break;
+          }
+      }
+
+      return retVal;
+
+    };
+
 
   }
 
@@ -448,9 +490,9 @@ app.hexGarden.reset();
       control.prototype.clicked = function(){ if(this.hit){ forEach(this.controls, 'clicked'); } };
       // control.prototype.rClicked=function(){};
       // control.prototype.cClicked=function(){};
-      control.prototype.dragged = function(){ if(this.hit){ forEach(this.controls, 'dragged'); } };
-      control.prototype.pressed = function(){ if(this.hit){ forEach(this.controls, 'pressed'); } };
-      control.prototype.released= function(){};
+      // control.prototype.dragged = function(){ if(this.hit){ forEach(this.controls, 'dragged'); } };
+      // control.prototype.pressed = function(){ if(this.hit){ forEach(this.controls, 'pressed'); } };
+      // control.prototype.released= function(){};
       // control.prototype.typed=function(){};
       control.prototype.over    = function(){};
       control.prototype.out     = function(){ this.hit=false; forEach(this.controls, 'out'); };
@@ -1298,27 +1340,31 @@ app.hexGarden.reset();
 
         this.color  = props.color;
         this.cursor = props.cursor;
-        this.font   = props.font;        
+        this.font   = props.font;
         this.border = true;
         this.count  = 0;
-        
+
+        this.retrieve=props.retrieve;
+
         this.reset();
-        
+
         app.currentCell=this.controls[0][0];
-    
+
       };
       hexGarden.prototype=Object.create(control.prototype);
       hexGarden.prototype.reset=function(){
 
         var p=this;             //  Reference to the hexGarden control
-      
-        this.controls=[];       //  Arary of Rings
+
+        this.controls=[];       //  Array of Rings
+        app.angles=[];          //  Clear the unique angles array
+
         var ring=[];            //  Array of nodes in each ring
         this.count=0;           //  Running total of nodes
 
-        const D  = 35;          //  Diameter
+        const D  = this.retrieve();          //  Diameter
         const SZ =  1.5;        //  Size
-      
+
         this.h=app.rows*D*2+20; //  Resize to accomodate # of rings * diameter
         this.w=this.h;
 
@@ -1335,7 +1381,7 @@ app.hexGarden.reset();
           for(var i=1; i<n; i++){
 
             pt0=new pnt(lerp(p0.x, p1.x, i/n),lerp(p0.y, p1.y, i/n));
-              
+
             ring.push(new hPt('H'+p.count, p, pt0.x, pt0.y, SZ, SZ,
               {row:       n,
                corner:    false,
@@ -1344,14 +1390,14 @@ app.hexGarden.reset();
                color:     CLRS.K_TEAL_0,
                font:      monoFont,
                cursor:    HAND}));
-            
+
             ordinal++;
             p.count++;
-            
+
           }
 
         };
-        
+
         //  Origin
         ring.push(new hPt('H'+p.count, p, 0, 0, SZ, SZ,
             {row:       0,
@@ -1361,7 +1407,7 @@ app.hexGarden.reset();
              color:     CLRS.K_TEAL_0,
              font:      monoFont,
              cursor:    HAND}));
-        
+
         p.controls.push(ring);
         ring=[];
         p.count++;
@@ -1385,55 +1431,55 @@ app.hexGarden.reset();
              corner:    true,
              ordinal:   ordinal,
              count:     p.count,
-             color:     CLRS.K_TEAL_2,
+             color:     CLRS.K_TEAL_0,
              font:      monoFont,
              cursor:    HAND})); //  Point #1
 
             ordinal++;
             p.count++;
-            
+
             addPoints(p0,p1,n);   //  Quadrant 0 - between pt0 and pt1
-          
+
           ring.push(new hPt('H'+p.count, p, p1.x, p1.y, SZ, SZ,
             {row:       n,
              corner:    true,
              ordinal:   ordinal,
              count:     p.count,
-             color:     CLRS.K_TEAL_2,
+             color:     CLRS.K_TEAL_0,
              font:      monoFont,
              cursor:    HAND})); //  Point #2
 
-            ordinal++;      
+            ordinal++;
             p.count++;
-            
+
           addPoints(p1, p2, n); //  Quadrant 1 - between pt1 and pt2
-          
+
           ring.push(new hPt('H'+p.count, p, p2.x, p2.y, SZ, SZ,
             {row:       n,
              corner:    true,
              ordinal:   ordinal,
              count:     p.count,
-             color:     CLRS.K_TEAL_2,
+             color:     CLRS.K_TEAL_0,
              font:      monoFont,
              cursor:    HAND})); //  Point #3
 
             ordinal++;
             p.count++;
-            
+
             addPoints(p2, p3, n); //  Quadrant 2 - between pt2 and pt3
-            
+
           ring.push(new hPt('H'+p.count, p, p3.x, p3.y, SZ, SZ,
             {row:       n,
              corner:    true,
              ordinal:   ordinal,
              count:     p.count,
-             color:     CLRS.K_TEAL_2,
+             color:     CLRS.K_TEAL_0,
              font:      monoFont,
              cursor:    HAND})); //  Point #4
 
             ordinal++;
             p.count++;
-            
+
             addPoints(p3, p4, n); //  Quadrant 3 - between pt3 and pt4
 
           ring.push(new hPt('H'+p.count, p, p4.x, p4.y, SZ, SZ,
@@ -1441,7 +1487,7 @@ app.hexGarden.reset();
              corner:    true,
              ordinal:   ordinal,
              count:     p.count,
-             color:     CLRS.K_TEAL_2,
+             color:     CLRS.K_TEAL_0,
              font:      monoFont,
              cursor:    HAND})); //  Point #5
 
@@ -1449,30 +1495,52 @@ app.hexGarden.reset();
             p.count++;
 
             addPoints(p4, p5, n); //  Quadrant 4 - between pt4 and pt5
-            
+
           ring.push(new hPt('H'+p.count, p, p5.x, p5.y, SZ, SZ,
             {row:       n,
              corner:    true,
              ordinal:   ordinal,
              count:     p.count,
-             color:     CLRS.K_TEAL_2,
+             color:     CLRS.K_TEAL_0,
              font:      monoFont,
              cursor:    HAND})); //  Point #6
-            
+
             ordinal++;
             p.count++;
-            
+
             addPoints(p5, p0, n); //  Quadrant 5 - between pt5 and pt0
-          
+
           p.controls.push(ring);  //  Load the ring
           ring=[];                //  Clear the ring
-          
+
           ordinal=0;              //  Reset the count
 
         }
-        
+
       };
       hexGarden.prototype.draw=function(){
+
+        var p =this;
+
+        function drawRing(){
+
+          noFill();
+          stroke(CLRS.K_TEAL_2);
+          strokeWeight(0.5);
+
+          beginShape();
+
+            for(var n in p.controls[app.row]){
+
+              if(p.controls[app.row][n].corner){
+                vertex(p.controls[app.row][n].x,p.controls[app.row][n].y);
+              }
+
+            }
+
+          endShape(CLOSE);
+
+        };
 
         this.active=this.hit && app.focus===this.id;
 
@@ -1496,7 +1564,9 @@ app.hexGarden.reset();
 
               }
             }
-            
+
+            if(app.ringOn){ drawRing(); };
+
         popMatrix();
 
       };
@@ -1550,13 +1620,13 @@ app.hexGarden.reset();
 
         }
 
-      }      
+      }
       hexGarden.prototype.out     = function(){ this.hit=false; }
       hexGarden.prototype.pressed = function(){};
       hexGarden.prototype.dragged = function(){};
-      
+
     }
-    
+
     /* Controls ============================================================ */
 
     /* Index                */
@@ -2730,7 +2800,12 @@ app.hexGarden.reset();
 
         this.isPrime  = isPrime(this.count);
 
-        this.angle    = nf(degrees(atan2(y,x)),1,4);
+        this.angle    = nf(degrees(atan2(y,x)),1,2);
+
+        if(!exists(this.angle) && this.id!=='H0'){
+          app.angles.push(this.angle);
+          this.on=true;
+        }
 
         this.color    = props.color;
         this.cursor   = props.cursor;
@@ -2740,40 +2815,40 @@ app.hexGarden.reset();
       hPt.prototype=Object.create(control.prototype);
       hPt.prototype.toString=function(){ return this.x + ", " + this.y; };
       hPt.prototype.draw=function(){
-        
+
         this.offset=0;
         this.active=this.hit && app.focus===this.id;
 
         pushMatrix();
 
           scale(1,-1);  //  To accomodate cartesian coordinates
-          
-            var f=2;
+
+            var f=3;
 
             noStroke();
-            fill(this.color);
+            fill(CLRS.BLUE);
 
-            if(this.corner){ f=5; 
-                             fill(CLRS.K_TEAL_0); }
-              
             if(this.active){
-              
-              cursor(this.cursor);
-              fill(CLRS.YELLOW);
-              f=5;
 
-              if(this.id===0){ f=30; }
+              cursor(this.cursor);
+              fill(CLRS.RED);
+              f=4;
 
             }
-            if(this.on){ fill(CLRS.RED); }
+            if(this.on){ fill(CLRS.YELLOW); }
             if(this.isPrime){ f=5; }
+            if(this.row===app.row){ f=4; }
 
               ellipse(this.x, this.y, this.w*f, this.h*f);
 
-            strokeWeight(0.5);
-            stroke(getColor(CLRS.WHITE,50));
+            if(this.on){
+
+              strokeWeight(0.25);
+              stroke(getColor(CLRS.WHITE,50));
 
               line(this.x, this.y, 0, 0);
+
+            }
 
         popMatrix();
 
@@ -2781,7 +2856,7 @@ app.hexGarden.reset();
       hPt.prototype.moved=function(x,y){
 
         if(dist(mouseX,mouseY,this.x+x,-this.y+y)<5){
-          
+
           this.hit=true;
           app.currentCell=this;
           app.focus=this.id;
@@ -2793,13 +2868,13 @@ app.hexGarden.reset();
 
       };
       hPt.prototype.clicked=function(x,y){
-      
+
         if(this.active){ this.on=!this.on; }
 
       };
-      
+
     }
-    
+
   }
 
   /********************************************************************************
@@ -2829,7 +2904,8 @@ app.hexGarden.reset();
 
       /* hexGarden           */
       rt.controls.push(new hexGarden(600, rt, width/2, height/2, 400, 400,
-        {font:      'sans-serif',
+        {retrieve:  getDiameter,
+         font:      'sans-serif',
          levels:    app.rows,
          cursor:    ARROW,
          color:     CLRS.K_TEAL_2,
@@ -2840,13 +2916,13 @@ app.hexGarden.reset();
 
       /* Hexagon Navigation Buttons ----------------------------------- */
       {
-        
+
         var left  = 30;
         var top   = 90;
-        
+
         /* Left            */
         rt.controls.push(new i_hexButton(110, rt, left, top, 40, 40,
-          {execute:   left,
+          {execute:   decrementDiameter,
            style:     GLYPHS.TEXT,
            text:      HEXNAV.LEFT,
            color:     CLRS.WHITE,
@@ -2855,7 +2931,7 @@ app.hexGarden.reset();
 
         /* Right           */
         rt.controls.push(new i_hexButton(120, rt, left+76, top, 40, 40,
-          {execute:   right,
+          {execute:   incrementDiameter,
            style:     GLYPHS.TEXT,
            color:     CLRS.WHITE,
            text:      HEXNAV.RIGHT,
@@ -2870,10 +2946,10 @@ app.hexGarden.reset();
            text:      'r',
            font:      monoFont,
            cursor:    HAND}));
-           
+
         /* Up Left         */
         rt.controls.push(new i_hexButton(130, rt, left+19, top-32, 40, 40,
-          {execute:   upLeft,
+          {execute:   incrementRows,
            style:     GLYPHS.TEXT,
            color:     CLRS.GRAY,
            text:      HEXNAV.UP_LEFT,
@@ -2882,7 +2958,7 @@ app.hexGarden.reset();
 
         /* Up Right        */
         rt.controls.push(new i_hexButton(140, rt, left+57, top-32, 40, 40,
-          {execute:   upRight,
+          {execute:   decrementRows,
            style:     GLYPHS.TEXT,
            color:     CLRS.GRAY,
            text:      HEXNAV.UP_RIGHT,
@@ -3086,52 +3162,13 @@ app.hexGarden.reset();
 
   };
 
-  function drawRings(){
-
-    noFill();
-    stroke(CLRS.YELLOW);
-    strokeWeight(1);
-
-    var cell;
-
-    // for(var ring=0; ring<app.controls.length; ring++){
-
-      stroke(CLRS.YELLOW);
-
-      beginShape();
-      
-        for(var r=0; r<app.controls.length; r++){
-
-          cell=app.controls[r];
-
-            if(cell.row===app.row){
-              vertex(cell.x, cell.y);
-            }
-
-        }
-          
-      endShape(CLOSE);
-      
-    // }
-    
-  };
-  
   function update(){
 
-    pushMatrix();
+    // frameRate(app.frameRate);
 
-      // translate(width/2+0.5, width/2+0.5);
-      // scale(1,-1);
+    background(0);
 
-        // frameRate(app.frameRate);
-
-        background(0);
-
-        forEach(app.controls,'draw');
-
-        // drawRings();
-
-    popMatrix();
+    forEach(app.controls,'draw');
 
   };
 
@@ -3143,9 +3180,6 @@ app.hexGarden.reset();
 
   execute=update;
 
-  // reset();
- // cursor(ARROW);
- 
   draw=function(){
 
     execute();
@@ -3154,16 +3188,24 @@ app.hexGarden.reset();
 
     fill(CLRS.WHITE);
     noStroke();
-    
+
     textSize(12);
     textAlign(LEFT,TOP);
-    text(app.hexGarden.count,   20, 550);
-    text(app.currentCell.angle, 20, 565);
-    // text(app.currentCell.row + ", " +
-         // app.currentCell.ordinal, 20,  60);
-    // text(app.currentCell.count,   20,  80);
-    // text(app.rows,                20, 100);
-    // text(app.row,                 20, 120);
+    text(app.hexGarden.count,     20, 550);
+    text(app.angles.length,       20, 565);
+    text(app.currentCell.angle,   20, 580);
+
+    text('Rows: ' + app.rows,     20, 100);
+    text(app.diameter,            20, 595);
+    text(app.currentCell.row + ", " +
+         app.currentCell.ordinal, 20, 610);
+    text('Integer: ' + app.currentCell.count,   20, 625);
+
+    // app.row++;
+
+    // if(app.row>app.rows){
+      // app.row=0;
+    // }
 
   };
 
@@ -3187,10 +3229,10 @@ app.hexGarden.reset();
           case app.keys[KEYCODES.PGDN]:       decrementRows();          break;    /* PGDN - Rows--    */
 
           case app.keys[KEYCODES.a] &&
-               app.keys[KEYCODES.CONTROL]:    app.pyramid.selectAll();  break;    /* CTRL+A Select All */
+               app.keys[KEYCODES.CONTROL]:    app.hexGarden.selectAll();  break;    /* CTRL+A Select All */
 
           case app.keys[KEYCODES.R] ||
-               app.keys[KEYCODES.r]:          app.pyramid.reset();      break;    /* R or r - Reset */
+               app.keys[KEYCODES.r]:          app.hexGarden.reset();      break;    /* R or r - Reset */
 
           case app.keys[KEYCODES.LEFT] ||
                app.keys[KEYCODES.A]:          left();                   break;    /* LEFT or A        */
@@ -3202,14 +3244,14 @@ app.hexGarden.reset();
                app.keys[KEYCODES.W]:          upLeft();                 break;    /* Up or CTRL + W   */
 
           case app.keys[KEYCODES.UP] ||
-               app.keys[KEYCODES.E]:          upRight();                break;    /* UP or E          */
+               app.keys[KEYCODES.E]:          up();                     break;    /* UP or E          */
 
           case app.keys[KEYCODES.DOWN] &&
                app.keys[KEYCODES.CONTROL] ||
                app.keys[KEYCODES.Z]:          downLeft();               break;    /* CTRL + DOWN or Z */
 
           case app.keys[KEYCODES.DOWN] ||
-               app.keys[KEYCODES.X]:          downRight();              break;    /* DOWN or X        */
+               app.keys[KEYCODES.X]:          down();                   break;    /* DOWN or X        */
 
           case app.keys[KEYCODES.SPACE]:      setCell();                break;    /* SPACE - Set Cell */
 
