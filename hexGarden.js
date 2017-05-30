@@ -168,8 +168,8 @@ var diagrams = function(processingInstance){
     this.cursor       = 0;      //  Position of the cursor in grid
     this.cells        = 0;      //  # of cells in the grid
 
-    this.rows         = 15;     //  # of rows in the grid
-    this.diameter     = 15;     //  Distance between nodes
+    this.rows         = 10;     //  # of rows in the grid
+    this.diameter     = 25;     //  Distance between nodes
 
     this.minDiameter  =  1;     //  Minimum allowed diamter
     this.maxDiameter  = 20;     //  Maximum allowed diameter
@@ -335,12 +335,25 @@ var diagrams = function(processingInstance){
 
     };
 
+    function resetAngles()     {
+      
+      app.angles=[];
+      
+      for(var row=0; row<=app.rows; row++){
+        app.angles[row]=[];
+      }
+
+println('Angles Reset');
+
+    };
+
     function reset()           {
 
       app.dirty = true;
 
-        app.hexGarden.reset();
-
+        app.hexGarden.reset();        
+        // resetAngles();
+        
       app.dirty=false;
 
     };
@@ -384,7 +397,7 @@ var diagrams = function(processingInstance){
       reset();
 
     };
-    function decrementRows()   {
+    function decrementRows()    {
 
       app.rows--;
       app.rows=(constrain)(app.rows, app.minRows, app.maxRows);
@@ -413,20 +426,19 @@ var diagrams = function(processingInstance){
 
     function exists(n)  {
 
-      var retVal=false;
+      for(var row in app.angles){
+        for(var col in app.angles[row]){
 
-      for(var a in app.angles){
-
-          if(app.angles[a]===n){
-            retVal=true;
-            break;
+          if(app.angles[row][col]===n){
+            return true;
           }
+
+        }
       }
 
-      return retVal;
+      return false;
 
     };
-
 
   }
 
@@ -491,8 +503,8 @@ var diagrams = function(processingInstance){
       // control.prototype.rClicked=function(){};
       // control.prototype.cClicked=function(){};
       // control.prototype.dragged = function(){ if(this.hit){ forEach(this.controls, 'dragged'); } };
-      // control.prototype.pressed = function(){ if(this.hit){ forEach(this.controls, 'pressed'); } };
-      // control.prototype.released= function(){};
+      control.prototype.pressed = function(){ if(this.hit){ forEach(this.controls, 'pressed'); } };
+      control.prototype.released= function(){};
       // control.prototype.typed=function(){};
       control.prototype.over    = function(){};
       control.prototype.out     = function(){ this.hit=false; forEach(this.controls, 'out'); };
@@ -1354,21 +1366,21 @@ var diagrams = function(processingInstance){
       hexGarden.prototype=Object.create(control.prototype);
       hexGarden.prototype.reset=function(){
 
-        var p=this;             //  Reference to the hexGarden control
+        var p=this;                 //  Reference to the hexGarden control
 
-        this.controls=[];       //  Array of Rings
-        app.angles=[];          //  Clear the unique angles array
+        this.controls=[];           //  Array of Rings
+        resetAngles();              //  Clear the unique angles array
 
-        var ring=[];            //  Array of nodes in each ring
-        this.count=0;           //  Running total of nodes
+        var ring=[];                //  Array of nodes in each ring
+        this.count=0;               //  Running total of nodes
 
-        const D  = this.retrieve();          //  Diameter
-        const SZ =  1.5;        //  Size
+        const D  = this.retrieve(); //  Diameter
+        const SZ =  1.5;            //  Size
 
-        this.h=app.rows*D*2+20; //  Resize to accomodate # of rings * diameter
+        this.h=app.rows*D*2+20;     //  Resize to accomodate # of rings * diameter
         this.w=this.h;
 
-        var ordinal=0;          //  Count within the ring
+        var ordinal=0;              //  Count within the ring
 
         function addPoints(p0,p1,n){
 
@@ -1409,6 +1421,7 @@ var diagrams = function(processingInstance){
              cursor:    HAND}));
 
         p.controls.push(ring);
+
         ring=[];
         p.count++;
 
@@ -2802,9 +2815,11 @@ var diagrams = function(processingInstance){
 
         this.angle    = nf(degrees(atan2(y,x)),1,2);
 
-        if(!exists(this.angle) && this.id!=='H0'){
-          app.angles.push(this.angle);
+        if(!exists(this.angle, app.angles[props.row])){
+// println(app.angles.length);
+          app.angles[props.row].push(this.angle);
           this.on=true;
+
         }
 
         this.color    = props.color;
@@ -3189,17 +3204,40 @@ var diagrams = function(processingInstance){
     fill(CLRS.WHITE);
     noStroke();
 
-    textSize(12);
+    textSize(10);
     textAlign(LEFT,TOP);
-    text(app.hexGarden.count,     20, 550);
-    text(app.angles.length,       20, 565);
-    text(app.currentCell.angle,   20, 580);
 
-    text('Rows: ' + app.rows,     20, 100);
-    text(app.diameter,            20, 595);
-    text(app.currentCell.row + ", " +
-         app.currentCell.ordinal, 20, 610);
-    text('Integer: ' + app.currentCell.count,   20, 625);
+    var labels='Count:        \n' +
+               'Length:       \n' +
+               'Rows:         \n' +
+               'Diameter:     \n\n' +
+               'Coordinates:  \n' +
+               'Angle:        \n' +
+               'Integer:      \n' +
+               'Row:';
+
+     var values=app.hexGarden.count     + '\n' +
+                app.angles.length       + '\n' +
+                app.rows                + '\n' +
+                app.diameter            + '\n\n' +
+                app.currentCell.row     + ", " +
+                app.currentCell.ordinal + '\n' +
+                app.currentCell.angle   + '\n' +
+                app.currentCell.count   + '\n' +
+                app.row;
+    
+    fill(CLRS.K_TEAL_3);
+    textAlign(LEFT,BOTTOM);
+
+    text(app.angles[app.row], 10, height-50, width-20, 1000);
+    
+    fill(getColor(CLRS.WHITE,75));
+    
+      text(labels, 10,500);
+      
+    fill(CLRS.YELLOW);
+    
+      text(values, 80,500);
 
     // app.row++;
 
@@ -3314,14 +3352,15 @@ var diagrams = function(processingInstance){
     };
     mouseDragged=function(){
 
-      switch(mouseButton){
+      // switch(mouseButton){
 
-        case LEFT:   forEach(app.controls,'dragged'); break;
+        // case LEFT:   forEach(app.controls,'dragged'); break;
         // case RIGHT:  for(var c in app.controls){ app.controls[c].rClicked(); } break;
         // case CENTER: for(var c in app.controls){ app.controls[c].cClicked(); } break;
 
-        default:     break;
-      }
+        // default:     break;
+
+      // }
 
     };
     mouseOut=function(){
