@@ -106,37 +106,11 @@ var diagrams = function(processingInstance){
     this.info         = false;  //  Is the info frame displayed
     this.telemetry    = false;  //  Is telemetry visible
 
-    /* App Specific ------------------ */
+    /* Hextris Specific ------------------ */
 
-    this.calculating  = false;
-
-    this.cursor       = 0;      //  Position of the cursor in grid
-    this.cells        = 0;      //  # of cells in the grid
-
-    this.rows         = 10;     //  # of rows in the grid
-    this.diameter     = 20;     //  Distance between nodes
-
-    this.minDiameter  =  1;     //  Minimum allowed diamter
-    this.maxDiameter  = 20;     //  Maximum allowed diameter
-
-    this.minRows      =  1;     //  Min # of rows permitted
-    this.maxRows      = 20;     //  Max # of rows permitted
-
-    this.row          = 9;      //  Current row
-    this.col          = 0;      //  Current column
-
-    this.hexGarden;             //  Global Reference to the hexGarden control
+    this.activeShape  = SHAPES.SINGLE;
     this.currentCell;           //  Global Reference to the currently selected cell in the pyramid
-
-    this.angles       = [];     //  Array of unique angles to each node
-
-    this.sierpinski   = false;  //  Is the Sierpinski triangle displayed
-    this.choose       = false;  //  n Choose p displayed https://en.wikipedia.org/wiki/Binomial_coefficient
-    this.sigma        = false;  //  Is the sum of the rows total displayed
-    this.ringOn       = true;   //  Is the ring displayed
-
-    this.text         = '';
-
+    
   };
 
   var app=new application();
@@ -448,9 +422,8 @@ println('Angles Reset');
       control.prototype.clicked = function(){ if(this.hit){ forEach(this.controls, 'clicked'); } };
       // control.prototype.rClicked=function(){};
       // control.prototype.cClicked=function(){};
-      // control.prototype.dragged = function(){ if(this.hit){ forEach(this.controls, 'dragged'); } };
-      control.prototype.pressed = function(){ if(this.hit){ forEach(this.controls, 'pressed'); } };
-      control.prototype.released= function(){};
+      control.prototype.dragged = function(){ if(this.hit){ forEach(this.controls, 'dragged'); } };
+      control.prototype.released= function(){ if(this.hit){ forEach(this.controls, 'released'); } };
       // control.prototype.typed=function(){};
       control.prototype.over    = function(){};
       control.prototype.out     = function(){ this.hit=false; forEach(this.controls, 'out'); };
@@ -735,64 +708,6 @@ println('Angles Reset');
 
     }
 
-    /* NavBar               */
-    {
-
-      function navbar(id, parent, x, y, w, h, props){
-
-        control.call(this, id, parent, x, y, w, h);
-
-        this.text        = props.text;
-        this.acolor      = props.acolor;
-        this.icolor      = props.icolor;
-        this.cursor      = props.cursor;
-        this.position    = props.position;
-        this.recordCount = props.recordCount;
-        this.execute     = props.execute;
-        this.font        = props.font;
-
-      };
-      navbar.prototype=Object.create(control.prototype);
-      navbar.prototype.draw=function(){
-
-        this.active=this.hit && app.focus===this.id;
-
-        pushMatrix();
-
-          translate(this.x+0.5, this.y+0.5);
-
-            noStroke();
-            fill(getColor(CLRS.BLACK,10));
-
-            if(this.hit   ){ fill(this.acolor);   }
-            if(this.active){ cursor(this.cursor); }
-
-              rect(0, 0, this.w, this.h);
-
-            stroke(getColor(CLRS.K_TEAL_0,25));
-            strokeWeight(0.25);
-
-              // line(0, 0, this.w,      0); // Top Border
-
-            // Caption
-            fill(getColor(CLRS.K_TEAL_1, 75));
-
-            if(this.hit){ fill(getColor(CLRS.WHITE,75)); }
-
-            textFont(this.font);
-            textAlign(CENTER,CENTER);
-            var txt=this.position() + ' of ' + this.recordCount();
-
-              text(txt, this.w/2, this.h/2);
-
-            forEach(this.controls, 'draw');
-
-        popMatrix();
-
-      };
-
-    }
-
     /* Toolbar              */
     {
 
@@ -1032,263 +947,6 @@ println('Angles Reset');
 
     }
 
-    /* Pyramid              */
-    {
-
-      function pyramid(id, parent, x, y, w, h, props){
-
-        control.call(this, id, parent, x, y, w, h);
-
-        this.levels = app.rows;
-        this.size   = this.h/app.rows*1.6;
-        this.font   = props.font;
-        this.cursor = props.cursor;
-
-        this.row    = 0;
-        this.col    = 0;
-
-        this.p0     = new pnt(this.w*cos(radians( 30))+this.x, this.w*sin(radians( 30))+this.y);
-        this.p1     = new pnt(this.w*cos(radians(150))+this.x, this.w*sin(radians(150))+this.y);
-        this.p2     = new pnt(this.w*cos(radians(270))+this.x, this.w*sin(radians(270))+this.y);
-
-        // Initialize
-        this.load=function(){
-
-          var xPos  = 0;
-          var yPos  = 0;
-          var ID    = 0;
-          var row   = [];
-          var total = 0;
-
-          var w2=this.size/2;
-
-          // PI/6 radians = 30 degrees
-          var rowOffset = this.size-(w2*cos(PI/3));
-          var colOffset = cos(PI/6)*w2;
-          var top       = -this.size*app.rows/2+rowOffset/2;
-          var rowTotal  = 0;
-
-          app.rowTotals=[];
-
-          /* Pascal buttons        */
-          for(var y=0; y<this.levels; y++){
-
-            for(var x=0; x<=y; x++){
-
-              ID=y + ',' + x;
-
-              xPos = x*colOffset*2-y*colOffset;
-              yPos = y*rowOffset+top;
-
-              row.push(new hexButton(ID, this, xPos, yPos, this.size, this.size,
-                {col:       x,
-                 row:       y,
-                 ordinal:   total,
-                 integer:   app.pascal[y][x],
-                 color:     CLRS.K_TEAL_1,
-                 font:      props.font,
-                 cursor:    HAND}));
-
-              total++;
-
-              rowTotal+=app.pascal[y][x];
-
-            }
-
-            this.controls.push(row);
-            row=[];
-
-            app.rowTotals.push(rowTotal);
-            rowTotal=0;
-
-          }
-
-          app.cells=total;
-
-        };
-
-        // this.load();
-
-      };
-      pyramid.prototype=Object.create(control.prototype);
-      pyramid.prototype.draw    = function(){
-
-        this.active=this.hit && app.focus===this.id;
-
-        pushMatrix();
-
-          translate(this.x-0.5,this.y-0.5);
-
-          /** Commented out to reduce processing time */
-            // noFill();
-            // noStroke();
-
-            // fill(getColor(CLRS.K_TEAL_0,15));
-            // textFont(this.font);
-
-            if(this.hit && this.active){
-
-              // fill(getColor(CLRS.K_TEAL_0,10));
-              cursor(this.cursor);
-
-              // stroke(getColor(CLRS.K_TEAL_0,10));
-              // strokeWeight(0.25);
-
-            }
-
-            // fill(getColor(CLRS.BLACK, 90));
-            // noStroke();
-
-              // triangle(this.p0.x-this.x, this.p0.y-this.y,
-                       // this.p1.x-this.x, this.p1.y-this.y,
-                       // this.p2.x-this.x, this.p2.y-this.y);
-
-            for(var row=0; row<this.controls.length; row++){
-              for(var col in this.controls[row]){
-
-                this.controls[row][col].draw(this.x,this.y);
-
-              }
-
-              if(app.sigma){  //  Display Row Totals
-
-                fill(getColor(CLRS.YELLOW,75));
-                textSize(this.controls[row][0].textSize*0.75);
-                textAlign(LEFT,CENTER);
-
-                  text(app.rowTotals[row], -width/2+25, this.controls[row][0].y);
-
-              }
-
-            }
-
-        popMatrix();
-
-      };
-      pyramid.prototype.selectAll   = function(){
-
-
-        for(var r=0; r<this.controls.length; r++){
-          for(var c in this.controls[r]){
-
-            this.controls[r][c].on=true;
-
-          }
-        }
-
-      };
-      pyramid.prototype.reset   = function(){
-
-        this.levels=app.rows;
-        this.size=this.h/app.rows*1.6;
-
-        this.controls=[];
-        this.load();
-
-        for(var r=0; r<this.controls.length; r++){
-          for(var c in this.controls[r]){
-
-            this.controls[r][c].on=false;;
-            this.controls[r][c].text=round(random(99));
-
-          }
-        }
-
-        app.row=0;
-        app.col=0;
-
-        this.on=false;
-
-      };
-      pyramid.prototype.moved   = function(x,y){
-      /* Overridden because of the shape */
-
-        if(this.parent.hit){
-
-          if(triangleHit(new pnt(this.p0.x+x, this.p0.y+y),
-                         new pnt(this.p1.x+x, this.p1.y+y),
-                         new pnt(this.p2.x+x, this.p2.y+y),
-                         mouseX,
-                         mouseY)){
-
-            this.hit=true;
-            app.focus=this.id;
-
-            for(var r=0; r<this.controls.length; r++){
-              for(var c in this.controls[r]){
-
-                this.controls[r][c].moved(this.x,this.y);
-
-              }
-            }
-
-          }
-          else{
-
-            this.hit=false;
-
-            for(var r=0; r<this.controls.length; r++){
-              for(var c in this.controls[r]){
-
-                this.controls[r][c].hit=false;
-
-              }
-            }
-
-          }
-
-        }
-
-      };
-      pyramid.prototype.clicked = function(){
-
-        if(this.hit){
-
-          for(var r=this.controls.length-1; r>-1; r--){
-            for(var c=this.controls[r].length-1; c>-1; c--){
-
-              this.controls[r][c].clicked();
-
-            }
-          }
-
-        }
-
-      }
-      pyramid.prototype.calc    = function(){
-
-        // if(this.on===false){
-
-          for(var row=this.controls.length-2; row>-1; row--){
-            for(var col=this.controls[row].length-1; col>-1; col--){
-
-              this.controls[row][col].calc();
-
-              this.controls[row+1][col  ].set();
-              this.controls[row+1][col+1].set();
-
-            }
-          }
-
-        // }
-
-        this.on=true;
-
-      }
-      pyramid.prototype.step    = function(row,col){
-
-        this.controls[row][col].calc();
-
-        this.controls[row+1][col  ].set();
-        this.controls[row+1][col+1].set();
-
-      }
-      pyramid.prototype.out     = function(){ this.hit=false; }
-      pyramid.prototype.pressed = function(){};
-      pyramid.prototype.dragged = function(){};
-
-    }
-
     /* Hex board          */
     {
 
@@ -1316,15 +974,15 @@ println('Angles Reset');
 
         var p=this; //  Reference to the hexGarden control
 
-        this.layout=[[1,2,3,4,5],         //  Array of Rings
-                     [1,2,3,4,5,6],
-                     [1,2,3,4,5,6,7],
-                     [1,2,3,4,5,6,7,8],
-                     [1,2,3,4,5,6,7,8,9],
-                     [1,2,3,4,5,6,7,8],
-                     [1,2,3,4,5,6,7],
-                     [1,2,3,4,5,6],
-                     [1,2,3,4,5],
+        this.layout=[[0,0,0,0,0],         //  Array of Rings
+                     [0,0,0,0,0,0],
+                     [0,0,0,0,0,0,0],
+                     [0,0,0,0,0,0,0,0],
+                     [0,0,0,0,0,0,0,0,0],
+                     [0,0,0,0,0,0,0,0],
+                     [0,0,0,0,0,0,0],
+                     [0,0,0,0,0,0],
+                     [0,0,0,0,0],
                     ];
 
         var rowArray=[];
@@ -1339,6 +997,7 @@ println('Angles Reset');
           var yOffset=w/2;
         
           p.w=w*cos(PI/6)*9;
+          p.w=500;
           
           var x=0;
           var y=0;
@@ -1406,8 +1065,8 @@ println('Angles Reset');
             if(this.active){ cursor(this.cursor); }
             if(this.border){ strokeWeight(1);
                              stroke(getColor(this.color, 100)); }
-
-              ellipse(0, 0, this.w, this.w);
+rectMode(CENTER);
+              rect(0, 0, this.w, this.w);
             
             for(var r in this.controls){
               for(var c in this.controls[r]){
@@ -1425,9 +1084,10 @@ println('Angles Reset');
             matchShape();
             
         popMatrix();
+rectMode(CORNER);
 
       };
-      hexBoard.prototype.moved   = function(x,y){
+      hexBoard.prototype.moved    = function(x,y){
       /* Overridden because of the nested controls */
 
         if(this.parent.hit){
@@ -1437,50 +1097,33 @@ println('Angles Reset');
             this.hit=true;
             app.focus=this.id;
 
-            for(var r in this.controls){
-              for(var c in this.controls[r]){
-
-                 this.controls[r][c].moved(this.x,this.y);
-
-              }
-            }
-
           }
           else{
 
             this.hit=false;
-
-            for(var r in this.controls){
-              for(var c in this.controls[r]){
-
-                this.controls[r][c].hit=false;
-
-              }
-            }
 
           }
 
         }
 
       };
-      hexBoard.prototype.clicked = function(){
+      hexBoard.prototype.out      = function(){ this.hit=false; }
+      hexBoard.prototype.released = function(){
 
-        if(this.hit){
+        println(this.activeCell.id);
 
-          for(var r in this.controls){
-            for(var c in this.controls[r]){
+      };
+      hexBoard.prototype.dragged  = function(){
 
-              this.controls[r][c].clicked();
+        for(var r in this.controls){
+          for(var c in this.controls[r]){
 
-            }
+            this.controls[r][c].moved(this.x,this.y);
+
           }
-
         }
 
-      }
-      hexBoard.prototype.out     = function(){ this.hit=false; }
-      hexBoard.prototype.pressed = function(){};
-      hexBoard.prototype.dragged = function(){};
+      };
 
     }
 
@@ -2768,12 +2411,11 @@ println('Angles Reset');
 
         this.active   = false;
 
-        this.text     = props.text;
-
         this.rotation = 0;
         this.running  = false;
         this.points   = [];
-
+        this.dpoints  =[];
+        
         /* Initialize */
         var w2=this.w/2;
 
@@ -2782,6 +2424,11 @@ println('Angles Reset');
                                     sin(radians(30+pt*60))*w2));
         }
 
+        for(var pt=0; pt<6; pt++){
+          this.dpoints.push(new pnt( cos(radians(30+pt*60))*(w2-3),
+                                     sin(radians(30+pt*60))*(w2-3) ));
+        }
+        
       };
       hexCell.prototype=Object.create(control.prototype);
       hexCell.prototype.draw=function(){
@@ -2811,21 +2458,25 @@ println('Angles Reset');
           };
 
           stroke(getColor(p.color,75));
-
-          var OS=p.offset;
+          
+          if(p.hit &&
+             app.activeShape===SHAPES.SINGLE &&
+             app.left){
+               fill(getColor(CLRS.K_TEAL_0,100));
+          }
 
           /** Hexagon */
             beginShape();
 
               for(var pt=0; pt<6; pt++){
-                vertex(p.points[pt].x,
-                       p.points[pt].y);
+                vertex(p.dpoints[pt].x,
+                       p.dpoints[pt].y);
               }
 
             endShape(CLOSE);          
 
         };
-        function caption(){
+/*         function caption(){
 
           fill(getColor(CLRS.WHITE,50));
 
@@ -2845,7 +2496,7 @@ println('Angles Reset');
             
           popMatrix();
 
-        };
+        }; */
 
         pushMatrix();
 
@@ -2855,11 +2506,8 @@ println('Angles Reset');
             border();
 
             /** Circle */
-            var d=cos(PI/6)*this.w;
+            // var d=cos(PI/6)*this.w;
             // ellipse(0,0,d,d);
-
-          // Caption         
-          caption();
 
         popMatrix();
 
@@ -2915,13 +2563,8 @@ println('Angles Reset');
         }
 
       };
-      /* Overridden because of shape */
-      hexCell.prototype.clicked=function(){
-
-        if(this.active){ this.execute(this.id); }
-
-      };
-      hexCell.prototype.set=function(){ this.on=true; };
+      
+      hexCell.prototype.clicked=function(x,y){};
 
     }
     
@@ -2957,7 +2600,7 @@ println('Angles Reset');
         {retrieve:  getDiameter,
          font:      'sans-serif',
          levels:    app.rows,
-         cursor:    WAIT,
+         cursor:    ARROW,
          color:     CLRS.K_TEAL_2,
          size:      0}));
 
@@ -3313,21 +2956,31 @@ println('Angles Reset');
     };
     mousePressed=function(){
 
-      switch(mouseButton){
+      // switch(mouseButton){
 
-        case LEFT:    app.left=true;    break;
-        case CENTER:  app.center=true;  break;
-        case RIGHT:   app.right=true;   break;
+        // case LEFT:    app.left=true;    break;
+        // case CENTER:  app.center=true;  break;
+        // case RIGHT:   app.right=true;   break;
 
-        default:                        break;
+        // default:                        break;
 
-      }
+      // }
 
-      forEach(app.controls,'pressed');
+      // forEach(app.controls,'pressed');
 
     };
     mouseReleased=function(){
 
+      switch(mouseButton){
+
+        case LEFT:   forEach(app.controls,'released'); break;
+        // case RIGHT:  for(var c in app.controls){ app.controls[c].rClicked(); } break;
+        // case CENTER: for(var c in app.controls){ app.controls[c].cClicked(); } break;
+
+        default:     break;
+
+      }
+      
       app.left=false;
       app.right=false;
       app.center=false;
@@ -3345,15 +2998,15 @@ println('Angles Reset');
     };
     mouseDragged=function(){
 
-      // switch(mouseButton){
+      switch(mouseButton){
 
-        // case LEFT:   forEach(app.controls,'dragged'); break;
+        case LEFT:   forEach(app.controls,'dragged'); break;
         // case RIGHT:  for(var c in app.controls){ app.controls[c].rClicked(); } break;
         // case CENTER: for(var c in app.controls){ app.controls[c].cClicked(); } break;
 
-        // default:     break;
+        default:     break;
 
-      // }
+      }
 
     };
     mouseOut=function(){
