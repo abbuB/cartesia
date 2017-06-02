@@ -1296,23 +1296,27 @@ println('Angles Reset');
 
         control.call(this, id, parent, x, y, w, h);
 
-        this.color  = props.color;
-        this.cursor = props.cursor;
-        this.font   = props.font;
-        this.border = true;
-        this.count  = 0;
+        this.color      = props.color;
+        this.cursor     = props.cursor;
+        this.font       = props.font;
+        this.border     = true;
+        this.count      = 0;
+
+        this.activeCell = 0;
 
         this.retrieve=props.retrieve;
 
         this.reset();
 
+        app.hexBoard=this;
+
       };
       hexBoard.prototype=Object.create(control.prototype);
       hexBoard.prototype.reset=function(){
 
-        var p=this;                 //  Reference to the hexGarden control
+        var p=this; //  Reference to the hexGarden control
 
-        this.layout=[[1,2,3,4,5],
+        this.layout=[[1,2,3,4,5],         //  Array of Rings
                      [1,2,3,4,5,6],
                      [1,2,3,4,5,6,7],
                      [1,2,3,4,5,6,7,8],
@@ -1320,17 +1324,34 @@ println('Angles Reset');
                      [1,2,3,4,5,6,7,8],
                      [1,2,3,4,5,6,7],
                      [1,2,3,4,5,6],
-                     [1,2,3,4,5],];           //  Array of Rings
-        
+                     [1,2,3,4,5],
+                    ];
+
         var rowArray=[];
         var n=0;
-        
+
         function reset(){
+
+          p.controls=[];
+                
+          var w=50;
+          var xOffset=w*cos(PI/6);
+          var yOffset=w/2;
+        
+          p.w=w*cos(PI/6)*9;
+          
+          var x=0;
+          var y=0;
 
           for(var row in p.layout){
             for(var col in p.layout[row]){
-      
-              rowArray.push(new hexCell('H'+n, p, col*44-row*22, row*38-p.w/2+50, 50, 50,
+
+              if(row<5){ x=col*xOffset-row*xOffset/2-2*xOffset;     }
+              else     { x=col*xOffset+(row-8)*xOffset/2-2*xOffset; }
+
+              y=row*w*0.75-6*yOffset;
+
+              rowArray.push(new hexCell('H'+n, p, x, y, w, w,
                 {execute:   clickTest,
                  row:       row,
                  col:       col,
@@ -1343,9 +1364,9 @@ println('Angles Reset');
                n++;
 
             }
-            
+
             p.controls.push(rowArray);
-            
+
             rowArray=[];
 
           }
@@ -1356,8 +1377,22 @@ println('Angles Reset');
 
       };
       hexBoard.prototype.draw=function(){
-
+      
         var p =this;
+        
+        function matchShape(){
+
+          if(p.activeCell.col>0){
+            // p.controls[p.activeCell.row][p.activeCell.col-2].on=true;
+            p.controls[p.activeCell.row][p.activeCell.col-1].on=true;
+            // p.controls[p.activeCell.row][p.activeCell.col].on=true;
+            // p.controls[p.activeCell.row][p.activeCell.col+1].on=true;
+          }
+          // else{
+            // p.controls[p.activeCell.row-1][p.activeCell.col-1].on=false;
+          // }
+          
+        };
 
         this.active=this.hit && app.focus===this.id;
 
@@ -1366,24 +1401,29 @@ println('Angles Reset');
           translate(this.x, this.y);
 
             // noStroke();
-            // fill(getColor(this.color, 5));
+            fill(getColor(this.color, 15));
 
             if(this.active){ cursor(this.cursor); }
-            // if(this.border){ strokeWeight(1);
-                             // stroke(getColor(this.color, 50)); }
+            if(this.border){ strokeWeight(1);
+                             stroke(getColor(this.color, 100)); }
 
-              ellipse(0, 0, this.w, this.h);
+              ellipse(0, 0, this.w, this.w);
+            
+            for(var r in this.controls){
+              for(var c in this.controls[r]){
 
-              forEach(this.controls, 'draw');
+                this.controls[r][c].draw();
 
-            // for(var r in this.controls){
-              // for(var c in this.controls[r]){
+              }
+            }
 
-                // this.controls[r][c].draw();
+            fill(CLRS.BLUE);
+            noStroke();
 
-              // }
-            // }
-
+            ellipse(0, 0, 5, 5);
+            
+            matchShape();
+            
         popMatrix();
 
       };
@@ -1400,7 +1440,7 @@ println('Angles Reset');
             for(var r in this.controls){
               for(var c in this.controls[r]){
 
-                this.controls[r][c].hit=true;
+                 this.controls[r][c].moved(this.x,this.y);
 
               }
             }
@@ -2732,18 +2772,15 @@ println('Angles Reset');
 
         this.rotation = 0;
         this.running  = false;
+        this.points   = [];
 
         /* Initialize */
         var w2=this.w/2;
-        var xPos=cos(radians(30))*w2;
-        var yPos=(w2/cos(radians(30)));
 
-        this.p1=new pnt( xPos, sin(radians( 30))*w2);
-        this.p2=new pnt(    0,                   w2);
-        this.p3=new pnt(-xPos, sin(radians(150))*w2);
-        this.p4=new pnt(-xPos, sin(radians(210))*w2);
-        this.p5=new pnt(    0,                  -w2);
-        this.p6=new pnt( xPos, sin(radians(330))*w2);
+        for(var pt=0; pt<6; pt++){
+          this.points.push(new pnt( cos(radians(30+pt*60))*w2,
+                                    sin(radians(30+pt*60))*w2));
+        }
 
       };
       hexCell.prototype=Object.create(control.prototype);
@@ -2754,9 +2791,9 @@ println('Angles Reset');
 
         var p=this;
         var offset=0;
-        
+
         function border(){
-          
+
           // Border
           strokeWeight(0.5);
 
@@ -2780,12 +2817,10 @@ println('Angles Reset');
           /** Hexagon */
             beginShape();
 
-              vertex(p.p1.x+OS, p.p1.y-OS);
-              vertex(p.p2.x+OS, p.p2.y-OS);
-              vertex(p.p3.x+OS, p.p3.y-OS);
-              vertex(p.p4.x+OS, p.p4.y-OS);
-              vertex(p.p5.x+OS, p.p5.y-OS);
-              vertex(p.p6.x+OS, p.p6.y-OS);
+              for(var pt=0; pt<6; pt++){
+                vertex(p.points[pt].x,
+                       p.points[pt].y);
+              }
 
             endShape(CLOSE);          
 
@@ -2821,7 +2856,7 @@ println('Angles Reset');
 
             /** Circle */
             var d=cos(PI/6)*this.w;
-            ellipse(0,0,d,d);
+            // ellipse(0,0,d,d);
 
           // Caption         
           caption();
@@ -2840,19 +2875,19 @@ println('Angles Reset');
 
             this.outerHit=true;
 
-              var rectHit=rectangleHit(new pnt(this.x+this.p1.x+x, this.y+this.p1.y+y),
-                                       new pnt(this.x+this.p3.x+x, this.y+this.p3.y+y),
-                                       new pnt(this.x+this.p6.x+x, this.y+this.p6.y+y),
+              var rectHit=rectangleHit(new pnt(this.x+this.points[0].x+x, this.y+this.points[0].y+y),
+                                       new pnt(this.x+this.points[2].x+x, this.y+this.points[2].y+y),
+                                       new pnt(this.x+this.points[5].x+x, this.y+this.points[5].y+y),
                                        mouseX,mouseY);
 
-              var triHit0=triangleHit(new pnt(this.x+this.p1.x+x, this.y+this.p1.y+y),
-                                      new pnt(this.x+this.p2.x+x, this.y+this.p2.y+y),
-                                      new pnt(this.x+this.p3.x+x, this.y+this.p3.y+y),
+              var triHit0=triangleHit(new pnt(this.x+this.points[0].x+x, this.y+this.points[0].y+y),
+                                      new pnt(this.x+this.points[1].x+x, this.y+this.points[1].y+y),
+                                      new pnt(this.x+this.points[2].x+x, this.y+this.points[2].y+y),
                                       mouseX,mouseY);
 
-              var triHit1=triangleHit(new pnt(this.x+this.p4.x+x, this.y+this.p4.y+y),
-                                      new pnt(this.x+this.p5.x+x, this.y+this.p5.y+y),
-                                      new pnt(this.x+this.p6.x+x, this.y+this.p6.y+y),
+              var triHit1=triangleHit(new pnt(this.x+this.points[3].x+x, this.y+this.points[3].y+y),
+                                      new pnt(this.x+this.points[4].x+x, this.y+this.points[4].y+y),
+                                      new pnt(this.x+this.points[5].x+x, this.y+this.points[5].y+y),
                                       mouseX,mouseY);
               if(rectHit ||
                  triHit0 ||
@@ -2860,6 +2895,7 @@ println('Angles Reset');
 
                 this.hit=true;
                 app.focus=this.id;
+                this.parent.activeCell=this;
 
               }
               else{
@@ -2921,7 +2957,7 @@ println('Angles Reset');
         {retrieve:  getDiameter,
          font:      'sans-serif',
          levels:    app.rows,
-         cursor:    ARROW,
+         cursor:    WAIT,
          color:     CLRS.K_TEAL_2,
          size:      0}));
 
@@ -3200,6 +3236,8 @@ println('Angles Reset');
 
     global=this.__frameRate;
 
+    text(app.hexBoard.activeCell.id,100,500);
+    
   };
 
   /* Keyboard Events =========================================================== */
