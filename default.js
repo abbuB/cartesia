@@ -145,6 +145,14 @@
 
 
     };
+    var SHAPES={
+
+      SINGLE:        0, //  Single Cell
+      LINE:          1, //  4 contiguous horizontal cells
+      LINE_FORWARD:  2, //  4 cells forward slash (Top is right most) 
+      LINE_BACK:     3  //  4 cells backward slash (Bottom is right most)
+
+    };    
     var CONSTANTS={
 
       DEGREES:        '°',
@@ -196,7 +204,7 @@
   
     /* Data types ================================================================ */
   {
-
+   
     function pt(row,col){
       this.row=row;
       this.col=col;
@@ -300,5 +308,33 @@
               mY<p0.y);
     };
     
+  function isPrime(n){
+
+    if      ( n===1     ) { return false; }   //  1 (one) is not prime
+    else if ( n<4       ) { return true;  }   //  2 and 3 are prime
+    else if ( n%2 === 0 ) { return false; }   //  even numbers
+    else if ( n<9       ) { return true;  }   //  we have already excluded 4, 6 and 8
+    else if ( n%3 === 0 ) { return false; }
+    else {
+      
+      var r = Math.pow(n,0.5);           //  n rounded to the greatest long r so that r*r<=n
+      var l = 5;
+      
+      while (l<=r) {
+      
+        if (n % l === 0      ) {return false; }
+        if (n % (l+2) === 0  ) {return false; }
+        
+        l+=6;                                 //  All primes greater than 3 can be written in the form 6k +/- 1
+      
+      }
+      
+      return true;  // n is prime
+
+      
+    }
+
+  };
+  
   }
   
