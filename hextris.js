@@ -97,6 +97,8 @@ var diagrams = function(processingInstance){
     this.left         = false;  //  Is the left mouse button pressed
     this.right        = false;  //  Is the right mouse button pressed
     this.center       = false;  //  Is the center mouse button pressed
+    
+    this.dragging     = false;  //  Is the mouse cursor moving and the left button pressed?
 
     this.focus        = -1;     //  The ID of the control with focus
 
@@ -108,7 +110,10 @@ var diagrams = function(processingInstance){
 
     /* Hextris Specific ------------------ */
 
+    this.hexBoard     = this.controls[1];
+
     this.activeShape  = SHAPES.SINGLE;
+
     this.currentCell;           //  Global Reference to the currently selected cell in the pyramid
     
   };
@@ -119,6 +124,8 @@ var diagrams = function(processingInstance){
   {
 
     var CLRS={
+
+      SINGLE:       color(128,0,0,255),
 
       K_STEEL_0:     color( 48, 68, 82,255),
       K_STEEL_1:     color(132,177,208,255),
@@ -212,23 +219,6 @@ var diagrams = function(processingInstance){
 
   }
 
-  // /* Data types ================================================================ */
-  // {
-
-    // function pt(row,col){
-      // this.row=row;
-      // this.col=col;
-    // };
-    // pt.prototype.toString=function(){ return this.row + ", " + this.col; }
-
-    // function pnt(x,y){
-      // this.x = x;
-      // this.y = y;
-    // };
-    // pnt.prototype.toString=function(){ return this.x +  ", " + this.y; }
-
-  // }
-
   /* Utility Functions ===================================================== */
   {
 
@@ -279,50 +269,11 @@ println('Angles Reset');
 
     function getDiameter()     { return app.diameter;                 };
 
-    function getTelemetry()    { return app.telemetry;                };
-    function toggleTelemetry() { app.telemetry=!app.telemetry;        };
-
     function getInfo()         { return app.info;                     };
     function toggleInfo()      { app.info=!app.info;                  };
-
-    function getChoose()       { return app.choose;                   };
-    function toggleChoose()    { app.choose=!app.choose;              };
-
-    function getSierpinski()   { return app.sierpinski;               };
-    function toggleSierpinski(){ app.sierpinski=!app.sierpinski;      };
-
-    function getSigma()        { return app.sigma;                    };
-    function toggleSigma()     { app.sigma=!app.sigma;                };
-
-    function incrementDiameter(){
-
-      app.diameter++;
-      app.diameter=(constrain)(app.diameter, app.minDiameter, app.maxDiameter);
-      reset();
-
-    };
-    function decrementDiameter(){
-
-      app.diameter--;
-      app.diameter=(constrain)(app.diameter, app.minDiameter, app.maxDiameter);
-      reset();
-
-    }
-
-    function incrementRows()    {
-
-      app.rows++;
-      app.rows=(constrain)(app.rows, app.minRows, app.maxRows);
-      reset();
-
-    };
-    function decrementRows()    {
-
-      app.rows--;
-      app.rows=(constrain)(app.rows, app.minRows, app.maxRows);
-      reset();
-
-    };
+    
+    function getTelemetry()    { return app.telemetry;                };
+    function toggleTelemetry() { app.telemetry=!app.telemetry;        };
 
     function constrainCurrent(){
 
@@ -332,16 +283,6 @@ println('Angles Reset');
       // app.currentCell=app.pyramid.controls[app.row][app.col];
 
     };
-
-    function up()       { app.row++;              constrainCurrent(); };
-    function down()     { app.row--;              constrainCurrent(); };
-
-    function right()    { app.row++;              constrainCurrent(); };
-    function left()     { app.row--;              constrainCurrent(); };
-    function upRight()  { app.row--;              constrainCurrent(); };
-    function upLeft()   { app.row--;  app.col--;  constrainCurrent(); };
-    function downRight(){ app.row++;  app.col++;  constrainCurrent(); };
-    function downLeft() { app.row++;              constrainCurrent(); };
 
     function exists(n)  {
 
@@ -360,6 +301,7 @@ println('Angles Reset');
     };
 
     function clickTest(n){ println('click: ' + n);                    };
+
   }
 
   /* Containers/Controls =================================================== */
@@ -389,7 +331,7 @@ println('Angles Reset');
         this.active   = false;    /** active = hit and focus */
         this.offset   = 0;        /** offset distance when clicked */
 
-        this.font     = monoFont;       /** default font */
+        this.font     = monoFont; /** default font */
 
       };
       control.prototype.draw    = function(){};
@@ -419,14 +361,15 @@ println('Angles Reset');
         }
 
       };
-      control.prototype.clicked = function(){ if(this.hit){ forEach(this.controls, 'clicked'); } };
-      // control.prototype.rClicked=function(){};
-      // control.prototype.cClicked=function(){};
-      control.prototype.dragged = function(){ if(this.hit){ forEach(this.controls, 'dragged'); } };
-      control.prototype.released= function(){ if(this.hit){ forEach(this.controls, 'released'); } };
-      // control.prototype.typed=function(){};
+      control.prototype.clicked = function(){ if(this.hit){ forEach(this.controls, 'clicked'); } };     
+      control.prototype.dragged = function(){ if(this.hit){ forEach(this.controls, 'dragged'); } };        
+      control.prototype.pressed = function(){};
+      control.prototype.released= function(){};      
       control.prototype.over    = function(){};
       control.prototype.out     = function(){ this.hit=false; forEach(this.controls, 'out'); };
+      // control.prototype.typed=function(){};
+      // control.prototype.rClicked=function(){};
+      // control.prototype.cClicked=function(){};
 
     }
 
@@ -444,8 +387,8 @@ println('Angles Reset');
         this.acolor = props.acolor;
         this.icolor = props.icolor;
 
-        this.cursor = props.cursor;
         this.border = props.border;
+        this.cursor = props.cursor;
 
         this.left   = 0;
 
@@ -459,13 +402,16 @@ println('Angles Reset');
 
           translate(this.x, this.y);
 
-            noStroke();
+            // noStroke();
             fill(this.icolor);
 
-            if(this.hit   ){ fill(this.acolor);   }
-            if(this.active){ cursor(this.cursor); }
-            if(this.border){ strokeWeight(1);
-                             stroke(CLRS.BLUE);   }
+            if(this.hit    ){ fill(this.acolor);   }
+            if(app.dragging){ cursor(HAND);        }
+            else            { cursor(this.cursor); }
+
+            // else if(this.active){ cursor(this.cursor); }
+            // if(this.border){ strokeWeight(10);
+                             // stroke(CLRS.BLUE);   }
 
               rect(0, 0, this.w, this.h);
 
@@ -485,7 +431,7 @@ println('Angles Reset');
           this.hit=true;
           app.focus=this.id;
 
-          for(var c in this.controls){ this.controls[c].moved((this.x+x), (this.y+y)); }
+          for(var c in this.controls){ this.controls[c].moved(this.x+x, this.y+y); }
 
         }
         else{
@@ -495,6 +441,16 @@ println('Angles Reset');
           for(var c in this.controls){ this.controls[c].hit=false; }
 
         }
+
+      };
+      root.prototype.dragged = function(){
+
+        if(this.hit){ forEach(this.controls, 'dragged'); }
+
+      };
+      root.prototype.released= function(){
+
+        if(this.hit){ forEach(this.controls, 'released'); }
 
       };
 
@@ -958,14 +914,17 @@ println('Angles Reset');
         this.cursor     = props.cursor;
         this.font       = props.font;
         this.border     = true;
-        this.count      = 0;
+        // this.count      = 0;
 
+        // this.angle      = 0;
+        
         this.activeCell = 0;
-
+        this.locked     = false;
+        
         this.retrieve=props.retrieve;
 
         this.reset();
-
+        
         app.hexBoard=this;
 
       };
@@ -1018,7 +977,7 @@ println('Angles Reset');
                  text:      n,
                  color:     CLRS.WHITE,
                  font:      monoFont,
-                 cursor:    HAND}));
+                 cursor:    ARROW}));
 
                n++;
 
@@ -1039,7 +998,7 @@ println('Angles Reset');
       
         var p =this;
         
-        function matchShape(){
+        function matchshap(){
 
           if(p.activeCell.col>0){
             // p.controls[p.activeCell.row][p.activeCell.col-2].on=true;
@@ -1058,15 +1017,17 @@ println('Angles Reset');
         pushMatrix();
 
           translate(this.x, this.y);
-
+          // rotate(this.angle);
+          
             // noStroke();
             fill(getColor(this.color, 15));
 
-            if(this.active){ cursor(this.cursor); }
-            if(this.border){ strokeWeight(1);
-                             stroke(getColor(this.color, 100)); }
-rectMode(CENTER);
-              rect(0, 0, this.w, this.w);
+            // if(this.active){ cursor(this.cursor); }
+            // if(this.locked){ cursor(HAND);        }
+            // if(this.border){ strokeWeight(1);
+                             // stroke(getColor(this.color, 100)); }
+
+              // ellipse(0, 0, this.w, this.w);
             
             for(var r in this.controls){
               for(var c in this.controls[r]){
@@ -1079,12 +1040,11 @@ rectMode(CENTER);
             fill(CLRS.BLUE);
             noStroke();
 
-            ellipse(0, 0, 5, 5);
+            // ellipse(0, 0, 5, 5);
             
-            matchShape();
+            // matchshap();
             
         popMatrix();
-rectMode(CORNER);
 
       };
       hexBoard.prototype.moved    = function(x,y){
@@ -1107,13 +1067,9 @@ rectMode(CORNER);
         }
 
       };
-      hexBoard.prototype.out      = function(){ this.hit=false; }
-      hexBoard.prototype.released = function(){
-
-        println(this.activeCell.id);
-
-      };
       hexBoard.prototype.dragged  = function(){
+
+        if(this.active){ this.locked=true; }
 
         for(var r in this.controls){
           for(var c in this.controls[r]){
@@ -1124,286 +1080,17 @@ rectMode(CORNER);
         }
 
       };
+      hexBoard.prototype.released = function(){
+
+        this.locked=false;
+
+      };
+      hexBoard.prototype.clicked  = function(){};
+      hexBoard.prototype.out      = function(){ this.hit=false; }
 
     }
 
     /* Controls ============================================================ */
-
-    /* Index                */
-    {
-
-      function index(id, parent, x, y, w, h, props){
-
-        control.call(this, id, parent, x, y, w, h);
-
-        this.radius = props.radius;
-        this.color  = props.color;
-        this.cursor = props.cursor;
-        this.font   = props.font;
-
-      };
-      index.prototype=Object.create(control.prototype);
-      index.prototype.draw=function(){
-
-        this.active=this.hit && app.focus===this.id;
-        this.offset=0;
-
-        pushMatrix();
-
-          translate(this.x, this.y);
-
-            strokeWeight(1);
-            stroke(getColor(CLRS.BLACK, 20));
-            fill(getColor(this.color, 50));
-            textFont(this.font);
-
-            if(this.active){ stroke(getColor(CLRS.BLACK, 40));
-                             fill(getColor(this.color, 75));
-
-                             cursor(this.cursor);               }
-
-            rect(this.offset, this.offset, this.w, this.h, this.radius);
-
-        popMatrix();
-
-      };
-
-    }
-
-    /* navScroll            */
-    {
-
-      function navScroll(id, parent, x, y, w, h, props){
-
-        control.call(this, id, parent, x, y, w, h);
-
-        this.color    = props.color;
-        this.cursor   = props.cursor;
-        this.execute  = props.execute;
-        this.font     = props.font;
-
-      };
-      navScroll.prototype=Object.create(control.prototype);
-      navScroll.prototype.draw=function(){
-
-        this.active=this.hit && app.focus===this.id;
-        this.offset=0;
-
-        pushMatrix();
-
-          translate(this.x, this.y);
-
-            noStroke();
-            noFill();
-            // fill(getColor(this.color, 5));
-            textFont(this.font);
-
-            if(this.active){
-
-              fill(getColor(this.color, 5));
-              strokeWeight(0.25);
-              stroke(getColor(CLRS.K_TEAL_1, 50));
-
-              cursor(this.cursor);
-
-            }
-
-              rect(1, 1, this.w-2, this.h-2);
-
-            var xPos=floor(app.cursor/app.cells*this.w);
-
-            stroke(getColor(CLRS.RED,100));
-            strokeWeight(0.5);
-
-              line(xPos,0,xPos,30);
-
-            forEach(this.controls, 'draw');
-
-        popMatrix();
-
-      };
-      navScroll.prototype.dragged=function(x,y){
-
-        if(this.active){
-
-          var X=round((mouseX-this.x)/this.w*app.cells);
-
-          if(X>=0 && X<=app.cells){
-            this.execute(X);
-          }
-
-        }
-
-      };
-      navScroll.prototype.clicked=function(){
-
-        if(this.active){
-
-          var X=round((mouseX-this.x)/this.w*app.cells);
-
-          if(X>=0 && X<=app.cells){
-            this.execute(X);
-          }
-
-        }
-
-      };
-
-    }
-
-    /* navButton            */
-    {
-
-      function navButton(id, parent, x, y, w, h, props){
-
-        control.call(this, id, parent, x, y, w, h);
-
-        this.execute  = props.execute;
-        this.type     = props.type;
-        this.retrieve = props.retrieve;
-        this.color    = props.color;
-        this.cursor   = props.cursor;
-        this.font     = props.font;
-
-      };
-      navButton.prototype=Object.create(control.prototype);
-      navButton.prototype.draw=function(){
-
-        this.active=this.hit && app.focus===this.id;
-        this.offset=0;
-
-        pushMatrix();
-
-          translate(this.x, this.y);
-
-            noStroke();
-            noFill();
-
-            if(this.active){
-
-              if(app.left){ this.offset=1; }
-
-              fill(getColor(this.color,10));
-              cursor(this.cursor);
-
-            }
-
-            //  Background
-              rect(this.offset, this.offset, this.w, this.h, 2);
-
-            // Icon
-            fill(getColor(CLRS.K_TEAL_1, 50));
-
-            if(this.parent.hit){ fill(getColor(this.color,  75)); }
-            if(this.hit)       { fill(getColor(this.color, 100)); }
-
-            noStroke();
-            textAlign(CENTER,CENTER);
-            textFont(this.font);
-
-              switch(this.type){
-
-                case NAVIGATION.FIRST:          text('|'+CONSTANTS.TRIANGLE_L,                  this.w/2+this.offset, this.h/2+this.offset); break;
-                case NAVIGATION.DECREMENT:      text(CONSTANTS.TRIANGLE_L,                      this.w/2+this.offset, this.h/2+this.offset); break;
-                case NAVIGATION.INCREMENT:      text(CONSTANTS.TRIANGLE_R,                      this.w/2+this.offset, this.h/2+this.offset); break;
-                case NAVIGATION.LAST:           text(CONSTANTS.TRIANGLE_R+'|',                  this.w/2+this.offset, this.h/2+this.offset); break;
-                case NAVIGATION.INCREMENTPAGE:  text(CONSTANTS.TRIANGLE_R+CONSTANTS.TRIANGLE_R, this.w/2+this.offset, this.h/2+this.offset); break;
-                case NAVIGATION.DECREMENTPAGE:  text(CONSTANTS.TRIANGLE_L+CONSTANTS.TRIANGLE_L, this.w/2+this.offset, this.h/2+this.offset); break;
-
-                default:  break;
-
-              }
-
-        popMatrix();
-
-      };
-      navButton.prototype.clicked=function(){
-      /* Overridden to maintain on/off value */
-
-        if(this.active){ this.execute(); }
-
-      };
-
-    }
-
-    /* OnOff                */
-    {
-
-      function onOff(id, parent, x, y, w, h, props){
-
-        control.call(this, id, parent, x, y, w, h);
-
-        this.execute  = props.execute;
-        this.retrieve = props.retrieve;
-        this.color    = props.color;
-        this.cursor   = props.cursor;
-        this.font     = props.font;
-
-      };
-      onOff.prototype=Object.create(control.prototype);
-      onOff.prototype.draw=function(){
-
-        this.active=this.hit && app.focus===this.id;
-        this.offset=0;
-
-        pushMatrix();
-
-          translate(this.x, this.y);
-
-            ellipseMode(CENTER);
-            textFont(this.font);
-
-            if(this.active){ stroke(getColor(this.color, 75));
-                             cursor(this.cursor);              }
-            else           { stroke(getColor(this.color, 50)); }
-
-            if(this.on){ rotate(-PI/2); }
-            else       { this.value=0;  }
-
-            strokeWeight(2);
-            noFill();
-
-              arc(0, 0, this.w, this.h, -PI/4, 3*PI/2-PI/4);
-
-              line(0, 1, 0, -9);
-
-        popMatrix();
-
-      };
-      onOff.prototype.moved=function(x,y){
-      /* Overridden because the control is round */
-
-        if(this.parent.hit){
-
-          if(dist(mouseX, mouseY,
-                  this.x+x, this.y+y)<this.w){
-
-            this.hit=true;
-            app.focus=this.id;
-
-          }
-          else{
-
-            this.hit=false;
-
-          }
-
-        }
-
-      };
-      onOff.prototype.clicked=function(){
-      /* Overridden to maintain on/off value */
-
-        if(this.active){
-
-          this.execute();
-          this.on=!this.on;
-
-        }
-
-      };
-
-    }
 
     /* Button               */
     {
@@ -1861,7 +1548,7 @@ rectMode(CORNER);
 
       };
       hexButton.prototype.moved=function(x,y){
-      /* Overridden because of the shape */
+      /* Overridden because of the shap */
 
         if(this.parent.hit){
 
@@ -2178,7 +1865,7 @@ rectMode(CORNER);
             var OS=this.offset;
 
             /** Hexagon */
-              beginShape();
+              beginshap();
 
                 vertex(this.p1.x+OS, this.p1.y-OS);
                 vertex(this.p2.x+OS, this.p2.y-OS);
@@ -2187,7 +1874,7 @@ rectMode(CORNER);
                 vertex(this.p5.x+OS, this.p5.y-OS);
                 vertex(this.p6.x+OS, this.p6.y-OS);
 
-              endShape(CLOSE);
+              endshap(CLOSE);
 
             /** Circle */
             // var d=cos(PI/6)*this.w;
@@ -2214,7 +1901,7 @@ rectMode(CORNER);
 
       };
       i_hexButton.prototype.moved=function(x,y){
-      /* Overridden because of the shape */
+      /* Overridden because of the shap */
 
         if(this.parent.hit){
 
@@ -2263,7 +1950,7 @@ rectMode(CORNER);
         }
 
       };
-      /* Overridden because of shape */
+      /* Overridden because of shap */
       i_hexButton.prototype.clicked=function(){
 
         if(this.active){
@@ -2286,106 +1973,108 @@ rectMode(CORNER);
       i_hexButton.prototype.set=function(){ this.on=true; };
 
     }
-
-    /* Hexagonal Grid Point */
-    {
-      function hPt(id, parent, x, y, w, h, props){
+    
+    /* shape                */
+      function shap(id, parent, x, y, w, h, props){
 
         control.call(this, id, parent, x, y, w, h);
 
-        this.row      = props.row;
-        this.ordinal  = props.ordinal;
-        this.count    = props.count;
-        this.corner   = props.corner;
+        this.style=props.style;
+           
+      };
+      shap.prototype=Object.create(control.prototype);
+      shap.prototype.draw=function(){
 
-        this.isPrime  = isPrime(this.count);
+        var p=this;
 
-        this.angle    = nf(degrees(atan2(y,x)),1,4);
+        function drawShape(){
 
-        if(!exists(this.angle, app.angles[props.row]) &&
-           this.id!=='H0'){
+          function drawHexagon(x,y,r){ // r=radius
 
-          app.angles[props.row].push(this.angle);
-          this.on=true;
+            beginShape();
+            
+              for(var pt=0; pt<6; pt++){
+                vertex(x+cos(radians(30+pt*60))*r,
+                       y+sin(radians(30+pt*60))*r);
+              }
 
-        }
+              // for(var pt=0; pt<6; pt++){
+                // this.dpoints.push(new pnt( cos(radians(30+pt*60))*(w2-3),
+                                           // sin(radians(30+pt*60))*(w2-3) ));
+              // }
 
-        this.color    = props.color;
-        this.cursor   = props.cursor;
-        this.font     = props.font;
+            endShape(CLOSE);
+
+          };
+          
+          switch(p.style){
+
+            case SHAPES.SINGLE:
+              
+              if(p.hit){ stroke(CLRS.WHITE); }
+
+              fill(CLRS.SINGLE);
+              
+              // ellipse(p.x, p.y, p.w, p.h);
+              
+              drawHexagon(p.x, p.y, p.w/2);
+              
+              break;
+
+            case SHAPES.LINE:
+
+              break;
+
+            case SHAPES.LINE_FORWARD:
+
+              break;
+
+            case SHAPES.LINE_BACK:    
+            
+            
+              break;
+
+            default: break;
+            
+          }
+
+        };
+
+        // pushMatrix();
+
+          // translate(this.x, this.y);
+          // scale(1,-1);
+
+            drawShape();
+
+            /** Circle */
+            // var d=cos(PI/6)*this.w;
+            // ellipse(0,0,d,d);
+
+        // popMatrix();
 
       };
-      hPt.prototype=Object.create(control.prototype);
-      hPt.prototype.toString=function(){ return this.x + ", " + this.y; };
-      hPt.prototype.draw=function(){
-
-        this.offset=0;
-        this.active=this.hit && app.focus===this.id;
-
-        pushMatrix();
-
-          scale(1,-1);  //  To accomodate cartesian coordinates
-
-            var f=3;
-
-            if(app.currentCell===this){
-
-              stroke(CLRS.WHITE);
-              strokeWeight(1);
-              noFill();
-                ellipse(this.x, this.y, this.w*8, this.h*8);
-                
-            }
-
-            noStroke();
-            fill(CLRS.K_TEAL_0);
-            
-            if(this.on){ fill(CLRS.YELLOW); }
-            // if(this.isPrime){ f=5; }
-            if(this.row===app.row){ f=4; }
-            if(this.active){
-
-              cursor(this.cursor);
-              fill(CLRS.RED);
-              f=4;
-
-            }
-            
-              ellipse(this.x, this.y, this.w*f, this.h*f);
-
-            if(this.on){
-
-              strokeWeight(0.25);
-              stroke(getColor(CLRS.WHITE,50));
-
-              line(this.x, this.y, 0, 0);
-
-            }
-
-        popMatrix();
-
-      };
-      hPt.prototype.moved=function(x,y){
-
-        if(dist(mouseX,mouseY,this.x+x,-this.y+y)<5){
+      shap.prototype.moved=function(x,y){
+        
+        if(dist(this.x+x,this.y+y,
+                mouseX,mouseY)<this.w/2){
 
           this.hit=true;
-          app.currentCell=this;
-          app.focus=this.id;
 
         }
         else{
           this.hit=false;
         }
+        
+      };
+      shap.prototype.dragged=function(x,y){
+        
+        if(this.hit){ this.x=mouseX;
+                      this.y=mouseY;  }
+        else        { this.hit=false; }
 
       };
-      hPt.prototype.clicked=function(x,y){
 
-        if(this.active){ this.on=!this.on; }
-
-      };
-
-    }
 
     /* Hexagonal Cell       */
     {
@@ -2395,7 +2084,7 @@ rectMode(CORNER);
         control.call(this, id, parent, x, y, w, h);
 
         this.outerHit=false;
-        this.offset=0;
+        // this.offset=0;
 
         this.row      = props.row;
         this.col      = props.col;
@@ -2414,7 +2103,7 @@ rectMode(CORNER);
         this.rotation = 0;
         this.running  = false;
         this.points   = [];
-        this.dpoints  =[];
+        this.dpoints  = [];
         
         /* Initialize */
         var w2=this.w/2;
@@ -2444,25 +2133,26 @@ rectMode(CORNER);
           // Border
           strokeWeight(0.5);
 
-          stroke(getColor(p.color, 40));
-          fill  (getColor(p.color, 15));
+          // stroke(getColor(p.color, 40));
+          noStroke();
+          fill  (getColor(color(61), 80));
 
           if(p.active){
 
             if(app.left &&
                p.style!==GLYPHS.RESET){ p.offset=1; }
 
-            strokeWeight(1.5);
-            cursor(p.cursor);
+            // strokeWeight(1.5);
+            // cursor(p.cursor);
 
           };
 
-          stroke(getColor(p.color,75));
+          // stroke(getColor(p.color,75));
           
           if(p.hit &&
              app.activeShape===SHAPES.SINGLE &&
-             app.left){
-               fill(getColor(CLRS.K_TEAL_0,100));
+             p.parent.locked){
+               fill(getColor(color(61),100));
           }
 
           /** Hexagon */
@@ -2513,7 +2203,7 @@ rectMode(CORNER);
 
       };
       hexCell.prototype.moved=function(x,y){
-      /* Overridden because of the shape */
+      /* Overridden because of the shap */
 
         if(this.parent.hit){
 
@@ -2563,8 +2253,6 @@ rectMode(CORNER);
         }
 
       };
-      
-      hexCell.prototype.clicked=function(x,y){};
 
     }
     
@@ -2587,8 +2275,8 @@ rectMode(CORNER);
       /* root control      */
       var rt=new root(100, null, 0, 0, width-1, height-1,
         {text:      'root',
-         acolor:    getColor(CLRS.BLACK,80),
-         icolor:    getColor(CLRS.BLACK,85),
+         acolor:    getColor(color(33),80),
+         icolor:    getColor(color(33),85),
          font:      monoFont,
          cursor:    ARROW,
          border:    true});
@@ -2596,7 +2284,7 @@ rectMode(CORNER);
       app.controls.push(rt);
 
       /* hexGarden           */
-      rt.controls.push(new hexBoard(600, rt, width/2, height/2, 400, 400,
+      rt.controls.push(new hexBoard(600, rt, 250, height/2, 400, 400,
         {retrieve:  getDiameter,
          font:      'sans-serif',
          levels:    app.rows,
@@ -2607,74 +2295,77 @@ rectMode(CORNER);
       /** Requires a reference to access globally */
       app.hexGarden=rt.controls[0];
 
+      rt.controls.push(new shap(400, rt, 100, 630, 30, 100,
+        {style: SHAPES.SINGLE}));
+
       /* Hexagon Navigation Buttons ----------------------------------- */
       {
 
-        var left  = 30;
-        var top   = 90;
+        // var left  = 30;
+        // var top   = 90;
 
-        /* Left            */
-        rt.controls.push(new i_hexButton(110, rt, left, top, 40, 40,
-          {execute:   decrementDiameter,
-           style:     GLYPHS.TEXT,
-           text:      HEXNAV.LEFT,
-           color:     CLRS.WHITE,
-           font:      monoFont,
-           cursor:    HAND}));
+        // /* Left            */
+        // rt.controls.push(new i_hexButton(110, rt, left, top, 40, 40,
+          // {execute:   decrementDiameter,
+           // style:     GLYPHS.TEXT,
+           // text:      HEXNAV.LEFT,
+           // color:     CLRS.WHITE,
+           // font:      monoFont,
+           // cursor:    HAND}));
 
-        /* Right           */
-        rt.controls.push(new i_hexButton(120, rt, left+76, top, 40, 40,
-          {execute:   incrementDiameter,
-           style:     GLYPHS.TEXT,
-           color:     CLRS.WHITE,
-           text:      HEXNAV.RIGHT,
-           font:      monoFont,
-           cursor:    HAND}));
+        // /* Right           */
+        // rt.controls.push(new i_hexButton(120, rt, left+76, top, 40, 40,
+          // {execute:   incrementDiameter,
+           // style:     GLYPHS.TEXT,
+           // color:     CLRS.WHITE,
+           // text:      HEXNAV.RIGHT,
+           // font:      monoFont,
+           // cursor:    HAND}));
 
-        /* Reset           */
-        rt.controls.push(new i_hexButton(170, rt, left+38, top, 40, 40,
-          {execute:   reset,
-           style:     GLYPHS.RESET,
-           color:     CLRS.RED,
-           text:      'r',
-           font:      monoFont,
-           cursor:    HAND}));
+        // /* Reset           */
+        // rt.controls.push(new i_hexButton(170, rt, left+38, top, 40, 40,
+          // {execute:   reset,
+           // style:     GLYPHS.RESET,
+           // color:     CLRS.RED,
+           // text:      'r',
+           // font:      monoFont,
+           // cursor:    HAND}));
 
-        /* Up Left         */
-        rt.controls.push(new i_hexButton(130, rt, left+19, top-32, 40, 40,
-          {execute:   incrementRows,
-           style:     GLYPHS.TEXT,
-           color:     CLRS.GRAY,
-           text:      HEXNAV.UP_LEFT,
-           font:      monoFont,
-           cursor:    HAND}));
+        // /* Up Left         */
+        // rt.controls.push(new i_hexButton(130, rt, left+19, top-32, 40, 40,
+          // {execute:   incrementRows,
+           // style:     GLYPHS.TEXT,
+           // color:     CLRS.GRAY,
+           // text:      HEXNAV.UP_LEFT,
+           // font:      monoFont,
+           // cursor:    HAND}));
 
-        /* Up Right        */
-        rt.controls.push(new i_hexButton(140, rt, left+57, top-32, 40, 40,
-          {execute:   decrementRows,
-           style:     GLYPHS.TEXT,
-           color:     CLRS.GRAY,
-           text:      HEXNAV.UP_RIGHT,
-           font:      monoFont,
-           cursor:    HAND}));
+        // /* Up Right        */
+        // rt.controls.push(new i_hexButton(140, rt, left+57, top-32, 40, 40,
+          // {execute:   decrementRows,
+           // style:     GLYPHS.TEXT,
+           // color:     CLRS.GRAY,
+           // text:      HEXNAV.UP_RIGHT,
+           // font:      monoFont,
+           // cursor:    HAND}));
 
-        /* Down Left       */
-        rt.controls.push(new i_hexButton(150, rt, left+19, top+32, 40, 40,
-          {execute:   downLeft,
-           style:     GLYPHS.TEXT,
-           text:      HEXNAV.DOWN_LEFT,
-           color:     color(92),
-           font:      monoFont,
-           cursor:    HAND}));
+        // /* Down Left       */
+        // rt.controls.push(new i_hexButton(150, rt, left+19, top+32, 40, 40,
+          // {execute:   downLeft,
+           // style:     GLYPHS.TEXT,
+           // text:      HEXNAV.DOWN_LEFT,
+           // color:     color(92),
+           // font:      monoFont,
+           // cursor:    HAND}));
 
-        /* Down Right      */
-        rt.controls.push(new i_hexButton(160, rt, left+57, top+32, 40, 40,
-          {execute:   downRight,
-           style:     GLYPHS.TEXT,
-           color:     color(92),
-           text:      HEXNAV.DOWN_RIGHT,
-           font:      monoFont,
-           cursor:    HAND}));
+        // /* Down Right      */
+        // rt.controls.push(new i_hexButton(160, rt, left+57, top+32, 40, 40,
+          // {execute:   downRight,
+           // style:     GLYPHS.TEXT,
+           // color:     color(92),
+           // text:      HEXNAV.DOWN_RIGHT,
+           // font:      monoFont,
+           // cursor:    HAND}));
 
 
 
@@ -2692,35 +2383,35 @@ rectMode(CORNER);
 
         rt.controls.push(tlbar);
 
-        /* choose          */
-        tlbar.controls.push(new i_Button(210, tlbar, 10, 5, 22, 22,
-          {text:      'choose',
-           font:      monoFont,
-           execute:   toggleChoose,
-           retrieve:  getChoose,
-           style:     GLYPHS.CHOOSE,
-           color:     CLRS.WHITE,
-           cursor:    HAND}));
+        // /* choose          */
+        // tlbar.controls.push(new i_Button(210, tlbar, 10, 5, 22, 22,
+          // {text:      'choose',
+           // font:      monoFont,
+           // execute:   toggleChoose,
+           // retrieve:  getChoose,
+           // style:     GLYPHS.CHOOSE,
+           // color:     CLRS.WHITE,
+           // cursor:    HAND}));
 
-        /* sigma           */
-        tlbar.controls.push(new i_Button(220, tlbar, 35, 5, 22, 22,
-          {text:      CONSTANTS.SIGMA,
-           font:      monoFont,
-           execute:   toggleSigma,
-           retrieve:  getSigma,
-           style:     GLYPHS.TEXT,
-           color:     CLRS.WHITE,
-           cursor:    HAND}));
+        // /* sigma           */
+        // tlbar.controls.push(new i_Button(220, tlbar, 35, 5, 22, 22,
+          // {text:      CONSTANTS.SIGMA,
+           // font:      monoFont,
+           // execute:   toggleSigma,
+           // retrieve:  getSigma,
+           // style:     GLYPHS.TEXT,
+           // color:     CLRS.WHITE,
+           // cursor:    HAND}));
 
-        /* sierpinski      */
-        tlbar.controls.push(new i_Button(230, tlbar, 60, 5, 22, 22,
-          {text:      'S',
-           font:      monoFont,
-           execute:   toggleSierpinski,
-           retrieve:  getSierpinski,
-           style:     GLYPHS.TRIFORCE,
-           color:     CLRS.WHITE,
-           cursor:    HAND}));
+        // /* sierpinski      */
+        // tlbar.controls.push(new i_Button(230, tlbar, 60, 5, 22, 22,
+          // {text:      'S',
+           // font:      monoFont,
+           // execute:   toggleSierpinski,
+           // retrieve:  getSierpinski,
+           // style:     GLYPHS.TRIFORCE,
+           // color:     CLRS.WHITE,
+           // cursor:    HAND}));
 
         /* information     */
         tlbar.controls.push(new i_Button(240, tlbar, 85, 5, 22, 22,
@@ -2859,7 +2550,7 @@ rectMode(CORNER);
 
     // frameRate(app.frameRate);
 
-    background(0);
+    background(128);
 
     forEach(app.controls,'draw');
 
@@ -2879,7 +2570,9 @@ rectMode(CORNER);
 
     global=this.__frameRate;
 
-    text(app.hexBoard.activeCell.id,100,500);
+    // text(app.hexBoard.activeCell.id,100,500);
+    fill(CLRS.YELLOW);
+    text(app.dragging, 20,100);
     
   };
 
@@ -2956,15 +2649,15 @@ rectMode(CORNER);
     };
     mousePressed=function(){
 
-      // switch(mouseButton){
+      switch(mouseButton){
 
-        // case LEFT:    app.left=true;    break;
-        // case CENTER:  app.center=true;  break;
-        // case RIGHT:   app.right=true;   break;
+        case LEFT:    app.left   = true;  break;
+        case CENTER:  app.center = true;  break;
+        case RIGHT:   app.right  = true;  break;
 
-        // default:                        break;
+        default:                          break;
 
-      // }
+      }
 
       // forEach(app.controls,'pressed');
 
@@ -2980,10 +2673,12 @@ rectMode(CORNER);
         default:     break;
 
       }
-      
-      app.left=false;
-      app.right=false;
-      app.center=false;
+
+      app.left   = false;
+      app.right  = false;
+      app.center = false;
+
+      app.dragging=false;
 
     };
     mouseMoved=function(){
@@ -2991,13 +2686,13 @@ rectMode(CORNER);
       app.mouseX=mouseX;
       app.mouseX=mouseY;
 
-      // if(!app.autoRun){ execute(); }
-
       for(var c in app.controls){ app.controls[c].moved(0,0); }
 
     };
     mouseDragged=function(){
-
+      
+      if(app.left){ app.dragging=true; }
+      
       switch(mouseButton){
 
         case LEFT:   forEach(app.controls,'dragged'); break;
@@ -3010,15 +2705,18 @@ rectMode(CORNER);
 
     };
     mouseOut=function(){
-
+      
+      app.dragging=false;
+      
       forEach(app.controls,'out');
+
       app.focus=-1;
 
     };
     mouseOver=function(){
 
-      forEach(app.controls,'over');
-      app.focus=-2;
+      // forEach(app.controls,'over');
+      // app.focus=-2;
 
     };
 
