@@ -81,7 +81,7 @@ var diagrams = function(processingInstance){
 
       angleMode='radians';
 
-      size(700, 700); // set size of canvas
+      size(600, 600); // set size of canvas
 
     }
 
@@ -2006,10 +2006,18 @@ println('Angles Reset');
             endShape(CLOSE);
 
           };
+
+          var f=1;
+          var w=0.5*p.w;
           
+          if(app.dragging){
+            f=1.25;
+            w=p.w*0.55;
+          }
+              
           switch(p.style){
 
-            case SHAPES.SINGLE:
+            case SHAPES.SINGLE: /* SINGLE                             */
               
               if(p.hit){ stroke(CLRS.WHITE); }
 
@@ -2017,12 +2025,19 @@ println('Angles Reset');
               
               // ellipse(p.x, p.y, p.w, p.h);
               
-              drawHexagon(p.x, p.y, p.w/2);
+              drawHexagon(p.x, p.y, w);
               
               break;
 
-            case SHAPES.LINE:
+            case SHAPES.LINE:   /* LINE                               */
 
+              fill(CLRS.SINGLE);
+
+              drawHexagon(p.x + f*1.5*p.w, p.y, w);
+              drawHexagon(p.x + f*0.5*p.w, p.y, w);
+              drawHexagon(p.x - f*0.5*p.w, p.y, w);
+              drawHexagon(p.x - f*1.5*p.w, p.y, w);
+            
               break;
 
             case SHAPES.LINE_FORWARD:
@@ -2295,8 +2310,8 @@ println('Angles Reset');
       /** Requires a reference to access globally */
       app.hexGarden=rt.controls[0];
 
-      rt.controls.push(new shap(400, rt, 100, 630, 30, 100,
-        {style: SHAPES.SINGLE}));
+      rt.controls.push(new shap(400, rt, 100, 530, 35, 100,
+        {style: SHAPES.LINE}));
 
       /* Hexagon Navigation Buttons ----------------------------------- */
       {
