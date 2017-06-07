@@ -81,7 +81,7 @@ var diagrams = function(processingInstance){
 
       angleMode='radians';
 
-      size(600, 600); // set size of canvas
+      size(700, 600); // set size of canvas
 
     }
 
@@ -126,11 +126,12 @@ var diagrams = function(processingInstance){
     var CLRS={
 
       SINGLE:       color(128,0,0,255),
+      LINE:         color(0,128,0,255),
 
-      K_STEEL_0:     color( 48, 68, 82,255),
-      K_STEEL_1:     color(132,177,208,255),
-      K_STEEL_2:     color(106,141,166,255),
-      K_STEEL_3:     color(136,164,184,255),
+      K_STEEL_0:    color( 48, 68, 82,255),
+      K_STEEL_1:    color(132,177,208,255),
+      K_STEEL_2:    color(106,141,166,255),
+      K_STEEL_3:    color(136,164,184,255),
 
       K_TEAL_0:     color( 24, 99,117,255),
       K_TEAL_1:     color( 28,117,138,255),
@@ -448,6 +449,11 @@ println('Angles Reset');
         if(this.hit){ forEach(this.controls, 'dragged'); }
 
       };
+      root.prototype.pressed= function(){
+
+        app.dragging=true;
+
+      };      
       root.prototype.released= function(){
 
         if(this.hit){ forEach(this.controls, 'released'); }
@@ -956,7 +962,7 @@ println('Angles Reset');
           var yOffset=w/2;
         
           p.w=w*cos(PI/6)*9;
-          p.w=500;
+          // p.w=500;
           
           var x=0;
           var y=0;
@@ -998,7 +1004,7 @@ println('Angles Reset');
       
         var p =this;
         
-        function matchshap(){
+        function matchShape(){
 
           if(p.activeCell.col>0){
             // p.controls[p.activeCell.row][p.activeCell.col-2].on=true;
@@ -1042,7 +1048,7 @@ println('Angles Reset');
 
             // ellipse(0, 0, 5, 5);
             
-            // matchshap();
+            // matchShape();
             
         popMatrix();
 
@@ -1994,8 +2000,8 @@ println('Angles Reset');
             beginShape();
             
               for(var pt=0; pt<6; pt++){
-                vertex(x+cos(radians(30+pt*60))*r,
-                       y+sin(radians(30+pt*60))*r);
+                vertex(x+cos(radians(30+pt*60))*(r-3),
+                       y+sin(radians(30+pt*60))*(r-3));
               }
 
               // for(var pt=0; pt<6; pt++){
@@ -2007,50 +2013,101 @@ println('Angles Reset');
 
           };
 
-          var f=1;
-          var w=0.5*p.w;
+          var f=0.8;
+          var w=p.w/2*cos(PI/6)*0.85;
           
-          if(app.dragging){
-            f=1.25;
-            w=p.w*0.55;
+          if(app.dragging && p.hit){
+            f=1;
+            w=p.w/2*cos(PI/6)*1;
           }
+
+          noStroke();
+          
+          function single(){
+            
+              fill(CLRS.SINGLE);
+
+              drawHexagon(p.x, p.y, w);
+            
+          };
+          function row(){
+            
+            fill(CLRS.LINE);
+
+            drawHexagon(p.x + f*3*w, p.y, w);
+            drawHexagon(p.x + f*1*w, p.y, w);
+            drawHexagon(p.x - f*1*w, p.y, w);
+            drawHexagon(p.x - f*3*w, p.y, w);
+            
+          };
+          function forward(){
+            
+            fill(CLRS.LINE);
+            
+            pushMatrix();
               
+              translate(p.x,p.y);                
+              rotate(-PI/3);
+              
+              drawHexagon( f*3*w, 0, w);
+              drawHexagon( f*1*w, 0, w);
+              drawHexagon(-f*1*w, 0, w);
+              drawHexagon(-f*3*w, 0, w);
+            
+            popMatrix();
+            
+          };
+          function back(){
+            
+            fill(CLRS.LINE);
+
+            pushMatrix();
+              
+              translate(p.x,p.y);                
+              rotate(PI/3);
+              
+              drawHexagon( f*3*w, 0, w);
+              drawHexagon( f*1*w, 0, w);
+              drawHexagon(-f*1*w, 0, w);
+              drawHexagon(-f*3*w, 0, w);
+
+            popMatrix();
+
+          };
+          function diamond(){
+            
+            fill(CLRS.LINE);
+
+            pushMatrix();
+              
+              translate(p.x,p.y);
+
+              if(app.dragging){
+                drawHexagon( 0,      w+0.75*w, w);
+                drawHexagon( f*1*w,  0,        w);
+                drawHexagon(-f*1*w,  0,        w);
+                drawHexagon( 0,      -w-0.75*w, w);
+              }
+              else{
+                drawHexagon( 0,      w*1.33, w);
+                drawHexagon( f*1*w,  0,      w);
+                drawHexagon(-f*1*w,  0,      w);
+                drawHexagon( 0,     -w*1.33, w);
+              }
+            popMatrix();
+
+          };
+          
           switch(p.style){
 
-            case SHAPES.SINGLE: /* SINGLE                             */
-              
-              if(p.hit){ stroke(CLRS.WHITE); }
-
-              fill(CLRS.SINGLE);
-              
-              // ellipse(p.x, p.y, p.w, p.h);
-              
-              drawHexagon(p.x, p.y, w);
-              
-              break;
-
-            case SHAPES.LINE:   /* LINE                               */
-
-              fill(CLRS.SINGLE);
-
-              drawHexagon(p.x + f*1.5*p.w, p.y, w);
-              drawHexagon(p.x + f*0.5*p.w, p.y, w);
-              drawHexagon(p.x - f*0.5*p.w, p.y, w);
-              drawHexagon(p.x - f*1.5*p.w, p.y, w);
-            
-              break;
-
-            case SHAPES.LINE_FORWARD:
-
-              break;
-
-            case SHAPES.LINE_BACK:    
-            
-            
-              break;
+            case SHAPES.SINGLE:      single();   break;
+            case SHAPES.ROW:         row();      break;
+            case SHAPES.ROW_FORWARD: forward();  break;
+            case SHAPES.ROW_BACK:    back();     break;
+            case SHAPES.DIAMOND:     diamond();  break;
 
             default: break;
-            
+
           }
 
         };
@@ -2150,7 +2207,8 @@ println('Angles Reset');
 
           // stroke(getColor(p.color, 40));
           noStroke();
-          fill  (getColor(color(61), 80));
+
+          fill(getColor(color(61), 80));
 
           if(p.active){
 
@@ -2310,9 +2368,22 @@ println('Angles Reset');
       /** Requires a reference to access globally */
       app.hexGarden=rt.controls[0];
 
-      rt.controls.push(new shap(400, rt, 100, 530, 35, 100,
-        {style: SHAPES.LINE}));
+      rt.controls.push(new shap(400, rt, 100, 530, 50, 100,
+        {style: SHAPES.SINGLE}));
 
+      rt.controls.push(new shap(400, rt, 200, 530, 50, 100,
+        {style: SHAPES.ROW}));
+        
+      rt.controls.push(new shap(400, rt, 300, 530, 50, 100,
+        {style: SHAPES.ROW_FORWARD}));
+
+      rt.controls.push(new shap(400, rt, 400, 530, 50, 100,
+        {style: SHAPES.ROW_BACK}));
+
+      rt.controls.push(new shap(400, rt, 500, 530, 50, 100,
+        {style: SHAPES.DIAMOND}));
+        
+        
       /* Hexagon Navigation Buttons ----------------------------------- */
       {
 
