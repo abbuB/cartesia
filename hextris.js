@@ -67,6 +67,8 @@ var diagrams = function(processingInstance){
   var global=this;
 
   const MY_FAV = 7;
+  const HEX_SIZE=50;
+
   // println(MY_FAV);
 
   function application(){
@@ -81,7 +83,7 @@ var diagrams = function(processingInstance){
 
       angleMode='radians';
 
-      size(700, 600); // set size of canvas
+      size(900, 600); // set size of canvas
 
     }
 
@@ -97,7 +99,7 @@ var diagrams = function(processingInstance){
     this.left         = false;  //  Is the left mouse button pressed
     this.right        = false;  //  Is the right mouse button pressed
     this.center       = false;  //  Is the center mouse button pressed
-    
+
     this.dragging     = false;  //  Is the mouse cursor moving and the left button pressed?
 
     this.focus        = -1;     //  The ID of the control with focus
@@ -115,7 +117,7 @@ var diagrams = function(processingInstance){
     this.activeShape  = SHAPES.SINGLE;
 
     this.currentCell;           //  Global Reference to the currently selected cell in the pyramid
-    
+
   };
 
   var app=new application();
@@ -125,8 +127,20 @@ var diagrams = function(processingInstance){
 
     var CLRS={
 
-      SINGLE:       color(128,0,0,255),
-      LINE:         color(0,128,0,255),
+      SINGLE:       color(170, 29, 29,255),
+      LINE:         color(158,182, 58,255),
+      DIAMOND:      color( 49,204,167,255),
+
+      U:            color(238,214, 15,255),
+      Z:            color( 29, 86,170,255),
+      SEVEN:        color(255, 81,  0,255),
+      B:            color(255,190,  0,255),
+      NODE:         color(255, 20,147,255),
+      V:            color(255,190,  0,255),
+
+      RED:          color(170, 29, 29,255), GREEN:        color(158,182, 58,255),
+      BLUE:         color( 29, 86,170,255), YELLOW:       color(238,214, 15,255),
+      ORANGE:       color(238,136, 15,255), GRAY:         color(128,128,128,255),
 
       K_STEEL_0:    color( 48, 68, 82,255),
       K_STEEL_1:    color(132,177,208,255),
@@ -246,9 +260,9 @@ var diagrams = function(processingInstance){
     };
 
     function resetAngles()     {
-      
+
       app.angles=[];
-      
+
       for(var row=0; row<=app.rows; row++){
         app.angles[row]=[];
       }
@@ -261,9 +275,9 @@ println('Angles Reset');
 
       app.dirty = true;
 
-        app.hexGarden.reset();        
+        app.hexGarden.reset();
         // resetAngles();
-        
+
       app.dirty=false;
 
     };
@@ -272,7 +286,7 @@ println('Angles Reset');
 
     function getInfo()         { return app.info;                     };
     function toggleInfo()      { app.info=!app.info;                  };
-    
+
     function getTelemetry()    { return app.telemetry;                };
     function toggleTelemetry() { app.telemetry=!app.telemetry;        };
 
@@ -362,10 +376,10 @@ println('Angles Reset');
         }
 
       };
-      control.prototype.clicked = function(){ if(this.hit){ forEach(this.controls, 'clicked'); } };     
-      control.prototype.dragged = function(){ if(this.hit){ forEach(this.controls, 'dragged'); } };        
+      control.prototype.clicked = function(){ if(this.hit){ forEach(this.controls, 'clicked'); } };
+      control.prototype.dragged = function(){ if(this.hit){ forEach(this.controls, 'dragged'); } };
       control.prototype.pressed = function(){};
-      control.prototype.released= function(){};      
+      control.prototype.released= function(){};
       control.prototype.over    = function(){};
       control.prototype.out     = function(){ this.hit=false; forEach(this.controls, 'out'); };
       // control.prototype.typed=function(){};
@@ -453,7 +467,7 @@ println('Angles Reset');
 
         app.dragging=true;
 
-      };      
+      };
       root.prototype.released= function(){
 
         if(this.hit){ forEach(this.controls, 'released'); }
@@ -923,14 +937,14 @@ println('Angles Reset');
         // this.count      = 0;
 
         // this.angle      = 0;
-        
+
         this.activeCell = 0;
         this.locked     = false;
-        
+
         this.retrieve=props.retrieve;
 
         this.reset();
-        
+
         app.hexBoard=this;
 
       };
@@ -956,14 +970,14 @@ println('Angles Reset');
         function reset(){
 
           p.controls=[];
-                
+
           var w=50;
           var xOffset=w*cos(PI/6);
           var yOffset=w/2;
-        
+
           p.w=w*cos(PI/6)*9;
           // p.w=500;
-          
+
           var x=0;
           var y=0;
 
@@ -1001,9 +1015,9 @@ println('Angles Reset');
 
       };
       hexBoard.prototype.draw=function(){
-      
+
         var p =this;
-        
+
         function matchShape(){
 
           if(p.activeCell.col>0){
@@ -1015,7 +1029,7 @@ println('Angles Reset');
           // else{
             // p.controls[p.activeCell.row-1][p.activeCell.col-1].on=false;
           // }
-          
+
         };
 
         this.active=this.hit && app.focus===this.id;
@@ -1024,7 +1038,7 @@ println('Angles Reset');
 
           translate(this.x, this.y);
           // rotate(this.angle);
-          
+
             // noStroke();
             fill(getColor(this.color, 15));
 
@@ -1034,7 +1048,7 @@ println('Angles Reset');
                              // stroke(getColor(this.color, 100)); }
 
               // ellipse(0, 0, this.w, this.w);
-            
+
             for(var r in this.controls){
               for(var c in this.controls[r]){
 
@@ -1047,9 +1061,9 @@ println('Angles Reset');
             noStroke();
 
             // ellipse(0, 0, 5, 5);
-            
+
             // matchShape();
-            
+
         popMatrix();
 
       };
@@ -1979,14 +1993,16 @@ println('Angles Reset');
       i_hexButton.prototype.set=function(){ this.on=true; };
 
     }
-    
+
     /* shape                */
+    {
+
       function shap(id, parent, x, y, w, h, props){
 
         control.call(this, id, parent, x, y, w, h);
 
         this.style=props.style;
-           
+
       };
       shap.prototype=Object.create(control.prototype);
       shap.prototype.draw=function(){
@@ -1998,7 +2014,7 @@ println('Angles Reset');
           function drawHexagon(x,y,r){ // r=radius
 
             beginShape();
-            
+
               for(var pt=0; pt<6; pt++){
                 vertex(x+cos(radians(30+pt*60))*(r-3),
                        y+sin(radians(30+pt*60))*(r-3));
@@ -2015,78 +2031,159 @@ println('Angles Reset');
 
           var f=0.8;
           var w=p.w/2*cos(PI/6)*0.85;
-          
+
           if(app.dragging && p.hit){
             f=1;
             w=p.w/2*cos(PI/6)*1;
           }
 
           noStroke();
-          
+
           function single(){
-            
+
               fill(CLRS.SINGLE);
 
-              drawHexagon(p.x, p.y, w);
-            
+              drawHexagon(0, 0, w);
+
           };
+
           function row(){
-            
+
             fill(CLRS.LINE);
 
-            drawHexagon(p.x + f*3*w, p.y, w);
-            drawHexagon(p.x + f*1*w, p.y, w);
-            drawHexagon(p.x - f*1*w, p.y, w);
-            drawHexagon(p.x - f*3*w, p.y, w);
-            
+              drawHexagon( f*3*w, 0, w);
+              drawHexagon( f*1*w, 0, w);
+              drawHexagon(-f*1*w, 0, w);
+              drawHexagon(-f*3*w, 0, w);
+
           };
           function forward(){
-            
+
             fill(CLRS.LINE);
-            
-            pushMatrix();
-              
-              translate(p.x,p.y);                
-              rotate(-PI/3);
-              
+
+            rotate(-PI/3);
+
               drawHexagon( f*3*w, 0, w);
               drawHexagon( f*1*w, 0, w);
               drawHexagon(-f*1*w, 0, w);
               drawHexagon(-f*3*w, 0, w);
-            
-            popMatrix();
-            
+
           };
           function back(){
-            
+
             fill(CLRS.LINE);
 
-            pushMatrix();
-              
-              translate(p.x,p.y);                
-              rotate(PI/3);
-              
+            rotate(PI/3);
+
               drawHexagon( f*3*w, 0, w);
               drawHexagon( f*1*w, 0, w);
               drawHexagon(-f*1*w, 0, w);
               drawHexagon(-f*3*w, 0, w);
 
-            popMatrix();
+          };
+
+          function diamond(){
+
+            fill(CLRS.DIAMOND);
+
+            if(app.dragging && p.hit){
+              drawHexagon( 0,      w+0.75*w, w);
+              drawHexagon( f*1*w,  0,        w);
+              drawHexagon(-f*1*w,  0,        w);
+              drawHexagon( 0,     -w-0.75*w, w);
+            }
+            else{
+              drawHexagon( 0,      w*1.33, w);
+              drawHexagon( f*1*w,  0,      w);
+              drawHexagon(-f*1*w,  0,      w);
+              drawHexagon( 0,     -w*1.33, w);
+            }
 
           };
-          function diamond(){
-            
-            fill(CLRS.LINE);
 
-            pushMatrix();
-              
-              translate(p.x,p.y);
+          function uUp(){
 
-              if(app.dragging){
+            fill(CLRS.U);
+
+              drawHexagon( f*cos(     0)*w*2, f*sin(     0)*w*2, w);
+              drawHexagon( f*cos(  PI/3)*w*2, f*sin(  PI/3)*w*2, w);
+              drawHexagon( f*cos(2*PI/3)*w*2, f*sin(2*PI/3)*w*2, w);
+              drawHexagon(-f*cos(     0)*w*2, f*sin(     0)*w*2, w);
+
+          };
+          function uDown(){
+
+            fill(CLRS.U);
+
+            rotate(PI);
+
+              drawHexagon( f*cos(     0)*w*2, f*sin(     0)*w*2, w);
+              drawHexagon( f*cos(  PI/3)*w*2, f*sin(  PI/3)*w*2, w);
+              drawHexagon( f*cos(2*PI/3)*w*2, f*sin(2*PI/3)*w*2, w);
+              drawHexagon(-f*cos(     0)*w*2, f*sin(     0)*w*2, w);
+
+          };
+
+          function upRight(){
+
+            fill(CLRS.U);
+
+            rotate(PI/3);
+
+              drawHexagon( f*cos(     0)*w*2, f*sin(     0)*w*2, w);
+              drawHexagon( f*cos(  PI/3)*w*2, f*sin(  PI/3)*w*2, w);
+              drawHexagon( f*cos(2*PI/3)*w*2, f*sin(2*PI/3)*w*2, w);
+              drawHexagon(-f*cos(     0)*w*2, f*sin(     0)*w*2, w);
+
+          };
+          function upLeft(){
+
+            fill(CLRS.U);
+
+            rotate(-PI/3);
+
+              drawHexagon( f*cos(     0)*w*2, f*sin(     0)*w*2, w);
+              drawHexagon( f*cos(  PI/3)*w*2, f*sin(  PI/3)*w*2, w);
+              drawHexagon( f*cos(2*PI/3)*w*2, f*sin(2*PI/3)*w*2, w);
+              drawHexagon(-f*cos(     0)*w*2, f*sin(     0)*w*2, w);
+
+          };
+          function downRight(){
+
+            fill(CLRS.U);
+
+            rotate(PI-PI/3);
+
+              drawHexagon( f*cos(     0)*w*2, f*sin(     0)*w*2, w);
+              drawHexagon( f*cos(  PI/3)*w*2, f*sin(  PI/3)*w*2, w);
+              drawHexagon( f*cos(2*PI/3)*w*2, f*sin(2*PI/3)*w*2, w);
+              drawHexagon(-f*cos(     0)*w*2, f*sin(     0)*w*2, w);
+
+          };
+          function downLeft(){
+
+            fill(CLRS.U);
+
+            rotate(-2*PI/3);
+
+              drawHexagon( f*cos(     0)*w*2, f*sin(     0)*w*2, w);
+              drawHexagon( f*cos(  PI/3)*w*2, f*sin(  PI/3)*w*2, w);
+              drawHexagon( f*cos(2*PI/3)*w*2, f*sin(2*PI/3)*w*2, w);
+              drawHexagon(-f*cos(     0)*w*2, f*sin(     0)*w*2, w);
+
+          };
+
+          function zRight(){
+
+            fill(CLRS.Z);
+
+            rotate(PI/3);
+
+              if(app.dragging && p.hit){
                 drawHexagon( 0,      w+0.75*w, w);
                 drawHexagon( f*1*w,  0,        w);
                 drawHexagon(-f*1*w,  0,        w);
-                drawHexagon( 0,      -w-0.75*w, w);
+                drawHexagon( 0,     -w-0.75*w, w);
               }
               else{
                 drawHexagon( 0,      w*1.33, w);
@@ -2094,21 +2191,221 @@ println('Angles Reset');
                 drawHexagon(-f*1*w,  0,      w);
                 drawHexagon( 0,     -w*1.33, w);
               }
-            popMatrix();
 
           };
-          
-          switch(p.style){
+          function zLeft(){
 
-            case SHAPES.SINGLE:      single();   break;
-            case SHAPES.ROW:         row();      break;
-            case SHAPES.ROW_FORWARD: forward();  break;
-            case SHAPES.ROW_BACK:    back();     break;
-            case SHAPES.DIAMOND:     diamond();  break;
+            fill(CLRS.Z);
 
-            default: break;
+            rotate(-PI/3);
 
-          }
+              if(app.dragging && p.hit){
+                drawHexagon( 0,      w+0.75*w, w);
+                drawHexagon( f*1*w,  0,        w);
+                drawHexagon(-f*1*w,  0,        w);
+                drawHexagon( 0,     -w-0.75*w, w);
+              }
+              else{
+                drawHexagon( 0,      w*1.33, w);
+                drawHexagon( f*1*w,  0,      w);
+                drawHexagon(-f*1*w,  0,      w);
+                drawHexagon( 0,     -w*1.33, w);
+              }
+
+          };
+
+          function sevenRight(){
+
+            fill(CLRS.SEVEN);
+
+              drawHexagon(f*cos(      0),     f*sin(      0), w);
+              drawHexagon(f*cos(-2*PI/3)*w*2, f*sin(-2*PI/3)*w*2, w);
+              drawHexagon(f*cos(   PI/3)*w*2, f*sin(   PI/3)*w*2, w);
+              drawHexagon(f*cos(  -PI/3)*w*2, f*sin(  -PI/3)*w*2, w);
+
+          };
+          function sevenLeft(){
+
+            fill(CLRS.SEVEN);
+
+            scale(-1,1);
+
+              drawHexagon(f*cos(      0),     f*sin(      0), w);
+              drawHexagon(f*cos(-2*PI/3)*w*2, f*sin(-2*PI/3)*w*2, w);
+              drawHexagon(f*cos(   PI/3)*w*2, f*sin(   PI/3)*w*2, w);
+              drawHexagon(f*cos(  -PI/3)*w*2, f*sin(  -PI/3)*w*2, w);
+
+          };
+          function angleRight(){
+
+            fill(CLRS.SEVEN);
+
+            scale(1,-1);
+
+              drawHexagon(f*cos(      0),     f*sin(      0), w);
+              drawHexagon(f*cos(-2*PI/3)*w*2, f*sin(-2*PI/3)*w*2, w);
+              drawHexagon(f*cos(   PI/3)*w*2, f*sin(   PI/3)*w*2, w);
+              drawHexagon(f*cos(  -PI/3)*w*2, f*sin(  -PI/3)*w*2, w);
+
+          };
+          function angleLeft(){
+
+            fill(CLRS.SEVEN);
+
+            scale(-1,-1);
+
+              drawHexagon(f*cos(      0),     f*sin(      0), w);
+              drawHexagon(f*cos(-2*PI/3)*w*2, f*sin(-2*PI/3)*w*2, w);
+              drawHexagon(f*cos(   PI/3)*w*2, f*sin(   PI/3)*w*2, w);
+              drawHexagon(f*cos(  -PI/3)*w*2, f*sin(  -PI/3)*w*2, w);
+
+          };
+
+          function nodeUpRight(){
+
+            fill(CLRS.NODE);
+
+            scale(-1,-1);
+
+              drawHexagon(f*cos(     0),     f*sin(     0),     w);
+              drawHexagon(f*cos(     0)*w*2, f*sin(     0)*w*2, w);
+              drawHexagon(f*cos(    PI)*w*2, f*sin(    PI)*w*2, w);
+              drawHexagon(f*cos(2*PI/3)*w*2, f*sin(2*PI/3)*w*2, w);
+
+          };
+          function nodeUpLeft(){
+
+            fill(CLRS.NODE);
+
+            scale(-1,-1);
+
+              drawHexagon(f*cos(   0),     f*sin(   0),     w);
+              drawHexagon(f*cos(   0)*w*2, f*sin(   0)*w*2, w);
+              drawHexagon(f*cos(  PI)*w*2, f*sin(  PI)*w*2, w);
+              drawHexagon(f*cos(PI/3)*w*2, f*sin(PI/3)*w*2, w);
+
+          };
+          function nodeDownRight(){
+
+            fill(CLRS.NODE);
+
+            scale(-1,-1);
+
+              drawHexagon(f*cos(      0),     f*sin(      0),     w);
+              drawHexagon(f*cos(      0)*w*2, f*sin(      0)*w*2, w);
+              drawHexagon(f*cos(     PI)*w*2, f*sin(     PI)*w*2, w);
+              drawHexagon(f*cos(-2*PI/3)*w*2, f*sin(-2*PI/3)*w*2, w);
+
+          };
+          function nodeDownLeft(){
+
+            fill(CLRS.NODE);
+
+            scale(-1,-1);
+
+              drawHexagon(f*cos(    0),     f*sin(    0),     w);
+              drawHexagon(f*cos(    0)*w*2, f*sin(    0)*w*2, w);
+              drawHexagon(f*cos(   PI)*w*2, f*sin(   PI)*w*2, w);
+              drawHexagon(f*cos(-PI/3)*w*2, f*sin(-PI/3)*w*2, w);
+
+          };
+
+          function vUpRight(){
+
+            fill(CLRS.V);
+
+            scale(-1,-1);
+
+              drawHexagon(f*cos(     0),     f*sin(     0),     w);
+              drawHexagon(f*cos(     0)*w*2, f*sin(     0)*w*2, w);
+              drawHexagon(f*cos( -PI/3)*w*2, f*sin( -PI/3)*w*2, w);
+              drawHexagon(f*cos(2*PI/3)*w*2, f*sin(2*PI/3)*w*2, w);
+
+          };
+          function vUpLeft(){
+
+            fill(CLRS.V);
+
+            scale(-1,-1);
+
+              drawHexagon(f*cos(      0),     f*sin(      0),     w);
+              drawHexagon(f*cos(     PI)*w*2, f*sin(     PI)*w*2, w);
+              drawHexagon(f*cos(-2*PI/3)*w*2, f*sin(-2*PI/3)*w*2, w);
+              drawHexagon(f*cos(   PI/3)*w*2, f*sin(   PI/3)*w*2, w);
+
+          };
+          function vDownRight(){
+
+            fill(CLRS.V);
+
+            scale(-1,-1);
+
+              drawHexagon(f*cos(     0),     f*sin(     0),     w);
+              drawHexagon(f*cos(    PI)*w*2, f*sin(    PI)*w*2, w);
+              drawHexagon(f*cos(2*PI/3)*w*2, f*sin(2*PI/3)*w*2, w);
+              drawHexagon(f*cos( -PI/3)*w*2, f*sin( -PI/3)*w*2, w);
+
+          };
+          function vDownLeft(){
+
+            fill(CLRS.V);
+
+            scale(-1,-1);
+
+              drawHexagon(f*cos(      0),     f*sin(      0),     w);
+              drawHexagon(f*cos(      0)*w*2, f*sin(      0)*w*2, w);
+              drawHexagon(f*cos(   PI/3)*w*2, f*sin(   PI/3)*w*2, w);
+              drawHexagon(f*cos(-2*PI/3)*w*2, f*sin(-2*PI/3)*w*2, w);
+
+          };
+
+          pushMatrix();
+
+            translate(p.x,p.y);
+
+            switch(p.style){
+
+              case SHAPES.SINGLE:         single();         break;
+
+              case SHAPES.ROW:            row();            break;
+              case SHAPES.ROW_FORWARD:    forward();        break;
+              case SHAPES.ROW_BACK:       back();           break;
+
+              case SHAPES.DIAMOND:        diamond();        break;
+
+              case SHAPES.UUP:            uUp();            break;
+              case SHAPES.UDOWN:          uDown();          break;
+
+              case SHAPES.UPRIGHT:        upRight();        break;
+              case SHAPES.UPLEFT:         upLeft();         break;
+
+              case SHAPES.DOWNRIGHT:      downRight();      break;
+              case SHAPES.DOWNLEFT:       downLeft();       break;
+
+              case SHAPES.ZRIGHT:         zRight();         break;
+              case SHAPES.ZLEFT:          zLeft();          break;
+
+              case SHAPES.SEVENRIGHT:     sevenRight();     break;
+              case SHAPES.SEVENLEFT:      sevenLeft();      break;
+
+              case SHAPES.ANGLERIGHT:     angleRight();     break;
+              case SHAPES.ANGLELEFT:      angleLeft();      break;
+
+              case SHAPES.NODEUPRIGHT:    nodeUpRight();    break;
+              case SHAPES.NODEUPLEFT:     nodeUpLeft();     break;
+              case SHAPES.NODEDOWNRIGHT:  nodeDownRight();  break;
+              case SHAPES.NODEDOWNLEFT:   nodeDownLeft();   break;
+
+              case SHAPES.VUPRIGHT:       vUpRight();       break;
+              case SHAPES.VUPLEFT:        vUpLeft();        break;
+              case SHAPES.VDOWNRIGHT:     vDownRight();     break;
+              case SHAPES.VDOWNLEFT:      vDownLeft();      break;
+
+              default: break;
+
+            }
+
+          popMatrix();
 
         };
 
@@ -2127,7 +2424,7 @@ println('Angles Reset');
 
       };
       shap.prototype.moved=function(x,y){
-        
+
         if(dist(this.x+x,this.y+y,
                 mouseX,mouseY)<this.w/2){
 
@@ -2137,16 +2434,17 @@ println('Angles Reset');
         else{
           this.hit=false;
         }
-        
+
       };
       shap.prototype.dragged=function(x,y){
-        
+
         if(this.hit){ this.x=mouseX;
                       this.y=mouseY;  }
         else        { this.hit=false; }
 
       };
 
+    }
 
     /* Hexagonal Cell       */
     {
@@ -2176,7 +2474,7 @@ println('Angles Reset');
         this.running  = false;
         this.points   = [];
         this.dpoints  = [];
-        
+
         /* Initialize */
         var w2=this.w/2;
 
@@ -2189,7 +2487,7 @@ println('Angles Reset');
           this.dpoints.push(new pnt( cos(radians(30+pt*60))*(w2-3),
                                      sin(radians(30+pt*60))*(w2-3) ));
         }
-        
+
       };
       hexCell.prototype=Object.create(control.prototype);
       hexCell.prototype.draw=function(){
@@ -2221,7 +2519,7 @@ println('Angles Reset');
           };
 
           // stroke(getColor(p.color,75));
-          
+
           if(p.hit &&
              app.activeShape===SHAPES.SINGLE &&
              p.parent.locked){
@@ -2236,7 +2534,7 @@ println('Angles Reset');
                        p.dpoints[pt].y);
               }
 
-            endShape(CLOSE);          
+            endShape(CLOSE);
 
         };
 /*         function caption(){
@@ -2245,18 +2543,18 @@ println('Angles Reset');
 
           // if(p.parent.hit       ){ fill(getColor(p.color, 75)); }
           if(p.active || p.on){ fill(getColor(CLRS.WHITE,75)); }
-          
+
           textFont(p.font);
           textAlign(CENTER,CENTER);
           textFont(p.font);
           textSize(20);
-          
+
           pushMatrix();
-          
+
             scale(1,-1);
-            
+
               text(p.text, p.offset, -p.offset);
-            
+
           popMatrix();
 
         }; */
@@ -2328,7 +2626,7 @@ println('Angles Reset');
       };
 
     }
-    
+
   }
 
   /********************************************************************************
@@ -2368,22 +2666,84 @@ println('Angles Reset');
       /** Requires a reference to access globally */
       app.hexGarden=rt.controls[0];
 
-      rt.controls.push(new shap(400, rt, 100, 530, 50, 100,
-        {style: SHAPES.SINGLE}));
+      // rt.controls.push(new shap(400, rt,  50, 530, HEX_SIZE, HEX_SIZE,
+        // {style: SHAPES.SINGLE}));
 
-      rt.controls.push(new shap(400, rt, 200, 530, 50, 100,
+      rt.controls.push(new shap(400, rt, 150, 530, HEX_SIZE, HEX_SIZE,
         {style: SHAPES.ROW}));
-        
-      rt.controls.push(new shap(400, rt, 300, 530, 50, 100,
+
+      rt.controls.push(new shap(400, rt, 250, 530, HEX_SIZE, HEX_SIZE,
         {style: SHAPES.ROW_FORWARD}));
 
-      rt.controls.push(new shap(400, rt, 400, 530, 50, 100,
+      rt.controls.push(new shap(400, rt, 350, 530, HEX_SIZE, HEX_SIZE,
         {style: SHAPES.ROW_BACK}));
 
-      rt.controls.push(new shap(400, rt, 500, 530, 50, 100,
+      rt.controls.push(new shap(400, rt, 450, 530, HEX_SIZE, HEX_SIZE,
         {style: SHAPES.DIAMOND}));
-        
-        
+
+      rt.controls.push(new shap(400, rt, 500, 100, HEX_SIZE, HEX_SIZE,
+        {style: SHAPES.UUP}));
+
+      rt.controls.push(new shap(400, rt, 500, 200, HEX_SIZE, HEX_SIZE,
+        {style: SHAPES.UDOWN}));
+
+      rt.controls.push(new shap(400, rt, 500, 300, HEX_SIZE, HEX_SIZE,
+        {style: SHAPES.UPRIGHT}));
+
+      rt.controls.push(new shap(400, rt, 500, 400, HEX_SIZE, HEX_SIZE,
+        {style: SHAPES.UPLEFT}));
+
+      rt.controls.push(new shap(400, rt, 600, 300, HEX_SIZE, HEX_SIZE,
+        {style: SHAPES.DOWNRIGHT}));
+
+      rt.controls.push(new shap(400, rt, 600, 400, HEX_SIZE, HEX_SIZE,
+        {style: SHAPES.DOWNLEFT}));
+
+      rt.controls.push(new shap(400, rt, 600, 100, HEX_SIZE, HEX_SIZE,
+        {style: SHAPES.ZRIGHT}));
+
+      rt.controls.push(new shap(400, rt, 600, 200, HEX_SIZE, HEX_SIZE,
+        {style: SHAPES.ZLEFT}));
+
+      rt.controls.push(new shap(400, rt, 700, 100, HEX_SIZE, HEX_SIZE,
+        {style: SHAPES.SEVENRIGHT}));
+
+      rt.controls.push(new shap(400, rt, 700, 200, HEX_SIZE, HEX_SIZE,
+        {style: SHAPES.SEVENLEFT}));
+
+      rt.controls.push(new shap(400, rt, 700, 300, HEX_SIZE, HEX_SIZE,
+        {style: SHAPES.ANGLERIGHT}));
+
+      rt.controls.push(new shap(400, rt, 700, 400, HEX_SIZE, HEX_SIZE,
+        {style: SHAPES.ANGLELEFT}));
+
+      rt.controls.push(new shap(400, rt, 300, 100, HEX_SIZE, HEX_SIZE,
+        {style: SHAPES.NODEUPRIGHT}));
+
+      rt.controls.push(new shap(400, rt, 300, 200, HEX_SIZE, HEX_SIZE,
+        {style: SHAPES.NODEUPLEFT}));
+
+      rt.controls.push(new shap(400, rt, 300, 300, HEX_SIZE, HEX_SIZE,
+        {style: SHAPES.NODEDOWNRIGHT}));
+
+      rt.controls.push(new shap(400, rt, 300, 400, HEX_SIZE, HEX_SIZE,
+        {style: SHAPES.NODEDOWNLEFT}));
+
+      rt.controls.push(new shap(400, rt, 800, 100, HEX_SIZE, HEX_SIZE,
+        {style: SHAPES.VUPRIGHT}));
+
+      rt.controls.push(new shap(400, rt, 800, 200, HEX_SIZE, HEX_SIZE,
+        {style: SHAPES.VUPLEFT}));
+
+      rt.controls.push(new shap(400, rt, 800, 300, HEX_SIZE, HEX_SIZE,
+        {style: SHAPES.VDOWNRIGHT}));
+
+      rt.controls.push(new shap(400, rt, 800, 400, HEX_SIZE, HEX_SIZE,
+        {style: SHAPES.VDOWNLEFT}));
+
+      rt.controls.push(new shap(400, rt,  50, 530, HEX_SIZE, HEX_SIZE,
+        {style: SHAPES.SINGLE}));
+
       /* Hexagon Navigation Buttons ----------------------------------- */
       {
 
@@ -2659,7 +3019,7 @@ println('Angles Reset');
     // text(app.hexBoard.activeCell.id,100,500);
     fill(CLRS.YELLOW);
     text(app.dragging, 20,100);
-    
+
   };
 
   /* Keyboard Events =========================================================== */
@@ -2776,9 +3136,9 @@ println('Angles Reset');
 
     };
     mouseDragged=function(){
-      
+
       if(app.left){ app.dragging=true; }
-      
+
       switch(mouseButton){
 
         case LEFT:   forEach(app.controls,'dragged'); break;
@@ -2791,9 +3151,9 @@ println('Angles Reset');
 
     };
     mouseOut=function(){
-      
+
       app.dragging=false;
-      
+
       forEach(app.controls,'out');
 
       app.focus=-1;
