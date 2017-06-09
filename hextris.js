@@ -68,6 +68,7 @@ var diagrams = function(processingInstance){
 
   const MY_FAV = 7;
   const HEX_SIZE=50;
+  const pi=nf(PI,1,10);
 
   // println(MY_FAV);
 
@@ -83,7 +84,7 @@ var diagrams = function(processingInstance){
 
       angleMode='radians';
 
-      size(900, 600); // set size of canvas
+      size(900, 700); // set size of canvas
 
     }
 
@@ -1037,7 +1038,7 @@ println('Angles Reset');
         pushMatrix();
 
           translate(this.x, this.y);
-          // rotate(this.angle);
+          rotate(this.angle);
 
             // noStroke();
             fill(getColor(this.color, 15));
@@ -1062,7 +1063,7 @@ println('Angles Reset');
 
             // ellipse(0, 0, 5, 5);
 
-            // matchShape();
+            matchShape();
 
         popMatrix();
 
@@ -2030,14 +2031,13 @@ println('Angles Reset');
           };
 
           var f=0.8;
-          var w=p.w/2*cos(PI/6)*0.85;
+          var w=p.w/2*cos(PI/6);
 
-          if(app.dragging && p.hit){
-            f=1;
-            w=p.w/2*cos(PI/6)*1;
-          }
+          if(app.dragging && p.hit){ f=1;     }
+          else                     { w*=0.86; }
 
           noStroke();
+          strokeWeight(0);
 
           function single(){
 
@@ -2334,7 +2334,7 @@ println('Angles Reset');
               drawHexagon(f*cos(   PI/3)*w*2, f*sin(   PI/3)*w*2, w);
 
           };
-          function vDownRight(){
+          function vDownLeft(){
 
             fill(CLRS.V);
 
@@ -2346,7 +2346,7 @@ println('Angles Reset');
               drawHexagon(f*cos( -PI/3)*w*2, f*sin( -PI/3)*w*2, w);
 
           };
-          function vDownLeft(){
+          function vDownRight(){
 
             fill(CLRS.V);
 
@@ -2738,7 +2738,7 @@ println('Angles Reset');
       rt.controls.push(new shap(400, rt, 800, 300, HEX_SIZE, HEX_SIZE,
         {style: SHAPES.VDOWNRIGHT}));
 
-      rt.controls.push(new shap(400, rt, 800, 400, HEX_SIZE, HEX_SIZE,
+      rt.controls.push(new shap(400, rt, 50, 400, HEX_SIZE, HEX_SIZE,
         {style: SHAPES.VDOWNLEFT}));
 
       rt.controls.push(new shap(400, rt,  50, 530, HEX_SIZE, HEX_SIZE,
@@ -3019,6 +3019,7 @@ println('Angles Reset');
     // text(app.hexBoard.activeCell.id,100,500);
     fill(CLRS.YELLOW);
     text(app.dragging, 20,100);
+    text(pi, 20,150);
 
   };
 
