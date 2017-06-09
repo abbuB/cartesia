@@ -67,8 +67,8 @@ var diagrams = function(processingInstance){
   var global=this;
 
   const MY_FAV = 7;
-  const HEX_SIZE=50;
-  const pi=nf(PI,1,10);
+  const HEX_SIZE=65;
+  // const pi=nf(PI,1,10);
 
   // println(MY_FAV);
 
@@ -84,7 +84,7 @@ var diagrams = function(processingInstance){
 
       angleMode='radians';
 
-      size(900, 700); // set size of canvas
+      size(800, 600); // set size of canvas
 
     }
 
@@ -108,8 +108,8 @@ var diagrams = function(processingInstance){
     this.controls     = [];     //  Collection of controls in the app
     this.keys         = [];     //  Array holding the value of all keycodes
 
-    this.info         = false;  //  Is the info frame displayed
-    this.telemetry    = false;  //  Is telemetry visible
+    this.info         = 0;  //  Is the info frame displayed
+    this.telemetry    = 1;  //  Is telemetry visible
 
     /* Hextris Specific ------------------ */
 
@@ -972,7 +972,7 @@ println('Angles Reset');
 
           p.controls=[];
 
-          var w=50;
+          var w=HEX_SIZE;
           var xOffset=w*cos(PI/6);
           var yOffset=w/2;
 
@@ -1041,8 +1041,15 @@ println('Angles Reset');
           rotate(this.angle);
 
             // noStroke();
-            fill(getColor(this.color, 15));
+            
 
+            if(app.activeShape!==null){
+              fill(app.activeShape.color);
+            }
+            else{
+              fill(getColor(this.color, 50));
+            }
+            
             // if(this.active){ cursor(this.cursor); }
             // if(this.locked){ cursor(HAND);        }
             // if(this.border){ strokeWeight(1);
@@ -1063,7 +1070,7 @@ println('Angles Reset');
 
             // ellipse(0, 0, 5, 5);
 
-            matchShape();
+            // matchShape();
 
         popMatrix();
 
@@ -2002,7 +2009,8 @@ println('Angles Reset');
 
         control.call(this, id, parent, x, y, w, h);
 
-        this.style=props.style;
+        this.style  = props.style;
+        this.color  = props.color;
 
       };
       shap.prototype=Object.create(control.prototype);
@@ -2017,8 +2025,8 @@ println('Angles Reset');
             beginShape();
 
               for(var pt=0; pt<6; pt++){
-                vertex(x+cos(radians(30+pt*60))*(r-3),
-                       y+sin(radians(30+pt*60))*(r-3));
+                vertex(x+cos(PI/6+pt*PI/3)*(r-3),
+                       y+sin(PI/6+pt*PI/3)*(r-3));
               }
 
               // for(var pt=0; pt<6; pt++){
@@ -2032,24 +2040,26 @@ println('Angles Reset');
 
           var f=0.8;
           var w=p.w/2*cos(PI/6);
+          
 
           if(app.dragging && p.hit){ f=1;     }
-          else                     { w*=0.86; }
+          else                     { w*=0.85; }
+
+          var w2=w*2;
 
           noStroke();
-          strokeWeight(0);
 
-          function single(){
+          function single(clr){
 
-              fill(CLRS.SINGLE);
+              fill(clr);
 
               drawHexagon(0, 0, w);
 
           };
 
-          function row(){
+          function row(clr){
 
-            fill(CLRS.LINE);
+            fill(clr);
 
               drawHexagon( f*3*w, 0, w);
               drawHexagon( f*1*w, 0, w);
@@ -2057,34 +2067,24 @@ println('Angles Reset');
               drawHexagon(-f*3*w, 0, w);
 
           };
-          function forward(){
-
-            fill(CLRS.LINE);
+          function forward(clr){
 
             rotate(-PI/3);
 
-              drawHexagon( f*3*w, 0, w);
-              drawHexagon( f*1*w, 0, w);
-              drawHexagon(-f*1*w, 0, w);
-              drawHexagon(-f*3*w, 0, w);
+              row(clr);
 
           };
-          function back(){
-
-            fill(CLRS.LINE);
+          function back(clr){
 
             rotate(PI/3);
 
-              drawHexagon( f*3*w, 0, w);
-              drawHexagon( f*1*w, 0, w);
-              drawHexagon(-f*1*w, 0, w);
-              drawHexagon(-f*3*w, 0, w);
+              row(clr);
 
           };
 
-          function diamond(){
+          function diamond(clr){
 
-            fill(CLRS.DIAMOND);
+            fill(clr);
 
             if(app.dragging && p.hit){
               drawHexagon( 0,      w+0.75*w, w);
@@ -2100,262 +2100,166 @@ println('Angles Reset');
             }
 
           };
+          function zRight(clr){
 
-          function uUp(){
+            rotate(PI/3);
 
-            fill(CLRS.U);
-
-              drawHexagon( f*cos(     0)*w*2, f*sin(     0)*w*2, w);
-              drawHexagon( f*cos(  PI/3)*w*2, f*sin(  PI/3)*w*2, w);
-              drawHexagon( f*cos(2*PI/3)*w*2, f*sin(2*PI/3)*w*2, w);
-              drawHexagon(-f*cos(     0)*w*2, f*sin(     0)*w*2, w);
+              diamond(clr);
 
           };
-          function uDown(){
+          function zLeft(clr){
 
-            fill(CLRS.U);
+            rotate(-PI/3);
+
+              diamond(clr);
+
+          };
+
+          function uUp(clr){
+
+            fill(clr);
+
+              drawHexagon( f*cos(     0)*w2, f*sin(     0)*w2, w);
+              drawHexagon( f*cos(  PI/3)*w2, f*sin(  PI/3)*w2, w);
+              drawHexagon( f*cos(2*PI/3)*w2, f*sin(2*PI/3)*w2, w);
+              drawHexagon(-f*cos(     0)*w2, f*sin(     0)*w2, w);
+
+          };
+          function uDown(clr){
 
             rotate(PI);
 
-              drawHexagon( f*cos(     0)*w*2, f*sin(     0)*w*2, w);
-              drawHexagon( f*cos(  PI/3)*w*2, f*sin(  PI/3)*w*2, w);
-              drawHexagon( f*cos(2*PI/3)*w*2, f*sin(2*PI/3)*w*2, w);
-              drawHexagon(-f*cos(     0)*w*2, f*sin(     0)*w*2, w);
+              uUp(clr);
 
           };
-
-          function upRight(){
-
-            fill(CLRS.U);
+          function upRight(clr){
 
             rotate(PI/3);
 
-              drawHexagon( f*cos(     0)*w*2, f*sin(     0)*w*2, w);
-              drawHexagon( f*cos(  PI/3)*w*2, f*sin(  PI/3)*w*2, w);
-              drawHexagon( f*cos(2*PI/3)*w*2, f*sin(2*PI/3)*w*2, w);
-              drawHexagon(-f*cos(     0)*w*2, f*sin(     0)*w*2, w);
+              uUp(clr);
 
           };
-          function upLeft(){
-
-            fill(CLRS.U);
+          function upLeft(clr){
 
             rotate(-PI/3);
 
-              drawHexagon( f*cos(     0)*w*2, f*sin(     0)*w*2, w);
-              drawHexagon( f*cos(  PI/3)*w*2, f*sin(  PI/3)*w*2, w);
-              drawHexagon( f*cos(2*PI/3)*w*2, f*sin(2*PI/3)*w*2, w);
-              drawHexagon(-f*cos(     0)*w*2, f*sin(     0)*w*2, w);
+              uUp(clr);
 
           };
-          function downRight(){
-
-            fill(CLRS.U);
+          function downRight(clr){
 
             rotate(PI-PI/3);
 
-              drawHexagon( f*cos(     0)*w*2, f*sin(     0)*w*2, w);
-              drawHexagon( f*cos(  PI/3)*w*2, f*sin(  PI/3)*w*2, w);
-              drawHexagon( f*cos(2*PI/3)*w*2, f*sin(2*PI/3)*w*2, w);
-              drawHexagon(-f*cos(     0)*w*2, f*sin(     0)*w*2, w);
+              uUp(clr);
 
           };
-          function downLeft(){
-
-            fill(CLRS.U);
+          function downLeft(clr){
 
             rotate(-2*PI/3);
 
-              drawHexagon( f*cos(     0)*w*2, f*sin(     0)*w*2, w);
-              drawHexagon( f*cos(  PI/3)*w*2, f*sin(  PI/3)*w*2, w);
-              drawHexagon( f*cos(2*PI/3)*w*2, f*sin(2*PI/3)*w*2, w);
-              drawHexagon(-f*cos(     0)*w*2, f*sin(     0)*w*2, w);
+              uUp(clr);
 
           };
 
-          function zRight(){
+          function sevenRight(clr){
 
-            fill(CLRS.Z);
+            fill(clr);
 
-            rotate(PI/3);
-
-              if(app.dragging && p.hit){
-                drawHexagon( 0,      w+0.75*w, w);
-                drawHexagon( f*1*w,  0,        w);
-                drawHexagon(-f*1*w,  0,        w);
-                drawHexagon( 0,     -w-0.75*w, w);
-              }
-              else{
-                drawHexagon( 0,      w*1.33, w);
-                drawHexagon( f*1*w,  0,      w);
-                drawHexagon(-f*1*w,  0,      w);
-                drawHexagon( 0,     -w*1.33, w);
-              }
+              drawHexagon(                0,                 0, w);
+              drawHexagon(f*cos(-2*PI/3)*w2, f*sin(-2*PI/3)*w2, w);
+              drawHexagon(f*cos(   PI/3)*w2, f*sin(   PI/3)*w2, w);
+              drawHexagon(f*cos(  -PI/3)*w2, f*sin(  -PI/3)*w2, w);
 
           };
-          function zLeft(){
+          function sevenLeft(clr){
 
-            fill(CLRS.Z);
-
-            rotate(-PI/3);
-
-              if(app.dragging && p.hit){
-                drawHexagon( 0,      w+0.75*w, w);
-                drawHexagon( f*1*w,  0,        w);
-                drawHexagon(-f*1*w,  0,        w);
-                drawHexagon( 0,     -w-0.75*w, w);
-              }
-              else{
-                drawHexagon( 0,      w*1.33, w);
-                drawHexagon( f*1*w,  0,      w);
-                drawHexagon(-f*1*w,  0,      w);
-                drawHexagon( 0,     -w*1.33, w);
-              }
-
-          };
-
-          function sevenRight(){
-
-            fill(CLRS.SEVEN);
-
-              drawHexagon(f*cos(      0),     f*sin(      0), w);
-              drawHexagon(f*cos(-2*PI/3)*w*2, f*sin(-2*PI/3)*w*2, w);
-              drawHexagon(f*cos(   PI/3)*w*2, f*sin(   PI/3)*w*2, w);
-              drawHexagon(f*cos(  -PI/3)*w*2, f*sin(  -PI/3)*w*2, w);
-
-          };
-          function sevenLeft(){
-
-            fill(CLRS.SEVEN);
+            fill(clr);
 
             scale(-1,1);
 
-              drawHexagon(f*cos(      0),     f*sin(      0), w);
-              drawHexagon(f*cos(-2*PI/3)*w*2, f*sin(-2*PI/3)*w*2, w);
-              drawHexagon(f*cos(   PI/3)*w*2, f*sin(   PI/3)*w*2, w);
-              drawHexagon(f*cos(  -PI/3)*w*2, f*sin(  -PI/3)*w*2, w);
+              sevenRight(clr);
 
           };
-          function angleRight(){
+          function angleRight(clr){
 
-            fill(CLRS.SEVEN);
+            fill(clr);
 
             scale(1,-1);
 
-              drawHexagon(f*cos(      0),     f*sin(      0), w);
-              drawHexagon(f*cos(-2*PI/3)*w*2, f*sin(-2*PI/3)*w*2, w);
-              drawHexagon(f*cos(   PI/3)*w*2, f*sin(   PI/3)*w*2, w);
-              drawHexagon(f*cos(  -PI/3)*w*2, f*sin(  -PI/3)*w*2, w);
+              sevenRight(clr);
 
           };
-          function angleLeft(){
+          function angleLeft(clr){
 
-            fill(CLRS.SEVEN);
+            fill(clr);
 
             scale(-1,-1);
 
-              drawHexagon(f*cos(      0),     f*sin(      0), w);
-              drawHexagon(f*cos(-2*PI/3)*w*2, f*sin(-2*PI/3)*w*2, w);
-              drawHexagon(f*cos(   PI/3)*w*2, f*sin(   PI/3)*w*2, w);
-              drawHexagon(f*cos(  -PI/3)*w*2, f*sin(  -PI/3)*w*2, w);
+              sevenRight(clr);
 
           };
 
-          function nodeUpRight(){
+          function nodeDownLeft(clr){
 
-            fill(CLRS.NODE);
+            fill(clr);
 
-            scale(-1,-1);
-
-              drawHexagon(f*cos(     0),     f*sin(     0),     w);
-              drawHexagon(f*cos(     0)*w*2, f*sin(     0)*w*2, w);
-              drawHexagon(f*cos(    PI)*w*2, f*sin(    PI)*w*2, w);
-              drawHexagon(f*cos(2*PI/3)*w*2, f*sin(2*PI/3)*w*2, w);
+              drawHexagon(               0,                0, w);
+              drawHexagon(f*cos(     0)*w2, f*sin(     0)*w2, w);
+              drawHexagon(f*cos(    PI)*w2, f*sin(    PI)*w2, w);
+              drawHexagon(f*cos(2*PI/3)*w2, f*sin(2*PI/3)*w2, w);
 
           };
-          function nodeUpLeft(){
+          function nodeDownRight(clr){
 
-            fill(CLRS.NODE);
+            scale(-1,1);
 
-            scale(-1,-1);
-
-              drawHexagon(f*cos(   0),     f*sin(   0),     w);
-              drawHexagon(f*cos(   0)*w*2, f*sin(   0)*w*2, w);
-              drawHexagon(f*cos(  PI)*w*2, f*sin(  PI)*w*2, w);
-              drawHexagon(f*cos(PI/3)*w*2, f*sin(PI/3)*w*2, w);
+              nodeDownLeft(clr);
 
           };
-          function nodeDownRight(){
+          function nodeUpLeft(clr){
 
-            fill(CLRS.NODE);
+            scale(1,-1);
 
-            scale(-1,-1);
-
-              drawHexagon(f*cos(      0),     f*sin(      0),     w);
-              drawHexagon(f*cos(      0)*w*2, f*sin(      0)*w*2, w);
-              drawHexagon(f*cos(     PI)*w*2, f*sin(     PI)*w*2, w);
-              drawHexagon(f*cos(-2*PI/3)*w*2, f*sin(-2*PI/3)*w*2, w);
+              nodeDownLeft(clr);
 
           };
-          function nodeDownLeft(){
-
-            fill(CLRS.NODE);
+          function nodeUpRight(clr){
 
             scale(-1,-1);
 
-              drawHexagon(f*cos(    0),     f*sin(    0),     w);
-              drawHexagon(f*cos(    0)*w*2, f*sin(    0)*w*2, w);
-              drawHexagon(f*cos(   PI)*w*2, f*sin(   PI)*w*2, w);
-              drawHexagon(f*cos(-PI/3)*w*2, f*sin(-PI/3)*w*2, w);
+              nodeDownLeft(clr);
 
           };
 
-          function vUpRight(){
+          function vDownLeft(clr){
 
-            fill(CLRS.V);
+            fill(clr);
 
-            scale(-1,-1);
-
-              drawHexagon(f*cos(     0),     f*sin(     0),     w);
-              drawHexagon(f*cos(     0)*w*2, f*sin(     0)*w*2, w);
-              drawHexagon(f*cos( -PI/3)*w*2, f*sin( -PI/3)*w*2, w);
-              drawHexagon(f*cos(2*PI/3)*w*2, f*sin(2*PI/3)*w*2, w);
+              drawHexagon(               0,                0, w);
+              drawHexagon(f*cos(     0)*w2, f*sin(     0)*w2, w);
+              drawHexagon(f*cos( -PI/3)*w2, f*sin( -PI/3)*w2, w);
+              drawHexagon(f*cos(2*PI/3)*w2, f*sin(2*PI/3)*w2, w);
 
           };
-          function vUpLeft(){
+          function vDownRight(clr){
 
-            fill(CLRS.V);
+            scale(-1,1);
 
-            scale(-1,-1);
-
-              drawHexagon(f*cos(      0),     f*sin(      0),     w);
-              drawHexagon(f*cos(     PI)*w*2, f*sin(     PI)*w*2, w);
-              drawHexagon(f*cos(-2*PI/3)*w*2, f*sin(-2*PI/3)*w*2, w);
-              drawHexagon(f*cos(   PI/3)*w*2, f*sin(   PI/3)*w*2, w);
+              vDownLeft(clr);
 
           };
-          function vDownLeft(){
+          function vUpLeft(clr){
 
-            fill(CLRS.V);
+            scale(1,-1);
 
-            scale(-1,-1);
-
-              drawHexagon(f*cos(     0),     f*sin(     0),     w);
-              drawHexagon(f*cos(    PI)*w*2, f*sin(    PI)*w*2, w);
-              drawHexagon(f*cos(2*PI/3)*w*2, f*sin(2*PI/3)*w*2, w);
-              drawHexagon(f*cos( -PI/3)*w*2, f*sin( -PI/3)*w*2, w);
+              vDownLeft(clr);
 
           };
-          function vDownRight(){
-
-            fill(CLRS.V);
+          function vUpRight(clr){
 
             scale(-1,-1);
 
-              drawHexagon(f*cos(      0),     f*sin(      0),     w);
-              drawHexagon(f*cos(      0)*w*2, f*sin(      0)*w*2, w);
-              drawHexagon(f*cos(   PI/3)*w*2, f*sin(   PI/3)*w*2, w);
-              drawHexagon(f*cos(-2*PI/3)*w*2, f*sin(-2*PI/3)*w*2, w);
+              vDownLeft(clr);
 
           };
 
@@ -2363,47 +2267,44 @@ println('Angles Reset');
 
             translate(p.x,p.y);
 
-            switch(p.style){
+              switch(p.style){
 
-              case SHAPES.SINGLE:         single();         break;
+                case SHAPES.SINGLE:         single(CLRS.SINGLE);      break;
 
-              case SHAPES.ROW:            row();            break;
-              case SHAPES.ROW_FORWARD:    forward();        break;
-              case SHAPES.ROW_BACK:       back();           break;
+                case SHAPES.ROW:            row(CLRS.LINE);           break;
+                case SHAPES.ROW_FORWARD:    forward(CLRS.LINE);       break;
+                case SHAPES.ROW_BACK:       back(CLRS.LINE);          break;
 
-              case SHAPES.DIAMOND:        diamond();        break;
+                case SHAPES.DIAMOND:        diamond(CLRS.DIAMOND);    break;
+                case SHAPES.ZRIGHT:         zRight(CLRS.Z);           break;
+                case SHAPES.ZLEFT:          zLeft(CLRS.Z);            break;
+                
+                case SHAPES.UUP:            uUp(CLRS.U);              break;
+                case SHAPES.UDOWN:          uDown(CLRS.U);            break;
 
-              case SHAPES.UUP:            uUp();            break;
-              case SHAPES.UDOWN:          uDown();          break;
+                case SHAPES.UPRIGHT:        upRight(CLRS.U);          break;
+                case SHAPES.UPLEFT:         upLeft(CLRS.U);           break;
+                case SHAPES.DOWNRIGHT:      downRight(CLRS.U);        break;
+                case SHAPES.DOWNLEFT:       downLeft(CLRS.U);         break;
 
-              case SHAPES.UPRIGHT:        upRight();        break;
-              case SHAPES.UPLEFT:         upLeft();         break;
+                case SHAPES.SEVENRIGHT:     sevenRight(CLRS.SEVEN);   break;
+                case SHAPES.SEVENLEFT:      sevenLeft(CLRS.SEVEN);    break;
+                case SHAPES.ANGLERIGHT:     angleRight(CLRS.SEVEN);   break;
+                case SHAPES.ANGLELEFT:      angleLeft(CLRS.SEVEN);    break;
 
-              case SHAPES.DOWNRIGHT:      downRight();      break;
-              case SHAPES.DOWNLEFT:       downLeft();       break;
+                case SHAPES.NODEDOWNLEFT:   nodeDownLeft(CLRS.NODE);  break;
+                case SHAPES.NODEDOWNRIGHT:  nodeDownRight(CLRS.NODE); break;
+                case SHAPES.NODEUPLEFT:     nodeUpLeft(CLRS.NODE);    break;
+                case SHAPES.NODEUPRIGHT:    nodeUpRight(CLRS.NODE);   break;
 
-              case SHAPES.ZRIGHT:         zRight();         break;
-              case SHAPES.ZLEFT:          zLeft();          break;
+                case SHAPES.VDOWNLEFT:      vDownLeft(CLRS.V);        break;
+                case SHAPES.VDOWNRIGHT:     vDownRight(CLRS.V);       break;
+                case SHAPES.VUPLEFT:        vUpLeft(CLRS.V);          break;
+                case SHAPES.VUPRIGHT:       vUpRight(CLRS.V);         break;
 
-              case SHAPES.SEVENRIGHT:     sevenRight();     break;
-              case SHAPES.SEVENLEFT:      sevenLeft();      break;
+                default:                                              break;
 
-              case SHAPES.ANGLERIGHT:     angleRight();     break;
-              case SHAPES.ANGLELEFT:      angleLeft();      break;
-
-              case SHAPES.NODEUPRIGHT:    nodeUpRight();    break;
-              case SHAPES.NODEUPLEFT:     nodeUpLeft();     break;
-              case SHAPES.NODEDOWNRIGHT:  nodeDownRight();  break;
-              case SHAPES.NODEDOWNLEFT:   nodeDownLeft();   break;
-
-              case SHAPES.VUPRIGHT:       vUpRight();       break;
-              case SHAPES.VUPLEFT:        vUpLeft();        break;
-              case SHAPES.VDOWNRIGHT:     vDownRight();     break;
-              case SHAPES.VDOWNLEFT:      vDownLeft();      break;
-
-              default: break;
-
-            }
+              }
 
           popMatrix();
 
@@ -2439,7 +2340,11 @@ println('Angles Reset');
       shap.prototype.dragged=function(x,y){
 
         if(this.hit){ this.x=mouseX;
-                      this.y=mouseY;  }
+                      this.y=mouseY;  
+
+          app.activeShape=this;
+
+        }
         else        { this.hit=false; }
 
       };
@@ -2506,24 +2411,10 @@ println('Angles Reset');
           // stroke(getColor(p.color, 40));
           noStroke();
 
-          fill(getColor(color(61), 80));
+          fill(getColor(color(61), 50));
 
-          if(p.active){
-
-            if(app.left &&
-               p.style!==GLYPHS.RESET){ p.offset=1; }
-
-            // strokeWeight(1.5);
-            // cursor(p.cursor);
-
-          };
-
-          // stroke(getColor(p.color,75));
-
-          if(p.hit &&
-             app.activeShape===SHAPES.SINGLE &&
-             p.parent.locked){
-               fill(getColor(color(61),100));
+          if(p.hit){
+               fill(getColor(app.activeShape.color,50));
           }
 
           /** Hexagon */
@@ -2537,28 +2428,6 @@ println('Angles Reset');
             endShape(CLOSE);
 
         };
-/*         function caption(){
-
-          fill(getColor(CLRS.WHITE,50));
-
-          // if(p.parent.hit       ){ fill(getColor(p.color, 75)); }
-          if(p.active || p.on){ fill(getColor(CLRS.WHITE,75)); }
-
-          textFont(p.font);
-          textAlign(CENTER,CENTER);
-          textFont(p.font);
-          textSize(20);
-
-          pushMatrix();
-
-            scale(1,-1);
-
-              text(p.text, p.offset, -p.offset);
-
-          popMatrix();
-
-        }; */
-
         pushMatrix();
 
           translate(this.x, this.y);
@@ -2655,7 +2524,7 @@ println('Angles Reset');
       app.controls.push(rt);
 
       /* hexGarden           */
-      rt.controls.push(new hexBoard(600, rt, 250, height/2, 400, 400,
+      rt.controls.push(new hexBoard(600, rt, 300, height/2, 400, 400,
         {retrieve:  getDiameter,
          font:      'sans-serif',
          levels:    app.rows,
@@ -2669,80 +2538,81 @@ println('Angles Reset');
       // rt.controls.push(new shap(400, rt,  50, 530, HEX_SIZE, HEX_SIZE,
         // {style: SHAPES.SINGLE}));
 
-      rt.controls.push(new shap(400, rt, 150, 530, HEX_SIZE, HEX_SIZE,
-        {style: SHAPES.ROW}));
+      // rt.controls.push(new shap(400, rt, 150, 530, HEX_SIZE, HEX_SIZE,
+        // {style: SHAPES.ROW}));
 
-      rt.controls.push(new shap(400, rt, 250, 530, HEX_SIZE, HEX_SIZE,
-        {style: SHAPES.ROW_FORWARD}));
+      // rt.controls.push(new shap(400, rt, 250, 530, HEX_SIZE, HEX_SIZE,
+        // {style: SHAPES.ROW_FORWARD}));
 
-      rt.controls.push(new shap(400, rt, 350, 530, HEX_SIZE, HEX_SIZE,
-        {style: SHAPES.ROW_BACK}));
+      // rt.controls.push(new shap(400, rt, 350, 530, HEX_SIZE, HEX_SIZE,
+        // {style: SHAPES.ROW_BACK}));
 
-      rt.controls.push(new shap(400, rt, 450, 530, HEX_SIZE, HEX_SIZE,
-        {style: SHAPES.DIAMOND}));
+      // rt.controls.push(new shap(400, rt, 450, 530, HEX_SIZE, HEX_SIZE,
+        // {style: SHAPES.DIAMOND}));
 
-      rt.controls.push(new shap(400, rt, 500, 100, HEX_SIZE, HEX_SIZE,
-        {style: SHAPES.UUP}));
+      // rt.controls.push(new shap(400, rt, 500, 100, HEX_SIZE, HEX_SIZE,
+        // {style: SHAPES.UUP}));
 
-      rt.controls.push(new shap(400, rt, 500, 200, HEX_SIZE, HEX_SIZE,
-        {style: SHAPES.UDOWN}));
+      // rt.controls.push(new shap(400, rt, 500, 200, HEX_SIZE, HEX_SIZE,
+        // {style: SHAPES.UDOWN}));
 
-      rt.controls.push(new shap(400, rt, 500, 300, HEX_SIZE, HEX_SIZE,
-        {style: SHAPES.UPRIGHT}));
+      // rt.controls.push(new shap(400, rt, 500, 300, HEX_SIZE, HEX_SIZE,
+        // {style: SHAPES.UPRIGHT}));
 
-      rt.controls.push(new shap(400, rt, 500, 400, HEX_SIZE, HEX_SIZE,
-        {style: SHAPES.UPLEFT}));
+      // rt.controls.push(new shap(400, rt, 500, 400, HEX_SIZE, HEX_SIZE,
+        // {style: SHAPES.UPLEFT}));
 
-      rt.controls.push(new shap(400, rt, 600, 300, HEX_SIZE, HEX_SIZE,
-        {style: SHAPES.DOWNRIGHT}));
+      // rt.controls.push(new shap(400, rt, 600, 300, HEX_SIZE, HEX_SIZE,
+        // {style: SHAPES.DOWNRIGHT}));
 
-      rt.controls.push(new shap(400, rt, 600, 400, HEX_SIZE, HEX_SIZE,
-        {style: SHAPES.DOWNLEFT}));
+      // rt.controls.push(new shap(400, rt, 600, 400, HEX_SIZE, HEX_SIZE,
+        // {style: SHAPES.DOWNLEFT}));
 
-      rt.controls.push(new shap(400, rt, 600, 100, HEX_SIZE, HEX_SIZE,
-        {style: SHAPES.ZRIGHT}));
+      // rt.controls.push(new shap(400, rt, 600, 100, HEX_SIZE, HEX_SIZE,
+        // {style: SHAPES.ZRIGHT}));
 
-      rt.controls.push(new shap(400, rt, 600, 200, HEX_SIZE, HEX_SIZE,
-        {style: SHAPES.ZLEFT}));
+      // rt.controls.push(new shap(400, rt, 600, 200, HEX_SIZE, HEX_SIZE,
+        // {style: SHAPES.ZLEFT}));
 
-      rt.controls.push(new shap(400, rt, 700, 100, HEX_SIZE, HEX_SIZE,
-        {style: SHAPES.SEVENRIGHT}));
+      // rt.controls.push(new shap(400, rt, 700, 100, HEX_SIZE, HEX_SIZE,
+        // {style: SHAPES.SEVENRIGHT}));
 
-      rt.controls.push(new shap(400, rt, 700, 200, HEX_SIZE, HEX_SIZE,
-        {style: SHAPES.SEVENLEFT}));
+      // rt.controls.push(new shap(400, rt, 700, 200, HEX_SIZE, HEX_SIZE,
+        // {style: SHAPES.SEVENLEFT}));
 
-      rt.controls.push(new shap(400, rt, 700, 300, HEX_SIZE, HEX_SIZE,
-        {style: SHAPES.ANGLERIGHT}));
+      // rt.controls.push(new shap(400, rt, 700, 300, HEX_SIZE, HEX_SIZE,
+        // {style: SHAPES.ANGLERIGHT}));
 
-      rt.controls.push(new shap(400, rt, 700, 400, HEX_SIZE, HEX_SIZE,
-        {style: SHAPES.ANGLELEFT}));
+      // rt.controls.push(new shap(400, rt, 700, 400, HEX_SIZE, HEX_SIZE,
+        // {style: SHAPES.ANGLELEFT}));
 
-      rt.controls.push(new shap(400, rt, 300, 100, HEX_SIZE, HEX_SIZE,
-        {style: SHAPES.NODEUPRIGHT}));
+      // rt.controls.push(new shap(400, rt, 300, 100, HEX_SIZE, HEX_SIZE,
+        // {style: SHAPES.NODEDOWNLEFT}));
 
-      rt.controls.push(new shap(400, rt, 300, 200, HEX_SIZE, HEX_SIZE,
-        {style: SHAPES.NODEUPLEFT}));
+      // rt.controls.push(new shap(400, rt, 300, 200, HEX_SIZE, HEX_SIZE,
+        // {style: SHAPES.NODEDOWNRIGHT}));
 
-      rt.controls.push(new shap(400, rt, 300, 300, HEX_SIZE, HEX_SIZE,
-        {style: SHAPES.NODEDOWNRIGHT}));
+      // rt.controls.push(new shap(400, rt, 300, 300, HEX_SIZE, HEX_SIZE,
+        // {style: SHAPES.NODEUPLEFT}));
+        
+      // rt.controls.push(new shap(400, rt, 300, 400, HEX_SIZE, HEX_SIZE,
+        // {style: SHAPES.NODEUPRIGHT}));
 
-      rt.controls.push(new shap(400, rt, 300, 400, HEX_SIZE, HEX_SIZE,
-        {style: SHAPES.NODEDOWNLEFT}));
+      // rt.controls.push(new shap(400, rt, 800, 100, HEX_SIZE, HEX_SIZE,
+        // {style: SHAPES.VDOWNLEFT}));
 
-      rt.controls.push(new shap(400, rt, 800, 100, HEX_SIZE, HEX_SIZE,
-        {style: SHAPES.VUPRIGHT}));
+      // rt.controls.push(new shap(400, rt, 800, 200, HEX_SIZE, HEX_SIZE,
+        // {style: SHAPES.VDOWNRIGHT}));
 
-      rt.controls.push(new shap(400, rt, 800, 200, HEX_SIZE, HEX_SIZE,
-        {style: SHAPES.VUPLEFT}));
+      // rt.controls.push(new shap(400, rt, 800, 300, HEX_SIZE, HEX_SIZE,
+        // {style: SHAPES.VUPLEFT}));
 
-      rt.controls.push(new shap(400, rt, 800, 300, HEX_SIZE, HEX_SIZE,
-        {style: SHAPES.VDOWNRIGHT}));
+      // rt.controls.push(new shap(400, rt, 800, 400, HEX_SIZE, HEX_SIZE,
+        // {style: SHAPES.VUPRIGHT}));
 
-      rt.controls.push(new shap(400, rt, 50, 400, HEX_SIZE, HEX_SIZE,
-        {style: SHAPES.VDOWNLEFT}));
-
-      rt.controls.push(new shap(400, rt,  50, 530, HEX_SIZE, HEX_SIZE,
-        {style: SHAPES.SINGLE}));
+      rt.controls.push(new shap('S'+0, rt, 50, 530, HEX_SIZE, HEX_SIZE,
+        {style: SHAPES.SINGLE,
+         color: CLRS.SINGLE}));
 
       /* Hexagon Navigation Buttons ----------------------------------- */
       {
@@ -3019,8 +2889,10 @@ println('Angles Reset');
     // text(app.hexBoard.activeCell.id,100,500);
     fill(CLRS.YELLOW);
     text(app.dragging, 20,100);
-    text(pi, 20,150);
+    
 
+    text(app.activeShape.id, 20,150);
+    
   };
 
   /* Keyboard Events =========================================================== */
