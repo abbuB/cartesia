@@ -114,8 +114,9 @@ var diagrams = function(processingInstance){
     /* Hextris Specific ------------------ */
 
     this.hexBoard     = this.controls[1];
-
-    this.activeShape  = SHAPES.SINGLE;
+    this.shapes       = [];
+    
+    this.activeShape  = null;
 
     this.currentCell;           //  Global Reference to the currently selected cell in the pyramid
 
@@ -394,9 +395,9 @@ println('Angles Reset');
     /* root                 */
     {
       /* Identical to a container control except is doesn't have a parent */
-      function root(id, parent, x, y, w, h, props){
+      function root(id, x, y, w, h, props){
 
-        control.call(this, id, parent, x, y, w, h);
+        control.call(this, id, null, x, y, w, h);
 
         this.text   = props.text;
 
@@ -421,13 +422,10 @@ println('Angles Reset');
             // noStroke();
             fill(this.icolor);
 
-            if(this.hit    ){ fill(this.acolor);   }
-            if(app.dragging){ cursor(HAND);        }
-            else            { cursor(this.cursor); }
-
-            // else if(this.active){ cursor(this.cursor); }
-            // if(this.border){ strokeWeight(10);
-                             // stroke(CLRS.BLUE);   }
+            if(this.hit              ){ fill(this.acolor);   }
+            if(app.dragging &&
+               app.activeShape!==null){ cursor(HAND);        }
+            else                      { cursor(this.cursor); }
 
               rect(0, 0, this.w, this.h);
 
@@ -802,33 +800,40 @@ println('Angles Reset');
 
             text('Mouse Coordinates \n\n\n\n' +
                  'Mouse Buttons     \n\n\n\n\n' +
-                 'Controls          \n\n\n\n\n' +
                  'Keys              \n\n\n\n\n' +
+                 'Controls          \n\n\n\n\n' +
                  'App               \n\n\n\n',
                  col1, row0+15);
 
           /* app.focus is required to be done after control update in main draw sub */
 
+          var activeShape;
+          
+          if(app.activeShape!==null){
+            activeShape=app.activeShape.id;
+          }
+          else{
+            activeShape='null';
+          }
+
           fill(getColor(CLRS.WHITE,75));
 
-            text('            \n' +
-                 'x:          \n' +
-                 'y:          \n\n\n' +
-                 'Left:       \n' +
-                 'Right:      \n' +
-                 'Center:     \n\n\n' +
-                 'Focus:      \n' +
-                 'Focused:    \n' +
-                 'Telemetry:  \n\n\n' +
-                 'Alt:        \n' +
-                 'Control:    \n' +
-                 'Shift:      \n\n\n' +
-                 'Choose:     \n' +
-                 'Sigma:      \n' +
-                 'Sierpinski: \n' +
-                 'Info:       \n\n' +
-                 'Cursor:     \n' +
-                 'Frame Rate: \n',
+            text('              \n' +
+                 'x:            \n' +
+                 'y:            \n\n\n' +
+                 'Left:         \n' +
+                 'Right:        \n' +
+                 'Center:       \n\n\n' +
+                 'Alt:          \n' +
+                 'Control:      \n' +
+                 'Shift:        \n\n\n' +
+                 'Focus:        \n' +
+                 'Focused:      \n' +
+                 'Telemetry:    \n\n\n' +
+                 'Active Shape: \n' +
+                 'Dragging:     \n\n' +
+                 'Info:         \n\n' +
+                 'Frame Rate:   \n',
                  col1, row0+15);
 
           fill(getColor(CLRS.YELLOW,75));
@@ -839,17 +844,15 @@ println('Angles Reset');
                  app.left                   + '\n' +
                  app.right                  + '\n' +
                  app.center                 + '\n\n\n' +
-                 app.focus                  + '\n' +
-                 focused                    + '\n' +
-                 app.telemetry              + '\n\n\n' +
                  app.keys[KEYCODES.ALT]     + '\n' +
                  app.keys[KEYCODES.CONTROL] + '\n' +
                  app.keys[KEYCODES.SHIFT]   + '\n\n\n' +
-                 app.choose                 + '\n' +
-                 app.sigma                  + '\n' +
-                 app.sierpinski             + '\n' +
+                 app.focus                  + '\n' +
+                 focused                    + '\n' +
+                 app.telemetry              + '\n\n\n' +
+                 activeShape                + '\n' +
+                 app.dragging               + '\n\n' +
                  app.info                   + '\n\n' +
-                 app.cursor                 + '\n' +
                  nf(global,0,2)             + '\n',
                  col2, row0+15);
 
@@ -931,18 +934,14 @@ println('Angles Reset');
 
         control.call(this, id, parent, x, y, w, h);
 
-        this.color      = props.color;
-        this.cursor     = props.cursor;
-        this.font       = props.font;
-        this.border     = true;
         // this.count      = 0;
 
         // this.angle      = 0;
 
         this.activeCell = 0;
-        this.locked     = false;
+        // this.locked     = false;
 
-        this.retrieve=props.retrieve;
+        this.retrieve   = props.retrieve;
 
         this.reset();
 
@@ -1040,22 +1039,12 @@ println('Angles Reset');
           translate(this.x, this.y);
           rotate(this.angle);
 
-            // noStroke();
-            
-
             if(app.activeShape!==null){
               fill(app.activeShape.color);
             }
             else{
               fill(getColor(this.color, 50));
             }
-            
-            // if(this.active){ cursor(this.cursor); }
-            // if(this.locked){ cursor(HAND);        }
-            // if(this.border){ strokeWeight(1);
-                             // stroke(getColor(this.color, 100)); }
-
-              // ellipse(0, 0, this.w, this.w);
 
             for(var r in this.controls){
               for(var c in this.controls[r]){
@@ -1065,11 +1054,6 @@ println('Angles Reset');
               }
             }
 
-            fill(CLRS.BLUE);
-            noStroke();
-
-            // ellipse(0, 0, 5, 5);
-
             // matchShape();
 
         popMatrix();
@@ -1078,39 +1062,41 @@ println('Angles Reset');
       hexBoard.prototype.moved    = function(x,y){
       /* Overridden because of the nested controls */
 
-        if(this.parent.hit){
+        // if(this.parent.hit){
 
-          if(dist(mouseX,mouseY,this.x,this.y)<this.w/2){
+          // if(dist(mouseX,mouseY,this.x,this.y)<this.w/2){
 
-            this.hit=true;
-            app.focus=this.id;
+            // this.hit=true;
+            // app.focus=this.id;
 
-          }
-          else{
+          // }
+          // else{
 
-            this.hit=false;
+            // this.hit=false;
 
-          }
+          // }
 
-        }
+        // }
 
       };
       hexBoard.prototype.dragged  = function(){
 
-        if(this.active){ this.locked=true; }
+        if(app.activeShape!==null){
 
-        for(var r in this.controls){
-          for(var c in this.controls[r]){
+          for(var r in this.controls){
+            for(var c in this.controls[r]){
 
-            this.controls[r][c].moved(this.x,this.y);
+              this.controls[r][c].moved(this.x,this.y);
 
+            }
           }
+
         }
 
       };
       hexBoard.prototype.released = function(){
 
-        this.locked=false;
+        // this.locked=false;
 
       };
       hexBoard.prototype.clicked  = function(){};
@@ -2029,11 +2015,6 @@ println('Angles Reset');
                        y+sin(PI/6+pt*PI/3)*(r-3));
               }
 
-              // for(var pt=0; pt<6; pt++){
-                // this.dpoints.push(new pnt( cos(radians(30+pt*60))*(w2-3),
-                                           // sin(radians(30+pt*60))*(w2-3) ));
-              // }
-
             endShape(CLOSE);
 
           };
@@ -2348,6 +2329,11 @@ println('Angles Reset');
         else        { this.hit=false; }
 
       };
+      shap.prototype.released=function(x,y){
+
+        app.activeShape=null;
+
+      };
 
     }
 
@@ -2405,16 +2391,15 @@ println('Angles Reset');
 
         function border(){
 
-          // Border
-          strokeWeight(0.5);
-
-          // stroke(getColor(p.color, 40));
           noStroke();
-
-          fill(getColor(color(61), 50));
+          fill(getColor(color(61), 100));
 
           if(p.hit){
-               fill(getColor(app.activeShape.color,50));
+
+            if(app.activeShape!==null){
+              fill(getColor(app.activeShape.color,50));
+            }
+
           }
 
           /** Hexagon */
@@ -2436,6 +2421,8 @@ println('Angles Reset');
             border();
 
             /** Circle */
+            // stroke(CLRS.BLACK);
+            // noFill();
             // var d=cos(PI/6)*this.w;
             // ellipse(0,0,d,d);
 
@@ -2445,7 +2432,7 @@ println('Angles Reset');
       hexCell.prototype.moved=function(x,y){
       /* Overridden because of the shap */
 
-        if(this.parent.hit){
+        // if(this.parent.hit){
 
           if(dist(mouseX, mouseY,
                   this.x+x,
@@ -2490,7 +2477,7 @@ println('Angles Reset');
 
           }
 
-        }
+        // }
 
       };
 
@@ -2513,17 +2500,17 @@ println('Angles Reset');
     /* LOAD CONTROLS */
 
       /* root control      */
-      var rt=new root(100, null, 0, 0, width-1, height-1,
+      var rt=new root(100, 0, 0, width-1, height-1,
         {text:      'root',
-         acolor:    getColor(color(33),80),
-         icolor:    getColor(color(33),85),
+         acolor:    getColor(color(33),85),
+         icolor:    getColor(color(33),80),
          font:      monoFont,
          cursor:    ARROW,
          border:    true});
 
       app.controls.push(rt);
 
-      /* hexGarden           */
+      /* hexBoard           */
       rt.controls.push(new hexBoard(600, rt, 300, height/2, 400, 400,
         {retrieve:  getDiameter,
          font:      'sans-serif',
@@ -2535,17 +2522,24 @@ println('Angles Reset');
       /** Requires a reference to access globally */
       app.hexGarden=rt.controls[0];
 
+      rt.controls.push(new shap('S'+0, rt, 50, 530, HEX_SIZE, HEX_SIZE,
+        {style: SHAPES.SINGLE,
+         color: CLRS.SINGLE}));
+
       // rt.controls.push(new shap(400, rt,  50, 530, HEX_SIZE, HEX_SIZE,
         // {style: SHAPES.SINGLE}));
 
-      // rt.controls.push(new shap(400, rt, 150, 530, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.ROW}));
+      rt.controls.push(new shap('S'+1, rt, 150, 530, HEX_SIZE, HEX_SIZE,
+        {style: SHAPES.ROW,
+         color: CLRS.LINE}));
 
-      // rt.controls.push(new shap(400, rt, 250, 530, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.ROW_FORWARD}));
+      rt.controls.push(new shap('S'+2, rt, 250, 530, HEX_SIZE, HEX_SIZE,
+        {style: SHAPES.ROW_FORWARD,
+         color: CLRS.LINE}));
 
-      // rt.controls.push(new shap(400, rt, 350, 530, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.ROW_BACK}));
+      rt.controls.push(new shap('S'+3, rt, 350, 530, HEX_SIZE, HEX_SIZE,
+        {style: SHAPES.ROW_BACK,
+         color: CLRS.LINE}));
 
       // rt.controls.push(new shap(400, rt, 450, 530, HEX_SIZE, HEX_SIZE,
         // {style: SHAPES.DIAMOND}));
@@ -2610,9 +2604,7 @@ println('Angles Reset');
       // rt.controls.push(new shap(400, rt, 800, 400, HEX_SIZE, HEX_SIZE,
         // {style: SHAPES.VUPRIGHT}));
 
-      rt.controls.push(new shap('S'+0, rt, 50, 530, HEX_SIZE, HEX_SIZE,
-        {style: SHAPES.SINGLE,
-         color: CLRS.SINGLE}));
+
 
       /* Hexagon Navigation Buttons ----------------------------------- */
       {
@@ -2886,13 +2878,6 @@ println('Angles Reset');
 
     global=this.__frameRate;
 
-    // text(app.hexBoard.activeCell.id,100,500);
-    fill(CLRS.YELLOW);
-    text(app.dragging, 20,100);
-    
-
-    text(app.activeShape.id, 20,150);
-    
   };
 
   /* Keyboard Events =========================================================== */
