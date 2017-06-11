@@ -108,8 +108,8 @@ var diagrams = function(processingInstance){
     this.controls     = [];     //  Collection of controls in the app
     this.keys         = [];     //  Array holding the value of all keycodes
 
-    this.info         = 0;  //  Is the info frame displayed
-    this.telemetry    = 1;  //  Is telemetry visible
+    this.info         = 0;      //  Is the info frame displayed
+    this.telemetry    = 1;      //  Is telemetry visible
 
     /* Hextris Specific ------------------ */
 
@@ -118,7 +118,7 @@ var diagrams = function(processingInstance){
     
     this.activeShape  = null;
 
-    this.currentCell;           //  Global Reference to the currently selected cell in the pyramid
+    // this.activeCell;           //  Global Reference to the currently selected cell in the garden
 
   };
 
@@ -256,8 +256,8 @@ var diagrams = function(processingInstance){
 
     function setCell()         {
 
-      app.currentCell=app.pyramid.controls[app.row][app.col];
-      app.currentCell.on=!app.currentCell.on;
+      // app.activeCell=app.pyramid.controls[app.row][app.col];
+      // app.activeCell.on=!app.activeCell.on;
 
     };
 
@@ -297,7 +297,7 @@ println('Angles Reset');
       app.row=(constrain)(app.row, 0, app.rows);
       // app.col=(constrain)(app.col, 0, app.pyramid.controls[app.row].length-1);
 
-      // app.currentCell=app.pyramid.controls[app.row][app.col];
+      // app.activeCell=app.pyramid.controls[app.row][app.col];
 
     };
 
@@ -938,7 +938,7 @@ println('Angles Reset');
 
         // this.angle      = 0;
 
-        this.activeCell = 0;
+        this.activeCell = null;
         // this.locked     = false;
 
         this.retrieve   = props.retrieve;
@@ -995,7 +995,7 @@ println('Angles Reset');
                  col:       col,
                  style:     GLYPHS.TEXT,
                  text:      n,
-                 color:     CLRS.WHITE,
+                 color:     getColor(color(61),100),
                  font:      monoFont,
                  cursor:    ARROW}));
 
@@ -1097,6 +1097,19 @@ println('Angles Reset');
       hexBoard.prototype.released = function(){
 
         // this.locked=false;
+
+
+      };
+      hexBoard.prototype.drop = function(){
+
+        if(this.activeCell.hit){
+
+          this.activeCell.color=app.activeShape.color;
+          this.activeCell=null;
+          
+          // remove activeShape
+
+        }
 
       };
       hexBoard.prototype.clicked  = function(){};
@@ -1618,7 +1631,7 @@ println('Angles Reset');
 
           app.path=this.path;
           app.cursor=this.ordinal;
-          app.currentCell=this;
+          app.activeCell=this;
 
           if(app.pyramid===this.parent){
             app.row=this.row;
@@ -2321,15 +2334,23 @@ println('Angles Reset');
       shap.prototype.dragged=function(x,y){
 
         if(this.hit){ this.x=mouseX;
-                      this.y=mouseY;  
+                      this.y=mouseY;
 
           app.activeShape=this;
 
         }
-        else        { this.hit=false; }
+        else{
+
+          this.hit=false;
+
+        }
 
       };
       shap.prototype.released=function(x,y){
+
+        if(app.hexBoard.activeCell!==null){
+          app.hexBoard.drop();
+        }
 
         app.activeShape=null;
 
@@ -2392,7 +2413,7 @@ println('Angles Reset');
         function border(){
 
           noStroke();
-          fill(getColor(color(61), 100));
+          fill(getColor(p.color, 100));
 
           if(p.hit){
 
@@ -2480,6 +2501,11 @@ println('Angles Reset');
         // }
 
       };
+      hexCell.prototype.released=function(x,y){
+
+        
+
+      };
 
     }
 
@@ -2526,9 +2552,6 @@ println('Angles Reset');
         {style: SHAPES.SINGLE,
          color: CLRS.SINGLE}));
 
-      // rt.controls.push(new shap(400, rt,  50, 530, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.SINGLE}));
-
       rt.controls.push(new shap('S'+1, rt, 150, 530, HEX_SIZE, HEX_SIZE,
         {style: SHAPES.ROW,
          color: CLRS.LINE}));
@@ -2537,72 +2560,93 @@ println('Angles Reset');
         {style: SHAPES.ROW_FORWARD,
          color: CLRS.LINE}));
 
-      rt.controls.push(new shap('S'+3, rt, 350, 530, HEX_SIZE, HEX_SIZE,
-        {style: SHAPES.ROW_BACK,
-         color: CLRS.LINE}));
+      // rt.controls.push(new shap('S'+3, rt, 350, 530, HEX_SIZE, HEX_SIZE,
+        // {style: SHAPES.ROW_BACK,
+         // color: CLRS.LINE}));
 
       // rt.controls.push(new shap(400, rt, 450, 530, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.DIAMOND}));
+        // {style: SHAPES.DIAMOND,
+         // color: CLRS.DIAMOND}));
 
       // rt.controls.push(new shap(400, rt, 500, 100, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.UUP}));
+        // {style: SHAPES.UUP,
+         // color: CLRS.U}));
 
       // rt.controls.push(new shap(400, rt, 500, 200, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.UDOWN}));
+        // {style: SHAPES.UDOWN,
+         // color: CLRS.U}));
 
       // rt.controls.push(new shap(400, rt, 500, 300, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.UPRIGHT}));
+        // {style: SHAPES.UPRIGHT,
+         // color: CLRS.U}));
 
       // rt.controls.push(new shap(400, rt, 500, 400, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.UPLEFT}));
+        // {style: SHAPES.UPLEFT,
+         // color: CLRS.U}));
 
       // rt.controls.push(new shap(400, rt, 600, 300, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.DOWNRIGHT}));
+        // {style: SHAPES.DOWNRIGHT,
+         // color: CLRS.U}));
 
       // rt.controls.push(new shap(400, rt, 600, 400, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.DOWNLEFT}));
+        // {style: SHAPES.DOWNLEFT,
+         // color: CLRS.U}));
 
       // rt.controls.push(new shap(400, rt, 600, 100, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.ZRIGHT}));
+        // {style: SHAPES.ZRIGHT,
+         // color: CLRS.Z}));
 
       // rt.controls.push(new shap(400, rt, 600, 200, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.ZLEFT}));
+        // {style: SHAPES.ZLEFT,
+         // color: CLRS.Z}));
 
       // rt.controls.push(new shap(400, rt, 700, 100, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.SEVENRIGHT}));
+        // {style: SHAPES.SEVENRIGHT,
+         // color: CLRS.SEVEN}));
 
       // rt.controls.push(new shap(400, rt, 700, 200, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.SEVENLEFT}));
+        // {style: SHAPES.SEVENLEFT,
+         // color: CLRS.SEVEN}));
 
       // rt.controls.push(new shap(400, rt, 700, 300, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.ANGLERIGHT}));
+        // {style: SHAPES.ANGLERIGHT,
+         // color: CLRS.SEVEN}));
 
       // rt.controls.push(new shap(400, rt, 700, 400, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.ANGLELEFT}));
+        // {style: SHAPES.ANGLELEFT,
+         // color: CLRS.SEVEN}));
 
       // rt.controls.push(new shap(400, rt, 300, 100, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.NODEDOWNLEFT}));
+        // {style: SHAPES.NODEDOWNLEFT,
+         // color: CLRS.NODE}));
 
       // rt.controls.push(new shap(400, rt, 300, 200, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.NODEDOWNRIGHT}));
+        // {style: SHAPES.NODEDOWNRIGHT,
+         // color: CLRS.NODE}));
 
       // rt.controls.push(new shap(400, rt, 300, 300, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.NODEUPLEFT}));
+        // {style: SHAPES.NODEUPLEFT,
+         // color: CLRS.NODE}));
         
       // rt.controls.push(new shap(400, rt, 300, 400, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.NODEUPRIGHT}));
+        // {style: SHAPES.NODEUPRIGHT,
+         // color: CLRS.NODE}));
 
       // rt.controls.push(new shap(400, rt, 800, 100, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.VDOWNLEFT}));
+        // {style: SHAPES.VDOWNLEFT,
+         // color: CLRS.V}));
 
       // rt.controls.push(new shap(400, rt, 800, 200, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.VDOWNRIGHT}));
+        // {style: SHAPES.VDOWNRIGHT,
+         // color: CLRS.V}));
 
       // rt.controls.push(new shap(400, rt, 800, 300, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.VUPLEFT}));
+        // {style: SHAPES.VUPLEFT,
+         // color: CLRS.V}));
 
-      // rt.controls.push(new shap(400, rt, 800, 400, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.VUPRIGHT}));
+      rt.controls.push(new shap(400, rt, 800, 400, HEX_SIZE, HEX_SIZE,
+        {style: SHAPES.VUPRIGHT,
+         color: CLRS.V}));
 
 
 
