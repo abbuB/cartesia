@@ -114,11 +114,6 @@ var diagrams = function(processingInstance){
     /* Hextris Specific ------------------ */
 
     this.hexBoard     = this.controls[1];
-    this.shapes       = [];
-    
-    this.activeShape  = null;
-
-    // this.activeCell;           //  Global Reference to the currently selected cell in the garden
 
   };
 
@@ -127,46 +122,44 @@ var diagrams = function(processingInstance){
   /* Constants ============================================================= */
   {
 
-      var CLRS_S={
+    var CLRS_S={
 
-        SINGLE:         0,
-        
-        LINE:           1,
-        LINE_FORWARD:   2,
-        LINE_BACK:      3,
-        
-        DIAMOND:        4,
-
-        UUP:            5,
-        UDOWN:          6,
-        
-        UPRIGHT:        7,
-        DOWNRIGHT:      8,
-        UPLEFT:         9,
-        DOWNLEFT:       10,
-        
-        ZRIGHT:         11,
-        ZLEFT:          12,
-        
-        SEVENRIGHT:     13,
-        SEVENLEFT:      14,
-        
-        ANGLERIGHT:     15,
-        ANGLELEFT:      16,
-        
-        NODEUPRIGHT:    17,
-        NODEUPLEFT:     18,
-        NODEDOWNRIGHT:  19,
-        NODEDOWNLEFT:   20,
-        
-        VUPRIGHT:       21,
-        VUPLEFT:        22,
-        VDOWNRIGHT:     23,
-        VDOWNLEFT:      24
-        
-      }
+      SINGLE:         0,
       
+      LINE:           1,
+      LINE_FORWARD:   2,
+      LINE_BACK:      3,
+      
+      DIAMOND:        4,
 
+      UUP:            5,
+      UDOWN:          6,
+      
+      UPRIGHT:        7,
+      DOWNRIGHT:      8,
+      UPLEFT:         9,
+      DOWNLEFT:       10,
+      
+      ZRIGHT:         11,
+      ZLEFT:          12,
+      
+      SEVENRIGHT:     13,
+      SEVENLEFT:      14,
+      
+      ANGLERIGHT:     15,
+      ANGLELEFT:      16,
+      
+      NODEUPRIGHT:    17,
+      NODEUPLEFT:     18,
+      NODEDOWNRIGHT:  19,
+      NODEDOWNLEFT:   20,
+      
+      VUPRIGHT:       21,
+      VUPLEFT:        22,
+      VDOWNRIGHT:     23,
+      VDOWNLEFT:      24
+      
+    }
 
     var CLRS={
 
@@ -513,7 +506,7 @@ println('Angles Reset');
 
             if(this.hit              ){ fill(this.acolor);   }
             if(app.dragging &&
-               app.activeShape!==null){ cursor(HAND);        }
+               app.hexBoard.activeShape!==null){ cursor(HAND);        }
             else                      { cursor(this.cursor); }
 
               rect(0, 0, this.w, this.h);
@@ -899,11 +892,11 @@ println('Angles Reset');
           var activeShape;
           var activeCell;
 
-          if(app.activeShape!==null)        { activeShape=app.activeShape.id;        }
-          else                              { activeShape='null';                    }
+          if(app.hexBoard.activeShape!==null){ activeShape=app.hexBoard.activeShape.id; }
+          else                               { activeShape='null';                      }
 
-          if(app.hexBoard.activeCell!==null){ activeCell=app.hexBoard.activeCell.id; }
-          else                              { activeCell='null';                     }
+          if(app.hexBoard.activeCell!==null) { activeCell=app.hexBoard.activeCell.id;   }
+          else                               { activeCell='null';                       }
 
           fill(getColor(CLRS.WHITE,75));
 
@@ -1026,13 +1019,17 @@ println('Angles Reset');
         control.call(this, id, parent, x, y, w, h);
 
         // this.count      = 0;
-
         // this.angle      = 0;
 
-        this.activeCell = null;
+        this.activeCell     = null;
+        this.activeShape    = null;
+        this.shapes         = [];
+        
+        this.position0=new pnt(150, 525);
+        this.position1=new pnt(300, 525);
+        this.position2=new pnt(450, 525);
+        
         // this.locked     = false;
-
-        this.retrieve   = props.retrieve;
 
         this.reset();
 
@@ -1103,7 +1100,130 @@ println('Angles Reset');
         };
 
         reset();
+        this.loadShapes();
 
+      };
+      hexBoard.prototype.loadShapes=function(){
+
+        var random0=floor(random(0,24));
+        var random1=floor(random(0,24));
+        var random2=floor(random(0,24));
+
+        this.shapes.push(new shap('S'+0, this, this.position0.x, this.position0.y, HEX_SIZE, HEX_SIZE,
+          {style: random0,
+           color: getShapeColor(random0)}));
+
+        this.shapes.push(new shap('S'+1, this, this.position1.x, this.position1.y, HEX_SIZE, HEX_SIZE,
+          {style: random1,
+           color: getShapeColor(random1)}));
+
+        this.shapes.push(new shap('S'+2, this, this.position2.x, this.position2.y, HEX_SIZE, HEX_SIZE,
+          {style: random2,
+           color: getShapeColor(random2)}));
+
+        {
+          // this.shapes.push(new shap('S'+0, this, 150, 520, HEX_SIZE, HEX_SIZE,
+            // {style: random0,
+             // color: getShapeColor(random0)}));
+
+          // this.shapes.push(new shap('S'+1, this, 300, 520, HEX_SIZE, HEX_SIZE,
+            // {style: random1,
+             // color: getShapeColor(random1)}));
+
+          // this.shapes.push(new shap('S'+2, this, 450, 520, HEX_SIZE, HEX_SIZE,
+            // {style: random2,
+             // color: getShapeColor(random2)}));
+
+          // this.shapes.push(new shap('S'+3, this, 350, 530, HEX_SIZE, HEX_SIZE,
+            // {style: SHAPES.ROW_BACK,
+             // color: CLRS.LINE}));
+
+          // this.shapes.push(new shap(400, this, 450, 530, HEX_SIZE, HEX_SIZE,
+            // {style: SHAPES.DIAMOND,
+             // color: CLRS.DIAMOND}));
+
+          // this.shapes.push(new shap(400, this, 500, 100, HEX_SIZE, HEX_SIZE,
+            // {style: SHAPES.UUP,
+             // color: CLRS.U}));
+
+          // this.shapes.push(new shap(400, this, 500, 200, HEX_SIZE, HEX_SIZE,
+            // {style: SHAPES.UDOWN,
+             // color: CLRS.U}));
+
+          // this.shapes.push(new shap(400, this, 500, 300, HEX_SIZE, HEX_SIZE,
+            // {style: SHAPES.UPRIGHT,
+             // color: CLRS.U}));
+
+          // this.shapes.push(new shap(400, this, 500, 400, HEX_SIZE, HEX_SIZE,
+            // {style: SHAPES.UPLEFT,
+             // color: CLRS.U}));
+
+          // this.shapes.push(new shap(400, this, 600, 300, HEX_SIZE, HEX_SIZE,
+            // {style: SHAPES.DOWNRIGHT,
+             // color: CLRS.U}));
+
+          // this.shapes.push(new shap(400, this, 600, 400, HEX_SIZE, HEX_SIZE,
+            // {style: SHAPES.DOWNLEFT,
+             // color: CLRS.U}));
+
+          // this.shapes.push(new shap(400, this, 600, 100, HEX_SIZE, HEX_SIZE,
+            // {style: SHAPES.ZRIGHT,
+             // color: CLRS.Z}));
+
+          // this.shapes.push(new shap(400, this, 600, 200, HEX_SIZE, HEX_SIZE,
+            // {style: SHAPES.ZLEFT,
+             // color: CLRS.Z}));
+
+          // this.shapes.push(new shap(400, this, 700, 100, HEX_SIZE, HEX_SIZE,
+            // {style: SHAPES.SEVENRIGHT,
+             // color: CLRS.SEVEN}));
+
+          // this.shapes.push(new shap(400, this, 700, 200, HEX_SIZE, HEX_SIZE,
+            // {style: SHAPES.SEVENLEFT,
+             // color: CLRS.SEVEN}));
+
+          // this.shapes.push(new shap(400, this, 700, 300, HEX_SIZE, HEX_SIZE,
+            // {style: SHAPES.ANGLERIGHT,
+             // color: CLRS.SEVEN}));
+
+          // this.shapes.push(new shap(400, this, 700, 400, HEX_SIZE, HEX_SIZE,
+            // {style: SHAPES.ANGLELEFT,
+             // color: CLRS.SEVEN}));
+
+          // this.shapes.push(new shap(400, this, 300, 100, HEX_SIZE, HEX_SIZE,
+            // {style: SHAPES.NODEDOWNLEFT,
+             // color: CLRS.NODE}));
+
+          // this.shapes.push(new shap(400, this, 300, 200, HEX_SIZE, HEX_SIZE,
+            // {style: SHAPES.NODEDOWNRIGHT,
+             // color: CLRS.NODE}));
+
+          // this.shapes.push(new shap(400, this, 300, 300, HEX_SIZE, HEX_SIZE,
+            // {style: SHAPES.NODEUPLEFT,
+             // color: CLRS.NODE}));
+            
+          // this.shapes.push(new shap(400, this, 300, 400, HEX_SIZE, HEX_SIZE,
+            // {style: SHAPES.NODEUPRIGHT,
+             // color: CLRS.NODE}));
+
+          // this.shapes.push(new shap(400, this, 800, 100, HEX_SIZE, HEX_SIZE,
+            // {style: SHAPES.VDOWNLEFT,
+             // color: CLRS.V}));
+
+          // this.shapes.push(new shap(400, this, 800, 200, HEX_SIZE, HEX_SIZE,
+            // {style: SHAPES.VDOWNRIGHT,
+             // color: CLRS.V}));
+
+          // this.shapes.push(new shap(400, this, 800, 300, HEX_SIZE, HEX_SIZE,
+            // {style: SHAPES.VUPLEFT,
+             // color: CLRS.V}));
+
+          // this.shapes.push(new shap(400, this, 800, 400, HEX_SIZE, HEX_SIZE,
+            // {style: SHAPES.VUPRIGHT,
+             // color: CLRS.V}));
+          
+        }
+           
       };
       hexBoard.prototype.draw=function(){
 
@@ -1130,8 +1250,8 @@ println('Angles Reset');
           translate(this.x, this.y);
           rotate(this.angle);
 
-            if(app.activeShape!==null){
-              fill(app.activeShape.color);
+            if(this.activeShape!==null){
+              fill(this.activeShape.color);
             }
             else{
               fill(getColor(this.color, 50));
@@ -1149,6 +1269,8 @@ println('Angles Reset');
 
         popMatrix();
 
+        forEach(this.shapes, 'draw');
+                    
       };
       hexBoard.prototype.moved    = function(x,y){
       /* Overridden because of the nested controls */
@@ -1169,16 +1291,22 @@ println('Angles Reset');
 
         // }
 
+        for(var s in this.shapes){
+          this.shapes[s].moved(0,0);
+        }
+        // forEach(this.shapes, 'moved');
       };
       hexBoard.prototype.dragged  = function(){
 
-        if(app.activeShape!==null){
+        forEach(this.shapes, 'dragged');
+      
+        if(this.activeShape!==null){
 
           for(var r in this.controls){
             for(var c in this.controls[r]){
 
               this.controls[r][c].moved(this.x,this.y);
-
+  
             }
           }
 
@@ -1187,7 +1315,7 @@ println('Angles Reset');
       };
       hexBoard.prototype.released = function(){
 
-        // this.locked=false;
+        forEach(this.shapes, 'released');
 
 
       };
@@ -1211,18 +1339,62 @@ println('Angles Reset');
       };
       hexBoard.prototype.resetShape=function(){
 
-        var x=app.activeShape.x;
-        var y=app.activeShape.y;
-        var delta=0;
+        var index=-1;
 
-        for(var n=0; n<100; n++){
+        for(var s in this.shapes){
 
-          delta=n/100;
-// println(delta);
-          app.activeShape.x=lerp(x, 100, delta);
-          app.activeShape.y=lerp(y, 100, delta);
+          if(this.shapes[s].id===this.activeShape.id){
+            index=s;
+            break;
+          }
 
         }
+
+        var id=this.shapes[index].id;
+
+        var x;
+        var y;
+
+        switch(id){
+
+          case 'S0': x=this.position0.x;
+                     y=this.position0.y;
+                     break;
+
+          case 'S1': x=this.position1.x;
+                     y=this.position1.y;
+                     break;
+
+          case 'S2': x=this.position2.x;
+                     y=this.position2.y;
+                     break;
+        }
+
+        this.shapes[index]=null;
+        
+        var random0=floor(random(0,24));
+
+        this.shapes[index]=new shap(id, this, x, y, HEX_SIZE, HEX_SIZE,
+                                {style: random0,
+                                 color: getShapeColor(random0)});
+
+println(this.shapes[index].id);
+        
+      };
+      hexBoard.prototype.score=function(){
+
+        var cells=[];
+
+        //  Determine if any of the 27 rows.cols are full
+
+        /**  Rows           */
+
+
+        /** Forward Cols    */
+
+
+        /**  Backward Cols  */
+
 
       };
       hexBoard.prototype.drop = function(){
@@ -1230,14 +1402,18 @@ println('Angles Reset');
         if(this.activeCell!==null){
           if(this.activeCell.hit){
 
-            this.activeCell.color=app.activeShape.color;
+            this.activeCell.color=this.activeShape.color;
 
           }
         }
 
-        this.activeCell=null;
         this.resetShape();
+
+        this.activeCell=null;
+        this.activeShape=null;
         
+        // this.score();
+
       };
       hexBoard.prototype.clicked  = function(){};
       hexBoard.prototype.out      = function(){ this.hit=false; }
@@ -2433,11 +2609,15 @@ println('Angles Reset');
 
           drawShape();
 
-          /** Circle */
-          fill(getColor(CLRS.BLACK,10));
-          
-          var d=cos(PI/6)*this.w*0.8;
-          ellipse(this.x,this.y,d,d);
+          if(this.hit){
+
+            /** Circle */
+            fill(getColor(CLRS.BLACK,10));
+
+            var d=cos(PI/6)*this.w*0.8;
+            ellipse(this.x,this.y,2*d,2*d);
+
+          }
 
       };
       shap.prototype.hitTest=function(x,y){
@@ -2454,11 +2634,12 @@ println('Angles Reset');
       shap.prototype.dragged=function(x,y){
 
         if(this.hit){
-          
+
           this.x=mouseX;
           this.y=mouseY;
 
-          app.activeShape=this;
+          this.parent.activeShape=this;
+          this.parent.dragging=true;
 
         }
         else{
@@ -2470,11 +2651,9 @@ println('Angles Reset');
       };
       shap.prototype.released=function(x,y){
 
-        // if(app.hexBoard.activeCell!==null){
-          app.hexBoard.drop();
-        // }
-
-        // app.activeShape=null;
+        if(this.parent.activeCell!==null){
+          this.parent.drop();
+        }
 
       };
 
@@ -2535,8 +2714,8 @@ println('Angles Reset');
 
           if(p.hit){
 
-            if(app.activeShape!==null){
-              fill(getColor(app.activeShape.color,50));
+            if(app.hexBoard.activeShape!==null){
+              fill(getColor(app.hexBoard.activeShape.color,50));
             }
 
           }
@@ -2610,7 +2789,7 @@ println('Angles Reset');
 
             if(this.hitTest(x,y)){ this.hit=true;
                                    app.focus=this.id;
-                                   this.parent.activeCell=this; }
+                                   app.hexBoard.activeCell=this; }
             else                 { this.hit=false;              }
 
           }
@@ -2665,112 +2844,6 @@ println('Angles Reset');
 
       /** Requires a reference to access globally */
       app.hexGarden=rt.controls[0];
-
-      var random0=floor(random(0,24));
-      var random1=floor(random(0,24));
-      var random2=floor(random(0,24));
-      
-      rt.controls.push(new shap('S'+0, rt, 150, 520, HEX_SIZE, HEX_SIZE,
-        {style: random0,
-         color: getShapeColor(random0)}));
-
-      rt.controls.push(new shap('S'+1, rt, 300, 520, HEX_SIZE, HEX_SIZE,
-        {style: random1,
-         color: getShapeColor(random1)}));
-
-      rt.controls.push(new shap('S'+2, rt, 450, 520, HEX_SIZE, HEX_SIZE,
-        {style: random2,
-         color: getShapeColor(random2)}));
-
-      // rt.controls.push(new shap('S'+3, rt, 350, 530, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.ROW_BACK,
-         // color: CLRS.LINE}));
-
-      // rt.controls.push(new shap(400, rt, 450, 530, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.DIAMOND,
-         // color: CLRS.DIAMOND}));
-
-      // rt.controls.push(new shap(400, rt, 500, 100, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.UUP,
-         // color: CLRS.U}));
-
-      // rt.controls.push(new shap(400, rt, 500, 200, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.UDOWN,
-         // color: CLRS.U}));
-
-      // rt.controls.push(new shap(400, rt, 500, 300, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.UPRIGHT,
-         // color: CLRS.U}));
-
-      // rt.controls.push(new shap(400, rt, 500, 400, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.UPLEFT,
-         // color: CLRS.U}));
-
-      // rt.controls.push(new shap(400, rt, 600, 300, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.DOWNRIGHT,
-         // color: CLRS.U}));
-
-      // rt.controls.push(new shap(400, rt, 600, 400, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.DOWNLEFT,
-         // color: CLRS.U}));
-
-      // rt.controls.push(new shap(400, rt, 600, 100, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.ZRIGHT,
-         // color: CLRS.Z}));
-
-      // rt.controls.push(new shap(400, rt, 600, 200, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.ZLEFT,
-         // color: CLRS.Z}));
-
-      // rt.controls.push(new shap(400, rt, 700, 100, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.SEVENRIGHT,
-         // color: CLRS.SEVEN}));
-
-      // rt.controls.push(new shap(400, rt, 700, 200, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.SEVENLEFT,
-         // color: CLRS.SEVEN}));
-
-      // rt.controls.push(new shap(400, rt, 700, 300, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.ANGLERIGHT,
-         // color: CLRS.SEVEN}));
-
-      // rt.controls.push(new shap(400, rt, 700, 400, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.ANGLELEFT,
-         // color: CLRS.SEVEN}));
-
-      // rt.controls.push(new shap(400, rt, 300, 100, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.NODEDOWNLEFT,
-         // color: CLRS.NODE}));
-
-      // rt.controls.push(new shap(400, rt, 300, 200, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.NODEDOWNRIGHT,
-         // color: CLRS.NODE}));
-
-      // rt.controls.push(new shap(400, rt, 300, 300, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.NODEUPLEFT,
-         // color: CLRS.NODE}));
-        
-      // rt.controls.push(new shap(400, rt, 300, 400, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.NODEUPRIGHT,
-         // color: CLRS.NODE}));
-
-      // rt.controls.push(new shap(400, rt, 800, 100, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.VDOWNLEFT,
-         // color: CLRS.V}));
-
-      // rt.controls.push(new shap(400, rt, 800, 200, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.VDOWNRIGHT,
-         // color: CLRS.V}));
-
-      // rt.controls.push(new shap(400, rt, 800, 300, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.VUPLEFT,
-         // color: CLRS.V}));
-
-      // rt.controls.push(new shap(400, rt, 800, 400, HEX_SIZE, HEX_SIZE,
-        // {style: SHAPES.VUPRIGHT,
-         // color: CLRS.V}));
-
-
 
       /* Hexagon Navigation Buttons ----------------------------------- */
       {
