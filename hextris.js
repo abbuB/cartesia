@@ -127,44 +127,47 @@ var diagrams = function(processingInstance){
   /* Constants ============================================================= */
   {
 
-      var SHAPES={
+      var CLRS_S={
 
-      SINGLE:          0,  //  Single Cell
+        SINGLE:         0,
+        
+        LINE:           1,
+        LINE_FORWARD:   2,
+        LINE_BACK:      3,
+        
+        DIAMOND:        4,
 
-      ROW:             1,  //  4 contiguous horizontal cells
-      ROW_FORWARD:     2,  //  4 cells forward slash (Top is right most)
-      ROW_BACK:        3,  //  4 cells backward slash (Bottom is right most)
-
-      DIAMOND:         4,   //  Diamond shape
-
-      UUP:             5,
-      UDOWN:           6,
-
-      UPRIGHT:         7,
-      DOWNRIGHT:       8,
-      UPLEFT:          9,
-      DOWNLEFT:       10,
-
-      ZRIGHT:         11,
-      ZLEFT:          12,
-
-      SEVENRIGHT:     13,
-      SEVENLEFT:      14,
+        UUP:            5,
+        UDOWN:          6,
+        
+        UPRIGHT:        7,
+        DOWNRIGHT:      8,
+        UPLEFT:         9,
+        DOWNLEFT:       10,
+        
+        ZRIGHT:         11,
+        ZLEFT:          12,
+        
+        SEVENRIGHT:     13,
+        SEVENLEFT:      14,
+        
+        ANGLERIGHT:     15,
+        ANGLELEFT:      16,
+        
+        NODEUPRIGHT:    17,
+        NODEUPLEFT:     18,
+        NODEDOWNRIGHT:  19,
+        NODEDOWNLEFT:   20,
+        
+        VUPRIGHT:       21,
+        VUPLEFT:        22,
+        VDOWNRIGHT:     23,
+        VDOWNLEFT:      24
+        
+      }
       
-      ANGLERIGHT:     15,
-      ANGLELEFT:      16,
-      
-      NODEUPRIGHT:    17,
-      NODEUPLEFT:     18,
-      NODEDOWNRIGHT:  19,
-      NODEDOWNLEFT:   20,
-      
-      VUPRIGHT:       21,
-      VUPLEFT:        22,
-      VDOWNRIGHT:     23,
-      VDOWNLEFT:      24
-      };
-      
+
+
     var CLRS={
 
       SINGLE:       color(170, 29, 29,255),
@@ -277,6 +280,54 @@ var diagrams = function(processingInstance){
   /* Utility Functions ===================================================== */
   {
 
+    function getShapeColor(n){
+
+      var retVal=-1;
+
+      switch(n){
+
+        case CLRS_S.SINGLE:         retVal=color(170, 29, 29,255);  break;
+
+        case CLRS_S.LINE:
+        case CLRS_S.LINE_FORWARD:
+        case CLRS_S.LINE_BACK:      retVal=color(158,182, 58,255);  break;
+
+        case CLRS_S.DIAMOND:        retVal=color( 49,204,167,255);  break;
+
+        case CLRS_S.UUP:
+        case CLRS_S.UDOWN:
+
+        case CLRS_S.UPRIGHT:
+        case CLRS_S.DOWNRIGHT:
+        case CLRS_S.UPLEFT:
+        case CLRS_S.DOWNLEFT:       retVal=color(238,214, 15,255);  break;
+
+        case CLRS_S.ZRIGHT:
+        case CLRS_S.ZLEFT:          retVal=color( 29, 86,170,255);  break;
+
+        case CLRS_S.SEVENRIGHT:
+        case CLRS_S.SEVENLEFT:
+        case CLRS_S.ANGLERIGHT:
+        case CLRS_S.ANGLELEFT:      retVal=color(255, 81,  0,255);  break;
+      
+        case CLRS_S.NODEUPRIGHT:
+        case CLRS_S.NODEUPLEFT:
+        case CLRS_S.NODEDOWNRIGHT:
+        case CLRS_S.NODEDOWNLEFT:   retVal=color(255, 20,147,255);  break;
+      
+        case CLRS_S.VUPRIGHT:
+        case CLRS_S.VUPLEFT:
+        case CLRS_S.VDOWNRIGHT:
+        case CLRS_S.VDOWNLEFT:      retVal=color(255,190,  0,255);  break;
+
+        default:                                                    break;
+
+      }
+
+      return retVal;
+
+    };
+    
     /**  Thanks Peter */
     // function forEach(arr, func, props){
 
@@ -2621,15 +2672,15 @@ println('Angles Reset');
       
       rt.controls.push(new shap('S'+0, rt, 150, 520, HEX_SIZE, HEX_SIZE,
         {style: random0,
-         color: random0}));
+         color: getShapeColor(random0)}));
 
       rt.controls.push(new shap('S'+1, rt, 300, 520, HEX_SIZE, HEX_SIZE,
         {style: random1,
-         color: random1}));
+         color: getShapeColor(random1)}));
 
       rt.controls.push(new shap('S'+2, rt, 450, 520, HEX_SIZE, HEX_SIZE,
         {style: random2,
-         color: random2}));
+         color: getShapeColor(random2)}));
 
       // rt.controls.push(new shap('S'+3, rt, 350, 530, HEX_SIZE, HEX_SIZE,
         // {style: SHAPES.ROW_BACK,
