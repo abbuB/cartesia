@@ -1021,9 +1021,12 @@ println('Angles Reset');
         // this.count      = 0;
         // this.angle      = 0;
 
+        this.shapes         = [];
+        
         this.activeCell     = null;
         this.activeShape    = null;
-        this.shapes         = [];
+        this.activeIndex    = null;
+        
         
         this.position0=new pnt(150, 525);
         this.position1=new pnt(300, 525);
@@ -1109,16 +1112,22 @@ println('Angles Reset');
         var random1=floor(random(0,24));
         var random2=floor(random(0,24));
 
-        this.shapes.push(new shap('S'+0, this, this.position0.x, this.position0.y, HEX_SIZE, HEX_SIZE,
-          {style: random0,
+        this.shapes.push(new shap(0, this, this.position0.x, this.position0.y, HEX_SIZE, HEX_SIZE,
+          {baseX: this.position0.x,
+           baseY: this.position0.y,
+           style: random0,
            color: getShapeColor(random0)}));
 
-        this.shapes.push(new shap('S'+1, this, this.position1.x, this.position1.y, HEX_SIZE, HEX_SIZE,
-          {style: random1,
+        this.shapes.push(new shap(1, this, this.position1.x, this.position1.y, HEX_SIZE, HEX_SIZE,
+          {baseX: this.position1.x,
+           baseY: this.position1.y,
+           style: random1,
            color: getShapeColor(random1)}));
 
-        this.shapes.push(new shap('S'+2, this, this.position2.x, this.position2.y, HEX_SIZE, HEX_SIZE,
-          {style: random2,
+        this.shapes.push(new shap(2, this, this.position2.x, this.position2.y, HEX_SIZE, HEX_SIZE,
+          {baseX: this.position2.x,
+           baseY: this.position2.y,
+           style: random2,
            color: getShapeColor(random2)}));
 
         {
@@ -1339,47 +1348,29 @@ println('Angles Reset');
       };
       hexBoard.prototype.resetShape=function(){
 
-        var index=-1;
-
-        for(var s in this.shapes){
-
-          if(this.shapes[s].id===this.activeShape.id){
-            index=s;
-            break;
-          }
-
-        }
-
-        var id=this.shapes[index].id;
-
-        var x;
-        var y;
-
-        switch(id){
-
-          case 'S0': x=this.position0.x;
-                     y=this.position0.y;
-                     break;
-
-          case 'S1': x=this.position1.x;
-                     y=this.position1.y;
-                     break;
-
-          case 'S2': x=this.position2.x;
-                     y=this.position2.y;
-                     break;
-        }
-
-        this.shapes[index]=null;
-        
+        //  Determine the knew shape
         var random0=floor(random(0,24));
+        var i=this.activeIndex;
 
-        this.shapes[index]=new shap(id, this, x, y, HEX_SIZE, HEX_SIZE,
-                                {style: random0,
-                                 color: getShapeColor(random0)});
+        this.shapes[i].x=this.shapes[i].baseX;
+        this.shapes[i].y=this.shapes[i].baseY+200;
+        this.shapes[i].style=random0;
+        this.shapes[i].color=getShapeColor(random0);
 
-println(this.shapes[index].id);
-        
+      };
+      hexBoard.prototype.resetShapes=function(){
+
+        for(var n in this.shapes){
+
+          var random0=floor(random(0,24));
+
+          this.shapes[n].x=this.shapes[n].baseX;
+          this.shapes[n].y=this.shapes[n].baseY;
+          this.shapes[n].style=random0;
+          this.shapes[n].color=getShapeColor(random0);
+
+        }
+
       };
       hexBoard.prototype.score=function(){
 
@@ -1411,7 +1402,8 @@ println(this.shapes[index].id);
 
         this.activeCell=null;
         this.activeShape=null;
-        
+        this.activeIndex=null;
+
         // this.score();
 
       };
@@ -2311,9 +2303,12 @@ println(this.shapes[index].id);
 
         control.call(this, id, parent, x, y, w, h);
 
+        this.baseX  = x;
+        this.baseY  = y;
+
         this.style  = props.style;
         this.color  = props.color;
-
+        
       };
       shap.prototype=Object.create(control.prototype);
       shap.prototype.draw=function(){
@@ -2609,6 +2604,16 @@ println(this.shapes[index].id);
 
           drawShape();
 
+          if(this.parent.activeShape===null &&
+             this.y>this.baseY){
+            this.y-=4;
+          }
+          else{
+            if(this.dragging===false){
+              this.y=this.baseY;
+            }
+          }
+
           if(this.hit){
 
             /** Circle */
@@ -2639,6 +2644,7 @@ println(this.shapes[index].id);
           this.y=mouseY;
 
           this.parent.activeShape=this;
+          this.parent.activeIndex=this.id;
           this.parent.dragging=true;
 
         }
@@ -3142,7 +3148,7 @@ println(this.shapes[index].id);
                app.keys[KEYCODES.CONTROL]:    app.hexGarden.selectAll();  break;    /* CTRL+A Select All */
 
           case app.keys[KEYCODES.R] ||
-               app.keys[KEYCODES.r]:          app.hexGarden.reset();      break;    /* R or r - Reset */
+               app.keys[KEYCODES.r]:          app.hexGarden.resetShapes();      break;    /* R or r - Reset */
 
           case app.keys[KEYCODES.LEFT] ||
                app.keys[KEYCODES.A]:          left();                   break;    /* LEFT or A        */
