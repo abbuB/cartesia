@@ -125,40 +125,40 @@ var diagrams = function(processingInstance){
     var CLRS_S={
 
       SINGLE:         0,
-      
+
       LINE:           1,
       LINE_FORWARD:   2,
       LINE_BACK:      3,
-      
+
       DIAMOND:        4,
 
       UUP:            5,
       UDOWN:          6,
-      
+
       UPRIGHT:        7,
       DOWNRIGHT:      8,
       UPLEFT:         9,
       DOWNLEFT:       10,
-      
+
       ZRIGHT:         11,
       ZLEFT:          12,
-      
+
       SEVENRIGHT:     13,
       SEVENLEFT:      14,
-      
+
       ANGLERIGHT:     15,
       ANGLELEFT:      16,
-      
+
       NODEUPRIGHT:    17,
       NODEUPLEFT:     18,
       NODEDOWNRIGHT:  19,
       NODEDOWNLEFT:   20,
-      
+
       VUPRIGHT:       21,
       VUPLEFT:        22,
       VDOWNRIGHT:     23,
       VDOWNLEFT:      24
-      
+
     }
 
     var CLRS={
@@ -302,12 +302,12 @@ var diagrams = function(processingInstance){
         case CLRS_S.SEVENLEFT:
         case CLRS_S.ANGLERIGHT:
         case CLRS_S.ANGLELEFT:      retVal=color(255, 81,  0,255);  break;
-      
+
         case CLRS_S.NODEUPRIGHT:
         case CLRS_S.NODEUPLEFT:
         case CLRS_S.NODEDOWNRIGHT:
         case CLRS_S.NODEDOWNLEFT:   retVal=color(255, 20,147,255);  break;
-      
+
         case CLRS_S.VUPRIGHT:
         case CLRS_S.VUPLEFT:
         case CLRS_S.VDOWNRIGHT:
@@ -320,17 +320,6 @@ var diagrams = function(processingInstance){
       return retVal;
 
     };
-    
-    /**  Thanks Peter */
-    // function forEach(arr, func, props){
-
-      // for(var c=0; c<arr.length; c++){
-
-        // arr[c][func](props);
-
-      // }
-
-    // };
 
     function isFocus(n){ return app.focus===n; }
 
@@ -1022,16 +1011,17 @@ println('Angles Reset');
         // this.angle      = 0;
 
         this.shapes         = [];
-        
+        this.layout         = [];
+
         this.activeCell     = null;
         this.activeShape    = null;
         this.activeIndex    = null;
-        
-        
+
+
         this.position0=new pnt(150, 525);
         this.position1=new pnt(300, 525);
         this.position2=new pnt(450, 525);
-        
+
         // this.locked     = false;
 
         this.reset();
@@ -1044,21 +1034,28 @@ println('Angles Reset');
 
         var p=this; //  Reference to the hexGarden control
 
-        this.layout=[[0,0,0,0,0],         //  Array of Rings
-                     [0,0,0,0,0,0],
-                     [0,0,0,0,0,0,0],
-                     [0,0,0,0,0,0,0,0],
-                     [0,0,0,0,0,0,0,0,0],
-                     [0,0,0,0,0,0,0,0],
-                     [0,0,0,0,0,0,0],
-                     [0,0,0,0,0,0],
-                     [0,0,0,0,0],
-                    ];
+        p.controls=[];
+        p.shapes=[];
+
+        p.activeCell  = null;
+        p.activeShape = null;
+        p.activeIndex = null;
+
+        p.layout=[[0,0,0,0,0],         //  Array of Rings
+                  [0,0,0,0,0,0],
+                  [0,0,0,0,0,0,0],
+                  [0,0,0,0,0,0,0,0],
+                  [0,0,0,0,0,0,0,0,0],
+                  [0,0,0,0,0,0,0,0],
+                  [0,0,0,0,0,0,0],
+                  [0,0,0,0,0,0],
+                  [0,0,0,0,0],
+                 ];
 
         var rowArray=[];
         var n=0;
 
-        function reset(){
+        function load(){
 
           p.controls=[];
 
@@ -1102,7 +1099,7 @@ println('Angles Reset');
 
         };
 
-        reset();
+        load();
         this.loadShapes();
 
       };
@@ -1210,7 +1207,7 @@ println('Angles Reset');
           // this.shapes.push(new shap(400, this, 300, 300, HEX_SIZE, HEX_SIZE,
             // {style: SHAPES.NODEUPLEFT,
              // color: CLRS.NODE}));
-            
+
           // this.shapes.push(new shap(400, this, 300, 400, HEX_SIZE, HEX_SIZE,
             // {style: SHAPES.NODEUPRIGHT,
              // color: CLRS.NODE}));
@@ -1230,9 +1227,9 @@ println('Angles Reset');
           // this.shapes.push(new shap(400, this, 800, 400, HEX_SIZE, HEX_SIZE,
             // {style: SHAPES.VUPRIGHT,
              // color: CLRS.V}));
-          
+
         }
-           
+
       };
       hexBoard.prototype.draw=function(){
 
@@ -1242,7 +1239,7 @@ println('Angles Reset');
 
           if(p.activeCell.col>0){
             // p.controls[p.activeCell.row][p.activeCell.col-2].on=true;
-            p.controls[p.activeCell.row][p.activeCell.col-1].on=true;
+            // p.controls[p.activeCell.row][p.activeCell.col-1].on=true;
             // p.controls[p.activeCell.row][p.activeCell.col].on=true;
             // p.controls[p.activeCell.row][p.activeCell.col+1].on=true;
           }
@@ -1276,10 +1273,14 @@ println('Angles Reset');
 
             // matchShape();
 
+            // noStroke();
+            // fill(getColor(CLRS.RED,10));
+            // ellipse(0,0,600,600);
+
         popMatrix();
 
         forEach(this.shapes, 'draw');
-                    
+
       };
       hexBoard.prototype.moved    = function(x,y){
       /* Overridden because of the nested controls */
@@ -1300,22 +1301,23 @@ println('Angles Reset');
 
         // }
 
+
         for(var s in this.shapes){
           this.shapes[s].moved(0,0);
         }
-        // forEach(this.shapes, 'moved');
+
       };
       hexBoard.prototype.dragged  = function(){
 
         forEach(this.shapes, 'dragged');
-      
+
         if(this.activeShape!==null){
 
           for(var r in this.controls){
             for(var c in this.controls[r]){
 
               this.controls[r][c].moved(this.x,this.y);
-  
+
             }
           }
 
@@ -1326,12 +1328,11 @@ println('Angles Reset');
 
         forEach(this.shapes, 'released');
 
-
       };
       hexBoard.prototype.validateShape=function(){
-        
+
         var retVal=false;
-        
+
           for(var r in this.controls){
             for(var c in this.controls[r]){
 
@@ -1341,7 +1342,7 @@ println('Angles Reset');
               }
 
             }
-          }        
+          }
 
         return retval;
 
@@ -1352,8 +1353,10 @@ println('Angles Reset');
         var random0=floor(random(0,24));
         var i=this.activeIndex;
 
+        // Create 200 pixels below baseY to allow to glide into place
         this.shapes[i].x=this.shapes[i].baseX;
         this.shapes[i].y=this.shapes[i].baseY+200;
+
         this.shapes[i].style=random0;
         this.shapes[i].color=getShapeColor(random0);
 
@@ -1374,12 +1377,34 @@ println('Angles Reset');
       };
       hexBoard.prototype.score=function(){
 
-        var cells=[];
+        // var cells=[];
+
+          var p=this;
+
+          function validateRow(r){
+
+            var retVal=true;
+
+            for(var col=0; col<p.layout[r].length; col++){
+
+              if(p.layout[r][col]===0){
+                retVal=false;
+                break;
+              }
+
+            }
+
+            return retVal;
+
+          };
 
         //  Determine if any of the 27 rows.cols are full
-
         /**  Rows           */
-
+          for(var n=0; n<this.layout.length; n++){
+            if(validateRow(n)){
+              println(ArrayToText2D(this.layout));
+            }
+          }
 
         /** Forward Cols    */
 
@@ -1389,26 +1414,40 @@ println('Angles Reset');
 
       };
       hexBoard.prototype.drop = function(){
-        
-        if(this.activeCell!==null){
-          if(this.activeCell.hit){
 
-            this.activeCell.color=this.activeShape.color;
+        if(this.activeCell!==null &&
+           this.activeCell.hit){
 
-          }
+          this.layout[this.activeCell.row][this.activeCell.col]=1;
+
+          this.score();
+
+          this.activeCell.color=this.activeShape.color;
+
+          this.resetShape();
+
+
+
         }
+        else{
 
-        this.resetShape();
+          this.activeShape.x=this.activeShape.baseX;
+          this.activeShape.y=this.activeShape.baseY;
 
-        this.activeCell=null;
-        this.activeShape=null;
-        this.activeIndex=null;
-
-        // this.score();
+        }
+// println(this.activeShape.id);
+        this.activeCell  = null;
+        this.activeShape = null;
+        this.activeIndex = null;
 
       };
       hexBoard.prototype.clicked  = function(){};
-      hexBoard.prototype.out      = function(){ this.hit=false; }
+      hexBoard.prototype.out      = function(){
+
+        this.hit=false;
+        forEach(this.shapes, 'out');
+
+      };
 
     }
 
@@ -2308,7 +2347,7 @@ println('Angles Reset');
 
         this.style  = props.style;
         this.color  = props.color;
-        
+
       };
       shap.prototype=Object.create(control.prototype);
       shap.prototype.draw=function(){
@@ -2332,7 +2371,7 @@ println('Angles Reset');
 
           var f=0.8;
           var w=p.w/2*cos(PI/6);
-          
+
 
           if(app.dragging && p.hit){ f=1;     }
           else                     { w*=0.85; }
@@ -2570,7 +2609,7 @@ println('Angles Reset');
                 case SHAPES.DIAMOND:        diamond(CLRS.DIAMOND);    break;
                 case SHAPES.ZRIGHT:         zRight(CLRS.Z);           break;
                 case SHAPES.ZLEFT:          zLeft(CLRS.Z);            break;
-                
+
                 case SHAPES.UUP:            uUp(CLRS.U);              break;
                 case SHAPES.UDOWN:          uDown(CLRS.U);            break;
 
@@ -2602,33 +2641,38 @@ println('Angles Reset');
 
         };
 
-          drawShape();
+        drawShape();
 
-          if(this.parent.activeShape===null &&
-             this.y>this.baseY){
-            this.y-=4;
-          }
-          else{
-            if(this.dragging===false){
-              this.y=this.baseY;
-            }
-          }
+        if(this.parent.activeShape!==this &&
+           this.y!==this.baseY){
+          this.y-=5;
+        }
+        else{
 
-          if(this.hit){
+          if(this.dragging===false){
 
-            /** Circle */
-            fill(getColor(CLRS.BLACK,10));
-
-            var d=cos(PI/6)*this.w*0.8;
-            ellipse(this.x,this.y,2*d,2*d);
+            this.x+=(this.baseX-this.x)/10;
+            this.y+=(this.baseY-this.y)/10;
 
           }
+
+        }
+
+        if(this.hit){
+
+          /** Circle */
+          fill(getColor(CLRS.BLACK,10));
+
+          var d=cos(PI/6)*this.w*0.8;
+          ellipse(this.x,this.y,2*d,2*d);
+
+        }
 
       };
       shap.prototype.hitTest=function(x,y){
-        
+
         return dist(this.x+x,this.y+y, mouseX,mouseY)<cos(PI/6)*this.w/2*0.8;
-                  
+
       };
       shap.prototype.moved=function(x,y){
 
@@ -2657,8 +2701,14 @@ println('Angles Reset');
       };
       shap.prototype.released=function(x,y){
 
-        if(this.parent.activeCell!==null){
+        if(this.parent.activeShape===this){ this.parent.drop(); }
+
+      };
+      shap.prototype.out=function(){
+
+        if(this.parent.activeShape===this){
           this.parent.drop();
+          this.hit=false;
         }
 
       };
@@ -2681,9 +2731,9 @@ println('Angles Reset');
 
         this.points   = [];
         this.dpoints  = [];
-        
+
         var p=this;
-        
+
         /* Initialize */
         function reset(){
 
@@ -2754,9 +2804,9 @@ println('Angles Reset');
 
       };
       hexCell.prototype.hitTest=function(x,y){
-        
+
         var retVal=false;
-        
+
         var rectHit=rectangleHit(new pnt(this.x+this.points[0].x+x, this.y+this.points[0].y+y),
                                        new pnt(this.x+this.points[2].x+x, this.y+this.points[2].y+y),
                                        new pnt(this.x+this.points[5].x+x, this.y+this.points[5].y+y),
@@ -2780,7 +2830,7 @@ println('Angles Reset');
         }
 
         return retVal;
-        
+
       };
       hexCell.prototype.moved=function(x,y){
       /* Overridden because of the shap */
