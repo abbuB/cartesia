@@ -115,6 +115,8 @@ var diagrams = function(processingInstance){
 
     this.hexBoard     = this.controls[1];
 
+    this.score        = 0;
+
   };
 
   var app=new application();
@@ -1377,40 +1379,226 @@ println('Angles Reset');
       };
       hexBoard.prototype.score=function(){
 
-        // var cells=[];
+        // println(this.layout[0][0]);
+        
+        var cells=[];
+        
+        var l=this.layout;
+        
+        function val(row,col){ return l[row][col]===1; };
+        function addCell(row,col){ cells.push(new pt(row,col)); };
+        
+        /* Rows */
+        { 
+        
+          // Row 0
+          if(val(0,0) && val(0,1) && val(0,2) && val(0,3) && val(0,4) ){
 
-          var p=this;
+            addCell(0,0); addCell(0,1); addCell(0,2); addCell(0,3); addCell(0,4);
 
-          function validateRow(r){
+             println('Row 0');
 
-            var retVal=true;
+          }
+          // Row 1
+          if(val(1,0) && val(1,1) && val(1,2) && val(1,3) && val(1,4) &&
+             val(1,5) ){
 
-            for(var col=0; col<p.layout[r].length; col++){
+             println('Row 1');
 
-              if(p.layout[r][col]===0){
-                retVal=false;
-                break;
-              }
+          }
+          // Row 2
+          if(val(2,0) && val(2,1) && val(2,2) && val(2,3) && val(2,4) &&
+             val(2,5) && val(2,6) ){
 
-            }
+             println('Row 2');
 
-            return retVal;
+          }
+          // Row 3
+          if(val(3,0) && val(3,1) && val(3,2) && val(3,3) && val(3,4) &&
+             val(3,5) && val(3,6) && val(3,7) ){
 
-          };
+             println('Row 3');
 
-        //  Determine if any of the 27 rows.cols are full
-        /**  Rows           */
-          for(var n=0; n<this.layout.length; n++){
-            if(validateRow(n)){
-              println(ArrayToText2D(this.layout));
-            }
+          }
+          // Row 4
+          if(val(4,0) && val(4,1) && val(4,2) && val(4,3) && val(4,4) &&
+             val(4,5) && val(4,6) && val(4,7) && val(4,8) ){
+
+             println('Row 4');
+
+          }
+          // Row 5
+          if(val(5,0) && val(5,1) && val(5,2) && val(5,3) && val(5,4) &&
+             val(5,5) && val(5,6) && val(5,7) ){
+
+             println('Row 5');
+
+          }
+          // Row 6
+          if(val(6,0) && val(6,1) && val(6,2) && val(6,3) && val(6,4) &&
+             val(6,5) && val(6,6) ){
+
+             println('Row 6');
+
+          }
+          // Row 7
+          if(val(7,0) && val(7,1) && val(7,2) && val(7,3) && val(7,4) &&
+             val(7,5) ){
+
+             println('Row 7');
+
+          }
+          // Row 8
+          if(val(8,0) && val(8,1) && val(8,2) && val(8,3) && val(8,4) ){
+
+             println('Row 8');
+
+          }
+        
+        }
+        
+        /* Forward Columns */
+        {
+          
+          // Column 0
+          if(val(0,0) && val(1,0) && val(2,0) && val(3,0) && val(4,0) ){
+
+             println('F Col 0');
+
+          }
+          // Column 1
+          if(val(0,1) && val(1,1) && val(2,1) && val(3,1) && val(4,1) &&
+             val(5,0) ){
+
+             println('F Col 1');
+
+          }
+          // Column 2
+          if(val(0,2) && val(1,2) && val(2,2) && val(3,2) && val(4,2) &&
+             val(5,1) && val(6,0) ){
+
+             println('F Col 2');
+
+          }
+          // Column 3
+          if(val(0,3) && val(1,3) && val(2,3) && val(3,3) && val(4,3) &&
+             val(5,2) && val(6,1) && val(7,0) ){
+
+             println('F Col 3');
+
+          }
+          // Column 4
+          if(val(0,4) && val(1,4) && val(2,4) && val(3,4) && val(4,4) &&
+             val(5,3) && val(6,2) && val(7,1) && val(8,0) ){
+
+             println('F Col 4');
+
+          }          
+          // Column 5
+          if(val(1,5) && val(2,5) && val(3,5) && val(4,5) && val(5,4) &&
+             val(6,3) && val(7,2) && val(8,1) ){
+
+             println('F Col 5');
+
+          }          
+          // Column 6
+          if(val(2,6) && val(3,6) && val(4,6) && val(5,5) && val(6,4) &&
+             val(7,3) && val(8,2) ){
+
+             println('F Col 6');
+
+          }
+          // Column 7
+          if(val(3,7) && val(4,7) && val(5,6) && val(6,5) && val(7,4) &&
+             val(8,3) ){
+
+             println('F Col 7');
+
+          }
+          // Column 8
+          if(val(4,8) && val(5,7) && val(6,6) && val(7,5) && val(8,4) ){
+
+             println('F Col 8');
+
           }
 
-        /** Forward Cols    */
+        }
 
+        /* Backward Columns */
+        {
+          
+          // Column 0
+          if(val(4,0) && val(5,0) && val(6,0) && val(7,0) && val(8,0) ){
 
-        /**  Backward Cols  */
+             println('B Col 0');
 
+          }
+          // Column 1
+          if(val(3,0) && val(4,1) && val(5,1) && val(6,1) && val(7,1) &&
+             val(8,1) ){
+
+             println('B Col 1');
+
+          }
+          // Column 2
+          if(val(2,0) && val(3,1) && val(4,2) && val(5,2) && val(6,2) &&
+             val(7,2) && val(8,2) ){
+
+             println('B Col 2');
+
+          }
+          // Column 3
+          if(val(1,0) && val(2,1) && val(3,2) && val(4,3) && val(5,3) &&
+             val(6,3) && val(7,3) && val(8,3) ){
+
+             println('B Col 3');
+
+          }
+          // Column 4
+          if(val(0,0) && val(1,1) && val(2,2) && val(3,3) && val(4,4) &&
+             val(5,4) && val(6,4) && val(7,4) && val(8,4) ){
+
+             println('B Col 4');
+
+          }          
+          // Column 5
+          if(val(0,1) && val(1,2) && val(2,3) && val(3,4) && val(4,5) &&
+             val(5,5) && val(6,5) && val(7,5) ){
+
+             println('B Col 5');
+
+          }          
+          // Column 6
+          if(val(0,2) && val(1,3) && val(2,4) && val(3,5) && val(4,6) &&
+             val(5,6) && val(6,6) ){
+
+             println('B Col 6');
+
+          }
+          // Column 7
+          if(val(0,3) && val(1,4) && val(2,5) && val(3,6) && val(4,7) &&
+             val(5,7) ){
+
+             println('B Col 7');
+
+          }
+          // Column 8
+          if(val(0,4) && val(1,5) && val(2,6) && val(3,7) && val(4,8) ){
+
+             println('B Col 8');
+
+          }
+          
+        }
+
+        // Clear Cells
+        for(var n=0; n<cells.length; n++){
+          this.layout[cells[n].row][cells[n].col]=0;
+          this.controls[cells[n].row][cells[n].col].color=CLRS.BLACK;
+          println(n);
+        }
+
+        cells=[]; // Reset Cell Array
 
       };
       hexBoard.prototype.drop = function(){
@@ -1425,8 +1613,6 @@ println('Angles Reset');
           this.activeCell.color=this.activeShape.color;
 
           this.resetShape();
-
-
 
         }
         else{
@@ -2770,7 +2956,7 @@ println('Angles Reset');
 
           if(p.hit){
 
-            if(app.hexBoard.activeShape!==null){
+            if(p.parent.activeShape!==null){
               fill(getColor(app.hexBoard.activeShape.color,50));
             }
 
