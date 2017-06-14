@@ -43,6 +43,7 @@ var diagrams = function(processingInstance){
 
     TO DO:
 
+      Highlight rows while tallying
 
 
     Research:
@@ -498,7 +499,7 @@ println('Angles Reset');
             if(this.hit              ){ fill(this.acolor);   }
             if(app.dragging &&
                app.hexBoard.activeShape!==null){ cursor(HAND);        }
-            else                      { cursor(this.cursor); }
+            else                               { cursor(this.cursor); }
 
               rect(0, 0, this.w, this.h);
 
@@ -1009,6 +1010,9 @@ println('Angles Reset');
 
         control.call(this, id, parent, x, y, w, h);
 
+        this.color          = getColor(color(61),100); //  Used to store hexCell default color
+
+        this.score          = 0;
         // this.count      = 0;
         // this.angle      = 0;
 
@@ -1018,7 +1022,6 @@ println('Angles Reset');
         this.activeCell     = null;
         this.activeShape    = null;
         this.activeIndex    = null;
-
 
         this.position0=new pnt(150, 525);
         this.position1=new pnt(300, 525);
@@ -1258,12 +1261,8 @@ println('Angles Reset');
           translate(this.x, this.y);
           rotate(this.angle);
 
-            if(this.activeShape!==null){
-              fill(this.activeShape.color);
-            }
-            else{
-              fill(getColor(this.color, 50));
-            }
+
+        // fill(getColor(this.color, 50));
 
             for(var r in this.controls){
               for(var c in this.controls[r]){
@@ -1377,7 +1376,7 @@ println('Angles Reset');
         }
 
       };
-      hexBoard.prototype.score=function(){
+      hexBoard.prototype.tally=function(){
 
         // println(this.layout[0][0]);
         
@@ -1385,9 +1384,9 @@ println('Angles Reset');
         
         var l=this.layout;
         
-        function val(row,col){ return l[row][col]===1; };
+        function val    (row,col){ return l[row][col]===1;      };
         function addCell(row,col){ cells.push(new pt(row,col)); };
-        
+
         /* Rows */
         { 
         
@@ -1396,65 +1395,105 @@ println('Angles Reset');
 
             addCell(0,0); addCell(0,1); addCell(0,2); addCell(0,3); addCell(0,4);
 
-             println('Row 0');
+            this.score+=5;
+            
+            // println('Row 0');
 
           }
           // Row 1
           if(val(1,0) && val(1,1) && val(1,2) && val(1,3) && val(1,4) &&
              val(1,5) ){
 
-             println('Row 1');
+            addCell(1,0); addCell(1,1); addCell(1,2); addCell(1,3); addCell(1,4);
+            addCell(1,5);
+             
+            this.score+=6;
+             
+            // println('Row 1');
 
           }
           // Row 2
           if(val(2,0) && val(2,1) && val(2,2) && val(2,3) && val(2,4) &&
              val(2,5) && val(2,6) ){
 
-             println('Row 2');
+            addCell(2,0); addCell(2,1); addCell(2,2); addCell(2,3); addCell(2,4);
+            addCell(2,5); addCell(2,6);
+
+            this.score+=7;
+             
+            // println('Row 2');
 
           }
           // Row 3
           if(val(3,0) && val(3,1) && val(3,2) && val(3,3) && val(3,4) &&
              val(3,5) && val(3,6) && val(3,7) ){
 
-             println('Row 3');
+            addCell(3,0); addCell(3,1); addCell(3,2); addCell(3,3); addCell(3,4);
+            addCell(3,5); addCell(3,6); addCell(3,7);
+             
+            this.score+=8;
+            // println('Row 3');
 
           }
           // Row 4
           if(val(4,0) && val(4,1) && val(4,2) && val(4,3) && val(4,4) &&
              val(4,5) && val(4,6) && val(4,7) && val(4,8) ){
 
-             println('Row 4');
+            addCell(4,0); addCell(4,1); addCell(4,2); addCell(4,3); addCell(4,4);
+            addCell(4,5); addCell(4,6); addCell(4,7); addCell(4,8);
+            
+            this.score+=9;
+            
+             // println('Row 4');
 
           }
           // Row 5
           if(val(5,0) && val(5,1) && val(5,2) && val(5,3) && val(5,4) &&
              val(5,5) && val(5,6) && val(5,7) ){
 
-             println('Row 5');
+            this.score+=8;
+             
+            addCell(5,0); addCell(5,1); addCell(5,2); addCell(5,3); addCell(5,4);
+            addCell(5,5); addCell(5,6); addCell(5,7);
+
+            // println('Row 5');
 
           }
           // Row 6
           if(val(6,0) && val(6,1) && val(6,2) && val(6,3) && val(6,4) &&
              val(6,5) && val(6,6) ){
 
-             println('Row 6');
+            this.score+=7;
+             
+            addCell(6,0); addCell(6,1); addCell(6,2); addCell(6,3); addCell(6,4);
+            addCell(6,5); addCell(6,6);
+            
+             // println('Row 6');
 
           }
           // Row 7
           if(val(7,0) && val(7,1) && val(7,2) && val(7,3) && val(7,4) &&
              val(7,5) ){
 
-             println('Row 7');
+            this.score+=6;
+             
+            addCell(7,0); addCell(7,1); addCell(7,2); addCell(7,3); addCell(7,4);
+            addCell(7,5);
+            
+             // println('Row 7');
 
           }
           // Row 8
           if(val(8,0) && val(8,1) && val(8,2) && val(8,3) && val(8,4) ){
 
-             println('Row 8');
+            this.score+=5;
+
+            addCell(8,0); addCell(8,1); addCell(8,2); addCell(8,3); addCell(8,4);
+
+            // println('Row 8');
 
           }
-        
+
         }
         
         /* Forward Columns */
@@ -1463,62 +1502,105 @@ println('Angles Reset');
           // Column 0
           if(val(0,0) && val(1,0) && val(2,0) && val(3,0) && val(4,0) ){
 
-             println('F Col 0');
+            this.score+=5;
+          
+            addCell(0,0); addCell(1,0); addCell(2,0); addCell(3,0); addCell(4,0);
+          
+            // println('F Col 0');
 
           }
           // Column 1
           if(val(0,1) && val(1,1) && val(2,1) && val(3,1) && val(4,1) &&
              val(5,0) ){
 
-             println('F Col 1');
+            this.score+=6;
+          
+            addCell(0,1); addCell(1,1); addCell(2,1); addCell(3,1); addCell(4,1);
+            addCell(5,0);
+            
+            // println('F Col 1');
 
           }
           // Column 2
           if(val(0,2) && val(1,2) && val(2,2) && val(3,2) && val(4,2) &&
              val(5,1) && val(6,0) ){
 
-             println('F Col 2');
+            this.score+=7;
+          
+            addCell(0,2); addCell(1,2); addCell(2,2); addCell(3,2); addCell(4,2);
+            addCell(5,1); addCell(6,0);
+            
+            // println('F Col 2');
 
           }
           // Column 3
           if(val(0,3) && val(1,3) && val(2,3) && val(3,3) && val(4,3) &&
              val(5,2) && val(6,1) && val(7,0) ){
 
-             println('F Col 3');
+            this.score+=8;
+          
+            addCell(0,3); addCell(1,3); addCell(2,3); addCell(3,3); addCell(4,3);
+            addCell(5,2); addCell(6,1); addCell(7,0);
+            
+            // println('F Col 3');
 
           }
           // Column 4
           if(val(0,4) && val(1,4) && val(2,4) && val(3,4) && val(4,4) &&
              val(5,3) && val(6,2) && val(7,1) && val(8,0) ){
 
-             println('F Col 4');
+            this.score+=9;
 
-          }          
+            addCell(0,4); addCell(1,4); addCell(2,4); addCell(3,4); addCell(4,4);
+            addCell(5,3); addCell(6,2); addCell(7,1); addCell(8,0);
+
+            // println('F Col 4');
+
+          }
           // Column 5
           if(val(1,5) && val(2,5) && val(3,5) && val(4,5) && val(5,4) &&
              val(6,3) && val(7,2) && val(8,1) ){
 
-             println('F Col 5');
+            this.score+=8;
+
+            addCell(1,5); addCell(2,5); addCell(3,5); addCell(4,5); addCell(5,4);
+            addCell(6,3); addCell(7,2); addCell(8,1);
+            
+            // println('F Col 5');
 
           }          
           // Column 6
           if(val(2,6) && val(3,6) && val(4,6) && val(5,5) && val(6,4) &&
              val(7,3) && val(8,2) ){
 
-             println('F Col 6');
+            this.score+=7;
+
+            addCell(2,6); addCell(3,6); addCell(4,6); addCell(5,5); addCell(6,4);
+            addCell(7,3); addCell(8,2);
+            
+            // println('F Col 6');
 
           }
           // Column 7
           if(val(3,7) && val(4,7) && val(5,6) && val(6,5) && val(7,4) &&
              val(8,3) ){
 
-             println('F Col 7');
+            this.score+=6;
+
+            addCell(3,7); addCell(4,7); addCell(5,6); addCell(6,5); addCell(7,4);
+            addCell(8,3);
+
+            // println('F Col 7');
 
           }
           // Column 8
           if(val(4,8) && val(5,7) && val(6,6) && val(7,5) && val(8,4) ){
 
-             println('F Col 8');
+            this.score+=5;
+
+            addCell(4,8); addCell(5,7); addCell(6,6); addCell(7,5); addCell(8,4);
+            
+            // println('F Col 8');
 
           }
 
@@ -1530,20 +1612,34 @@ println('Angles Reset');
           // Column 0
           if(val(4,0) && val(5,0) && val(6,0) && val(7,0) && val(8,0) ){
 
-             println('B Col 0');
+            this.score+=5;
+
+            addCell(4,0); addCell(5,0); addCell(6,0); addCell(7,0); addCell(8,0);
+            
+            // println('B Col 0');
 
           }
           // Column 1
           if(val(3,0) && val(4,1) && val(5,1) && val(6,1) && val(7,1) &&
              val(8,1) ){
 
-             println('B Col 1');
+            this.score+=6;
+            
+            addCell(3,0); addCell(4,1); addCell(5,1); addCell(6,1); addCell(7,1);
+            addCell(8,1);
+            
+            // println('B Col 1');
 
           }
           // Column 2
           if(val(2,0) && val(3,1) && val(4,2) && val(5,2) && val(6,2) &&
              val(7,2) && val(8,2) ){
 
+            this.score+=7;
+            
+            addCell(2,0); addCell(3,1); addCell(4,2); addCell(5,2); addCell(6,1);
+            addCell(7,2); addCell(8,2);
+            
              println('B Col 2');
 
           }
@@ -1551,51 +1647,80 @@ println('Angles Reset');
           if(val(1,0) && val(2,1) && val(3,2) && val(4,3) && val(5,3) &&
              val(6,3) && val(7,3) && val(8,3) ){
 
-             println('B Col 3');
+            this.score+=8;
+            
+            addCell(1,0); addCell(2,1); addCell(3,2); addCell(4,3); addCell(5,3);
+            addCell(6,3); addCell(7,3); addCell(8,3);
+            
+            // println('B Col 3');
 
           }
           // Column 4
           if(val(0,0) && val(1,1) && val(2,2) && val(3,3) && val(4,4) &&
              val(5,4) && val(6,4) && val(7,4) && val(8,4) ){
 
-             println('B Col 4');
+            this.score+=9;
+            
+            addCell(0,0); addCell(1,1); addCell(2,2); addCell(3,3); addCell(4,4);
+            addCell(5,4); addCell(6,4); addCell(7,4); addCell(8,4);
+ 
+            // println('B Col 4');
 
-          }          
+          }
           // Column 5
           if(val(0,1) && val(1,2) && val(2,3) && val(3,4) && val(4,5) &&
              val(5,5) && val(6,5) && val(7,5) ){
 
-             println('B Col 5');
+            this.score+=8;
+            
+            addCell(0,1); addCell(1,2); addCell(2,3); addCell(3,4); addCell(4,5);
+            addCell(5,5); addCell(6,5); addCell(7,5);
+            
+            // println('B Col 5');
 
           }          
           // Column 6
           if(val(0,2) && val(1,3) && val(2,4) && val(3,5) && val(4,6) &&
              val(5,6) && val(6,6) ){
 
-             println('B Col 6');
+            this.score+=7;
+            
+            addCell(0,2); addCell(1,3); addCell(2,4); addCell(3,5); addCell(4,6);
+            addCell(5,6); addCell(6,6);
+            
+            // println('B Col 6');
 
           }
           // Column 7
           if(val(0,3) && val(1,4) && val(2,5) && val(3,6) && val(4,7) &&
              val(5,7) ){
 
-             println('B Col 7');
+            this.score+=6;
+            
+            addCell(0,3); addCell(1,4); addCell(2,5); addCell(3,6); addCell(4,7);
+            addCell(5,7);
+            
+            // println('B Col 7');
 
           }
           // Column 8
           if(val(0,4) && val(1,5) && val(2,6) && val(3,7) && val(4,8) ){
 
-             println('B Col 8');
+            this.score+=5;
+            
+            addCell(0,4); addCell(1,5); addCell(2,6); addCell(3,7); addCell(4,8);
+
+            // println('B Col 8');
 
           }
-          
+
         }
 
         // Clear Cells
         for(var n=0; n<cells.length; n++){
           this.layout[cells[n].row][cells[n].col]=0;
-          this.controls[cells[n].row][cells[n].col].color=CLRS.BLACK;
-          println(n);
+          this.controls[cells[n].row][cells[n].col].color=this.color;
+          // println(n);
         }
 
         cells=[]; // Reset Cell Array
@@ -1608,9 +1733,9 @@ println('Angles Reset');
 
           this.layout[this.activeCell.row][this.activeCell.col]=1;
 
-          this.score();
-
           this.activeCell.color=this.activeShape.color;
+          
+          this.tally();
 
           this.resetShape();
 
@@ -2957,7 +3082,7 @@ println('Angles Reset');
           if(p.hit){
 
             if(p.parent.activeShape!==null){
-              fill(getColor(app.hexBoard.activeShape.color,50));
+              fill(getColor(p.parent.activeShape.color,50));
             }
 
           }
@@ -3358,6 +3483,12 @@ println('Angles Reset');
     execute();
 
     global=this.__frameRate;
+
+    fill(CLRS.YELLOW);
+    textSize(36);
+    textAlign(CENTER,CENTER);
+
+      text(app.hexBoard.score, 50, 60);
 
   };
 
