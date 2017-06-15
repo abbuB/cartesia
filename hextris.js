@@ -1297,49 +1297,57 @@ println('Angles Reset');
         }
 
       };
-      hexBoard.prototype.dragged  = function(){
-
-        forEach(this.shapes, 'dragged');
-
-        if(this.activeShape!==null){
-
-          for(var r in this.controls){
-            for(var c in this.controls[r]){
-
-              this.controls[r][c].moved(this.x,this.y);
-
-            }
-          }
-
-        }
-
+      hexBoard.prototype.validateDrop=function(source){
+        // println(source);
+        var retVal=false;
+        
         if(this.activeCell!==null){
 
-            var c   = this.controls;
-            var l   = this.layout;
-            var row = this.activeCell.row;
-            var col = this.activeCell.col;
-
+            var ctrls   = this.controls;
+            var layout  = this.layout;
+            var row     = this.activeCell.row;
+            var col     = this.activeCell.col;
+                
             function validateUUP(){
 
               try{
 
-                if(l[ row   ][(col-1)]===0 &&
-                   l[ row   ][(col+1)]===0 &&
-                   l[(row+1)][(col-1)]===0 &&
-                   l[(row+1)][ col   ]===0){
+                if(layout[ row   ][(col-1)]===0 &&
+                   layout[ row   ][(col+1)]===0 &&
+                   layout[(row+1)][(col-1)]===0 &&
+                   layout[(row+1)][ col   ]===0){
 
-                  c[ row   ][(col-1)].hover=true;
-                  c[ row   ][(col+1)].hover=true;
-                  c[(row+1)][(col-1)].hover=true;
-                  c[(row+1)][ col   ].hover=true;
+                  if(source===SOURCES.DRAGGED){
 
+                    ctrls[ row   ][(col-1)].hover=true;
+                    ctrls[ row   ][(col+1)].hover=true;
+                    ctrls[(row+1)][(col-1)].hover=true;
+                    ctrls[(row+1)][ col   ].hover=true;
+                    
+                  }
+                  else if(source===SOURCES.RELEASED){
+                    
+                    layout[ row   ][(col-1)]=1;
+                    layout[ row   ][(col+1)]=1;
+                    layout[(row+1)][(col-1)]=1;
+                    layout[(row+1)][ col   ]=1;
+                    
+                    println(this.layout);
+                    
+                  }
+                  else{
+
+                    println('validateDrop Error');
+
+                  }
+                   
                 }
 
               }
               catch(e){
+                
                 if(e instanceof TypeError){
-                  println("Cell doesn't exist");
+                  // println("Cell doesn't exist");
                 }
                 else{ println(e); }
                 
@@ -1390,11 +1398,34 @@ println('Angles Reset');
             }
 
         }
+
+        return retVal;
+
+      };
+      hexBoard.prototype.dragged  = function(){
+
+        forEach(this.shapes, 'dragged');
+
+        if(this.activeShape!==null){
+
+          for(var r in this.controls){
+            for(var c in this.controls[r]){
+
+              this.controls[r][c].moved(this.x,this.y);
+
+            }
+          }
+
+        }
+
+        this.validateDrop(SOURCES.DRAGGED);
         
       };
       hexBoard.prototype.released = function(){
 
         forEach(this.shapes, 'released');
+
+        this.validateDrop(SOURCES.RELEASED);        
 
       };
 
@@ -1798,25 +1829,26 @@ println('Angles Reset');
       };
       hexBoard.prototype.drop = function(){
 
-        if(this.validateShape()){
+        if(this.activeShape!==null){
 
-          this.layout[this.activeCell.row][this.activeCell.col]=1;
-          
           var ctrls=this.controls;
           
           for(var r in ctrls){
             for(var c in ctrls[r]){
               
-              if(ctrls[r][c].hover){
+              if(ctrls[r][c].hover && this.layout[r][c]!==1){
                  ctrls[r][c].color=this.activeShape.color;
               }
 
             }
           }
 
+          this.validateDrop(SOURCES.RELEASED);
+          
           this.tally();
 
           this.resetShape();
+          
 
         }
         else{
