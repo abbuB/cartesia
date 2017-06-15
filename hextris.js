@@ -42,7 +42,8 @@ var diagrams = function(processingInstance){
 
 
     TO DO:
-
+      
+      Animation for drop outside grid
       Highlight rows while tallying
 
 
@@ -1117,8 +1118,8 @@ println('Angles Reset');
         this.shapes.push(new shap(0, this, this.position0.x, this.position0.y, HEX_SIZE, HEX_SIZE,
           {baseX: this.position0.x,
            baseY: this.position0.y,
-           style: random0,
-           color: getShapeColor(random0)}));
+           style: SHAPES.UUP,
+           color: getShapeColor(SHAPES.UUP)}));
 
         this.shapes.push(new shap(1, this, this.position1.x, this.position1.y, HEX_SIZE, HEX_SIZE,
           {baseX: this.position1.x,
@@ -1240,20 +1241,6 @@ println('Angles Reset');
 
         var p =this;
 
-        function matchShape(){
-
-          if(p.activeCell.col>0){
-            // p.controls[p.activeCell.row][p.activeCell.col-2].on=true;
-            // p.controls[p.activeCell.row][p.activeCell.col-1].on=true;
-            // p.controls[p.activeCell.row][p.activeCell.col].on=true;
-            // p.controls[p.activeCell.row][p.activeCell.col+1].on=true;
-          }
-          // else{
-            // p.controls[p.activeCell.row-1][p.activeCell.col-1].on=false;
-          // }
-
-        };
-
         this.active=this.hit && app.focus===this.id;
 
         pushMatrix();
@@ -1263,16 +1250,16 @@ println('Angles Reset');
 
 
         // fill(getColor(this.color, 50));
+            
+            var ctrls=this.controls;
+            
+            for(var r in ctrls){
+              for(var c in ctrls[r]){
 
-            for(var r in this.controls){
-              for(var c in this.controls[r]){
-
-                this.controls[r][c].draw();
-
+                ctrls[r][c].draw();
+  
               }
             }
-
-            // matchShape();
 
             // noStroke();
             // fill(getColor(CLRS.RED,10));
@@ -1281,6 +1268,8 @@ println('Angles Reset');
         popMatrix();
 
         forEach(this.shapes, 'draw');
+
+
 
       };
       hexBoard.prototype.moved    = function(x,y){
@@ -1324,30 +1313,91 @@ println('Angles Reset');
 
         }
 
+        if(this.activeCell!==null){
+
+            var c   = this.controls;
+            var l   = this.layout;
+            var row = this.activeCell.row;
+            var col = this.activeCell.col;
+
+            function validateUUP(){
+
+              try{
+
+                if(l[ row   ][(col-1)]===0 &&
+                   l[ row   ][(col+1)]===0 &&
+                   l[(row+1)][(col-1)]===0 &&
+                   l[(row+1)][ col   ]===0){
+
+                  c[ row   ][(col-1)].hover=true;
+                  c[ row   ][(col+1)].hover=true;
+                  c[(row+1)][(col-1)].hover=true;
+                  c[(row+1)][ col   ].hover=true;
+
+                }
+
+              }
+              catch(e){
+                if(e instanceof TypeError){
+                  println("Cell doesn't exist");
+                }
+                else{ println(e); }
+                
+              }
+
+            };
+
+            switch(this.activeShape.style){
+
+              case SHAPES.SINGLE:         break;  // Nothing required
+
+              case SHAPES.ROW:            break;
+              case SHAPES.ROW_FORWARD:    break;
+              case SHAPES.ROW_BACK:       break;
+
+              case SHAPES.DIAMOND:        break;
+
+              case SHAPES.UUP:            validateUUP();  break;
+              
+              case SHAPES.UDOWN:          break;
+
+              case SHAPES.UPRIGHT:        break;
+              case SHAPES.DOWNRIGHT:      break;
+              case SHAPES.UPLEFT:         break;
+              case SHAPES.DOWNLEFT:       break;
+
+              case SHAPES.ZRIGHT:         break;
+              case SHAPES.ZLEFT:          break;
+
+              case SHAPES.SEVENRIGHT:     break;
+              case SHAPES.SEVENLEFT:      break;
+
+              case SHAPES.ANGLERIGHT:     break;
+              case SHAPES.ANGLELEFT:      break;
+
+              case SHAPES.NODEUPRIGHT:    break;
+              case SHAPES.NODEUPLEFT:     break;
+              case SHAPES.NODEDOWNRIGHT:  break;
+              case SHAPES.NODEDOWNLEFT:   break;
+
+              case SHAPES.VUPRIGHT:       break;
+              case SHAPES.VUPLEFT:        break;
+              case SHAPES.VDOWNRIGHT:     break;
+              case SHAPES.VDOWNLEFT:      break;
+
+              default:  break;
+
+            }
+
+        }
+        
       };
       hexBoard.prototype.released = function(){
 
         forEach(this.shapes, 'released');
 
       };
-      hexBoard.prototype.validateShape=function(){
 
-        var retVal=false;
-
-          for(var r in this.controls){
-            for(var c in this.controls[r]){
-
-              if(this.controls[r][c].hit){
-                retVal=true;
-                break;
-              }
-
-            }
-          }
-
-        return retval;
-
-      };
       hexBoard.prototype.resetShape=function(){
 
         //  Determine the knew shape
@@ -1358,8 +1408,8 @@ println('Angles Reset');
         this.shapes[i].x=this.shapes[i].baseX;
         this.shapes[i].y=this.shapes[i].baseY+200;
 
-        this.shapes[i].style=random0;
-        this.shapes[i].color=getShapeColor(random0);
+        this.shapes[i].style=SHAPES.UUP;
+        this.shapes[i].color=getShapeColor(SHAPES.UUP);
 
       };
       hexBoard.prototype.resetShapes=function(){
@@ -1370,6 +1420,7 @@ println('Angles Reset');
 
           this.shapes[n].x=this.shapes[n].baseX;
           this.shapes[n].y=this.shapes[n].baseY;
+
           this.shapes[n].style=random0;
           this.shapes[n].color=getShapeColor(random0);
 
@@ -1379,24 +1430,24 @@ println('Angles Reset');
       hexBoard.prototype.tally=function(){
 
         // println(this.layout[0][0]);
-        
+
         var cells=[];
-        
+
         var l=this.layout;
-        
+
         function val    (row,col){ return l[row][col]===1;      };
         function addCell(row,col){ cells.push(new pt(row,col)); };
 
         /* Rows */
-        { 
-        
+        {
+
           // Row 0
           if(val(0,0) && val(0,1) && val(0,2) && val(0,3) && val(0,4) ){
 
             addCell(0,0); addCell(0,1); addCell(0,2); addCell(0,3); addCell(0,4);
 
             this.score+=5;
-            
+
             // println('Row 0');
 
           }
@@ -1406,9 +1457,9 @@ println('Angles Reset');
 
             addCell(1,0); addCell(1,1); addCell(1,2); addCell(1,3); addCell(1,4);
             addCell(1,5);
-             
+
             this.score+=6;
-             
+
             // println('Row 1');
 
           }
@@ -1420,7 +1471,7 @@ println('Angles Reset');
             addCell(2,5); addCell(2,6);
 
             this.score+=7;
-             
+
             // println('Row 2');
 
           }
@@ -1430,7 +1481,7 @@ println('Angles Reset');
 
             addCell(3,0); addCell(3,1); addCell(3,2); addCell(3,3); addCell(3,4);
             addCell(3,5); addCell(3,6); addCell(3,7);
-             
+
             this.score+=8;
             // println('Row 3');
 
@@ -1441,9 +1492,9 @@ println('Angles Reset');
 
             addCell(4,0); addCell(4,1); addCell(4,2); addCell(4,3); addCell(4,4);
             addCell(4,5); addCell(4,6); addCell(4,7); addCell(4,8);
-            
+
             this.score+=9;
-            
+
              // println('Row 4');
 
           }
@@ -1452,7 +1503,7 @@ println('Angles Reset');
              val(5,5) && val(5,6) && val(5,7) ){
 
             this.score+=8;
-             
+
             addCell(5,0); addCell(5,1); addCell(5,2); addCell(5,3); addCell(5,4);
             addCell(5,5); addCell(5,6); addCell(5,7);
 
@@ -1464,10 +1515,10 @@ println('Angles Reset');
              val(6,5) && val(6,6) ){
 
             this.score+=7;
-             
+
             addCell(6,0); addCell(6,1); addCell(6,2); addCell(6,3); addCell(6,4);
             addCell(6,5); addCell(6,6);
-            
+
              // println('Row 6');
 
           }
@@ -1476,10 +1527,10 @@ println('Angles Reset');
              val(7,5) ){
 
             this.score+=6;
-             
+
             addCell(7,0); addCell(7,1); addCell(7,2); addCell(7,3); addCell(7,4);
             addCell(7,5);
-            
+
              // println('Row 7');
 
           }
@@ -1495,17 +1546,17 @@ println('Angles Reset');
           }
 
         }
-        
+
         /* Forward Columns */
         {
-          
+
           // Column 0
           if(val(0,0) && val(1,0) && val(2,0) && val(3,0) && val(4,0) ){
 
             this.score+=5;
-          
+
             addCell(0,0); addCell(1,0); addCell(2,0); addCell(3,0); addCell(4,0);
-          
+
             // println('F Col 0');
 
           }
@@ -1514,10 +1565,10 @@ println('Angles Reset');
              val(5,0) ){
 
             this.score+=6;
-          
+
             addCell(0,1); addCell(1,1); addCell(2,1); addCell(3,1); addCell(4,1);
             addCell(5,0);
-            
+
             // println('F Col 1');
 
           }
@@ -1526,10 +1577,10 @@ println('Angles Reset');
              val(5,1) && val(6,0) ){
 
             this.score+=7;
-          
+
             addCell(0,2); addCell(1,2); addCell(2,2); addCell(3,2); addCell(4,2);
             addCell(5,1); addCell(6,0);
-            
+
             // println('F Col 2');
 
           }
@@ -1538,10 +1589,10 @@ println('Angles Reset');
              val(5,2) && val(6,1) && val(7,0) ){
 
             this.score+=8;
-          
+
             addCell(0,3); addCell(1,3); addCell(2,3); addCell(3,3); addCell(4,3);
             addCell(5,2); addCell(6,1); addCell(7,0);
-            
+
             // println('F Col 3');
 
           }
@@ -1565,10 +1616,10 @@ println('Angles Reset');
 
             addCell(1,5); addCell(2,5); addCell(3,5); addCell(4,5); addCell(5,4);
             addCell(6,3); addCell(7,2); addCell(8,1);
-            
+
             // println('F Col 5');
 
-          }          
+          }
           // Column 6
           if(val(2,6) && val(3,6) && val(4,6) && val(5,5) && val(6,4) &&
              val(7,3) && val(8,2) ){
@@ -1577,7 +1628,7 @@ println('Angles Reset');
 
             addCell(2,6); addCell(3,6); addCell(4,6); addCell(5,5); addCell(6,4);
             addCell(7,3); addCell(8,2);
-            
+
             // println('F Col 6');
 
           }
@@ -1599,7 +1650,7 @@ println('Angles Reset');
             this.score+=5;
 
             addCell(4,8); addCell(5,7); addCell(6,6); addCell(7,5); addCell(8,4);
-            
+
             // println('F Col 8');
 
           }
@@ -1608,14 +1659,14 @@ println('Angles Reset');
 
         /* Backward Columns */
         {
-          
+
           // Column 0
           if(val(4,0) && val(5,0) && val(6,0) && val(7,0) && val(8,0) ){
 
             this.score+=5;
 
             addCell(4,0); addCell(5,0); addCell(6,0); addCell(7,0); addCell(8,0);
-            
+
             // println('B Col 0');
 
           }
@@ -1624,10 +1675,10 @@ println('Angles Reset');
              val(8,1) ){
 
             this.score+=6;
-            
+
             addCell(3,0); addCell(4,1); addCell(5,1); addCell(6,1); addCell(7,1);
             addCell(8,1);
-            
+
             // println('B Col 1');
 
           }
@@ -1636,10 +1687,10 @@ println('Angles Reset');
              val(7,2) && val(8,2) ){
 
             this.score+=7;
-            
-            addCell(2,0); addCell(3,1); addCell(4,2); addCell(5,2); addCell(6,1);
+
+            addCell(2,0); addCell(3,1); addCell(4,2); addCell(5,2); addCell(6,2);
             addCell(7,2); addCell(8,2);
-            
+
              println('B Col 2');
 
           }
@@ -1648,10 +1699,10 @@ println('Angles Reset');
              val(6,3) && val(7,3) && val(8,3) ){
 
             this.score+=8;
-            
+
             addCell(1,0); addCell(2,1); addCell(3,2); addCell(4,3); addCell(5,3);
             addCell(6,3); addCell(7,3); addCell(8,3);
-            
+
             // println('B Col 3');
 
           }
@@ -1660,10 +1711,10 @@ println('Angles Reset');
              val(5,4) && val(6,4) && val(7,4) && val(8,4) ){
 
             this.score+=9;
-            
+
             addCell(0,0); addCell(1,1); addCell(2,2); addCell(3,3); addCell(4,4);
             addCell(5,4); addCell(6,4); addCell(7,4); addCell(8,4);
- 
+
             // println('B Col 4');
 
           }
@@ -1672,22 +1723,22 @@ println('Angles Reset');
              val(5,5) && val(6,5) && val(7,5) ){
 
             this.score+=8;
-            
+
             addCell(0,1); addCell(1,2); addCell(2,3); addCell(3,4); addCell(4,5);
             addCell(5,5); addCell(6,5); addCell(7,5);
-            
+
             // println('B Col 5');
 
-          }          
+          }
           // Column 6
           if(val(0,2) && val(1,3) && val(2,4) && val(3,5) && val(4,6) &&
              val(5,6) && val(6,6) ){
 
             this.score+=7;
-            
+
             addCell(0,2); addCell(1,3); addCell(2,4); addCell(3,5); addCell(4,6);
             addCell(5,6); addCell(6,6);
-            
+
             // println('B Col 6');
 
           }
@@ -1696,10 +1747,10 @@ println('Angles Reset');
              val(5,7) ){
 
             this.score+=6;
-            
+
             addCell(0,3); addCell(1,4); addCell(2,5); addCell(3,6); addCell(4,7);
             addCell(5,7);
-            
+
             // println('B Col 7');
 
           }
@@ -1707,7 +1758,7 @@ println('Angles Reset');
           if(val(0,4) && val(1,5) && val(2,6) && val(3,7) && val(4,8) ){
 
             this.score+=5;
-            
+
             addCell(0,4); addCell(1,5); addCell(2,6); addCell(3,7); addCell(4,8);
 
             // println('B Col 8');
@@ -1726,15 +1777,43 @@ println('Angles Reset');
         cells=[]; // Reset Cell Array
 
       };
+
+      hexBoard.prototype.validateShape=function(){
+
+        var retVal=false;
+
+          for(var r in this.controls){
+            for(var c in this.controls[r]){
+              
+              if(this.controls[r][c].hit){
+                retVal=true;
+                break;
+              }
+
+            }
+          }
+
+        return retVal;
+
+      };
       hexBoard.prototype.drop = function(){
 
-        if(this.activeCell!==null &&
-           this.activeCell.hit){
+        if(this.validateShape()){
 
           this.layout[this.activeCell.row][this.activeCell.col]=1;
-
-          this.activeCell.color=this.activeShape.color;
           
+          var ctrls=this.controls;
+          
+          for(var r in ctrls){
+            for(var c in ctrls[r]){
+              
+              if(ctrls[r][c].hover){
+                 ctrls[r][c].color=this.activeShape.color;
+              }
+
+            }
+          }
+
           this.tally();
 
           this.resetShape();
@@ -1746,7 +1825,7 @@ println('Angles Reset');
           this.activeShape.y=this.activeShape.baseY;
 
         }
-// println(this.activeShape.id);
+
         this.activeCell  = null;
         this.activeShape = null;
         this.activeIndex = null;
@@ -2982,7 +3061,7 @@ println('Angles Reset');
       };
       shap.prototype.hitTest=function(x,y){
 
-        return dist(this.x+x,this.y+y, mouseX,mouseY)<cos(PI/6)*this.w/2*0.8;
+        return dist(this.x+x,this.y+y, mouseX,mouseY)<cos(PI/6)*this.w*1.25;
 
       };
       shap.prototype.moved=function(x,y){
@@ -3035,10 +3114,12 @@ println('Angles Reset');
 
         this.outerHit=false;
 
-        this.row      = props.row;
-        this.col      = props.col;
+        this.row      = Number(props.row);
+        this.col      = Number(props.col);
 
         this.color    = props.color;
+
+        this.hover    = false;
 
         this.points   = [];
         this.dpoints  = [];
@@ -3079,13 +3160,13 @@ println('Angles Reset');
           noStroke();
           fill(getColor(p.color, 100));
 
-          if(p.hit){
+          // if(p.hit){
 
-            if(p.parent.activeShape!==null){
+            if(p.hover && p.parent.activeShape!==null){
               fill(getColor(p.parent.activeShape.color,50));
             }
 
-          }
+          // }
 
           /** Hexagon */
             beginShape();
@@ -3157,7 +3238,7 @@ println('Angles Reset');
             if(this.hitTest(x,y)){ this.hit=true;
                                    app.focus=this.id;
                                    app.hexBoard.activeCell=this; }
-            else                 { this.hit=false;              }
+            else                 { this.hit=false;               }
 
           }
           else{
@@ -3167,6 +3248,8 @@ println('Angles Reset');
 
           }
 
+          this.hover=false;
+          
         // }
 
       };
@@ -3490,6 +3573,24 @@ println('Angles Reset');
 
       text(app.hexBoard.score, 50, 60);
 
+    textSize(24);
+      
+      try{
+
+      var row=Number(app.hexBoard.activeCell.row);
+      var col=Number(app.hexBoard.activeCell.col);
+
+        text(row + ', ' +  col, 50, 100);
+
+        row+=1;
+
+        text(row + ', ' +  col, 50, 130);
+
+      }
+      catch(e){
+        // println(e);
+      }
+
   };
 
   /* Keyboard Events =========================================================== */
@@ -3710,7 +3811,7 @@ println('Angles Reset');
 /**
 
 1729 = 10^3+9^3 = 12^3+1^3
-hextris.js  
+hextris.js
 
 */
 
