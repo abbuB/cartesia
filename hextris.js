@@ -42,7 +42,7 @@ var diagrams = function(processingInstance){
 
 
     TO DO:
-      
+
       Animation for drop outside grid
       Highlight rows while tallying
 
@@ -837,8 +837,18 @@ println('Angles Reset');
 
           noStroke();
 
-          if(p.hit){ fill(getColor(p.color, 85)); }
-          else     { fill(getColor(p.color, 80)); }
+          if(p.hit){
+            
+            // fill(getColor(p.color, 85));
+            fill(getColor(CLRS.BLACK,100));
+            
+          }
+          else{
+            
+            // fill(getColor(p.color, 80));
+            fill(getColor(CLRS.BLACK,50));
+            
+          }
 
           rect(p.offset, 0, p.w, p.h);
 
@@ -851,7 +861,7 @@ println('Angles Reset');
 
           var col0=p.offset+20;
           var col1=p.offset+30;
-          var col2=p.offset+130;
+          var col2=p.offset+170;
 
           if     ( app.telemetry && p.offset>-200){ p.offset-=10; }
           else if(!app.telemetry && p.offset<0   ){ p.offset+=10; }
@@ -913,7 +923,8 @@ println('Angles Reset');
                  col1, row0+15);
 
           fill(getColor(CLRS.YELLOW,75));
-
+          textAlign(RIGHT,TOP);
+          
             text('\n' +
                  mouseX                     + '\n' +
                  mouseY                     + '\n\n\n' +
@@ -938,7 +949,7 @@ println('Angles Reset');
           textSize(11);
           textAlign(LEFT,BOTTOM);
 
-            text(txt, p.offset+17, p.h-45, p.w-20, 100);
+            text(txt, p.offset+17, p.h-55, p.w-20, 100);
 
         };
 
@@ -1130,8 +1141,8 @@ println('Angles Reset');
         this.shapes.push(new shap(2, this, this.position2.x, this.position2.y, HEX_SIZE, HEX_SIZE,
           {baseX: this.position2.x,
            baseY: this.position2.y,
-           style: random2,
-           color: getShapeColor(random2)}));
+           style: SHAPES.SINGLE,
+           color: getShapeColor(SHAPES.SINGLE)}));
 
         {
           // this.shapes.push(new shap('S'+0, this, 150, 520, HEX_SIZE, HEX_SIZE,
@@ -1250,14 +1261,14 @@ println('Angles Reset');
 
 
         // fill(getColor(this.color, 50));
-            
+
             var ctrls=this.controls;
-            
+
             for(var r in ctrls){
               for(var c in ctrls[r]){
 
                 ctrls[r][c].draw();
-  
+
               }
             }
 
@@ -1268,8 +1279,6 @@ println('Angles Reset');
         popMatrix();
 
         forEach(this.shapes, 'draw');
-
-
 
       };
       hexBoard.prototype.moved    = function(x,y){
@@ -1300,98 +1309,185 @@ println('Angles Reset');
       hexBoard.prototype.validateDrop=function(source){
         // println(source);
         var retVal=false;
-        
+
         if(this.activeCell!==null){
 
             var ctrls   = this.controls;
             var layout  = this.layout;
             var row     = this.activeCell.row;
             var col     = this.activeCell.col;
-                
-            function validateUUP(){
+
+            function valSingle(){
+
+              switch(source){
+
+                case SOURCES.DRAGGED:   ctrls[row][col].hover=true; break;
+                case SOURCES.RELEASED:  layout[row][col]=1;         break;
+
+                default:  break;
+
+              }
+
+            };
+            
+            function valRow(){
+
+              switch(source){
+
+                case SOURCES.DRAGGED:   ctrls[row][col].hover=true; break;
+                case SOURCES.RELEASED:  layout[row][col]=1;         break;
+
+                default:  break;
+
+              }
+
+            };
+            function valRowForward(){
+
+              switch(source){
+
+                case SOURCES.DRAGGED:   ctrls[row][col].hover=true; break;
+                case SOURCES.RELEASED:  layout[row][col]=1;         break;
+
+                default:  break;
+
+              }
+
+            };
+            function valRowback(){
+
+              switch(source){
+
+                case SOURCES.DRAGGED:   ctrls[row][col].hover=true; break;
+                case SOURCES.RELEASED:  layout[row][col]=1;         break;
+
+                default:  break;
+
+              }
+
+            };            
+            
+            function valDiamond(){
+
+              switch(source){
+
+                case SOURCES.DRAGGED:   ctrls[row][col].hover=true; break;
+                case SOURCES.RELEASED:  layout[row][col]=1;         break;
+
+                default:  break;
+
+              }
+
+            };
+            
+            function valUUP(){
 
               try{
 
-                if(layout[ row   ][(col-1)]===0 &&
-                   layout[ row   ][(col+1)]===0 &&
-                   layout[(row+1)][(col-1)]===0 &&
-                   layout[(row+1)][ col   ]===0){
+                if(row>3){
 
-                  if(source===SOURCES.DRAGGED){
+                  if(layout[ row   ][(col-1)]===0 &&
+                     layout[ row   ][(col+1)]===0 &&
+                     layout[(row+1)][(col-1)]===0 &&
+                     layout[(row+1)][ col   ]===0){
 
-                    ctrls[ row   ][(col-1)].hover=true;
-                    ctrls[ row   ][(col+1)].hover=true;
-                    ctrls[(row+1)][(col-1)].hover=true;
-                    ctrls[(row+1)][ col   ].hover=true;
-                    
+                    switch(source){
+
+                      case SOURCES.DRAGGED:   ctrls[ row   ][(col-1)].hover=true;
+                                              ctrls[ row   ][(col+1)].hover=true;
+                                              ctrls[(row+1)][(col-1)].hover=true;
+                                              ctrls[(row+1)][ col   ].hover=true;   break;
+
+                      case SOURCES.RELEASED:  layout[ row   ][(col-1)]=1;
+                                              layout[ row   ][(col+1)]=1;
+                                              layout[(row+1)][(col-1)]=1;
+                                              layout[(row+1)][ col   ]=1;           break;
+
+                      default:  println('validateDrop Error');                      break;
+
+                    }
+                
                   }
-                  else if(source===SOURCES.RELEASED){
-                    
-                    layout[ row   ][(col-1)]=1;
-                    layout[ row   ][(col+1)]=1;
-                    layout[(row+1)][(col-1)]=1;
-                    layout[(row+1)][ col   ]=1;
-                    
-                    println(this.layout);
-                    
-                  }
-                  else{
 
-                    println('validateDrop Error');
-
-                  }
-                   
+                }
+                else{
+                
                 }
 
               }
               catch(e){
-                
+
                 if(e instanceof TypeError){
                   // println("Cell doesn't exist");
                 }
                 else{ println(e); }
-                
+
               }
 
             };
+            function valUDown(){};
+            
+            function valUpRight(){};
+            function valDownRight(){};
+            function valUpLeft(){};
+            function valDownLeft(){};
+            
+            function valZRight(){};
+            function valZLeft(){};
+            
+            function valSevenRight(){};
+            function valSevenLeft(){};
 
+            function valAngleRight(){};
+            function valAngleLeft(){};
+            
+            function valNodeUpRight(){};
+            function valNodeUpLeft(){};
+            function valNodeDownRight(){};
+            function valNodeDownLeft(){};
+            
+            function valeVUpRight(){};
+            function valeVUpLeft(){};
+            function valeVDownRight(){};
+            function valeVDownLeft(){};
+            
             switch(this.activeShape.style){
 
-              case SHAPES.SINGLE:         break;  // Nothing required
+              case SHAPES.SINGLE:         valSingle();        break;
 
-              case SHAPES.ROW:            break;
-              case SHAPES.ROW_FORWARD:    break;
-              case SHAPES.ROW_BACK:       break;
+              case SHAPES.ROW:            valRow();           break;
+              case SHAPES.ROW_FORWARD:    valRowForward();    break;
+              case SHAPES.ROW_BACK:       valRowBack();       break;
 
-              case SHAPES.DIAMOND:        break;
+              case SHAPES.DIAMOND:        valDiamond();       break;
 
-              case SHAPES.UUP:            validateUUP();  break;
-              
-              case SHAPES.UDOWN:          break;
+              case SHAPES.UUP:            valUUP();           break;
 
-              case SHAPES.UPRIGHT:        break;
-              case SHAPES.DOWNRIGHT:      break;
-              case SHAPES.UPLEFT:         break;
-              case SHAPES.DOWNLEFT:       break;
+              case SHAPES.UDOWN:          valUDown();         break;
 
-              case SHAPES.ZRIGHT:         break;
-              case SHAPES.ZLEFT:          break;
+              case SHAPES.UPRIGHT:        valUpRight();       break;
+              case SHAPES.DOWNRIGHT:      valDownRight();     break;
+              case SHAPES.UPLEFT:         valUpLeft();        break;
+              case SHAPES.DOWNLEFT:       valDownLeft();      break;
 
-              case SHAPES.SEVENRIGHT:     break;
-              case SHAPES.SEVENLEFT:      break;
+              case SHAPES.ZRIGHT:         valZRight();        break;
+              case SHAPES.ZLEFT:          valeZLeft();        break;
 
-              case SHAPES.ANGLERIGHT:     break;
-              case SHAPES.ANGLELEFT:      break;
+              case SHAPES.SEVENRIGHT:     valSevenRight();    break;
+              case SHAPES.SEVENLEFT:      valeSevenLeft();    break;
 
-              case SHAPES.NODEUPRIGHT:    break;
-              case SHAPES.NODEUPLEFT:     break;
-              case SHAPES.NODEDOWNRIGHT:  break;
-              case SHAPES.NODEDOWNLEFT:   break;
+              case SHAPES.ANGLERIGHT:     valAngleRight();    break;
+              case SHAPES.ANGLELEFT:      valAngleLeft();     break;
 
-              case SHAPES.VUPRIGHT:       break;
-              case SHAPES.VUPLEFT:        break;
-              case SHAPES.VDOWNRIGHT:     break;
-              case SHAPES.VDOWNLEFT:      break;
+              case SHAPES.NODEUPRIGHT:    valNodeUpRight();   break;
+              case SHAPES.NODEUPLEFT:     valNodeUpLeft();    break;
+              case SHAPES.NODEDOWNRIGHT:  valNodeDownRight(); break;
+              case SHAPES.NODEDOWNLEFT:   valNodeDownLeft();  break;
+
+              case SHAPES.VUPRIGHT:       valVUpRight();      break;
+              case SHAPES.VUPLEFT:        valVUpLeft();       break;
+              case SHAPES.VDOWNRIGHT:     valVDownRight();    break;
+              case SHAPES.VDOWNLEFT:      valVDownLeft();     break;
 
               default:  break;
 
@@ -1419,13 +1515,13 @@ println('Angles Reset');
         }
 
         this.validateDrop(SOURCES.DRAGGED);
-        
+
       };
       hexBoard.prototype.released = function(){
 
         forEach(this.shapes, 'released');
 
-        this.validateDrop(SOURCES.RELEASED);        
+        this.validateDrop(SOURCES.RELEASED);
 
       };
 
@@ -1815,7 +1911,7 @@ println('Angles Reset');
 
           for(var r in this.controls){
             for(var c in this.controls[r]){
-              
+
               if(this.controls[r][c].hit){
                 retVal=true;
                 break;
@@ -1832,10 +1928,10 @@ println('Angles Reset');
         if(this.activeShape!==null){
 
           var ctrls=this.controls;
-          
+
           for(var r in ctrls){
             for(var c in ctrls[r]){
-              
+
               if(ctrls[r][c].hover && this.layout[r][c]!==1){
                  ctrls[r][c].color=this.activeShape.color;
               }
@@ -1844,11 +1940,11 @@ println('Angles Reset');
           }
 
           this.validateDrop(SOURCES.RELEASED);
-          
+
           this.tally();
 
           this.resetShape();
-          
+
 
         }
         else{
@@ -2801,7 +2897,9 @@ println('Angles Reset');
           var w2=w*2;
 
           noStroke();
-
+          strokeWeight(2);
+          stroke(getColor(CLRS.BLACK,25));
+         
           function single(clr){
 
               fill(clr);
@@ -3084,6 +3182,7 @@ println('Angles Reset');
 
           /** Circle */
           fill(getColor(CLRS.BLACK,10));
+          noStroke();
 
           var d=cos(PI/6)*this.w*0.8;
           ellipse(this.x,this.y,2*d,2*d);
@@ -3281,7 +3380,7 @@ println('Angles Reset');
           }
 
           this.hover=false;
-          
+
         // }
 
       };
@@ -3606,7 +3705,7 @@ println('Angles Reset');
       text(app.hexBoard.score, 50, 60);
 
     textSize(24);
-      
+
       try{
 
       var row=Number(app.hexBoard.activeCell.row);
