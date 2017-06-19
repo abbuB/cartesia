@@ -1135,8 +1135,8 @@ println('Angles Reset');
         this.shapes.push(new shap(1, this, this.position1.x, this.position1.y, HEX_SIZE, HEX_SIZE,
           {baseX: this.position1.x,
            baseY: this.position1.y,
-           style: random1,
-           color: getShapeColor(random1)}));
+           style: SHAPES.DIAMOND,
+           color: getShapeColor(SHAPES.DIAMOND)}));
 
         this.shapes.push(new shap(2, this, this.position2.x, this.position2.y, HEX_SIZE, HEX_SIZE,
           {baseX: this.position2.x,
@@ -1158,7 +1158,7 @@ println('Angles Reset');
              // color: getShapeColor(random2)}));
 
           // this.shapes.push(new shap('S'+3, this, 350, 530, HEX_SIZE, HEX_SIZE,
-            // {style: SHAPES.ROW_BACK,
+            // {style: SHAPES.ROWBACK,
              // color: CLRS.LINE}));
 
           // this.shapes.push(new shap(400, this, 450, 530, HEX_SIZE, HEX_SIZE,
@@ -1319,62 +1319,504 @@ println('Angles Reset');
 
             function valSingle(){
 
-              switch(source){
+              try{
 
-                case SOURCES.DRAGGED:   ctrls[row][col].hover=true; break;
-                case SOURCES.RELEASED:  layout[row][col]=1;         break;
+                switch(source){
 
-                default:  break;
+                  case SOURCES.DRAGGED:   ctrls[row][col].hover=true; break;
+                  case SOURCES.RELEASED:  layout[row][col]=1;         break;
+
+                  default:  break;
+
+                }
 
               }
+              catch(e){
 
+                if(e instanceof TypeError){
+                  // Cell doesn't exist
+                }
+                else{ println(e); }
+
+              }
+              
             };
-            
+
             function valRow(){
+              
+              try{
 
-              switch(source){
+                switch(source){
 
-                case SOURCES.DRAGGED:   ctrls[row][col].hover=true; break;
-                case SOURCES.RELEASED:  layout[row][col]=1;         break;
+                  case SOURCES.DRAGGED:
 
-                default:  break;
+                    if(layout[row][col-1]===0 &&
+                       layout[row][col-2]===0 &&
+                       layout[row][col  ]===0 &&
+                       layout[row][col+1]===0){
+                         
+                      ctrls[row][col-1].hover=true;
+                      ctrls[row][col-2].hover=true;
+                      ctrls[row][col  ].hover=true;
+                      ctrls[row][col+1].hover=true;
+
+                    }
+
+                    break;
+
+                  case SOURCES.RELEASED:
+
+                    if(layout[row][col-1]===0 &&
+                       layout[row][col-2]===0 &&
+                       layout[row][col  ]===0 &&
+                       layout[row][col+1]===0){
+                         
+                      layout[row][col-1]=1;
+                      layout[row][col-2]=1;
+                      layout[row][col  ]=1;
+                      layout[row][col+1]=1;
+
+                    }
+
+                    break;
+
+                  default:  break;
+
+                }
 
               }
+              catch(e){
 
+                if(e instanceof TypeError){
+                  // Cell doesn't exist
+                }
+                else{ println(e); }
+
+              }
+              
             };
             function valRowForward(){
+              
+              try{
+                
+                switch(source){
 
-              switch(source){
+                  case SOURCES.DRAGGED:
 
-                case SOURCES.DRAGGED:   ctrls[row][col].hover=true; break;
-                case SOURCES.RELEASED:  layout[row][col]=1;         break;
+                    if     (row<4){ // Rows 0 -> 3
 
-                default:  break;
+                      if(layout[row  ][col]===0 &&
+                         layout[row-1][col]===0 &&
+                         layout[row-2][col]===0 &&
+                         layout[row+1][col]===0){
+
+                        ctrls[row  ][col].hover=true;
+                        ctrls[row-1][col].hover=true;
+                        ctrls[row-2][col].hover=true;
+                        ctrls[row+1][col].hover=true;
+
+                      }
+
+                    }
+                    else if(row===4){
+
+                      if(layout[row  ][col  ]===0 &&
+                         layout[row-1][col  ]===0 &&
+                         layout[row-2][col  ]===0 &&
+                         layout[row+1][col-1]===0){
+
+                        ctrls[row  ][col  ].hover=true;
+                        ctrls[row-1][col  ].hover=true;
+                        ctrls[row-2][col  ].hover=true;
+                        ctrls[row+1][col-1].hover=true;
+
+                      }
+
+                    }
+                    else if(row===5){
+
+                      if(layout[row  ][col  ]===0 &&
+                         layout[row-1][col+1]===0 &&
+                         layout[row-2][col+1]===0 &&
+                         layout[row+1][col-1]===0){
+
+                        ctrls[row  ][col  ].hover=true;
+                        ctrls[row-1][col+1].hover=true;
+                        ctrls[row-2][col+1].hover=true;
+                        ctrls[row+1][col-1].hover=true;
+
+                      }
+
+                    }
+                    else if(row>5){
+
+                      if(layout[row  ][col  ]===0 &&
+                         layout[row-1][col+1]===0 &&
+                         layout[row-2][col+2]===0 &&
+                         layout[row+1][col-1]===0){
+
+                        ctrls[row  ][col  ].hover=true;
+                        ctrls[row-1][col+1].hover=true;
+                        ctrls[row-2][col+2].hover=true;
+                        ctrls[row+1][col-1].hover=true;
+
+                      }
+
+                    }
+                    
+                    break;
+
+                  case SOURCES.RELEASED:
+
+                    if     (row<4){ // Rows 0 -> 3
+
+                      if(layout[row  ][col]===0 &&
+                         layout[row-1][col]===0 &&
+                         layout[row-2][col]===0 &&
+                         layout[row+1][col]===0){
+
+                        layout[row  ][col]=1;
+                        layout[row-1][col]=1;
+                        layout[row-2][col]=1;
+                        layout[row+1][col]=1;
+
+                      }
+
+                    }
+                    else if(row===4){
+
+                      if(layout[row  ][col  ]===0 &&
+                         layout[row-1][col  ]===0 &&
+                         layout[row-2][col  ]===0 &&
+                         layout[row+1][col-1]===0){
+
+                        layout[row  ][col  ]=1;
+                        layout[row-1][col  ]=1;
+                        layout[row-2][col  ]=1;
+                        layout[row+1][col-1]=1;
+
+                      }
+
+                    }
+                    else if(row===5){
+
+                      if(layout[row  ][col  ]===0 &&
+                         layout[row-1][col+1]===0 &&
+                         layout[row-2][col+1]===0 &&
+                         layout[row+1][col-1]===0){
+
+                        layout[row  ][col  ]=1;
+                        layout[row-1][col+1]=1;
+                        layout[row-2][col+1]=1;
+                        layout[row+1][col-1]=1;
+
+                      }
+
+                    }
+                    else if(row>5){
+
+                      if(layout[row  ][col  ]===0 &&
+                         layout[row-1][col+1]===0 &&
+                         layout[row-2][col+2]===0 &&
+                         layout[row+1][col-1]===0){
+
+                        layout[row  ][col  ]=1;
+                        layout[row-1][col+1]=1;
+                        layout[row-2][col+2]=1;
+                        layout[row+1][col-1]=1;
+
+                      }
+
+                    }
+                    
+                    break;
+
+
+                  default:  break;
+
+                }
 
               }
+              catch(e){
 
+                if(e instanceof TypeError){
+                  // Cell doesn't exist
+                }
+                else{ println(e); }
+
+              }
+              
             };
-            function valRowback(){
+            function valRowBack(){
+              
+              try{
+                
+                switch(source){
 
-              switch(source){
+                  case SOURCES.DRAGGED:
 
-                case SOURCES.DRAGGED:   ctrls[row][col].hover=true; break;
-                case SOURCES.RELEASED:  layout[row][col]=1;         break;
+                    if     (row<4){ // Rows 0 -> 3
 
-                default:  break;
+                      if(layout[row  ][col  ]===0 &&
+                         layout[row-1][col-1]===0 &&
+                         layout[row-2][col-2]===0 &&
+                         layout[row+1][col+1]===0){
+
+                        ctrls[row  ][col  ].hover=true;
+                        ctrls[row-1][col-1].hover=true;
+                        ctrls[row-2][col-2].hover=true;
+                        ctrls[row+1][col+1].hover=true;
+
+                      }
+
+                    }
+                    else if(row===4){
+
+                      if(layout[row  ][col  ]===0 &&
+                         layout[row-1][col-1]===0 &&
+                         layout[row-2][col-2]===0 &&
+                         layout[row+1][col  ]===0){
+
+                        ctrls[row  ][col  ].hover=true;
+                        ctrls[row-1][col-1].hover=true;
+                        ctrls[row-2][col-2].hover=true;
+                        ctrls[row+1][col  ].hover=true;
+
+                      }
+
+                    }
+                    else if(row===5){
+
+                      if(layout[row  ][col  ]===0 &&
+                         layout[row-1][col  ]===0 &&
+                         layout[row-2][col-1]===0 &&
+                         layout[row+1][col  ]===0){
+
+                        ctrls[row  ][col  ].hover=true;
+                        ctrls[row-1][col  ].hover=true;
+                        ctrls[row-2][col-1].hover=true;
+                        ctrls[row+1][col  ].hover=true;
+
+                      }
+
+                    }
+                    else if(row>5){
+
+                      if(layout[row  ][col]===0 &&
+                         layout[row-1][col]===0 &&
+                         layout[row-2][col]===0 &&
+                         layout[row+1][col]===0){
+
+                        ctrls[row  ][col].hover=true;
+                        ctrls[row-1][col].hover=true;
+                        ctrls[row-2][col].hover=true;
+                        ctrls[row+1][col].hover=true;
+
+                      }
+
+                    }
+                    
+                    break;
+
+                  case SOURCES.RELEASED:
+
+                    if     (row<4){ // Rows 0 -> 3
+
+                      if(layout[row  ][col  ]===0 &&
+                         layout[row-1][col-1]===0 &&
+                         layout[row-2][col-2]===0 &&
+                         layout[row+1][col+1]===0){
+
+                        layout[row  ][col  ]=1;
+                        layout[row-1][col-1]=1;
+                        layout[row-2][col-2]=1;
+                        layout[row+1][col+1]=1;
+
+                      }
+
+                    }
+                    else if(row===4){
+
+                      if(layout[row  ][col  ]===0 &&
+                         layout[row-1][col-1]===0 &&
+                         layout[row-2][col-2]===0 &&
+                         layout[row+1][col  ]===0){
+
+                        layout[row  ][col  ]=1;
+                        layout[row-1][col-1]=1;
+                        layout[row-2][col-2]=1;
+                        layout[row+1][col  ]=1;
+
+                      }
+
+                    }
+                    else if(row===5){
+
+                      if(layout[row  ][col  ]===0 &&
+                         layout[row-1][col  ]===0 &&
+                         layout[row-2][col-1]===0 &&
+                         layout[row+1][col  ]===0){
+
+                        layout[row  ][col  ]=1;
+                        layout[row-1][col  ]=1;
+                        layout[row-2][col-1]=1;
+                        layout[row+1][col  ]=1;
+
+                      }
+
+                    }
+                    else if(row>5){
+
+                      if(layout[row  ][col]===0 &&
+                         layout[row-1][col]===0 &&
+                         layout[row-2][col]===0 &&
+                         layout[row+1][col]===0){
+
+                        layout[row  ][col]=1;
+                        layout[row-1][col]=1;
+                        layout[row-2][col]=1;
+                        layout[row+1][col]=1;
+
+                      }
+
+                    }
+                    
+                    break;
+
+
+                  default:  break;
+
+                }
 
               }
+              catch(e){
 
+                if(e instanceof TypeError){
+                  // Cell doesn't exist
+                }
+                else{ println(e); }
+
+              }
+              
             };            
             
             function valDiamond(){
+              
+              try{
 
-              switch(source){
+                switch(source){
 
-                case SOURCES.DRAGGED:   ctrls[row][col].hover=true; break;
-                case SOURCES.RELEASED:  layout[row][col]=1;         break;
+                  case SOURCES.DRAGGED:
+                  
+                    if(row<4){
+                      
+                      if(layout[row  ][col  ]===0 &&
+                         layout[row-1][col-1]===0 &&
+                         layout[row  ][col-1]===0 &&
+                         layout[row+1][col  ]===0){
 
-                default:  break;
+                        ctrls[row  ][col  ].hover=true;
+                        ctrls[row-1][col-1].hover=true;
+                        ctrls[row  ][col-1].hover=true;
+                        ctrls[row+1][col  ].hover=true;
+
+                      }
+
+                    }
+                    else if(row===4){
+
+                      if(layout[row  ][col  ]===0 &&
+                         layout[row-1][col-1]===0 &&
+                         layout[row  ][col-1]===0 &&
+                         layout[row+1][col-1]===0){
+
+                        ctrls[row  ][col  ].hover=true;
+                        ctrls[row-1][col-1].hover=true;
+                        ctrls[row  ][col-1].hover=true;
+                        ctrls[row+1][col-1].hover=true;
+
+                      }
+                      
+                    }
+                    else if(row>4){
+
+                      if(layout[row  ][col  ]===0 &&
+                         layout[row-1][col  ]===0 &&
+                         layout[row  ][col-1]===0 &&
+                         layout[row+1][col-1]===0){
+
+                        ctrls[row  ][col  ].hover=true;
+                        ctrls[row-1][col  ].hover=true;
+                        ctrls[row  ][col-1].hover=true;
+                        ctrls[row+1][col-1].hover=true;
+
+                      }
+                      
+                    }
+                    
+                    break;
+                      
+                  case SOURCES.RELEASED:
+                  
+                    if(row<4){
+                      
+                      if(layout[row  ][col  ]===0 &&
+                         layout[row-1][col-1]===0 &&
+                         layout[row  ][col-1]===0 &&
+                         layout[row+1][col  ]===0){
+
+                        layout[row  ][col  ]=1;
+                        layout[row-1][col-1]=1;
+                        layout[row  ][col-1]=1;
+                        layout[row+1][col  ]=1;
+
+                      }
+
+                    }
+                    else if(row===4){
+
+                      if(layout[row  ][col  ]===0 &&
+                         layout[row-1][col-1]===0 &&
+                         layout[row  ][col-1]===0 &&
+                         layout[row+1][col-1]===0){
+
+                        layout[row  ][col  ]=1;
+                        layout[row-1][col-1]=1;
+                        layout[row  ][col-1]=1;
+                        layout[row+1][col-1]=1;
+
+                      }
+                      
+                    }
+                    else if(row>4){
+
+                      if(layout[row  ][col  ]===0 &&
+                         layout[row-1][col  ]===0 &&
+                         layout[row  ][col-1]===0 &&
+                         layout[row+1][col-1]===0){
+
+                        layout[row  ][col  ]=1;
+                        layout[row-1][col  ]=1;
+                        layout[row  ][col-1]=1;
+                        layout[row+1][col-1]=1;
+
+                      }
+                      
+                    }
+                    
+                    break;                  
+
+                  default:  break;
+
+                }
+
+              }
+              catch(e){
+
+                if(e instanceof TypeError){
+                  // println("Cell doesn't exist");
+                }
+                else{ println(e); }
 
               }
 
@@ -1425,39 +1867,476 @@ println('Angles Reset');
               }
 
             };
-            function valUDown(){};
-            
-            function valUpRight(){};
-            function valDownRight(){};
-            function valUpLeft(){};
-            function valDownLeft(){};
-            
-            function valZRight(){};
-            function valZLeft(){};
-            
-            function valSevenRight(){};
-            function valSevenLeft(){};
+            function valUDown(){
+              
+               try{
 
-            function valAngleRight(){};
-            function valAngleLeft(){};
+                switch(source){
+
+                  case SOURCES.DRAGGED:   ctrls[row][col].hover=true; break;
+                  case SOURCES.RELEASED:  layout[row][col]=1;         break;
+
+                  default:  break;
+
+                }
+
+              }
+              catch(e){
+
+                if(e instanceof TypeError){
+                  // println("Cell doesn't exist");
+                }
+                else{ println(e); }
+
+              }
             
-            function valNodeUpRight(){};
-            function valNodeUpLeft(){};
-            function valNodeDownRight(){};
-            function valNodeDownLeft(){};
+            };
             
-            function valeVUpRight(){};
-            function valeVUpLeft(){};
-            function valeVDownRight(){};
-            function valeVDownLeft(){};
+            function valUpRight(){
+              
+               try{
+
+                switch(source){
+
+                  case SOURCES.DRAGGED:   ctrls[row][col].hover=true; break;
+                  case SOURCES.RELEASED:  layout[row][col]=1;         break;
+
+                  default:  break;
+
+                }
+
+              }
+              catch(e){
+
+                if(e instanceof TypeError){
+                  // println("Cell doesn't exist");
+                }
+                else{ println(e); }
+
+              }
+              
+            };
+            function valDownRight(){
+              
+               try{
+
+                switch(source){
+
+                  case SOURCES.DRAGGED:   ctrls[row][col].hover=true; break;
+                  case SOURCES.RELEASED:  layout[row][col]=1;         break;
+
+                  default:  break;
+
+                }
+
+              }
+              catch(e){
+
+                if(e instanceof TypeError){
+                  // println("Cell doesn't exist");
+                }
+                else{ println(e); }
+
+              }
+              
+            };
+            function valUpLeft(){
+              
+               try{
+
+                switch(source){
+
+                  case SOURCES.DRAGGED:   ctrls[row][col].hover=true; break;
+                  case SOURCES.RELEASED:  layout[row][col]=1;         break;
+
+                  default:  break;
+
+                }
+
+              }
+              catch(e){
+
+                if(e instanceof TypeError){
+                  // println("Cell doesn't exist");
+                }
+                else{ println(e); }
+
+              }
+              
+            };
+            function valDownLeft(){
+              
+               try{
+
+                switch(source){
+
+                  case SOURCES.DRAGGED:   ctrls[row][col].hover=true; break;
+                  case SOURCES.RELEASED:  layout[row][col]=1;         break;
+
+                  default:  break;
+
+                }
+
+              }
+              catch(e){
+
+                if(e instanceof TypeError){
+                  // println("Cell doesn't exist");
+                }
+                else{ println(e); }
+
+              }
+              
+            };
+            
+            function valZRight(){
+              
+               try{
+
+                switch(source){
+
+                  case SOURCES.DRAGGED:   ctrls[row][col].hover=true; break;
+                  case SOURCES.RELEASED:  layout[row][col]=1;         break;
+
+                  default:  break;
+
+                }
+
+              }
+              catch(e){
+
+                if(e instanceof TypeError){
+                  // println("Cell doesn't exist");
+                }
+                else{ println(e); }
+
+              }
+              
+            };
+            function valZLeft(){
+              
+               try{
+
+                switch(source){
+
+                  case SOURCES.DRAGGED:   ctrls[row][col].hover=true; break;
+                  case SOURCES.RELEASED:  layout[row][col]=1;         break;
+
+                  default:  break;
+
+                }
+
+              }
+              catch(e){
+
+                if(e instanceof TypeError){
+                  // println("Cell doesn't exist");
+                }
+                else{ println(e); }
+
+              }
+              
+            };
+            
+            function valSevenRight(){
+              
+               try{
+
+                switch(source){
+
+                  case SOURCES.DRAGGED:   ctrls[row][col].hover=true; break;
+                  case SOURCES.RELEASED:  layout[row][col]=1;         break;
+
+                  default:  break;
+
+                }
+
+              }
+              catch(e){
+
+                if(e instanceof TypeError){
+                  // println("Cell doesn't exist");
+                }
+                else{ println(e); }
+
+              }
+              
+            };
+            function valSevenLeft(){
+
+               try{
+
+                switch(source){
+
+                  case SOURCES.DRAGGED:   ctrls[row][col].hover=true; break;
+                  case SOURCES.RELEASED:  layout[row][col]=1;         break;
+
+                  default:  break;
+
+                }
+
+              }
+              catch(e){
+
+                if(e instanceof TypeError){
+                  // println("Cell doesn't exist");
+                }
+                else{ println(e); }
+
+              }
+              
+            };
+
+            function valAngleRight(){
+              
+               try{
+
+                switch(source){
+
+                  case SOURCES.DRAGGED:   ctrls[row][col].hover=true; break;
+                  case SOURCES.RELEASED:  layout[row][col]=1;         break;
+
+                  default:  break;
+
+                }
+
+              }
+              catch(e){
+
+                if(e instanceof TypeError){
+                  // println("Cell doesn't exist");
+                }
+                else{ println(e); }
+
+              }
+              
+            };
+            function valAngleLeft(){
+              
+               try{
+
+                switch(source){
+
+                  case SOURCES.DRAGGED:   ctrls[row][col].hover=true; break;
+                  case SOURCES.RELEASED:  layout[row][col]=1;         break;
+
+                  default:  break;
+
+                }
+
+              }
+              catch(e){
+
+                if(e instanceof TypeError){
+                  // println("Cell doesn't exist");
+                }
+                else{ println(e); }
+
+              }
+              
+            };
+            
+            function valNodeUpRight(){
+              
+               try{
+
+                switch(source){
+
+                  case SOURCES.DRAGGED:   ctrls[row][col].hover=true; break;
+                  case SOURCES.RELEASED:  layout[row][col]=1;         break;
+
+                  default:  break;
+
+                }
+
+              }
+              catch(e){
+
+                if(e instanceof TypeError){
+                  // println("Cell doesn't exist");
+                }
+                else{ println(e); }
+
+              }
+              
+            };
+            function valNodeUpLeft(){
+              
+               try{
+
+                switch(source){
+
+                  case SOURCES.DRAGGED:   ctrls[row][col].hover=true; break;
+                  case SOURCES.RELEASED:  layout[row][col]=1;         break;
+
+                  default:  break;
+
+                }
+
+              }
+              catch(e){
+
+                if(e instanceof TypeError){
+                  // println("Cell doesn't exist");
+                }
+                else{ println(e); }
+
+              }
+              
+            };
+            function valNodeDownRight(){
+              
+               try{
+
+                switch(source){
+
+                  case SOURCES.DRAGGED:   ctrls[row][col].hover=true; break;
+                  case SOURCES.RELEASED:  layout[row][col]=1;         break;
+
+                  default:  break;
+
+                }
+
+              }
+              catch(e){
+
+                if(e instanceof TypeError){
+                  // println("Cell doesn't exist");
+                }
+                else{ println(e); }
+
+              }
+              
+            };
+            function valNodeDownLeft(){
+              
+               try{
+
+                switch(source){
+
+                  case SOURCES.DRAGGED:   ctrls[row][col].hover=true; break;
+                  case SOURCES.RELEASED:  layout[row][col]=1;         break;
+
+                  default:  break;
+
+                }
+
+              }
+              catch(e){
+
+                if(e instanceof TypeError){
+                  // println("Cell doesn't exist");
+                }
+                else{ println(e); }
+
+              }
+              
+            };
+            
+            function valeVUpRight(){
+              
+               try{
+
+                switch(source){
+
+                  case SOURCES.DRAGGED:   ctrls[row][col].hover=true; break;
+                  case SOURCES.RELEASED:  layout[row][col]=1;         break;
+
+                  default:  break;
+
+                }
+
+              }
+              catch(e){
+
+                if(e instanceof TypeError){
+                  // println("Cell doesn't exist");
+                }
+                else{ println(e); }
+
+              }
+              
+            };
+            function valeVUpLeft(){
+              
+               try{
+
+                switch(source){
+
+                  case SOURCES.DRAGGED:   ctrls[row][col].hover=true; break;
+                  case SOURCES.RELEASED:  layout[row][col]=1;         break;
+
+                  default:  break;
+
+                }
+
+              }
+              catch(e){
+
+                if(e instanceof TypeError){
+                  // println("Cell doesn't exist");
+                }
+                else{ println(e); }
+
+              }
+              
+            };
+            function valeVDownRight(){
+
+               try{
+
+                switch(source){
+
+                  case SOURCES.DRAGGED:   ctrls[row][col].hover=true; break;
+                  case SOURCES.RELEASED:  layout[row][col]=1;         break;
+
+                  default:  break;
+
+                }
+
+              }
+              catch(e){
+
+                if(e instanceof TypeError){
+                  // println("Cell doesn't exist");
+                }
+                else{ println(e); }
+
+              }
+              
+            };
+            function valeVDownLeft(){
+              
+               try{
+
+                switch(source){
+
+                  case SOURCES.DRAGGED:   ctrls[row][col].hover=true; break;
+                  case SOURCES.RELEASED:  layout[row][col]=1;         break;
+
+                  default:  break;
+
+                }
+
+              }
+              catch(e){
+
+                if(e instanceof TypeError){
+                  // println("Cell doesn't exist");
+                }
+                else{ println(e); }
+
+              }
+              
+            };
             
             switch(this.activeShape.style){
 
               case SHAPES.SINGLE:         valSingle();        break;
 
               case SHAPES.ROW:            valRow();           break;
-              case SHAPES.ROW_FORWARD:    valRowForward();    break;
-              case SHAPES.ROW_BACK:       valRowBack();       break;
+              case SHAPES.ROWFORWARD:     valRowForward();    break;
+              case SHAPES.ROWBACK:        valRowBack();       break;
 
               case SHAPES.DIAMOND:        valDiamond();       break;
 
@@ -1535,8 +2414,8 @@ println('Angles Reset');
         this.shapes[i].x=this.shapes[i].baseX;
         this.shapes[i].y=this.shapes[i].baseY+200;
 
-        this.shapes[i].style=SHAPES.UUP;
-        this.shapes[i].color=getShapeColor(SHAPES.UUP);
+        this.shapes[i].style=SHAPES.DIAMOND;
+        this.shapes[i].color=getShapeColor(SHAPES.DIAMOND);
 
       };
       hexBoard.prototype.resetShapes=function(){
@@ -3123,8 +4002,8 @@ println('Angles Reset');
                 case SHAPES.SINGLE:         single(CLRS.SINGLE);      break;
 
                 case SHAPES.ROW:            row(CLRS.LINE);           break;
-                case SHAPES.ROW_FORWARD:    forward(CLRS.LINE);       break;
-                case SHAPES.ROW_BACK:       back(CLRS.LINE);          break;
+                case SHAPES.ROWFORWARD:    forward(CLRS.LINE);       break;
+                case SHAPES.ROWBACK:       back(CLRS.LINE);          break;
 
                 case SHAPES.DIAMOND:        diamond(CLRS.DIAMOND);    break;
                 case SHAPES.ZRIGHT:         zRight(CLRS.Z);           break;
