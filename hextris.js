@@ -1129,20 +1129,20 @@ println('Angles Reset');
         this.shapes.push(new shap(0, this, this.position0.x, this.position0.y, HEX_SIZE, HEX_SIZE,
           {baseX: this.position0.x,
            baseY: this.position0.y,
-           style: SHAPES.NODEDOWNLEFT,
-           color: getShapeColor(SHAPES.NODEDOWNLEFT)}));
+           style: random0,
+           color: getShapeColor(random0)}));
 
         this.shapes.push(new shap(1, this, this.position1.x, this.position1.y, HEX_SIZE, HEX_SIZE,
           {baseX: this.position1.x,
            baseY: this.position1.y,
-           style: SHAPES.UPLEFT,
-           color: getShapeColor(SHAPES.UPLEFT)}));
+           style: random1,
+           color: getShapeColor(random1)}));
 
         this.shapes.push(new shap(2, this, this.position2.x, this.position2.y, HEX_SIZE, HEX_SIZE,
           {baseX: this.position2.x,
            baseY: this.position2.y,
-           style: SHAPES.DOWNRIGHT,
-           color: getShapeColor(SHAPES.DOWNRIGHT)}));
+           style: random2,
+           color: getShapeColor(random2)}));
 
         {
           // this.shapes.push(new shap('S'+0, this, 150, 520, HEX_SIZE, HEX_SIZE,
@@ -3648,12 +3648,12 @@ println('Angles Reset');
 
                       if(layout[row  ][col  ]===0 &&
                          layout[row  ][col-1]===0 &&
-                         layout[row  ][col+1]===0 &&
+                         layout[row-1][col  ]===0 &&
                          layout[row+1][col  ]===0){
 
                         ctrls[row  ][col  ].hover=true;
                         ctrls[row  ][col-1].hover=true;
-                        ctrls[row  ][col+1].hover=true;
+                        ctrls[row-1][col  ].hover=true;
                         ctrls[row+1][col  ].hover=true;
 
                       }
@@ -3663,12 +3663,12 @@ println('Angles Reset');
 
                       if(layout[row  ][col  ]===0 &&
                          layout[row  ][col-1]===0 &&
-                         layout[row  ][col+1]===0 &&
+                         layout[row-1][col  ]===0 &&
                          layout[row+1][col-1]===0){
 
                         ctrls[row  ][col  ].hover=true;
                         ctrls[row  ][col-1].hover=true;
-                        ctrls[row  ][col+1].hover=true;
+                        ctrls[row-1][col  ].hover=true;
                         ctrls[row+1][col-1].hover=true;
 
                       }
@@ -3678,12 +3678,12 @@ println('Angles Reset');
 
                       if(layout[row  ][col  ]===0 &&
                          layout[row  ][col-1]===0 &&
-                         layout[row  ][col+1]===0 &&
+                         layout[row-1][col+1]===0 &&
                          layout[row+1][col-1]===0){
 
                         ctrls[row  ][col  ].hover=true;
                         ctrls[row  ][col-1].hover=true;
-                        ctrls[row  ][col+1].hover=true;
+                        ctrls[row-1][col+1].hover=true;
                         ctrls[row+1][col-1].hover=true;
 
                       }
@@ -3698,12 +3698,12 @@ println('Angles Reset');
 
                       if(layout[row  ][col  ]===0 &&
                          layout[row  ][col-1]===0 &&
-                         layout[row  ][col+1]===0 &&
+                         layout[row-1][col  ]===0 &&
                          layout[row+1][col  ]===0){
 
                         layout[row  ][col  ]=1;
                         layout[row  ][col-1]=1;
-                        layout[row  ][col+1]=1;
+                        layout[row-1][col  ]=1;
                         layout[row+1][col  ]=1;
 
                       }
@@ -3713,12 +3713,12 @@ println('Angles Reset');
 
                       if(layout[row  ][col  ]===0 &&
                          layout[row  ][col-1]===0 &&
-                         layout[row  ][col+1]===0 &&
+                         layout[row-1][col  ]===0 &&
                          layout[row+1][col-1]===0){
 
                         layout[row  ][col  ]=1;
                         layout[row  ][col-1]=1;
-                        layout[row  ][col+1]=1;
+                        layout[row-1][col  ]=1;
                         layout[row+1][col-1]=1;
 
                       }
@@ -3728,19 +3728,19 @@ println('Angles Reset');
 
                       if(layout[row  ][col  ]===0 &&
                          layout[row  ][col-1]===0 &&
-                         layout[row  ][col+1]===0 &&
+                         layout[row-1][col+1]===0 &&
                          layout[row+1][col-1]===0){
 
                         layout[row  ][col  ]=1;
                         layout[row  ][col-1]=1;
-                        layout[row  ][col+1]=1;
+                        layout[row-1][col+1]=1;
                         layout[row+1][col-1]=1;
 
                       }
 
                     }                    
 
-                    break;            
+                    break;         
 
                   default:  break;
 
@@ -3763,13 +3763,110 @@ println('Angles Reset');
 
                 switch(source){
 
-                  case SOURCES.DRAGGED:   ctrls[row][col].hover=true; break;
-                  case SOURCES.RELEASED:  layout[row][col]=1;         break;
+                  case SOURCES.DRAGGED:
 
+                    if(row<4){
+
+                      if(layout[row  ][col  ]===0 &&
+                         layout[row  ][col+1]===0 &&
+                         layout[row-1][col-1]===0 &&
+                         layout[row+1][col+1]===0){
+
+                        ctrls[row  ][col  ].hover=true;
+                        ctrls[row  ][col+1].hover=true;
+                        ctrls[row-1][col-1].hover=true;
+                        ctrls[row+1][col+1].hover=true;
+
+                      }
+
+                    }                  
+                    else if(row===4){
+
+                      if(layout[row  ][col  ]===0 &&
+                         layout[row  ][col+1]===0 &&
+                         layout[row-1][col-1]===0 &&
+                         layout[row+1][col  ]===0){
+
+                        ctrls[row  ][col  ].hover=true;
+                        ctrls[row  ][col+1].hover=true;
+                        ctrls[row-1][col-1].hover=true;
+                        ctrls[row+1][col  ].hover=true;
+
+                      }
+
+                    } 
+                    else if(row>4){
+
+                      if(layout[row  ][col  ]===0 &&
+                         layout[row  ][col+1]===0 &&
+                         layout[row-1][col  ]===0 &&
+                         layout[row+1][col  ]===0){
+
+                        ctrls[row  ][col  ].hover=true;
+                        ctrls[row  ][col+1].hover=true;
+                        ctrls[row-1][col  ].hover=true;
+                        ctrls[row+1][col  ].hover=true;
+
+                      }
+
+                    }                    
+
+                    break;
+
+                  case SOURCES.RELEASED:
+                  
+                    if(row<4){
+
+                      if(layout[row  ][col  ]===0 &&
+                         layout[row  ][col+1]===0 &&
+                         layout[row-1][col-1]===0 &&
+                         layout[row+1][col+1]===0){
+
+                        layout[row  ][col  ]=1;
+                        layout[row  ][col+1]=1;
+                        layout[row-1][col-1]=1;
+                        layout[row+1][col+1]=1;
+
+                      }
+
+                    }                  
+                    else if(row===4){
+
+                      if(layout[row  ][col  ]===0 &&
+                         layout[row  ][col+1]===0 &&
+                         layout[row-1][col-1]===0 &&
+                         layout[row+1][col  ]===0){
+
+                        layout[row  ][col  ]=1;
+                        layout[row  ][col+1]=1;
+                        layout[row-1][col-1]=1;
+                        layout[row+1][col  ]=1;
+
+                      }
+
+                    } 
+                    else if(row>4){
+
+                      if(layout[row  ][col  ]===0 &&
+                         layout[row  ][col+1]===0 &&
+                         layout[row-1][col  ]===0 &&
+                         layout[row+1][col  ]===0){
+
+                        layout[row  ][col  ]=1;
+                        layout[row  ][col+1]=1;
+                        layout[row-1][col  ]=1;
+                        layout[row+1][col  ]=1;
+
+                      }
+
+                    }                  
+
+                    break;  
+                  
                   default:  break;
 
                 }
-
+                
               }
               catch(e){
 
@@ -3787,9 +3884,106 @@ println('Angles Reset');
 
                 switch(source){
 
-                  case SOURCES.DRAGGED:   ctrls[row][col].hover=true; break;
-                  case SOURCES.RELEASED:  layout[row][col]=1;         break;
+                  case SOURCES.DRAGGED:
 
+                    if(row<4){
+
+                      if(layout[row  ][col  ]===0 &&
+                         layout[row  ][col-1]===0 &&
+                         layout[row-1][col-1]===0 &&
+                         layout[row+1][col+1]===0){
+
+                        ctrls[row  ][col  ].hover=true;
+                        ctrls[row  ][col-1].hover=true;
+                        ctrls[row-1][col-1].hover=true;
+                        ctrls[row+1][col+1].hover=true;
+
+                      }
+
+                    }                  
+                    else if(row===4){
+
+                      if(layout[row  ][col  ]===0 &&
+                         layout[row  ][col-1]===0 &&
+                         layout[row-1][col-1]===0 &&
+                         layout[row+1][col  ]===0){
+
+                        ctrls[row  ][col  ].hover=true;
+                        ctrls[row  ][col-1].hover=true;
+                        ctrls[row-1][col-1].hover=true;
+                        ctrls[row+1][col  ].hover=true;
+
+                      }
+
+                    } 
+                    else if(row>4){
+
+                      if(layout[row  ][col  ]===0 &&
+                         layout[row  ][col-1]===0 &&
+                         layout[row-1][col  ]===0 &&
+                         layout[row+1][col  ]===0){
+
+                        ctrls[row  ][col  ].hover=true;
+                        ctrls[row  ][col-1].hover=true;
+                        ctrls[row-1][col  ].hover=true;
+                        ctrls[row+1][col  ].hover=true;
+
+                      }
+
+                    }                    
+
+                    break;
+
+                  case SOURCES.RELEASED:
+                  
+                    if(row<4){
+
+                      if(layout[row  ][col  ]===0 &&
+                         layout[row  ][col-1]===0 &&
+                         layout[row-1][col-1]===0 &&
+                         layout[row+1][col+1]===0){
+
+                        layout[row  ][col  ]=1;
+                        layout[row  ][col-1]=1;
+                        layout[row-1][col-1]=1;
+                        layout[row+1][col+1]=1;
+
+                      }
+
+                    }                  
+                    else if(row===4){
+
+                      if(layout[row  ][col  ]===0 &&
+                         layout[row  ][col-1]===0 &&
+                         layout[row-1][col-1]===0 &&
+                         layout[row+1][col  ]===0){
+
+                        layout[row  ][col  ]=1;
+                        layout[row  ][col-1]=1;
+                        layout[row-1][col-1]=1;
+                        layout[row+1][col  ]=1;
+
+                      }
+
+                    } 
+                    else if(row>4){
+
+                      if(layout[row  ][col  ]===0 &&
+                         layout[row  ][col-1]===0 &&
+                         layout[row-1][col  ]===0 &&
+                         layout[row+1][col  ]===0){
+
+                        layout[row  ][col  ]=1;
+                        layout[row  ][col-1]=1;
+                        layout[row-1][col  ]=1;
+                        layout[row+1][col  ]=1;
+
+                      }
+
+                    }                    
+
+                    break;  
+                  
                   default:  break;
 
                 }
@@ -3811,9 +4005,106 @@ println('Angles Reset');
 
                 switch(source){
 
-                  case SOURCES.DRAGGED:   ctrls[row][col].hover=true; break;
-                  case SOURCES.RELEASED:  layout[row][col]=1;         break;
+                  case SOURCES.DRAGGED:
 
+                    if(row<4){
+
+                      if(layout[row  ][col  ]===0 &&
+                         layout[row  ][col+1]===0 &&
+                         layout[row-1][col  ]===0 &&
+                         layout[row+1][col  ]===0){
+
+                        ctrls[row  ][col  ].hover=true;
+                        ctrls[row  ][col+1].hover=true;
+                        ctrls[row-1][col  ].hover=true;
+                        ctrls[row+1][col  ].hover=true;
+
+                      }
+
+                    }                  
+                    else if(row===4){
+
+                      if(layout[row  ][col  ]===0 &&
+                         layout[row  ][col+1]===0 &&
+                         layout[row-1][col  ]===0 &&
+                         layout[row+1][col-1]===0){
+
+                        ctrls[row  ][col  ].hover=true;
+                        ctrls[row  ][col+1].hover=true;
+                        ctrls[row-1][col  ].hover=true;
+                        ctrls[row+1][col-1].hover=true;
+
+                      }
+
+                    } 
+                    else if(row>4){
+
+                      if(layout[row  ][col  ]===0 &&
+                         layout[row  ][col+1]===0 &&
+                         layout[row-1][col+1]===0 &&
+                         layout[row+1][col-1]===0){
+
+                        ctrls[row  ][col  ].hover=true;
+                        ctrls[row  ][col+1].hover=true;
+                        ctrls[row-1][col+1].hover=true;
+                        ctrls[row+1][col-1].hover=true;
+
+                      }
+
+                    }                    
+
+                    break;
+
+                  case SOURCES.RELEASED:
+                  
+                    if(row<4){
+
+                      if(layout[row  ][col  ]===0 &&
+                         layout[row  ][col+1]===0 &&
+                         layout[row-1][col  ]===0 &&
+                         layout[row+1][col  ]===0){
+
+                        layout[row  ][col  ]=1;
+                        layout[row  ][col+1]=1;
+                        layout[row-1][col  ]=1;
+                        layout[row+1][col  ]=1;
+
+                      }
+
+                    }                  
+                    else if(row===4){
+
+                      if(layout[row  ][col  ]===0 &&
+                         layout[row  ][col+1]===0 &&
+                         layout[row-1][col  ]===0 &&
+                         layout[row+1][col-1]===0){
+
+                        layout[row  ][col  ]=1;
+                        layout[row  ][col+1]=1;
+                        layout[row-1][col  ]=1;
+                        layout[row+1][col-1]=1;
+
+                      }
+
+                    } 
+                    else if(row>4){
+
+                      if(layout[row  ][col  ]===0 &&
+                         layout[row  ][col+1]===0 &&
+                         layout[row-1][col+1]===0 &&
+                         layout[row+1][col-1]===0){
+
+                        layout[row  ][col  ]=1;
+                        layout[row  ][col+1]=1;
+                        layout[row-1][col+1]=1;
+                        layout[row+1][col-1]=1;
+
+                      }
+
+                    }                    
+
+                    break;  
+                  
                   default:  break;
 
                 }
@@ -3914,8 +4205,8 @@ println('Angles Reset');
         this.shapes[i].x=this.shapes[i].baseX;
         this.shapes[i].y=this.shapes[i].baseY+200;
 
-        this.shapes[i].style=SHAPES.NODEDOWNLEFT;
-        this.shapes[i].color=getShapeColor(SHAPES.NODEDOWNLEFT);
+        this.shapes[i].style=random0;
+        this.shapes[i].color=getShapeColor(random0);
 
       };
       hexBoard.prototype.resetShapes=function(){
