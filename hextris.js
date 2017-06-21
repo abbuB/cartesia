@@ -42,6 +42,8 @@ var diagrams = function(processingInstance){
 
 
     TO DO:
+      
+      error objects for each specific piece and error context
 
       Animation for drop outside grid
       Highlight rows while tallying
@@ -1323,8 +1325,25 @@ println('Angles Reset');
 
                 switch(source){
 
-                  case SOURCES.DRAGGED:   ctrls[row][col].hover=true; break;
-                  case SOURCES.RELEASED:  layout[row][col]=1;         break;
+                  case SOURCES.DRAGGED:
+
+                    if(layout[row][col]===0){
+
+                      ctrls[row][col].hover=true;
+
+                    }
+
+                    break;
+
+                  case SOURCES.RELEASED:
+
+                    if(layout[row][col]===0){
+
+                      layout[row][col]=1;
+
+                    }
+
+                    break;
 
                   default:  break;
 
@@ -1904,7 +1923,7 @@ println('Angles Reset');
 
                         layout[row  ][col-1]=1;
                         layout[row  ][col+1]=1;
-                        layout[row+1][col-1]=1;
+                        layout[row+1][col+1]=1;
                         layout[row+1][col  ]=1;
 
                       }
@@ -2261,12 +2280,12 @@ println('Angles Reset');
                       if(layout[row  ][col-1]===0 &&
                          layout[row-1][col+1]===0 &&
                          layout[row-1][col  ]===0 &&
-                         layout[row+1][col  ]===0){
+                         layout[row+1][col-1]===0){
 
                         layout[row  ][col-1]=1;
                         layout[row-1][col+1]=1;
                         layout[row-1][col  ]=1;
-                        layout[row+1][col  ]=1;
+                        layout[row+1][col-1]=1;
 
                       }
                     
