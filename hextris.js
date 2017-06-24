@@ -1131,8 +1131,8 @@ println('Angles Reset');
         this.shapes.push(new shap(0, this, this.position0.x, this.position0.y, HEX_SIZE, HEX_SIZE,
           {baseX: this.position0.x,
            baseY: this.position0.y,
-           style: random0,
-           color: getShapeColor(random0)}));
+           style: SHAPES.SINGLE,
+           color: getShapeColor(SHAPES.SINGLE)}));
 
         this.shapes.push(new shap(1, this, this.position1.x, this.position1.y, HEX_SIZE, HEX_SIZE,
           {baseX: this.position1.x,
@@ -1309,7 +1309,9 @@ println('Angles Reset');
 
       };
       hexBoard.prototype.validateDrop=function(source){
+
         // println(source);
+      
         var retVal=false;
 
         if(this.activeCell!==null){
@@ -4190,7 +4192,7 @@ println('Angles Reset');
       hexBoard.prototype.dragged  = function(){
 
         forEach(this.shapes, 'dragged');
-
+      
         if(this.activeShape!==null){
 
           for(var r in this.controls){
@@ -4201,31 +4203,36 @@ println('Angles Reset');
             }
           }
 
-        }
+          this.validateDrop(SOURCES.DRAGGED);
 
-        this.validateDrop(SOURCES.DRAGGED);
+        }
 
       };
       hexBoard.prototype.released = function(){
 
-        forEach(this.shapes, 'released');
+      
+        if(this.activeShape!==null){
+          
+          forEach(this.shapes, 'released');
 
-        this.validateDrop(SOURCES.RELEASED);
+          this.validateDrop(SOURCES.RELEASED);
 
+        }
+        
       };
 
       hexBoard.prototype.resetShape=function(){
 
-        //  Determine the knew shape
-        var random0=floor(random(0,24));
+        //  Determine the new shape
+        var rand=floor(random(0,24));
         var i=this.activeIndex;
 
         // Create 200 pixels below baseY to allow to glide into place
         this.shapes[i].x=this.shapes[i].baseX;
         this.shapes[i].y=this.shapes[i].baseY+200;
 
-        this.shapes[i].style=random0;
-        this.shapes[i].color=getShapeColor(random0);
+        this.shapes[i].style=rand;
+        this.shapes[i].color=getShapeColor(rand);
 
       };
       hexBoard.prototype.resetShapes=function(){
@@ -4621,7 +4628,8 @@ println('Angles Reset');
           for(var r in ctrls){
             for(var c in ctrls[r]){
 
-              if(ctrls[r][c].hover && this.layout[r][c]!==1){
+              if(ctrls[r][c].hover &&
+                 this.layout[r][c]!==1){
                  ctrls[r][c].color=this.activeShape.color;
               }
 
@@ -5602,17 +5610,26 @@ println('Angles Reset');
 
             fill(clr);
 
-              drawHexagon( f*3*w, 0, w);
-              drawHexagon( f*1*w, 0, w);
-              drawHexagon(-f*1*w, 0, w);
-              drawHexagon(-f*3*w, 0, w);
+            var offset=-p.w/2;
+            
+              drawHexagon(offset+f*3*w, 0, w);
+              drawHexagon(offset+f*1*w, 0, w);
+              drawHexagon(offset-f*1*w, 0, w);
+              drawHexagon(offset-f*3*w, 0, w);
 
           };
           function forward(clr){
 
+            fill(clr);
+
             rotate(-PI/3);
 
-              row(clr);
+            var offset=p.w/2;
+            
+              drawHexagon(offset+f*3*w, 0, w);
+              drawHexagon(offset+f*1*w, 0, w);
+              drawHexagon(offset-f*1*w, 0, w);
+              drawHexagon(offset-f*3*w, 0, w);
 
           };
           function back(clr){
@@ -5626,18 +5643,20 @@ println('Angles Reset');
           function diamond(clr){
 
             fill(clr);
-
+            
+            var offset=-p.w/2;
+            
             if(app.dragging && p.hit){
-              drawHexagon( 0,      w+0.75*w, w);
-              drawHexagon( f*1*w,  0,        w);
-              drawHexagon(-f*1*w,  0,        w);
-              drawHexagon( 0,     -w-0.75*w, w);
+              drawHexagon(offset+0,      w+0.75*w, w);
+              drawHexagon(offset+f*1*w,  0,        w);
+              drawHexagon(offset-f*1*w,  0,        w);
+              drawHexagon(offset+0,     -w-0.75*w, w);
             }
             else{
-              drawHexagon( 0,      w*1.33, w);
-              drawHexagon( f*1*w,  0,      w);
-              drawHexagon(-f*1*w,  0,      w);
-              drawHexagon( 0,     -w*1.33, w);
+              drawHexagon(offset+0,      w*1.33, w);
+              drawHexagon(offset+f*1*w,  0,      w);
+              drawHexagon(offset-f*1*w,  0,      w);
+              drawHexagon(offset+0,     -w*1.33, w);
             }
 
           };
@@ -5652,7 +5671,22 @@ println('Angles Reset');
 
             rotate(-PI/3);
 
-              diamond(clr);
+            fill(clr);
+            
+            var offset=p.w/2;
+            
+            if(app.dragging && p.hit){
+              drawHexagon(offset+0,      w+0.75*w, w);
+              drawHexagon(offset+f*1*w,  0,        w);
+              drawHexagon(offset-f*1*w,  0,        w);
+              drawHexagon(offset+0,     -w-0.75*w, w);
+            }
+            else{
+              drawHexagon(offset+0,      w*1.33, w);
+              drawHexagon(offset+f*1*w,  0,      w);
+              drawHexagon(offset-f*1*w,  0,      w);
+              drawHexagon(offset+0,     -w*1.33, w);
+            }
 
           };
 
@@ -5813,8 +5847,8 @@ println('Angles Reset');
                 case SHAPES.SINGLE:         single(CLRS.SINGLE);      break;
 
                 case SHAPES.ROW:            row(CLRS.LINE);           break;
-                case SHAPES.ROWFORWARD:    forward(CLRS.LINE);       break;
-                case SHAPES.ROWBACK:       back(CLRS.LINE);          break;
+                case SHAPES.ROWFORWARD:     forward(CLRS.LINE);       break;
+                case SHAPES.ROWBACK:        back(CLRS.LINE);          break;
 
                 case SHAPES.DIAMOND:        diamond(CLRS.DIAMOND);    break;
                 case SHAPES.ZRIGHT:         zRight(CLRS.Z);           break;
