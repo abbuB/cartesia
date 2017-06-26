@@ -42,7 +42,7 @@ var diagrams = function(processingInstance){
 
 
     TO DO:
-      
+
       error objects for each specific piece and error context
 
       Animation for drop outside grid
@@ -80,6 +80,11 @@ var diagrams = function(processingInstance){
 
     /* Initialize -------------------- */
     {
+
+// println(millis());
+
+      randomSeed(millis());
+      // randomSeed(1);
 
       frameRate(0);
 
@@ -840,16 +845,16 @@ println('Angles Reset');
           noStroke();
 
           if(p.hit){
-            
+
             // fill(getColor(p.color, 85));
             fill(getColor(CLRS.BLACK,100));
-            
+
           }
           else{
-            
+
             // fill(getColor(p.color, 80));
             fill(getColor(CLRS.BLACK,50));
-            
+
           }
 
           rect(p.offset, 0, p.w, p.h);
@@ -926,7 +931,7 @@ println('Angles Reset');
 
           fill(getColor(CLRS.YELLOW,75));
           textAlign(RIGHT,TOP);
-          
+
             text('\n' +
                  mouseX                     + '\n' +
                  mouseY                     + '\n\n\n' +
@@ -1083,7 +1088,7 @@ println('Angles Reset');
           var yOffset=w/2;
 
           p.w=w*cos(PI/6)*9;
-          // p.w=500;
+          p.w=1500;
 
           var x=0;
           var y=0;
@@ -1124,27 +1129,21 @@ println('Angles Reset');
       };
       hexBoard.prototype.loadShapes=function(){
 
-        var random0=floor(random(0,24));
-        var random1=floor(random(0,24));
-        var random2=floor(random(0,24));
+        var rand0=SHAPES.SINGLE; //floor(random(0,24));
+        var rand1=floor(random(0,24));
+        var rand2=floor(random(0,24));
 
         this.shapes.push(new shap(0, this, this.position0.x, this.position0.y, HEX_SIZE, HEX_SIZE,
-          {baseX: this.position0.x,
-           baseY: this.position0.y,
-           style: SHAPES.SINGLE,
-           color: getShapeColor(SHAPES.SINGLE)}));
+          {style: rand0,
+           color: getShapeColor(rand0)}));
 
         this.shapes.push(new shap(1, this, this.position1.x, this.position1.y, HEX_SIZE, HEX_SIZE,
-          {baseX: this.position1.x,
-           baseY: this.position1.y,
-           style: random1,
-           color: getShapeColor(random1)}));
+          {style: rand1,
+           color: getShapeColor(rand1)}));
 
         this.shapes.push(new shap(2, this, this.position2.x, this.position2.y, HEX_SIZE, HEX_SIZE,
-          {baseX: this.position2.x,
-           baseY: this.position2.y,
-           style: random2,
-           color: getShapeColor(random2)}));
+          {style: rand2,
+           color: getShapeColor(rand2)}));
 
         {
           // this.shapes.push(new shap('S'+0, this, 150, 520, HEX_SIZE, HEX_SIZE,
@@ -1252,9 +1251,9 @@ println('Angles Reset');
       };
       hexBoard.prototype.draw=function(){
 
-        var p =this;
+        // var p =this;
 
-        this.active=this.hit && app.focus===this.id;
+        // this.active=this.hit && app.focus===this.id;
 
         pushMatrix();
 
@@ -1274,2953 +1273,2770 @@ println('Angles Reset');
               }
             }
 
-            // noStroke();
+            // stroke(CLRS.BLUE);
             // fill(getColor(CLRS.RED,10));
-            // ellipse(0,0,600,600);
+            // ellipse(0,0,this.w,this.w);
 
         popMatrix();
 
         forEach(this.shapes, 'draw');
 
       };
+      hexBoard.prototype.hitTest  = function(x,y){ return dist(mouseX,mouseY,this.x,this.y)<this.w/2; };
       hexBoard.prototype.moved    = function(x,y){
       /* Overridden because of the nested controls */
 
-        // if(this.parent.hit){
+        if(this.parent.hit){
 
-          // if(dist(mouseX,mouseY,this.x,this.y)<this.w/2){
+          if(this.hitTest(x,y)){ this.hit=true;
+                                 app.focus=this.id; }
+          else                 { this.hit=false;    }
 
-            // this.hit=true;
-            // app.focus=this.id;
+          for(var s in this.shapes){
+            this.shapes[s].moved(0,0);
+          }
 
-          // }
-          // else{
-
-            // this.hit=false;
-
-          // }
-
-        // }
-
-
-        for(var s in this.shapes){
-          this.shapes[s].moved(0,0);
         }
 
       };
-      hexBoard.prototype.validateDrop=function(source){
+      hexBoard.prototype.placeShape=function(source){
+
+        var layout  = this.layout;
+        var row     = this.activeCell.row;
+        var col     = this.activeCell.col;
+
+        function valSingle(){
+
+          if(layout[row][col]===0){
+
+            layout[row][col]=1;
+
+          }
+
+        };
+        function valRow(){
+
+          if(layout[row][col-1]===0 &&
+             layout[row][col-2]===0 &&
+             layout[row][col  ]===0 &&
+             layout[row][col+1]===0){
+
+            layout[row][col-1]=1;
+            layout[row][col-2]=1;
+            layout[row][col  ]=1;
+            layout[row][col+1]=1;
+
+          }
+
+        };
+        function valRowForward(){
+
+          if(row<4){
+
+            if(layout[row  ][col]===0 &&
+               layout[row-1][col]===0 &&
+               layout[row-2][col]===0 &&
+               layout[row+1][col]===0){
+
+              layout[row  ][col]=1;
+              layout[row-1][col]=1;
+              layout[row-2][col]=1;
+              layout[row+1][col]=1;
+
+            }
+
+          }
+          else if(row===4){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row-1][col  ]===0 &&
+               layout[row-2][col  ]===0 &&
+               layout[row+1][col-1]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row-1][col  ]=1;
+              layout[row-2][col  ]=1;
+              layout[row+1][col-1]=1;
+
+            }
+
+          }
+          else if(row===5){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row-1][col+1]===0 &&
+               layout[row-2][col+1]===0 &&
+               layout[row+1][col-1]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row-1][col+1]=1;
+              layout[row-2][col+1]=1;
+              layout[row+1][col-1]=1;
+
+            }
+
+          }
+          else if(row>5){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row-1][col+1]===0 &&
+               layout[row-2][col+2]===0 &&
+               layout[row+1][col-1]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row-1][col+1]=1;
+              layout[row-2][col+2]=1;
+              layout[row+1][col-1]=1;
+
+            }
+
+          }
+
+        };
+        function valRowBack(){
+
+          if(row<4){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row-1][col-1]===0 &&
+               layout[row-2][col-2]===0 &&
+               layout[row+1][col+1]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row-1][col-1]=1;
+              layout[row-2][col-2]=1;
+              layout[row+1][col+1]=1;
+
+            }
+
+          }
+          else if(row===4){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row-1][col-1]===0 &&
+               layout[row-2][col-2]===0 &&
+               layout[row+1][col  ]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row-1][col-1]=1;
+              layout[row-2][col-2]=1;
+              layout[row+1][col  ]=1;
+
+            }
+
+          }
+          else if(row===5){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row-1][col  ]===0 &&
+               layout[row-2][col-1]===0 &&
+               layout[row+1][col  ]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row-1][col  ]=1;
+              layout[row-2][col-1]=1;
+              layout[row+1][col  ]=1;
+
+            }
+
+          }
+          else if(row>5){
+
+            if(layout[row  ][col]===0 &&
+               layout[row-1][col]===0 &&
+               layout[row-2][col]===0 &&
+               layout[row+1][col]===0){
+
+              layout[row  ][col]=1;
+              layout[row-1][col]=1;
+              layout[row-2][col]=1;
+              layout[row+1][col]=1;
+
+            }
+
+          }
+
+        };
+
+        function valDiamond(){
+
+          if(row<4){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row-1][col-1]===0 &&
+               layout[row  ][col-1]===0 &&
+               layout[row+1][col  ]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row-1][col-1]=1;
+              layout[row  ][col-1]=1;
+              layout[row+1][col  ]=1;
+
+            }
+
+          }
+          else if(row===4){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row-1][col-1]===0 &&
+               layout[row  ][col-1]===0 &&
+               layout[row+1][col-1]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row-1][col-1]=1;
+              layout[row  ][col-1]=1;
+              layout[row+1][col-1]=1;
+
+            }
+
+          }
+          else if(row>4){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row-1][col  ]===0 &&
+               layout[row  ][col-1]===0 &&
+               layout[row+1][col-1]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row-1][col  ]=1;
+              layout[row  ][col-1]=1;
+              layout[row+1][col-1]=1;
+
+            }
+
+          }
+
+        };
+
+        function valUUP(){
+
+          if(row<3){
+
+            if(layout[row  ][col-1]===0 &&
+               layout[row  ][col+1]===0 &&
+               layout[row+1][col+1]===0 &&
+               layout[row+1][col  ]===0){
+
+              layout[row  ][col-1]=1;
+              layout[row  ][col+1]=1;
+              layout[row+1][col+1]=1;
+              layout[row+1][col  ]=1;
+
+            }
+
+          }
+          else if(row===3 ){
+
+            if(layout[row  ][col-1]===0 &&
+               layout[row  ][col+1]===0 &&
+               layout[row+1][col+1]===0 &&
+               layout[row+1][col  ]===0){
+
+              layout[row  ][col-1]=1;
+              layout[row  ][col+1]=1;
+              layout[row+1][col+1]=1;
+              layout[row+1][col  ]=1;
+
+            }
+
+          }
+          else if(row>=3 ){
+
+            if(layout[row  ][col-1]===0 &&
+               layout[row  ][col+1]===0 &&
+               layout[row+1][col-1]===0 &&
+               layout[row+1][col  ]===0){
+
+              layout[row  ][col-1]=1;
+              layout[row  ][col+1]=1;
+              layout[row+1][col-1]=1;
+              layout[row+1][col  ]=1;
+
+            }
+
+          }
+
+        };
+        function valUDown(){
+
+          if(row<5){
+
+            if(layout[row-1][col  ]===0 &&
+               layout[row-1][col-1]===0 &&
+               layout[row  ][col+1]===0 &&
+               layout[row  ][col-1]===0){
+
+              layout[row-1][col  ]=1;
+              layout[row-1][col-1]=1;
+              layout[row  ][col+1]=1;
+              layout[row  ][col-1]=1;
+
+            }
+
+          }
+          else if(row>=5 ){
+
+            if(layout[row-1][col  ]===0 &&
+               layout[row-1][col+1]===0 &&
+               layout[row  ][col+1]===0 &&
+               layout[row  ][col-1]===0){
+
+              layout[row-1][col  ]=1;
+              layout[row-1][col+1]=1;
+              layout[row  ][col+1]=1;
+              layout[row  ][col-1]=1;
+
+            }
+
+          }
+
+        };
+
+        function valUpRight(){
+
+          if(row<4){
+
+            if(layout[row  ][col-1]===0 &&
+               layout[row-1][col-1]===0 &&
+               layout[row+1][col  ]===0 &&
+               layout[row+1][col+1]===0){
+
+              layout[row  ][col-1]=1;
+              layout[row-1][col-1]=1;
+              layout[row+1][col  ]=1;
+              layout[row+1][col+1]=1;
+
+            }
+
+          }
+          else if(row===4 ){
+
+            if(layout[row  ][col-1]===0 &&
+               layout[row-1][col-1]===0 &&
+               layout[row+1][col  ]===0 &&
+               layout[row+1][col-1]===0){
+
+              layout[row  ][col-1]=1;
+              layout[row-1][col-1]=1;
+              layout[row+1][col  ]=1;
+              layout[row+1][col-1]=1;
+
+            }
+
+          }
+          else if(row>4 ){
+
+            if(layout[row  ][col-1]===0 &&
+               layout[row-1][col  ]===0 &&
+               layout[row+1][col  ]===0 &&
+               layout[row+1][col-1]===0){
+
+              layout[row  ][col-1]=1;
+              layout[row-1][col  ]=1;
+              layout[row+1][col  ]=1;
+              layout[row+1][col-1]=1;
+
+            }
+
+          }
+
+        };
+        function valDownRight(){
+
+          if(row<4){
+
+            if(layout[row  ][col-1]===0 &&
+               layout[row-1][col-1]===0 &&
+               layout[row-1][col  ]===0 &&
+               layout[row+1][col  ]===0){
+
+              layout[row  ][col-1]=1;
+              layout[row-1][col-1]=1;
+              layout[row-1][col  ]=1;
+              layout[row+1][col  ]=1;
+
+            }
+
+          }
+          else if(row===4 ){
+
+            if(layout[row  ][col-1]===0 &&
+               layout[row-1][col-1]===0 &&
+               layout[row-1][col  ]===0 &&
+               layout[row+1][col-1]===0){
+
+              layout[row  ][col-1]=1;
+              layout[row-1][col-1]=1;
+              layout[row-1][col  ]=1;
+              layout[row+1][col-1]=1;
+
+            }
+
+          }
+          else if(row>4 ){
+
+            if(layout[row  ][col-1]===0 &&
+               layout[row-1][col+1]===0 &&
+               layout[row-1][col  ]===0 &&
+               layout[row+1][col-1]===0){
+
+              layout[row  ][col-1]=1;
+              layout[row-1][col+1]=1;
+              layout[row-1][col  ]=1;
+              layout[row+1][col-1]=1;
+
+            }
+
+          }
+
+        };
+        function valUpLeft(){
+
+          if(row<4){
+
+            if(layout[row  ][col+1]===0 &&
+               layout[row-1][col  ]===0 &&
+               layout[row+1][col  ]===0 &&
+               layout[row+1][col+1]===0){
+
+              layout[row  ][col+1]=1;
+              layout[row-1][col  ]=1;
+              layout[row+1][col  ]=1;
+              layout[row+1][col+1]=1;
+
+            }
+
+          }
+          else if(row===4 ){
+
+            if(layout[row  ][col+1]===0 &&
+               layout[row-1][col  ]===0 &&
+               layout[row+1][col  ]===0 &&
+               layout[row+1][col-1]===0){
+
+              layout[row  ][col+1]=1;
+              layout[row-1][col  ]=1;
+              layout[row+1][col  ]=1;
+              layout[row+1][col-1]=1;
+
+            }
+
+          }
+          else if(row>4 ){
+
+            if(layout[row  ][col+1]===0 &&
+               layout[row-1][col+1]===0 &&
+               layout[row+1][col-1]===0 &&
+               layout[row+1][col  ]===0){
+
+              layout[row  ][col+1]=1;
+              layout[row-1][col+1]=1;
+              layout[row+1][col-1]=1;
+              layout[row+1][col  ]=1;
+
+            }
+
+          }
+
+        };
+        function valDownLeft(){
+
+          if(row<4){
+
+            if(layout[row  ][col+1]===0 &&
+               layout[row-1][col  ]===0 &&
+               layout[row-1][col-1]===0 &&
+               layout[row+1][col+1]===0){
+
+              layout[row  ][col+1]=1;
+              layout[row-1][col  ]=1;
+              layout[row-1][col-1]=1;
+              layout[row+1][col+1]=1;
+
+            }
+
+          }
+          else if(row===4 ){
+
+            if(layout[row  ][col+1]===0 &&
+               layout[row-1][col  ]===0 &&
+               layout[row-1][col-1]===0 &&
+               layout[row+1][col  ]===0){
+
+              layout[row  ][col+1]=1;
+              layout[row-1][col  ]=1;
+              layout[row-1][col-1]=1;
+              layout[row+1][col  ]=1;
+
+            }
+
+          }
+          else if(row>4 ){
+
+            if(layout[row  ][col+1]===0 &&
+               layout[row-1][col  ]===0 &&
+               layout[row-1][col+1]===0 &&
+               layout[row+1][col  ]===0){
+
+              layout[row  ][col+1]=1;
+              layout[row-1][col  ]=1;
+              layout[row-1][col+1]=1;
+              layout[row+1][col  ]=1;
+
+            }
+
+          }
+
+        };
+
+        function valZRight(){
+
+          if(row<5){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row  ][col-1]===0 &&
+               layout[row-1][col-1]===0 &&
+               layout[row-1][col  ]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row  ][col-1]=1;
+              layout[row-1][col-1]=1;
+              layout[row-1][col  ]=1;
+
+            }
+
+          }
+          else if(row>=5){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row  ][col-1]===0 &&
+               layout[row-1][col  ]===0 &&
+               layout[row-1][col+1]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row  ][col-1]=1;
+              layout[row-1][col  ]=1;
+              layout[row-1][col+1]=1;
+
+            }
+
+          }
+
+        };
+        function valZLeft(){
+
+          if(row<5){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row  ][col+1]===0 &&
+               layout[row-1][col  ]===0 &&
+               layout[row-1][col-1]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row  ][col+1]=1;
+              layout[row-1][col  ]=1;
+              layout[row-1][col-1]=1;
+
+            }
+
+          }
+          else if(row>=5){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row  ][col+1]===0 &&
+               layout[row-1][col  ]===0 &&
+               layout[row-1][col+1]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row  ][col+1]=1;
+              layout[row-1][col  ]=1;
+              layout[row-1][col+1]=1;
+
+            }
+
+          }
+
+        };
+
+        function valSevenRight(){
+
+          if(row<4){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row+1][col+1]===0 &&
+               layout[row-1][col  ]===0 &&
+               layout[row-1][col-1]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row+1][col+1]=1;
+              layout[row-1][col  ]=1;
+              layout[row-1][col-1]=1;
+
+            }
+
+          }
+          else if(row===4){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row+1][col  ]===0 &&
+               layout[row-1][col  ]===0 &&
+               layout[row-1][col-1]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row+1][col  ]=1;
+              layout[row-1][col  ]=1;
+              layout[row-1][col-1]=1;
+
+            }
+
+          }
+          else if(row>4){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row+1][col  ]===0 &&
+               layout[row-1][col  ]===0 &&
+               layout[row-1][col+1]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row+1][col  ]=1;
+              layout[row-1][col  ]=1;
+              layout[row-1][col+1]=1;
+
+            }
+
+          }
+
+        };
+        function valSevenLeft(){
+
+          if(row<4){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row+1][col  ]===0 &&
+               layout[row-1][col  ]===0 &&
+               layout[row-1][col-1]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row+1][col  ]=1;
+              layout[row-1][col  ]=1;
+              layout[row-1][col-1]=1;
+
+            }
+
+          }
+          else if(row===4){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row+1][col-1]===0 &&
+               layout[row-1][col  ]===0 &&
+               layout[row-1][col-1]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row+1][col-1]=1;
+              layout[row-1][col  ]=1;
+              layout[row-1][col-1]=1;
+
+            }
+
+          }
+          else if(row>4){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row+1][col-1]===0 &&
+               layout[row-1][col  ]===0 &&
+               layout[row-1][col+1]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row+1][col-1]=1;
+              layout[row-1][col  ]=1;
+              layout[row-1][col+1]=1;
+
+            }
+
+          }
+
+        };
+
+        function valAngleRight(){
+
+          if(row<4){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row-1][col  ]===0 &&
+               layout[row+1][col  ]===0 &&
+               layout[row+1][col+1]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row-1][col  ]=1;
+              layout[row+1][col  ]=1;
+              layout[row+1][col+1]=1;
+
+            }
+
+          }
+          else if(row===4){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row-1][col  ]===0 &&
+               layout[row+1][col  ]===0 &&
+               layout[row+1][col-1]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row-1][col  ]=1;
+              layout[row+1][col  ]=1;
+              layout[row+1][col-1]=1;
+
+            }
+
+          }
+          else if(row>4){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row-1][col+1]===0 &&
+               layout[row+1][col  ]===0 &&
+               layout[row+1][col-1]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row-1][col+1]=1;
+              layout[row+1][col  ]=1;
+              layout[row+1][col-1]=1;
+
+            }
+
+          }
+
+        };
+        function valAngleLeft(){
+
+          if(row<4){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row-1][col-1]===0 &&
+               layout[row+1][col  ]===0 &&
+               layout[row+1][col+1]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row-1][col-1]=1;
+              layout[row+1][col  ]=1;
+              layout[row+1][col+1]=1;
+
+            }
+
+          }
+          else if(row===4){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row-1][col-1]===0 &&
+               layout[row+1][col  ]===0 &&
+               layout[row+1][col-1]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row-1][col-1]=1;
+              layout[row+1][col  ]=1;
+              layout[row+1][col-1]=1;
+
+            }
+
+          }
+          else if(row>4){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row-1][col  ]===0 &&
+               layout[row+1][col  ]===0 &&
+               layout[row+1][col-1]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row-1][col  ]=1;
+              layout[row+1][col  ]=1;
+              layout[row+1][col-1]=1;
+
+            }
+
+          }
+
+        };
+
+        function valNodeUpRight(){
+
+          if(row<5){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row  ][col-1]===0 &&
+               layout[row  ][col+1]===0 &&
+               layout[row-1][col  ]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row  ][col-1]=1;
+              layout[row  ][col+1]=1;
+              layout[row-1][col  ]=1;
+
+            }
+
+          }
+          else if(row>4){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row  ][col-1]===0 &&
+               layout[row  ][col+1]===0 &&
+               layout[row-1][col+1]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row  ][col-1]=1;
+              layout[row  ][col+1]=1;
+              layout[row-1][col+1]=1;
+
+            }
+
+          }
+
+        };
+        function valNodeUpLeft(){
+
+          if(row<5){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row  ][col-1]===0 &&
+               layout[row  ][col+1]===0 &&
+               layout[row-1][col-1]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row  ][col-1]=1;
+              layout[row  ][col+1]=1;
+              layout[row-1][col-1]=1;
+
+            }
+
+          }
+          else if(row>4){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row  ][col-1]===0 &&
+               layout[row  ][col+1]===0 &&
+               layout[row-1][col  ]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row  ][col-1]=1;
+              layout[row  ][col+1]=1;
+              layout[row-1][col  ]=1;
+
+            }
+
+          }
+
+        };
+        function valNodeDownRight(){
+
+          if(row<4){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row  ][col-1]===0 &&
+               layout[row  ][col+1]===0 &&
+               layout[row+1][col+1]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row  ][col-1]=1;
+              layout[row  ][col+1]=1;
+              layout[row+1][col+1]=1;
+
+            }
+
+          }
+          else if(row===4){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row  ][col-1]===0 &&
+               layout[row  ][col+1]===0 &&
+               layout[row+1][col  ]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row  ][col-1]=1;
+              layout[row  ][col+1]=1;
+              layout[row+1][col  ]=1;
+
+            }
+
+          }
+          else if(row>4){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row  ][col-1]===0 &&
+               layout[row  ][col+1]===0 &&
+               layout[row+1][col  ]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row  ][col-1]=1;
+              layout[row  ][col+1]=1;
+              layout[row+1][col  ]=1;
+
+            }
+
+          }
+
+        };
+        function valNodeDownLeft(){
+
+          if(row<4){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row  ][col-1]===0 &&
+               layout[row  ][col+1]===0 &&
+               layout[row+1][col  ]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row  ][col-1]=1;
+              layout[row  ][col+1]=1;
+              layout[row+1][col  ]=1;
+
+            }
+
+          }
+          else if(row===4){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row  ][col-1]===0 &&
+               layout[row  ][col+1]===0 &&
+               layout[row+1][col-1]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row  ][col-1]=1;
+              layout[row  ][col+1]=1;
+              layout[row+1][col-1]=1;
+
+            }
+
+          }
+          else if(row>4){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row  ][col-1]===0 &&
+               layout[row  ][col+1]===0 &&
+               layout[row+1][col-1]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row  ][col-1]=1;
+              layout[row  ][col+1]=1;
+              layout[row+1][col-1]=1;
+
+            }
+
+          }
+
+        };
+
+        function valVUpRight(){
+
+          if(row<4){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row  ][col-1]===0 &&
+               layout[row-1][col  ]===0 &&
+               layout[row+1][col  ]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row  ][col-1]=1;
+              layout[row-1][col  ]=1;
+              layout[row+1][col  ]=1;
+
+            }
+
+          }
+          else if(row===4){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row  ][col-1]===0 &&
+               layout[row-1][col  ]===0 &&
+               layout[row+1][col-1]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row  ][col-1]=1;
+              layout[row-1][col  ]=1;
+              layout[row+1][col-1]=1;
+
+            }
+
+          }
+          else if(row>4){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row  ][col-1]===0 &&
+               layout[row-1][col+1]===0 &&
+               layout[row+1][col-1]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row  ][col-1]=1;
+              layout[row-1][col+1]=1;
+              layout[row+1][col-1]=1;
+
+            }
+
+          }
+
+        };
+        function valVUpLeft(){
+
+          if(row<4){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row  ][col+1]===0 &&
+               layout[row-1][col-1]===0 &&
+               layout[row+1][col+1]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row  ][col+1]=1;
+              layout[row-1][col-1]=1;
+              layout[row+1][col+1]=1;
+
+            }
+
+          }
+          else if(row===4){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row  ][col+1]===0 &&
+               layout[row-1][col-1]===0 &&
+               layout[row+1][col  ]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row  ][col+1]=1;
+              layout[row-1][col-1]=1;
+              layout[row+1][col  ]=1;
+
+            }
+
+          }
+          else if(row>4){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row  ][col+1]===0 &&
+               layout[row-1][col  ]===0 &&
+               layout[row+1][col  ]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row  ][col+1]=1;
+              layout[row-1][col  ]=1;
+              layout[row+1][col  ]=1;
+
+            }
+
+          }
+
+        };
+        function valVDownRight(){
+
+          if(row<4){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row  ][col-1]===0 &&
+               layout[row-1][col-1]===0 &&
+               layout[row+1][col+1]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row  ][col-1]=1;
+              layout[row-1][col-1]=1;
+              layout[row+1][col+1]=1;
+
+            }
+
+          }
+          else if(row===4){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row  ][col-1]===0 &&
+               layout[row-1][col-1]===0 &&
+               layout[row+1][col  ]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row  ][col-1]=1;
+              layout[row-1][col-1]=1;
+              layout[row+1][col  ]=1;
+
+            }
+
+          }
+          else if(row>4){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row  ][col-1]===0 &&
+               layout[row-1][col  ]===0 &&
+               layout[row+1][col  ]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row  ][col-1]=1;
+              layout[row-1][col  ]=1;
+              layout[row+1][col  ]=1;
+
+            }
+
+          }
+
+        };
+        function valVDownLeft(){
+
+          if(row<4){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row  ][col+1]===0 &&
+               layout[row-1][col  ]===0 &&
+               layout[row+1][col  ]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row  ][col+1]=1;
+              layout[row-1][col  ]=1;
+              layout[row+1][col  ]=1;
+
+            }
+
+          }
+          else if(row===4){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row  ][col+1]===0 &&
+               layout[row-1][col  ]===0 &&
+               layout[row+1][col-1]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row  ][col+1]=1;
+              layout[row-1][col  ]=1;
+              layout[row+1][col-1]=1;
+
+            }
+
+          }
+          else if(row>4){
+
+            if(layout[row  ][col  ]===0 &&
+               layout[row  ][col+1]===0 &&
+               layout[row-1][col+1]===0 &&
+               layout[row+1][col-1]===0){
+
+              layout[row  ][col  ]=1;
+              layout[row  ][col+1]=1;
+              layout[row-1][col+1]=1;
+              layout[row+1][col-1]=1;
+
+            }
+
+          }
+
+        };
+
+        switch(this.activeShape.style){
+
+          case SHAPES.SINGLE:         valSingle();        break;
+
+          case SHAPES.ROW:            valRow();           break;
+          case SHAPES.ROWFORWARD:     valRowForward();    break;
+          case SHAPES.ROWBACK:        valRowBack();       break;
+
+          case SHAPES.DIAMOND:        valDiamond();       break;
+
+          case SHAPES.UUP:            valUUP();           break;
+
+          case SHAPES.UDOWN:          valUDown();         break;
+
+          case SHAPES.UPRIGHT:        valUpRight();       break;
+          case SHAPES.DOWNRIGHT:      valDownRight();     break;
+          case SHAPES.UPLEFT:         valUpLeft();        break;
+          case SHAPES.DOWNLEFT:       valDownLeft();      break;
+
+          case SHAPES.ZRIGHT:         valZRight();        break;
+          case SHAPES.ZLEFT:          valZLeft();         break;
+
+          case SHAPES.SEVENRIGHT:     valSevenRight();    break;
+          case SHAPES.SEVENLEFT:      valSevenLeft();     break;
+
+          case SHAPES.ANGLERIGHT:     valAngleRight();    break;
+          case SHAPES.ANGLELEFT:      valAngleLeft();     break;
+
+          case SHAPES.NODEUPRIGHT:    valNodeUpRight();   break;
+          case SHAPES.NODEUPLEFT:     valNodeUpLeft();    break;
+          case SHAPES.NODEDOWNRIGHT:  valNodeDownRight(); break;
+          case SHAPES.NODEDOWNLEFT:   valNodeDownLeft();  break;
+
+          case SHAPES.VUPRIGHT:       valVUpRight();      break;
+          case SHAPES.VUPLEFT:        valVUpLeft();       break;
+          case SHAPES.VDOWNRIGHT:     valVDownRight();    break;
+          case SHAPES.VDOWNLEFT:      valVDownLeft();     break;
+
+          default:  break;
+
+        }
+
+      }; 
+      hexBoard.prototype.validateDrop=function(){
 
         // println(source);
-      
+
         var retVal=false;
+        
+        var ctrls   = this.controls;
+        var layout  = this.layout;
+        var row     = this.activeCell.row;
+        var col     = this.activeCell.col;
 
-        if(this.activeCell!==null){
+        function valSingle(){
 
-            var ctrls   = this.controls;
-            var layout  = this.layout;
-            var row     = this.activeCell.row;
-            var col     = this.activeCell.col;
+          try{
 
-            function valSingle(){
+            if(layout[row][col]===0){
 
-              try{
+              ctrls[row][col].hover=true;
+              retVal=true;
 
-                switch(source){
+            }
 
-                  case SOURCES.DRAGGED:
+          }
+          catch(e){
 
-                    if(layout[row][col]===0){
+            if(e instanceof TypeError){
+              // Cell doesn't exist
+            }
+            else{ println(e); }
 
-                      ctrls[row][col].hover=true;
+          }
 
-                    }
+        };
 
-                    break;
+        function valRow(){
 
-                  case SOURCES.RELEASED:
+          try{
 
-                    if(layout[row][col]===0){
+            if(layout[row][col-1]===0 &&
+               layout[row][col-2]===0 &&
+               layout[row][col  ]===0 &&
+               layout[row][col+1]===0){
 
-                      layout[row][col]=1;
+              ctrls[row][col-1].hover=true;
+              ctrls[row][col-2].hover=true;
+              ctrls[row][col  ].hover=true;
+              ctrls[row][col+1].hover=true;
 
-                    }
+            }
 
-                    break;
+          }
+          catch(e){
 
-                  default:  break;
+            if(e instanceof TypeError){
+              // Cell doesn't exist
+            }
+            else{ println(e); }
 
-                }
+          }
 
-              }
-              catch(e){
+        };
+        function valRowForward(){
 
-                if(e instanceof TypeError){
-                  // Cell doesn't exist
-                }
-                else{ println(e); }
+          try{
 
-              }
-              
-            };
+            if(row<4){
 
-            function valRow(){
-              
-              try{
+              if(layout[row  ][col]===0 &&
+                 layout[row-1][col]===0 &&
+                 layout[row-2][col]===0 &&
+                 layout[row+1][col]===0){
 
-                switch(source){
-
-                  case SOURCES.DRAGGED:
-
-                    if(layout[row][col-1]===0 &&
-                       layout[row][col-2]===0 &&
-                       layout[row][col  ]===0 &&
-                       layout[row][col+1]===0){
-                         
-                      ctrls[row][col-1].hover=true;
-                      ctrls[row][col-2].hover=true;
-                      ctrls[row][col  ].hover=true;
-                      ctrls[row][col+1].hover=true;
-
-                    }
-
-                    break;
-
-                  case SOURCES.RELEASED:
-
-                    if(layout[row][col-1]===0 &&
-                       layout[row][col-2]===0 &&
-                       layout[row][col  ]===0 &&
-                       layout[row][col+1]===0){
-                         
-                      layout[row][col-1]=1;
-                      layout[row][col-2]=1;
-                      layout[row][col  ]=1;
-                      layout[row][col+1]=1;
-
-                    }
-
-                    break;
-
-                  default:  break;
-
-                }
+                ctrls[row  ][col].hover=true;
+                ctrls[row-1][col].hover=true;
+                ctrls[row-2][col].hover=true;
+                ctrls[row+1][col].hover=true;
 
               }
-              catch(e){
 
-                if(e instanceof TypeError){
-                  // Cell doesn't exist
-                }
-                else{ println(e); }
-
-              }
-              
-            };
-            function valRowForward(){
-              
-              try{
-                
-                switch(source){
-
-                  case SOURCES.DRAGGED:
-
-                    if     (row<4){ // Rows 0 -> 3
-
-                      if(layout[row  ][col]===0 &&
-                         layout[row-1][col]===0 &&
-                         layout[row-2][col]===0 &&
-                         layout[row+1][col]===0){
-
-                        ctrls[row  ][col].hover=true;
-                        ctrls[row-1][col].hover=true;
-                        ctrls[row-2][col].hover=true;
-                        ctrls[row+1][col].hover=true;
-
-                      }
-
-                    }
-                    else if(row===4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row-2][col  ]===0 &&
-                         layout[row+1][col-1]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row-1][col  ].hover=true;
-                        ctrls[row-2][col  ].hover=true;
-                        ctrls[row+1][col-1].hover=true;
-
-                      }
-
-                    }
-                    else if(row===5){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row-1][col+1]===0 &&
-                         layout[row-2][col+1]===0 &&
-                         layout[row+1][col-1]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row-1][col+1].hover=true;
-                        ctrls[row-2][col+1].hover=true;
-                        ctrls[row+1][col-1].hover=true;
-
-                      }
-
-                    }
-                    else if(row>5){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row-1][col+1]===0 &&
-                         layout[row-2][col+2]===0 &&
-                         layout[row+1][col-1]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row-1][col+1].hover=true;
-                        ctrls[row-2][col+2].hover=true;
-                        ctrls[row+1][col-1].hover=true;
-
-                      }
-
-                    }
-                    
-                    break;
-
-                  case SOURCES.RELEASED:
-
-                    if     (row<4){ // Rows 0 -> 3
-
-                      if(layout[row  ][col]===0 &&
-                         layout[row-1][col]===0 &&
-                         layout[row-2][col]===0 &&
-                         layout[row+1][col]===0){
-
-                        layout[row  ][col]=1;
-                        layout[row-1][col]=1;
-                        layout[row-2][col]=1;
-                        layout[row+1][col]=1;
-
-                      }
-
-                    }
-                    else if(row===4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row-2][col  ]===0 &&
-                         layout[row+1][col-1]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row-1][col  ]=1;
-                        layout[row-2][col  ]=1;
-                        layout[row+1][col-1]=1;
-
-                      }
-
-                    }
-                    else if(row===5){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row-1][col+1]===0 &&
-                         layout[row-2][col+1]===0 &&
-                         layout[row+1][col-1]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row-1][col+1]=1;
-                        layout[row-2][col+1]=1;
-                        layout[row+1][col-1]=1;
-
-                      }
-
-                    }
-                    else if(row>5){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row-1][col+1]===0 &&
-                         layout[row-2][col+2]===0 &&
-                         layout[row+1][col-1]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row-1][col+1]=1;
-                        layout[row-2][col+2]=1;
-                        layout[row+1][col-1]=1;
-
-                      }
-
-                    }
-                    
-                    break;
-
-
-                  default:  break;
-
-                }
-
-              }
-              catch(e){
-
-                if(e instanceof TypeError){
-                  // Cell doesn't exist
-                }
-                else{ println(e); }
-
-              }
-              
-            };
-            function valRowBack(){
-              
-              try{
-                
-                switch(source){
-
-                  case SOURCES.DRAGGED:
-
-                    if     (row<4){ // Rows 0 -> 3
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row-1][col-1]===0 &&
-                         layout[row-2][col-2]===0 &&
-                         layout[row+1][col+1]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row-1][col-1].hover=true;
-                        ctrls[row-2][col-2].hover=true;
-                        ctrls[row+1][col+1].hover=true;
-
-                      }
-
-                    }
-                    else if(row===4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row-1][col-1]===0 &&
-                         layout[row-2][col-2]===0 &&
-                         layout[row+1][col  ]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row-1][col-1].hover=true;
-                        ctrls[row-2][col-2].hover=true;
-                        ctrls[row+1][col  ].hover=true;
-
-                      }
-
-                    }
-                    else if(row===5){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row-2][col-1]===0 &&
-                         layout[row+1][col  ]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row-1][col  ].hover=true;
-                        ctrls[row-2][col-1].hover=true;
-                        ctrls[row+1][col  ].hover=true;
-
-                      }
-
-                    }
-                    else if(row>5){
-
-                      if(layout[row  ][col]===0 &&
-                         layout[row-1][col]===0 &&
-                         layout[row-2][col]===0 &&
-                         layout[row+1][col]===0){
-
-                        ctrls[row  ][col].hover=true;
-                        ctrls[row-1][col].hover=true;
-                        ctrls[row-2][col].hover=true;
-                        ctrls[row+1][col].hover=true;
-
-                      }
-
-                    }
-                    
-                    break;
-
-                  case SOURCES.RELEASED:
-
-                    if     (row<4){ // Rows 0 -> 3
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row-1][col-1]===0 &&
-                         layout[row-2][col-2]===0 &&
-                         layout[row+1][col+1]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row-1][col-1]=1;
-                        layout[row-2][col-2]=1;
-                        layout[row+1][col+1]=1;
-
-                      }
-
-                    }
-                    else if(row===4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row-1][col-1]===0 &&
-                         layout[row-2][col-2]===0 &&
-                         layout[row+1][col  ]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row-1][col-1]=1;
-                        layout[row-2][col-2]=1;
-                        layout[row+1][col  ]=1;
-
-                      }
-
-                    }
-                    else if(row===5){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row-2][col-1]===0 &&
-                         layout[row+1][col  ]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row-1][col  ]=1;
-                        layout[row-2][col-1]=1;
-                        layout[row+1][col  ]=1;
-
-                      }
-
-                    }
-                    else if(row>5){
-
-                      if(layout[row  ][col]===0 &&
-                         layout[row-1][col]===0 &&
-                         layout[row-2][col]===0 &&
-                         layout[row+1][col]===0){
-
-                        layout[row  ][col]=1;
-                        layout[row-1][col]=1;
-                        layout[row-2][col]=1;
-                        layout[row+1][col]=1;
-
-                      }
-
-                    }
-                    
-                    break;
-
-
-                  default:  break;
-
-                }
-
-              }
-              catch(e){
-
-                if(e instanceof TypeError){
-                  // Cell doesn't exist
-                }
-                else{ println(e); }
-
-              }
-              
-            };            
-            
-            function valDiamond(){
-              
-              try{
-
-                switch(source){
-
-                  case SOURCES.DRAGGED:
-                  
-                    if(row<4){
-                      
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row-1][col-1]===0 &&
-                         layout[row  ][col-1]===0 &&
-                         layout[row+1][col  ]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row-1][col-1].hover=true;
-                        ctrls[row  ][col-1].hover=true;
-                        ctrls[row+1][col  ].hover=true;
-
-                      }
-
-                    }
-                    else if(row===4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row-1][col-1]===0 &&
-                         layout[row  ][col-1]===0 &&
-                         layout[row+1][col-1]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row-1][col-1].hover=true;
-                        ctrls[row  ][col-1].hover=true;
-                        ctrls[row+1][col-1].hover=true;
-
-                      }
-                      
-                    }
-                    else if(row>4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row  ][col-1]===0 &&
-                         layout[row+1][col-1]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row-1][col  ].hover=true;
-                        ctrls[row  ][col-1].hover=true;
-                        ctrls[row+1][col-1].hover=true;
-
-                      }
-                      
-                    }
-                    
-                    break;
-                      
-                  case SOURCES.RELEASED:
-                  
-                    if(row<4){
-                      
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row-1][col-1]===0 &&
-                         layout[row  ][col-1]===0 &&
-                         layout[row+1][col  ]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row-1][col-1]=1;
-                        layout[row  ][col-1]=1;
-                        layout[row+1][col  ]=1;
-
-                      }
-
-                    }
-                    else if(row===4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row-1][col-1]===0 &&
-                         layout[row  ][col-1]===0 &&
-                         layout[row+1][col-1]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row-1][col-1]=1;
-                        layout[row  ][col-1]=1;
-                        layout[row+1][col-1]=1;
-
-                      }
-                      
-                    }
-                    else if(row>4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row  ][col-1]===0 &&
-                         layout[row+1][col-1]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row-1][col  ]=1;
-                        layout[row  ][col-1]=1;
-                        layout[row+1][col-1]=1;
-
-                      }
-                      
-                    }
-                    
-                    break;                  
-
-                  default:  break;
-
-                }
-
-              }
-              catch(e){
-
-                if(e instanceof TypeError){
-                  // println("Cell doesn't exist");
-                }
-                else{ println(e); }
+            }
+            else if(row===4){
+
+              if(layout[row  ][col  ]===0 &&
+                 layout[row-1][col  ]===0 &&
+                 layout[row-2][col  ]===0 &&
+                 layout[row+1][col-1]===0){
+
+                ctrls[row  ][col  ].hover=true;
+                ctrls[row-1][col  ].hover=true;
+                ctrls[row-2][col  ].hover=true;
+                ctrls[row+1][col-1].hover=true;
 
               }
 
-            };
-            
-            function valUUP(){
+            }
+            else if(row===5){
 
-              try{
+              if(layout[row  ][col  ]===0 &&
+                 layout[row-1][col+1]===0 &&
+                 layout[row-2][col+1]===0 &&
+                 layout[row+1][col-1]===0){
 
-                switch(source){
-
-                  case SOURCES.DRAGGED:
-
-                    if (row<3){
-                      
-                      if(layout[row  ][col-1]===0 &&
-                         layout[row  ][col+1]===0 &&
-                         layout[row+1][col+1]===0 &&
-                         layout[row+1][col  ]===0){
-
-                        ctrls[row  ][col-1].hover=true;
-                        ctrls[row  ][col+1].hover=true;
-                        ctrls[row+1][col+1].hover=true;
-                        ctrls[row+1][col  ].hover=true;
-
-                      }
-                      
-                    }
-                    else if(row===3 ){
-
-                      if(layout[row  ][col-1]===0 &&
-                         layout[row  ][col+1]===0 &&
-                         layout[row+1][col+1]===0 &&
-                         layout[row+1][col  ]===0){
-
-                        ctrls[row  ][col-1].hover=true;
-                        ctrls[row  ][col+1].hover=true;
-                        ctrls[row+1][col+1].hover=true;
-                        ctrls[row+1][col  ].hover=true;
-
-                      }
-                    
-                    }
-                    else if(row>=3 ){
-
-                      if(layout[row  ][col-1]===0 &&
-                         layout[row  ][col+1]===0 &&
-                         layout[row+1][col-1]===0 &&
-                         layout[row+1][col  ]===0){
-
-                        ctrls[row  ][col-1].hover=true;
-                        ctrls[row  ][col+1].hover=true;
-                        ctrls[row+1][col-1].hover=true;
-                        ctrls[row+1][col  ].hover=true;
-
-                      }
-                    
-                    }
-                    
-                    break;
-
-                  case SOURCES.RELEASED:
-                  
-                    if (row<3){
-                      
-                      if(layout[row  ][col-1]===0 &&
-                         layout[row  ][col+1]===0 &&
-                         layout[row+1][col+1]===0 &&
-                         layout[row+1][col  ]===0){
-
-                        layout[row  ][col-1]=1;
-                        layout[row  ][col+1]=1;
-                        layout[row+1][col+1]=1;
-                        layout[row+1][col  ]=1;
-
-                      }
-                      
-                    }
-                    else if(row===3 ){
-
-                      if(layout[row  ][col-1]===0 &&
-                         layout[row  ][col+1]===0 &&
-                         layout[row+1][col+1]===0 &&
-                         layout[row+1][col  ]===0){
-
-                        layout[row  ][col-1]=1;
-                        layout[row  ][col+1]=1;
-                        layout[row+1][col+1]=1;
-                        layout[row+1][col  ]=1;
-
-                      }
-                    
-                    }                    
-                    else if(row>=3 ){
-
-                      if(layout[row  ][col-1]===0 &&
-                         layout[row  ][col+1]===0 &&
-                         layout[row+1][col-1]===0 &&
-                         layout[row+1][col  ]===0){
-
-                        layout[row  ][col-1]=1;
-                        layout[row  ][col+1]=1;
-                        layout[row+1][col-1]=1;
-                        layout[row+1][col  ]=1;
-
-                      }
-                    
-                    }
-
-                    break;
-
-                  default:
-                  
-                    println('validateDrop Error');
-                  
-                    break;
-
-                }
-
-              }
-              catch(e){
-
-                if(e instanceof TypeError){
-                  // println("Cell doesn't exist");
-                }
-                else{ println(e); }
+                ctrls[row  ][col  ].hover=true;
+                ctrls[row-1][col+1].hover=true;
+                ctrls[row-2][col+1].hover=true;
+                ctrls[row+1][col-1].hover=true;
 
               }
 
-            };
-            function valUDown(){
+            }
+            else if(row>5){
 
-              try{
+              if(layout[row  ][col  ]===0 &&
+                 layout[row-1][col+1]===0 &&
+                 layout[row-2][col+2]===0 &&
+                 layout[row+1][col-1]===0){
 
-                switch(source){
+                ctrls[row  ][col  ].hover=true;
+                ctrls[row-1][col+1].hover=true;
+                ctrls[row-2][col+2].hover=true;
+                ctrls[row+1][col-1].hover=true;
 
-                  case SOURCES.DRAGGED:
+              }
 
-                    if (row<5){
-                      
-                      if(layout[row-1][col  ]===0 &&
-                         layout[row-1][col-1]===0 &&
-                         layout[row  ][col+1]===0 &&
-                         layout[row  ][col-1]===0){
+            }
 
-                        ctrls[row-1][col  ].hover=true;
-                        ctrls[row-1][col-1].hover=true;
-                        ctrls[row  ][col+1].hover=true;
-                        ctrls[row  ][col-1].hover=true;
+          }
+          catch(e){
 
-                      }
-                      
-                    }
-                    else if(row>=5 ){
+            if(e instanceof TypeError){
+              // Cell doesn't exist
+            }
+            else{ println(e); }
 
-                      if(layout[row-1][col  ]===0 &&
-                         layout[row-1][col+1]===0 &&
-                         layout[row  ][col+1]===0 &&
-                         layout[row  ][col-1]===0){
+          }
 
-                        ctrls[row-1][col  ].hover=true;
-                        ctrls[row-1][col+1].hover=true;
-                        ctrls[row  ][col+1].hover=true;
-                        ctrls[row  ][col-1].hover=true;
+        };
+        function valRowBack(){
 
-                      }
-                    
-                    }
-                    
-                    break;
+          try{
 
-                  case SOURCES.RELEASED:
-                  
-                    if (row<5){
-                      
-                      if(layout[row-1][col  ]===0 &&
-                         layout[row-1][col-1]===0 &&
-                         layout[row  ][col+1]===0 &&
-                         layout[row  ][col-1]===0){
+            if(row<4){
 
-                        layout[row-1][col  ]=1;
-                        layout[row-1][col-1]=1;
-                        layout[row  ][col+1]=1;
-                        layout[row  ][col-1]=1;
+              if(layout[row  ][col  ]===0 &&
+                 layout[row-1][col-1]===0 &&
+                 layout[row-2][col-2]===0 &&
+                 layout[row+1][col+1]===0){
 
-                      }
-                      
-                    }
-                    else if(row>=5 ){
+                ctrls[row  ][col  ].hover=true;
+                ctrls[row-1][col-1].hover=true;
+                ctrls[row-2][col-2].hover=true;
+                ctrls[row+1][col+1].hover=true;
 
-                      if(layout[row-1][col  ]===0 &&
-                         layout[row-1][col+1]===0 &&
-                         layout[row  ][col+1]===0 &&
-                         layout[row  ][col-1]===0){
+              }
 
-                        layout[row-1][col  ]=1;
-                        layout[row-1][col+1]=1;
-                        layout[row  ][col+1]=1;
-                        layout[row  ][col-1]=1;
+            }
+            else if(row===4){
 
-                      }
+              if(layout[row  ][col  ]===0 &&
+                 layout[row-1][col-1]===0 &&
+                 layout[row-2][col-2]===0 &&
+                 layout[row+1][col  ]===0){
 
-                    }
+                ctrls[row  ][col  ].hover=true;
+                ctrls[row-1][col-1].hover=true;
+                ctrls[row-2][col-2].hover=true;
+                ctrls[row+1][col  ].hover=true;
 
-                    break;
+              }
 
-                  default:
+            }
+            else if(row===5){
 
-                    println('validateDrop Error');
+              if(layout[row  ][col  ]===0 &&
+                 layout[row-1][col  ]===0 &&
+                 layout[row-2][col-1]===0 &&
+                 layout[row+1][col  ]===0){
 
-                    break;
+                ctrls[row  ][col  ].hover=true;
+                ctrls[row-1][col  ].hover=true;
+                ctrls[row-2][col-1].hover=true;
+                ctrls[row+1][col  ].hover=true;
+
+              }
+
+            }
+            else if(row>5){
+
+              if(layout[row  ][col]===0 &&
+                 layout[row-1][col]===0 &&
+                 layout[row-2][col]===0 &&
+                 layout[row+1][col]===0){
+
+                ctrls[row  ][col].hover=true;
+                ctrls[row-1][col].hover=true;
+                ctrls[row-2][col].hover=true;
+                ctrls[row+1][col].hover=true;
+
+              }
+
+            }
+
+          }
+          catch(e){
+
+            if(e instanceof TypeError){
+              // Cell doesn't exist
+            }
+            else{ println(e); }
+
+          }
+
+        };
+
+        function valDiamond(){
+
+          try{
+
+            if(row<4){
+
+              if(layout[row  ][col  ]===0 &&
+                 layout[row-1][col-1]===0 &&
+                 layout[row  ][col-1]===0 &&
+                 layout[row+1][col  ]===0){
+
+                ctrls[row  ][col  ].hover=true;
+                ctrls[row-1][col-1].hover=true;
+                ctrls[row  ][col-1].hover=true;
+                ctrls[row+1][col  ].hover=true;
+
+              }
+
+            }
+            else if(row===4){
+
+              if(layout[row  ][col  ]===0 &&
+                 layout[row-1][col-1]===0 &&
+                 layout[row  ][col-1]===0 &&
+                 layout[row+1][col-1]===0){
+
+                ctrls[row  ][col  ].hover=true;
+                ctrls[row-1][col-1].hover=true;
+                ctrls[row  ][col-1].hover=true;
+                ctrls[row+1][col-1].hover=true;
+
+              }
+
+            }
+            else if(row>4){
+
+              if(layout[row  ][col  ]===0 &&
+                 layout[row-1][col  ]===0 &&
+                 layout[row  ][col-1]===0 &&
+                 layout[row+1][col-1]===0){
+
+                ctrls[row  ][col  ].hover=true;
+                ctrls[row-1][col  ].hover=true;
+                ctrls[row  ][col-1].hover=true;
+                ctrls[row+1][col-1].hover=true;
+
+              }
+
+            }
+
+          }
+          catch(e){
+
+            if(e instanceof TypeError){
+              // println("Cell doesn't exist");
+            }
+            else{ println(e); }
+
+          }
+
+        };
+
+        function valUUP(){
+
+          try{
+
+            if(row<3){
+
+              if(layout[row  ][col-1]===0 &&
+                 layout[row  ][col+1]===0 &&
+                 layout[row+1][col+1]===0 &&
+                 layout[row+1][col  ]===0){
+
+                ctrls[row  ][col-1].hover=true;
+                ctrls[row  ][col+1].hover=true;
+                ctrls[row+1][col+1].hover=true;
+                ctrls[row+1][col  ].hover=true;
+
+              }
+
+            }
+            else if(row===3 ){
+
+              if(layout[row  ][col-1]===0 &&
+                 layout[row  ][col+1]===0 &&
+                 layout[row+1][col+1]===0 &&
+                 layout[row+1][col  ]===0){
+
+                ctrls[row  ][col-1].hover=true;
+                ctrls[row  ][col+1].hover=true;
+                ctrls[row+1][col+1].hover=true;
+                ctrls[row+1][col  ].hover=true;
+
+              }
+
+            }
+            else if(row>=3 ){
+
+              if(layout[row  ][col-1]===0 &&
+                 layout[row  ][col+1]===0 &&
+                 layout[row+1][col-1]===0 &&
+                 layout[row+1][col  ]===0){
+
+                ctrls[row  ][col-1].hover=true;
+                ctrls[row  ][col+1].hover=true;
+                ctrls[row+1][col-1].hover=true;
+                ctrls[row+1][col  ].hover=true;
+
+              }
+
+            }
+
+          }
+          catch(e){
+
+            if(e instanceof TypeError){
+              // println("Cell doesn't exist");
+            }
+            else{ println(e); }
+
+          }
+
+        };
+        function valUDown(){
+
+          try{
+
+            if(row<5){
+
+              if(layout[row-1][col  ]===0 &&
+                 layout[row-1][col-1]===0 &&
+                 layout[row  ][col+1]===0 &&
+                 layout[row  ][col-1]===0){
+
+                ctrls[row-1][col  ].hover=true;
+                ctrls[row-1][col-1].hover=true;
+                ctrls[row  ][col+1].hover=true;
+                ctrls[row  ][col-1].hover=true;
+
+              }
+
+            }
+            else if(row>=5 ){
+
+              if(layout[row-1][col  ]===0 &&
+                 layout[row-1][col+1]===0 &&
+                 layout[row  ][col+1]===0 &&
+                 layout[row  ][col-1]===0){
+
+                ctrls[row-1][col  ].hover=true;
+                ctrls[row-1][col+1].hover=true;
+                ctrls[row  ][col+1].hover=true;
+                ctrls[row  ][col-1].hover=true;
+
+              }
+
+            }
+
+          }
+          catch(e){
+
+            if(e instanceof TypeError){
+              // println("Cell doesn't exist");
+            }
+            else{ println(e); }
+
+          }
+
+        };
+
+        function valUpRight(){
+
+           try{
+
+            if(row<4){
+
+              if(layout[row  ][col-1]===0 &&
+                 layout[row-1][col-1]===0 &&
+                 layout[row+1][col  ]===0 &&
+                 layout[row+1][col+1]===0){
+
+                ctrls[row  ][col-1].hover=true;
+                ctrls[row-1][col-1].hover=true;
+                ctrls[row+1][col  ].hover=true;
+                ctrls[row+1][col+1].hover=true;
+
+              }
+
+            }
+            else if(row===4 ){
+
+              if(layout[row  ][col-1]===0 &&
+                 layout[row-1][col-1]===0 &&
+                 layout[row+1][col  ]===0 &&
+                 layout[row+1][col-1]===0){
+
+                ctrls[row  ][col-1].hover=true;
+                ctrls[row-1][col-1].hover=true;
+                ctrls[row+1][col  ].hover=true;
+                ctrls[row+1][col-1].hover=true;
+
+              }
+
+            }
+            else if(row>4 ){
+
+              if(layout[row  ][col-1]===0 &&
+                 layout[row-1][col  ]===0 &&
+                 layout[row+1][col  ]===0 &&
+                 layout[row+1][col-1]===0){
+
+                ctrls[row  ][col-1].hover=true;
+                ctrls[row-1][col  ].hover=true;
+                ctrls[row+1][col  ].hover=true;
+                ctrls[row+1][col-1].hover=true;
+
+              }
+
+            }
+
+          }
+          catch(e){
+
+            if(e instanceof TypeError){
+              // println("Cell doesn't exist");
+            }
+            else{ println(e); }
+
+          }
+
+        };
+        function valDownRight(){
+
+          try{
+
+            if(row<4){
+
+              if(layout[row  ][col-1]===0 &&
+                 layout[row-1][col-1]===0 &&
+                 layout[row-1][col  ]===0 &&
+                 layout[row+1][col  ]===0){
+
+                ctrls[row  ][col-1].hover=true;
+                ctrls[row-1][col-1].hover=true;
+                ctrls[row-1][col  ].hover=true;
+                ctrls[row+1][col  ].hover=true;
+
+              }
+
+            }
+            else if(row===4 ){
+
+              if(layout[row  ][col-1]===0 &&
+                 layout[row-1][col-1]===0 &&
+                 layout[row-1][col  ]===0 &&
+                 layout[row+1][col-1]===0){
+
+                ctrls[row  ][col-1].hover=true;
+                ctrls[row-1][col-1].hover=true;
+                ctrls[row-1][col  ].hover=true;
+                ctrls[row+1][col-1].hover=true;
+
+              }
+
+            }
+            else if(row>4 ){
+
+              if(layout[row  ][col-1]===0 &&
+                 layout[row-1][col+1]===0 &&
+                 layout[row-1][col  ]===0 &&
+                 layout[row+1][col-1]===0){
+
+                ctrls[row  ][col-1].hover=true;
+                ctrls[row-1][col+1].hover=true;
+                ctrls[row-1][col  ].hover=true;
+                ctrls[row+1][col-1].hover=true;
+
+              }
+
+            }
+
+          }
+          catch(e){
+
+            if(e instanceof TypeError){
+              // println("Cell doesn't exist");
+            }
+            else{ println(e); }
+
+          }
+
+        };
+        function valUpLeft(){
+
+          try{
+
+            if(row<4){
+
+              if(layout[row  ][col+1]===0 &&
+                 layout[row-1][col  ]===0 &&
+                 layout[row+1][col  ]===0 &&
+                 layout[row+1][col+1]===0){
+
+                ctrls[row  ][col+1].hover=true;
+                ctrls[row-1][col  ].hover=true;
+                ctrls[row+1][col  ].hover=true;
+                ctrls[row+1][col+1].hover=true;
+
+              }
+
+            }
+            else if(row===4 ){
+
+              if(layout[row  ][col+1]===0 &&
+                 layout[row-1][col  ]===0 &&
+                 layout[row+1][col  ]===0 &&
+                 layout[row+1][col-1]===0){
+
+                ctrls[row  ][col+1].hover=true;
+                ctrls[row-1][col  ].hover=true;
+                ctrls[row+1][col  ].hover=true;
+                ctrls[row+1][col-1].hover=true;
+
+              }
+
+            }
+            else if(row>4 ){
+
+              if(layout[row  ][col+1]===0 &&
+                 layout[row-1][col+1]===0 &&
+                 layout[row+1][col-1]===0 &&
+                 layout[row+1][col  ]===0){
+
+                ctrls[row  ][col+1].hover=true;
+                ctrls[row-1][col+1].hover=true;
+                ctrls[row+1][col-1].hover=true;
+                ctrls[row+1][col  ].hover=true;
+
+              }
+
+            }
+
+          }
+          catch(e){
+
+            if(e instanceof TypeError){
+              // println("Cell doesn't exist");
+            }
+            else{ println(e); }
+
+          }
+
+        };
+        function valDownLeft(){
+
+          try{
+
+            if(row<4){
+
+              if(layout[row  ][col+1]===0 &&
+                 layout[row-1][col  ]===0 &&
+                 layout[row-1][col-1]===0 &&
+                 layout[row+1][col+1]===0){
+
+                ctrls[row  ][col+1].hover=true;
+                ctrls[row-1][col  ].hover=true;
+                ctrls[row-1][col-1].hover=true;
+                ctrls[row+1][col+1].hover=true;
+
+              }
+
+            }
+            else if(row===4 ){
+
+              if(layout[row  ][col+1]===0 &&
+                 layout[row-1][col  ]===0 &&
+                 layout[row-1][col-1]===0 &&
+                 layout[row+1][col  ]===0){
+
+                ctrls[row  ][col+1].hover=true;
+                ctrls[row-1][col  ].hover=true;
+                ctrls[row-1][col-1].hover=true;
+                ctrls[row+1][col  ].hover=true;
+
+              }
+
+            }
+            else if(row>4 ){
+
+              if(layout[row  ][col+1]===0 &&
+                 layout[row-1][col  ]===0 &&
+                 layout[row-1][col+1]===0 &&
+                 layout[row+1][col  ]===0){
+
+                ctrls[row  ][col+1].hover=true;
+                ctrls[row-1][col  ].hover=true;
+                ctrls[row-1][col+1].hover=true;
+                ctrls[row+1][col  ].hover=true;
+
+              }
+
+            }
+
+          }
+          catch(e){
+
+            if(e instanceof TypeError){
+              // println("Cell doesn't exist");
+            }
+            else{ println(e); }
+
+          }
+
+        };
+
+        function valZRight(){
+
+          try{
+
+            if(row<5){
+
+              if(layout[row  ][col  ]===0 &&
+                 layout[row  ][col-1]===0 &&
+                 layout[row-1][col-1]===0 &&
+                 layout[row-1][col  ]===0){
+
+                ctrls[row  ][col  ].hover=true;
+                ctrls[row  ][col-1].hover=true;
+                ctrls[row-1][col-1].hover=true;
+                ctrls[row-1][col  ].hover=true;
+
+              }
+
+            }
+            else if(row>=5){
+
+              if(layout[row  ][col  ]===0 &&
+                 layout[row  ][col-1]===0 &&
+                 layout[row-1][col  ]===0 &&
+                 layout[row-1][col+1]===0){
+
+                ctrls[row  ][col  ].hover=true;
+                ctrls[row  ][col-1].hover=true;
+                ctrls[row-1][col  ].hover=true;
+                ctrls[row-1][col+1].hover=true;
+
+              }
+
+            }
+
+          }
+          catch(e){
+
+            if(e instanceof TypeError){
+              // println("Cell doesn't exist");
+            }
+            else{ println(e); }
+
+          }
+
+        };
+        function valZLeft(){
+
+          try{
+
+            if(row<5){
+
+              if(layout[row  ][col  ]===0 &&
+                 layout[row  ][col+1]===0 &&
+                 layout[row-1][col  ]===0 &&
+                 layout[row-1][col-1]===0){
+
+                ctrls[row  ][col  ].hover=true;
+                ctrls[row  ][col+1].hover=true;
+                ctrls[row-1][col  ].hover=true;
+                ctrls[row-1][col-1].hover=true;
+
+              }
+
+            }
+            else if(row>=5){
+
+              if(layout[row  ][col  ]===0 &&
+                 layout[row  ][col+1]===0 &&
+                 layout[row-1][col  ]===0 &&
+                 layout[row-1][col+1]===0){
+
+                ctrls[row  ][col  ].hover=true;
+                ctrls[row  ][col+1].hover=true;
+                ctrls[row-1][col  ].hover=true;
+                ctrls[row-1][col+1].hover=true;
+
+              }
+
+            }
+
+          }
+          catch(e){
+
+            if(e instanceof TypeError){
+              // println("Cell doesn't exist");
+            }
+            else{ println(e); }
+
+          }
+
+        };
+
+        function valSevenRight(){
+
+          try{
+
+            if(row<4){
+
+              if(layout[row  ][col  ]===0 &&
+                 layout[row+1][col+1]===0 &&
+                 layout[row-1][col  ]===0 &&
+                 layout[row-1][col-1]===0){
+
+                ctrls[row  ][col  ].hover=true;
+                ctrls[row+1][col+1].hover=true;
+                ctrls[row-1][col  ].hover=true;
+                ctrls[row-1][col-1].hover=true;
+
+              }
+
+            }
+            else if(row===4){
+
+              if(layout[row  ][col  ]===0 &&
+                 layout[row+1][col  ]===0 &&
+                 layout[row-1][col  ]===0 &&
+                 layout[row-1][col-1]===0){
+
+                ctrls[row  ][col  ].hover=true;
+                ctrls[row+1][col  ].hover=true;
+                ctrls[row-1][col  ].hover=true;
+                ctrls[row-1][col-1].hover=true;
+
+              }
+
+            }
+            else if(row>4){
+
+              if(layout[row  ][col  ]===0 &&
+                 layout[row+1][col  ]===0 &&
+                 layout[row-1][col  ]===0 &&
+                 layout[row-1][col+1]===0){
+
+                ctrls[row  ][col  ].hover=true;
+                ctrls[row+1][col  ].hover=true;
+                ctrls[row-1][col  ].hover=true;
+                ctrls[row-1][col+1].hover=true;
+
+              }
+
+            }
+
+          }
+          catch(e){
+
+            if(e instanceof TypeError){
+              // println("Cell doesn't exist");
+            }
+            else{ println(e); }
+
+          }
+
+        };
+        function valSevenLeft(){
+
+          try{
+
+            if(row<4){
+
+              if(layout[row  ][col  ]===0 &&
+                 layout[row+1][col  ]===0 &&
+                 layout[row-1][col  ]===0 &&
+                 layout[row-1][col-1]===0){
+
+                ctrls[row  ][col  ].hover=true;
+                ctrls[row+1][col  ].hover=true;
+                ctrls[row-1][col  ].hover=true;
+                ctrls[row-1][col-1].hover=true;
+
+              }
+
+            }
+            else if(row===4){
+
+              if(layout[row  ][col  ]===0 &&
+                 layout[row+1][col-1]===0 &&
+                 layout[row-1][col  ]===0 &&
+                 layout[row-1][col-1]===0){
+
+                ctrls[row  ][col  ].hover=true;
+                ctrls[row+1][col-1].hover=true;
+                ctrls[row-1][col  ].hover=true;
+                ctrls[row-1][col-1].hover=true;
+
+              }
+
+            }
+            else if(row>4){
+
+              if(layout[row  ][col  ]===0 &&
+                 layout[row+1][col-1]===0 &&
+                 layout[row-1][col  ]===0 &&
+                 layout[row-1][col+1]===0){
+
+                ctrls[row  ][col  ].hover=true;
+                ctrls[row+1][col-1].hover=true;
+                ctrls[row-1][col  ].hover=true;
+                ctrls[row-1][col+1].hover=true;
+
+              }
+
+            }
+
+          }
+          catch(e){
+
+            if(e instanceof TypeError){
+              // println("Cell doesn't exist");
+            }
+            else{ println(e); }
+
+          }
+
+        };
+
+        function valAngleRight(){
+
+          try{
+
+            if(row<4){
+
+              if(layout[row  ][col  ]===0 &&
+                 layout[row-1][col  ]===0 &&
+                 layout[row+1][col  ]===0 &&
+                 layout[row+1][col+1]===0){
+
+                ctrls[row  ][col  ].hover=true;
+                ctrls[row-1][col  ].hover=true;
+                ctrls[row+1][col  ].hover=true;
+                ctrls[row+1][col+1].hover=true;
+
+              }
+
+            }
+            else if(row===4){
+
+              if(layout[row  ][col  ]===0 &&
+                 layout[row-1][col  ]===0 &&
+                 layout[row+1][col  ]===0 &&
+                 layout[row+1][col-1]===0){
+
+                ctrls[row  ][col  ].hover=true;
+                ctrls[row-1][col  ].hover=true;
+                ctrls[row+1][col  ].hover=true;
+                ctrls[row+1][col-1].hover=true;
+
+              }
+
+            }
+            else if(row>4){
+
+              if(layout[row  ][col  ]===0 &&
+                 layout[row-1][col+1]===0 &&
+                 layout[row+1][col  ]===0 &&
+                 layout[row+1][col-1]===0){
+
+                ctrls[row  ][col  ].hover=true;
+                ctrls[row-1][col+1].hover=true;
+                ctrls[row+1][col  ].hover=true;
+                ctrls[row+1][col-1].hover=true;
+
+              }
+
+            }
+
+          }
+          catch(e){
+
+            if(e instanceof TypeError){
+              // println("Cell doesn't exist");
+            }
+            else{ println(e); }
+
+          }
+
+        };
+        function valAngleLeft(){
+
+          try{
+
+            if(row<4){
+
+              if(layout[row  ][col  ]===0 &&
+                 layout[row-1][col-1]===0 &&
+                 layout[row+1][col  ]===0 &&
+                 layout[row+1][col+1]===0){
+
+                ctrls[row  ][col  ].hover=true;
+                ctrls[row-1][col-1].hover=true;
+                ctrls[row+1][col  ].hover=true;
+                ctrls[row+1][col+1].hover=true;
+
+              }
+
+            }
+            else if(row===4){
+
+              if(layout[row  ][col  ]===0 &&
+                 layout[row-1][col-1]===0 &&
+                 layout[row+1][col  ]===0 &&
+                 layout[row+1][col-1]===0){
+
+                ctrls[row  ][col  ].hover=true;
+                ctrls[row-1][col-1].hover=true;
+                ctrls[row+1][col  ].hover=true;
+                ctrls[row+1][col-1].hover=true;
+
+              }
+
+            }
+            else if(row>4){
+
+              if(layout[row  ][col  ]===0 &&
+                 layout[row-1][col  ]===0 &&
+                 layout[row+1][col  ]===0 &&
+                 layout[row+1][col-1]===0){
+
+                ctrls[row  ][col  ].hover=true;
+                ctrls[row-1][col  ].hover=true;
+                ctrls[row+1][col  ].hover=true;
+                ctrls[row+1][col-1].hover=true;
+
+              }
+
+            }
+
+          }
+          catch(e){
+
+            if(e instanceof TypeError){
+              // println("Cell doesn't exist");
+            }
+            else{ println(e); }
+
+          }
+
+        };
+
+        function valNodeUpRight(){
+
+          try{
+
+            if(row<5){
+
+              if(layout[row  ][col  ]===0 &&
+                 layout[row  ][col-1]===0 &&
+                 layout[row  ][col+1]===0 &&
+                 layout[row-1][col  ]===0){
+
+                ctrls[row  ][col  ].hover=true;
+                ctrls[row  ][col-1].hover=true;
+                ctrls[row  ][col+1].hover=true;
+                ctrls[row-1][col  ].hover=true;
+
+              }
+
+            }
+            else if(row>4){
+
+              if(layout[row  ][col  ]===0 &&
+                 layout[row  ][col-1]===0 &&
+                 layout[row  ][col+1]===0 &&
+                 layout[row-1][col+1]===0){
+
+                ctrls[row  ][col  ].hover=true;
+                ctrls[row  ][col-1].hover=true;
+                ctrls[row  ][col+1].hover=true;
+                ctrls[row-1][col+1].hover=true;
+
+              }
+
+            }
+
+          }
+          catch(e){
+
+            if(e instanceof TypeError){
+              // println("Cell doesn't exist");
+            }
+            else{ println(e); }
+
+          }
+
+        };
+        function valNodeUpLeft(){
+
+          try{
+
+            if(row<5){
+
+              if(layout[row  ][col  ]===0 &&
+                 layout[row  ][col-1]===0 &&
+                 layout[row  ][col+1]===0 &&
+                 layout[row-1][col-1]===0){
+
+                ctrls[row  ][col  ].hover=true;
+                ctrls[row  ][col-1].hover=true;
+                ctrls[row  ][col+1].hover=true;
+                ctrls[row-1][col-1].hover=true;
+
+              }
+
+            }
+            else if(row>4){
+
+              if(layout[row  ][col  ]===0 &&
+                 layout[row  ][col-1]===0 &&
+                 layout[row  ][col+1]===0 &&
+                 layout[row-1][col  ]===0){
+
+                ctrls[row  ][col  ].hover=true;
+                ctrls[row  ][col-1].hover=true;
+                ctrls[row  ][col+1].hover=true;
+                ctrls[row-1][col  ].hover=true;
+
+              }
+
+            }
+
+          }
+          catch(e){
+
+            if(e instanceof TypeError){
+              // println("Cell doesn't exist");
+            }
+            else{ println(e); }
+
+          }
+
+        };
+        function valNodeDownRight(){
+
+          try{
+
+            if(row<4){
+
+              if(layout[row  ][col  ]===0 &&
+                 layout[row  ][col-1]===0 &&
+                 layout[row  ][col+1]===0 &&
+                 layout[row+1][col+1]===0){
+
+                ctrls[row  ][col  ].hover=true;
+                ctrls[row  ][col-1].hover=true;
+                ctrls[row  ][col+1].hover=true;
+                ctrls[row+1][col+1].hover=true;
+
+              }
+
+            }
+            else if(row===4){
+
+              if(layout[row  ][col  ]===0 &&
+                 layout[row  ][col-1]===0 &&
+                 layout[row  ][col+1]===0 &&
+                 layout[row+1][col  ]===0){
+
+                ctrls[row  ][col  ].hover=true;
+                hover=true;
+                  ctrls[row  ][col+1].hover=true;
+                  ctrls[row+1][col  ].hover=true;
 
                 }
 
-              }
-              catch(e){
+            }
+            else if(row>4){
 
-                if(e instanceof TypeError){
-                  // println("Cell doesn't exist");
+              if(layout[row  ][col  ]===0 &&
+                layout[row  ][col-1]===0 &&
+                layout[row  ][col+1]===0 &&
+                layout[row+1][col  ]===0){
+
+              ctrls[row  ][col  ].hover=true;
+                ctrls[row  ][col-1].hover=true;
+                ctrls[row  ][col+1].hover=true;
+                ctrls[row+1][col  ].hover=true;
+
+              }
+
+            }
+
+          }
+          catch(e){
+
+            if(e instanceof TypeError){
+              println("Cell doesn't exist");
+            }
+            else{ println(e); }
+
+          }
+
+        };
+        function valNodeDownLeft(){
+
+           try{
+
+            switch(source){
+
+              case SOURCES.DRAGGED:
+
+                if(row<4){
+
+                  if(layout[row  ][col  ]===0 &&
+                     layout[row  ][col-1]===0 &&
+                     layout[row  ][col+1]===0 &&
+                     layout[row+1][col  ]===0){
+
+                    ctrls[row  ][col  ].hover=true;
+                    ctrls[row  ][col-1].hover=true;
+                    ctrls[row  ][col+1].hover=true;
+                    ctrls[row+1][col  ].hover=true;
+
+                  }
+
                 }
-                else{ println(e); }
+                else if(row===4){
 
-              }
-            
-            };
-            
-            function valUpRight(){
-              
-               try{
+                  if(layout[row  ][col  ]===0 &&
+                     layout[row  ][col-1]===0 &&
+                     layout[row  ][col+1]===0 &&
+                     layout[row+1][col-1]===0){
 
-                switch(source){
+                    ctrls[row  ][col  ].hover=true;
+                    ctrls[row  ][col-1].hover=true;
+                    ctrls[row  ][col+1].hover=true;
+                    ctrls[row+1][col-1].hover=true;
 
-                  case SOURCES.DRAGGED:
+                  }
 
-                    if (row<4){
-                      
-                      if(layout[row  ][col-1]===0 &&
-                         layout[row-1][col-1]===0 &&
-                         layout[row+1][col  ]===0 &&
-                         layout[row+1][col+1]===0){
+                }
+                else if(row>4){
 
-                        ctrls[row  ][col-1].hover=true;
-                        ctrls[row-1][col-1].hover=true;
-                        ctrls[row+1][col  ].hover=true;
-                        ctrls[row+1][col+1].hover=true;
+                  if(layout[row  ][col  ]===0 &&
+                     layout[row  ][col-1]===0 &&
+                     layout[row  ][col+1]===0 &&
+                     layout[row+1][col-1]===0){
 
-                      }
-                      
-                    }
-                    else if(row===4 ){
+                    ctrls[row  ][col  ].hover=true;
+                    ctrls[row  ][col-1].hover=true;
+                    ctrls[row  ][col+1].hover=true;
+                    ctrls[row+1][col-1].hover=true;
 
-                      if(layout[row  ][col-1]===0 &&
-                         layout[row-1][col-1]===0 &&
-                         layout[row+1][col  ]===0 &&
-                         layout[row+1][col-1]===0){
-
-                        ctrls[row  ][col-1].hover=true;
-                        ctrls[row-1][col-1].hover=true;
-                        ctrls[row+1][col  ].hover=true;
-                        ctrls[row+1][col-1].hover=true;
-
-                      }
-                    
-                    }
-                    else if(row>4 ){
-
-                      if(layout[row  ][col-1]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row+1][col  ]===0 &&
-                         layout[row+1][col-1]===0){
-
-                        ctrls[row  ][col-1].hover=true;
-                        ctrls[row-1][col  ].hover=true;
-                        ctrls[row+1][col  ].hover=true;
-                        ctrls[row+1][col-1].hover=true;
-
-                      }
-                    
-                    }
-                    
-                    break;
-
-                  case SOURCES.RELEASED:
-                  
-                    if (row<4){
-                      
-                      if(layout[row  ][col-1]===0 &&
-                         layout[row-1][col-1]===0 &&
-                         layout[row+1][col  ]===0 &&
-                         layout[row+1][col+1]===0){
-
-                        layout[row  ][col-1]=1;
-                        layout[row-1][col-1]=1;
-                        layout[row+1][col  ]=1;
-                        layout[row+1][col+1]=1;
-
-                      }
-                      
-                    }
-                    else if(row===4 ){
-
-                      if(layout[row  ][col-1]===0 &&
-                         layout[row-1][col-1]===0 &&
-                         layout[row+1][col  ]===0 &&
-                         layout[row+1][col-1]===0){
-
-                        layout[row  ][col-1]=1;
-                        layout[row-1][col-1]=1;
-                        layout[row+1][col  ]=1;
-                        layout[row+1][col-1]=1;
-
-                      }
-                    
-                    }
-                    else if(row>4 ){
-
-                      if(layout[row  ][col-1]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row+1][col  ]===0 &&
-                         layout[row+1][col-1]===0){
-
-                        layout[row  ][col-1]=1;
-                        layout[row-1][col  ]=1;
-                        layout[row+1][col  ]=1;
-                        layout[row+1][col-1]=1;
-
-                      }
-                    
-                    }
-
-                    break;
-
-                  default:
-
-                    println('validateDrop Error');
-
-                    break;
+                  }
 
                 }
 
-              }
-              catch(e){
+                break;
 
-                if(e instanceof TypeError){
-                  // println("Cell doesn't exist");
+              case SOURCES.RELEASED:
+
+                if(row<4){
+
+                  if(layout[row  ][col  ]===0 &&
+                     layout[row  ][col-1]===0 &&
+                     layout[row  ][col+1]===0 &&
+                     layout[row+1][col  ]===0){
+
+                    layout[row  ][col  ]=1;
+                    layout[row  ][col-1]=1;
+                    layout[row  ][col+1]=1;
+                    layout[row+1][col  ]=1;
+
+                  }
+
                 }
-                else{ println(e); }
+                else if(row===4){
 
-              }
-              
-            };
-            function valDownRight(){
-              
-               try{
+                  if(layout[row  ][col  ]===0 &&
+                     layout[row  ][col-1]===0 &&
+                     layout[row  ][col+1]===0 &&
+                     layout[row+1][col-1]===0){
 
-                switch(source){
+                    layout[row  ][col  ]=1;
+                    layout[row  ][col-1]=1;
+                    layout[row  ][col+1]=1;
+                    layout[row+1][col-1]=1;
 
-                  case SOURCES.DRAGGED:
+                  }
 
-                    if (row<4){
-                      
-                      if(layout[row  ][col-1]===0 &&
-                         layout[row-1][col-1]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row+1][col  ]===0){
+                }
+                else if(row>4){
 
-                        ctrls[row  ][col-1].hover=true;
-                        ctrls[row-1][col-1].hover=true;
-                        ctrls[row-1][col  ].hover=true;
-                        ctrls[row+1][col  ].hover=true;
+                  if(layout[row  ][col  ]===0 &&
+                     layout[row  ][col-1]===0 &&
+                     layout[row  ][col+1]===0 &&
+                     layout[row+1][col-1]===0){
 
-                      }
-                      
-                    }
-                    else if(row===4 ){
+                    layout[row  ][col  ]=1;
+                    layout[row  ][col-1]=1;
+                    layout[row  ][col+1]=1;
+                    layout[row+1][col-1]=1;
 
-                      if(layout[row  ][col-1]===0 &&
-                         layout[row-1][col-1]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row+1][col-1]===0){
-
-                        ctrls[row  ][col-1].hover=true;
-                        ctrls[row-1][col-1].hover=true;
-                        ctrls[row-1][col  ].hover=true;
-                        ctrls[row+1][col-1].hover=true;
-
-                      }
-                    
-                    }
-                    else if(row>4 ){
-
-                      if(layout[row  ][col-1]===0 &&
-                         layout[row-1][col+1]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row+1][col-1]===0){
-
-                        ctrls[row  ][col-1].hover=true;
-                        ctrls[row-1][col+1].hover=true;
-                        ctrls[row-1][col  ].hover=true;
-                        ctrls[row+1][col-1].hover=true;
-
-                      }
-                    
-                    }
-                    
-                    break;
-
-                  case SOURCES.RELEASED:
-                  
-                    if (row<4){
-                      
-                      if(layout[row  ][col-1]===0 &&
-                         layout[row-1][col-1]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row+1][col  ]===0){
-
-                        layout[row  ][col-1]=1;
-                        layout[row-1][col-1]=1;
-                        layout[row-1][col  ]=1;
-                        layout[row+1][col  ]=1;
-
-                      }
-                      
-                    }
-                    else if(row===4 ){
-
-                      if(layout[row  ][col-1]===0 &&
-                         layout[row-1][col-1]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row+1][col-1]===0){
-
-                        layout[row  ][col-1]=1;
-                        layout[row-1][col-1]=1;
-                        layout[row-1][col  ]=1;
-                        layout[row+1][col-1]=1;
-
-                      }
-                    
-                    }
-                    else if(row>4 ){
-
-                      if(layout[row  ][col-1]===0 &&
-                         layout[row-1][col+1]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row+1][col-1]===0){
-
-                        layout[row  ][col-1]=1;
-                        layout[row-1][col+1]=1;
-                        layout[row-1][col  ]=1;
-                        layout[row+1][col-1]=1;
-
-                      }
-                    
-                    }
-
-                    break;
-
-                  default:
-
-                    println('validateDrop Error');
-
-                    break;
+                  }
 
                 }
 
-              }
-              catch(e){
-
-                if(e instanceof TypeError){
-                  // println("Cell doesn't exist");
-                }
-                else{ println(e); }
-
-              }
-              
-            };
-            function valUpLeft(){
-              
-               try{
-
-                switch(source){
-
-                  case SOURCES.DRAGGED:
-
-                    if (row<4){
-                      
-                      if(layout[row  ][col+1]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row+1][col  ]===0 &&
-                         layout[row+1][col+1]===0){
-
-                        ctrls[row  ][col+1].hover=true;
-                        ctrls[row-1][col  ].hover=true;
-                        ctrls[row+1][col  ].hover=true;
-                        ctrls[row+1][col+1].hover=true;
-
-                      }
-                      
-                    }
-                    else if(row===4 ){
-
-                      if(layout[row  ][col+1]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row+1][col  ]===0 &&
-                         layout[row+1][col-1]===0){
-
-                        ctrls[row  ][col+1].hover=true;
-                        ctrls[row-1][col  ].hover=true;
-                        ctrls[row+1][col  ].hover=true;
-                        ctrls[row+1][col-1].hover=true;
-
-                      }
-                    
-                    }
-                    else if(row>4 ){
-
-                      if(layout[row  ][col+1]===0 &&
-                         layout[row-1][col+1]===0 &&
-                         layout[row+1][col-1]===0 &&
-                         layout[row+1][col  ]===0){
-
-                        ctrls[row  ][col+1].hover=true;
-                        ctrls[row-1][col+1].hover=true;
-                        ctrls[row+1][col-1].hover=true;
-                        ctrls[row+1][col  ].hover=true;
-
-                      }
-                    
-                    }
-                    
-                    break;
-
-                  case SOURCES.RELEASED:
-                  
-                    if (row<4){
-                      
-                      if(layout[row  ][col+1]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row+1][col  ]===0 &&
-                         layout[row+1][col+1]===0){
-
-                        layout[row  ][col+1]=1;
-                        layout[row-1][col  ]=1;
-                        layout[row+1][col  ]=1;
-                        layout[row+1][col+1]=1;
-
-                      }
-                      
-                    }
-                    else if(row===4 ){
-
-                      if(layout[row  ][col+1]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row+1][col  ]===0 &&
-                         layout[row+1][col-1]===0){
-
-                        layout[row  ][col+1]=1;
-                        layout[row-1][col  ]=1;
-                        layout[row+1][col  ]=1;
-                        layout[row+1][col-1]=1;
-
-                      }
-                    
-                    }
-                    else if(row>4 ){
-
-                      if(layout[row  ][col+1]===0 &&
-                         layout[row-1][col+1]===0 &&
-                         layout[row+1][col-1]===0 &&
-                         layout[row+1][col  ]===0){
-
-                        layout[row  ][col+1]=1;
-                        layout[row-1][col+1]=1;
-                        layout[row+1][col-1]=1;
-                        layout[row+1][col  ]=1;
-
-                      }
-                    
-                    }
-
-                    break;
-
-                  default:
-
-                    println('validateDrop Error');
-
-                    break;
-
-                }
-
-              }
-              catch(e){
-
-                if(e instanceof TypeError){
-                  // println("Cell doesn't exist");
-                }
-                else{ println(e); }
-
-              }
-              
-            };
-            function valDownLeft(){
-              
-               try{
-
-                switch(source){
-
-                  case SOURCES.DRAGGED:
-
-                    if (row<4){
-                      
-                      if(layout[row  ][col+1]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row-1][col-1]===0 &&
-                         layout[row+1][col+1]===0){
-
-                        ctrls[row  ][col+1].hover=true;
-                        ctrls[row-1][col  ].hover=true;
-                        ctrls[row-1][col-1].hover=true;
-                        ctrls[row+1][col+1].hover=true;
-
-                      }
-                      
-                    }
-                    else if(row===4 ){
-
-                      if(layout[row  ][col+1]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row-1][col-1]===0 &&
-                         layout[row+1][col  ]===0){
-
-                        ctrls[row  ][col+1].hover=true;
-                        ctrls[row-1][col  ].hover=true;
-                        ctrls[row-1][col-1].hover=true;
-                        ctrls[row+1][col  ].hover=true;
-
-                      }
-                    
-                    }
-                    else if(row>4 ){
-
-                      if(layout[row  ][col+1]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row-1][col+1]===0 &&
-                         layout[row+1][col  ]===0){
-
-                        ctrls[row  ][col+1].hover=true;
-                        ctrls[row-1][col  ].hover=true;
-                        ctrls[row-1][col+1].hover=true;
-                        ctrls[row+1][col  ].hover=true;
-
-                      }
-                    
-                    }
-                    
-                    break;
-
-                  case SOURCES.RELEASED:
-                  
-                    if (row<4){
-                      
-                      if(layout[row  ][col+1]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row-1][col-1]===0 &&
-                         layout[row+1][col+1]===0){
-
-                        layout[row  ][col+1]=1;
-                        layout[row-1][col  ]=1;
-                        layout[row-1][col-1]=1;
-                        layout[row+1][col+1]=1;
-
-                      }
-                      
-                    }
-                    else if(row===4 ){
-
-                      if(layout[row  ][col+1]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row-1][col-1]===0 &&
-                         layout[row+1][col  ]===0){
-
-                        layout[row  ][col+1]=1;
-                        layout[row-1][col  ]=1;
-                        layout[row-1][col-1]=1;
-                        layout[row+1][col  ]=1;
-
-                      }
-                    
-                    }
-                    else if(row>4 ){
-
-                      if(layout[row  ][col+1]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row-1][col+1]===0 &&
-                         layout[row+1][col  ]===0){
-
-                        layout[row  ][col+1]=1;
-                        layout[row-1][col  ]=1;
-                        layout[row-1][col+1]=1;
-                        layout[row+1][col  ]=1;
-
-                      }
-                    
-                    }
-
-                    break;
-
-                  default:
-
-                    println('validateDrop Error');
-
-                    break;
-
-                }
-
-              }
-              catch(e){
-
-                if(e instanceof TypeError){
-                  // println("Cell doesn't exist");
-                }
-                else{ println(e); }
-
-              }
-              
-            };
-            
-            function valZRight(){
-              
-               try{
-
-                switch(source){
-
-                  case SOURCES.DRAGGED:
-                  
-                    if(row<5){
-                      
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col-1]===0 &&
-                         layout[row-1][col-1]===0 &&
-                         layout[row-1][col  ]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row  ][col-1].hover=true;
-                        ctrls[row-1][col-1].hover=true;
-                        ctrls[row-1][col  ].hover=true;
-
-                      }
-
-                    }
-                    else if(row>=5){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col-1]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row-1][col+1]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row  ][col-1].hover=true;
-                        ctrls[row-1][col  ].hover=true;
-                        ctrls[row-1][col+1].hover=true;
-
-                      }
-                      
-                    }                    
-                    
-                    break;
-                      
-                  case SOURCES.RELEASED:
-                  
-                    if(row<5){
-                      
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col-1]===0 &&
-                         layout[row-1][col-1]===0 &&
-                         layout[row-1][col  ]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row  ][col-1]=1;
-                        layout[row-1][col-1]=1;
-                        layout[row-1][col  ]=1;
-
-                      }
-
-                    }
-                    else if(row>=5){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col-1]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row-1][col+1]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row  ][col-1]=1;
-                        layout[row-1][col  ]=1;
-                        layout[row-1][col+1]=1;
-
-                      }
-                      
-                    }     
-                    
-                    break;                  
-
-                  default:  break;
-
-                }
-
-              }
-              catch(e){
-
-                if(e instanceof TypeError){
-                  // println("Cell doesn't exist");
-                }
-                else{ println(e); }
-
-              }
-              
-            };
-            function valZLeft(){
-              
-               try{
-
-                switch(source){
-
-                  case SOURCES.DRAGGED:
-                  
-                    if(row<5){
-                      
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col+1]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row-1][col-1]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row  ][col+1].hover=true;
-                        ctrls[row-1][col  ].hover=true;
-                        ctrls[row-1][col-1].hover=true;
-
-                      }
-
-                    }
-                    else if(row>=5){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col+1]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row-1][col+1]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row  ][col+1].hover=true;
-                        ctrls[row-1][col  ].hover=true;
-                        ctrls[row-1][col+1].hover=true;
-
-                      }
-                      
-                    }                    
-                    
-                    break;
-                      
-                  case SOURCES.RELEASED:
-                  
-                    if(row<5){
-                      
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col+1]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row-1][col-1]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row  ][col+1]=1;
-                        layout[row-1][col  ]=1;
-                        layout[row-1][col-1]=1;
-
-                      }
-
-                    }
-                    else if(row>=5){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col+1]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row-1][col+1]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row  ][col+1]=1;
-                        layout[row-1][col  ]=1;
-                        layout[row-1][col+1]=1;
-
-                      }
-                      
-                    }       
-                    
-                    break;                  
-
-                  default:  break;
-
-                }
-
-              }
-              catch(e){
-
-                if(e instanceof TypeError){
-                  // println("Cell doesn't exist");
-                }
-                else{ println(e); }
-
-              }
-              
-            };
-            
-            function valSevenRight(){
-              
-               try{
-
-                switch(source){
-
-                  case SOURCES.DRAGGED:
-                  
-                    if(row<4){
-                      
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row+1][col+1]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row-1][col-1]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row+1][col+1].hover=true;
-                        ctrls[row-1][col  ].hover=true;
-                        ctrls[row-1][col-1].hover=true;
-
-                      }
-
-                    }
-                    else if(row===4){
-                      
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row+1][col  ]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row-1][col-1]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row+1][col  ].hover=true;
-                        ctrls[row-1][col  ].hover=true;
-                        ctrls[row-1][col-1].hover=true;
-
-                      }
-                      
-                    }                       
-                    else if(row>4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row+1][col  ]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row-1][col+1]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row+1][col  ].hover=true;
-                        ctrls[row-1][col  ].hover=true;
-                        ctrls[row-1][col+1].hover=true;
-
-                      }
-                      
-                    }                    
-                    
-                    break;
-                      
-                  case SOURCES.RELEASED:
-                  
-                    if(row<4){
-                      
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row+1][col+1]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row-1][col-1]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row+1][col+1]=1;
-                        layout[row-1][col  ]=1;
-                        layout[row-1][col-1]=1;
-
-                      }
-
-                    }
-                    else if(row===4){
-                      
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row+1][col  ]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row-1][col-1]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row+1][col  ]=1;
-                        layout[row-1][col  ]=1;
-                        layout[row-1][col-1]=1;
-
-                      }
-                      
-                    }                       
-                    else if(row>4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row+1][col  ]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row-1][col+1]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row+1][col  ]=1;
-                        layout[row-1][col  ]=1;
-                        layout[row-1][col+1]=1;
-
-                      }
-                      
-                    }       
-                    
-                    break;                  
-
-                  default:  break;
-
-                }
-
-              }
-              catch(e){
-
-                if(e instanceof TypeError){
-                  // println("Cell doesn't exist");
-                }
-                else{ println(e); }
-
-              }
-              
-            };
-            function valSevenLeft(){
-
-               try{
-
-                switch(source){
-
-                  case SOURCES.DRAGGED:
-                  
-                    if(row<4){
-                      
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row+1][col  ]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row-1][col-1]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row+1][col  ].hover=true;
-                        ctrls[row-1][col  ].hover=true;
-                        ctrls[row-1][col-1].hover=true;
-
-                      }
-
-                    }
-                    else if(row===4){
-                      
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row+1][col-1]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row-1][col-1]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row+1][col-1].hover=true;
-                        ctrls[row-1][col  ].hover=true;
-                        ctrls[row-1][col-1].hover=true;
-
-                      }
-                      
-                    }                       
-                    else if(row>4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row+1][col-1]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row-1][col+1]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row+1][col-1].hover=true;
-                        ctrls[row-1][col  ].hover=true;
-                        ctrls[row-1][col+1].hover=true;
-
-                      }
-                      
-                    }                    
-                    
-                    break;
-                      
-                  case SOURCES.RELEASED:
-                  
-                    if(row<4){
-                      
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row+1][col  ]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row-1][col-1]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row+1][col  ]=1;
-                        layout[row-1][col  ]=1;
-                        layout[row-1][col-1]=1;
-
-                      }
-
-                    }
-                    else if(row===4){
-                      
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row+1][col-1]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row-1][col-1]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row+1][col-1]=1;
-                        layout[row-1][col  ]=1;
-                        layout[row-1][col-1]=1;
-
-                      }
-                      
-                    }                       
-                    else if(row>4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row+1][col-1]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row-1][col+1]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row+1][col-1]=1;
-                        layout[row-1][col  ]=1;
-                        layout[row-1][col+1]=1;
-
-                      }
-                      
-                    }         
-                    
-                    break;                  
-
-                  default:  break;
-
-                }
-
-              }
-              catch(e){
-
-                if(e instanceof TypeError){
-                  // println("Cell doesn't exist");
-                }
-                else{ println(e); }
-
-              }
-              
-            };
-
-            function valAngleRight(){
-              
-               try{
-
-                switch(source){
-
-                  case SOURCES.DRAGGED:
-                  
-                    if(row<4){
-                      
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row+1][col  ]===0 &&
-                         layout[row+1][col+1]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row-1][col  ].hover=true;
-                        ctrls[row+1][col  ].hover=true;
-                        ctrls[row+1][col+1].hover=true;
-
-                      }
-
-                    }
-                    else if(row===4){
-                      
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row+1][col  ]===0 &&
-                         layout[row+1][col-1]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row-1][col  ].hover=true;
-                        ctrls[row+1][col  ].hover=true;
-                        ctrls[row+1][col-1].hover=true;
-
-                      }
-                      
-                    }                       
-                    else if(row>4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row-1][col+1]===0 &&
-                         layout[row+1][col  ]===0 &&
-                         layout[row+1][col-1]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row-1][col+1].hover=true;
-                        ctrls[row+1][col  ].hover=true;
-                        ctrls[row+1][col-1].hover=true;
-
-                      }
-
-                    }                    
-
-                    break;
-
-                  case SOURCES.RELEASED:
-                  
-                    if(row<4){
-                      
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row+1][col  ]===0 &&
-                         layout[row+1][col+1]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row-1][col  ]=1;
-                        layout[row+1][col  ]=1;
-                        layout[row+1][col+1]=1;
-
-                      }
-
-                    }
-                    else if(row===4){
-                      
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row+1][col  ]===0 &&
-                         layout[row+1][col-1]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row-1][col  ]=1;
-                        layout[row+1][col  ]=1;
-                        layout[row+1][col-1]=1;
-
-                      }
-                      
-                    }                       
-                    else if(row>4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row-1][col+1]===0 &&
-                         layout[row+1][col  ]===0 &&
-                         layout[row+1][col-1]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row-1][col+1]=1;
-                        layout[row+1][col  ]=1;
-                        layout[row+1][col-1]=1;
-
-                      }
-
-                    }        
-                    
-                    break;                  
-
-                  default:  break;
-
-                }
-
-              }
-              catch(e){
-
-                if(e instanceof TypeError){
-                  // println("Cell doesn't exist");
-                }
-                else{ println(e); }
-
-              }
-              
-            };
-            function valAngleLeft(){
-              
-               try{
-
-                switch(source){
-
-                  case SOURCES.DRAGGED:
-                  
-                    if(row<4){
-                      
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row-1][col-1]===0 &&
-                         layout[row+1][col  ]===0 &&
-                         layout[row+1][col+1]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row-1][col-1].hover=true;
-                        ctrls[row+1][col  ].hover=true;
-                        ctrls[row+1][col+1].hover=true;
-
-                      }
-
-                    }
-                    else if(row===4){
-                      
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row-1][col-1]===0 &&
-                         layout[row+1][col  ]===0 &&
-                         layout[row+1][col-1]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row-1][col-1].hover=true;
-                        ctrls[row+1][col  ].hover=true;
-                        ctrls[row+1][col-1].hover=true;
-
-                      }
-                      
-                    }                       
-                    else if(row>4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row+1][col  ]===0 &&
-                         layout[row+1][col-1]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row-1][col  ].hover=true;
-                        ctrls[row+1][col  ].hover=true;
-                        ctrls[row+1][col-1].hover=true;
-
-                      }
-
-                    }                    
-
-                    break;
-
-                  case SOURCES.RELEASED:
-                  
-                    if(row<4){
-                      
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row-1][col-1]===0 &&
-                         layout[row+1][col  ]===0 &&
-                         layout[row+1][col+1]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row-1][col-1]=1;
-                        layout[row+1][col  ]=1;
-                        layout[row+1][col+1]=1;
-
-                      }
-
-                    }
-                    else if(row===4){
-                      
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row-1][col-1]===0 &&
-                         layout[row+1][col  ]===0 &&
-                         layout[row+1][col-1]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row-1][col-1]=1;
-                        layout[row+1][col  ]=1;
-                        layout[row+1][col-1]=1;
-
-                      }
-                      
-                    }                       
-                    else if(row>4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row+1][col  ]===0 &&
-                         layout[row+1][col-1]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row-1][col  ]=1;
-                        layout[row+1][col  ]=1;
-                        layout[row+1][col-1]=1;
-
-                      }
-
-                    }    
-                    
-                    break;                  
-
-                  default:  break;
-
-                }
-
-              }
-              catch(e){
-
-                if(e instanceof TypeError){
-                  // println("Cell doesn't exist");
-                }
-                else{ println(e); }
-
-              }
-              
-            };
-
-            function valNodeUpRight(){
-
-               try{
-
-                switch(source){
-
-                  case SOURCES.DRAGGED:
-
-                    if(row<5){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col-1]===0 &&
-                         layout[row  ][col+1]===0 &&
-                         layout[row-1][col  ]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row  ][col-1].hover=true;
-                        ctrls[row  ][col+1].hover=true;
-                        ctrls[row-1][col  ].hover=true;
-
-                      }
-
-                    }                  
-                    else if(row>4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col-1]===0 &&
-                         layout[row  ][col+1]===0 &&
-                         layout[row-1][col+1]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row  ][col-1].hover=true;
-                        ctrls[row  ][col+1].hover=true;
-                        ctrls[row-1][col+1].hover=true;
-
-                      }
-
-                    }                    
-
-                    break;
-
-                  case SOURCES.RELEASED:
-                  
-                    if(row<5){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col-1]===0 &&
-                         layout[row  ][col+1]===0 &&
-                         layout[row-1][col  ]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row  ][col-1]=1;
-                        layout[row  ][col+1]=1;
-                        layout[row-1][col  ]=1;
-
-                      }
-
-                    }                  
-                    else if(row>4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col-1]===0 &&
-                         layout[row  ][col+1]===0 &&
-                         layout[row-1][col+1]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row  ][col-1]=1;
-                        layout[row  ][col+1]=1;
-                        layout[row-1][col+1]=1;
-
-                      }
-
-                    }    
-                    break;                  
-
-                  default:  break;
-
-                }
-
-              }
-              catch(e){
-
-                if(e instanceof TypeError){
-                  // println("Cell doesn't exist");
-                }
-                else{ println(e); }
-
-              }
-              
-            };
-            function valNodeUpLeft(){
-              
-               try{
-
-                switch(source){
-
-                  case SOURCES.DRAGGED:
-
-                    if(row<5){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col-1]===0 &&
-                         layout[row  ][col+1]===0 &&
-                         layout[row-1][col-1]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row  ][col-1].hover=true;
-                        ctrls[row  ][col+1].hover=true;
-                        ctrls[row-1][col-1].hover=true;
-
-                      }
-
-                    }                  
-                    else if(row>4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col-1]===0 &&
-                         layout[row  ][col+1]===0 &&
-                         layout[row-1][col  ]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row  ][col-1].hover=true;
-                        ctrls[row  ][col+1].hover=true;
-                        ctrls[row-1][col  ].hover=true;
-
-                      }
-
-                    }                    
-
-                    break;
-
-                  case SOURCES.RELEASED:
-                  
-                    if(row<5){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col-1]===0 &&
-                         layout[row  ][col+1]===0 &&
-                         layout[row-1][col-1]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row  ][col-1]=1;
-                        layout[row  ][col+1]=1;
-                        layout[row-1][col-1]=1;
-
-                      }
-
-                    }                  
-                    else if(row>4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col-1]===0 &&
-                         layout[row  ][col+1]===0 &&
-                         layout[row-1][col  ]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row  ][col-1]=1;
-                        layout[row  ][col+1]=1;
-                        layout[row-1][col  ]=1;
-
-                      }
-
-                    }    
-                    break;                  
-
-                  default:  break;
-
-                }
-
-              }
-              catch(e){
-
-                if(e instanceof TypeError){
-                  // println("Cell doesn't exist");
-                }
-                else{ println(e); }
-
-              }
-              
-            };
-            function valNodeDownRight(){
-              
-               try{
-
-                switch(source){
-
-                  case SOURCES.DRAGGED:
-
-                    if(row<4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col-1]===0 &&
-                         layout[row  ][col+1]===0 &&
-                         layout[row+1][col+1]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row  ][col-1].hover=true;
-                        ctrls[row  ][col+1].hover=true;
-                        ctrls[row+1][col+1].hover=true;
-
-                      }
-
-                    }                  
-                    else if(row===4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col-1]===0 &&
-                         layout[row  ][col+1]===0 &&
-                         layout[row+1][col  ]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row  ][col-1].hover=true;
-                        ctrls[row  ][col+1].hover=true;
-                        ctrls[row+1][col  ].hover=true;
-
-                      }
-
-                    } 
-                    else if(row>4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col-1]===0 &&
-                         layout[row  ][col+1]===0 &&
-                         layout[row+1][col  ]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row  ][col-1].hover=true;
-                        ctrls[row  ][col+1].hover=true;
-                        ctrls[row+1][col  ].hover=true;
-
-                      }
-
-                    }                    
-
-                    break;
-
-                  case SOURCES.RELEASED:
-                  
-                    if(row<4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col-1]===0 &&
-                         layout[row  ][col+1]===0 &&
-                         layout[row+1][col+1]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row  ][col-1]=1;
-                        layout[row  ][col+1]=1;
-                        layout[row+1][col+1]=1;
-
-                      }
-
-                    }                  
-                    else if(row===4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col-1]===0 &&
-                         layout[row  ][col+1]===0 &&
-                         layout[row+1][col  ]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row  ][col-1]=1;
-                        layout[row  ][col+1]=1;
-                        layout[row+1][col  ]=1;
-
-                      }
-
-                    } 
-                    else if(row>4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col-1]===0 &&
-                         layout[row  ][col+1]===0 &&
-                         layout[row+1][col  ]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row  ][col-1]=1;
-                        layout[row  ][col+1]=1;
-                        layout[row+1][col  ]=1;
-
-                      }
-
-                    }                    
-
-                    break;               
-
-                  default:  break;
-
-                }
-
-              }
-              catch(e){
-
-                if(e instanceof TypeError){
-                  // println("Cell doesn't exist");
-                }
-                else{ println(e); }
-
-              }
-              
-            };
-            function valNodeDownLeft(){
-              
-               try{
-
-                switch(source){
-
-                  case SOURCES.DRAGGED:
-
-                    if(row<4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col-1]===0 &&
-                         layout[row  ][col+1]===0 &&
-                         layout[row+1][col  ]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row  ][col-1].hover=true;
-                        ctrls[row  ][col+1].hover=true;
-                        ctrls[row+1][col  ].hover=true;
-
-                      }
-
-                    }                  
-                    else if(row===4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col-1]===0 &&
-                         layout[row  ][col+1]===0 &&
-                         layout[row+1][col-1]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row  ][col-1].hover=true;
-                        ctrls[row  ][col+1].hover=true;
-                        ctrls[row+1][col-1].hover=true;
-
-                      }
-
-                    } 
-                    else if(row>4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col-1]===0 &&
-                         layout[row  ][col+1]===0 &&
-                         layout[row+1][col-1]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row  ][col-1].hover=true;
-                        ctrls[row  ][col+1].hover=true;
-                        ctrls[row+1][col-1].hover=true;
-
-                      }
-
-                    }                    
-
-                    break;
-
-                  case SOURCES.RELEASED:
-                  
-                    if(row<4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col-1]===0 &&
-                         layout[row  ][col+1]===0 &&
-                         layout[row+1][col  ]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row  ][col-1]=1;
-                        layout[row  ][col+1]=1;
-                        layout[row+1][col  ]=1;
-
-                      }
-
-                    }                  
-                    else if(row===4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col-1]===0 &&
-                         layout[row  ][col+1]===0 &&
-                         layout[row+1][col-1]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row  ][col-1]=1;
-                        layout[row  ][col+1]=1;
-                        layout[row+1][col-1]=1;
-
-                      }
-
-                    } 
-                    else if(row>4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col-1]===0 &&
-                         layout[row  ][col+1]===0 &&
-                         layout[row+1][col-1]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row  ][col-1]=1;
-                        layout[row  ][col+1]=1;
-                        layout[row+1][col-1]=1;
-
-                      }
-
-                    }                    
-
-                    break;            
-
-                  default:  break;
-
-                }
-
-              }
-              catch(e){
-
-                if(e instanceof TypeError){
-                  // println("Cell doesn't exist");
-                }
-                else{ println(e); }
-
-              }
-              
-            };
-            
-            function valVUpRight(){
-              
-               try{
-
-                switch(source){
-
-                  case SOURCES.DRAGGED:
-
-                    if(row<4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col-1]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row+1][col  ]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row  ][col-1].hover=true;
-                        ctrls[row-1][col  ].hover=true;
-                        ctrls[row+1][col  ].hover=true;
-
-                      }
-
-                    }                  
-                    else if(row===4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col-1]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row+1][col-1]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row  ][col-1].hover=true;
-                        ctrls[row-1][col  ].hover=true;
-                        ctrls[row+1][col-1].hover=true;
-
-                      }
-
-                    } 
-                    else if(row>4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col-1]===0 &&
-                         layout[row-1][col+1]===0 &&
-                         layout[row+1][col-1]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row  ][col-1].hover=true;
-                        ctrls[row-1][col+1].hover=true;
-                        ctrls[row+1][col-1].hover=true;
-
-                      }
-
-                    }                    
-
-                    break;
-
-                  case SOURCES.RELEASED:
-                  
-                    if(row<4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col-1]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row+1][col  ]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row  ][col-1]=1;
-                        layout[row-1][col  ]=1;
-                        layout[row+1][col  ]=1;
-
-                      }
-
-                    }                  
-                    else if(row===4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col-1]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row+1][col-1]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row  ][col-1]=1;
-                        layout[row-1][col  ]=1;
-                        layout[row+1][col-1]=1;
-
-                      }
-
-                    } 
-                    else if(row>4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col-1]===0 &&
-                         layout[row-1][col+1]===0 &&
-                         layout[row+1][col-1]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row  ][col-1]=1;
-                        layout[row-1][col+1]=1;
-                        layout[row+1][col-1]=1;
-
-                      }
-
-                    }                    
-
-                    break;         
-
-                  default:  break;
-
-                }
-
-              }
-              catch(e){
-
-                if(e instanceof TypeError){
-                  // println("Cell doesn't exist");
-                }
-                else{ println(e); }
-
-              }
-              
-            };
-            function valVUpLeft(){
-              
-               try{
-
-                switch(source){
-
-                  case SOURCES.DRAGGED:
-
-                    if(row<4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col+1]===0 &&
-                         layout[row-1][col-1]===0 &&
-                         layout[row+1][col+1]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row  ][col+1].hover=true;
-                        ctrls[row-1][col-1].hover=true;
-                        ctrls[row+1][col+1].hover=true;
-
-                      }
-
-                    }                  
-                    else if(row===4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col+1]===0 &&
-                         layout[row-1][col-1]===0 &&
-                         layout[row+1][col  ]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row  ][col+1].hover=true;
-                        ctrls[row-1][col-1].hover=true;
-                        ctrls[row+1][col  ].hover=true;
-
-                      }
-
-                    } 
-                    else if(row>4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col+1]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row+1][col  ]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row  ][col+1].hover=true;
-                        ctrls[row-1][col  ].hover=true;
-                        ctrls[row+1][col  ].hover=true;
-
-                      }
-
-                    }                    
-
-                    break;
-
-                  case SOURCES.RELEASED:
-                  
-                    if(row<4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col+1]===0 &&
-                         layout[row-1][col-1]===0 &&
-                         layout[row+1][col+1]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row  ][col+1]=1;
-                        layout[row-1][col-1]=1;
-                        layout[row+1][col+1]=1;
-
-                      }
-
-                    }                  
-                    else if(row===4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col+1]===0 &&
-                         layout[row-1][col-1]===0 &&
-                         layout[row+1][col  ]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row  ][col+1]=1;
-                        layout[row-1][col-1]=1;
-                        layout[row+1][col  ]=1;
-
-                      }
-
-                    } 
-                    else if(row>4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col+1]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row+1][col  ]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row  ][col+1]=1;
-                        layout[row-1][col  ]=1;
-                        layout[row+1][col  ]=1;
-
-                      }
-
-                    }                  
-
-                    break;  
-                  
-                  default:  break;
-
-                }
-                
-              }
-              catch(e){
-
-                if(e instanceof TypeError){
-                  // println("Cell doesn't exist");
-                }
-                else{ println(e); }
-
-              }
-              
-            };
-            function valVDownRight(){
-
-               try{
-
-                switch(source){
-
-                  case SOURCES.DRAGGED:
-
-                    if(row<4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col-1]===0 &&
-                         layout[row-1][col-1]===0 &&
-                         layout[row+1][col+1]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row  ][col-1].hover=true;
-                        ctrls[row-1][col-1].hover=true;
-                        ctrls[row+1][col+1].hover=true;
-
-                      }
-
-                    }                  
-                    else if(row===4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col-1]===0 &&
-                         layout[row-1][col-1]===0 &&
-                         layout[row+1][col  ]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row  ][col-1].hover=true;
-                        ctrls[row-1][col-1].hover=true;
-                        ctrls[row+1][col  ].hover=true;
-
-                      }
-
-                    } 
-                    else if(row>4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col-1]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row+1][col  ]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row  ][col-1].hover=true;
-                        ctrls[row-1][col  ].hover=true;
-                        ctrls[row+1][col  ].hover=true;
-
-                      }
-
-                    }                    
-
-                    break;
-
-                  case SOURCES.RELEASED:
-                  
-                    if(row<4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col-1]===0 &&
-                         layout[row-1][col-1]===0 &&
-                         layout[row+1][col+1]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row  ][col-1]=1;
-                        layout[row-1][col-1]=1;
-                        layout[row+1][col+1]=1;
-
-                      }
-
-                    }                  
-                    else if(row===4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col-1]===0 &&
-                         layout[row-1][col-1]===0 &&
-                         layout[row+1][col  ]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row  ][col-1]=1;
-                        layout[row-1][col-1]=1;
-                        layout[row+1][col  ]=1;
-
-                      }
-
-                    } 
-                    else if(row>4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col-1]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row+1][col  ]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row  ][col-1]=1;
-                        layout[row-1][col  ]=1;
-                        layout[row+1][col  ]=1;
-
-                      }
-
-                    }                    
-
-                    break;  
-                  
-                  default:  break;
-
-                }
-
-              }
-              catch(e){
-
-                if(e instanceof TypeError){
-                  // println("Cell doesn't exist");
-                }
-                else{ println(e); }
-
-              }
-              
-            };
-            function valVDownLeft(){
-              
-               try{
-
-                switch(source){
-
-                  case SOURCES.DRAGGED:
-
-                    if(row<4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col+1]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row+1][col  ]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row  ][col+1].hover=true;
-                        ctrls[row-1][col  ].hover=true;
-                        ctrls[row+1][col  ].hover=true;
-
-                      }
-
-                    }                  
-                    else if(row===4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col+1]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row+1][col-1]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row  ][col+1].hover=true;
-                        ctrls[row-1][col  ].hover=true;
-                        ctrls[row+1][col-1].hover=true;
-
-                      }
-
-                    } 
-                    else if(row>4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col+1]===0 &&
-                         layout[row-1][col+1]===0 &&
-                         layout[row+1][col-1]===0){
-
-                        ctrls[row  ][col  ].hover=true;
-                        ctrls[row  ][col+1].hover=true;
-                        ctrls[row-1][col+1].hover=true;
-                        ctrls[row+1][col-1].hover=true;
-
-                      }
-
-                    }                    
-
-                    break;
-
-                  case SOURCES.RELEASED:
-                  
-                    if(row<4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col+1]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row+1][col  ]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row  ][col+1]=1;
-                        layout[row-1][col  ]=1;
-                        layout[row+1][col  ]=1;
-
-                      }
-
-                    }                  
-                    else if(row===4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col+1]===0 &&
-                         layout[row-1][col  ]===0 &&
-                         layout[row+1][col-1]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row  ][col+1]=1;
-                        layout[row-1][col  ]=1;
-                        layout[row+1][col-1]=1;
-
-                      }
-
-                    } 
-                    else if(row>4){
-
-                      if(layout[row  ][col  ]===0 &&
-                         layout[row  ][col+1]===0 &&
-                         layout[row-1][col+1]===0 &&
-                         layout[row+1][col-1]===0){
-
-                        layout[row  ][col  ]=1;
-                        layout[row  ][col+1]=1;
-                        layout[row-1][col+1]=1;
-                        layout[row+1][col-1]=1;
-
-                      }
-
-                    }                    
-
-                    break;  
-                  
-                  default:  break;
-
-                }
-
-              }
-              catch(e){
-
-                if(e instanceof TypeError){
-                  // println("Cell doesn't exist");
-                }
-                else{ println(e); }
-
-              }
-              
-            };
-            
-            switch(this.activeShape.style){
-
-              case SHAPES.SINGLE:         valSingle();        break;
-
-              case SHAPES.ROW:            valRow();           break;
-              case SHAPES.ROWFORWARD:     valRowForward();    break;
-              case SHAPES.ROWBACK:        valRowBack();       break;
-
-              case SHAPES.DIAMOND:        valDiamond();       break;
-
-              case SHAPES.UUP:            valUUP();           break;
-
-              case SHAPES.UDOWN:          valUDown();         break;
-
-              case SHAPES.UPRIGHT:        valUpRight();       break;
-              case SHAPES.DOWNRIGHT:      valDownRight();     break;
-              case SHAPES.UPLEFT:         valUpLeft();        break;
-              case SHAPES.DOWNLEFT:       valDownLeft();      break;
-
-              case SHAPES.ZRIGHT:         valZRight();        break;
-              case SHAPES.ZLEFT:          valZLeft();         break;
-
-              case SHAPES.SEVENRIGHT:     valSevenRight();    break;
-              case SHAPES.SEVENLEFT:      valSevenLeft();     break;
-
-              case SHAPES.ANGLERIGHT:     valAngleRight();    break;
-              case SHAPES.ANGLELEFT:      valAngleLeft();     break;
-
-              case SHAPES.NODEUPRIGHT:    valNodeUpRight();   break;
-              case SHAPES.NODEUPLEFT:     valNodeUpLeft();    break;
-              case SHAPES.NODEDOWNRIGHT:  valNodeDownRight(); break;
-              case SHAPES.NODEDOWNLEFT:   valNodeDownLeft();  break;
-
-              case SHAPES.VUPRIGHT:       valVUpRight();      break;
-              case SHAPES.VUPLEFT:        valVUpLeft();       break;
-              case SHAPES.VDOWNRIGHT:     valVDownRight();    break;
-              case SHAPES.VDOWNLEFT:      valVDownLeft();     break;
+                break;
 
               default:  break;
 
             }
 
+          }
+          catch(e){
+
+            if(e instanceof TypeError){
+              // println("Cell doesn't exist");
+            }
+            else{ println(e); }
+
+          }
+
+        };
+
+        function valVUpRight(){
+
+          try{
+
+            if(row<4){
+
+              if(layout[row  ][col  ]===0 &&
+                 layout[row  ][col-1]===0 &&
+                 layout[row-1][col  ]===0 &&
+                 layout[row+1][col  ]===0){
+
+                ctrls[row  ][col  ].hover=true;
+                ctrls[row  ][col-1].hover=true;
+                ctrls[row-1][col  ].hover=true;
+                ctrls[row+1][col  ].hover=true;
+
+              }
+
+            }
+            else if(row===4){
+
+              if(layout[row  ][col  ]===0 &&
+                 layout[row  ][col-1]===0 &&
+                 layout[row-1][col  ]===0 &&
+                 layout[row+1][col-1]===0){
+
+                ctrls[row  ][col  ].hover=true;
+                ctrls[row  ][col-1].hover=true;
+                ctrls[row-1][col  ].hover=true;
+                ctrls[row+1][col-1].hover=true;
+
+              }
+
+            }
+            else if(row>4){
+
+              if(layout[row  ][col  ]===0 &&
+                 layout[row  ][col-1]===0 &&
+                 layout[row-1][col+1]===0 &&
+                 layout[row+1][col-1]===0){
+
+                ctrls[row  ][col  ].hover=true;
+                ctrls[row  ][col-1].hover=true;
+                ctrls[row-1][col+1].hover=true;
+                ctrls[row+1][col-1].hover=true;
+
+              }
+
+            }
+
+          }
+          catch(e){
+
+            if(e instanceof TypeError){
+              // println("Cell doesn't exist");
+            }
+            else{ println(e); }
+
+          }
+
+        };
+        function valVUpLeft(){
+
+          try{
+
+            if(row<4){
+
+              if(layout[row  ][col  ]===0 &&
+                 layout[row  ][col+1]===0 &&
+                 layout[row-1][col-1]===0 &&
+                 layout[row+1][col+1]===0){
+
+                ctrls[row  ][col  ].hover=true;
+                ctrls[row  ][col+1].hover=true;
+                ctrls[row-1][col-1].hover=true;
+                ctrls[row+1][col+1].hover=true;
+
+              }
+
+            }
+            else if(row===4){
+
+              if(layout[row  ][col  ]===0 &&
+                 layout[row  ][col+1]===0 &&
+                 layout[row-1][col-1]===0 &&
+                 layout[row+1][col  ]===0){
+
+                ctrls[row  ][col  ].hover=true;
+                ctrls[row  ][col+1].hover=true;
+                ctrls[row-1][col-1].hover=true;
+                ctrls[row+1][col  ].hover=true;
+
+              }
+
+            }
+            else if(row>4){
+
+              if(layout[row  ][col  ]===0 &&
+                 layout[row  ][col+1]===0 &&
+                 layout[row-1][col  ]===0 &&
+                 layout[row+1][col  ]===0){
+
+                ctrls[row  ][col  ].hover=true;
+                ctrls[row  ][col+1].hover=true;
+                ctrls[row-1][col  ].hover=true;
+                ctrls[row+1][col  ].hover=true;
+
+              }
+
+            }
+
+          }
+          catch(e){
+
+            if(e instanceof TypeError){
+              // println("Cell doesn't exist");
+            }
+            else{ println(e); }
+
+          }
+
+        };
+        function valVDownRight(){
+
+          try{
+
+            if(row<4){
+
+              if(layout[row  ][col  ]===0 &&
+                 layout[row  ][col-1]===0 &&
+                 layout[row-1][col-1]===0 &&
+                 layout[row+1][col+1]===0){
+
+                ctrls[row  ][col  ].hover=true;
+                ctrls[row  ][col-1].hover=true;
+                ctrls[row-1][col-1].hover=true;
+                ctrls[row+1][col+1].hover=true;
+
+              }
+
+            }
+            else if(row===4){
+
+              if(layout[row  ][col  ]===0 &&
+                 layout[row  ][col-1]===0 &&
+                 layout[row-1][col-1]===0 &&
+                 layout[row+1][col  ]===0){
+
+                ctrls[row  ][col  ].hover=true;
+                ctrls[row  ][col-1].hover=true;
+                ctrls[row-1][col-1].hover=true;
+                ctrls[row+1][col  ].hover=true;
+
+              }
+
+            }
+            else if(row>4){
+
+              if(layout[row  ][col  ]===0 &&
+                 layout[row  ][col-1]===0 &&
+                 layout[row-1][col  ]===0 &&
+                 layout[row+1][col  ]===0){
+
+                ctrls[row  ][col  ].hover=true;
+                ctrls[row  ][col-1].hover=true;
+                ctrls[row-1][col  ].hover=true;
+                ctrls[row+1][col  ].hover=true;
+
+              }
+
+            }
+
+          }
+          catch(e){
+
+            if(e instanceof TypeError){
+              // println("Cell doesn't exist");
+            }
+            else{ println(e); }
+
+          }
+
+        };
+        function valVDownLeft(){
+
+          try{
+
+            if(row<4){
+
+              if(layout[row  ][col  ]===0 &&
+                 layout[row  ][col+1]===0 &&
+                 layout[row-1][col  ]===0 &&
+                 layout[row+1][col  ]===0){
+
+                ctrls[row  ][col  ].hover=true;
+                ctrls[row  ][col+1].hover=true;
+                ctrls[row-1][col  ].hover=true;
+                ctrls[row+1][col  ].hover=true;
+
+              }
+
+            }
+            else if(row===4){
+
+              if(layout[row  ][col  ]===0 &&
+                 layout[row  ][col+1]===0 &&
+                 layout[row-1][col  ]===0 &&
+                 layout[row+1][col-1]===0){
+
+                ctrls[row  ][col  ].hover=true;
+                ctrls[row  ][col+1].hover=true;
+                ctrls[row-1][col  ].hover=true;
+                ctrls[row+1][col-1].hover=true;
+
+              }
+
+            }
+            else if(row>4){
+
+              if(layout[row  ][col  ]===0 &&
+                 layout[row  ][col+1]===0 &&
+                 layout[row-1][col+1]===0 &&
+                 layout[row+1][col-1]===0){
+
+                ctrls[row  ][col  ].hover=true;
+                ctrls[row  ][col+1].hover=true;
+                ctrls[row-1][col+1].hover=true;
+                ctrls[row+1][col-1].hover=true;
+
+              }
+
+            }
+
+          }
+          catch(e){
+
+            if(e instanceof TypeError){
+              // println("Cell doesn't exist");
+            }
+            else{ println(e); }
+
+          }
+
+        };
+
+        switch(this.activeShape.style){
+
+          case SHAPES.SINGLE:         valSingle();        break;
+
+          case SHAPES.ROW:            valRow();           break;
+          case SHAPES.ROWFORWARD:     valRowForward();    break;
+          case SHAPES.ROWBACK:        valRowBack();       break;
+
+          case SHAPES.DIAMOND:        valDiamond();       break;
+
+          case SHAPES.UUP:            valUUP();           break;
+
+          case SHAPES.UDOWN:          valUDown();         break;
+
+          case SHAPES.UPRIGHT:        valUpRight();       break;
+          case SHAPES.DOWNRIGHT:      valDownRight();     break;
+          case SHAPES.UPLEFT:         valUpLeft();        break;
+          case SHAPES.DOWNLEFT:       valDownLeft();      break;
+
+          case SHAPES.ZRIGHT:         valZRight();        break;
+          case SHAPES.ZLEFT:          valZLeft();         break;
+
+          case SHAPES.SEVENRIGHT:     valSevenRight();    break;
+          case SHAPES.SEVENLEFT:      valSevenLeft();     break;
+
+          case SHAPES.ANGLERIGHT:     valAngleRight();    break;
+          case SHAPES.ANGLELEFT:      valAngleLeft();     break;
+
+          case SHAPES.NODEUPRIGHT:    valNodeUpRight();   break;
+          case SHAPES.NODEUPLEFT:     valNodeUpLeft();    break;
+          case SHAPES.NODEDOWNRIGHT:  valNodeDownRight(); break;
+          case SHAPES.NODEDOWNLEFT:   valNodeDownLeft();  break;
+
+          case SHAPES.VUPRIGHT:       valVUpRight();      break;
+          case SHAPES.VUPLEFT:        valVUpLeft();       break;
+          case SHAPES.VDOWNRIGHT:     valVDownRight();    break;
+          case SHAPES.VDOWNLEFT:      valVDownLeft();     break;
+
+          default:  break;
+
         }
 
         return retVal;
 
-      };
+      };   
       hexBoard.prototype.dragged  = function(){
 
+        if(this.hitTest(mouseX,mouseY)){
+          app.focus=this.id;        
+        }
+        else{
+          this.activeCell=null;
+          this.activeID=null;
+        }
+
         forEach(this.shapes, 'dragged');
-      
+        
         if(this.activeShape!==null){
 
           for(var r in this.controls){
             for(var c in this.controls[r]){
 
-              this.controls[r][c].moved(this.x,this.y);
+              this.controls[r][c].dragged(this.x,this.y);
 
             }
           }
-
-          this.validateDrop(SOURCES.DRAGGED);
+          
+          if(app.focus!==this.id){
+            this.validateDrop();
+          }
 
         }
 
       };
       hexBoard.prototype.released = function(){
 
+        forEach(this.shapes, 'released');
       
-        if(this.activeShape!==null){
-          
-          forEach(this.shapes, 'released');
+        if(this.activeShape!==null && 
+           app.focus!==this.id){
 
-          this.validateDrop(SOURCES.RELEASED);
+          this.placeShape;
 
         }
-        
-      };
 
+      };
       hexBoard.prototype.resetShape=function(){
 
         //  Determine the new shape
@@ -4239,13 +4055,13 @@ println('Angles Reset');
 
         for(var n in this.shapes){
 
-          var random0=floor(random(0,24));
+          var rand=floor(random(0,24));
 
           this.shapes[n].x=this.shapes[n].baseX;
           this.shapes[n].y=this.shapes[n].baseY;
 
-          this.shapes[n].style=random0;
-          this.shapes[n].color=getShapeColor(random0);
+          this.shapes[n].style=rand;
+          this.shapes[n].color=getShapeColor(rand);
 
         }
 
@@ -4514,7 +4330,7 @@ println('Angles Reset');
             addCell(2,0); addCell(3,1); addCell(4,2); addCell(5,2); addCell(6,2);
             addCell(7,2); addCell(8,2);
 
-             println('B Col 2');
+             // println('B Col 2');
 
           }
           // Column 3
@@ -4600,28 +4416,10 @@ println('Angles Reset');
         cells=[]; // Reset Cell Array
 
       };
-
-      hexBoard.prototype.validateShape=function(){
-
-        var retVal=false;
-
-          for(var r in this.controls){
-            for(var c in this.controls[r]){
-
-              if(this.controls[r][c].hit){
-                retVal=true;
-                break;
-              }
-
-            }
-          }
-
-        return retVal;
-
-      };
       hexBoard.prototype.drop = function(){
 
-        if(this.activeShape!==null){
+        if(this.activeShape!==null &&
+           app.focus!==this.id){
 
           var ctrls=this.controls;
 
@@ -4636,15 +4434,22 @@ println('Angles Reset');
             }
           }
 
-          this.validateDrop(SOURCES.RELEASED);
+          this.validateDrop();
 
           this.tally();
 
           this.resetShape();
 
-
         }
         else{
+
+          // for(var r in this.controls){
+            // for(var c in this.controls[r]){
+
+              // this.controls[r][c].moved(this.x,this.y);
+
+            // }
+          // }
 
           this.activeShape.x=this.activeShape.baseX;
           this.activeShape.y=this.activeShape.baseY;
@@ -4654,9 +4459,8 @@ println('Angles Reset');
         this.activeCell  = null;
         this.activeShape = null;
         this.activeIndex = null;
-
+          
       };
-      hexBoard.prototype.clicked  = function(){};
       hexBoard.prototype.out      = function(){
 
         this.hit=false;
@@ -5597,7 +5401,7 @@ println('Angles Reset');
           noStroke();
           strokeWeight(2);
           stroke(getColor(CLRS.BLACK,25));
-         
+
           function single(clr){
 
               fill(clr);
@@ -5610,8 +5414,8 @@ println('Angles Reset');
 
             fill(clr);
 
-            var offset=-p.w/2;
-            
+            var offset=-w*f;
+
               drawHexagon(offset+f*3*w, 0, w);
               drawHexagon(offset+f*1*w, 0, w);
               drawHexagon(offset-f*1*w, 0, w);
@@ -5624,8 +5428,8 @@ println('Angles Reset');
 
             rotate(-PI/3);
 
-            var offset=p.w/2;
-            
+            var offset=w*f;
+
               drawHexagon(offset+f*3*w, 0, w);
               drawHexagon(offset+f*1*w, 0, w);
               drawHexagon(offset-f*1*w, 0, w);
@@ -5643,9 +5447,9 @@ println('Angles Reset');
           function diamond(clr){
 
             fill(clr);
-            
-            var offset=-p.w/2;
-            
+
+            var offset=-w*f;
+
             if(app.dragging && p.hit){
               drawHexagon(offset+0,      w+0.75*w, w);
               drawHexagon(offset+f*1*w,  0,        w);
@@ -5672,9 +5476,9 @@ println('Angles Reset');
             rotate(-PI/3);
 
             fill(clr);
-            
-            var offset=p.w/2;
-            
+
+            var offset=w*f;
+
             if(app.dragging && p.hit){
               drawHexagon(offset+0,      w+0.75*w, w);
               drawHexagon(offset+f*1*w,  0,        w);
@@ -5911,6 +5715,9 @@ println('Angles Reset');
           var d=cos(PI/6)*this.w*0.8;
           ellipse(this.x,this.y,2*d,2*d);
 
+          fill(CLRS.RED);
+          ellipse(this.x,this.y,2,2);
+
         }
 
       };
@@ -5921,14 +5728,15 @@ println('Angles Reset');
       };
       shap.prototype.moved=function(x,y){
 
-        if(this.hitTest(x,y)){ this.hit=true;  }
-        else                 { this.hit=false; }
+        if(this.hitTest(x,y) &&
+           this.parent.activeShape===null){ this.hit=true;  }
+        else                              { this.hit=false; }
 
       };
       shap.prototype.dragged=function(x,y){
 
         if(this.hit){
-
+      
           this.x=mouseX;
           this.y=mouseY;
 
@@ -5946,7 +5754,9 @@ println('Angles Reset');
       };
       shap.prototype.released=function(x,y){
 
-        if(this.parent.activeShape===this){ this.parent.drop(); }
+        if(this.parent.activeShape===this){
+          this.parent.drop();          
+        }
 
       };
       shap.prototype.out=function(){
@@ -6079,14 +5889,17 @@ println('Angles Reset');
         return retVal;
 
       };
-      hexCell.prototype.moved=function(x,y){
+      hexCell.prototype.outerHitTest=function(x,y){
+
+        return dist(mouseX, mouseY, this.x+x, this.y+y)<this.w/2;
+
+      };
+      hexCell.prototype.dragged=function(x,y){
       /* Overridden because of the shap */
 
         // if(this.parent.hit){
 
-          if(dist(mouseX, mouseY,
-                  this.x+x,
-                  this.y+y)<this.w/2){
+          if(this.outerHitTest(x,y)){
 
             this.outerHit=true;
 
