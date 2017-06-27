@@ -1129,9 +1129,9 @@ println('Angles Reset');
       };
       hexBoard.prototype.loadShapes=function(){
 
-        var rand0=SHAPES.NODEDOWNLEFT; //floor(random(0,24));
-        var rand1=SHAPES.NODEDOWNRIGHT; //floor(random(0,24));
-        var rand2=SHAPES.NODEUPRIGHT; //floor(random(0,24));
+        var rand0=floor(random(0,24));
+        var rand1=floor(random(0,24));
+        var rand2=floor(random(0,24));
 
         this.shapes.push(new shap(0, this, this.position0.x, this.position0.y, HEX_SIZE, HEX_SIZE,
           {style: rand0,
@@ -4514,23 +4514,15 @@ println('Angles Reset');
           
           }
           else{
-            this.activeShape.x=this.activeShape.baseX;
-            this.activeShape.y=this.activeShape.baseY;
+            // this.activeShape.x=this.activeShape.baseX;
+            // this.activeShape.y=this.activeShape.baseY;
           }
           
         }
         else{
 
-          // for(var r in this.controls){
-            // for(var c in this.controls[r]){
-
-              // this.controls[r][c].moved(this.x,this.y);
-
-            // }
-          // }
-
-          this.activeShape.x=this.activeShape.baseX;
-          this.activeShape.y=this.activeShape.baseY;
+          // this.activeShape.x=this.activeShape.baseX;
+          // this.activeShape.y=this.activeShape.baseY;
 
         }
 
@@ -5443,6 +5435,9 @@ println('Angles Reset');
         this.baseX  = x;
         this.baseY  = y;
 
+        this.increment=0;
+        this.increment=0;
+
         this.style  = props.style;
         this.color  = props.color;
 
@@ -5769,22 +5764,30 @@ println('Angles Reset');
 
         drawShape();
 
-        if(this.parent.activeShape!==this &&
-           this.y!==this.baseY){
-          this.y-=5;
-        }
-        else{
+        if(!app.dragging &&
+           this.parent.activeShape!==this){
+          
+          if(this.y>600){
 
-          if(this.dragging===false){
+            this.y-=5;
 
-            this.x+=(this.baseX-this.x)/10;
-            this.y+=(this.baseY-this.y)/10;
+          }
+          else if(this.y<this.baseY){
+
+            if(abs(this.y-this.baseY)<this.incrementY){
+              this.y=this.baseY;
+              this.x=this.baseX;
+            }
+            else{
+              this.y+=this.incrementY;
+              this.x+=this.incrementX;
+            }
 
           }
 
         }
-
-        if(this.hit){
+        
+        if(this.hit && app.debug){
 
           /** Circle */
           fill(getColor(CLRS.BLACK,10));
@@ -5817,7 +5820,10 @@ println('Angles Reset');
       
           this.x=mouseX;
           this.y=mouseY;
-
+          
+          this.incrementX=(this.baseX-this.x)/20;
+          this.incrementY=(this.baseY-this.y)/20;
+          
           this.parent.activeShape=this;
           this.parent.activeIndex=this.id;
           this.parent.dragging=true;
@@ -5832,7 +5838,7 @@ println('Angles Reset');
       };
       shap.prototype.released=function(x,y){
 
-        if(this.parent.activeShape===this){
+        if(this.parent.activeShape===this){          
           this.parent.drop();          
         }
 
