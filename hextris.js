@@ -1129,9 +1129,9 @@ println('Angles Reset');
       };
       hexBoard.prototype.loadShapes=function(){
 
-        var rand0=SHAPES.SINGLE; //floor(random(0,24));
-        var rand1=floor(random(0,24));
-        var rand2=floor(random(0,24));
+        var rand0=SHAPES.NODEDOWNLEFT; //floor(random(0,24));
+        var rand1=SHAPES.NODEDOWNRIGHT; //floor(random(0,24));
+        var rand2=SHAPES.NODEUPRIGHT; //floor(random(0,24));
 
         this.shapes.push(new shap(0, this, this.position0.x, this.position0.y, HEX_SIZE, HEX_SIZE,
           {style: rand0,
@@ -1299,7 +1299,7 @@ println('Angles Reset');
         }
 
       };
-      hexBoard.prototype.placeShape=function(source){
+      hexBoard.prototype.placeShape=function(){
 
         var layout  = this.layout;
         var row     = this.activeCell.row;
@@ -2481,6 +2481,7 @@ println('Angles Reset');
             if(layout[row][col]===0){
 
               ctrls[row][col].hover=true;
+
               retVal=true;
 
             }
@@ -2510,7 +2511,9 @@ println('Angles Reset');
               ctrls[row][col-2].hover=true;
               ctrls[row][col  ].hover=true;
               ctrls[row][col+1].hover=true;
-
+              
+              retVal=true;
+              
             }
 
           }
@@ -2540,6 +2543,8 @@ println('Angles Reset');
                 ctrls[row-2][col].hover=true;
                 ctrls[row+1][col].hover=true;
 
+                retVal=true;
+                              
               }
 
             }
@@ -2555,6 +2560,8 @@ println('Angles Reset');
                 ctrls[row-2][col  ].hover=true;
                 ctrls[row+1][col-1].hover=true;
 
+                retVal=true;
+                
               }
 
             }
@@ -2570,6 +2577,8 @@ println('Angles Reset');
                 ctrls[row-2][col+1].hover=true;
                 ctrls[row+1][col-1].hover=true;
 
+                retVal=true;
+                
               }
 
             }
@@ -2585,6 +2594,8 @@ println('Angles Reset');
                 ctrls[row-2][col+2].hover=true;
                 ctrls[row+1][col-1].hover=true;
 
+                retVal=true;
+                
               }
 
             }
@@ -2615,7 +2626,9 @@ println('Angles Reset');
                 ctrls[row-1][col-1].hover=true;
                 ctrls[row-2][col-2].hover=true;
                 ctrls[row+1][col+1].hover=true;
-
+                
+                retVal=true;
+                
               }
 
             }
@@ -2630,7 +2643,9 @@ println('Angles Reset');
                 ctrls[row-1][col-1].hover=true;
                 ctrls[row-2][col-2].hover=true;
                 ctrls[row+1][col  ].hover=true;
-
+                
+                retVal=true;
+                
               }
 
             }
@@ -2645,7 +2660,9 @@ println('Angles Reset');
                 ctrls[row-1][col  ].hover=true;
                 ctrls[row-2][col-1].hover=true;
                 ctrls[row+1][col  ].hover=true;
-
+                
+                retVal=true;
+                
               }
 
             }
@@ -2660,7 +2677,9 @@ println('Angles Reset');
                 ctrls[row-1][col].hover=true;
                 ctrls[row-2][col].hover=true;
                 ctrls[row+1][col].hover=true;
-
+                
+                retVal=true;
+                
               }
 
             }
@@ -2692,7 +2711,9 @@ println('Angles Reset');
                 ctrls[row-1][col-1].hover=true;
                 ctrls[row  ][col-1].hover=true;
                 ctrls[row+1][col  ].hover=true;
-
+                
+                retVal=true;
+                
               }
 
             }
@@ -2708,6 +2729,8 @@ println('Angles Reset');
                 ctrls[row  ][col-1].hover=true;
                 ctrls[row+1][col-1].hover=true;
 
+                retVal=true;
+                
               }
 
             }
@@ -2722,7 +2745,9 @@ println('Angles Reset');
                 ctrls[row-1][col  ].hover=true;
                 ctrls[row  ][col-1].hover=true;
                 ctrls[row+1][col-1].hover=true;
-
+                
+                retVal=true;
+                
               }
 
             }
@@ -2755,6 +2780,8 @@ println('Angles Reset');
                 ctrls[row+1][col+1].hover=true;
                 ctrls[row+1][col  ].hover=true;
 
+                retVal=true;
+                
               }
 
             }
@@ -2770,6 +2797,8 @@ println('Angles Reset');
                 ctrls[row+1][col+1].hover=true;
                 ctrls[row+1][col  ].hover=true;
 
+                retVal=true;
+                
               }
 
             }
@@ -2785,6 +2814,8 @@ println('Angles Reset');
                 ctrls[row+1][col-1].hover=true;
                 ctrls[row+1][col  ].hover=true;
 
+                retVal=true;
+                
               }
 
             }
@@ -2816,6 +2847,8 @@ println('Angles Reset');
                 ctrls[row  ][col+1].hover=true;
                 ctrls[row  ][col-1].hover=true;
 
+                retVal=true;
+                
               }
 
             }
@@ -2830,7 +2863,9 @@ println('Angles Reset');
                 ctrls[row-1][col+1].hover=true;
                 ctrls[row  ][col+1].hover=true;
                 ctrls[row  ][col-1].hover=true;
-
+                
+                retVal=true;
+                
               }
 
             }
@@ -2862,7 +2897,9 @@ println('Angles Reset');
                 ctrls[row-1][col-1].hover=true;
                 ctrls[row+1][col  ].hover=true;
                 ctrls[row+1][col+1].hover=true;
-
+                
+                retVal=true;
+                
               }
 
             }
@@ -2877,7 +2914,9 @@ println('Angles Reset');
                 ctrls[row-1][col-1].hover=true;
                 ctrls[row+1][col  ].hover=true;
                 ctrls[row+1][col-1].hover=true;
-
+                
+                retVal=true;
+                
               }
 
             }
@@ -2892,7 +2931,9 @@ println('Angles Reset');
                 ctrls[row-1][col  ].hover=true;
                 ctrls[row+1][col  ].hover=true;
                 ctrls[row+1][col-1].hover=true;
-
+                
+                retVal=true;
+                
               }
 
             }
@@ -2924,6 +2965,8 @@ println('Angles Reset');
                 ctrls[row-1][col  ].hover=true;
                 ctrls[row+1][col  ].hover=true;
 
+                retVal=true;
+                
               }
 
             }
@@ -2938,7 +2981,9 @@ println('Angles Reset');
                 ctrls[row-1][col-1].hover=true;
                 ctrls[row-1][col  ].hover=true;
                 ctrls[row+1][col-1].hover=true;
-
+                
+                retVal=true;
+                
               }
 
             }
@@ -2953,7 +2998,9 @@ println('Angles Reset');
                 ctrls[row-1][col+1].hover=true;
                 ctrls[row-1][col  ].hover=true;
                 ctrls[row+1][col-1].hover=true;
-
+                
+                retVal=true;
+                
               }
 
             }
@@ -2984,7 +3031,9 @@ println('Angles Reset');
                 ctrls[row-1][col  ].hover=true;
                 ctrls[row+1][col  ].hover=true;
                 ctrls[row+1][col+1].hover=true;
-
+                
+                retVal=true;
+                
               }
 
             }
@@ -2999,7 +3048,9 @@ println('Angles Reset');
                 ctrls[row-1][col  ].hover=true;
                 ctrls[row+1][col  ].hover=true;
                 ctrls[row+1][col-1].hover=true;
-
+                
+                retVal=true;
+                
               }
 
             }
@@ -3014,7 +3065,9 @@ println('Angles Reset');
                 ctrls[row-1][col+1].hover=true;
                 ctrls[row+1][col-1].hover=true;
                 ctrls[row+1][col  ].hover=true;
-
+                
+                retVal=true;
+                
               }
 
             }
@@ -3046,6 +3099,8 @@ println('Angles Reset');
                 ctrls[row-1][col-1].hover=true;
                 ctrls[row+1][col+1].hover=true;
 
+                retVal=true;
+                
               }
 
             }
@@ -3060,7 +3115,9 @@ println('Angles Reset');
                 ctrls[row-1][col  ].hover=true;
                 ctrls[row-1][col-1].hover=true;
                 ctrls[row+1][col  ].hover=true;
-
+                
+                retVal=true;
+                
               }
 
             }
@@ -3076,6 +3133,8 @@ println('Angles Reset');
                 ctrls[row-1][col+1].hover=true;
                 ctrls[row+1][col  ].hover=true;
 
+                retVal=true;
+                
               }
 
             }
@@ -3108,6 +3167,8 @@ println('Angles Reset');
                 ctrls[row-1][col-1].hover=true;
                 ctrls[row-1][col  ].hover=true;
 
+                retVal=true;
+                
               }
 
             }
@@ -3123,6 +3184,8 @@ println('Angles Reset');
                 ctrls[row-1][col  ].hover=true;
                 ctrls[row-1][col+1].hover=true;
 
+                retVal=true;
+                
               }
 
             }
@@ -3154,6 +3217,8 @@ println('Angles Reset');
                 ctrls[row-1][col  ].hover=true;
                 ctrls[row-1][col-1].hover=true;
 
+                retVal=true;
+                
               }
 
             }
@@ -3169,6 +3234,8 @@ println('Angles Reset');
                 ctrls[row-1][col  ].hover=true;
                 ctrls[row-1][col+1].hover=true;
 
+                retVal=true;
+                
               }
 
             }
@@ -3201,6 +3268,8 @@ println('Angles Reset');
                 ctrls[row-1][col  ].hover=true;
                 ctrls[row-1][col-1].hover=true;
 
+                retVal=true;
+                
               }
 
             }
@@ -3216,6 +3285,8 @@ println('Angles Reset');
                 ctrls[row-1][col  ].hover=true;
                 ctrls[row-1][col-1].hover=true;
 
+                retVal=true;
+                
               }
 
             }
@@ -3231,6 +3302,8 @@ println('Angles Reset');
                 ctrls[row-1][col  ].hover=true;
                 ctrls[row-1][col+1].hover=true;
 
+                retVal=true;
+                
               }
 
             }
@@ -3262,6 +3335,8 @@ println('Angles Reset');
                 ctrls[row-1][col  ].hover=true;
                 ctrls[row-1][col-1].hover=true;
 
+                retVal=true;
+                
               }
 
             }
@@ -3277,6 +3352,8 @@ println('Angles Reset');
                 ctrls[row-1][col  ].hover=true;
                 ctrls[row-1][col-1].hover=true;
 
+                retVal=true;
+                
               }
 
             }
@@ -3292,6 +3369,8 @@ println('Angles Reset');
                 ctrls[row-1][col  ].hover=true;
                 ctrls[row-1][col+1].hover=true;
 
+                retVal=true;
+                
               }
 
             }
@@ -3324,6 +3403,8 @@ println('Angles Reset');
                 ctrls[row+1][col  ].hover=true;
                 ctrls[row+1][col+1].hover=true;
 
+                retVal=true;
+                
               }
 
             }
@@ -3339,6 +3420,8 @@ println('Angles Reset');
                 ctrls[row+1][col  ].hover=true;
                 ctrls[row+1][col-1].hover=true;
 
+                retVal=true;
+                
               }
 
             }
@@ -3354,6 +3437,8 @@ println('Angles Reset');
                 ctrls[row+1][col  ].hover=true;
                 ctrls[row+1][col-1].hover=true;
 
+                retVal=true;
+                
               }
 
             }
@@ -3385,6 +3470,8 @@ println('Angles Reset');
                 ctrls[row+1][col  ].hover=true;
                 ctrls[row+1][col+1].hover=true;
 
+                retVal=true;
+                
               }
 
             }
@@ -3400,6 +3487,8 @@ println('Angles Reset');
                 ctrls[row+1][col  ].hover=true;
                 ctrls[row+1][col-1].hover=true;
 
+                retVal=true;
+                
               }
 
             }
@@ -3415,6 +3504,8 @@ println('Angles Reset');
                 ctrls[row+1][col  ].hover=true;
                 ctrls[row+1][col-1].hover=true;
 
+                retVal=true;
+                
               }
 
             }
@@ -3447,6 +3538,8 @@ println('Angles Reset');
                 ctrls[row  ][col+1].hover=true;
                 ctrls[row-1][col  ].hover=true;
 
+                retVal=true;
+                
               }
 
             }
@@ -3462,6 +3555,8 @@ println('Angles Reset');
                 ctrls[row  ][col+1].hover=true;
                 ctrls[row-1][col+1].hover=true;
 
+                retVal=true;
+                
               }
 
             }
@@ -3493,6 +3588,8 @@ println('Angles Reset');
                 ctrls[row  ][col+1].hover=true;
                 ctrls[row-1][col-1].hover=true;
 
+                retVal=true;
+                
               }
 
             }
@@ -3508,6 +3605,8 @@ println('Angles Reset');
                 ctrls[row  ][col+1].hover=true;
                 ctrls[row-1][col  ].hover=true;
 
+                retVal=true;
+                
               }
 
             }
@@ -3539,6 +3638,8 @@ println('Angles Reset');
                 ctrls[row  ][col+1].hover=true;
                 ctrls[row+1][col+1].hover=true;
 
+                retVal=true;
+                
               }
 
             }
@@ -3550,25 +3651,29 @@ println('Angles Reset');
                  layout[row+1][col  ]===0){
 
                 ctrls[row  ][col  ].hover=true;
-                hover=true;
-                  ctrls[row  ][col+1].hover=true;
-                  ctrls[row+1][col  ].hover=true;
+                ctrls[row  ][col-1].hover=true;
+                ctrls[row  ][col+1].hover=true;
+                ctrls[row+1][col  ].hover=true;
 
+                retVal=true;
+                
                 }
 
             }
             else if(row>4){
 
               if(layout[row  ][col  ]===0 &&
-                layout[row  ][col-1]===0 &&
-                layout[row  ][col+1]===0 &&
-                layout[row+1][col  ]===0){
+                 layout[row  ][col-1]===0 &&
+                 layout[row  ][col+1]===0 &&
+                 layout[row+1][col  ]===0){
 
-              ctrls[row  ][col  ].hover=true;
+                ctrls[row  ][col  ].hover=true;
                 ctrls[row  ][col-1].hover=true;
                 ctrls[row  ][col+1].hover=true;
                 ctrls[row+1][col  ].hover=true;
 
+                retVal=true;
+                
               }
 
             }
@@ -3577,7 +3682,7 @@ println('Angles Reset');
           catch(e){
 
             if(e instanceof TypeError){
-              println("Cell doesn't exist");
+              // println("Cell doesn't exist");
             }
             else{ println(e); }
 
@@ -3586,111 +3691,57 @@ println('Angles Reset');
         };
         function valNodeDownLeft(){
 
-           try{
+          try{
 
-            switch(source){
+            if(row<4){
 
-              case SOURCES.DRAGGED:
+              if(layout[row  ][col  ]===0 &&
+                 layout[row  ][col-1]===0 &&
+                 layout[row  ][col+1]===0 &&
+                 layout[row+1][col  ]===0){
 
-                if(row<4){
+                ctrls[row  ][col  ].hover=true;
+                ctrls[row  ][col-1].hover=true;
+                ctrls[row  ][col+1].hover=true;
+                ctrls[row+1][col  ].hover=true;
+            
+                retVal=true;
+            
+              }
 
-                  if(layout[row  ][col  ]===0 &&
-                     layout[row  ][col-1]===0 &&
-                     layout[row  ][col+1]===0 &&
-                     layout[row+1][col  ]===0){
+            }
+            else if(row===4){
 
-                    ctrls[row  ][col  ].hover=true;
-                    ctrls[row  ][col-1].hover=true;
-                    ctrls[row  ][col+1].hover=true;
-                    ctrls[row+1][col  ].hover=true;
+              if(layout[row  ][col  ]===0 &&
+                 layout[row  ][col-1]===0 &&
+                 layout[row  ][col+1]===0 &&
+                 layout[row+1][col-1]===0){
 
-                  }
+                ctrls[row  ][col  ].hover=true;
+                ctrls[row  ][col-1].hover=true;
+                ctrls[row  ][col+1].hover=true;
+                ctrls[row+1][col-1].hover=true;
 
-                }
-                else if(row===4){
+                retVal=true;
+                                
+              }
 
-                  if(layout[row  ][col  ]===0 &&
-                     layout[row  ][col-1]===0 &&
-                     layout[row  ][col+1]===0 &&
-                     layout[row+1][col-1]===0){
+            }
+            else if(row>4){
 
-                    ctrls[row  ][col  ].hover=true;
-                    ctrls[row  ][col-1].hover=true;
-                    ctrls[row  ][col+1].hover=true;
-                    ctrls[row+1][col-1].hover=true;
+              if(layout[row  ][col  ]===0 &&
+                 layout[row  ][col-1]===0 &&
+                 layout[row  ][col+1]===0 &&
+                 layout[row+1][col-1]===0){
 
-                  }
+                ctrls[row  ][col  ].hover=true;
+                ctrls[row  ][col-1].hover=true;
+                ctrls[row  ][col+1].hover=true;
+                ctrls[row+1][col-1].hover=true;
 
-                }
-                else if(row>4){
-
-                  if(layout[row  ][col  ]===0 &&
-                     layout[row  ][col-1]===0 &&
-                     layout[row  ][col+1]===0 &&
-                     layout[row+1][col-1]===0){
-
-                    ctrls[row  ][col  ].hover=true;
-                    ctrls[row  ][col-1].hover=true;
-                    ctrls[row  ][col+1].hover=true;
-                    ctrls[row+1][col-1].hover=true;
-
-                  }
-
-                }
-
-                break;
-
-              case SOURCES.RELEASED:
-
-                if(row<4){
-
-                  if(layout[row  ][col  ]===0 &&
-                     layout[row  ][col-1]===0 &&
-                     layout[row  ][col+1]===0 &&
-                     layout[row+1][col  ]===0){
-
-                    layout[row  ][col  ]=1;
-                    layout[row  ][col-1]=1;
-                    layout[row  ][col+1]=1;
-                    layout[row+1][col  ]=1;
-
-                  }
-
-                }
-                else if(row===4){
-
-                  if(layout[row  ][col  ]===0 &&
-                     layout[row  ][col-1]===0 &&
-                     layout[row  ][col+1]===0 &&
-                     layout[row+1][col-1]===0){
-
-                    layout[row  ][col  ]=1;
-                    layout[row  ][col-1]=1;
-                    layout[row  ][col+1]=1;
-                    layout[row+1][col-1]=1;
-
-                  }
-
-                }
-                else if(row>4){
-
-                  if(layout[row  ][col  ]===0 &&
-                     layout[row  ][col-1]===0 &&
-                     layout[row  ][col+1]===0 &&
-                     layout[row+1][col-1]===0){
-
-                    layout[row  ][col  ]=1;
-                    layout[row  ][col-1]=1;
-                    layout[row  ][col+1]=1;
-                    layout[row+1][col-1]=1;
-
-                  }
-
-                }
-
-                break;
-
-              default:  break;
+                retVal=true;
+                                
+              }
 
             }
 
@@ -3721,6 +3772,8 @@ println('Angles Reset');
                 ctrls[row  ][col-1].hover=true;
                 ctrls[row-1][col  ].hover=true;
                 ctrls[row+1][col  ].hover=true;
+                
+                retVal=true;
 
               }
 
@@ -3736,6 +3789,8 @@ println('Angles Reset');
                 ctrls[row  ][col-1].hover=true;
                 ctrls[row-1][col  ].hover=true;
                 ctrls[row+1][col-1].hover=true;
+                
+                retVal=true;
 
               }
 
@@ -3751,6 +3806,8 @@ println('Angles Reset');
                 ctrls[row  ][col-1].hover=true;
                 ctrls[row-1][col+1].hover=true;
                 ctrls[row+1][col-1].hover=true;
+                
+                retVal=true;
 
               }
 
@@ -3782,6 +3839,8 @@ println('Angles Reset');
                 ctrls[row  ][col+1].hover=true;
                 ctrls[row-1][col-1].hover=true;
                 ctrls[row+1][col+1].hover=true;
+                
+                retVal=true;
 
               }
 
@@ -3797,6 +3856,8 @@ println('Angles Reset');
                 ctrls[row  ][col+1].hover=true;
                 ctrls[row-1][col-1].hover=true;
                 ctrls[row+1][col  ].hover=true;
+                
+                retVal=true;
 
               }
 
@@ -3812,6 +3873,8 @@ println('Angles Reset');
                 ctrls[row  ][col+1].hover=true;
                 ctrls[row-1][col  ].hover=true;
                 ctrls[row+1][col  ].hover=true;
+                
+                retVal=true;
 
               }
 
@@ -3843,6 +3906,8 @@ println('Angles Reset');
                 ctrls[row  ][col-1].hover=true;
                 ctrls[row-1][col-1].hover=true;
                 ctrls[row+1][col+1].hover=true;
+                
+                retVal=true;
 
               }
 
@@ -3858,6 +3923,8 @@ println('Angles Reset');
                 ctrls[row  ][col-1].hover=true;
                 ctrls[row-1][col-1].hover=true;
                 ctrls[row+1][col  ].hover=true;
+                
+                retVal=true;
 
               }
 
@@ -3873,6 +3940,8 @@ println('Angles Reset');
                 ctrls[row  ][col-1].hover=true;
                 ctrls[row-1][col  ].hover=true;
                 ctrls[row+1][col  ].hover=true;
+                
+                retVal=true;
 
               }
 
@@ -3904,6 +3973,8 @@ println('Angles Reset');
                 ctrls[row  ][col+1].hover=true;
                 ctrls[row-1][col  ].hover=true;
                 ctrls[row+1][col  ].hover=true;
+                
+                retVal=true;
 
               }
 
@@ -3919,6 +3990,8 @@ println('Angles Reset');
                 ctrls[row  ][col+1].hover=true;
                 ctrls[row-1][col  ].hover=true;
                 ctrls[row+1][col-1].hover=true;
+                
+                retVal=true;
 
               }
 
@@ -3934,6 +4007,8 @@ println('Angles Reset');
                 ctrls[row  ][col+1].hover=true;
                 ctrls[row-1][col+1].hover=true;
                 ctrls[row+1][col-1].hover=true;
+                
+                retVal=true;
 
               }
 
@@ -3995,7 +4070,11 @@ println('Angles Reset');
 
         return retVal;
 
-      };   
+      };
+      hexBoard.prototype.clicked=function(){
+        // place holder to bypass standard control click
+
+      };  
       hexBoard.prototype.dragged  = function(){
 
         if(this.hitTest(mouseX,mouseY)){
@@ -4028,13 +4107,6 @@ println('Angles Reset');
       hexBoard.prototype.released = function(){
 
         forEach(this.shapes, 'released');
-      
-        if(this.activeShape!==null && 
-           app.focus!==this.id){
-
-          this.placeShape;
-
-        }
 
       };
       hexBoard.prototype.resetShape=function(){
@@ -4434,12 +4506,18 @@ println('Angles Reset');
             }
           }
 
-          this.validateDrop();
+          if(this.validateDrop()){
 
-          this.tally();
-
-          this.resetShape();
-
+            this.placeShape();
+            this.tally();
+            this.resetShape();
+          
+          }
+          else{
+            this.activeShape.x=this.activeShape.baseX;
+            this.activeShape.y=this.activeShape.baseY;
+          }
+          
         }
         else{
 
