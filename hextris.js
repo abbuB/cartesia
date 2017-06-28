@@ -2462,13 +2462,13 @@ println('Angles Reset');
 
         }
 
-      }; 
+      };
       hexBoard.prototype.validateDrop=function(){
 
         // println(source);
 
         var retVal=false;
-        
+
         var ctrls   = this.controls;
         var layout  = this.layout;
         var row     = this.activeCell.row;
@@ -2511,9 +2511,9 @@ println('Angles Reset');
               ctrls[row][col-2].hover=true;
               ctrls[row][col  ].hover=true;
               ctrls[row][col+1].hover=true;
-              
+
               retVal=true;
-              
+
             }
 
           }
@@ -2544,7 +2544,7 @@ println('Angles Reset');
                 ctrls[row+1][col].hover=true;
 
                 retVal=true;
-                              
+
               }
 
             }
@@ -2561,7 +2561,7 @@ println('Angles Reset');
                 ctrls[row+1][col-1].hover=true;
 
                 retVal=true;
-                
+
               }
 
             }
@@ -2578,7 +2578,7 @@ println('Angles Reset');
                 ctrls[row+1][col-1].hover=true;
 
                 retVal=true;
-                
+
               }
 
             }
@@ -2595,7 +2595,7 @@ println('Angles Reset');
                 ctrls[row+1][col-1].hover=true;
 
                 retVal=true;
-                
+
               }
 
             }
@@ -2626,9 +2626,9 @@ println('Angles Reset');
                 ctrls[row-1][col-1].hover=true;
                 ctrls[row-2][col-2].hover=true;
                 ctrls[row+1][col+1].hover=true;
-                
+
                 retVal=true;
-                
+
               }
 
             }
@@ -2643,9 +2643,9 @@ println('Angles Reset');
                 ctrls[row-1][col-1].hover=true;
                 ctrls[row-2][col-2].hover=true;
                 ctrls[row+1][col  ].hover=true;
-                
+
                 retVal=true;
-                
+
               }
 
             }
@@ -2660,9 +2660,9 @@ println('Angles Reset');
                 ctrls[row-1][col  ].hover=true;
                 ctrls[row-2][col-1].hover=true;
                 ctrls[row+1][col  ].hover=true;
-                
+
                 retVal=true;
-                
+
               }
 
             }
@@ -2677,9 +2677,9 @@ println('Angles Reset');
                 ctrls[row-1][col].hover=true;
                 ctrls[row-2][col].hover=true;
                 ctrls[row+1][col].hover=true;
-                
+
                 retVal=true;
-                
+
               }
 
             }
@@ -2711,9 +2711,9 @@ println('Angles Reset');
                 ctrls[row-1][col-1].hover=true;
                 ctrls[row  ][col-1].hover=true;
                 ctrls[row+1][col  ].hover=true;
-                
+
                 retVal=true;
-                
+
               }
 
             }
@@ -2730,7 +2730,7 @@ println('Angles Reset');
                 ctrls[row+1][col-1].hover=true;
 
                 retVal=true;
-                
+
               }
 
             }
@@ -2745,9 +2745,9 @@ println('Angles Reset');
                 ctrls[row-1][col  ].hover=true;
                 ctrls[row  ][col-1].hover=true;
                 ctrls[row+1][col-1].hover=true;
-                
+
                 retVal=true;
-                
+
               }
 
             }
@@ -2781,7 +2781,7 @@ println('Angles Reset');
                 ctrls[row+1][col  ].hover=true;
 
                 retVal=true;
-                
+
               }
 
             }
@@ -2798,7 +2798,7 @@ println('Angles Reset');
                 ctrls[row+1][col  ].hover=true;
 
                 retVal=true;
-                
+
               }
 
             }
@@ -2815,7 +2815,7 @@ println('Angles Reset');
                 ctrls[row+1][col  ].hover=true;
 
                 retVal=true;
-                
+
               }
 
             }
@@ -2848,7 +2848,7 @@ println('Angles Reset');
                 ctrls[row  ][col-1].hover=true;
 
                 retVal=true;
-                
+
               }
 
             }
@@ -2863,9 +2863,9 @@ println('Angles Reset');
                 ctrls[row-1][col+1].hover=true;
                 ctrls[row  ][col+1].hover=true;
                 ctrls[row  ][col-1].hover=true;
-                
+
                 retVal=true;
-                
+
               }
 
             }
@@ -2897,9 +2897,9 @@ println('Angles Reset');
                 ctrls[row-1][col-1].hover=true;
                 ctrls[row+1][col  ].hover=true;
                 ctrls[row+1][col+1].hover=true;
-                
+
                 retVal=true;
-                
+
               }
 
             }
@@ -2914,9 +2914,9 @@ println('Angles Reset');
                 ctrls[row-1][col-1].hover=true;
                 ctrls[row+1][col  ].hover=true;
                 ctrls[row+1][col-1].hover=true;
-                
+
                 retVal=true;
-                
+
               }
 
             }
@@ -2931,9 +2931,9 @@ println('Angles Reset');
                 ctrls[row-1][col  ].hover=true;
                 ctrls[row+1][col  ].hover=true;
                 ctrls[row+1][col-1].hover=true;
-                
+
                 retVal=true;
-                
+
               }
 
             }
@@ -2966,7 +2966,7 @@ println('Angles Reset');
                 ctrls[row+1][col  ].hover=true;
 
                 retVal=true;
-                
+
               }
 
             }
@@ -2981,9 +2981,9 @@ println('Angles Reset');
                 ctrls[row-1][col-1].hover=true;
                 ctrls[row-1][col  ].hover=true;
                 ctrls[row+1][col-1].hover=true;
-                
+
                 retVal=true;
-                
+
               }
 
             }
@@ -2998,9 +2998,9 @@ println('Angles Reset');
                 ctrls[row-1][col+1].hover=true;
                 ctrls[row-1][col  ].hover=true;
                 ctrls[row+1][col-1].hover=true;
-                
+
                 retVal=true;
-                
+
               }
 
             }
@@ -3031,9 +3031,9 @@ println('Angles Reset');
                 ctrls[row-1][col  ].hover=true;
                 ctrls[row+1][col  ].hover=true;
                 ctrls[row+1][col+1].hover=true;
-                
+
                 retVal=true;
-                
+
               }
 
             }
@@ -3048,9 +3048,9 @@ println('Angles Reset');
                 ctrls[row-1][col  ].hover=true;
                 ctrls[row+1][col  ].hover=true;
                 ctrls[row+1][col-1].hover=true;
-                
+
                 retVal=true;
-                
+
               }
 
             }
@@ -3065,9 +3065,9 @@ println('Angles Reset');
                 ctrls[row-1][col+1].hover=true;
                 ctrls[row+1][col-1].hover=true;
                 ctrls[row+1][col  ].hover=true;
-                
+
                 retVal=true;
-                
+
               }
 
             }
@@ -3100,7 +3100,7 @@ println('Angles Reset');
                 ctrls[row+1][col+1].hover=true;
 
                 retVal=true;
-                
+
               }
 
             }
@@ -3115,9 +3115,9 @@ println('Angles Reset');
                 ctrls[row-1][col  ].hover=true;
                 ctrls[row-1][col-1].hover=true;
                 ctrls[row+1][col  ].hover=true;
-                
+
                 retVal=true;
-                
+
               }
 
             }
@@ -3134,7 +3134,7 @@ println('Angles Reset');
                 ctrls[row+1][col  ].hover=true;
 
                 retVal=true;
-                
+
               }
 
             }
@@ -3168,7 +3168,7 @@ println('Angles Reset');
                 ctrls[row-1][col  ].hover=true;
 
                 retVal=true;
-                
+
               }
 
             }
@@ -3185,7 +3185,7 @@ println('Angles Reset');
                 ctrls[row-1][col+1].hover=true;
 
                 retVal=true;
-                
+
               }
 
             }
@@ -3218,7 +3218,7 @@ println('Angles Reset');
                 ctrls[row-1][col-1].hover=true;
 
                 retVal=true;
-                
+
               }
 
             }
@@ -3235,7 +3235,7 @@ println('Angles Reset');
                 ctrls[row-1][col+1].hover=true;
 
                 retVal=true;
-                
+
               }
 
             }
@@ -3269,7 +3269,7 @@ println('Angles Reset');
                 ctrls[row-1][col-1].hover=true;
 
                 retVal=true;
-                
+
               }
 
             }
@@ -3286,7 +3286,7 @@ println('Angles Reset');
                 ctrls[row-1][col-1].hover=true;
 
                 retVal=true;
-                
+
               }
 
             }
@@ -3303,7 +3303,7 @@ println('Angles Reset');
                 ctrls[row-1][col+1].hover=true;
 
                 retVal=true;
-                
+
               }
 
             }
@@ -3336,7 +3336,7 @@ println('Angles Reset');
                 ctrls[row-1][col-1].hover=true;
 
                 retVal=true;
-                
+
               }
 
             }
@@ -3353,7 +3353,7 @@ println('Angles Reset');
                 ctrls[row-1][col-1].hover=true;
 
                 retVal=true;
-                
+
               }
 
             }
@@ -3370,7 +3370,7 @@ println('Angles Reset');
                 ctrls[row-1][col+1].hover=true;
 
                 retVal=true;
-                
+
               }
 
             }
@@ -3404,7 +3404,7 @@ println('Angles Reset');
                 ctrls[row+1][col+1].hover=true;
 
                 retVal=true;
-                
+
               }
 
             }
@@ -3421,7 +3421,7 @@ println('Angles Reset');
                 ctrls[row+1][col-1].hover=true;
 
                 retVal=true;
-                
+
               }
 
             }
@@ -3438,7 +3438,7 @@ println('Angles Reset');
                 ctrls[row+1][col-1].hover=true;
 
                 retVal=true;
-                
+
               }
 
             }
@@ -3471,7 +3471,7 @@ println('Angles Reset');
                 ctrls[row+1][col+1].hover=true;
 
                 retVal=true;
-                
+
               }
 
             }
@@ -3488,7 +3488,7 @@ println('Angles Reset');
                 ctrls[row+1][col-1].hover=true;
 
                 retVal=true;
-                
+
               }
 
             }
@@ -3505,7 +3505,7 @@ println('Angles Reset');
                 ctrls[row+1][col-1].hover=true;
 
                 retVal=true;
-                
+
               }
 
             }
@@ -3539,7 +3539,7 @@ println('Angles Reset');
                 ctrls[row-1][col  ].hover=true;
 
                 retVal=true;
-                
+
               }
 
             }
@@ -3556,7 +3556,7 @@ println('Angles Reset');
                 ctrls[row-1][col+1].hover=true;
 
                 retVal=true;
-                
+
               }
 
             }
@@ -3589,7 +3589,7 @@ println('Angles Reset');
                 ctrls[row-1][col-1].hover=true;
 
                 retVal=true;
-                
+
               }
 
             }
@@ -3606,7 +3606,7 @@ println('Angles Reset');
                 ctrls[row-1][col  ].hover=true;
 
                 retVal=true;
-                
+
               }
 
             }
@@ -3639,7 +3639,7 @@ println('Angles Reset');
                 ctrls[row+1][col+1].hover=true;
 
                 retVal=true;
-                
+
               }
 
             }
@@ -3656,7 +3656,7 @@ println('Angles Reset');
                 ctrls[row+1][col  ].hover=true;
 
                 retVal=true;
-                
+
                 }
 
             }
@@ -3673,7 +3673,7 @@ println('Angles Reset');
                 ctrls[row+1][col  ].hover=true;
 
                 retVal=true;
-                
+
               }
 
             }
@@ -3704,9 +3704,9 @@ println('Angles Reset');
                 ctrls[row  ][col-1].hover=true;
                 ctrls[row  ][col+1].hover=true;
                 ctrls[row+1][col  ].hover=true;
-            
+
                 retVal=true;
-            
+
               }
 
             }
@@ -3723,7 +3723,7 @@ println('Angles Reset');
                 ctrls[row+1][col-1].hover=true;
 
                 retVal=true;
-                                
+
               }
 
             }
@@ -3740,7 +3740,7 @@ println('Angles Reset');
                 ctrls[row+1][col-1].hover=true;
 
                 retVal=true;
-                                
+
               }
 
             }
@@ -3772,7 +3772,7 @@ println('Angles Reset');
                 ctrls[row  ][col-1].hover=true;
                 ctrls[row-1][col  ].hover=true;
                 ctrls[row+1][col  ].hover=true;
-                
+
                 retVal=true;
 
               }
@@ -3789,7 +3789,7 @@ println('Angles Reset');
                 ctrls[row  ][col-1].hover=true;
                 ctrls[row-1][col  ].hover=true;
                 ctrls[row+1][col-1].hover=true;
-                
+
                 retVal=true;
 
               }
@@ -3806,7 +3806,7 @@ println('Angles Reset');
                 ctrls[row  ][col-1].hover=true;
                 ctrls[row-1][col+1].hover=true;
                 ctrls[row+1][col-1].hover=true;
-                
+
                 retVal=true;
 
               }
@@ -3839,7 +3839,7 @@ println('Angles Reset');
                 ctrls[row  ][col+1].hover=true;
                 ctrls[row-1][col-1].hover=true;
                 ctrls[row+1][col+1].hover=true;
-                
+
                 retVal=true;
 
               }
@@ -3856,7 +3856,7 @@ println('Angles Reset');
                 ctrls[row  ][col+1].hover=true;
                 ctrls[row-1][col-1].hover=true;
                 ctrls[row+1][col  ].hover=true;
-                
+
                 retVal=true;
 
               }
@@ -3873,7 +3873,7 @@ println('Angles Reset');
                 ctrls[row  ][col+1].hover=true;
                 ctrls[row-1][col  ].hover=true;
                 ctrls[row+1][col  ].hover=true;
-                
+
                 retVal=true;
 
               }
@@ -3906,7 +3906,7 @@ println('Angles Reset');
                 ctrls[row  ][col-1].hover=true;
                 ctrls[row-1][col-1].hover=true;
                 ctrls[row+1][col+1].hover=true;
-                
+
                 retVal=true;
 
               }
@@ -3923,7 +3923,7 @@ println('Angles Reset');
                 ctrls[row  ][col-1].hover=true;
                 ctrls[row-1][col-1].hover=true;
                 ctrls[row+1][col  ].hover=true;
-                
+
                 retVal=true;
 
               }
@@ -3940,7 +3940,7 @@ println('Angles Reset');
                 ctrls[row  ][col-1].hover=true;
                 ctrls[row-1][col  ].hover=true;
                 ctrls[row+1][col  ].hover=true;
-                
+
                 retVal=true;
 
               }
@@ -3973,7 +3973,7 @@ println('Angles Reset');
                 ctrls[row  ][col+1].hover=true;
                 ctrls[row-1][col  ].hover=true;
                 ctrls[row+1][col  ].hover=true;
-                
+
                 retVal=true;
 
               }
@@ -3990,7 +3990,7 @@ println('Angles Reset');
                 ctrls[row  ][col+1].hover=true;
                 ctrls[row-1][col  ].hover=true;
                 ctrls[row+1][col-1].hover=true;
-                
+
                 retVal=true;
 
               }
@@ -4007,7 +4007,7 @@ println('Angles Reset');
                 ctrls[row  ][col+1].hover=true;
                 ctrls[row-1][col+1].hover=true;
                 ctrls[row+1][col-1].hover=true;
-                
+
                 retVal=true;
 
               }
@@ -4072,13 +4072,14 @@ println('Angles Reset');
 
       };
       hexBoard.prototype.clicked=function(){
-        // place holder to bypass standard control click
-
-      };  
+        
+        forEach(this.shapes, 'clicked');
+        
+      };
       hexBoard.prototype.dragged  = function(){
 
         if(this.hitTest(mouseX,mouseY)){
-          app.focus=this.id;        
+          app.focus=this.id;
         }
         else{
           this.activeCell=null;
@@ -4086,7 +4087,7 @@ println('Angles Reset');
         }
 
         forEach(this.shapes, 'dragged');
-        
+
         if(this.activeShape!==null){
 
           for(var r in this.controls){
@@ -4096,7 +4097,7 @@ println('Angles Reset');
 
             }
           }
-          
+
           if(app.focus!==this.id){
             this.validateDrop();
           }
@@ -4115,12 +4116,14 @@ println('Angles Reset');
         var rand=floor(random(0,24));
         var i=this.activeIndex;
 
-        // Create 200 pixels below baseY to allow to glide into place
+        // Create 200 pixels below baseY to allow it to glide into position
         this.shapes[i].x=this.shapes[i].baseX;
         this.shapes[i].y=this.shapes[i].baseY+200;
 
         this.shapes[i].style=rand;
         this.shapes[i].color=getShapeColor(rand);
+        this.shapes[i].deltaX=0;        
+        this.shapes[i].deltaY=-5;
 
       };
       hexBoard.prototype.resetShapes=function(){
@@ -4511,25 +4514,15 @@ println('Angles Reset');
             this.placeShape();
             this.tally();
             this.resetShape();
-          
-          }
-          else{
-            // this.activeShape.x=this.activeShape.baseX;
-            // this.activeShape.y=this.activeShape.baseY;
-          }
-          
-        }
-        else{
 
-          // this.activeShape.x=this.activeShape.baseX;
-          // this.activeShape.y=this.activeShape.baseY;
+          }
 
         }
 
         this.activeCell  = null;
         this.activeShape = null;
         this.activeIndex = null;
-          
+
       };
       hexBoard.prototype.out      = function(){
 
@@ -5435,8 +5428,8 @@ println('Angles Reset');
         this.baseX  = x;
         this.baseY  = y;
 
-        this.increment=0;
-        this.increment=0;
+        this.deltaX = -1;
+        this.deltaY = -1;
 
         this.style  = props.style;
         this.color  = props.color;
@@ -5764,29 +5757,28 @@ println('Angles Reset');
 
         drawShape();
 
-        if(!app.dragging &&
-           this.parent.activeShape!==this){
-          
-          if(this.y>600){
+        if(this.parent.activeShape!==this){
 
-            this.y-=5;
-
+          if(this.deltaX===0 &&
+             this.deltaY===0){
+            this.x=this.baseX;
+            this.y=this.baseY;
           }
-          else if(this.y<this.baseY){
+          else{
 
-            if(abs(this.y-this.baseY)<this.incrementY){
-              this.y=this.baseY;
-              this.x=this.baseX;
-            }
-            else{
-              this.y+=this.incrementY;
-              this.x+=this.incrementX;
+            this.x+=this.deltaX;
+            this.y+=this.deltaY;
+
+            if(abs(this.x-this.baseX)<=abs(this.deltaX) &&
+               abs(this.y-this.baseY)<=abs(this.deltaY)){
+              this.deltaX=0;
+              this.deltaY=0;
             }
 
           }
 
         }
-        
+
         if(this.hit && app.debug){
 
           /** Circle */
@@ -5798,6 +5790,14 @@ println('Angles Reset');
 
           fill(CLRS.RED);
           ellipse(this.x,this.y,2,2);
+
+          // if(this.parent.activeShape===this){
+            fill(CLRS.WHITE);
+            textSize(14);
+            text(nf(this.deltaX,1,2) + ', ' +
+                 nf(this.deltaY,1,2),
+                 this.x,this.y);
+          // }
 
         }
 
@@ -5817,30 +5817,37 @@ println('Angles Reset');
       shap.prototype.dragged=function(x,y){
 
         if(this.hit){
-      
+
           this.x=mouseX;
           this.y=mouseY;
-          
-          this.incrementX=(this.baseX-this.x)/20;
-          this.incrementY=(this.baseY-this.y)/20;
-          
+
+          this.deltaX=(this.baseX-this.x)/20;
+          this.deltaY=(this.baseY-this.y)/20;
+
           this.parent.activeShape=this;
           this.parent.activeIndex=this.id;
           this.parent.dragging=true;
 
         }
-        else{
+        // else{
 
-          this.hit=false;
+          // this.hit=false;
 
-        }
+        // }
 
+      };
+      shap.prototype.clicked=function(x,y){
+
+        // if(this.parent.activeShape===this){
+          // this.parent.drop();
+        // }
+        
       };
       shap.prototype.released=function(x,y){
 
-        if(this.parent.activeShape===this){          
-          this.parent.drop();          
-        }
+        // if(this.parent.activeShape===this){
+          this.parent.drop();
+        // }
 
       };
       shap.prototype.out=function(){
@@ -6406,14 +6413,16 @@ println('Angles Reset');
 
     mouseClicked=function(){
 
-      switch(mouseButton){
+      forEach(app.controls,'clicked');
+    
+      // switch(mouseButton){
 
-        case LEFT:    forEach(app.controls,'clicked');  break;
+        // case LEFT:    forEach(app.controls,'clicked');  break;
         // case RIGHT:   forEach(app.controls,'rclicked'); break;
         // case CENTER:  forEach(app.controls,'cclicked'); break;
 
-        default:     break;
-      }
+        // default:     break;
+      // }
 
     };
     mousePressed=function(){
