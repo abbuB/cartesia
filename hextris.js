@@ -43,10 +43,9 @@ var diagrams = function(processingInstance){
 
     TO DO:
 
-      error objects for each specific piece and error context
-
-      Animation for drop outside grid
-      Highlight rows while tallying
+      - Game Over
+      - Error objects for each specific piece and error context
+      - Highlight rows while tallying
 
 
     Research:
@@ -54,6 +53,15 @@ var diagrams = function(processingInstance){
 
     TO DONE:
 
+      - Animation for drop outside grid
+    
+        
+        
+        
+        
+        
+        
+        
         textFont(createFont('sans-serif', 14));
         textFont(createFont(monoFont, 14));
         textFont(createFont('serif', 14));
@@ -125,6 +133,7 @@ var diagrams = function(processingInstance){
     this.hexBoard     = this.controls[1];
 
     this.score        = 0;
+    this.gameOver     = false;
 
   };
 
@@ -1025,6 +1034,14 @@ println('Angles Reset');
     /* Hex board          */
     {
 
+      function printLayout(){
+        
+        for(var r in app.hexBoard.layout){
+          println(app.hexBoard.layout[r]);
+        }
+        
+      };
+      
       function hexBoard(id, parent, x, y, w, h, props){
 
         control.call(this, id, parent, x, y, w, h);
@@ -1129,9 +1146,9 @@ println('Angles Reset');
       };
       hexBoard.prototype.loadShapes=function(){
 
-        var rand0=floor(random(0,24));
-        var rand1=floor(random(0,24));
-        var rand2=floor(random(0,24));
+        var rand0=SHAPES.LINE;//floor(random(0,24));
+        var rand1=SHAPES.LINE;//floor(random(0,24));
+        var rand2=SHAPES.LINE;//floor(random(0,24));
 
         this.shapes.push(new shap(0, this, this.position0.x, this.position0.y, HEX_SIZE, HEX_SIZE,
           {style: rand0,
@@ -1144,109 +1161,6 @@ println('Angles Reset');
         this.shapes.push(new shap(2, this, this.position2.x, this.position2.y, HEX_SIZE, HEX_SIZE,
           {style: rand2,
            color: getShapeColor(rand2)}));
-
-        {
-          // this.shapes.push(new shap('S'+0, this, 150, 520, HEX_SIZE, HEX_SIZE,
-            // {style: random0,
-             // color: getShapeColor(random0)}));
-
-          // this.shapes.push(new shap('S'+1, this, 300, 520, HEX_SIZE, HEX_SIZE,
-            // {style: random1,
-             // color: getShapeColor(random1)}));
-
-          // this.shapes.push(new shap('S'+2, this, 450, 520, HEX_SIZE, HEX_SIZE,
-            // {style: random2,
-             // color: getShapeColor(random2)}));
-
-          // this.shapes.push(new shap('S'+3, this, 350, 530, HEX_SIZE, HEX_SIZE,
-            // {style: SHAPES.ROWBACK,
-             // color: CLRS.LINE}));
-
-          // this.shapes.push(new shap(400, this, 450, 530, HEX_SIZE, HEX_SIZE,
-            // {style: SHAPES.DIAMOND,
-             // color: CLRS.DIAMOND}));
-
-          // this.shapes.push(new shap(400, this, 500, 100, HEX_SIZE, HEX_SIZE,
-            // {style: SHAPES.UUP,
-             // color: CLRS.U}));
-
-          // this.shapes.push(new shap(400, this, 500, 200, HEX_SIZE, HEX_SIZE,
-            // {style: SHAPES.UDOWN,
-             // color: CLRS.U}));
-
-          // this.shapes.push(new shap(400, this, 500, 300, HEX_SIZE, HEX_SIZE,
-            // {style: SHAPES.UPRIGHT,
-             // color: CLRS.U}));
-
-          // this.shapes.push(new shap(400, this, 500, 400, HEX_SIZE, HEX_SIZE,
-            // {style: SHAPES.UPLEFT,
-             // color: CLRS.U}));
-
-          // this.shapes.push(new shap(400, this, 600, 300, HEX_SIZE, HEX_SIZE,
-            // {style: SHAPES.DOWNRIGHT,
-             // color: CLRS.U}));
-
-          // this.shapes.push(new shap(400, this, 600, 400, HEX_SIZE, HEX_SIZE,
-            // {style: SHAPES.DOWNLEFT,
-             // color: CLRS.U}));
-
-          // this.shapes.push(new shap(400, this, 600, 100, HEX_SIZE, HEX_SIZE,
-            // {style: SHAPES.ZRIGHT,
-             // color: CLRS.Z}));
-
-          // this.shapes.push(new shap(400, this, 600, 200, HEX_SIZE, HEX_SIZE,
-            // {style: SHAPES.ZLEFT,
-             // color: CLRS.Z}));
-
-          // this.shapes.push(new shap(400, this, 700, 100, HEX_SIZE, HEX_SIZE,
-            // {style: SHAPES.SEVENRIGHT,
-             // color: CLRS.SEVEN}));
-
-          // this.shapes.push(new shap(400, this, 700, 200, HEX_SIZE, HEX_SIZE,
-            // {style: SHAPES.SEVENLEFT,
-             // color: CLRS.SEVEN}));
-
-          // this.shapes.push(new shap(400, this, 700, 300, HEX_SIZE, HEX_SIZE,
-            // {style: SHAPES.ANGLERIGHT,
-             // color: CLRS.SEVEN}));
-
-          // this.shapes.push(new shap(400, this, 700, 400, HEX_SIZE, HEX_SIZE,
-            // {style: SHAPES.ANGLELEFT,
-             // color: CLRS.SEVEN}));
-
-          // this.shapes.push(new shap(400, this, 300, 100, HEX_SIZE, HEX_SIZE,
-            // {style: SHAPES.NODEDOWNLEFT,
-             // color: CLRS.NODE}));
-
-          // this.shapes.push(new shap(400, this, 300, 200, HEX_SIZE, HEX_SIZE,
-            // {style: SHAPES.NODEDOWNRIGHT,
-             // color: CLRS.NODE}));
-
-          // this.shapes.push(new shap(400, this, 300, 300, HEX_SIZE, HEX_SIZE,
-            // {style: SHAPES.NODEUPLEFT,
-             // color: CLRS.NODE}));
-
-          // this.shapes.push(new shap(400, this, 300, 400, HEX_SIZE, HEX_SIZE,
-            // {style: SHAPES.NODEUPRIGHT,
-             // color: CLRS.NODE}));
-
-          // this.shapes.push(new shap(400, this, 800, 100, HEX_SIZE, HEX_SIZE,
-            // {style: SHAPES.VDOWNLEFT,
-             // color: CLRS.V}));
-
-          // this.shapes.push(new shap(400, this, 800, 200, HEX_SIZE, HEX_SIZE,
-            // {style: SHAPES.VDOWNRIGHT,
-             // color: CLRS.V}));
-
-          // this.shapes.push(new shap(400, this, 800, 300, HEX_SIZE, HEX_SIZE,
-            // {style: SHAPES.VUPLEFT,
-             // color: CLRS.V}));
-
-          // this.shapes.push(new shap(400, this, 800, 400, HEX_SIZE, HEX_SIZE,
-            // {style: SHAPES.VUPRIGHT,
-             // color: CLRS.V}));
-
-        }
 
       };
       hexBoard.prototype.draw=function(){
@@ -1305,7 +1219,7 @@ println('Angles Reset');
         var row     = this.activeCell.row;
         var col     = this.activeCell.col;
 
-        function valSingle(){
+        function single(){
 
           if(layout[row][col]===0){
 
@@ -1314,7 +1228,8 @@ println('Angles Reset');
           }
 
         };
-        function valRow(){
+        
+        function lineFlat(){
 
           if(layout[row][col-1]===0 &&
              layout[row][col-2]===0 &&
@@ -1329,9 +1244,9 @@ println('Angles Reset');
           }
 
         };
-        function valRowForward(){
+        function lineForward(){
 
-          if(row<4){
+          if     (row<4){
 
             if(layout[row  ][col]===0 &&
                layout[row-1][col]===0 &&
@@ -1393,9 +1308,9 @@ println('Angles Reset');
           }
 
         };
-        function valRowBack(){
+        function lineBack(){
 
-          if(row<4){
+          if     (row<4){
 
             if(layout[row  ][col  ]===0 &&
                layout[row-1][col-1]===0 &&
@@ -1458,9 +1373,9 @@ println('Angles Reset');
 
         };
 
-        function valDiamond(){
+        function diamond(){
 
-          if(row<4){
+          if     (row<4){
 
             if(layout[row  ][col  ]===0 &&
                layout[row-1][col-1]===0 &&
@@ -1508,9 +1423,9 @@ println('Angles Reset');
 
         };
 
-        function valUUP(){
+        function uUP(){
 
-          if(row<3){
+          if     (row<3){
 
             if(layout[row  ][col-1]===0 &&
                layout[row  ][col+1]===0 &&
@@ -1557,9 +1472,9 @@ println('Angles Reset');
           }
 
         };
-        function valUDown(){
+        function uDown(){
 
-          if(row<5){
+          if     (row<5){
 
             if(layout[row-1][col  ]===0 &&
                layout[row-1][col-1]===0 &&
@@ -1592,9 +1507,9 @@ println('Angles Reset');
 
         };
 
-        function valUpRight(){
+        function upRight(){
 
-          if(row<4){
+          if     (row<4){
 
             if(layout[row  ][col-1]===0 &&
                layout[row-1][col-1]===0 &&
@@ -1641,9 +1556,9 @@ println('Angles Reset');
           }
 
         };
-        function valDownRight(){
+        function downRight(){
 
-          if(row<4){
+          if     (row<4){
 
             if(layout[row  ][col-1]===0 &&
                layout[row-1][col-1]===0 &&
@@ -1690,9 +1605,9 @@ println('Angles Reset');
           }
 
         };
-        function valUpLeft(){
+        function upLeft(){
 
-          if(row<4){
+          if     (row<4){
 
             if(layout[row  ][col+1]===0 &&
                layout[row-1][col  ]===0 &&
@@ -1739,9 +1654,9 @@ println('Angles Reset');
           }
 
         };
-        function valDownLeft(){
+        function downLeft(){
 
-          if(row<4){
+          if     (row<4){
 
             if(layout[row  ][col+1]===0 &&
                layout[row-1][col  ]===0 &&
@@ -1789,9 +1704,9 @@ println('Angles Reset');
 
         };
 
-        function valZRight(){
+        function zRight(){
 
-          if(row<5){
+          if     (row<5){
 
             if(layout[row  ][col  ]===0 &&
                layout[row  ][col-1]===0 &&
@@ -1823,9 +1738,9 @@ println('Angles Reset');
           }
 
         };
-        function valZLeft(){
+        function zLeft(){
 
-          if(row<5){
+          if     (row<5){
 
             if(layout[row  ][col  ]===0 &&
                layout[row  ][col+1]===0 &&
@@ -1858,9 +1773,9 @@ println('Angles Reset');
 
         };
 
-        function valSevenRight(){
+        function sevenRight(){
 
-          if(row<4){
+          if     (row<4){
 
             if(layout[row  ][col  ]===0 &&
                layout[row+1][col+1]===0 &&
@@ -1907,9 +1822,9 @@ println('Angles Reset');
           }
 
         };
-        function valSevenLeft(){
+        function sevenLeft(){
 
-          if(row<4){
+          if     (row<4){
 
             if(layout[row  ][col  ]===0 &&
                layout[row+1][col  ]===0 &&
@@ -1957,9 +1872,9 @@ println('Angles Reset');
 
         };
 
-        function valAngleRight(){
+        function angleRight(){
 
-          if(row<4){
+          if     (row<4){
 
             if(layout[row  ][col  ]===0 &&
                layout[row-1][col  ]===0 &&
@@ -2006,9 +1921,9 @@ println('Angles Reset');
           }
 
         };
-        function valAngleLeft(){
+        function angleLeft(){
 
-          if(row<4){
+          if     (row<4){
 
             if(layout[row  ][col  ]===0 &&
                layout[row-1][col-1]===0 &&
@@ -2056,9 +1971,9 @@ println('Angles Reset');
 
         };
 
-        function valNodeUpRight(){
+        function nodeUpRight(){
 
-          if(row<5){
+          if     (row<5){
 
             if(layout[row  ][col  ]===0 &&
                layout[row  ][col-1]===0 &&
@@ -2090,9 +2005,9 @@ println('Angles Reset');
           }
 
         };
-        function valNodeUpLeft(){
+        function nodeUpLeft(){
 
-          if(row<5){
+          if     (row<5){
 
             if(layout[row  ][col  ]===0 &&
                layout[row  ][col-1]===0 &&
@@ -2124,9 +2039,9 @@ println('Angles Reset');
           }
 
         };
-        function valNodeDownRight(){
+        function nodeDownRight(){
 
-          if(row<4){
+          if     (row<4){
 
             if(layout[row  ][col  ]===0 &&
                layout[row  ][col-1]===0 &&
@@ -2173,9 +2088,9 @@ println('Angles Reset');
           }
 
         };
-        function valNodeDownLeft(){
+        function nodeDownLeft(){
 
-          if(row<4){
+          if      (row<4){
 
             if(layout[row  ][col  ]===0 &&
                layout[row  ][col-1]===0 &&
@@ -2223,9 +2138,9 @@ println('Angles Reset');
 
         };
 
-        function valVUpRight(){
+        function vUpRight(){
 
-          if(row<4){
+          if     (row<4){
 
             if(layout[row  ][col  ]===0 &&
                layout[row  ][col-1]===0 &&
@@ -2272,9 +2187,9 @@ println('Angles Reset');
           }
 
         };
-        function valVUpLeft(){
+        function vUpLeft(){
 
-          if(row<4){
+          if     (row<4){
 
             if(layout[row  ][col  ]===0 &&
                layout[row  ][col+1]===0 &&
@@ -2321,9 +2236,9 @@ println('Angles Reset');
           }
 
         };
-        function valVDownRight(){
+        function vDownRight(){
 
-          if(row<4){
+          if     (row<4){
 
             if(layout[row  ][col  ]===0 &&
                layout[row  ][col-1]===0 &&
@@ -2370,9 +2285,9 @@ println('Angles Reset');
           }
 
         };
-        function valVDownLeft(){
+        function vDownLeft(){
 
-          if(row<4){
+          if     (row<4){
 
             if(layout[row  ][col  ]===0 &&
                layout[row  ][col+1]===0 &&
@@ -2422,41 +2337,41 @@ println('Angles Reset');
 
         switch(this.activeShape.style){
 
-          case SHAPES.SINGLE:         valSingle();        break;
+          case SHAPES.SINGLE:         single();         break;
 
-          case SHAPES.ROW:            valRow();           break;
-          case SHAPES.ROWFORWARD:     valRowForward();    break;
-          case SHAPES.ROWBACK:        valRowBack();       break;
+          case SHAPES.LINE:           lineFlat();       break;
+          case SHAPES.LINEFORWARD:    lineForward();    break;
+          case SHAPES.LINEBACK:       lineBack();       break;
 
-          case SHAPES.DIAMOND:        valDiamond();       break;
+          case SHAPES.DIAMOND:        diamond();        break;
 
-          case SHAPES.UUP:            valUUP();           break;
+          case SHAPES.UUP:            uUP();            break;
 
-          case SHAPES.UDOWN:          valUDown();         break;
+          case SHAPES.UDOWN:          uDown();          break;
 
-          case SHAPES.UPRIGHT:        valUpRight();       break;
-          case SHAPES.DOWNRIGHT:      valDownRight();     break;
-          case SHAPES.UPLEFT:         valUpLeft();        break;
-          case SHAPES.DOWNLEFT:       valDownLeft();      break;
+          case SHAPES.UPRIGHT:        upRight();        break;
+          case SHAPES.DOWNRIGHT:      downRight();      break;
+          case SHAPES.UPLEFT:         upLeft();         break;
+          case SHAPES.DOWNLEFT:       downLeft();       break;
 
-          case SHAPES.ZRIGHT:         valZRight();        break;
-          case SHAPES.ZLEFT:          valZLeft();         break;
+          case SHAPES.ZRIGHT:         zRight();         break;
+          case SHAPES.ZLEFT:          zLeft();          break;
 
-          case SHAPES.SEVENRIGHT:     valSevenRight();    break;
-          case SHAPES.SEVENLEFT:      valSevenLeft();     break;
+          case SHAPES.SEVENRIGHT:     sevenRight();     break;
+          case SHAPES.SEVENLEFT:      sevenLeft();      break;
 
-          case SHAPES.ANGLERIGHT:     valAngleRight();    break;
-          case SHAPES.ANGLELEFT:      valAngleLeft();     break;
+          case SHAPES.ANGLERIGHT:     angleRight();     break;
+          case SHAPES.ANGLELEFT:      angleLeft();      break;
 
-          case SHAPES.NODEUPRIGHT:    valNodeUpRight();   break;
-          case SHAPES.NODEUPLEFT:     valNodeUpLeft();    break;
-          case SHAPES.NODEDOWNRIGHT:  valNodeDownRight(); break;
-          case SHAPES.NODEDOWNLEFT:   valNodeDownLeft();  break;
+          case SHAPES.NODEUPRIGHT:    nodeUpRight();    break;
+          case SHAPES.NODEUPLEFT:     nodeUpLeft();     break;
+          case SHAPES.NODEDOWNRIGHT:  nodeDownRight();  break;
+          case SHAPES.NODEDOWNLEFT:   nodeDownLeft();   break;
 
-          case SHAPES.VUPRIGHT:       valVUpRight();      break;
-          case SHAPES.VUPLEFT:        valVUpLeft();       break;
-          case SHAPES.VDOWNRIGHT:     valVDownRight();    break;
-          case SHAPES.VDOWNLEFT:      valVDownLeft();     break;
+          case SHAPES.VUPRIGHT:       vUpRight();       break;
+          case SHAPES.VUPLEFT:        vUpLeft();        break;
+          case SHAPES.VDOWNRIGHT:     vDownRight();     break;
+          case SHAPES.VDOWNLEFT:      vDownLeft();      break;
 
           default:  break;
 
@@ -2474,7 +2389,7 @@ println('Angles Reset');
         var row     = this.activeCell.row;
         var col     = this.activeCell.col;
 
-        function valSingle(){
+        function single(){
 
           try{
 
@@ -2498,7 +2413,7 @@ println('Angles Reset');
 
         };
 
-        function valRow(){
+        function lineFlat(){
 
           try{
 
@@ -2527,7 +2442,7 @@ println('Angles Reset');
           }
 
         };
-        function valRowForward(){
+        function lineForward(){
 
           try{
 
@@ -2611,7 +2526,7 @@ println('Angles Reset');
           }
 
         };
-        function valRowBack(){
+        function lineBack(){
 
           try{
 
@@ -2696,7 +2611,7 @@ println('Angles Reset');
 
         };
 
-        function valDiamond(){
+        function diamond(){
 
           try{
 
@@ -2764,7 +2679,7 @@ println('Angles Reset');
 
         };
 
-        function valUUP(){
+        function uUP(){
 
           try{
 
@@ -2831,7 +2746,7 @@ println('Angles Reset');
           }
 
         };
-        function valUDown(){
+        function uDown(){
 
           try{
 
@@ -2882,7 +2797,7 @@ println('Angles Reset');
 
         };
 
-        function valUpRight(){
+        function upRight(){
 
            try{
 
@@ -2949,7 +2864,7 @@ println('Angles Reset');
           }
 
         };
-        function valDownRight(){
+        function downRight(){
 
           try{
 
@@ -3016,7 +2931,7 @@ println('Angles Reset');
           }
 
         };
-        function valUpLeft(){
+        function upLeft(){
 
           try{
 
@@ -3083,7 +2998,7 @@ println('Angles Reset');
           }
 
         };
-        function valDownLeft(){
+        function downLeft(){
 
           try{
 
@@ -3151,7 +3066,7 @@ println('Angles Reset');
 
         };
 
-        function valZRight(){
+        function zRight(){
 
           try{
 
@@ -3201,7 +3116,7 @@ println('Angles Reset');
           }
 
         };
-        function valZLeft(){
+        function zLeft(){
 
           try{
 
@@ -3252,7 +3167,7 @@ println('Angles Reset');
 
         };
 
-        function valSevenRight(){
+        function sevenRight(){
 
           try{
 
@@ -3319,7 +3234,7 @@ println('Angles Reset');
           }
 
         };
-        function valSevenLeft(){
+        function sevenLeft(){
 
           try{
 
@@ -3387,7 +3302,7 @@ println('Angles Reset');
 
         };
 
-        function valAngleRight(){
+        function angleRight(){
 
           try{
 
@@ -3454,7 +3369,7 @@ println('Angles Reset');
           }
 
         };
-        function valAngleLeft(){
+        function angleLeft(){
 
           try{
 
@@ -3522,7 +3437,7 @@ println('Angles Reset');
 
         };
 
-        function valNodeUpRight(){
+        function nodeUpRight(){
 
           try{
 
@@ -3572,7 +3487,7 @@ println('Angles Reset');
           }
 
         };
-        function valNodeUpLeft(){
+        function nodeUpLeft(){
 
           try{
 
@@ -3622,7 +3537,7 @@ println('Angles Reset');
           }
 
         };
-        function valNodeDownRight(){
+        function nodeDownRight(){
 
           try{
 
@@ -3689,7 +3604,7 @@ println('Angles Reset');
           }
 
         };
-        function valNodeDownLeft(){
+        function nodeDownLeft(){
 
           try{
 
@@ -3757,7 +3672,7 @@ println('Angles Reset');
 
         };
 
-        function valVUpRight(){
+        function vUpRight(){
 
           try{
 
@@ -3824,7 +3739,7 @@ println('Angles Reset');
           }
 
         };
-        function valVUpLeft(){
+        function vUpLeft(){
 
           try{
 
@@ -3891,7 +3806,7 @@ println('Angles Reset');
           }
 
         };
-        function valVDownRight(){
+        function vDownRight(){
 
           try{
 
@@ -3958,7 +3873,7 @@ println('Angles Reset');
           }
 
         };
-        function valVDownLeft(){
+        function vDownLeft(){
 
           try{
 
@@ -4028,41 +3943,41 @@ println('Angles Reset');
 
         switch(this.activeShape.style){
 
-          case SHAPES.SINGLE:         valSingle();        break;
+          case SHAPES.SINGLE:         single();         break;
 
-          case SHAPES.ROW:            valRow();           break;
-          case SHAPES.ROWFORWARD:     valRowForward();    break;
-          case SHAPES.ROWBACK:        valRowBack();       break;
+          case SHAPES.LINE:           lineFlat();       break;
+          case SHAPES.LINEFORWARD:    lineForward();    break;
+          case SHAPES.LINEBACK:       lineBack();       break;
 
-          case SHAPES.DIAMOND:        valDiamond();       break;
+          case SHAPES.DIAMOND:        diamond();        break;
 
-          case SHAPES.UUP:            valUUP();           break;
+          case SHAPES.UUP:            uUP();            break;
 
-          case SHAPES.UDOWN:          valUDown();         break;
+          case SHAPES.UDOWN:          uDown();          break;
 
-          case SHAPES.UPRIGHT:        valUpRight();       break;
-          case SHAPES.DOWNRIGHT:      valDownRight();     break;
-          case SHAPES.UPLEFT:         valUpLeft();        break;
-          case SHAPES.DOWNLEFT:       valDownLeft();      break;
+          case SHAPES.UPRIGHT:        upRight();        break;
+          case SHAPES.DOWNRIGHT:      downRight();      break;
+          case SHAPES.UPLEFT:         upLeft();         break;
+          case SHAPES.DOWNLEFT:       downLeft();       break;
 
-          case SHAPES.ZRIGHT:         valZRight();        break;
-          case SHAPES.ZLEFT:          valZLeft();         break;
+          case SHAPES.ZRIGHT:         zRight();         break;
+          case SHAPES.ZLEFT:          zLeft();          break;
 
-          case SHAPES.SEVENRIGHT:     valSevenRight();    break;
-          case SHAPES.SEVENLEFT:      valSevenLeft();     break;
+          case SHAPES.SEVENRIGHT:     sevenRight();     break;
+          case SHAPES.SEVENLEFT:      sevenLeft();      break;
 
-          case SHAPES.ANGLERIGHT:     valAngleRight();    break;
-          case SHAPES.ANGLELEFT:      valAngleLeft();     break;
+          case SHAPES.ANGLERIGHT:     angleRight();     break;
+          case SHAPES.ANGLELEFT:      angleLeft();      break;
 
-          case SHAPES.NODEUPRIGHT:    valNodeUpRight();   break;
-          case SHAPES.NODEUPLEFT:     valNodeUpLeft();    break;
-          case SHAPES.NODEDOWNRIGHT:  valNodeDownRight(); break;
-          case SHAPES.NODEDOWNLEFT:   valNodeDownLeft();  break;
+          case SHAPES.NODEUPRIGHT:    nodeUpRight();    break;
+          case SHAPES.NODEUPLEFT:     nodeUpLeft();     break;
+          case SHAPES.NODEDOWNRIGHT:  nodeDownRight();  break;
+          case SHAPES.NODEDOWNLEFT:   nodeDownLeft();   break;
 
-          case SHAPES.VUPRIGHT:       valVUpRight();      break;
-          case SHAPES.VUPLEFT:        valVUpLeft();       break;
-          case SHAPES.VDOWNRIGHT:     valVDownRight();    break;
-          case SHAPES.VDOWNLEFT:      valVDownLeft();     break;
+          case SHAPES.VUPRIGHT:       vUpRight();       break;
+          case SHAPES.VUPLEFT:        vUpLeft();        break;
+          case SHAPES.VDOWNRIGHT:     vDownRight();     break;
+          case SHAPES.VDOWNLEFT:      vDownLeft();      break;
 
           default:  break;
 
@@ -4113,7 +4028,7 @@ println('Angles Reset');
       hexBoard.prototype.resetShape=function(){
 
         //  Determine the new shape
-        var rand=floor(random(0,24));
+        var rand=SHAPES.LINE;//floor(random(0,24));
         var i=this.activeIndex;
 
         // Create 200 pixels below baseY to allow it to glide into position
@@ -4491,6 +4406,1053 @@ println('Angles Reset');
         cells=[]; // Reset Cell Array
 
       };
+      hexBoard.prototype.gameOver=function(){
+        
+        var layout = this.layout;
+        var retVal = true;
+        
+        function testShape(s,row,col){
+
+          function single(){
+            
+            try{
+
+              if(layout[row][col]===0){ retVal=false;  }
+
+            }
+            catch(e){
+
+              if(e instanceof TypeError){
+                // Cell doesn't exist
+                println('single');
+              }
+              else{ println(e); }
+
+            }              
+              
+          };
+          function lineFlat(){
+            
+            try{
+              
+              if(layout[row][col-1]===0 &&
+                 layout[row][col-2]===0 &&
+                 layout[row][col  ]===0 &&
+                 layout[row][col+1]===0){ retVal=false;  }
+
+            }
+            catch(e){
+
+              if(e instanceof TypeError){
+                // Cell doesn't exist
+                println('lineFlat');
+              }
+              else{ println(e); }
+
+            }
+
+          };
+          function lineForward(){
+            
+            try{
+              
+              if     (row<4){
+
+                if(layout[row  ][col]===0 &&
+                   layout[row-1][col]===0 &&
+                   layout[row-2][col]===0 &&
+                   layout[row+1][col]===0){ retVal=false;  }
+
+              }
+              else if(row===4){
+
+                if(layout[row  ][col  ]===0 &&
+                   layout[row-1][col  ]===0 &&
+                   layout[row-2][col  ]===0 &&
+                   layout[row+1][col-1]===0){ retVal=false;  }
+
+              }
+              else if(row===5){
+
+                if(layout[row  ][col  ]===0 &&
+                   layout[row-1][col+1]===0 &&
+                   layout[row-2][col+1]===0 &&
+                   layout[row+1][col-1]===0){ retVal=false;  }
+
+              }
+              else if(row>5){
+
+              if(layout[row  ][col  ]===0 &&
+                 layout[row-1][col+1]===0 &&
+                 layout[row-2][col+2]===0 &&
+                 layout[row+1][col-1]===0){ retVal=false;  }
+
+            }
+            
+            }
+            catch(e){
+
+              if(e instanceof TypeError){
+                // Cell doesn't exist
+                println('lineForward');
+              }
+              else{ println(e); }
+
+            }
+            
+          };
+          function lineBack(){
+            
+            try{
+              
+              if     (row<4){
+
+                if(layout[row  ][col  ]===0 &&
+                   layout[row-1][col-1]===0 &&
+                   layout[row-2][col-2]===0 &&
+                   layout[row+1][col+1]===0){ retVal=false; }
+
+              }
+              else if(row===4){
+
+                if(layout[row  ][col  ]===0 &&
+                   layout[row-1][col-1]===0 &&
+                   layout[row-2][col-2]===0 &&
+                   layout[row+1][col  ]===0){ retVal=false;  }
+
+              }
+              else if(row===5){
+
+                if(layout[row  ][col  ]===0 &&
+                   layout[row-1][col  ]===0 &&
+                   layout[row-2][col-1]===0 &&
+                   layout[row+1][col  ]===0){ retVal=false;  }
+
+              }
+              else if(row>5){
+
+                if(layout[row  ][col]===0 &&
+                   layout[row-1][col]===0 &&
+                   layout[row-2][col]===0 &&
+                   layout[row+1][col]===0){ retVal=false;  }
+
+              }
+
+            }
+            catch(e){
+
+              if(e instanceof TypeError){
+                // Cell doesn't exist
+                println('lineBack');
+              }
+              else{ println(e); }
+
+            }
+            
+          };
+
+          function diamond(){
+            
+            try{
+              
+              if     (row<4){
+
+                if(layout[row  ][col  ]===0 &&
+                   layout[row-1][col-1]===0 &&
+                   layout[row  ][col-1]===0 &&
+                   layout[row+1][col  ]===0){ retVal=false;  }
+
+              }
+              else if(row===4){
+
+                if(layout[row  ][col  ]===0 &&
+                   layout[row-1][col-1]===0 &&
+                   layout[row  ][col-1]===0 &&
+                   layout[row+1][col-1]===0){ retVal=false;  }
+
+              }
+              else if(row>4){
+
+                if(layout[row  ][col  ]===0 &&
+                   layout[row-1][col  ]===0 &&
+                   layout[row  ][col-1]===0 &&
+                   layout[row+1][col-1]===0){ retVal=false;  }
+
+              }
+
+            }
+            catch(e){
+
+              if(e instanceof TypeError){
+                // Cell doesn't exist
+              }
+              else{ println(e); }
+
+            }
+            
+          };
+
+          function uUP(){
+            
+            try{
+
+              if     (row<3){
+
+                if(layout[row  ][col-1]===0 &&
+                   layout[row  ][col+1]===0 &&
+                   layout[row+1][col+1]===0 &&
+                   layout[row+1][col  ]===0){ retVal=false;  }
+
+              }
+              else if(row===3 ){
+
+                if(layout[row  ][col-1]===0 &&
+                   layout[row  ][col+1]===0 &&
+                   layout[row+1][col+1]===0 &&
+                   layout[row+1][col  ]===0){ retVal=false;  }
+
+              }
+              else if(row>=3 ){
+
+                if(layout[row  ][col-1]===0 &&
+                   layout[row  ][col+1]===0 &&
+                   layout[row+1][col-1]===0 &&
+                   layout[row+1][col  ]===0){ retVal=false;  }
+
+              }
+
+            }
+            catch(e){
+
+              if(e instanceof TypeError){
+                // Cell doesn't exist
+              }
+              else{ println(e); }
+
+            }
+            
+          };
+          function uDown(){
+            
+            try{
+              
+              if     (row<5){
+
+                if(layout[row-1][col  ]===0 &&
+                   layout[row-1][col-1]===0 &&
+                   layout[row  ][col+1]===0 &&
+                   layout[row  ][col-1]===0){ retVal=false;  }
+
+              }
+              else if(row>=5 ){
+
+                if(layout[row-1][col  ]===0 &&
+                   layout[row-1][col+1]===0 &&
+                   layout[row  ][col+1]===0 &&
+                   layout[row  ][col-1]===0){ retVal=false;  }
+
+              }
+
+            }
+            catch(e){
+
+              if(e instanceof TypeError){
+                // Cell doesn't exist
+              }
+              else{ println(e); }
+
+            }
+            
+          };
+
+          function upRight(){
+            
+            try{
+              
+              if     (row<4){
+
+                if(layout[row  ][col-1]===0 &&
+                   layout[row-1][col-1]===0 &&
+                   layout[row+1][col  ]===0 &&
+                   layout[row+1][col+1]===0){ retVal=false;  }
+
+              }
+              else if(row===4 ){
+
+                if(layout[row  ][col-1]===0 &&
+                   layout[row-1][col-1]===0 &&
+                   layout[row+1][col  ]===0 &&
+                   layout[row+1][col-1]===0){ retVal=false;  }
+
+              }
+              else if(row>4 ){
+
+                if(layout[row  ][col-1]===0 &&
+                   layout[row-1][col  ]===0 &&
+                   layout[row+1][col  ]===0 &&
+                   layout[row+1][col-1]===0){ retVal=false;  }
+
+              }
+
+            }
+            catch(e){
+
+              if(e instanceof TypeError){
+                // Cell doesn't exist
+              }
+              else{ println(e); }
+
+            }
+            
+          };
+          function downRight(){
+          
+            try{
+
+              if     (row<4){
+
+                if(layout[row  ][col-1]===0 &&
+                   layout[row-1][col-1]===0 &&
+                   layout[row-1][col  ]===0 &&
+                   layout[row+1][col  ]===0){ retVal=false;  }
+
+              }
+              else if(row===4 ){
+
+                if(layout[row  ][col-1]===0 &&
+                   layout[row-1][col-1]===0 &&
+                   layout[row-1][col  ]===0 &&
+                   layout[row+1][col-1]===0){ retVal=false;  }
+
+              }
+              else if(row>4 ){
+
+                if(layout[row  ][col-1]===0 &&
+                   layout[row-1][col+1]===0 &&
+                   layout[row-1][col  ]===0 &&
+                   layout[row+1][col-1]===0){ retVal=false;  }
+
+              }
+
+            }
+            catch(e){
+
+              if(e instanceof TypeError){
+                // Cell doesn't exist
+              }
+              else{ println(e); }
+
+            }
+            
+          };
+          function upLeft(){
+            
+            try{
+                
+              if     (row<4){
+
+                if(layout[row  ][col+1]===0 &&
+                   layout[row-1][col  ]===0 &&
+                   layout[row+1][col  ]===0 &&
+                   layout[row+1][col+1]===0){ retVal=false;  }
+
+              }
+              else if(row===4 ){
+
+                if(layout[row  ][col+1]===0 &&
+                   layout[row-1][col  ]===0 &&
+                   layout[row+1][col  ]===0 &&
+                   layout[row+1][col-1]===0){ retVal=false;  }
+
+              }
+              else if(row>4 ){
+
+                if(layout[row  ][col+1]===0 &&
+                   layout[row-1][col+1]===0 &&
+                   layout[row+1][col-1]===0 &&
+                   layout[row+1][col  ]===0){ retVal=false;  }
+
+              }
+              
+            }
+            catch(e){
+
+              if(e instanceof TypeError){
+                // Cell doesn't exist
+              }
+              else{ println(e); }
+
+            }
+
+          };
+          function downLeft(){
+            
+            try{
+              
+              if     (row<4){
+
+                if(layout[row  ][col+1]===0 &&
+                   layout[row-1][col  ]===0 &&
+                   layout[row-1][col-1]===0 &&
+                   layout[row+1][col+1]===0){ retVal=false;  }
+
+              }
+              else if(row===4 ){
+
+                if(layout[row  ][col+1]===0 &&
+                   layout[row-1][col  ]===0 &&
+                   layout[row-1][col-1]===0 &&
+                   layout[row+1][col  ]===0){ retVal=false;  }
+
+              }
+              else if(row>4 ){
+
+                if(layout[row  ][col+1]===0 &&
+                   layout[row-1][col  ]===0 &&
+                   layout[row-1][col+1]===0 &&
+                   layout[row+1][col  ]===0){ retVal=false;  }
+
+              }
+
+            }
+            catch(e){
+
+              if(e instanceof TypeError){
+                // Cell doesn't exist
+              }
+              else{ println(e); }
+
+            }
+            
+          };
+
+          function zRight(){
+            
+            try{
+                
+              if     (row<5){
+
+                if(layout[row  ][col  ]===0 &&
+                   layout[row  ][col-1]===0 &&
+                   layout[row-1][col-1]===0 &&
+                   layout[row-1][col  ]===0){ retVal=false;  }
+
+              }
+              else if(row>=5){
+
+                if(layout[row  ][col  ]===0 &&
+                   layout[row  ][col-1]===0 &&
+                   layout[row-1][col  ]===0 &&
+                   layout[row-1][col+1]===0){ retVal=false;  }
+
+              }
+
+            }
+            catch(e){
+
+              if(e instanceof TypeError){
+                // Cell doesn't exist
+              }
+              else{ println(e); }
+
+            }
+            
+          };
+          function zLeft(){
+
+            try{
+
+              if     (row<5){
+
+                if(layout[row  ][col  ]===0 &&
+                   layout[row  ][col+1]===0 &&
+                   layout[row-1][col  ]===0 &&
+                   layout[row-1][col-1]===0){ retVal=false;  }
+
+              }
+              else if(row>=5){
+
+                if(layout[row  ][col  ]===0 &&
+                   layout[row  ][col+1]===0 &&
+                   layout[row-1][col  ]===0 &&
+                   layout[row-1][col+1]===0){ retVal=false;  }
+
+              }
+
+            }
+            catch(e){
+
+              if(e instanceof TypeError){
+                // Cell doesn't exist
+              }
+              else{ println(e); }
+
+            }
+            
+          };
+
+          function sevenRight(){
+
+            try{
+              
+              if     (row<4){
+
+                if(layout[row  ][col  ]===0 &&
+                   layout[row+1][col+1]===0 &&
+                   layout[row-1][col  ]===0 &&
+                   layout[row-1][col-1]===0){ retVal=false;  }
+
+              }
+              else if(row===4){
+
+                if(layout[row  ][col  ]===0 &&
+                   layout[row+1][col  ]===0 &&
+                   layout[row-1][col  ]===0 &&
+                   layout[row-1][col-1]===0){ retVal=false;  }
+
+              }
+              else if(row>4){
+
+                if(layout[row  ][col  ]===0 &&
+                   layout[row+1][col  ]===0 &&
+                   layout[row-1][col  ]===0 &&
+                   layout[row-1][col+1]===0){ retVal=false;  }
+
+              }
+
+            }
+            catch(e){
+
+              if(e instanceof TypeError){
+                // Cell doesn't exist
+              }
+              else{ println(e); }
+
+            }
+            
+          };
+          function sevenLeft(){
+            
+            try{
+              
+              if     (row<4){
+
+                if(layout[row  ][col  ]===0 &&
+                   layout[row+1][col  ]===0 &&
+                   layout[row-1][col  ]===0 &&
+                   layout[row-1][col-1]===0){ retVal=false;  }
+
+              }
+              else if(row===4){
+
+                if(layout[row  ][col  ]===0 &&
+                   layout[row+1][col-1]===0 &&
+                   layout[row-1][col  ]===0 &&
+                   layout[row-1][col-1]===0){ retVal=false;  }
+
+              }
+              else if(row>4){
+
+                if(layout[row  ][col  ]===0 &&
+                   layout[row+1][col-1]===0 &&
+                   layout[row-1][col  ]===0 &&
+                   layout[row-1][col+1]===0){ retVal=false;  }
+
+              }
+
+            }
+            catch(e){
+
+              if(e instanceof TypeError){
+                // Cell doesn't exist
+              }
+              else{ println(e); }
+
+            }
+            
+          };
+
+          function angleRight(){
+            
+            try{
+
+              if     (row<4){
+
+                if(layout[row  ][col  ]===0 &&
+                   layout[row-1][col  ]===0 &&
+                   layout[row+1][col  ]===0 &&
+                   layout[row+1][col+1]===0){ retVal=false; }
+
+              }
+              else if(row===4){
+
+                if(layout[row  ][col  ]===0 &&
+                   layout[row-1][col  ]===0 &&
+                   layout[row+1][col  ]===0 &&
+                   layout[row+1][col-1]===0){ retVal=false;  }
+
+              }
+              else if(row>4){
+
+                if(layout[row  ][col  ]===0 &&
+                   layout[row-1][col+1]===0 &&
+                   layout[row+1][col  ]===0 &&
+                   layout[row+1][col-1]===0){ retVal=false;  }
+
+              }
+
+            }
+            catch(e){
+
+              if(e instanceof TypeError){
+                // Cell doesn't exist
+              }
+              else{ println(e); }
+
+            }
+            
+          };
+          function angleLeft(){
+            
+            try{
+                
+              if     (row<4){
+
+                if(layout[row  ][col  ]===0 &&
+                   layout[row-1][col-1]===0 &&
+                   layout[row+1][col  ]===0 &&
+                   layout[row+1][col+1]===0){ retVal=false;  }
+
+              }
+              else if(row===4){
+
+                if(layout[row  ][col  ]===0 &&
+                   layout[row-1][col-1]===0 &&
+                   layout[row+1][col  ]===0 &&
+                   layout[row+1][col-1]===0){ retVal=false;  }
+
+              }
+              else if(row>4){
+
+                if(layout[row  ][col  ]===0 &&
+                   layout[row-1][col  ]===0 &&
+                   layout[row+1][col  ]===0 &&
+                   layout[row+1][col-1]===0){ retVal=false;  }
+
+              }
+
+            }
+            catch(e){
+
+              if(e instanceof TypeError){
+                // Cell doesn't exist
+              }
+              else{ println(e); }
+
+            }
+            
+          };
+
+          function nodeUpRight(){
+            
+            try{
+              
+              if     (row<5){
+
+                if(layout[row  ][col  ]===0 &&
+                   layout[row  ][col-1]===0 &&
+                   layout[row  ][col+1]===0 &&
+                   layout[row-1][col  ]===0){ retVal=false;  }
+
+              }
+              else if(row>4){
+
+                if(layout[row  ][col  ]===0 &&
+                   layout[row  ][col-1]===0 &&
+                   layout[row  ][col+1]===0 &&
+                   layout[row-1][col+1]===0){ retVal=false;  }
+
+              }
+
+            }
+            catch(e){
+
+              if(e instanceof TypeError){
+                // Cell doesn't exist
+              }
+              else{ println(e); }
+
+            }
+            
+          };
+          function nodeUpLeft(){
+
+            try{
+              
+              if     (row<5){
+
+                if(layout[row  ][col  ]===0 &&
+                   layout[row  ][col-1]===0 &&
+                   layout[row  ][col+1]===0 &&
+                   layout[row-1][col-1]===0){ retVal=false;  }
+
+              }
+              else if(row>4){
+
+                if(layout[row  ][col  ]===0 &&
+                   layout[row  ][col-1]===0 &&
+                   layout[row  ][col+1]===0 &&
+                   layout[row-1][col  ]===0){ retVal=false;  }
+
+              }
+
+            }
+            catch(e){
+
+              if(e instanceof TypeError){
+                // Cell doesn't exist
+              }
+              else{ println(e); }
+
+            }
+            
+          };
+          function nodeDownRight(){
+            
+            try{
+              
+              if     (row<4){
+
+                if(layout[row  ][col  ]===0 &&
+                   layout[row  ][col-1]===0 &&
+                   layout[row  ][col+1]===0 &&
+                   layout[row+1][col+1]===0){ retVal=false; }
+
+              }
+              else if(row===4){
+
+                if(layout[row  ][col  ]===0 &&
+                   layout[row  ][col-1]===0 &&
+                   layout[row  ][col+1]===0 &&
+                   layout[row+1][col  ]===0){ retVal=false;  }
+
+              }
+              else if(row>4){
+
+                if(layout[row  ][col  ]===0 &&
+                   layout[row  ][col-1]===0 &&
+                   layout[row  ][col+1]===0 &&
+                   layout[row+1][col  ]===0){ retVal=false;  }
+
+              }
+
+            }
+            catch(e){
+
+              if(e instanceof TypeError){
+                // Cell doesn't exist
+              }
+              else{ println(e); }
+
+            }
+            
+          };
+          function nodeDownLeft(){
+            
+            try{
+
+              if     (row<4){
+
+                if(layout[row  ][col  ]===0 &&
+                   layout[row  ][col-1]===0 &&
+                   layout[row  ][col+1]===0 &&
+                   layout[row+1][col  ]===0){ retVal=false;  }
+
+              }
+              else if(row===4){
+
+                if(layout[row  ][col  ]===0 &&
+                   layout[row  ][col-1]===0 &&
+                   layout[row  ][col+1]===0 &&
+                   layout[row+1][col-1]===0){ retVal=false;  }
+
+              }
+              else if(row>4){
+
+                if(layout[row  ][col  ]===0 &&
+                   layout[row  ][col-1]===0 &&
+                   layout[row  ][col+1]===0 &&
+                   layout[row+1][col-1]===0){ retVal=false;  }
+
+              }
+
+            }
+            catch(e){
+
+              if(e instanceof TypeError){
+                // Cell doesn't exist
+              }
+              else{ println(e); }
+
+            }
+            
+          };
+
+          function vUpRight(){
+            
+            try{
+              
+              if     (row<4){
+
+                if(layout[row  ][col  ]===0 &&
+                   layout[row  ][col-1]===0 &&
+                   layout[row-1][col  ]===0 &&
+                   layout[row+1][col  ]===0){ retVal=false;  }
+
+              }
+              else if(row===4){
+
+                if(layout[row  ][col  ]===0 &&
+                   layout[row  ][col-1]===0 &&
+                   layout[row-1][col  ]===0 &&
+                   layout[row+1][col-1]===0){ retVal=false;  }
+
+              }
+              else if(row>4){
+
+                if(layout[row  ][col  ]===0 &&
+                   layout[row  ][col-1]===0 &&
+                   layout[row-1][col+1]===0 &&
+                   layout[row+1][col-1]===0){ retVal=false;  }
+
+              }
+
+            }
+            catch(e){
+
+              if(e instanceof TypeError){
+                // Cell doesn't exist
+              }
+              else{ println(e); }
+
+            }
+            
+          };
+          function vUpLeft(){
+
+            try{
+              
+              if     (row<4){
+
+                if(layout[row  ][col  ]===0 &&
+                   layout[row  ][col+1]===0 &&
+                   layout[row-1][col-1]===0 &&
+                   layout[row+1][col+1]===0){ retVal=false;  }
+
+              }
+              else if(row===4){
+
+                if(layout[row  ][col  ]===0 &&
+                   layout[row  ][col+1]===0 &&
+                   layout[row-1][col-1]===0 &&
+                   layout[row+1][col  ]===0){ retVal=false;  }
+
+              }
+              else if(row>4){
+
+                if(layout[row  ][col  ]===0 &&
+                   layout[row  ][col+1]===0 &&
+                   layout[row-1][col  ]===0 &&
+                   layout[row+1][col  ]===0){ retVal=false;  }
+
+              }
+
+            }
+            catch(e){
+
+              if(e instanceof TypeError){
+                // Cell doesn't exist
+              }
+              else{ println(e); }
+
+            }
+            
+          };
+          function vDownRight(){
+            
+            try{
+
+              if     (row<4){
+
+                if(layout[row  ][col  ]===0 &&
+                   layout[row  ][col-1]===0 &&
+                   layout[row-1][col-1]===0 &&
+                   layout[row+1][col+1]===0){ retVal=false;  }
+
+              }
+              else if(row===4){
+
+                if(layout[row  ][col  ]===0 &&
+                   layout[row  ][col-1]===0 &&
+                   layout[row-1][col-1]===0 &&
+                   layout[row+1][col  ]===0){ retVal=false;  }
+
+              }
+              else if(row>4){
+
+                if(layout[row  ][col  ]===0 &&
+                   layout[row  ][col-1]===0 &&
+                   layout[row-1][col  ]===0 &&
+                   layout[row+1][col  ]===0){ retVal=false;  }
+
+              }
+
+            }
+            catch(e){
+
+              if(e instanceof TypeError){
+                // Cell doesn't exist
+              }
+              else{ println(e); }
+
+            }
+            
+          };
+          function vDownLeft(){
+            
+            try{
+
+              if     (row<4){
+
+                if(layout[row  ][col  ]===0 &&
+                   layout[row  ][col+1]===0 &&
+                   layout[row-1][col  ]===0 &&
+                   layout[row+1][col  ]===0){ retVal=false;  }
+
+              }
+              else if(row===4){
+
+                if(layout[row  ][col  ]===0 &&
+                   layout[row  ][col+1]===0 &&
+                   layout[row-1][col  ]===0 &&
+                   layout[row+1][col-1]===0){ retVal=false;  }
+
+              }
+              else if(row>4){
+
+                if(layout[row  ][col  ]===0 &&
+                   layout[row  ][col+1]===0 &&
+                   layout[row-1][col+1]===0 &&
+                   layout[row+1][col-1]===0){ retVal=false;  }
+
+              }
+
+            }
+            catch(e){
+
+              if(e instanceof TypeError){
+                // Cell doesn't exist
+              }
+              else{ println(e); }
+
+            }
+            
+          };
+
+          switch(s){
+
+            case SHAPES.SINGLE:         single();        break;
+
+            case SHAPES.LINE:           lineFlat();      break;
+            case SHAPES.LINEFORWARD:    lineForward();   break;
+            case SHAPES.LINEBACK:       lineBack();      break;
+
+            case SHAPES.DIAMOND:        diamond();       break;
+
+            case SHAPES.UUP:            uUP();           break;
+
+            case SHAPES.UDOWN:          uDown();         break;
+
+            case SHAPES.UPRIGHT:        upRight();       break;
+            case SHAPES.DOWNRIGHT:      downRight();     break;
+            case SHAPES.UPLEFT:         upLeft();        break;
+            case SHAPES.DOWNLEFT:       downLeft();      break;
+
+            case SHAPES.ZRIGHT:         zRight();        break;
+            case SHAPES.ZLEFT:          zLeft();         break;
+
+            case SHAPES.SEVENRIGHT:     sevenRight();    break;
+            case SHAPES.SEVENLEFT:      sevenLeft();     break;
+
+            case SHAPES.ANGLERIGHT:     angleRight();    break;
+            case SHAPES.ANGLELEFT:      angleLeft();     break;
+
+            case SHAPES.NODEUPRIGHT:    nodeUpRight();   break;
+            case SHAPES.NODEUPLEFT:     nodeUpLeft();    break;
+            case SHAPES.NODEDOWNRIGHT:  nodeDownRight(); break;
+            case SHAPES.NODEDOWNLEFT:   nodeDownLeft();  break;
+
+            case SHAPES.VUPRIGHT:       vUpRight();      break;
+            case SHAPES.VUPLEFT:        vUpLeft();       break;
+            case SHAPES.VDOWNRIGHT:     vDownRight();    break;
+            case SHAPES.VDOWNLEFT:      vDownLeft();     break;
+
+            default:  break;
+
+          }
+
+        };
+
+        try{
+          
+          var n=0;
+
+          for(var s in this.shapes){
+
+            for(var r in this.controls){
+              for(var c in this.controls[r]){
+                
+                // if(this.layout[r][c]===0 ||
+                   // this.shapes[s].style===SHAPES.UDOWN ||
+                   // this.shapes[s].style===SHAPES.UPRIGHT ||
+                   // this.shapes[s].style===SHAPES.UPLEFT ||
+                   // this.shapes[s].style===SHAPES.DOWNRIGHT ||
+                   // this.shapes[s].style===SHAPES.DOWNLEFT){
+
+                  n++;
+
+                  testShape(this.shapes[s].style,r,c);
+
+                  // if(retVal===false){ break; }
+
+                // }
+
+              }
+              // if(retVal===false){ break; }
+
+            }
+            // if(retVal===false){ break; }
+
+          }
+
+println(n);
+
+          return retVal;
+
+        }
+        catch(e){
+
+          if(e instanceof TypeError){
+            // Cell doesn't exist
+            retVal=false;
+            println(e);
+          }
+          else{ println(e); }
+
+        }
+          
+      };
+      
       hexBoard.prototype.drop = function(){
 
         if(this.activeShape!==null &&
@@ -4514,6 +5476,10 @@ println('Angles Reset');
             this.placeShape();
             this.tally();
             this.resetShape();
+
+            app.gameOver=this.gameOver();
+
+            // printLayout();
 
           }
 
@@ -5716,9 +6682,9 @@ println('Angles Reset');
 
                 case SHAPES.SINGLE:         single(CLRS.SINGLE);      break;
 
-                case SHAPES.ROW:            row(CLRS.LINE);           break;
-                case SHAPES.ROWFORWARD:     forward(CLRS.LINE);       break;
-                case SHAPES.ROWBACK:        back(CLRS.LINE);          break;
+                case SHAPES.LINE:            row(CLRS.LINE);           break;
+                case SHAPES.LINEFORWARD:     forward(CLRS.LINE);       break;
+                case SHAPES.LINEBACK:        back(CLRS.LINE);          break;
 
                 case SHAPES.DIAMOND:        diamond(CLRS.DIAMOND);    break;
                 case SHAPES.ZRIGHT:         zRight(CLRS.Z);           break;
@@ -5935,13 +6901,20 @@ println('Angles Reset');
             endShape(CLOSE);
 
         };
+        
         pushMatrix();
 
           translate(this.x, this.y);
           scale(1,-1);
 
             border();
-
+            
+            if(app.debug){
+              scale(1,-1);
+              fill(CLRS.BLACK);
+              textSize(24);
+              text(this.parent.layout[this.row][this.col],0,0);
+            }
             /** Circle */
             // stroke(CLRS.BLACK);
             // noFill();
@@ -6332,6 +7305,8 @@ println('Angles Reset');
 
       text(app.hexBoard.score, 50, 60);
 
+      text(app.gameOver, 500, 60);
+      
     textSize(24);
 
       try{
