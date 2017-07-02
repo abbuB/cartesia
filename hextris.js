@@ -33,6 +33,9 @@
 +oeis.org
 +math.stackexchange.com
 +jasondavies.com
++hex.frvr.com
++mynoise.net
++developer.mozilla.org
 
 */
 
@@ -1054,6 +1057,7 @@ println('Angles Reset');
 
         this.shapes         = [];
         this.layout         = [];
+        this.scores         = [];
 
         this.activeCell     = null;
         this.activeShape    = null;
@@ -1196,6 +1200,26 @@ println('Angles Reset');
         popMatrix();
 
         forEach(this.shapes, 'draw');
+        this.purge();
+        forEach(this.scores, 'draw');
+
+      };
+      hexBoard.prototype.purge=function(){
+        
+        var total=0;
+        
+        for(var n=0; n<this.scores.length; n++){
+          
+          if(this.scores[n].timer!==0){
+            total=1;
+            break;
+          }
+
+        }
+
+        if(total===0){
+          this.scores=[];
+        }
 
       };
       hexBoard.prototype.hitTest  = function(x,y){ return dist(mouseX,mouseY,this.x,this.y)<this.w/2; };
@@ -4065,6 +4089,8 @@ println('Angles Reset');
 
         // println(this.layout[0][0]);
 
+        this.score+=40;
+
         var cells=[];
 
         var l=this.layout;
@@ -4080,8 +4106,13 @@ println('Angles Reset');
 
             addCell(0,0); addCell(0,1); addCell(0,2); addCell(0,3); addCell(0,4);
 
-            this.score+=5;
+            this.score+=50;
 
+            this.scores.push(new score(this.scores.length, this, this.activeShape.x, this.activeShape.y, 10,10,
+              { style:  SCORESTYLES.TEXT,
+                text:   '50',
+                timer:  60}));
+                
             // println('Row 0');
 
           }
@@ -5481,13 +5512,18 @@ println('Angles Reset');
 
           if(this.validateDrop()){
 
+            this.scores.push(new score(this.scores.length, this, this.activeShape.x, this.activeShape.y, 10,10,
+              { style:  SCORESTYLES.TEXT,
+                text:   '40',
+                timer:  30}));
+
             this.placeShape();
             this.tally();
             this.resetShape();
 
             app.gameOver=this.gameOver();
 
-            printLayout();
+            // printLayout();
 
           }
 
@@ -6392,6 +6428,112 @@ println('Angles Reset');
 
     }
 
+    /* Score               */
+    {
+
+      function score(id, parent, x, y, w, h, props){
+
+        control.call(this, id, parent, x, y, w, h);
+
+        this.execute  = props.execute;
+        this.retrieve = props.retrieve;
+
+        this.style    = props.style;
+
+        this.text     = props.text;
+        this.font     = props.font;
+        
+        this.color    = props.color;
+        this.cursor   = props.cursor;
+
+        this.timer    = props.timer;
+
+        // this.on=false;
+
+      };
+      score.prototype=Object.create(control.prototype);
+      score.prototype.draw=function(){
+
+        if(this.timer===0){ return; }
+
+          this.offset=0;
+          this.active=this.hit && app.focus===this.id;
+          
+          pushMatrix();
+
+            translate(this.x, this.y);
+            scale(1,-1);
+
+              // Border
+              strokeWeight(0.75);
+              fill(getColor(CLRS.ACTIVE, 5));
+              noStroke();
+              
+              if(this.style===SCORESTYLES.TEXT){
+
+                scale(1,-1);
+
+                // textFont(this.font);
+                textSize(this.timer+30);
+                fill(this.color);
+                fill(getColor(CLRS.WHITE,70+this.timer));
+                textAlign(CENTER,CENTER);
+
+                  text(this.timer, 0, this.timer);
+
+                if(this.timer===0){
+                  
+                  // this.parent.scores[0]=null;
+                  println(this.parent.scores[0].timer);
+                  
+                }
+                else              { this.timer--; }
+
+              }
+              else if(this.style===SCORESTYLE.CLICK){
+                
+                rect(this.offset, -this.h-this.offset, this.w, this.h, 3);  
+                
+              }
+
+          popMatrix();
+
+      };
+      score.prototype.moved=function(x,y){
+
+        if(this.parent.hit){
+
+          if(mouseX>(this.x+x) &&
+             mouseX<(this.x+x) + this.w &&
+             mouseY>(this.y+y) &&
+             mouseY<(this.y+y) + this.h){
+
+              this.hit=true;
+              app.focus=this.id;
+
+          }
+          else{
+
+            this.hit=false;
+
+          }
+
+        }
+
+      };
+      score.prototype.clicked=function(){
+      /* Overridden to maintain on/off value */
+
+        if(this.active){
+
+          this.execute();
+
+        }
+
+      };
+
+    }
+    
     /* shape                */
     {
 
@@ -7322,24 +7464,27 @@ println('Angles Reset');
 
       text(app.hexBoard.score, 50, 60);
 
-      text(app.gameOver, 500, 60);
-      
-    textSize(24);
+      // text(app.gameOver, 500, 60);
+
+      text(app.hexBoard.scores.length, 500, 60);
+    // textSize(24);
 
       try{
 
-        var row=Number(app.hexBoard.activeCell.row);
-        var col=Number(app.hexBoard.activeCell.col);
+        // text(app.hexBoard.scores.length, 500, 60);
+      
+        // var row=Number(app.hexBoard.activeCell.row);
+        // var col=Number(app.hexBoard.activeCell.col);
 
-        text(row + ', ' +  col, 50, 100);
+        // text(row + ', ' +  col, 50, 100);
 
-        row+=1;
+        // row+=1;
 
-        text(row + ', ' +  col, 50, 130);
+        // text(row + ', ' +  col, 50, 130);
 
       }
       catch(e){
-        // println(e);
+        println(e);
       }
 
   };
