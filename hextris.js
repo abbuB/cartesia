@@ -1073,7 +1073,7 @@ println('Angles Reset');
       hexBoard.prototype=Object.create(control.prototype);
       hexBoard.prototype.reset=function(){
 
-        var p=this; //  Reference to the hexGarden control
+        var p=this; //  Reference to the hexBoard control
 
         p.controls=[];
         p.shapes=[];
@@ -1092,7 +1092,7 @@ println('Angles Reset');
                   [0,0,0,0,0,0],
                   [0,0,0,0,0],
                  ];
-
+                 
         var rowArray=[];
         var n=0;
 
@@ -1142,13 +1142,15 @@ println('Angles Reset');
 
         load();
         this.loadShapes();
+        app.gameOver=false;
+        this.score=0;
 
       };
       hexBoard.prototype.loadShapes=function(){
 
-        var rand0=SHAPES.LINE;//floor(random(0,24));
-        var rand1=SHAPES.LINE;//floor(random(0,24));
-        var rand2=SHAPES.LINE;//floor(random(0,24));
+        var rand0=floor(random(0,24));
+        var rand1=floor(random(0,24));
+        var rand2=floor(random(0,24));
 
         this.shapes.push(new shap(0, this, this.position0.x, this.position0.y, HEX_SIZE, HEX_SIZE,
           {style: rand0,
@@ -4027,9 +4029,12 @@ println('Angles Reset');
       };
       hexBoard.prototype.resetShape=function(){
 
-        //  Determine the new shape
-        var rand=SHAPES.LINE;//floor(random(0,24));
         var i=this.activeIndex;
+
+        //  Determine the new shape
+        var rand=floor(random(0,24));
+        
+        // if(i===0){ rand=SHAPES.SINGLE; }
 
         // Create 200 pixels below baseY to allow it to glide into position
         this.shapes[i].x=this.shapes[i].baseX;
@@ -4037,7 +4042,7 @@ println('Angles Reset');
 
         this.shapes[i].style=rand;
         this.shapes[i].color=getShapeColor(rand);
-        this.shapes[i].deltaX=0;        
+        this.shapes[i].deltaX=0;
         this.shapes[i].deltaY=-5;
 
       };
@@ -4400,6 +4405,7 @@ println('Angles Reset');
         for(var n=0; n<cells.length; n++){
           this.layout[cells[n].row][cells[n].col]=0;
           this.controls[cells[n].row][cells[n].col].color=this.color;
+          this.controls[cells[n].row][cells[n].col].timer=60;
           // println(n);
         }
 
@@ -4412,7 +4418,10 @@ println('Angles Reset');
         var retVal = true;
         
         function testShape(s,row,col){
-
+          
+          row/=1;
+          col/=1;
+          
           function single(){
             
             try{
@@ -4428,17 +4437,17 @@ println('Angles Reset');
               }
               else{ println(e); }
 
-            }              
+            }
               
           };
           function lineFlat(){
-            
+
             try{
-              
-              if(layout[row][col-1]===0 &&
-                 layout[row][col-2]===0 &&
-                 layout[row][col  ]===0 &&
-                 layout[row][col+1]===0){ retVal=false;  }
+
+              if(layout[row][col-1]==0 &&
+                 layout[row][col-2]==0 &&
+                 layout[row][col  ]==0 &&
+                 layout[row][col+1]==0){ retVal=false;  }
 
             }
             catch(e){
@@ -4482,12 +4491,12 @@ println('Angles Reset');
               }
               else if(row>5){
 
-              if(layout[row  ][col  ]===0 &&
-                 layout[row-1][col+1]===0 &&
-                 layout[row-2][col+2]===0 &&
-                 layout[row+1][col-1]===0){ retVal=false;  }
+                if(layout[row  ][col  ]===0 &&
+                   layout[row-1][col+1]===0 &&
+                   layout[row-2][col+2]===0 &&
+                   layout[row+1][col-1]===0){ retVal=false;  }
 
-            }
+              }
             
             }
             catch(e){
@@ -4543,7 +4552,6 @@ println('Angles Reset');
 
               if(e instanceof TypeError){
                 // Cell doesn't exist
-                println('lineBack');
               }
               else{ println(e); }
 
@@ -5403,7 +5411,7 @@ println('Angles Reset');
 
         };
 
-        try{
+        // try{
           
           var n=0;
 
@@ -5412,44 +5420,44 @@ println('Angles Reset');
             for(var r in this.controls){
               for(var c in this.controls[r]){
                 
-                // if(this.layout[r][c]===0 ||
-                   // this.shapes[s].style===SHAPES.UDOWN ||
-                   // this.shapes[s].style===SHAPES.UPRIGHT ||
-                   // this.shapes[s].style===SHAPES.UPLEFT ||
-                   // this.shapes[s].style===SHAPES.DOWNRIGHT ||
-                   // this.shapes[s].style===SHAPES.DOWNLEFT){
+                if(this.layout[r][c]===0 ||
+                   this.shapes[s].style===SHAPES.UDOWN ||
+                   this.shapes[s].style===SHAPES.UPRIGHT ||
+                   this.shapes[s].style===SHAPES.UPLEFT ||
+                   this.shapes[s].style===SHAPES.DOWNRIGHT ||
+                   this.shapes[s].style===SHAPES.DOWNLEFT){
 
                   n++;
 
                   testShape(this.shapes[s].style,r,c);
 
-                  // if(retVal===false){ break; }
+                  if(retVal===false){ break; }
 
-                // }
+                }
 
               }
-              // if(retVal===false){ break; }
+              if(retVal===false){ break; }
 
             }
-            // if(retVal===false){ break; }
+            if(retVal===false){ break; }
 
           }
 
-println(n);
+// println(n);
 
           return retVal;
 
-        }
-        catch(e){
+        // }
+        // catch(e){
 
-          if(e instanceof TypeError){
+          // if(e instanceof TypeError){
             // Cell doesn't exist
-            retVal=false;
-            println(e);
-          }
-          else{ println(e); }
+            // retVal=false;
+            // println(e);
+          // }
+          // else{ println(e); }
 
-        }
+        // }
           
       };
       
@@ -5479,7 +5487,7 @@ println(n);
 
             app.gameOver=this.gameOver();
 
-            // printLayout();
+            printLayout();
 
           }
 
@@ -6758,11 +6766,11 @@ println(n);
           ellipse(this.x,this.y,2,2);
 
           // if(this.parent.activeShape===this){
-            fill(CLRS.WHITE);
-            textSize(14);
-            text(nf(this.deltaX,1,2) + ', ' +
-                 nf(this.deltaY,1,2),
-                 this.x,this.y);
+            // fill(CLRS.WHITE);
+            // textSize(14);
+            // text(nf(this.deltaX,1,2) + ', ' +
+                 // nf(this.deltaY,1,2),
+                 // this.x,this.y);
           // }
 
         }
@@ -6842,6 +6850,7 @@ println(n);
         this.color    = props.color;
 
         this.hover    = false;
+        this.timer    = 0;
 
         this.points   = [];
         this.dpoints  = [];
@@ -6880,15 +6889,22 @@ println(n);
         function border(){
 
           noStroke();
-          fill(getColor(p.color, 100));
 
-          // if(p.hit){
-
-            if(p.hover && p.parent.activeShape!==null){
-              fill(getColor(p.parent.activeShape.color,50));
-            }
-
-          // }
+          if(app.gameOver){
+            fill(getColor(CLRS.RED,50));
+          }
+          else if(p.timer!==0){
+            // stroke(CLRS.RED);
+            strokeWeight(p.timer/30*5);
+            fill(getColor(CLRS.WHITE, 75*p.timer/30));
+            p.timer--;
+          }
+          else if(p.hover && p.parent.activeShape!==null){
+            fill(getColor(p.parent.activeShape.color,50));
+          }
+          else{
+            fill(getColor(p.color, 100));
+          }
 
           /** Hexagon */
             beginShape();
@@ -6909,12 +6925,13 @@ println(n);
 
             border();
             
-            if(app.debug){
-              scale(1,-1);
-              fill(CLRS.BLACK);
-              textSize(24);
-              text(this.parent.layout[this.row][this.col],0,0);
-            }
+            // if(app.debug){
+              // textAlign(CENTER,CENTER);
+              // scale(1,-1);
+              // fill(CLRS.BLACK);
+              // textSize(24);
+              // text(this.parent.layout[this.row][this.col],0,0);
+            // }
             /** Circle */
             // stroke(CLRS.BLACK);
             // noFill();
@@ -7311,8 +7328,8 @@ println(n);
 
       try{
 
-      var row=Number(app.hexBoard.activeCell.row);
-      var col=Number(app.hexBoard.activeCell.col);
+        var row=Number(app.hexBoard.activeCell.row);
+        var col=Number(app.hexBoard.activeCell.col);
 
         text(row + ', ' +  col, 50, 100);
 
