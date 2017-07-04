@@ -45,7 +45,10 @@ var diagrams = function(processingInstance){
 
 
     TO DO:
-
+      
+      - High Score
+      - Hints
+      - Game Intro
       - Game Over
       - Error objects for each specific piece and error context
       - Highlight rows while tallying
@@ -4084,7 +4087,9 @@ var diagrams = function(processingInstance){
       hexBoard.prototype.tally=function(){
 
         this.score+=40;
+        
         var cells=[];
+        var multiplier=1;
 
         var offsetX=this.x;
         var offsetY=this.y;
@@ -4101,12 +4106,13 @@ var diagrams = function(processingInstance){
           if(val(0,0) && val(0,1) && val(0,2) && val(0,3) && val(0,4) ){
 
             addCell(0,0); addCell(0,1); addCell(0,2); addCell(0,3); addCell(0,4);
-
-            this.score+=100;
+            
+            this.score+=100*multiplier;
+            multiplier++;
             this.scores.push(new score(this.scores.length, this, this.controls[0][2].x+offsetX,
                                                                  this.controls[0][2].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
-                text:   '100',
+                text:   100*multiplier,
                 timer:  40}));
 
           }
@@ -4117,11 +4123,12 @@ var diagrams = function(processingInstance){
             addCell(1,0); addCell(1,1); addCell(1,2); addCell(1,3); addCell(1,4);
             addCell(1,5);
 
-            this.score+=120;
+            this.score+=120*multiplier;
+            multiplier++;
             this.scores.push(new score(this.scores.length, this, this.controls[1][2].x+offsetX,
                                                                  this.controls[1][2].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
-                text:   '120',
+                text:   120*multiplier,
                 timer:  50}));
 
           }
@@ -4132,11 +4139,12 @@ var diagrams = function(processingInstance){
             addCell(2,0); addCell(2,1); addCell(2,2); addCell(2,3); addCell(2,4);
             addCell(2,5); addCell(2,6);
 
-            this.score+=140;
+            this.score+=140*multiplier;
+            multiplier++;
             this.scores.push(new score(this.scores.length, this, this.controls[2][3].x+offsetX,
                                                                  this.controls[2][3].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
-                text:   '140',
+                text:   140*multiplier,
                 timer:  50}));
 
           }
@@ -4147,11 +4155,12 @@ var diagrams = function(processingInstance){
             addCell(3,0); addCell(3,1); addCell(3,2); addCell(3,3); addCell(3,4);
             addCell(3,5); addCell(3,6); addCell(3,7);
 
-            this.score+=160;
+            this.score+=160*multiplier;
+            multiplier++;
             this.scores.push(new score(this.scores.length, this, this.controls[3][4].x+offsetX,
                                                                  this.controls[3][4].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
-                text:   '160',
+                text:   160*multiplier,
                 timer:  50}));
 
           }
@@ -4162,11 +4171,12 @@ var diagrams = function(processingInstance){
             addCell(4,0); addCell(4,1); addCell(4,2); addCell(4,3); addCell(4,4);
             addCell(4,5); addCell(4,6); addCell(4,7); addCell(4,8);
 
-            this.score+=180;
+            this.score+=180*multiplier;
+            multiplier++;
             this.scores.push(new score(this.scores.length, this, this.controls[4][4].x+offsetX,
                                                                  this.controls[4][4].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
-                text:   '180',
+                text:   180*multiplier,
                 timer:  50}));
 
           }
@@ -4177,11 +4187,12 @@ var diagrams = function(processingInstance){
             addCell(5,0); addCell(5,1); addCell(5,2); addCell(5,3); addCell(5,4);
             addCell(5,5); addCell(5,6); addCell(5,7);
 
-            this.score+=160;
+            this.score+=160*multiplier;
+            multiplier++;
             this.scores.push(new score(this.scores.length, this, this.controls[5][3].x+offsetX,
                                                                  this.controls[5][3].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
-                text:   '160',
+                text:   160*multiplier,
                 timer:  50}));
 
           }
@@ -4192,11 +4203,12 @@ var diagrams = function(processingInstance){
             addCell(6,0); addCell(6,1); addCell(6,2); addCell(6,3); addCell(6,4);
             addCell(6,5); addCell(6,6);
 
-            this.score+=140;
+            this.score+=140*multiplier;
+            multiplier++;
             this.scores.push(new score(this.scores.length, this, this.controls[6][3].x+offsetX,
                                                                  this.controls[6][3].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
-                text:   '140',
+                text:   140*multiplier,
                 timer:  50}));
 
           }
@@ -4207,11 +4219,12 @@ var diagrams = function(processingInstance){
             addCell(7,0); addCell(7,1); addCell(7,2); addCell(7,3); addCell(7,4);
             addCell(7,5);
 
-            this.score+=120;
+            this.score+=120*multiplier;
+            multiplier++;
             this.scores.push(new score(this.scores.length, this, this.controls[7][2].x+offsetX,
                                                                  this.controls[7][2].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
-                text:   '120',
+                text:   120*multiplier,
                 timer:  50}));
 
           }
@@ -4220,11 +4233,12 @@ var diagrams = function(processingInstance){
 
             addCell(8,0); addCell(8,1); addCell(8,2); addCell(8,3); addCell(8,4);
 
-            this.score+=100;
+            this.score+=100*multiplier;
+            multiplier++;
             this.scores.push(new score(this.scores.length, this, this.controls[8][2].x+offsetX,
                                                                  this.controls[8][2].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
-                text:   '100',
+                text:   100*multiplier,
                 timer:  50}));
 
           }
@@ -4239,11 +4253,12 @@ var diagrams = function(processingInstance){
 
             addCell(0,0); addCell(1,0); addCell(2,0); addCell(3,0); addCell(4,0);
 
-            this.score+=100;
+            this.score+=100*multiplier;
+            multiplier++;
             this.scores.push(new score(this.scores.length, this, this.controls[2][0].x+offsetX,
                                                                  this.controls[2][0].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
-                text:   '100',
+                text:   100*multiplier,
                 timer:  50}));
 
           }
@@ -4254,11 +4269,12 @@ var diagrams = function(processingInstance){
             addCell(0,1); addCell(1,1); addCell(2,1); addCell(3,1); addCell(4,1);
             addCell(5,0);
 
-            this.score+=120;
+            this.score+=120*multiplier;
+            multiplier++;
             this.scores.push(new score(this.scores.length, this, this.controls[2][1].x+offsetX,
                                                                  this.controls[2][1].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
-                text:   '120',
+                text:   120*multiplier,
                 timer:  50}));
 
           }
@@ -4269,11 +4285,12 @@ var diagrams = function(processingInstance){
             addCell(0,2); addCell(1,2); addCell(2,2); addCell(3,2); addCell(4,2);
             addCell(5,1); addCell(6,0);
 
-            this.score+=140;
+            this.score+=140*multiplier;
+            multiplier++;
             this.scores.push(new score(this.scores.length, this, this.controls[3][2].x+offsetX,
                                                                  this.controls[3][2].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
-                text:   '140',
+                text:   140*multiplier,
                 timer:  50}));
 
           }
@@ -4284,11 +4301,12 @@ var diagrams = function(processingInstance){
             addCell(0,3); addCell(1,3); addCell(2,3); addCell(3,3); addCell(4,3);
             addCell(5,2); addCell(6,1); addCell(7,0);
 
-            this.score+=160;
+            this.score+=160*multiplier;
+            multiplier++;
             this.scores.push(new score(this.scores.length, this, this.controls[4][3].x+offsetX,
                                                                  this.controls[4][3].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
-                text:   '160',
+                text:   160*multiplier,
                 timer:  50}));
 
           }
@@ -4299,11 +4317,12 @@ var diagrams = function(processingInstance){
             addCell(0,4); addCell(1,4); addCell(2,4); addCell(3,4); addCell(4,4);
             addCell(5,3); addCell(6,2); addCell(7,1); addCell(8,0);
 
-            this.score+=180;
+            this.score+=180*multiplier;
+            multiplier++;
             this.scores.push(new score(this.scores.length, this, this.controls[4][4].x+offsetX,
                                                                  this.controls[4][4].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
-                text:   '180',
+                text:   180*multiplier,
                 timer:  50}));
 
           }
@@ -4314,11 +4333,12 @@ var diagrams = function(processingInstance){
             addCell(1,5); addCell(2,5); addCell(3,5); addCell(4,5); addCell(5,4);
             addCell(6,3); addCell(7,2); addCell(8,1);
 
-            this.score+=160;
+            this.score+=160*multiplier;
+            multiplier++;
             this.scores.push(new score(this.scores.length, this, this.controls[4][5].x+offsetX,
                                                                  this.controls[4][5].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
-                text:   '160',
+                text:   160*multiplier,
                 timer:  50}));
 
           }
@@ -4329,11 +4349,12 @@ var diagrams = function(processingInstance){
             addCell(2,6); addCell(3,6); addCell(4,6); addCell(5,5); addCell(6,4);
             addCell(7,3); addCell(8,2);
 
-            this.score+=140;
+            this.score+=140*multiplier;
+            multiplier++;
             this.scores.push(new score(this.scores.length, this, this.controls[5][5].x+offsetX,
                                                                  this.controls[5][5].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
-                text:   '140',
+                text:   140*multiplier,
                 timer:  50}));
 
           }
@@ -4344,11 +4365,12 @@ var diagrams = function(processingInstance){
             addCell(3,7); addCell(4,7); addCell(5,6); addCell(6,5); addCell(7,4);
             addCell(8,3);
 
-            this.score+=120;
+            this.score+=120*multiplier;
+            multiplier++;
             this.scores.push(new score(this.scores.length, this, this.controls[5][6].x+offsetX,
                                                                  this.controls[5][6].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
-                text:   '120',
+                text:   120*multiplier,
                 timer:  50}));
 
           }
@@ -4357,11 +4379,12 @@ var diagrams = function(processingInstance){
 
             addCell(4,8); addCell(5,7); addCell(6,6); addCell(7,5); addCell(8,4);
 
-            this.score+=100;
+            this.score+=100*multiplier;
+            multiplier++;
             this.scores.push(new score(this.scores.length, this, this.controls[6][6].x+offsetX,
                                                                  this.controls[6][6].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
-                text:   '100',
+                text:   100*multiplier,
                 timer:  50}));
 
           }
@@ -4376,11 +4399,12 @@ var diagrams = function(processingInstance){
 
             addCell(4,0); addCell(5,0); addCell(6,0); addCell(7,0); addCell(8,0);
 
-            this.score+=100;
+            this.score+=100*multiplier;
+            multiplier++;
             this.scores.push(new score(this.scores.length, this, this.controls[6][0].x+offsetX,
                                                                  this.controls[6][0].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
-                text:   '100',
+                text:   100*multiplier,
                 timer:  50}));
 
           }
@@ -4391,11 +4415,12 @@ var diagrams = function(processingInstance){
             addCell(3,0); addCell(4,1); addCell(5,1); addCell(6,1); addCell(7,1);
             addCell(8,1);
 
-            this.score+=120;
+            this.score+=120*multiplier;
+            multiplier++;
             this.scores.push(new score(this.scores.length, this, this.controls[6][1].x+offsetX,
                                                                  this.controls[6][1].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
-                text:   '120',
+                text:   120*multiplier,
                 timer:  50}));
                 
           }
@@ -4406,11 +4431,12 @@ var diagrams = function(processingInstance){
             addCell(2,0); addCell(3,1); addCell(4,2); addCell(5,2); addCell(6,2);
             addCell(7,2); addCell(8,2);
 
-            this.score+=140;
+            this.score+=140*multiplier;
+            multiplier++;
             this.scores.push(new score(this.scores.length, this, this.controls[6][2].x+offsetX,
                                                                  this.controls[6][2].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
-                text:   '140',
+                text:   140*multiplier,
                 timer:  50}));
 
           }
@@ -4421,11 +4447,12 @@ var diagrams = function(processingInstance){
             addCell(1,0); addCell(2,1); addCell(3,2); addCell(4,3); addCell(5,3);
             addCell(6,3); addCell(7,3); addCell(8,3);
 
-            this.score+=160;
+            this.score+=160*multiplier;
+            multiplier++;
             this.scores.push(new score(this.scores.length, this, this.controls[5][3].x+offsetX,
                                                                  this.controls[5][3].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
-                text:   '160',
+                text:   160*multiplier,
                 timer:  50}));
 
           }
@@ -4436,11 +4463,12 @@ var diagrams = function(processingInstance){
             addCell(0,0); addCell(1,1); addCell(2,2); addCell(3,3); addCell(4,4);
             addCell(5,4); addCell(6,4); addCell(7,4); addCell(8,4);
 
-            this.score+=180;
+            this.score+=180*multiplier;
+            multiplier++;
             this.scores.push(new score(this.scores.length, this, this.controls[4][4].x+offsetX,
                                                                  this.controls[4][4].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
-                text:   '180',
+                text:   180*multiplier,
                 timer:  50}));
 
           }
@@ -4451,11 +4479,12 @@ var diagrams = function(processingInstance){
             addCell(0,1); addCell(1,2); addCell(2,3); addCell(3,4); addCell(4,5);
             addCell(5,5); addCell(6,5); addCell(7,5);
 
-            this.score+=160;
+            this.score+=160*multiplier;
+            multiplier++;
             this.scores.push(new score(this.scores.length, this, this.controls[3][4].x+offsetX,
                                                                  this.controls[3][4].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
-                text:   '160',
+                text:   160*multiplier,
                 timer:  50}));
 
           }
@@ -4466,11 +4495,12 @@ var diagrams = function(processingInstance){
             addCell(0,2); addCell(1,3); addCell(2,4); addCell(3,5); addCell(4,6);
             addCell(5,6); addCell(6,6);
 
-            this.score+=140;
+            this.score+=140*multiplier;
+            multiplier++;
             this.scores.push(new score(this.scores.length, this, this.controls[3][5].x+offsetX,
                                                                  this.controls[3][5].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
-                text:   '140',
+                text:   140*multiplier,
                 timer:  50}));
 
           }
@@ -4481,11 +4511,12 @@ var diagrams = function(processingInstance){
             addCell(0,3); addCell(1,4); addCell(2,5); addCell(3,6); addCell(4,7);
             addCell(5,7);
 
-            this.score+=120;
+            this.score+=120*multiplier;
+            multiplier++;
             this.scores.push(new score(this.scores.length, this, this.controls[2][5].x+offsetX,
                                                                  this.controls[2][5].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
-                text:   '120',
+                text:   120*multiplier,
                 timer:  50}));                                    
 
           }
@@ -4494,11 +4525,12 @@ var diagrams = function(processingInstance){
 
             addCell(0,4); addCell(1,5); addCell(2,6); addCell(3,7); addCell(4,8);
 
-            this.score+=100;
+            this.score+=100*multiplier;
+            multiplier++;
             this.scores.push(new score(this.scores.length, this, this.controls[2][6].x+offsetX,
                                                                  this.controls[2][6].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
-                text:   '100',
+                text:   100*multiplier,
                 timer:  50}));
 
           }
@@ -7533,6 +7565,7 @@ var diagrams = function(processingInstance){
   initialize();
 
   execute=play;
+frameRate(0);
 
   draw=function(){
 
