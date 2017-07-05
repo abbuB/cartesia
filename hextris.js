@@ -1129,7 +1129,8 @@ var diagrams = function(processingInstance){
                  text:      n,
                  color:     getColor(color(61),100),
                  font:      monoFont,
-                 cursor:    ARROW}));
+                 cursor:    ARROW,
+                 on:        false}));
 
                n++;
 
@@ -1147,52 +1148,70 @@ var diagrams = function(processingInstance){
 
           var ctrls=p.controls;
           
-          try{
+          // try{
 
             for(var r in ctrls){
               for(var c in ctrls[r]){
-                
-                // println(n);
-                
+
                 r/=1;
                 c/=1;
 
+                //  Left/Right
                 if(c<ctrls[r].length){ ctrls[r][c].right  = ctrls[r][c+1]; }
                 if(c>0              ){ ctrls[r][c].left   = ctrls[r][c-1]; }
 
+                //  Top
                 if(r>0){
                   
                   if(r<5){  ctrls[r][c].topRight    = ctrls[r-1][c  ]; }
                   else   {  ctrls[r][c].topRight    = ctrls[r-1][c+1]; }
 
                 }
-                if(r>0 && c>0){
-
-                  if(r<5){  ctrls[r][c].topLeft     = ctrls[r-1][c-1]; }
-                  else   {  ctrls[r][c].topLeft     = ctrls[r-1][c  ]; }
+                
+                if(r<5){
+                  
+                  if(r>0 && c>0){ ctrls[r][c].topLeft = ctrls[r-1][c-1]; }
 
                 }
+                else{
 
-                if(r<ctrls.length-1){
+                  ctrls[r][c].topLeft  = ctrls[r-1][c  ]; 
+
+                }
+                
+                // Bottom
+                if(r<4){
 
                   ctrls[r][c].bottomRight = ctrls[r+1][c+1];
                   ctrls[r][c].bottomLeft  = ctrls[r+1][c];
+
+                }
+                else if(r===4){
+
+                  ctrls[r][c].bottomRight = ctrls[r+1][c  ];
+                  ctrls[r][c].bottomLeft  = ctrls[r+1][c-1];                  
+
+                }
+                else if(r<ctrls.length-1){
+
+                  ctrls[r][c].bottomRight = ctrls[r+1][c];
+                  ctrls[r][c].bottomLeft  = ctrls[r+1][c-1];
 
                 }
 
               }
             }
 
-          }
-          catch(e){
+          // }
+          // catch(e){
 
-            if(e instanceof TypeError){
+            // if(e instanceof TypeError){
               // Cell doesn't exist
-              println('Type Error');
-            }
-            else{ println(e); }
+              // println('Type Error');
+            // }
+            // else{ println(e); }
 
-          }
+          // }
 
         };
         
@@ -1206,9 +1225,9 @@ var diagrams = function(processingInstance){
       };
       hexBoard.prototype.loadShapes=function(){
 
-        var rand0=SHAPES.SINGLE;//floor(random(0,24));
-        var rand1=SHAPES.SINGLE;//floor(random(0,24));
-        var rand2=SHAPES.SINGLE;//floor(random(0,24));
+        var rand0=floor(random(0,24));
+        var rand1=floor(random(0,24));
+        var rand2=floor(random(0,24));
 
         this.shapes.push(new shap(0, this, this.position0.x, this.position0.y, HEX_SIZE, HEX_SIZE,
           {style: rand0,
@@ -1301,1123 +1320,212 @@ var diagrams = function(processingInstance){
       };
       hexBoard.prototype.placeShape=function(){
 
-        var layout  = this.layout;
-        var row     = this.activeCell.row;
-        var col     = this.activeCell.col;
+        var ac = this.activeCell;
 
         function single(){
 
-          if(layout[row][col]===0){
-
-            layout[row][col]=1;
-
-          }
+          ac.on=true;
 
         };
 
         function lineFlat(){
 
-          if(layout[row][col-1]===0 &&
-             layout[row][col-2]===0 &&
-             layout[row][col  ]===0 &&
-             layout[row][col+1]===0){
-
-            layout[row][col-1]=1;
-            layout[row][col-2]=1;
-            layout[row][col  ]=1;
-            layout[row][col+1]=1;
-
-          }
+          ac.on           =true;
+          ac.right.on     =true;
+          ac.left.on      =true;
+          ac.left.left.on =true;
 
         };
         function lineForward(){
 
-          if     (row<4){
-
-            if(layout[row  ][col]===0 &&
-               layout[row-1][col]===0 &&
-               layout[row-2][col]===0 &&
-               layout[row+1][col]===0){
-
-              layout[row  ][col]=1;
-              layout[row-1][col]=1;
-              layout[row-2][col]=1;
-              layout[row+1][col]=1;
-
-            }
-
-          }
-          else if(row===4){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row-1][col  ]===0 &&
-               layout[row-2][col  ]===0 &&
-               layout[row+1][col-1]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row-1][col  ]=1;
-              layout[row-2][col  ]=1;
-              layout[row+1][col-1]=1;
-
-            }
-
-          }
-          else if(row===5){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row-1][col+1]===0 &&
-               layout[row-2][col+1]===0 &&
-               layout[row+1][col-1]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row-1][col+1]=1;
-              layout[row-2][col+1]=1;
-              layout[row+1][col-1]=1;
-
-            }
-
-          }
-          else if(row>5){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row-1][col+1]===0 &&
-               layout[row-2][col+2]===0 &&
-               layout[row+1][col-1]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row-1][col+1]=1;
-              layout[row-2][col+2]=1;
-              layout[row+1][col-1]=1;
-
-            }
-
-          }
+          ac.on                  =true;
+          ac.bottomLeft.on       =true;
+          ac.topRight.on         =true;
+          ac.topRight.topRight.on=true;
 
         };
         function lineBack(){
 
-          if     (row<4){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row-1][col-1]===0 &&
-               layout[row-2][col-2]===0 &&
-               layout[row+1][col+1]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row-1][col-1]=1;
-              layout[row-2][col-2]=1;
-              layout[row+1][col+1]=1;
-
-            }
-
-          }
-          else if(row===4){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row-1][col-1]===0 &&
-               layout[row-2][col-2]===0 &&
-               layout[row+1][col  ]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row-1][col-1]=1;
-              layout[row-2][col-2]=1;
-              layout[row+1][col  ]=1;
-
-            }
-
-          }
-          else if(row===5){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row-1][col  ]===0 &&
-               layout[row-2][col-1]===0 &&
-               layout[row+1][col  ]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row-1][col  ]=1;
-              layout[row-2][col-1]=1;
-              layout[row+1][col  ]=1;
-
-            }
-
-          }
-          else if(row>5){
-
-            if(layout[row  ][col]===0 &&
-               layout[row-1][col]===0 &&
-               layout[row-2][col]===0 &&
-               layout[row+1][col]===0){
-
-              layout[row  ][col]=1;
-              layout[row-1][col]=1;
-              layout[row-2][col]=1;
-              layout[row+1][col]=1;
-
-            }
-
-          }
+          ac.on                 =true;
+          ac.bottomRight.on     =true;
+          ac.topLeft.on         =true;
+          ac.topLeft.topLeft.on =true;
 
         };
 
         function diamond(){
 
-          if     (row<4){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row-1][col-1]===0 &&
-               layout[row  ][col-1]===0 &&
-               layout[row+1][col  ]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row-1][col-1]=1;
-              layout[row  ][col-1]=1;
-              layout[row+1][col  ]=1;
-
-            }
-
-          }
-          else if(row===4){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row-1][col-1]===0 &&
-               layout[row  ][col-1]===0 &&
-               layout[row+1][col-1]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row-1][col-1]=1;
-              layout[row  ][col-1]=1;
-              layout[row+1][col-1]=1;
-
-            }
-
-          }
-          else if(row>4){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row-1][col  ]===0 &&
-               layout[row  ][col-1]===0 &&
-               layout[row+1][col-1]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row-1][col  ]=1;
-              layout[row  ][col-1]=1;
-              layout[row+1][col-1]=1;
-
-            }
-
-          }
+          ac.on            =true;
+          ac.left.on       =true;
+          ac.bottomLeft.on =true;
+          ac.topLeft.on    =true;
 
         };
 
         function uUP(){
 
-          if     (row<3){
-
-            if(layout[row  ][col-1]===0 &&
-               layout[row  ][col+1]===0 &&
-               layout[row+1][col+1]===0 &&
-               layout[row+1][col  ]===0){
-
-              layout[row  ][col-1]=1;
-              layout[row  ][col+1]=1;
-              layout[row+1][col+1]=1;
-              layout[row+1][col  ]=1;
-
-            }
-
-          }
-          else if(row===3 ){
-
-            if(layout[row  ][col-1]===0 &&
-               layout[row  ][col+1]===0 &&
-               layout[row+1][col+1]===0 &&
-               layout[row+1][col  ]===0){
-
-              layout[row  ][col-1]=1;
-              layout[row  ][col+1]=1;
-              layout[row+1][col+1]=1;
-              layout[row+1][col  ]=1;
-
-            }
-
-          }
-          else if(row>=3 ){
-
-            if(layout[row  ][col-1]===0 &&
-               layout[row  ][col+1]===0 &&
-               layout[row+1][col-1]===0 &&
-               layout[row+1][col  ]===0){
-
-              layout[row  ][col-1]=1;
-              layout[row  ][col+1]=1;
-              layout[row+1][col-1]=1;
-              layout[row+1][col  ]=1;
-
-            }
-
-          }
+          ac.left.on        =true;
+          ac.right.on       =true;
+          ac.bottomRight.on =true;
+          ac.bottomLeft.on  =true;
 
         };
         function uDown(){
 
-          if     (row<5){
-
-            if(layout[row-1][col  ]===0 &&
-               layout[row-1][col-1]===0 &&
-               layout[row  ][col+1]===0 &&
-               layout[row  ][col-1]===0){
-
-              layout[row-1][col  ]=1;
-              layout[row-1][col-1]=1;
-              layout[row  ][col+1]=1;
-              layout[row  ][col-1]=1;
-
-            }
-
-          }
-          else if(row>=5 ){
-
-            if(layout[row-1][col  ]===0 &&
-               layout[row-1][col+1]===0 &&
-               layout[row  ][col+1]===0 &&
-               layout[row  ][col-1]===0){
-
-              layout[row-1][col  ]=1;
-              layout[row-1][col+1]=1;
-              layout[row  ][col+1]=1;
-              layout[row  ][col-1]=1;
-
-            }
-
-          }
+          ac.left.on     =true;
+          ac.right.on    =true;
+          ac.topRight.on =true;
+          ac.topLeft.on  =true;
 
         };
 
         function upRight(){
 
-          if     (row<4){
-
-            if(layout[row  ][col-1]===0 &&
-               layout[row-1][col-1]===0 &&
-               layout[row+1][col  ]===0 &&
-               layout[row+1][col+1]===0){
-
-              layout[row  ][col-1]=1;
-              layout[row-1][col-1]=1;
-              layout[row+1][col  ]=1;
-              layout[row+1][col+1]=1;
-
-            }
-
-          }
-          else if(row===4 ){
-
-            if(layout[row  ][col-1]===0 &&
-               layout[row-1][col-1]===0 &&
-               layout[row+1][col  ]===0 &&
-               layout[row+1][col-1]===0){
-
-              layout[row  ][col-1]=1;
-              layout[row-1][col-1]=1;
-              layout[row+1][col  ]=1;
-              layout[row+1][col-1]=1;
-
-            }
-
-          }
-          else if(row>4 ){
-
-            if(layout[row  ][col-1]===0 &&
-               layout[row-1][col  ]===0 &&
-               layout[row+1][col  ]===0 &&
-               layout[row+1][col-1]===0){
-
-              layout[row  ][col-1]=1;
-              layout[row-1][col  ]=1;
-              layout[row+1][col  ]=1;
-              layout[row+1][col-1]=1;
-
-            }
-
-          }
+          ac.left.on        =true;
+          ac.topLeft.on     =true;
+          ac.bottomRight.on =true;
+          ac.bottomLeft.on  =true;
 
         };
         function downRight(){
 
-          if     (row<4){
-
-            if(layout[row  ][col-1]===0 &&
-               layout[row-1][col-1]===0 &&
-               layout[row-1][col  ]===0 &&
-               layout[row+1][col  ]===0){
-
-              layout[row  ][col-1]=1;
-              layout[row-1][col-1]=1;
-              layout[row-1][col  ]=1;
-              layout[row+1][col  ]=1;
-
-            }
-
-          }
-          else if(row===4 ){
-
-            if(layout[row  ][col-1]===0 &&
-               layout[row-1][col-1]===0 &&
-               layout[row-1][col  ]===0 &&
-               layout[row+1][col-1]===0){
-
-              layout[row  ][col-1]=1;
-              layout[row-1][col-1]=1;
-              layout[row-1][col  ]=1;
-              layout[row+1][col-1]=1;
-
-            }
-
-          }
-          else if(row>4 ){
-
-            if(layout[row  ][col-1]===0 &&
-               layout[row-1][col+1]===0 &&
-               layout[row-1][col  ]===0 &&
-               layout[row+1][col-1]===0){
-
-              layout[row  ][col-1]=1;
-              layout[row-1][col+1]=1;
-              layout[row-1][col  ]=1;
-              layout[row+1][col-1]=1;
-
-            }
-
-          }
+          ac.left.on       =true;
+          ac.bottomLeft.on =true;
+          ac.topRight.on   =true;
+          ac.topLeft.on    =true;
 
         };
         function upLeft(){
 
-          if     (row<4){
-
-            if(layout[row  ][col+1]===0 &&
-               layout[row-1][col  ]===0 &&
-               layout[row+1][col  ]===0 &&
-               layout[row+1][col+1]===0){
-
-              layout[row  ][col+1]=1;
-              layout[row-1][col  ]=1;
-              layout[row+1][col  ]=1;
-              layout[row+1][col+1]=1;
-
-            }
-
-          }
-          else if(row===4 ){
-
-            if(layout[row  ][col+1]===0 &&
-               layout[row-1][col  ]===0 &&
-               layout[row+1][col  ]===0 &&
-               layout[row+1][col-1]===0){
-
-              layout[row  ][col+1]=1;
-              layout[row-1][col  ]=1;
-              layout[row+1][col  ]=1;
-              layout[row+1][col-1]=1;
-
-            }
-
-          }
-          else if(row>4 ){
-
-            if(layout[row  ][col+1]===0 &&
-               layout[row-1][col+1]===0 &&
-               layout[row+1][col-1]===0 &&
-               layout[row+1][col  ]===0){
-
-              layout[row  ][col+1]=1;
-              layout[row-1][col+1]=1;
-              layout[row+1][col-1]=1;
-              layout[row+1][col  ]=1;
-
-            }
-
-          }
+          ac.right.on       =true;
+          ac.topRight.on    =true;
+          ac.bottomRight.on =true;
+          ac.bottomLeft.on  =true;
 
         };
         function downLeft(){
 
-          if     (row<4){
-
-            if(layout[row  ][col+1]===0 &&
-               layout[row-1][col  ]===0 &&
-               layout[row-1][col-1]===0 &&
-               layout[row+1][col+1]===0){
-
-              layout[row  ][col+1]=1;
-              layout[row-1][col  ]=1;
-              layout[row-1][col-1]=1;
-              layout[row+1][col+1]=1;
-
-            }
-
-          }
-          else if(row===4 ){
-
-            if(layout[row  ][col+1]===0 &&
-               layout[row-1][col  ]===0 &&
-               layout[row-1][col-1]===0 &&
-               layout[row+1][col  ]===0){
-
-              layout[row  ][col+1]=1;
-              layout[row-1][col  ]=1;
-              layout[row-1][col-1]=1;
-              layout[row+1][col  ]=1;
-
-            }
-
-          }
-          else if(row>4 ){
-
-            if(layout[row  ][col+1]===0 &&
-               layout[row-1][col  ]===0 &&
-               layout[row-1][col+1]===0 &&
-               layout[row+1][col  ]===0){
-
-              layout[row  ][col+1]=1;
-              layout[row-1][col  ]=1;
-              layout[row-1][col+1]=1;
-              layout[row+1][col  ]=1;
-
-            }
-
-          }
+          ac.right.on       =true;
+          ac.bottomRight.on =true;
+          ac.topRight.on    =true;
+          ac.topLeft.on     =true;
 
         };
 
         function zRight(){
 
-          if     (row<5){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row  ][col-1]===0 &&
-               layout[row-1][col-1]===0 &&
-               layout[row-1][col  ]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row  ][col-1]=1;
-              layout[row-1][col-1]=1;
-              layout[row-1][col  ]=1;
-
-            }
-
-          }
-          else if(row>=5){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row  ][col-1]===0 &&
-               layout[row-1][col  ]===0 &&
-               layout[row-1][col+1]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row  ][col-1]=1;
-              layout[row-1][col  ]=1;
-              layout[row-1][col+1]=1;
-
-            }
-
-          }
+          ac.on          =true;
+          ac.left.on     =true;
+          ac.topRight.on =true;
+          ac.topLeft.on  =true;
 
         };
         function zLeft(){
 
-          if     (row<5){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row  ][col+1]===0 &&
-               layout[row-1][col  ]===0 &&
-               layout[row-1][col-1]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row  ][col+1]=1;
-              layout[row-1][col  ]=1;
-              layout[row-1][col-1]=1;
-
-            }
-
-          }
-          else if(row>=5){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row  ][col+1]===0 &&
-               layout[row-1][col  ]===0 &&
-               layout[row-1][col+1]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row  ][col+1]=1;
-              layout[row-1][col  ]=1;
-              layout[row-1][col+1]=1;
-
-            }
-
-          }
+          ac.on          =true;
+          ac.right.on    =true;
+          ac.topRight.on =true;
+          ac.topLeft.on  =true;
 
         };
 
         function sevenRight(){
 
-          if     (row<4){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row+1][col+1]===0 &&
-               layout[row-1][col  ]===0 &&
-               layout[row-1][col-1]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row+1][col+1]=1;
-              layout[row-1][col  ]=1;
-              layout[row-1][col-1]=1;
-
-            }
-
-          }
-          else if(row===4){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row+1][col  ]===0 &&
-               layout[row-1][col  ]===0 &&
-               layout[row-1][col-1]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row+1][col  ]=1;
-              layout[row-1][col  ]=1;
-              layout[row-1][col-1]=1;
-
-            }
-
-          }
-          else if(row>4){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row+1][col  ]===0 &&
-               layout[row-1][col  ]===0 &&
-               layout[row-1][col+1]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row+1][col  ]=1;
-              layout[row-1][col  ]=1;
-              layout[row-1][col+1]=1;
-
-            }
-
-          }
+          ac.on             =true;
+          ac.bottomRight.on =true;
+          ac.topRight.on    =true;
+          ac.topLeft.on     =true;
 
         };
         function sevenLeft(){
 
-          if     (row<4){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row+1][col  ]===0 &&
-               layout[row-1][col  ]===0 &&
-               layout[row-1][col-1]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row+1][col  ]=1;
-              layout[row-1][col  ]=1;
-              layout[row-1][col-1]=1;
-
-            }
-
-          }
-          else if(row===4){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row+1][col-1]===0 &&
-               layout[row-1][col  ]===0 &&
-               layout[row-1][col-1]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row+1][col-1]=1;
-              layout[row-1][col  ]=1;
-              layout[row-1][col-1]=1;
-
-            }
-
-          }
-          else if(row>4){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row+1][col-1]===0 &&
-               layout[row-1][col  ]===0 &&
-               layout[row-1][col+1]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row+1][col-1]=1;
-              layout[row-1][col  ]=1;
-              layout[row-1][col+1]=1;
-
-            }
-
-          }
+          ac.on            =true;
+          ac.bottomLeft.on =true;
+          ac.topRight.on   =true;
+          ac.topLeft.on    =true;
 
         };
 
         function angleRight(){
 
-          if     (row<4){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row-1][col  ]===0 &&
-               layout[row+1][col  ]===0 &&
-               layout[row+1][col+1]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row-1][col  ]=1;
-              layout[row+1][col  ]=1;
-              layout[row+1][col+1]=1;
-
-            }
-
-          }
-          else if(row===4){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row-1][col  ]===0 &&
-               layout[row+1][col  ]===0 &&
-               layout[row+1][col-1]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row-1][col  ]=1;
-              layout[row+1][col  ]=1;
-              layout[row+1][col-1]=1;
-
-            }
-
-          }
-          else if(row>4){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row-1][col+1]===0 &&
-               layout[row+1][col  ]===0 &&
-               layout[row+1][col-1]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row-1][col+1]=1;
-              layout[row+1][col  ]=1;
-              layout[row+1][col-1]=1;
-
-            }
-
-          }
+          ac.on             =true;
+          ac.topRight.on    =true;
+          ac.bottomRight.on =true;
+          ac.bottomLeft.on  =true;
 
         };
         function angleLeft(){
 
-          if     (row<4){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row-1][col-1]===0 &&
-               layout[row+1][col  ]===0 &&
-               layout[row+1][col+1]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row-1][col-1]=1;
-              layout[row+1][col  ]=1;
-              layout[row+1][col+1]=1;
-
-            }
-
-          }
-          else if(row===4){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row-1][col-1]===0 &&
-               layout[row+1][col  ]===0 &&
-               layout[row+1][col-1]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row-1][col-1]=1;
-              layout[row+1][col  ]=1;
-              layout[row+1][col-1]=1;
-
-            }
-
-          }
-          else if(row>4){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row-1][col  ]===0 &&
-               layout[row+1][col  ]===0 &&
-               layout[row+1][col-1]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row-1][col  ]=1;
-              layout[row+1][col  ]=1;
-              layout[row+1][col-1]=1;
-
-            }
-
-          }
+          ac.on             =true;
+          ac.topLeft.on     =true;
+          ac.bottomRight.on =true;
+          ac.bottomLeft.on  =true;
 
         };
 
         function nodeUpRight(){
 
-          if     (row<5){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row  ][col-1]===0 &&
-               layout[row  ][col+1]===0 &&
-               layout[row-1][col  ]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row  ][col-1]=1;
-              layout[row  ][col+1]=1;
-              layout[row-1][col  ]=1;
-
-            }
-
-          }
-          else if(row>4){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row  ][col-1]===0 &&
-               layout[row  ][col+1]===0 &&
-               layout[row-1][col+1]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row  ][col-1]=1;
-              layout[row  ][col+1]=1;
-              layout[row-1][col+1]=1;
-
-            }
-
-          }
+          ac.on          =true;
+          ac.left.on     =true;
+          ac.right.on    =true;
+          ac.topRight.on =true;
 
         };
         function nodeUpLeft(){
 
-          if     (row<5){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row  ][col-1]===0 &&
-               layout[row  ][col+1]===0 &&
-               layout[row-1][col-1]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row  ][col-1]=1;
-              layout[row  ][col+1]=1;
-              layout[row-1][col-1]=1;
-
-            }
-
-          }
-          else if(row>4){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row  ][col-1]===0 &&
-               layout[row  ][col+1]===0 &&
-               layout[row-1][col  ]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row  ][col-1]=1;
-              layout[row  ][col+1]=1;
-              layout[row-1][col  ]=1;
-
-            }
-
-          }
+          ac.on         =true;
+          ac.left.on    =true;
+          ac.right.on   =true;
+          ac.topLeft.on =true;
 
         };
         function nodeDownRight(){
 
-          if     (row<4){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row  ][col-1]===0 &&
-               layout[row  ][col+1]===0 &&
-               layout[row+1][col+1]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row  ][col-1]=1;
-              layout[row  ][col+1]=1;
-              layout[row+1][col+1]=1;
-
-            }
-
-          }
-          else if(row===4){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row  ][col-1]===0 &&
-               layout[row  ][col+1]===0 &&
-               layout[row+1][col  ]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row  ][col-1]=1;
-              layout[row  ][col+1]=1;
-              layout[row+1][col  ]=1;
-
-            }
-
-          }
-          else if(row>4){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row  ][col-1]===0 &&
-               layout[row  ][col+1]===0 &&
-               layout[row+1][col  ]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row  ][col-1]=1;
-              layout[row  ][col+1]=1;
-              layout[row+1][col  ]=1;
-
-            }
-
-          }
+          ac.on             =true;
+          ac.left.on        =true;
+          ac.right.on       =true;
+          ac.bottomRight.on =true;
 
         };
         function nodeDownLeft(){
 
-          if      (row<4){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row  ][col-1]===0 &&
-               layout[row  ][col+1]===0 &&
-               layout[row+1][col  ]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row  ][col-1]=1;
-              layout[row  ][col+1]=1;
-              layout[row+1][col  ]=1;
-
-            }
-
-          }
-          else if(row===4){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row  ][col-1]===0 &&
-               layout[row  ][col+1]===0 &&
-               layout[row+1][col-1]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row  ][col-1]=1;
-              layout[row  ][col+1]=1;
-              layout[row+1][col-1]=1;
-
-            }
-
-          }
-          else if(row>4){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row  ][col-1]===0 &&
-               layout[row  ][col+1]===0 &&
-               layout[row+1][col-1]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row  ][col-1]=1;
-              layout[row  ][col+1]=1;
-              layout[row+1][col-1]=1;
-
-            }
-
-          }
+          ac.on            =true;
+          ac.left.on       =true;
+          ac.right.on      =true;
+          ac.bottomLeft.on =true;
 
         };
 
         function vUpRight(){
 
-          if     (row<4){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row  ][col-1]===0 &&
-               layout[row-1][col  ]===0 &&
-               layout[row+1][col  ]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row  ][col-1]=1;
-              layout[row-1][col  ]=1;
-              layout[row+1][col  ]=1;
-
-            }
-
-          }
-          else if(row===4){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row  ][col-1]===0 &&
-               layout[row-1][col  ]===0 &&
-               layout[row+1][col-1]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row  ][col-1]=1;
-              layout[row-1][col  ]=1;
-              layout[row+1][col-1]=1;
-
-            }
-
-          }
-          else if(row>4){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row  ][col-1]===0 &&
-               layout[row-1][col+1]===0 &&
-               layout[row+1][col-1]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row  ][col-1]=1;
-              layout[row-1][col+1]=1;
-              layout[row+1][col-1]=1;
-
-            }
-
-          }
+          ac.on            =true;
+          ac.left.on       =true;
+          ac.topRight.on   =true;
+          ac.bottomLeft.on =true;
 
         };
         function vUpLeft(){
 
-          if     (row<4){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row  ][col+1]===0 &&
-               layout[row-1][col-1]===0 &&
-               layout[row+1][col+1]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row  ][col+1]=1;
-              layout[row-1][col-1]=1;
-              layout[row+1][col+1]=1;
-
-            }
-
-          }
-          else if(row===4){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row  ][col+1]===0 &&
-               layout[row-1][col-1]===0 &&
-               layout[row+1][col  ]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row  ][col+1]=1;
-              layout[row-1][col-1]=1;
-              layout[row+1][col  ]=1;
-
-            }
-
-          }
-          else if(row>4){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row  ][col+1]===0 &&
-               layout[row-1][col  ]===0 &&
-               layout[row+1][col  ]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row  ][col+1]=1;
-              layout[row-1][col  ]=1;
-              layout[row+1][col  ]=1;
-
-            }
-
-          }
+          ac.on             =true;
+          ac.right.on       =true;
+          ac.topLeft.on     =true;
+          ac.bottomRight.on =true;
 
         };
         function vDownRight(){
 
-          if     (row<4){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row  ][col-1]===0 &&
-               layout[row-1][col-1]===0 &&
-               layout[row+1][col+1]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row  ][col-1]=1;
-              layout[row-1][col-1]=1;
-              layout[row+1][col+1]=1;
-
-            }
-
-          }
-          else if(row===4){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row  ][col-1]===0 &&
-               layout[row-1][col-1]===0 &&
-               layout[row+1][col  ]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row  ][col-1]=1;
-              layout[row-1][col-1]=1;
-              layout[row+1][col  ]=1;
-
-            }
-
-          }
-          else if(row>4){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row  ][col-1]===0 &&
-               layout[row-1][col  ]===0 &&
-               layout[row+1][col  ]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row  ][col-1]=1;
-              layout[row-1][col  ]=1;
-              layout[row+1][col  ]=1;
-
-            }
-
-          }
+          ac.on            =true;
+          ac.left.on       =true;
+          ac.topLeft.on   =true;
+          ac.bottomRight.on =true;
 
         };
         function vDownLeft(){
 
-          if     (row<4){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row  ][col+1]===0 &&
-               layout[row-1][col  ]===0 &&
-               layout[row+1][col  ]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row  ][col+1]=1;
-              layout[row-1][col  ]=1;
-              layout[row+1][col  ]=1;
-
-            }
-
-          }
-          else if(row===4){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row  ][col+1]===0 &&
-               layout[row-1][col  ]===0 &&
-               layout[row+1][col-1]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row  ][col+1]=1;
-              layout[row-1][col  ]=1;
-              layout[row+1][col-1]=1;
-
-            }
-
-          }
-          else if(row>4){
-
-            if(layout[row  ][col  ]===0 &&
-               layout[row  ][col+1]===0 &&
-               layout[row-1][col+1]===0 &&
-               layout[row+1][col-1]===0){
-
-              layout[row  ][col  ]=1;
-              layout[row  ][col+1]=1;
-              layout[row-1][col+1]=1;
-              layout[row+1][col-1]=1;
-
-            }
-
-          }
+          ac.on            =true;
+          ac.right.on      =true;
+          ac.topRight.on   =true;
+          ac.bottomLeft.on =true;
 
         };
 
@@ -2466,22 +1574,16 @@ var diagrams = function(processingInstance){
       };
       hexBoard.prototype.validateDrop=function(){
 
-        // println(source);
-
         var retVal=false;
-
-        var ctrls   = this.controls;
-        var layout  = this.layout;
-        var row     = this.activeCell.row;
-        var col     = this.activeCell.col;
+        var ac = this.activeCell;
 
         function single(){
 
           try{
 
-            if(layout[row][col]===0){
+            if(ac.on===false){
 
-              ctrls[row][col].hover=true;
+              ac.hover=true;
 
               retVal=true;
 
@@ -2503,15 +1605,15 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(layout[row][col-1]===0 &&
-               layout[row][col-2]===0 &&
-               layout[row][col  ]===0 &&
-               layout[row][col+1]===0){
-
-              ctrls[row][col-1].hover=true;
-              ctrls[row][col-2].hover=true;
-              ctrls[row][col  ].hover=true;
-              ctrls[row][col+1].hover=true;
+            if(ac.on          ===false &&
+               ac.right.on    ===false &&
+               ac.left.on     ===false &&
+               ac.left.left.on===false){
+                 
+              ac.hover=true;
+              ac.right.hover=true;
+              ac.left.hover=true;
+              ac.left.left.hover=true;
 
               retVal=true;
 
@@ -2532,72 +1634,17 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(row<4){
+            if(ac.on                  ===false &&
+               ac.bottomLeft.on       ===false &&
+               ac.topRight.on         ===false &&
+               ac.topRight.topRight.on===false){
 
-              if(layout[row  ][col]===0 &&
-                 layout[row-1][col]===0 &&
-                 layout[row-2][col]===0 &&
-                 layout[row+1][col]===0){
+              ac.hover                  =true;
+              ac.bottomLeft.hover       =true;
+              ac.topRight.hover         =true;
+              ac.topRight.topRight.hover=true;
 
-                ctrls[row  ][col].hover=true;
-                ctrls[row-1][col].hover=true;
-                ctrls[row-2][col].hover=true;
-                ctrls[row+1][col].hover=true;
-
-                retVal=true;
-
-              }
-
-            }
-            else if(row===4){
-
-              if(layout[row  ][col  ]===0 &&
-                 layout[row-1][col  ]===0 &&
-                 layout[row-2][col  ]===0 &&
-                 layout[row+1][col-1]===0){
-
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row-1][col  ].hover=true;
-                ctrls[row-2][col  ].hover=true;
-                ctrls[row+1][col-1].hover=true;
-
-                retVal=true;
-
-              }
-
-            }
-            else if(row===5){
-
-              if(layout[row  ][col  ]===0 &&
-                 layout[row-1][col+1]===0 &&
-                 layout[row-2][col+1]===0 &&
-                 layout[row+1][col-1]===0){
-
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row-1][col+1].hover=true;
-                ctrls[row-2][col+1].hover=true;
-                ctrls[row+1][col-1].hover=true;
-
-                retVal=true;
-
-              }
-
-            }
-            else if(row>5){
-
-              if(layout[row  ][col  ]===0 &&
-                 layout[row-1][col+1]===0 &&
-                 layout[row-2][col+2]===0 &&
-                 layout[row+1][col-1]===0){
-
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row-1][col+1].hover=true;
-                ctrls[row-2][col+2].hover=true;
-                ctrls[row+1][col-1].hover=true;
-
-                retVal=true;
-
-              }
+              retVal=true;
 
             }
 
@@ -2616,72 +1663,17 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(row<4){
+            if(ac.on                 ===false &&
+               ac.bottomRight.on     ===false &&
+               ac.topLeft.on         ===false &&
+               ac.topLeft.topLeft.on ===false){
 
-              if(layout[row  ][col  ]===0 &&
-                 layout[row-1][col-1]===0 &&
-                 layout[row-2][col-2]===0 &&
-                 layout[row+1][col+1]===0){
+              ac.hover                 =true;
+              ac.bottomRight.hover     =true;
+              ac.topLeft.hover         =true;
+              ac.topLeft.topLeft.hover =true;
 
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row-1][col-1].hover=true;
-                ctrls[row-2][col-2].hover=true;
-                ctrls[row+1][col+1].hover=true;
-
-                retVal=true;
-
-              }
-
-            }
-            else if(row===4){
-
-              if(layout[row  ][col  ]===0 &&
-                 layout[row-1][col-1]===0 &&
-                 layout[row-2][col-2]===0 &&
-                 layout[row+1][col  ]===0){
-
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row-1][col-1].hover=true;
-                ctrls[row-2][col-2].hover=true;
-                ctrls[row+1][col  ].hover=true;
-
-                retVal=true;
-
-              }
-
-            }
-            else if(row===5){
-
-              if(layout[row  ][col  ]===0 &&
-                 layout[row-1][col  ]===0 &&
-                 layout[row-2][col-1]===0 &&
-                 layout[row+1][col  ]===0){
-
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row-1][col  ].hover=true;
-                ctrls[row-2][col-1].hover=true;
-                ctrls[row+1][col  ].hover=true;
-
-                retVal=true;
-
-              }
-
-            }
-            else if(row>5){
-
-              if(layout[row  ][col]===0 &&
-                 layout[row-1][col]===0 &&
-                 layout[row-2][col]===0 &&
-                 layout[row+1][col]===0){
-
-                ctrls[row  ][col].hover=true;
-                ctrls[row-1][col].hover=true;
-                ctrls[row-2][col].hover=true;
-                ctrls[row+1][col].hover=true;
-
-                retVal=true;
-
-              }
+              retVal=true;
 
             }
 
@@ -2701,55 +1693,17 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(row<4){
+            if(ac.on            ===false &&
+               ac.left.on       ===false &&
+               ac.bottomLeft.on ===false &&
+               ac.topLeft.on    ===false){
 
-              if(layout[row  ][col  ]===0 &&
-                 layout[row-1][col-1]===0 &&
-                 layout[row  ][col-1]===0 &&
-                 layout[row+1][col  ]===0){
+              ac.hover            =true;
+              ac.left.hover       =true;
+              ac.bottomLeft.hover =true;
+              ac.topLeft.hover    =true;
 
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row-1][col-1].hover=true;
-                ctrls[row  ][col-1].hover=true;
-                ctrls[row+1][col  ].hover=true;
-
-                retVal=true;
-
-              }
-
-            }
-            else if(row===4){
-
-              if(layout[row  ][col  ]===0 &&
-                 layout[row-1][col-1]===0 &&
-                 layout[row  ][col-1]===0 &&
-                 layout[row+1][col-1]===0){
-
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row-1][col-1].hover=true;
-                ctrls[row  ][col-1].hover=true;
-                ctrls[row+1][col-1].hover=true;
-
-                retVal=true;
-
-              }
-
-            }
-            else if(row>4){
-
-              if(layout[row  ][col  ]===0 &&
-                 layout[row-1][col  ]===0 &&
-                 layout[row  ][col-1]===0 &&
-                 layout[row+1][col-1]===0){
-
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row-1][col  ].hover=true;
-                ctrls[row  ][col-1].hover=true;
-                ctrls[row+1][col-1].hover=true;
-
-                retVal=true;
-
-              }
+              retVal=true;
 
             }
 
@@ -2769,55 +1723,17 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(row<3){
+            if(ac.left.on        ===false &&
+               ac.right.on       ===false &&
+               ac.bottomRight.on ===false &&
+               ac.bottomLeft.on  ===false){
 
-              if(layout[row  ][col-1]===0 &&
-                 layout[row  ][col+1]===0 &&
-                 layout[row+1][col+1]===0 &&
-                 layout[row+1][col  ]===0){
+              ac.left.hover        =true;
+              ac.right.hover       =true;
+              ac.bottomRight.hover =true;
+              ac.bottomLeft.hover  =true;
 
-                ctrls[row  ][col-1].hover=true;
-                ctrls[row  ][col+1].hover=true;
-                ctrls[row+1][col+1].hover=true;
-                ctrls[row+1][col  ].hover=true;
-
-                retVal=true;
-
-              }
-
-            }
-            else if(row===3 ){
-
-              if(layout[row  ][col-1]===0 &&
-                 layout[row  ][col+1]===0 &&
-                 layout[row+1][col+1]===0 &&
-                 layout[row+1][col  ]===0){
-
-                ctrls[row  ][col-1].hover=true;
-                ctrls[row  ][col+1].hover=true;
-                ctrls[row+1][col+1].hover=true;
-                ctrls[row+1][col  ].hover=true;
-
-                retVal=true;
-
-              }
-
-            }
-            else if(row>=3 ){
-
-              if(layout[row  ][col-1]===0 &&
-                 layout[row  ][col+1]===0 &&
-                 layout[row+1][col-1]===0 &&
-                 layout[row+1][col  ]===0){
-
-                ctrls[row  ][col-1].hover=true;
-                ctrls[row  ][col+1].hover=true;
-                ctrls[row+1][col-1].hover=true;
-                ctrls[row+1][col  ].hover=true;
-
-                retVal=true;
-
-              }
+              retVal=true;
 
             }
 
@@ -2836,38 +1752,17 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(row<5){
+            if(ac.left.on     ===false &&
+               ac.right.on    ===false &&
+               ac.topRight.on ===false &&
+               ac.topLeft.on  ===false){
 
-              if(layout[row-1][col  ]===0 &&
-                 layout[row-1][col-1]===0 &&
-                 layout[row  ][col+1]===0 &&
-                 layout[row  ][col-1]===0){
+              ac.left.hover     =true;
+              ac.right.hover    =true;
+              ac.topRight.hover =true;
+              ac.topLeft.hover  =true;
 
-                ctrls[row-1][col  ].hover=true;
-                ctrls[row-1][col-1].hover=true;
-                ctrls[row  ][col+1].hover=true;
-                ctrls[row  ][col-1].hover=true;
-
-                retVal=true;
-
-              }
-
-            }
-            else if(row>=5 ){
-
-              if(layout[row-1][col  ]===0 &&
-                 layout[row-1][col+1]===0 &&
-                 layout[row  ][col+1]===0 &&
-                 layout[row  ][col-1]===0){
-
-                ctrls[row-1][col  ].hover=true;
-                ctrls[row-1][col+1].hover=true;
-                ctrls[row  ][col+1].hover=true;
-                ctrls[row  ][col-1].hover=true;
-
-                retVal=true;
-
-              }
+              retVal=true;
 
             }
 
@@ -2887,55 +1782,17 @@ var diagrams = function(processingInstance){
 
            try{
 
-            if(row<4){
+            if(ac.left.on        ===false &&
+               ac.topLeft.on     ===false &&
+               ac.bottomRight.on ===false &&
+               ac.bottomLeft.on  ===false){
 
-              if(layout[row  ][col-1]===0 &&
-                 layout[row-1][col-1]===0 &&
-                 layout[row+1][col  ]===0 &&
-                 layout[row+1][col+1]===0){
+              ac.left.hover        =true;
+              ac.topLeft.hover     =true;
+              ac.bottomRight.hover =true;
+              ac.bottomLeft.hover  =true;
 
-                ctrls[row  ][col-1].hover=true;
-                ctrls[row-1][col-1].hover=true;
-                ctrls[row+1][col  ].hover=true;
-                ctrls[row+1][col+1].hover=true;
-
-                retVal=true;
-
-              }
-
-            }
-            else if(row===4 ){
-
-              if(layout[row  ][col-1]===0 &&
-                 layout[row-1][col-1]===0 &&
-                 layout[row+1][col  ]===0 &&
-                 layout[row+1][col-1]===0){
-
-                ctrls[row  ][col-1].hover=true;
-                ctrls[row-1][col-1].hover=true;
-                ctrls[row+1][col  ].hover=true;
-                ctrls[row+1][col-1].hover=true;
-
-                retVal=true;
-
-              }
-
-            }
-            else if(row>4 ){
-
-              if(layout[row  ][col-1]===0 &&
-                 layout[row-1][col  ]===0 &&
-                 layout[row+1][col  ]===0 &&
-                 layout[row+1][col-1]===0){
-
-                ctrls[row  ][col-1].hover=true;
-                ctrls[row-1][col  ].hover=true;
-                ctrls[row+1][col  ].hover=true;
-                ctrls[row+1][col-1].hover=true;
-
-                retVal=true;
-
-              }
+              retVal=true;
 
             }
 
@@ -2954,55 +1811,17 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(row<4){
+            if(ac.left.on     ===false &&
+               ac.bottomLeft.on    ===false &&
+               ac.topRight.on ===false &&
+               ac.topLeft.on  ===false){
 
-              if(layout[row  ][col-1]===0 &&
-                 layout[row-1][col-1]===0 &&
-                 layout[row-1][col  ]===0 &&
-                 layout[row+1][col  ]===0){
+              ac.left.hover     =true;
+              ac.bottomLeft.hover    =true;
+              ac.topRight.hover =true;
+              ac.topLeft.hover  =true;
 
-                ctrls[row  ][col-1].hover=true;
-                ctrls[row-1][col-1].hover=true;
-                ctrls[row-1][col  ].hover=true;
-                ctrls[row+1][col  ].hover=true;
-
-                retVal=true;
-
-              }
-
-            }
-            else if(row===4 ){
-
-              if(layout[row  ][col-1]===0 &&
-                 layout[row-1][col-1]===0 &&
-                 layout[row-1][col  ]===0 &&
-                 layout[row+1][col-1]===0){
-
-                ctrls[row  ][col-1].hover=true;
-                ctrls[row-1][col-1].hover=true;
-                ctrls[row-1][col  ].hover=true;
-                ctrls[row+1][col-1].hover=true;
-
-                retVal=true;
-
-              }
-
-            }
-            else if(row>4 ){
-
-              if(layout[row  ][col-1]===0 &&
-                 layout[row-1][col+1]===0 &&
-                 layout[row-1][col  ]===0 &&
-                 layout[row+1][col-1]===0){
-
-                ctrls[row  ][col-1].hover=true;
-                ctrls[row-1][col+1].hover=true;
-                ctrls[row-1][col  ].hover=true;
-                ctrls[row+1][col-1].hover=true;
-
-                retVal=true;
-
-              }
+              retVal=true;
 
             }
 
@@ -3021,55 +1840,17 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(row<4){
+            if(ac.right.on       ===false &&
+               ac.topRight.on    ===false &&
+               ac.bottomRight.on ===false &&
+               ac.bottomLeft.on  ===false){
 
-              if(layout[row  ][col+1]===0 &&
-                 layout[row-1][col  ]===0 &&
-                 layout[row+1][col  ]===0 &&
-                 layout[row+1][col+1]===0){
+              ac.right.hover       =true;
+              ac.topRight.hover    =true;
+              ac.bottomRight.hover =true;
+              ac.bottomLeft.hover  =true;
 
-                ctrls[row  ][col+1].hover=true;
-                ctrls[row-1][col  ].hover=true;
-                ctrls[row+1][col  ].hover=true;
-                ctrls[row+1][col+1].hover=true;
-
-                retVal=true;
-
-              }
-
-            }
-            else if(row===4 ){
-
-              if(layout[row  ][col+1]===0 &&
-                 layout[row-1][col  ]===0 &&
-                 layout[row+1][col  ]===0 &&
-                 layout[row+1][col-1]===0){
-
-                ctrls[row  ][col+1].hover=true;
-                ctrls[row-1][col  ].hover=true;
-                ctrls[row+1][col  ].hover=true;
-                ctrls[row+1][col-1].hover=true;
-
-                retVal=true;
-
-              }
-
-            }
-            else if(row>4 ){
-
-              if(layout[row  ][col+1]===0 &&
-                 layout[row-1][col+1]===0 &&
-                 layout[row+1][col-1]===0 &&
-                 layout[row+1][col  ]===0){
-
-                ctrls[row  ][col+1].hover=true;
-                ctrls[row-1][col+1].hover=true;
-                ctrls[row+1][col-1].hover=true;
-                ctrls[row+1][col  ].hover=true;
-
-                retVal=true;
-
-              }
+              retVal=true;
 
             }
 
@@ -3088,55 +1869,17 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(row<4){
+            if(ac.right.on       ===false &&
+               ac.bottomRight.on ===false &&
+               ac.topRight.on    ===false &&
+               ac.topLeft.on     ===false){
 
-              if(layout[row  ][col+1]===0 &&
-                 layout[row-1][col  ]===0 &&
-                 layout[row-1][col-1]===0 &&
-                 layout[row+1][col+1]===0){
+              ac.right.hover       =true;
+              ac.bottomRight.hover =true;
+              ac.topRight.hover    =true;
+              ac.topLeft.hover     =true;
 
-                ctrls[row  ][col+1].hover=true;
-                ctrls[row-1][col  ].hover=true;
-                ctrls[row-1][col-1].hover=true;
-                ctrls[row+1][col+1].hover=true;
-
-                retVal=true;
-
-              }
-
-            }
-            else if(row===4 ){
-
-              if(layout[row  ][col+1]===0 &&
-                 layout[row-1][col  ]===0 &&
-                 layout[row-1][col-1]===0 &&
-                 layout[row+1][col  ]===0){
-
-                ctrls[row  ][col+1].hover=true;
-                ctrls[row-1][col  ].hover=true;
-                ctrls[row-1][col-1].hover=true;
-                ctrls[row+1][col  ].hover=true;
-
-                retVal=true;
-
-              }
-
-            }
-            else if(row>4 ){
-
-              if(layout[row  ][col+1]===0 &&
-                 layout[row-1][col  ]===0 &&
-                 layout[row-1][col+1]===0 &&
-                 layout[row+1][col  ]===0){
-
-                ctrls[row  ][col+1].hover=true;
-                ctrls[row-1][col  ].hover=true;
-                ctrls[row-1][col+1].hover=true;
-                ctrls[row+1][col  ].hover=true;
-
-                retVal=true;
-
-              }
+              retVal=true;
 
             }
 
@@ -3156,38 +1899,17 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(row<5){
+            if(ac.on          ===false &&
+               ac.left.on     ===false &&
+               ac.topRight.on ===false &&
+               ac.topLeft.on  ===false){
 
-              if(layout[row  ][col  ]===0 &&
-                 layout[row  ][col-1]===0 &&
-                 layout[row-1][col-1]===0 &&
-                 layout[row-1][col  ]===0){
+              ac.hover          =true;
+              ac.left.hover     =true;
+              ac.topRight.hover =true;
+              ac.topLeft.hover  =true;
 
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row  ][col-1].hover=true;
-                ctrls[row-1][col-1].hover=true;
-                ctrls[row-1][col  ].hover=true;
-
-                retVal=true;
-
-              }
-
-            }
-            else if(row>=5){
-
-              if(layout[row  ][col  ]===0 &&
-                 layout[row  ][col-1]===0 &&
-                 layout[row-1][col  ]===0 &&
-                 layout[row-1][col+1]===0){
-
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row  ][col-1].hover=true;
-                ctrls[row-1][col  ].hover=true;
-                ctrls[row-1][col+1].hover=true;
-
-                retVal=true;
-
-              }
+              retVal=true;
 
             }
 
@@ -3206,38 +1928,17 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(row<5){
+            if(ac.on          ===false &&
+               ac.right.on    ===false &&
+               ac.topRight.on ===false &&
+               ac.topLeft.on  ===false){
 
-              if(layout[row  ][col  ]===0 &&
-                 layout[row  ][col+1]===0 &&
-                 layout[row-1][col  ]===0 &&
-                 layout[row-1][col-1]===0){
+              ac.hover          =true;
+              ac.right.hover    =true;
+              ac.topRight.hover =true;
+              ac.topLeft.hover  =true;
 
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row  ][col+1].hover=true;
-                ctrls[row-1][col  ].hover=true;
-                ctrls[row-1][col-1].hover=true;
-
-                retVal=true;
-
-              }
-
-            }
-            else if(row>=5){
-
-              if(layout[row  ][col  ]===0 &&
-                 layout[row  ][col+1]===0 &&
-                 layout[row-1][col  ]===0 &&
-                 layout[row-1][col+1]===0){
-
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row  ][col+1].hover=true;
-                ctrls[row-1][col  ].hover=true;
-                ctrls[row-1][col+1].hover=true;
-
-                retVal=true;
-
-              }
+              retVal=true;
 
             }
 
@@ -3257,55 +1958,17 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(row<4){
+            if(ac.on             ===false &&
+               ac.bottomRight.on ===false &&
+               ac.topRight.on    ===false &&
+               ac.topLeft.on     ===false){
 
-              if(layout[row  ][col  ]===0 &&
-                 layout[row+1][col+1]===0 &&
-                 layout[row-1][col  ]===0 &&
-                 layout[row-1][col-1]===0){
+              ac.hover             =true;
+              ac.bottomRight.hover =true;
+              ac.topRight.hover    =true;
+              ac.topLeft.hover     =true;
 
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row+1][col+1].hover=true;
-                ctrls[row-1][col  ].hover=true;
-                ctrls[row-1][col-1].hover=true;
-
-                retVal=true;
-
-              }
-
-            }
-            else if(row===4){
-
-              if(layout[row  ][col  ]===0 &&
-                 layout[row+1][col  ]===0 &&
-                 layout[row-1][col  ]===0 &&
-                 layout[row-1][col-1]===0){
-
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row+1][col  ].hover=true;
-                ctrls[row-1][col  ].hover=true;
-                ctrls[row-1][col-1].hover=true;
-
-                retVal=true;
-
-              }
-
-            }
-            else if(row>4){
-
-              if(layout[row  ][col  ]===0 &&
-                 layout[row+1][col  ]===0 &&
-                 layout[row-1][col  ]===0 &&
-                 layout[row-1][col+1]===0){
-
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row+1][col  ].hover=true;
-                ctrls[row-1][col  ].hover=true;
-                ctrls[row-1][col+1].hover=true;
-
-                retVal=true;
-
-              }
+              retVal=true;
 
             }
 
@@ -3324,55 +1987,17 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(row<4){
+            if(ac.on            ===false &&
+               ac.bottomLeft.on ===false &&
+               ac.topRight.on   ===false &&
+               ac.topLeft.on    ===false){
 
-              if(layout[row  ][col  ]===0 &&
-                 layout[row+1][col  ]===0 &&
-                 layout[row-1][col  ]===0 &&
-                 layout[row-1][col-1]===0){
+              ac.hover            =true;
+              ac.bottomLeft.hover =true;
+              ac.topRight.hover   =true;
+              ac.topLeft.hover    =true;
 
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row+1][col  ].hover=true;
-                ctrls[row-1][col  ].hover=true;
-                ctrls[row-1][col-1].hover=true;
-
-                retVal=true;
-
-              }
-
-            }
-            else if(row===4){
-
-              if(layout[row  ][col  ]===0 &&
-                 layout[row+1][col-1]===0 &&
-                 layout[row-1][col  ]===0 &&
-                 layout[row-1][col-1]===0){
-
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row+1][col-1].hover=true;
-                ctrls[row-1][col  ].hover=true;
-                ctrls[row-1][col-1].hover=true;
-
-                retVal=true;
-
-              }
-
-            }
-            else if(row>4){
-
-              if(layout[row  ][col  ]===0 &&
-                 layout[row+1][col-1]===0 &&
-                 layout[row-1][col  ]===0 &&
-                 layout[row-1][col+1]===0){
-
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row+1][col-1].hover=true;
-                ctrls[row-1][col  ].hover=true;
-                ctrls[row-1][col+1].hover=true;
-
-                retVal=true;
-
-              }
+              retVal=true;
 
             }
 
@@ -3392,55 +2017,17 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(row<4){
+            if(ac.on             ===false &&
+               ac.topRight.on    ===false &&
+               ac.bottomRight.on ===false &&
+               ac.bottomLeft.on  ===false){
 
-              if(layout[row  ][col  ]===0 &&
-                 layout[row-1][col  ]===0 &&
-                 layout[row+1][col  ]===0 &&
-                 layout[row+1][col+1]===0){
+              ac.hover             =true;
+              ac.topRight.hover    =true;
+              ac.bottomRight.hover =true;
+              ac.bottomLeft.hover  =true;
 
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row-1][col  ].hover=true;
-                ctrls[row+1][col  ].hover=true;
-                ctrls[row+1][col+1].hover=true;
-
-                retVal=true;
-
-              }
-
-            }
-            else if(row===4){
-
-              if(layout[row  ][col  ]===0 &&
-                 layout[row-1][col  ]===0 &&
-                 layout[row+1][col  ]===0 &&
-                 layout[row+1][col-1]===0){
-
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row-1][col  ].hover=true;
-                ctrls[row+1][col  ].hover=true;
-                ctrls[row+1][col-1].hover=true;
-
-                retVal=true;
-
-              }
-
-            }
-            else if(row>4){
-
-              if(layout[row  ][col  ]===0 &&
-                 layout[row-1][col+1]===0 &&
-                 layout[row+1][col  ]===0 &&
-                 layout[row+1][col-1]===0){
-
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row-1][col+1].hover=true;
-                ctrls[row+1][col  ].hover=true;
-                ctrls[row+1][col-1].hover=true;
-
-                retVal=true;
-
-              }
+              retVal=true;
 
             }
 
@@ -3459,55 +2046,17 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(row<4){
+            if(ac.on             ===false &&
+               ac.topLeft.on     ===false &&
+               ac.bottomRight.on ===false &&
+               ac.bottomLeft.on  ===false){
 
-              if(layout[row  ][col  ]===0 &&
-                 layout[row-1][col-1]===0 &&
-                 layout[row+1][col  ]===0 &&
-                 layout[row+1][col+1]===0){
+              ac.hover             =true;
+              ac.topLeft.hover     =true;
+              ac.bottomRight.hover =true;
+              ac.bottomLeft.hover  =true;
 
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row-1][col-1].hover=true;
-                ctrls[row+1][col  ].hover=true;
-                ctrls[row+1][col+1].hover=true;
-
-                retVal=true;
-
-              }
-
-            }
-            else if(row===4){
-
-              if(layout[row  ][col  ]===0 &&
-                 layout[row-1][col-1]===0 &&
-                 layout[row+1][col  ]===0 &&
-                 layout[row+1][col-1]===0){
-
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row-1][col-1].hover=true;
-                ctrls[row+1][col  ].hover=true;
-                ctrls[row+1][col-1].hover=true;
-
-                retVal=true;
-
-              }
-
-            }
-            else if(row>4){
-
-              if(layout[row  ][col  ]===0 &&
-                 layout[row-1][col  ]===0 &&
-                 layout[row+1][col  ]===0 &&
-                 layout[row+1][col-1]===0){
-
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row-1][col  ].hover=true;
-                ctrls[row+1][col  ].hover=true;
-                ctrls[row+1][col-1].hover=true;
-
-                retVal=true;
-
-              }
+              retVal=true;
 
             }
 
@@ -3527,38 +2076,17 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(row<5){
+            if(ac.on          ===false &&
+               ac.left.on     ===false &&
+               ac.right.on    ===false &&
+               ac.topRight.on ===false){
 
-              if(layout[row  ][col  ]===0 &&
-                 layout[row  ][col-1]===0 &&
-                 layout[row  ][col+1]===0 &&
-                 layout[row-1][col  ]===0){
+              ac.hover          =true;
+              ac.left.hover     =true;
+              ac.right.hover    =true;
+              ac.topRight.hover =true;
 
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row  ][col-1].hover=true;
-                ctrls[row  ][col+1].hover=true;
-                ctrls[row-1][col  ].hover=true;
-
-                retVal=true;
-
-              }
-
-            }
-            else if(row>4){
-
-              if(layout[row  ][col  ]===0 &&
-                 layout[row  ][col-1]===0 &&
-                 layout[row  ][col+1]===0 &&
-                 layout[row-1][col+1]===0){
-
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row  ][col-1].hover=true;
-                ctrls[row  ][col+1].hover=true;
-                ctrls[row-1][col+1].hover=true;
-
-                retVal=true;
-
-              }
+              retVal=true;
 
             }
 
@@ -3577,38 +2105,17 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(row<5){
+            if(ac.on         ===false &&
+               ac.left.on    ===false &&
+               ac.right.on   ===false &&
+               ac.topLeft.on ===false){
 
-              if(layout[row  ][col  ]===0 &&
-                 layout[row  ][col-1]===0 &&
-                 layout[row  ][col+1]===0 &&
-                 layout[row-1][col-1]===0){
+              ac.hover         =true;
+              ac.left.hover    =true;
+              ac.right.hover   =true;
+              ac.topLeft.hover =true;
 
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row  ][col-1].hover=true;
-                ctrls[row  ][col+1].hover=true;
-                ctrls[row-1][col-1].hover=true;
-
-                retVal=true;
-
-              }
-
-            }
-            else if(row>4){
-
-              if(layout[row  ][col  ]===0 &&
-                 layout[row  ][col-1]===0 &&
-                 layout[row  ][col+1]===0 &&
-                 layout[row-1][col  ]===0){
-
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row  ][col-1].hover=true;
-                ctrls[row  ][col+1].hover=true;
-                ctrls[row-1][col  ].hover=true;
-
-                retVal=true;
-
-              }
+              retVal=true;
 
             }
 
@@ -3627,55 +2134,17 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(row<4){
+            if(ac.on          ===false &&
+               ac.left.on     ===false &&
+               ac.right.on    ===false &&
+               ac.bottomRight.on ===false){
 
-              if(layout[row  ][col  ]===0 &&
-                 layout[row  ][col-1]===0 &&
-                 layout[row  ][col+1]===0 &&
-                 layout[row+1][col+1]===0){
+              ac.hover             =true;
+              ac.left.hover        =true;
+              ac.right.hover       =true;
+              ac.bottomRight.hover =true;
 
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row  ][col-1].hover=true;
-                ctrls[row  ][col+1].hover=true;
-                ctrls[row+1][col+1].hover=true;
-
-                retVal=true;
-
-              }
-
-            }
-            else if(row===4){
-
-              if(layout[row  ][col  ]===0 &&
-                 layout[row  ][col-1]===0 &&
-                 layout[row  ][col+1]===0 &&
-                 layout[row+1][col  ]===0){
-
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row  ][col-1].hover=true;
-                ctrls[row  ][col+1].hover=true;
-                ctrls[row+1][col  ].hover=true;
-
-                retVal=true;
-
-                }
-
-            }
-            else if(row>4){
-
-              if(layout[row  ][col  ]===0 &&
-                 layout[row  ][col-1]===0 &&
-                 layout[row  ][col+1]===0 &&
-                 layout[row+1][col  ]===0){
-
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row  ][col-1].hover=true;
-                ctrls[row  ][col+1].hover=true;
-                ctrls[row+1][col  ].hover=true;
-
-                retVal=true;
-
-              }
+              retVal=true;
 
             }
 
@@ -3694,55 +2163,17 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(row<4){
+            if(ac.on            ===false &&
+               ac.left.on       ===false &&
+               ac.right.on      ===false &&
+               ac.bottomLeft.on ===false){
 
-              if(layout[row  ][col  ]===0 &&
-                 layout[row  ][col-1]===0 &&
-                 layout[row  ][col+1]===0 &&
-                 layout[row+1][col  ]===0){
+              ac.hover            =true;
+              ac.left.hover       =true;
+              ac.right.hover      =true;
+              ac.bottomLeft.hover =true;
 
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row  ][col-1].hover=true;
-                ctrls[row  ][col+1].hover=true;
-                ctrls[row+1][col  ].hover=true;
-
-                retVal=true;
-
-              }
-
-            }
-            else if(row===4){
-
-              if(layout[row  ][col  ]===0 &&
-                 layout[row  ][col-1]===0 &&
-                 layout[row  ][col+1]===0 &&
-                 layout[row+1][col-1]===0){
-
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row  ][col-1].hover=true;
-                ctrls[row  ][col+1].hover=true;
-                ctrls[row+1][col-1].hover=true;
-
-                retVal=true;
-
-              }
-
-            }
-            else if(row>4){
-
-              if(layout[row  ][col  ]===0 &&
-                 layout[row  ][col-1]===0 &&
-                 layout[row  ][col+1]===0 &&
-                 layout[row+1][col-1]===0){
-
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row  ][col-1].hover=true;
-                ctrls[row  ][col+1].hover=true;
-                ctrls[row+1][col-1].hover=true;
-
-                retVal=true;
-
-              }
+              retVal=true;
 
             }
 
@@ -3762,55 +2193,17 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(row<4){
+            if(ac.on            ===false &&
+               ac.left.on       ===false &&
+               ac.topRight.on   ===false &&
+               ac.bottomLeft.on ===false){
 
-              if(layout[row  ][col  ]===0 &&
-                 layout[row  ][col-1]===0 &&
-                 layout[row-1][col  ]===0 &&
-                 layout[row+1][col  ]===0){
+              ac.hover            =true;
+              ac.left.hover       =true;
+              ac.topRight.hover   =true;
+              ac.bottomLeft.hover =true;
 
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row  ][col-1].hover=true;
-                ctrls[row-1][col  ].hover=true;
-                ctrls[row+1][col  ].hover=true;
-
-                retVal=true;
-
-              }
-
-            }
-            else if(row===4){
-
-              if(layout[row  ][col  ]===0 &&
-                 layout[row  ][col-1]===0 &&
-                 layout[row-1][col  ]===0 &&
-                 layout[row+1][col-1]===0){
-
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row  ][col-1].hover=true;
-                ctrls[row-1][col  ].hover=true;
-                ctrls[row+1][col-1].hover=true;
-
-                retVal=true;
-
-              }
-
-            }
-            else if(row>4){
-
-              if(layout[row  ][col  ]===0 &&
-                 layout[row  ][col-1]===0 &&
-                 layout[row-1][col+1]===0 &&
-                 layout[row+1][col-1]===0){
-
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row  ][col-1].hover=true;
-                ctrls[row-1][col+1].hover=true;
-                ctrls[row+1][col-1].hover=true;
-
-                retVal=true;
-
-              }
+              retVal=true;
 
             }
 
@@ -3829,55 +2222,17 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(row<4){
+            if(ac.on             ===false &&
+               ac.right.on       ===false &&
+               ac.topLeft.on     ===false &&
+               ac.bottomRight.on ===false){
 
-              if(layout[row  ][col  ]===0 &&
-                 layout[row  ][col+1]===0 &&
-                 layout[row-1][col-1]===0 &&
-                 layout[row+1][col+1]===0){
+              ac.hover             =true;
+              ac.right.hover       =true;
+              ac.topLeft.hover     =true;
+              ac.bottomRight.hover =true;
 
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row  ][col+1].hover=true;
-                ctrls[row-1][col-1].hover=true;
-                ctrls[row+1][col+1].hover=true;
-
-                retVal=true;
-
-              }
-
-            }
-            else if(row===4){
-
-              if(layout[row  ][col  ]===0 &&
-                 layout[row  ][col+1]===0 &&
-                 layout[row-1][col-1]===0 &&
-                 layout[row+1][col  ]===0){
-
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row  ][col+1].hover=true;
-                ctrls[row-1][col-1].hover=true;
-                ctrls[row+1][col  ].hover=true;
-
-                retVal=true;
-
-              }
-
-            }
-            else if(row>4){
-
-              if(layout[row  ][col  ]===0 &&
-                 layout[row  ][col+1]===0 &&
-                 layout[row-1][col  ]===0 &&
-                 layout[row+1][col  ]===0){
-
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row  ][col+1].hover=true;
-                ctrls[row-1][col  ].hover=true;
-                ctrls[row+1][col  ].hover=true;
-
-                retVal=true;
-
-              }
+              retVal=true;
 
             }
 
@@ -3896,55 +2251,17 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(row<4){
+            if(ac.on             ===false &&
+               ac.left.on        ===false &&
+               ac.topLeft.on     ===false &&
+               ac.bottomRight.on ===false){
 
-              if(layout[row  ][col  ]===0 &&
-                 layout[row  ][col-1]===0 &&
-                 layout[row-1][col-1]===0 &&
-                 layout[row+1][col+1]===0){
+              ac.hover             =true;
+              ac.left.hover        =true;
+              ac.topLeft.hover     =true;
+              ac.bottomRight.hover =true;
 
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row  ][col-1].hover=true;
-                ctrls[row-1][col-1].hover=true;
-                ctrls[row+1][col+1].hover=true;
-
-                retVal=true;
-
-              }
-
-            }
-            else if(row===4){
-
-              if(layout[row  ][col  ]===0 &&
-                 layout[row  ][col-1]===0 &&
-                 layout[row-1][col-1]===0 &&
-                 layout[row+1][col  ]===0){
-
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row  ][col-1].hover=true;
-                ctrls[row-1][col-1].hover=true;
-                ctrls[row+1][col  ].hover=true;
-
-                retVal=true;
-
-              }
-
-            }
-            else if(row>4){
-
-              if(layout[row  ][col  ]===0 &&
-                 layout[row  ][col-1]===0 &&
-                 layout[row-1][col  ]===0 &&
-                 layout[row+1][col  ]===0){
-
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row  ][col-1].hover=true;
-                ctrls[row-1][col  ].hover=true;
-                ctrls[row+1][col  ].hover=true;
-
-                retVal=true;
-
-              }
+              retVal=true;
 
             }
 
@@ -3963,55 +2280,17 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(row<4){
+            if(ac.on          ===false &&
+               ac.right.on    ===false &&
+               ac.topRight.on ===false &&
+               ac.bottomLeft.on  ===false){
 
-              if(layout[row  ][col  ]===0 &&
-                 layout[row  ][col+1]===0 &&
-                 layout[row-1][col  ]===0 &&
-                 layout[row+1][col  ]===0){
+              ac.hover          =true;
+              ac.right.hover    =true;
+              ac.topRight.hover =true;
+              ac.bottomLeft.hover  =true;
 
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row  ][col+1].hover=true;
-                ctrls[row-1][col  ].hover=true;
-                ctrls[row+1][col  ].hover=true;
-
-                retVal=true;
-
-              }
-
-            }
-            else if(row===4){
-
-              if(layout[row  ][col  ]===0 &&
-                 layout[row  ][col+1]===0 &&
-                 layout[row-1][col  ]===0 &&
-                 layout[row+1][col-1]===0){
-
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row  ][col+1].hover=true;
-                ctrls[row-1][col  ].hover=true;
-                ctrls[row+1][col-1].hover=true;
-
-                retVal=true;
-
-              }
-
-            }
-            else if(row>4){
-
-              if(layout[row  ][col  ]===0 &&
-                 layout[row  ][col+1]===0 &&
-                 layout[row-1][col+1]===0 &&
-                 layout[row+1][col-1]===0){
-
-                ctrls[row  ][col  ].hover=true;
-                ctrls[row  ][col+1].hover=true;
-                ctrls[row-1][col+1].hover=true;
-                ctrls[row+1][col-1].hover=true;
-
-                retVal=true;
-
-              }
+              retVal=true;
 
             }
 
@@ -4169,6 +2448,7 @@ var diagrams = function(processingInstance){
                                                                  this.controls[0][2].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
                 text:   100*multiplier,
+                font:   monoFont,
                 timer:  40}));
 
             multiplier++;
@@ -4187,6 +2467,7 @@ var diagrams = function(processingInstance){
                                                                  this.controls[1][2].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
                 text:   120*multiplier,
+                font:   monoFont,
                 timer:  50}));
 
             multiplier++;
@@ -4205,6 +2486,7 @@ var diagrams = function(processingInstance){
                                                                  this.controls[2][3].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
                 text:   140*multiplier,
+                font:   monoFont,
                 timer:  50}));
 
             multiplier++;
@@ -4223,6 +2505,7 @@ var diagrams = function(processingInstance){
                                                                  this.controls[3][4].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
                 text:   160*multiplier,
+                font:   monoFont,
                 timer:  50}));
 
             multiplier++;
@@ -4241,6 +2524,7 @@ var diagrams = function(processingInstance){
                                                                  this.controls[4][4].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
                 text:   180*multiplier,
+                font:   monoFont,
                 timer:  50}));
 
             multiplier++;
@@ -4259,6 +2543,7 @@ var diagrams = function(processingInstance){
                                                                  this.controls[5][3].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
                 text:   160*multiplier,
+                font:   monoFont,
                 timer:  50}));
 
             multiplier++;
@@ -4277,6 +2562,7 @@ var diagrams = function(processingInstance){
                                                                  this.controls[6][3].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
                 text:   140*multiplier,
+                font:   monoFont,
                 timer:  50}));
 
             multiplier++;
@@ -4295,6 +2581,7 @@ var diagrams = function(processingInstance){
                                                                  this.controls[7][2].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
                 text:   120*multiplier,
+                font:   monoFont,
                 timer:  50}));
 
             multiplier++;
@@ -4311,6 +2598,7 @@ var diagrams = function(processingInstance){
                                                                  this.controls[8][2].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
                 text:   100*multiplier,
+                font:   monoFont,
                 timer:  50}));
 
             multiplier++;
@@ -4333,6 +2621,7 @@ var diagrams = function(processingInstance){
                                                                  this.controls[2][0].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
                 text:   100*multiplier,
+                font:   monoFont,
                 timer:  50}));
 
             multiplier++;
@@ -4351,6 +2640,7 @@ var diagrams = function(processingInstance){
                                                                  this.controls[2][1].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
                 text:   120*multiplier,
+                font:   monoFont,
                 timer:  50}));
 
             multiplier++;
@@ -4369,6 +2659,7 @@ var diagrams = function(processingInstance){
                                                                  this.controls[3][2].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
                 text:   140*multiplier,
+                font:   monoFont,
                 timer:  50}));
 
             multiplier++;
@@ -4387,6 +2678,7 @@ var diagrams = function(processingInstance){
                                                                  this.controls[4][3].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
                 text:   160*multiplier,
+                font:   monoFont,
                 timer:  50}));
 
             multiplier++;
@@ -4405,6 +2697,7 @@ var diagrams = function(processingInstance){
                                                                  this.controls[4][4].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
                 text:   180*multiplier,
+                font:   monoFont,
                 timer:  50}));
 
             multiplier++;
@@ -4423,6 +2716,7 @@ var diagrams = function(processingInstance){
                                                                  this.controls[4][5].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
                 text:   160*multiplier,
+                font:   monoFont,
                 timer:  50}));
 
             multiplier++;
@@ -4441,6 +2735,7 @@ var diagrams = function(processingInstance){
                                                                  this.controls[5][5].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
                 text:   140*multiplier,
+                font:   monoFont,
                 timer:  50}));
 
             multiplier++;
@@ -4459,6 +2754,7 @@ var diagrams = function(processingInstance){
                                                                  this.controls[5][6].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
                 text:   120*multiplier,
+                font:   monoFont,
                 timer:  50}));
 
             multiplier++;
@@ -4475,6 +2771,7 @@ var diagrams = function(processingInstance){
                                                                  this.controls[6][6].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
                 text:   100*multiplier,
+                font:   monoFont,
                 timer:  50}));
 
             multiplier++;
@@ -4497,6 +2794,7 @@ var diagrams = function(processingInstance){
                                                                  this.controls[6][0].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
                 text:   100*multiplier,
+                font:   monoFont,
                 timer:  50}));
 
             multiplier++;
@@ -4515,6 +2813,7 @@ var diagrams = function(processingInstance){
                                                                  this.controls[6][1].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
                 text:   120*multiplier,
+                font:   monoFont,
                 timer:  50}));
 
             multiplier++;
@@ -4533,6 +2832,7 @@ var diagrams = function(processingInstance){
                                                                  this.controls[6][2].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
                 text:   140*multiplier,
+                font:   monoFont,
                 timer:  50}));
 
             multiplier++;
@@ -4551,6 +2851,7 @@ var diagrams = function(processingInstance){
                                                                  this.controls[5][3].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
                 text:   160*multiplier,
+                font:   monoFont,
                 timer:  50}));
 
             multiplier++;
@@ -4569,6 +2870,7 @@ var diagrams = function(processingInstance){
                                                                  this.controls[4][4].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
                 text:   180*multiplier,
+                font:   monoFont,
                 timer:  50}));
 
             multiplier++;
@@ -4587,6 +2889,7 @@ var diagrams = function(processingInstance){
                                                                  this.controls[3][4].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
                 text:   160*multiplier,
+                font:   monoFont,
                 timer:  50}));
 
             multiplier++;
@@ -4605,6 +2908,7 @@ var diagrams = function(processingInstance){
                                                                  this.controls[3][5].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
                 text:   140*multiplier,
+                font:   monoFont,
                 timer:  50}));
 
             multiplier++;
@@ -4623,6 +2927,7 @@ var diagrams = function(processingInstance){
                                                                  this.controls[2][5].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
                 text:   120*multiplier,
+                font:   monoFont,
                 timer:  50}));
 
             multiplier++;
@@ -4638,6 +2943,7 @@ var diagrams = function(processingInstance){
                                                                  this.controls[2][6].y+offsetY, 0,0,
               { style:  SCORESTYLES.TEXT,
                 text:   100*multiplier,
+                font:   monoFont,
                 timer:  50}));
 
             multiplier++;
@@ -5721,6 +4027,7 @@ var diagrams = function(processingInstance){
 
             this.scores.push(new score(this.scores.length, this, this.activeShape.x, this.activeShape.y, 10,10,
               { style:  SCORESTYLES.TEXT,
+                font:   monoFont,
                 text:   '40',
                 timer:  30}));
 
@@ -6655,6 +4962,11 @@ var diagrams = function(processingInstance){
 
         this.timer    = props.timer;
 
+        this.scale    = 1;
+
+        textFont(this.font);
+        textSize(30);
+                
         // this.on=false;
 
       };
@@ -6669,7 +4981,7 @@ var diagrams = function(processingInstance){
           pushMatrix();
 
             translate(this.x, this.y);
-            scale(1,-1);
+            scale(this.scale,-this.scale);
 
               // Border
               strokeWeight(0.75);
@@ -6679,9 +4991,9 @@ var diagrams = function(processingInstance){
               if(this.style===SCORESTYLES.TEXT){
 
                 scale(1,-1);
-
+                
                 // textFont(this.font);
-                textSize(this.timer+30);
+                // textSize(30);
                 fill(this.color);
                 fill(getColor(CLRS.WHITE,70+this.timer));
                 textAlign(CENTER,CENTER);
@@ -6704,6 +5016,8 @@ var diagrams = function(processingInstance){
               }
 
           popMatrix();
+
+          this.scale*=0.99;
 
       };
       score.prototype.moved=function(x,y){
@@ -7285,13 +5599,12 @@ var diagrams = function(processingInstance){
           // try{
             
             if(this.hit){
- 
-// println(this.right.x);
+
               // if(this.right       ){ this.right.color       = CLRS.VIOLET;  }
               // if(this.left        ){ this.left.color        = CLRS.PINK;    }
               
-              if(this.topRight    ){ this.topRight.color    = CLRS.GREEN;   }
-              if(this.topLeft     ){ this.topLeft.color     = CLRS.YELLOW;  }
+              // if(this.topRight    ){ this.topRight.color    = CLRS.GREEN;   }
+              // if(this.topLeft     ){ this.topLeft.color     = CLRS.YELLOW;  }
               
               // if(this.bottomRight ){ this.bottomRight.color = CLRS.BLUE;    }
               // if(this.bottomLeft  ){ this.bottomLeft.color  = CLRS.ORANGE;  }
