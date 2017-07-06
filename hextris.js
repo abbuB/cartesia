@@ -1610,9 +1610,9 @@ var diagrams = function(processingInstance){
                ac.left.on     ===false &&
                ac.left.left.on===false){
                  
-              ac.hover=true;
-              ac.right.hover=true;
-              ac.left.hover=true;
+              ac.hover          =true;
+              ac.right.hover    =true;
+              ac.left.hover     =true;
               ac.left.left.hover=true;
 
               retVal=true;
@@ -2430,9 +2430,10 @@ var diagrams = function(processingInstance){
         var offsetY=this.y;
 
         var l=this.layout;
+        var p=this;
 
-        function val    (row,col){ return l[row][col]===1;      };
-        function addCell(row,col){ cells.push(new pt(row,col)); };
+        function val    (row,col){ return p.controls[row][col].on; };
+        function addCell(row,col){ cells.push(new pt(row,col));    };
 
         /* Rows */
         {
@@ -2954,7 +2955,7 @@ var diagrams = function(processingInstance){
 
         // Clear Cells
         for(var n=0; n<cells.length; n++){
-          this.layout[cells[n].row][cells[n].col]=0;
+          this.controls[cells[n].row][cells[n].col].on=false;
           this.controls[cells[n].row][cells[n].col].color=this.color;
           this.controls[cells[n].row][cells[n].col].timer=60;
         }
@@ -2964,19 +2965,15 @@ var diagrams = function(processingInstance){
       };
       hexBoard.prototype.gameOver=function(){
 
-        var layout = this.layout;
         var retVal = true;
 
-        function testShape(s,row,col){
-
-          row/=1;
-          col/=1;
+        function testShape(s,cell){
 
           function single(){
 
             try{
 
-              if(layout[row][col]===0){ retVal=false;  }
+              retVal=!cell.on;
 
             }
             catch(e){
@@ -2993,10 +2990,10 @@ var diagrams = function(processingInstance){
 
             try{
 
-              if(layout[row][col-1]==0 &&
-                 layout[row][col-2]==0 &&
-                 layout[row][col  ]==0 &&
-                 layout[row][col+1]==0){ retVal=false;  }
+              retVal=!(cell.on           ===false &&
+                       cell.right.on     ===false &&
+                       cell.left.on      ===false &&
+                       cell.left.left.on ===false)
 
             }
             catch(e){
@@ -3013,38 +3010,10 @@ var diagrams = function(processingInstance){
 
             try{
 
-              if     (row<4){
-
-                if(layout[row  ][col]===0 &&
-                   layout[row-1][col]===0 &&
-                   layout[row-2][col]===0 &&
-                   layout[row+1][col]===0){ retVal=false;  }
-
-              }
-              else if(row===4){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row-1][col  ]===0 &&
-                   layout[row-2][col  ]===0 &&
-                   layout[row+1][col-1]===0){ retVal=false;  }
-
-              }
-              else if(row===5){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row-1][col+1]===0 &&
-                   layout[row-2][col+1]===0 &&
-                   layout[row+1][col-1]===0){ retVal=false;  }
-
-              }
-              else if(row>5){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row-1][col+1]===0 &&
-                   layout[row-2][col+2]===0 &&
-                   layout[row+1][col-1]===0){ retVal=false;  }
-
-              }
+              retVal=!(cell.on                   ===false &&
+                       cell.bottomLeft.on        ===false &&
+                       cell.topRight.on          ===false &&
+                       cell.topRight.topRight.on ===false)
 
             }
             catch(e){
@@ -3061,38 +3030,10 @@ var diagrams = function(processingInstance){
 
             try{
 
-              if     (row<4){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row-1][col-1]===0 &&
-                   layout[row-2][col-2]===0 &&
-                   layout[row+1][col+1]===0){ retVal=false; }
-
-              }
-              else if(row===4){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row-1][col-1]===0 &&
-                   layout[row-2][col-2]===0 &&
-                   layout[row+1][col  ]===0){ retVal=false;  }
-
-              }
-              else if(row===5){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row-1][col  ]===0 &&
-                   layout[row-2][col-1]===0 &&
-                   layout[row+1][col  ]===0){ retVal=false;  }
-
-              }
-              else if(row>5){
-
-                if(layout[row  ][col]===0 &&
-                   layout[row-1][col]===0 &&
-                   layout[row-2][col]===0 &&
-                   layout[row+1][col]===0){ retVal=false;  }
-
-              }
+              retVal=!(cell.on                 ===false &&
+                       cell.bottomRight.on     ===false &&
+                       cell.topLeft.on         ===false &&
+                       cell.topLeft.topLeft.on ===false)
 
             }
             catch(e){
@@ -3110,30 +3051,10 @@ var diagrams = function(processingInstance){
 
             try{
 
-              if     (row<4){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row-1][col-1]===0 &&
-                   layout[row  ][col-1]===0 &&
-                   layout[row+1][col  ]===0){ retVal=false;  }
-
-              }
-              else if(row===4){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row-1][col-1]===0 &&
-                   layout[row  ][col-1]===0 &&
-                   layout[row+1][col-1]===0){ retVal=false;  }
-
-              }
-              else if(row>4){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row-1][col  ]===0 &&
-                   layout[row  ][col-1]===0 &&
-                   layout[row+1][col-1]===0){ retVal=false;  }
-
-              }
+              retVal=!(cell.on            ===false &&
+                       cell.left.on       ===false &&
+                       cell.bottomLeft.on ===false &&
+                       cell.topLeft.on    ===false)
 
             }
             catch(e){
@@ -3151,30 +3072,10 @@ var diagrams = function(processingInstance){
 
             try{
 
-              if     (row<3){
-
-                if(layout[row  ][col-1]===0 &&
-                   layout[row  ][col+1]===0 &&
-                   layout[row+1][col+1]===0 &&
-                   layout[row+1][col  ]===0){ retVal=false;  }
-
-              }
-              else if(row===3 ){
-
-                if(layout[row  ][col-1]===0 &&
-                   layout[row  ][col+1]===0 &&
-                   layout[row+1][col+1]===0 &&
-                   layout[row+1][col  ]===0){ retVal=false;  }
-
-              }
-              else if(row>=3 ){
-
-                if(layout[row  ][col-1]===0 &&
-                   layout[row  ][col+1]===0 &&
-                   layout[row+1][col-1]===0 &&
-                   layout[row+1][col  ]===0){ retVal=false;  }
-
-              }
+              retVal=!(cell.left           ===false &&
+                       cell.right.on       ===false &&
+                       cell.bottomRight.on ===false &&
+                       cell.bottomLeft.on  ===false)
 
             }
             catch(e){
@@ -3191,22 +3092,10 @@ var diagrams = function(processingInstance){
 
             try{
 
-              if     (row<5){
-
-                if(layout[row-1][col  ]===0 &&
-                   layout[row-1][col-1]===0 &&
-                   layout[row  ][col+1]===0 &&
-                   layout[row  ][col-1]===0){ retVal=false;  }
-
-              }
-              else if(row>=5 ){
-
-                if(layout[row-1][col  ]===0 &&
-                   layout[row-1][col+1]===0 &&
-                   layout[row  ][col+1]===0 &&
-                   layout[row  ][col-1]===0){ retVal=false;  }
-
-              }
+              retVal=!(cell.left        ===false &&
+                       cell.right.on    ===false &&
+                       cell.topRight.on ===false &&
+                       cell.topLeft.on  ===false)
 
             }
             catch(e){
@@ -3224,30 +3113,10 @@ var diagrams = function(processingInstance){
 
             try{
 
-              if     (row<4){
-
-                if(layout[row  ][col-1]===0 &&
-                   layout[row-1][col-1]===0 &&
-                   layout[row+1][col  ]===0 &&
-                   layout[row+1][col+1]===0){ retVal=false;  }
-
-              }
-              else if(row===4 ){
-
-                if(layout[row  ][col-1]===0 &&
-                   layout[row-1][col-1]===0 &&
-                   layout[row+1][col  ]===0 &&
-                   layout[row+1][col-1]===0){ retVal=false;  }
-
-              }
-              else if(row>4 ){
-
-                if(layout[row  ][col-1]===0 &&
-                   layout[row-1][col  ]===0 &&
-                   layout[row+1][col  ]===0 &&
-                   layout[row+1][col-1]===0){ retVal=false;  }
-
-              }
+              retVal=!(cell.left           ===false &&
+                       cell.topLeft.on     ===false &&
+                       cell.bottomRight.on ===false &&
+                       cell.bottomLeft.on  ===false)
 
             }
             catch(e){
@@ -3264,30 +3133,10 @@ var diagrams = function(processingInstance){
 
             try{
 
-              if     (row<4){
-
-                if(layout[row  ][col-1]===0 &&
-                   layout[row-1][col-1]===0 &&
-                   layout[row-1][col  ]===0 &&
-                   layout[row+1][col  ]===0){ retVal=false;  }
-
-              }
-              else if(row===4 ){
-
-                if(layout[row  ][col-1]===0 &&
-                   layout[row-1][col-1]===0 &&
-                   layout[row-1][col  ]===0 &&
-                   layout[row+1][col-1]===0){ retVal=false;  }
-
-              }
-              else if(row>4 ){
-
-                if(layout[row  ][col-1]===0 &&
-                   layout[row-1][col+1]===0 &&
-                   layout[row-1][col  ]===0 &&
-                   layout[row+1][col-1]===0){ retVal=false;  }
-
-              }
+              retVal=!(cell.left          ===false &&
+                       cell.bottomLeft.on ===false &&
+                       cell.topRight.on   ===false &&
+                       cell.topLeft.on    ===false)
 
             }
             catch(e){
@@ -3304,30 +3153,10 @@ var diagrams = function(processingInstance){
 
             try{
 
-              if     (row<4){
-
-                if(layout[row  ][col+1]===0 &&
-                   layout[row-1][col  ]===0 &&
-                   layout[row+1][col  ]===0 &&
-                   layout[row+1][col+1]===0){ retVal=false;  }
-
-              }
-              else if(row===4 ){
-
-                if(layout[row  ][col+1]===0 &&
-                   layout[row-1][col  ]===0 &&
-                   layout[row+1][col  ]===0 &&
-                   layout[row+1][col-1]===0){ retVal=false;  }
-
-              }
-              else if(row>4 ){
-
-                if(layout[row  ][col+1]===0 &&
-                   layout[row-1][col+1]===0 &&
-                   layout[row+1][col-1]===0 &&
-                   layout[row+1][col  ]===0){ retVal=false;  }
-
-              }
+              retVal=!(cell.right.on       ===false &&
+                       cell.topRight.on    ===false &&
+                       cell.bottomRight.on ===false &&
+                       cell.bottomLeft.on  ===false)
 
             }
             catch(e){
@@ -3344,30 +3173,10 @@ var diagrams = function(processingInstance){
 
             try{
 
-              if     (row<4){
-
-                if(layout[row  ][col+1]===0 &&
-                   layout[row-1][col  ]===0 &&
-                   layout[row-1][col-1]===0 &&
-                   layout[row+1][col+1]===0){ retVal=false;  }
-
-              }
-              else if(row===4 ){
-
-                if(layout[row  ][col+1]===0 &&
-                   layout[row-1][col  ]===0 &&
-                   layout[row-1][col-1]===0 &&
-                   layout[row+1][col  ]===0){ retVal=false;  }
-
-              }
-              else if(row>4 ){
-
-                if(layout[row  ][col+1]===0 &&
-                   layout[row-1][col  ]===0 &&
-                   layout[row-1][col+1]===0 &&
-                   layout[row+1][col  ]===0){ retVal=false;  }
-
-              }
+              retVal=!(cell.right.on       ===false &&
+                       cell.bottomRight.on ===false &&
+                       cell.topRight.on    ===false &&
+                       cell.topLeft.on     ===false)
 
             }
             catch(e){
@@ -3385,22 +3194,10 @@ var diagrams = function(processingInstance){
 
             try{
 
-              if     (row<5){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row  ][col-1]===0 &&
-                   layout[row-1][col-1]===0 &&
-                   layout[row-1][col  ]===0){ retVal=false;  }
-
-              }
-              else if(row>=5){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row  ][col-1]===0 &&
-                   layout[row-1][col  ]===0 &&
-                   layout[row-1][col+1]===0){ retVal=false;  }
-
-              }
+              retVal=!(cell.on          ===false &&
+                       cell.left.on     ===false &&
+                       cell.topRight.on ===false &&
+                       cell.topLeft.on  ===false)
 
             }
             catch(e){
@@ -3417,22 +3214,10 @@ var diagrams = function(processingInstance){
 
             try{
 
-              if     (row<5){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row  ][col+1]===0 &&
-                   layout[row-1][col  ]===0 &&
-                   layout[row-1][col-1]===0){ retVal=false;  }
-
-              }
-              else if(row>=5){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row  ][col+1]===0 &&
-                   layout[row-1][col  ]===0 &&
-                   layout[row-1][col+1]===0){ retVal=false;  }
-
-              }
+              retVal=!(cell.on          ===false &&
+                       cell.right.on    ===false &&
+                       cell.topRight.on ===false &&
+                       cell.topLeft.on  ===false)
 
             }
             catch(e){
@@ -3450,30 +3235,10 @@ var diagrams = function(processingInstance){
 
             try{
 
-              if     (row<4){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row+1][col+1]===0 &&
-                   layout[row-1][col  ]===0 &&
-                   layout[row-1][col-1]===0){ retVal=false;  }
-
-              }
-              else if(row===4){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row+1][col  ]===0 &&
-                   layout[row-1][col  ]===0 &&
-                   layout[row-1][col-1]===0){ retVal=false;  }
-
-              }
-              else if(row>4){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row+1][col  ]===0 &&
-                   layout[row-1][col  ]===0 &&
-                   layout[row-1][col+1]===0){ retVal=false;  }
-
-              }
+              retVal=!(cell.on             ===false &&
+                       cell.bottomRight.on ===false &&
+                       cell.topRight.on    ===false &&
+                       cell.topLeft.on     ===false)
 
             }
             catch(e){
@@ -3490,30 +3255,10 @@ var diagrams = function(processingInstance){
 
             try{
 
-              if     (row<4){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row+1][col  ]===0 &&
-                   layout[row-1][col  ]===0 &&
-                   layout[row-1][col-1]===0){ retVal=false;  }
-
-              }
-              else if(row===4){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row+1][col-1]===0 &&
-                   layout[row-1][col  ]===0 &&
-                   layout[row-1][col-1]===0){ retVal=false;  }
-
-              }
-              else if(row>4){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row+1][col-1]===0 &&
-                   layout[row-1][col  ]===0 &&
-                   layout[row-1][col+1]===0){ retVal=false;  }
-
-              }
+              retVal=!(cell.on            ===false &&
+                       cell.bottomLeft.on ===false &&
+                       cell.topRight.on   ===false &&
+                       cell.topLeft.on    ===false)
 
             }
             catch(e){
@@ -3531,30 +3276,10 @@ var diagrams = function(processingInstance){
 
             try{
 
-              if     (row<4){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row-1][col  ]===0 &&
-                   layout[row+1][col  ]===0 &&
-                   layout[row+1][col+1]===0){ retVal=false; }
-
-              }
-              else if(row===4){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row-1][col  ]===0 &&
-                   layout[row+1][col  ]===0 &&
-                   layout[row+1][col-1]===0){ retVal=false;  }
-
-              }
-              else if(row>4){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row-1][col+1]===0 &&
-                   layout[row+1][col  ]===0 &&
-                   layout[row+1][col-1]===0){ retVal=false;  }
-
-              }
+              retVal=!(cell.on             ===false &&
+                       cell.topRight.on    ===false &&
+                       cell.bottomRight.on ===false &&
+                       cell.bottomLeft.on  ===false)
 
             }
             catch(e){
@@ -3571,30 +3296,10 @@ var diagrams = function(processingInstance){
 
             try{
 
-              if     (row<4){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row-1][col-1]===0 &&
-                   layout[row+1][col  ]===0 &&
-                   layout[row+1][col+1]===0){ retVal=false;  }
-
-              }
-              else if(row===4){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row-1][col-1]===0 &&
-                   layout[row+1][col  ]===0 &&
-                   layout[row+1][col-1]===0){ retVal=false;  }
-
-              }
-              else if(row>4){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row-1][col  ]===0 &&
-                   layout[row+1][col  ]===0 &&
-                   layout[row+1][col-1]===0){ retVal=false;  }
-
-              }
+              retVal=!(cell.on             ===false &&
+                       cell.topLeft.on     ===false &&
+                       cell.bottomRight.on ===false &&
+                       cell.bottomLeft.on  ===false)
 
             }
             catch(e){
@@ -3612,22 +3317,10 @@ var diagrams = function(processingInstance){
 
             try{
 
-              if     (row<5){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row  ][col-1]===0 &&
-                   layout[row  ][col+1]===0 &&
-                   layout[row-1][col  ]===0){ retVal=false;  }
-
-              }
-              else if(row>4){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row  ][col-1]===0 &&
-                   layout[row  ][col+1]===0 &&
-                   layout[row-1][col+1]===0){ retVal=false;  }
-
-              }
+              retVal=!(cell.on          ===false &&
+                       cell.left.on     ===false &&
+                       cell.right.on    ===false &&
+                       cell.topRight.on ===false)
 
             }
             catch(e){
@@ -3644,22 +3337,10 @@ var diagrams = function(processingInstance){
 
             try{
 
-              if     (row<5){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row  ][col-1]===0 &&
-                   layout[row  ][col+1]===0 &&
-                   layout[row-1][col-1]===0){ retVal=false;  }
-
-              }
-              else if(row>4){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row  ][col-1]===0 &&
-                   layout[row  ][col+1]===0 &&
-                   layout[row-1][col  ]===0){ retVal=false;  }
-
-              }
+              retVal=!(cell.on         ===false &&
+                       cell.left.on    ===false &&
+                       cell.right.on   ===false &&
+                       cell.topLeft.on ===false)
 
             }
             catch(e){
@@ -3676,30 +3357,10 @@ var diagrams = function(processingInstance){
 
             try{
 
-              if     (row<4){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row  ][col-1]===0 &&
-                   layout[row  ][col+1]===0 &&
-                   layout[row+1][col+1]===0){ retVal=false; }
-
-              }
-              else if(row===4){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row  ][col-1]===0 &&
-                   layout[row  ][col+1]===0 &&
-                   layout[row+1][col  ]===0){ retVal=false;  }
-
-              }
-              else if(row>4){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row  ][col-1]===0 &&
-                   layout[row  ][col+1]===0 &&
-                   layout[row+1][col  ]===0){ retVal=false;  }
-
-              }
+              retVal=!(cell.on             ===false &&
+                       cell.left.on        ===false &&
+                       cell.right.on       ===false &&
+                       cell.bottomRight.on ===false)
 
             }
             catch(e){
@@ -3716,30 +3377,10 @@ var diagrams = function(processingInstance){
 
             try{
 
-              if     (row<4){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row  ][col-1]===0 &&
-                   layout[row  ][col+1]===0 &&
-                   layout[row+1][col  ]===0){ retVal=false;  }
-
-              }
-              else if(row===4){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row  ][col-1]===0 &&
-                   layout[row  ][col+1]===0 &&
-                   layout[row+1][col-1]===0){ retVal=false;  }
-
-              }
-              else if(row>4){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row  ][col-1]===0 &&
-                   layout[row  ][col+1]===0 &&
-                   layout[row+1][col-1]===0){ retVal=false;  }
-
-              }
+              retVal=!(cell.on            ===false &&
+                       cell.left.on       ===false &&
+                       cell.right.on      ===false &&
+                       cell.bottomLeft.on ===false)
 
             }
             catch(e){
@@ -3757,30 +3398,10 @@ var diagrams = function(processingInstance){
 
             try{
 
-              if     (row<4){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row  ][col-1]===0 &&
-                   layout[row-1][col  ]===0 &&
-                   layout[row+1][col  ]===0){ retVal=false;  }
-
-              }
-              else if(row===4){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row  ][col-1]===0 &&
-                   layout[row-1][col  ]===0 &&
-                   layout[row+1][col-1]===0){ retVal=false;  }
-
-              }
-              else if(row>4){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row  ][col-1]===0 &&
-                   layout[row-1][col+1]===0 &&
-                   layout[row+1][col-1]===0){ retVal=false;  }
-
-              }
+              retVal=!(cell.on            ===false &&
+                       cell.left.on       ===false &&
+                       cell.topRight.on   ===false &&
+                       cell.bottomLeft.on ===false)
 
             }
             catch(e){
@@ -3797,30 +3418,10 @@ var diagrams = function(processingInstance){
 
             try{
 
-              if     (row<4){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row  ][col+1]===0 &&
-                   layout[row-1][col-1]===0 &&
-                   layout[row+1][col+1]===0){ retVal=false;  }
-
-              }
-              else if(row===4){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row  ][col+1]===0 &&
-                   layout[row-1][col-1]===0 &&
-                   layout[row+1][col  ]===0){ retVal=false;  }
-
-              }
-              else if(row>4){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row  ][col+1]===0 &&
-                   layout[row-1][col  ]===0 &&
-                   layout[row+1][col  ]===0){ retVal=false;  }
-
-              }
+              retVal=!(cell.on             ===false &&
+                       cell.right.on       ===false &&
+                       cell.topLeft.on     ===false &&
+                       cell.bottomRight.on ===false)
 
             }
             catch(e){
@@ -3837,30 +3438,10 @@ var diagrams = function(processingInstance){
 
             try{
 
-              if     (row<4){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row  ][col-1]===0 &&
-                   layout[row-1][col-1]===0 &&
-                   layout[row+1][col+1]===0){ retVal=false;  }
-
-              }
-              else if(row===4){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row  ][col-1]===0 &&
-                   layout[row-1][col-1]===0 &&
-                   layout[row+1][col  ]===0){ retVal=false;  }
-
-              }
-              else if(row>4){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row  ][col-1]===0 &&
-                   layout[row-1][col  ]===0 &&
-                   layout[row+1][col  ]===0){ retVal=false;  }
-
-              }
+              retVal=!(cell.on            ===false &&
+                       cell.right.on      ===false &&
+                       cell.topRight.on   ===false &&
+                       cell.bottomLeft.on ===false)
 
             }
             catch(e){
@@ -3877,30 +3458,10 @@ var diagrams = function(processingInstance){
 
             try{
 
-              if     (row<4){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row  ][col+1]===0 &&
-                   layout[row-1][col  ]===0 &&
-                   layout[row+1][col  ]===0){ retVal=false;  }
-
-              }
-              else if(row===4){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row  ][col+1]===0 &&
-                   layout[row-1][col  ]===0 &&
-                   layout[row+1][col-1]===0){ retVal=false;  }
-
-              }
-              else if(row>4){
-
-                if(layout[row  ][col  ]===0 &&
-                   layout[row  ][col+1]===0 &&
-                   layout[row-1][col+1]===0 &&
-                   layout[row+1][col-1]===0){ retVal=false;  }
-
-              }
+              retVal=!(cell.on                 ===false &&
+                       cell.bottomRight.on     ===false &&
+                       cell.topLeft.on         ===false &&
+                       cell.topLeft.topLeft.on ===false)
 
             }
             catch(e){
@@ -3967,20 +3528,20 @@ var diagrams = function(processingInstance){
             for(var r in this.controls){
               for(var c in this.controls[r]){
 
-                if(this.layout[r][c]===0 ||
-                   this.shapes[s].style===SHAPES.UDOWN ||
-                   this.shapes[s].style===SHAPES.UPRIGHT ||
-                   this.shapes[s].style===SHAPES.UPLEFT ||
-                   this.shapes[s].style===SHAPES.DOWNRIGHT ||
-                   this.shapes[s].style===SHAPES.DOWNLEFT){
+                // if(this.layout[r][c]===0 ||
+                   // this.shapes[s].style===SHAPES.UDOWN ||
+                   // this.shapes[s].style===SHAPES.UPRIGHT ||
+                   // this.shapes[s].style===SHAPES.UPLEFT ||
+                   // this.shapes[s].style===SHAPES.DOWNRIGHT ||
+                   // this.shapes[s].style===SHAPES.DOWNLEFT){
 
                   n++;
 
-                  testShape(this.shapes[s].style,r,c);
+                  testShape(this.shapes[s].style,this.controls[r][c]);
 
                   if(retVal===false){ break; }
 
-                }
+                // }
 
               }
               if(retVal===false){ break; }
@@ -4965,7 +4526,7 @@ var diagrams = function(processingInstance){
         this.scale    = 1;
 
         textFont(this.font);
-        textSize(30);
+        textSize(50);
                 
         // this.on=false;
 
@@ -5353,9 +4914,9 @@ var diagrams = function(processingInstance){
 
                 case SHAPES.SINGLE:         single(CLRS.SINGLE);      break;
 
-                case SHAPES.LINE:            row(CLRS.LINE);           break;
-                case SHAPES.LINEFORWARD:     forward(CLRS.LINE);       break;
-                case SHAPES.LINEBACK:        back(CLRS.LINE);          break;
+                case SHAPES.LINE:           row(CLRS.LINE);           break;
+                case SHAPES.LINEFORWARD:    forward(CLRS.LINE);       break;
+                case SHAPES.LINEBACK:       back(CLRS.LINE);          break;
 
                 case SHAPES.DIAMOND:        diamond(CLRS.DIAMOND);    break;
                 case SHAPES.ZRIGHT:         zRight(CLRS.Z);           break;
@@ -5562,7 +5123,7 @@ var diagrams = function(processingInstance){
           noStroke();
 
           if(app.gameOver){
-            fill(getColor(CLRS.RED,50));
+            fill(getColor(CLRS.RED,10));
           }
           else if(p.timer!==0){
             // stroke(CLRS.RED);
@@ -5595,31 +5156,6 @@ var diagrams = function(processingInstance){
           scale(1,-1);
 
             border();
-
-          // try{
-            
-            if(this.hit){
-
-              // if(this.right       ){ this.right.color       = CLRS.VIOLET;  }
-              // if(this.left        ){ this.left.color        = CLRS.PINK;    }
-              
-              // if(this.topRight    ){ this.topRight.color    = CLRS.GREEN;   }
-              // if(this.topLeft     ){ this.topLeft.color     = CLRS.YELLOW;  }
-              
-              // if(this.bottomRight ){ this.bottomRight.color = CLRS.BLUE;    }
-              // if(this.bottomLeft  ){ this.bottomLeft.color  = CLRS.ORANGE;  }
-
-            }
-
-          // }
-          // catch(e){
-
-            // if(e instanceof TypeError){
-              // Cell doesn't exist
-            // }
-            // else{ println(e); }
-
-          // }
           
             // if(app.debug){
               // textAlign(CENTER,CENTER);
