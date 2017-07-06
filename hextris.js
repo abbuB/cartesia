@@ -1320,212 +1320,212 @@ var diagrams = function(processingInstance){
       };
       hexBoard.prototype.placeShape=function(){
 
-        var ac = this.activeCell;
+        var cell = this.activeCell;
 
         function single(){
 
-          ac.on=true;
+          cell.on=true;
 
         };
 
         function lineFlat(){
 
-          ac.on           =true;
-          ac.right.on     =true;
-          ac.left.on      =true;
-          ac.left.left.on =true;
+          cell.on           =true;
+          cell.right.on     =true;
+          cell.left.on      =true;
+          cell.left.left.on =true;
 
         };
         function lineForward(){
 
-          ac.on                  =true;
-          ac.bottomLeft.on       =true;
-          ac.topRight.on         =true;
-          ac.topRight.topRight.on=true;
+          cell.on                  =true;
+          cell.bottomLeft.on       =true;
+          cell.topRight.on         =true;
+          cell.topRight.topRight.on=true;
 
         };
         function lineBack(){
 
-          ac.on                 =true;
-          ac.bottomRight.on     =true;
-          ac.topLeft.on         =true;
-          ac.topLeft.topLeft.on =true;
+          cell.on                 =true;
+          cell.bottomRight.on     =true;
+          cell.topLeft.on         =true;
+          cell.topLeft.topLeft.on =true;
 
         };
 
         function diamond(){
 
-          ac.on            =true;
-          ac.left.on       =true;
-          ac.bottomLeft.on =true;
-          ac.topLeft.on    =true;
+          cell.on            =true;
+          cell.left.on       =true;
+          cell.bottomLeft.on =true;
+          cell.topLeft.on    =true;
 
         };
 
         function uUP(){
 
-          ac.left.on        =true;
-          ac.right.on       =true;
-          ac.bottomRight.on =true;
-          ac.bottomLeft.on  =true;
+          cell.left.on        =true;
+          cell.right.on       =true;
+          cell.bottomRight.on =true;
+          cell.bottomLeft.on  =true;
 
         };
         function uDown(){
 
-          ac.left.on     =true;
-          ac.right.on    =true;
-          ac.topRight.on =true;
-          ac.topLeft.on  =true;
+          cell.left.on     =true;
+          cell.right.on    =true;
+          cell.topRight.on =true;
+          cell.topLeft.on  =true;
 
         };
 
         function upRight(){
 
-          ac.left.on        =true;
-          ac.topLeft.on     =true;
-          ac.bottomRight.on =true;
-          ac.bottomLeft.on  =true;
+          cell.left.on        =true;
+          cell.topLeft.on     =true;
+          cell.bottomRight.on =true;
+          cell.bottomLeft.on  =true;
 
         };
         function downRight(){
 
-          ac.left.on       =true;
-          ac.bottomLeft.on =true;
-          ac.topRight.on   =true;
-          ac.topLeft.on    =true;
+          cell.left.on       =true;
+          cell.bottomLeft.on =true;
+          cell.topRight.on   =true;
+          cell.topLeft.on    =true;
 
         };
         function upLeft(){
 
-          ac.right.on       =true;
-          ac.topRight.on    =true;
-          ac.bottomRight.on =true;
-          ac.bottomLeft.on  =true;
+          cell.right.on       =true;
+          cell.topRight.on    =true;
+          cell.bottomRight.on =true;
+          cell.bottomLeft.on  =true;
 
         };
         function downLeft(){
 
-          ac.right.on       =true;
-          ac.bottomRight.on =true;
-          ac.topRight.on    =true;
-          ac.topLeft.on     =true;
+          cell.right.on       =true;
+          cell.bottomRight.on =true;
+          cell.topRight.on    =true;
+          cell.topLeft.on     =true;
 
         };
 
         function zRight(){
 
-          ac.on          =true;
-          ac.left.on     =true;
-          ac.topRight.on =true;
-          ac.topLeft.on  =true;
+          cell.on          =true;
+          cell.left.on     =true;
+          cell.topRight.on =true;
+          cell.topLeft.on  =true;
 
         };
         function zLeft(){
 
-          ac.on          =true;
-          ac.right.on    =true;
-          ac.topRight.on =true;
-          ac.topLeft.on  =true;
+          cell.on          =true;
+          cell.right.on    =true;
+          cell.topRight.on =true;
+          cell.topLeft.on  =true;
 
         };
 
         function sevenRight(){
 
-          ac.on             =true;
-          ac.bottomRight.on =true;
-          ac.topRight.on    =true;
-          ac.topLeft.on     =true;
+          cell.on             =true;
+          cell.bottomRight.on =true;
+          cell.topRight.on    =true;
+          cell.topLeft.on     =true;
 
         };
         function sevenLeft(){
 
-          ac.on            =true;
-          ac.bottomLeft.on =true;
-          ac.topRight.on   =true;
-          ac.topLeft.on    =true;
+          cell.on            =true;
+          cell.bottomLeft.on =true;
+          cell.topRight.on   =true;
+          cell.topLeft.on    =true;
 
         };
 
         function angleRight(){
 
-          ac.on             =true;
-          ac.topRight.on    =true;
-          ac.bottomRight.on =true;
-          ac.bottomLeft.on  =true;
+          cell.on             =true;
+          cell.topRight.on    =true;
+          cell.bottomRight.on =true;
+          cell.bottomLeft.on  =true;
 
         };
         function angleLeft(){
 
-          ac.on             =true;
-          ac.topLeft.on     =true;
-          ac.bottomRight.on =true;
-          ac.bottomLeft.on  =true;
+          cell.on             =true;
+          cell.topLeft.on     =true;
+          cell.bottomRight.on =true;
+          cell.bottomLeft.on  =true;
 
         };
 
         function nodeUpRight(){
 
-          ac.on          =true;
-          ac.left.on     =true;
-          ac.right.on    =true;
-          ac.topRight.on =true;
+          cell.on          =true;
+          cell.left.on     =true;
+          cell.right.on    =true;
+          cell.topRight.on =true;
 
         };
         function nodeUpLeft(){
 
-          ac.on         =true;
-          ac.left.on    =true;
-          ac.right.on   =true;
-          ac.topLeft.on =true;
+          cell.on         =true;
+          cell.left.on    =true;
+          cell.right.on   =true;
+          cell.topLeft.on =true;
 
         };
         function nodeDownRight(){
 
-          ac.on             =true;
-          ac.left.on        =true;
-          ac.right.on       =true;
-          ac.bottomRight.on =true;
+          cell.on             =true;
+          cell.left.on        =true;
+          cell.right.on       =true;
+          cell.bottomRight.on =true;
 
         };
         function nodeDownLeft(){
 
-          ac.on            =true;
-          ac.left.on       =true;
-          ac.right.on      =true;
-          ac.bottomLeft.on =true;
+          cell.on            =true;
+          cell.left.on       =true;
+          cell.right.on      =true;
+          cell.bottomLeft.on =true;
 
         };
 
         function vUpRight(){
 
-          ac.on            =true;
-          ac.left.on       =true;
-          ac.topRight.on   =true;
-          ac.bottomLeft.on =true;
+          cell.on            =true;
+          cell.left.on       =true;
+          cell.topRight.on   =true;
+          cell.bottomLeft.on =true;
 
         };
         function vUpLeft(){
 
-          ac.on             =true;
-          ac.right.on       =true;
-          ac.topLeft.on     =true;
-          ac.bottomRight.on =true;
+          cell.on             =true;
+          cell.right.on       =true;
+          cell.topLeft.on     =true;
+          cell.bottomRight.on =true;
 
         };
         function vDownRight(){
 
-          ac.on            =true;
-          ac.left.on       =true;
-          ac.topLeft.on   =true;
-          ac.bottomRight.on =true;
+          cell.on             =true;
+          cell.left.on        =true;
+          cell.topLeft.on     =true;
+          cell.bottomRight.on =true;
 
         };
         function vDownLeft(){
 
-          ac.on            =true;
-          ac.right.on      =true;
-          ac.topRight.on   =true;
-          ac.bottomLeft.on =true;
+          cell.on            =true;
+          cell.right.on      =true;
+          cell.topRight.on   =true;
+          cell.bottomLeft.on =true;
 
         };
 
@@ -1575,15 +1575,15 @@ var diagrams = function(processingInstance){
       hexBoard.prototype.validateDrop=function(){
 
         var retVal=false;
-        var ac = this.activeCell;
+        var cell = this.activeCell;
 
         function single(){
 
           try{
 
-            if(ac.on===false){
+            if(cell.on===false){
 
-              ac.hover=true;
+              cell.hover=true;
 
               retVal=true;
 
@@ -1605,15 +1605,15 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(ac.on          ===false &&
-               ac.right.on    ===false &&
-               ac.left.on     ===false &&
-               ac.left.left.on===false){
+            if(cell.on          ===false &&
+               cell.right.on    ===false &&
+               cell.left.on     ===false &&
+               cell.left.left.on===false){
                  
-              ac.hover          =true;
-              ac.right.hover    =true;
-              ac.left.hover     =true;
-              ac.left.left.hover=true;
+              cell.hover          =true;
+              cell.right.hover    =true;
+              cell.left.hover     =true;
+              cell.left.left.hover=true;
 
               retVal=true;
 
@@ -1634,15 +1634,15 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(ac.on                  ===false &&
-               ac.bottomLeft.on       ===false &&
-               ac.topRight.on         ===false &&
-               ac.topRight.topRight.on===false){
+            if(cell.on                  ===false &&
+               cell.bottomLeft.on       ===false &&
+               cell.topRight.on         ===false &&
+               cell.topRight.topRight.on===false){
 
-              ac.hover                  =true;
-              ac.bottomLeft.hover       =true;
-              ac.topRight.hover         =true;
-              ac.topRight.topRight.hover=true;
+              cell.hover                  =true;
+              cell.bottomLeft.hover       =true;
+              cell.topRight.hover         =true;
+              cell.topRight.topRight.hover=true;
 
               retVal=true;
 
@@ -1663,15 +1663,15 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(ac.on                 ===false &&
-               ac.bottomRight.on     ===false &&
-               ac.topLeft.on         ===false &&
-               ac.topLeft.topLeft.on ===false){
+            if(cell.on                 ===false &&
+               cell.bottomRight.on     ===false &&
+               cell.topLeft.on         ===false &&
+               cell.topLeft.topLeft.on ===false){
 
-              ac.hover                 =true;
-              ac.bottomRight.hover     =true;
-              ac.topLeft.hover         =true;
-              ac.topLeft.topLeft.hover =true;
+              cell.hover                 =true;
+              cell.bottomRight.hover     =true;
+              cell.topLeft.hover         =true;
+              cell.topLeft.topLeft.hover =true;
 
               retVal=true;
 
@@ -1693,15 +1693,15 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(ac.on            ===false &&
-               ac.left.on       ===false &&
-               ac.bottomLeft.on ===false &&
-               ac.topLeft.on    ===false){
+            if(cell.on            ===false &&
+               cell.left.on       ===false &&
+               cell.bottomLeft.on ===false &&
+               cell.topLeft.on    ===false){
 
-              ac.hover            =true;
-              ac.left.hover       =true;
-              ac.bottomLeft.hover =true;
-              ac.topLeft.hover    =true;
+              cell.hover            =true;
+              cell.left.hover       =true;
+              cell.bottomLeft.hover =true;
+              cell.topLeft.hover    =true;
 
               retVal=true;
 
@@ -1723,15 +1723,15 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(ac.left.on        ===false &&
-               ac.right.on       ===false &&
-               ac.bottomRight.on ===false &&
-               ac.bottomLeft.on  ===false){
+            if(cell.left.on        ===false &&
+               cell.right.on       ===false &&
+               cell.bottomRight.on ===false &&
+               cell.bottomLeft.on  ===false){
 
-              ac.left.hover        =true;
-              ac.right.hover       =true;
-              ac.bottomRight.hover =true;
-              ac.bottomLeft.hover  =true;
+              cell.left.hover        =true;
+              cell.right.hover       =true;
+              cell.bottomRight.hover =true;
+              cell.bottomLeft.hover  =true;
 
               retVal=true;
 
@@ -1752,15 +1752,15 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(ac.left.on     ===false &&
-               ac.right.on    ===false &&
-               ac.topRight.on ===false &&
-               ac.topLeft.on  ===false){
+            if(cell.left.on     ===false &&
+               cell.right.on    ===false &&
+               cell.topRight.on ===false &&
+               cell.topLeft.on  ===false){
 
-              ac.left.hover     =true;
-              ac.right.hover    =true;
-              ac.topRight.hover =true;
-              ac.topLeft.hover  =true;
+              cell.left.hover     =true;
+              cell.right.hover    =true;
+              cell.topRight.hover =true;
+              cell.topLeft.hover  =true;
 
               retVal=true;
 
@@ -1782,15 +1782,15 @@ var diagrams = function(processingInstance){
 
            try{
 
-            if(ac.left.on        ===false &&
-               ac.topLeft.on     ===false &&
-               ac.bottomRight.on ===false &&
-               ac.bottomLeft.on  ===false){
+            if(cell.left.on        ===false &&
+               cell.topLeft.on     ===false &&
+               cell.bottomRight.on ===false &&
+               cell.bottomLeft.on  ===false){
 
-              ac.left.hover        =true;
-              ac.topLeft.hover     =true;
-              ac.bottomRight.hover =true;
-              ac.bottomLeft.hover  =true;
+              cell.left.hover        =true;
+              cell.topLeft.hover     =true;
+              cell.bottomRight.hover =true;
+              cell.bottomLeft.hover  =true;
 
               retVal=true;
 
@@ -1811,15 +1811,15 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(ac.left.on     ===false &&
-               ac.bottomLeft.on    ===false &&
-               ac.topRight.on ===false &&
-               ac.topLeft.on  ===false){
+            if(cell.left.on     ===false &&
+               cell.bottomLeft.on    ===false &&
+               cell.topRight.on ===false &&
+               cell.topLeft.on  ===false){
 
-              ac.left.hover     =true;
-              ac.bottomLeft.hover    =true;
-              ac.topRight.hover =true;
-              ac.topLeft.hover  =true;
+              cell.left.hover     =true;
+              cell.bottomLeft.hover    =true;
+              cell.topRight.hover =true;
+              cell.topLeft.hover  =true;
 
               retVal=true;
 
@@ -1840,15 +1840,15 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(ac.right.on       ===false &&
-               ac.topRight.on    ===false &&
-               ac.bottomRight.on ===false &&
-               ac.bottomLeft.on  ===false){
+            if(cell.right.on       ===false &&
+               cell.topRight.on    ===false &&
+               cell.bottomRight.on ===false &&
+               cell.bottomLeft.on  ===false){
 
-              ac.right.hover       =true;
-              ac.topRight.hover    =true;
-              ac.bottomRight.hover =true;
-              ac.bottomLeft.hover  =true;
+              cell.right.hover       =true;
+              cell.topRight.hover    =true;
+              cell.bottomRight.hover =true;
+              cell.bottomLeft.hover  =true;
 
               retVal=true;
 
@@ -1869,15 +1869,15 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(ac.right.on       ===false &&
-               ac.bottomRight.on ===false &&
-               ac.topRight.on    ===false &&
-               ac.topLeft.on     ===false){
+            if(cell.right.on       ===false &&
+               cell.bottomRight.on ===false &&
+               cell.topRight.on    ===false &&
+               cell.topLeft.on     ===false){
 
-              ac.right.hover       =true;
-              ac.bottomRight.hover =true;
-              ac.topRight.hover    =true;
-              ac.topLeft.hover     =true;
+              cell.right.hover       =true;
+              cell.bottomRight.hover =true;
+              cell.topRight.hover    =true;
+              cell.topLeft.hover     =true;
 
               retVal=true;
 
@@ -1899,15 +1899,15 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(ac.on          ===false &&
-               ac.left.on     ===false &&
-               ac.topRight.on ===false &&
-               ac.topLeft.on  ===false){
+            if(cell.on          ===false &&
+               cell.left.on     ===false &&
+               cell.topRight.on ===false &&
+               cell.topLeft.on  ===false){
 
-              ac.hover          =true;
-              ac.left.hover     =true;
-              ac.topRight.hover =true;
-              ac.topLeft.hover  =true;
+              cell.hover          =true;
+              cell.left.hover     =true;
+              cell.topRight.hover =true;
+              cell.topLeft.hover  =true;
 
               retVal=true;
 
@@ -1928,15 +1928,15 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(ac.on          ===false &&
-               ac.right.on    ===false &&
-               ac.topRight.on ===false &&
-               ac.topLeft.on  ===false){
+            if(cell.on          ===false &&
+               cell.right.on    ===false &&
+               cell.topRight.on ===false &&
+               cell.topLeft.on  ===false){
 
-              ac.hover          =true;
-              ac.right.hover    =true;
-              ac.topRight.hover =true;
-              ac.topLeft.hover  =true;
+              cell.hover          =true;
+              cell.right.hover    =true;
+              cell.topRight.hover =true;
+              cell.topLeft.hover  =true;
 
               retVal=true;
 
@@ -1958,15 +1958,15 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(ac.on             ===false &&
-               ac.bottomRight.on ===false &&
-               ac.topRight.on    ===false &&
-               ac.topLeft.on     ===false){
+            if(cell.on             ===false &&
+               cell.bottomRight.on ===false &&
+               cell.topRight.on    ===false &&
+               cell.topLeft.on     ===false){
 
-              ac.hover             =true;
-              ac.bottomRight.hover =true;
-              ac.topRight.hover    =true;
-              ac.topLeft.hover     =true;
+              cell.hover             =true;
+              cell.bottomRight.hover =true;
+              cell.topRight.hover    =true;
+              cell.topLeft.hover     =true;
 
               retVal=true;
 
@@ -1987,15 +1987,15 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(ac.on            ===false &&
-               ac.bottomLeft.on ===false &&
-               ac.topRight.on   ===false &&
-               ac.topLeft.on    ===false){
+            if(cell.on            ===false &&
+               cell.bottomLeft.on ===false &&
+               cell.topRight.on   ===false &&
+               cell.topLeft.on    ===false){
 
-              ac.hover            =true;
-              ac.bottomLeft.hover =true;
-              ac.topRight.hover   =true;
-              ac.topLeft.hover    =true;
+              cell.hover            =true;
+              cell.bottomLeft.hover =true;
+              cell.topRight.hover   =true;
+              cell.topLeft.hover    =true;
 
               retVal=true;
 
@@ -2017,15 +2017,15 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(ac.on             ===false &&
-               ac.topRight.on    ===false &&
-               ac.bottomRight.on ===false &&
-               ac.bottomLeft.on  ===false){
+            if(cell.on             ===false &&
+               cell.topRight.on    ===false &&
+               cell.bottomRight.on ===false &&
+               cell.bottomLeft.on  ===false){
 
-              ac.hover             =true;
-              ac.topRight.hover    =true;
-              ac.bottomRight.hover =true;
-              ac.bottomLeft.hover  =true;
+              cell.hover             =true;
+              cell.topRight.hover    =true;
+              cell.bottomRight.hover =true;
+              cell.bottomLeft.hover  =true;
 
               retVal=true;
 
@@ -2046,15 +2046,15 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(ac.on             ===false &&
-               ac.topLeft.on     ===false &&
-               ac.bottomRight.on ===false &&
-               ac.bottomLeft.on  ===false){
+            if(cell.on             ===false &&
+               cell.topLeft.on     ===false &&
+               cell.bottomRight.on ===false &&
+               cell.bottomLeft.on  ===false){
 
-              ac.hover             =true;
-              ac.topLeft.hover     =true;
-              ac.bottomRight.hover =true;
-              ac.bottomLeft.hover  =true;
+              cell.hover             =true;
+              cell.topLeft.hover     =true;
+              cell.bottomRight.hover =true;
+              cell.bottomLeft.hover  =true;
 
               retVal=true;
 
@@ -2076,15 +2076,15 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(ac.on          ===false &&
-               ac.left.on     ===false &&
-               ac.right.on    ===false &&
-               ac.topRight.on ===false){
+            if(cell.on          ===false &&
+               cell.left.on     ===false &&
+               cell.right.on    ===false &&
+               cell.topRight.on ===false){
 
-              ac.hover          =true;
-              ac.left.hover     =true;
-              ac.right.hover    =true;
-              ac.topRight.hover =true;
+              cell.hover          =true;
+              cell.left.hover     =true;
+              cell.right.hover    =true;
+              cell.topRight.hover =true;
 
               retVal=true;
 
@@ -2105,15 +2105,15 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(ac.on         ===false &&
-               ac.left.on    ===false &&
-               ac.right.on   ===false &&
-               ac.topLeft.on ===false){
+            if(cell.on         ===false &&
+               cell.left.on    ===false &&
+               cell.right.on   ===false &&
+               cell.topLeft.on ===false){
 
-              ac.hover         =true;
-              ac.left.hover    =true;
-              ac.right.hover   =true;
-              ac.topLeft.hover =true;
+              cell.hover         =true;
+              cell.left.hover    =true;
+              cell.right.hover   =true;
+              cell.topLeft.hover =true;
 
               retVal=true;
 
@@ -2134,15 +2134,15 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(ac.on          ===false &&
-               ac.left.on     ===false &&
-               ac.right.on    ===false &&
-               ac.bottomRight.on ===false){
+            if(cell.on          ===false &&
+               cell.left.on     ===false &&
+               cell.right.on    ===false &&
+               cell.bottomRight.on ===false){
 
-              ac.hover             =true;
-              ac.left.hover        =true;
-              ac.right.hover       =true;
-              ac.bottomRight.hover =true;
+              cell.hover             =true;
+              cell.left.hover        =true;
+              cell.right.hover       =true;
+              cell.bottomRight.hover =true;
 
               retVal=true;
 
@@ -2163,15 +2163,15 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(ac.on            ===false &&
-               ac.left.on       ===false &&
-               ac.right.on      ===false &&
-               ac.bottomLeft.on ===false){
+            if(cell.on            ===false &&
+               cell.left.on       ===false &&
+               cell.right.on      ===false &&
+               cell.bottomLeft.on ===false){
 
-              ac.hover            =true;
-              ac.left.hover       =true;
-              ac.right.hover      =true;
-              ac.bottomLeft.hover =true;
+              cell.hover            =true;
+              cell.left.hover       =true;
+              cell.right.hover      =true;
+              cell.bottomLeft.hover =true;
 
               retVal=true;
 
@@ -2193,15 +2193,15 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(ac.on            ===false &&
-               ac.left.on       ===false &&
-               ac.topRight.on   ===false &&
-               ac.bottomLeft.on ===false){
+            if(cell.on            ===false &&
+               cell.left.on       ===false &&
+               cell.topRight.on   ===false &&
+               cell.bottomLeft.on ===false){
 
-              ac.hover            =true;
-              ac.left.hover       =true;
-              ac.topRight.hover   =true;
-              ac.bottomLeft.hover =true;
+              cell.hover            =true;
+              cell.left.hover       =true;
+              cell.topRight.hover   =true;
+              cell.bottomLeft.hover =true;
 
               retVal=true;
 
@@ -2222,15 +2222,15 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(ac.on             ===false &&
-               ac.right.on       ===false &&
-               ac.topLeft.on     ===false &&
-               ac.bottomRight.on ===false){
+            if(cell.on             ===false &&
+               cell.right.on       ===false &&
+               cell.topLeft.on     ===false &&
+               cell.bottomRight.on ===false){
 
-              ac.hover             =true;
-              ac.right.hover       =true;
-              ac.topLeft.hover     =true;
-              ac.bottomRight.hover =true;
+              cell.hover             =true;
+              cell.right.hover       =true;
+              cell.topLeft.hover     =true;
+              cell.bottomRight.hover =true;
 
               retVal=true;
 
@@ -2251,15 +2251,15 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(ac.on             ===false &&
-               ac.left.on        ===false &&
-               ac.topLeft.on     ===false &&
-               ac.bottomRight.on ===false){
+            if(cell.on             ===false &&
+               cell.left.on        ===false &&
+               cell.topLeft.on     ===false &&
+               cell.bottomRight.on ===false){
 
-              ac.hover             =true;
-              ac.left.hover        =true;
-              ac.topLeft.hover     =true;
-              ac.bottomRight.hover =true;
+              cell.hover             =true;
+              cell.left.hover        =true;
+              cell.topLeft.hover     =true;
+              cell.bottomRight.hover =true;
 
               retVal=true;
 
@@ -2280,15 +2280,15 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(ac.on          ===false &&
-               ac.right.on    ===false &&
-               ac.topRight.on ===false &&
-               ac.bottomLeft.on  ===false){
+            if(cell.on             ===false &&
+               cell.right.on       ===false &&
+               cell.topRight.on    ===false &&
+               cell.bottomLeft.on  ===false){
 
-              ac.hover          =true;
-              ac.right.hover    =true;
-              ac.topRight.hover =true;
-              ac.bottomLeft.hover  =true;
+              cell.hover             =true;
+              cell.right.hover       =true;
+              cell.topRight.hover    =true;
+              cell.bottomLeft.hover  =true;
 
               retVal=true;
 
@@ -3438,10 +3438,10 @@ var diagrams = function(processingInstance){
 
             try{
 
-              retVal=!(cell.on            ===false &&
-                       cell.right.on      ===false &&
-                       cell.topRight.on   ===false &&
-                       cell.bottomLeft.on ===false)
+              retVal=!(cell.on             ===false &&
+                       cell.left.on        ===false &&
+                       cell.topLeft.on     ===false &&
+                       cell.bottomRight.on ===false)
 
             }
             catch(e){
@@ -3458,10 +3458,10 @@ var diagrams = function(processingInstance){
 
             try{
 
-              retVal=!(cell.on                 ===false &&
-                       cell.bottomRight.on     ===false &&
-                       cell.topLeft.on         ===false &&
-                       cell.topLeft.topLeft.on ===false)
+              retVal=!(cell.on            ===false &&
+                       cell.right.on      ===false &&
+                       cell.topRight.on   ===false &&
+                       cell.bottomleft.on ===false)
 
             }
             catch(e){
@@ -3528,20 +3528,11 @@ var diagrams = function(processingInstance){
             for(var r in this.controls){
               for(var c in this.controls[r]){
 
-                // if(this.layout[r][c]===0 ||
-                   // this.shapes[s].style===SHAPES.UDOWN ||
-                   // this.shapes[s].style===SHAPES.UPRIGHT ||
-                   // this.shapes[s].style===SHAPES.UPLEFT ||
-                   // this.shapes[s].style===SHAPES.DOWNRIGHT ||
-                   // this.shapes[s].style===SHAPES.DOWNLEFT){
+                // n++;
 
-                  n++;
+                testShape(this.shapes[s].style,this.controls[r][c]);
 
-                  testShape(this.shapes[s].style,this.controls[r][c]);
-
-                  if(retVal===false){ break; }
-
-                // }
+                if(retVal===false){ break; }
 
               }
               if(retVal===false){ break; }
@@ -4526,7 +4517,7 @@ var diagrams = function(processingInstance){
         this.scale    = 1;
 
         textFont(this.font);
-        textSize(50);
+        textSize(100);
                 
         // this.on=false;
 
