@@ -45,7 +45,13 @@ var diagrams = function(processingInstance){
 
 
     TO DO:
+      
+      Names:  heXcell
+              geekred
+              ...
 
+      - rotating hexagons for row clearance
+      
       - Undo Stack
       - High Score
       - Hints
@@ -62,7 +68,29 @@ var diagrams = function(processingInstance){
 
       - Animation for drop outside grid
 
-
+      Old Mcdonald
+      Sick of the farm
+      Wants a new life 
+      A new place to go
+      But if you strip away the consonants from reinvention
+      You get E I E I O
+      
+      Old Mcdonald
+      Tried to give up the booze
+      Should have done this a long time ago
+      Suck out the vowels of best intentions
+      You get E I E I O
+      
+      No more echos on the farm
+      No more duck sounds in the air
+      There's a quack quack here
+      But there's no quack quack there
+      
+      Drunk on the insurance money
+      From torching the farm
+      Old Mcdonald gets a tattoo
+      It's there amongst the skulls and the livestock
+      It's E I E I O
 
 
 
@@ -96,7 +124,7 @@ var diagrams = function(processingInstance){
 
       randomSeed(millis());
 
-      frameRate(60);
+      frameRate(80);
 
       cursor(WAIT);
       strokeCap(SQUARE);
@@ -111,7 +139,7 @@ var diagrams = function(processingInstance){
 
     this.debug        = true;   //  Mode that displays enhanced debugging tools
 
-    this.frameRate    = 0;      //  Refresh speed
+    this.frameRate    = 70;      //  Refresh speed
 
     this.mouseX       = 0;      //  Current mouseX location
     this.mouseY       = 0;      //  Current mouseY location
@@ -1036,14 +1064,6 @@ var diagrams = function(processingInstance){
     /* Hex board          */
     {
 
-      function printLayout(){
-
-        for(var r in app.hexBoard.layout){
-          println(app.hexBoard.layout[r]);
-        }
-
-      };
-
       function hexBoard(id, parent, x, y, w, h, props){
 
         control.call(this, id, parent, x, y, w, h);
@@ -1055,7 +1075,6 @@ var diagrams = function(processingInstance){
         // this.angle      = 0;
 
         this.shapes         = [];
-        this.layout         = [];
         this.scores         = [];
 
         this.activeCell     = null;
@@ -1074,7 +1093,7 @@ var diagrams = function(processingInstance){
 
       };
       hexBoard.prototype=Object.create(control.prototype);
-      hexBoard.prototype.reset=function(){
+      hexBoard.prototype.reset        =function(){
 
         var p=this; //  Reference to the hexBoard control
 
@@ -1223,11 +1242,11 @@ var diagrams = function(processingInstance){
         this.score=0;
 
       };
-      hexBoard.prototype.loadShapes=function(){
+      hexBoard.prototype.loadShapes   =function(){
 
-        var rand0=floor(random(0,24));
-        var rand1=floor(random(0,24));
-        var rand2=floor(random(0,24));
+        var rand0=SHAPES.LINEBACK;//floor(random(0,24));
+        var rand1=SHAPES.LINEBACK;//floor(random(0,24));
+        var rand2=SHAPES.SINGLE;//floor(random(0,24));
 
         this.shapes.push(new shap(0, this, this.position0.x, this.position0.y, HEX_SIZE, HEX_SIZE,
           {style: rand0,
@@ -1242,7 +1261,7 @@ var diagrams = function(processingInstance){
            color: getShapeColor(rand2)}));
 
       };
-      hexBoard.prototype.draw=function(){
+      hexBoard.prototype.draw         = function(){
 
         // var p =this;
 
@@ -1278,7 +1297,71 @@ var diagrams = function(processingInstance){
         if(frameCount%1000===0){ this.purge(); }
 
       };
-      hexBoard.prototype.purge=function(){
+      hexBoard.prototype.hitTest      = function(x,y){ return dist(mouseX,mouseY,this.x,this.y)<this.w/2; };
+      hexBoard.prototype.moved        = function(x,y){
+      /* Overridden because of the nested controls */
+
+        if(this.parent.hit){
+
+          if(this.hitTest(x,y)){ this.hit=true;
+                                 app.focus=this.id; }
+          else                 { this.hit=false;    }
+
+          for(var s in this.shapes){
+            this.shapes[s].moved(0,0);
+          }
+            
+        }
+
+      };
+      hexBoard.prototype.clicked      = function(){
+
+        forEach(this.shapes, 'clicked');
+
+      };
+      hexBoard.prototype.dragged      = function(){
+
+        if(this.hitTest(mouseX,mouseY)){
+          app.focus=this.id;
+        }
+        else{
+          this.activeCell=null;
+          this.activeID=null;
+        }
+
+        forEach(this.shapes, 'dragged');
+
+        if(this.activeShape!==null){
+
+          for(var r in this.controls){
+            for(var c in this.controls[r]){
+
+              this.controls[r][c].dragged(this.x,this.y);
+
+            }
+          }
+
+          if(app.focus!==this.id){
+            this.validateDrop();
+          }
+
+        }
+
+      };
+      hexBoard.prototype.released     = function(){
+
+        forEach(this.shapes, 'released');
+
+      };      
+      hexBoard.prototype.out          = function(){
+
+        this.hit=false;
+        forEach(this.shapes, 'out');
+        this.activeCell=null;
+
+      };
+      
+      hexBoard.prototype.purge        = function(){
 
         var total=0;
 
@@ -1295,30 +1378,8 @@ var diagrams = function(processingInstance){
           this.scores=[];
         }
 
-      };
-      hexBoard.prototype.hitTest  = function(x,y){ return dist(mouseX,mouseY,this.x,this.y)<this.w/2; };
-      hexBoard.prototype.moved    = function(x,y){
-      /* Overridden because of the nested controls */
-
-        if(this.parent.hit){
-
-          if(this.hitTest(x,y)){ this.hit=true;
-                                 app.focus=this.id; }
-          else                 { this.hit=false;    }
-
-          for(var s in this.shapes){
-            this.shapes[s].moved(0,0);
-          }
-            
-        }
-
-      };
-      hexBoard.prototype.clicked=function(){
-
-        forEach(this.shapes, 'clicked');
-
-      };
-      hexBoard.prototype.placeShape=function(){
+      };      
+      hexBoard.prototype.placeShape   = function(){
 
         var cell = this.activeCell;
 
@@ -1572,7 +1633,7 @@ var diagrams = function(processingInstance){
         }
 
       };
-      hexBoard.prototype.validateDrop=function(){
+      hexBoard.prototype.validateDrop = function(){
 
         var retVal=false;
         var cell = this.activeCell;
@@ -1811,15 +1872,15 @@ var diagrams = function(processingInstance){
 
           try{
 
-            if(cell.left.on     ===false &&
-               cell.bottomLeft.on    ===false &&
-               cell.topRight.on ===false &&
-               cell.topLeft.on  ===false){
+            if(cell.left.on       ===false &&
+               cell.bottomLeft.on ===false &&
+               cell.topRight.on   ===false &&
+               cell.topLeft.on    ===false){
 
-              cell.left.hover     =true;
-              cell.bottomLeft.hover    =true;
-              cell.topRight.hover =true;
-              cell.topLeft.hover  =true;
+              cell.left.hover       =true;
+              cell.bottomLeft.hover =true;
+              cell.topRight.hover   =true;
+              cell.topLeft.hover    =true;
 
               retVal=true;
 
@@ -2351,41 +2412,7 @@ var diagrams = function(processingInstance){
         return retVal;
 
       };
-      hexBoard.prototype.dragged  = function(){
-
-        if(this.hitTest(mouseX,mouseY)){
-          app.focus=this.id;
-        }
-        else{
-          this.activeCell=null;
-          this.activeID=null;
-        }
-
-        forEach(this.shapes, 'dragged');
-
-        if(this.activeShape!==null){
-
-          for(var r in this.controls){
-            for(var c in this.controls[r]){
-
-              this.controls[r][c].dragged(this.x,this.y);
-
-            }
-          }
-
-          if(app.focus!==this.id){
-            this.validateDrop();
-          }
-
-        }
-
-      };
-      hexBoard.prototype.released = function(){
-
-        forEach(this.shapes, 'released');
-
-      };
-      hexBoard.prototype.resetShape=function(){
+      hexBoard.prototype.resetShape   = function(){
 
         var i=this.activeIndex;
 
@@ -2404,7 +2431,7 @@ var diagrams = function(processingInstance){
         this.shapes[i].deltaY=-5;
 
       };
-      hexBoard.prototype.resetShapes=function(){
+      hexBoard.prototype.resetShapes  = function(){
 
         for(var n in this.shapes){
 
@@ -2419,17 +2446,17 @@ var diagrams = function(processingInstance){
         }
 
       };
-      hexBoard.prototype.tally=function(){
+      hexBoard.prototype.tally        = function(){
 
         this.score+=40;
 
         var cells=[];
         var multiplier=1;
 
-        var offsetX=this.x;
-        var offsetY=this.y;
+        // var offsetX=this.x;
+        // var offsetY=this.y;
 
-        var l=this.layout;
+        // var l=this.layout;
         var p=this;
 
         function val    (row,col){ return p.controls[row][col].on; };
@@ -2437,533 +2464,83 @@ var diagrams = function(processingInstance){
 
         /* Rows */
         {
+          
+          function rowTally(row){
+            
+            cell=p.controls[row][0];
 
-          // Row 0
-          if(val(0,0) && val(0,1) && val(0,2) && val(0,3) && val(0,4) ){
+            while(cell!=null){
 
-            addCell(0,0); addCell(0,1); addCell(0,2); addCell(0,3); addCell(0,4);
+              if(cell.on===false){
+                return false;
+              }
 
-            this.score+=100*multiplier;
+              cell=cell.right;
 
-            this.scores.push(new score(this.scores.length, this, this.controls[0][2].x+offsetX,
-                                                                 this.controls[0][2].y+offsetY, 0,0,
-              { style:  SCORESTYLES.TEXT,
-                text:   100*multiplier,
-                font:   monoFont,
-                timer:  40}));
+            }
 
-            multiplier++;
+            return true;
 
-          }
-          // Row 1
-          if(val(1,0) && val(1,1) && val(1,2) && val(1,3) && val(1,4) &&
-             val(1,5) ){
+          };
 
-            addCell(1,0); addCell(1,1); addCell(1,2); addCell(1,3); addCell(1,4);
-            addCell(1,5);
+          function backTally(row){
+            
+            cell=p.controls[row][0];
 
-            this.score+=120*multiplier;
+            while(cell!=null){
 
-            this.scores.push(new score(this.scores.length, this, this.controls[1][2].x+offsetX,
-                                                                 this.controls[1][2].y+offsetY, 0,0,
-              { style:  SCORESTYLES.TEXT,
-                text:   120*multiplier,
-                font:   monoFont,
-                timer:  50}));
+              if(cell.on===false){
+                return false;
+              }
 
-            multiplier++;
+              cell=cell.bottomRight;
 
-          }
-          // Row 2
-          if(val(2,0) && val(2,1) && val(2,2) && val(2,3) && val(2,4) &&
-             val(2,5) && val(2,6) ){
+            }
 
-            addCell(2,0); addCell(2,1); addCell(2,2); addCell(2,3); addCell(2,4);
-            addCell(2,5); addCell(2,6);
+            return true;
 
-            this.score+=140*multiplier;
+          };
+          
+          //  Iterate each row
+          for(var row in this.controls){
 
-            this.scores.push(new score(this.scores.length, this, this.controls[2][3].x+offsetX,
-                                                                 this.controls[2][3].y+offsetY, 0,0,
-              { style:  SCORESTYLES.TEXT,
-                text:   140*multiplier,
-                font:   monoFont,
-                timer:  50}));
+            if(rowTally(row)){
 
-            multiplier++;
+              for(var n in this.controls[row]){
+                cells.push(this.controls[row][n]);
+              }
 
-          }
-          // Row 3
-          if(val(3,0) && val(3,1) && val(3,2) && val(3,3) && val(3,4) &&
-             val(3,5) && val(3,6) && val(3,7) ){
+              var col=floor(this.controls[row].length/2);
+              var len=this.controls[row].length;
+              
+              this.score+=20*len*multiplier;
 
-            addCell(3,0); addCell(3,1); addCell(3,2); addCell(3,3); addCell(3,4);
-            addCell(3,5); addCell(3,6); addCell(3,7);
+              this.scores.push(new score(this.scores.length, this, this.controls[row][col].x+p.x,
+                                                                   this.controls[row][col].y+p.y, 0,0,
+                { style:  SCORESTYLES.TEXT,
+                  text:   20*len*multiplier,
+                  font:   serifFont,
+                  timer:  60}));
 
-            this.score+=160*multiplier;
+              multiplier++;
 
-            this.scores.push(new score(this.scores.length, this, this.controls[3][4].x+offsetX,
-                                                                 this.controls[3][4].y+offsetY, 0,0,
-              { style:  SCORESTYLES.TEXT,
-                text:   160*multiplier,
-                font:   monoFont,
-                timer:  50}));
-
-            multiplier++;
-
-          }
-          // Row 4
-          if(val(4,0) && val(4,1) && val(4,2) && val(4,3) && val(4,4) &&
-             val(4,5) && val(4,6) && val(4,7) && val(4,8) ){
-
-            addCell(4,0); addCell(4,1); addCell(4,2); addCell(4,3); addCell(4,4);
-            addCell(4,5); addCell(4,6); addCell(4,7); addCell(4,8);
-
-            this.score+=180*multiplier;
-
-            this.scores.push(new score(this.scores.length, this, this.controls[4][4].x+offsetX,
-                                                                 this.controls[4][4].y+offsetY, 0,0,
-              { style:  SCORESTYLES.TEXT,
-                text:   180*multiplier,
-                font:   monoFont,
-                timer:  50}));
-
-            multiplier++;
-
-          }
-          // Row 5
-          if(val(5,0) && val(5,1) && val(5,2) && val(5,3) && val(5,4) &&
-             val(5,5) && val(5,6) && val(5,7) ){
-
-            addCell(5,0); addCell(5,1); addCell(5,2); addCell(5,3); addCell(5,4);
-            addCell(5,5); addCell(5,6); addCell(5,7);
-
-            this.score+=160*multiplier;
-
-            this.scores.push(new score(this.scores.length, this, this.controls[5][3].x+offsetX,
-                                                                 this.controls[5][3].y+offsetY, 0,0,
-              { style:  SCORESTYLES.TEXT,
-                text:   160*multiplier,
-                font:   monoFont,
-                timer:  50}));
-
-            multiplier++;
-
-          }
-          // Row 6
-          if(val(6,0) && val(6,1) && val(6,2) && val(6,3) && val(6,4) &&
-             val(6,5) && val(6,6) ){
-
-            addCell(6,0); addCell(6,1); addCell(6,2); addCell(6,3); addCell(6,4);
-            addCell(6,5); addCell(6,6);
-
-            this.score+=140*multiplier;
-
-            this.scores.push(new score(this.scores.length, this, this.controls[6][3].x+offsetX,
-                                                                 this.controls[6][3].y+offsetY, 0,0,
-              { style:  SCORESTYLES.TEXT,
-                text:   140*multiplier,
-                font:   monoFont,
-                timer:  50}));
-
-            multiplier++;
-
-          }
-          // Row 7
-          if(val(7,0) && val(7,1) && val(7,2) && val(7,3) && val(7,4) &&
-             val(7,5) ){
-
-            addCell(7,0); addCell(7,1); addCell(7,2); addCell(7,3); addCell(7,4);
-            addCell(7,5);
-
-            this.score+=120*multiplier;
-
-            this.scores.push(new score(this.scores.length, this, this.controls[7][2].x+offsetX,
-                                                                 this.controls[7][2].y+offsetY, 0,0,
-              { style:  SCORESTYLES.TEXT,
-                text:   120*multiplier,
-                font:   monoFont,
-                timer:  50}));
-
-            multiplier++;
-
-          }
-          // Row 8
-          if(val(8,0) && val(8,1) && val(8,2) && val(8,3) && val(8,4) ){
-
-            addCell(8,0); addCell(8,1); addCell(8,2); addCell(8,3); addCell(8,4);
-
-            this.score+=100*multiplier;
-
-            this.scores.push(new score(this.scores.length, this, this.controls[8][2].x+offsetX,
-                                                                 this.controls[8][2].y+offsetY, 0,0,
-              { style:  SCORESTYLES.TEXT,
-                text:   100*multiplier,
-                font:   monoFont,
-                timer:  50}));
-
-            multiplier++;
-
-          }
-
-        }
-
-        /* Forward Columns */
-        {
-
-          // Column 0
-          if(val(0,0) && val(1,0) && val(2,0) && val(3,0) && val(4,0) ){
-
-            addCell(0,0); addCell(1,0); addCell(2,0); addCell(3,0); addCell(4,0);
-
-            this.score+=100*multiplier;
-
-            this.scores.push(new score(this.scores.length, this, this.controls[2][0].x+offsetX,
-                                                                 this.controls[2][0].y+offsetY, 0,0,
-              { style:  SCORESTYLES.TEXT,
-                text:   100*multiplier,
-                font:   monoFont,
-                timer:  50}));
-
-            multiplier++;
-
-          }
-          // Column 1
-          if(val(0,1) && val(1,1) && val(2,1) && val(3,1) && val(4,1) &&
-             val(5,0) ){
-
-            addCell(0,1); addCell(1,1); addCell(2,1); addCell(3,1); addCell(4,1);
-            addCell(5,0);
-
-            this.score+=120*multiplier;
-
-            this.scores.push(new score(this.scores.length, this, this.controls[2][1].x+offsetX,
-                                                                 this.controls[2][1].y+offsetY, 0,0,
-              { style:  SCORESTYLES.TEXT,
-                text:   120*multiplier,
-                font:   monoFont,
-                timer:  50}));
-
-            multiplier++;
-
-          }
-          // Column 2
-          if(val(0,2) && val(1,2) && val(2,2) && val(3,2) && val(4,2) &&
-             val(5,1) && val(6,0) ){
-
-            addCell(0,2); addCell(1,2); addCell(2,2); addCell(3,2); addCell(4,2);
-            addCell(5,1); addCell(6,0);
-
-            this.score+=140*multiplier;
-
-            this.scores.push(new score(this.scores.length, this, this.controls[3][2].x+offsetX,
-                                                                 this.controls[3][2].y+offsetY, 0,0,
-              { style:  SCORESTYLES.TEXT,
-                text:   140*multiplier,
-                font:   monoFont,
-                timer:  50}));
-
-            multiplier++;
-
-          }
-          // Column 3
-          if(val(0,3) && val(1,3) && val(2,3) && val(3,3) && val(4,3) &&
-             val(5,2) && val(6,1) && val(7,0) ){
-
-            addCell(0,3); addCell(1,3); addCell(2,3); addCell(3,3); addCell(4,3);
-            addCell(5,2); addCell(6,1); addCell(7,0);
-
-            this.score+=160*multiplier;
-
-            this.scores.push(new score(this.scores.length, this, this.controls[4][3].x+offsetX,
-                                                                 this.controls[4][3].y+offsetY, 0,0,
-              { style:  SCORESTYLES.TEXT,
-                text:   160*multiplier,
-                font:   monoFont,
-                timer:  50}));
-
-            multiplier++;
-
-          }
-          // Column 4
-          if(val(0,4) && val(1,4) && val(2,4) && val(3,4) && val(4,4) &&
-             val(5,3) && val(6,2) && val(7,1) && val(8,0) ){
-
-            addCell(0,4); addCell(1,4); addCell(2,4); addCell(3,4); addCell(4,4);
-            addCell(5,3); addCell(6,2); addCell(7,1); addCell(8,0);
-
-            this.score+=180*multiplier;
-
-            this.scores.push(new score(this.scores.length, this, this.controls[4][4].x+offsetX,
-                                                                 this.controls[4][4].y+offsetY, 0,0,
-              { style:  SCORESTYLES.TEXT,
-                text:   180*multiplier,
-                font:   monoFont,
-                timer:  50}));
-
-            multiplier++;
-
-          }
-          // Column 5
-          if(val(1,5) && val(2,5) && val(3,5) && val(4,5) && val(5,4) &&
-             val(6,3) && val(7,2) && val(8,1) ){
-
-            addCell(1,5); addCell(2,5); addCell(3,5); addCell(4,5); addCell(5,4);
-            addCell(6,3); addCell(7,2); addCell(8,1);
-
-            this.score+=160*multiplier;
-
-            this.scores.push(new score(this.scores.length, this, this.controls[4][5].x+offsetX,
-                                                                 this.controls[4][5].y+offsetY, 0,0,
-              { style:  SCORESTYLES.TEXT,
-                text:   160*multiplier,
-                font:   monoFont,
-                timer:  50}));
-
-            multiplier++;
-
-          }
-          // Column 6
-          if(val(2,6) && val(3,6) && val(4,6) && val(5,5) && val(6,4) &&
-             val(7,3) && val(8,2) ){
-
-            addCell(2,6); addCell(3,6); addCell(4,6); addCell(5,5); addCell(6,4);
-            addCell(7,3); addCell(8,2);
-
-            this.score+=140*multiplier;
-
-            this.scores.push(new score(this.scores.length, this, this.controls[5][5].x+offsetX,
-                                                                 this.controls[5][5].y+offsetY, 0,0,
-              { style:  SCORESTYLES.TEXT,
-                text:   140*multiplier,
-                font:   monoFont,
-                timer:  50}));
-
-            multiplier++;
-
-          }
-          // Column 7
-          if(val(3,7) && val(4,7) && val(5,6) && val(6,5) && val(7,4) &&
-             val(8,3) ){
-
-            addCell(3,7); addCell(4,7); addCell(5,6); addCell(6,5); addCell(7,4);
-            addCell(8,3);
-
-            this.score+=120*multiplier;
-
-            this.scores.push(new score(this.scores.length, this, this.controls[5][6].x+offsetX,
-                                                                 this.controls[5][6].y+offsetY, 0,0,
-              { style:  SCORESTYLES.TEXT,
-                text:   120*multiplier,
-                font:   monoFont,
-                timer:  50}));
-
-            multiplier++;
-
-          }
-          // Column 8
-          if(val(4,8) && val(5,7) && val(6,6) && val(7,5) && val(8,4) ){
-
-            addCell(4,8); addCell(5,7); addCell(6,6); addCell(7,5); addCell(8,4);
-
-            this.score+=100*multiplier;
-
-            this.scores.push(new score(this.scores.length, this, this.controls[6][6].x+offsetX,
-                                                                 this.controls[6][6].y+offsetY, 0,0,
-              { style:  SCORESTYLES.TEXT,
-                text:   100*multiplier,
-                font:   monoFont,
-                timer:  50}));
-
-            multiplier++;
-
-          }
-
-        }
-
-        /* Backward Columns */
-        {
-
-          // Column 0
-          if(val(4,0) && val(5,0) && val(6,0) && val(7,0) && val(8,0) ){
-
-            addCell(4,0); addCell(5,0); addCell(6,0); addCell(7,0); addCell(8,0);
-
-            this.score+=100*multiplier;
-
-            this.scores.push(new score(this.scores.length, this, this.controls[6][0].x+offsetX,
-                                                                 this.controls[6][0].y+offsetY, 0,0,
-              { style:  SCORESTYLES.TEXT,
-                text:   100*multiplier,
-                font:   monoFont,
-                timer:  50}));
-
-            multiplier++;
-
-          }
-          // Column 1
-          if(val(3,0) && val(4,1) && val(5,1) && val(6,1) && val(7,1) &&
-             val(8,1) ){
-
-            addCell(3,0); addCell(4,1); addCell(5,1); addCell(6,1); addCell(7,1);
-            addCell(8,1);
-
-            this.score+=120*multiplier;
-
-            this.scores.push(new score(this.scores.length, this, this.controls[6][1].x+offsetX,
-                                                                 this.controls[6][1].y+offsetY, 0,0,
-              { style:  SCORESTYLES.TEXT,
-                text:   120*multiplier,
-                font:   monoFont,
-                timer:  50}));
-
-            multiplier++;
-
-          }
-          // Column 2
-          if(val(2,0) && val(3,1) && val(4,2) && val(5,2) && val(6,2) &&
-             val(7,2) && val(8,2) ){
-
-            addCell(2,0); addCell(3,1); addCell(4,2); addCell(5,2); addCell(6,2);
-            addCell(7,2); addCell(8,2);
-
-            this.score+=140*multiplier;
-
-            this.scores.push(new score(this.scores.length, this, this.controls[6][2].x+offsetX,
-                                                                 this.controls[6][2].y+offsetY, 0,0,
-              { style:  SCORESTYLES.TEXT,
-                text:   140*multiplier,
-                font:   monoFont,
-                timer:  50}));
-
-            multiplier++;
-
-          }
-          // Column 3
-          if(val(1,0) && val(2,1) && val(3,2) && val(4,3) && val(5,3) &&
-             val(6,3) && val(7,3) && val(8,3) ){
-
-            addCell(1,0); addCell(2,1); addCell(3,2); addCell(4,3); addCell(5,3);
-            addCell(6,3); addCell(7,3); addCell(8,3);
-
-            this.score+=160*multiplier;
-
-            this.scores.push(new score(this.scores.length, this, this.controls[5][3].x+offsetX,
-                                                                 this.controls[5][3].y+offsetY, 0,0,
-              { style:  SCORESTYLES.TEXT,
-                text:   160*multiplier,
-                font:   monoFont,
-                timer:  50}));
-
-            multiplier++;
-
-          }
-          // Column 4
-          if(val(0,0) && val(1,1) && val(2,2) && val(3,3) && val(4,4) &&
-             val(5,4) && val(6,4) && val(7,4) && val(8,4) ){
-
-            addCell(0,0); addCell(1,1); addCell(2,2); addCell(3,3); addCell(4,4);
-            addCell(5,4); addCell(6,4); addCell(7,4); addCell(8,4);
-
-            this.score+=180*multiplier;
-
-            this.scores.push(new score(this.scores.length, this, this.controls[4][4].x+offsetX,
-                                                                 this.controls[4][4].y+offsetY, 0,0,
-              { style:  SCORESTYLES.TEXT,
-                text:   180*multiplier,
-                font:   monoFont,
-                timer:  50}));
-
-            multiplier++;
-
-          }
-          // Column 5
-          if(val(0,1) && val(1,2) && val(2,3) && val(3,4) && val(4,5) &&
-             val(5,5) && val(6,5) && val(7,5) ){
-
-            addCell(0,1); addCell(1,2); addCell(2,3); addCell(3,4); addCell(4,5);
-            addCell(5,5); addCell(6,5); addCell(7,5);
-
-            this.score+=160*multiplier;
-
-            this.scores.push(new score(this.scores.length, this, this.controls[3][4].x+offsetX,
-                                                                 this.controls[3][4].y+offsetY, 0,0,
-              { style:  SCORESTYLES.TEXT,
-                text:   160*multiplier,
-                font:   monoFont,
-                timer:  50}));
-
-            multiplier++;
-
-          }
-          // Column 6
-          if(val(0,2) && val(1,3) && val(2,4) && val(3,5) && val(4,6) &&
-             val(5,6) && val(6,6) ){
-
-            addCell(0,2); addCell(1,3); addCell(2,4); addCell(3,5); addCell(4,6);
-            addCell(5,6); addCell(6,6);
-
-            this.score+=140*multiplier;
-
-            this.scores.push(new score(this.scores.length, this, this.controls[3][5].x+offsetX,
-                                                                 this.controls[3][5].y+offsetY, 0,0,
-              { style:  SCORESTYLES.TEXT,
-                text:   140*multiplier,
-                font:   monoFont,
-                timer:  50}));
-
-            multiplier++;
-
-          }
-          // Column 7
-          if(val(0,3) && val(1,4) && val(2,5) && val(3,6) && val(4,7) &&
-             val(5,7) ){
-
-            addCell(0,3); addCell(1,4); addCell(2,5); addCell(3,6); addCell(4,7);
-            addCell(5,7);
-
-            this.score+=120*multiplier;
-
-            this.scores.push(new score(this.scores.length, this, this.controls[2][5].x+offsetX,
-                                                                 this.controls[2][5].y+offsetY, 0,0,
-              { style:  SCORESTYLES.TEXT,
-                text:   120*multiplier,
-                font:   monoFont,
-                timer:  50}));
-
-            multiplier++;
-
-          }
-          // Column 8
-          if(val(0,4) && val(1,5) && val(2,6) && val(3,7) && val(4,8) ){
-
-            addCell(0,4); addCell(1,5); addCell(2,6); addCell(3,7); addCell(4,8);
-
-            this.score+=100*multiplier;
-            this.scores.push(new score(this.scores.length, this, this.controls[2][6].x+offsetX,
-                                                                 this.controls[2][6].y+offsetY, 0,0,
-              { style:  SCORESTYLES.TEXT,
-                text:   100*multiplier,
-                font:   monoFont,
-                timer:  50}));
-
-            multiplier++;
+            }
 
           }
 
         }
 
         // Clear Cells
-        for(var n=0; n<cells.length; n++){
-          this.controls[cells[n].row][cells[n].col].on=false;
-          this.controls[cells[n].row][cells[n].col].color=this.color;
-          this.controls[cells[n].row][cells[n].col].timer=60;
+        for(var n in cells){
+          cells[n].on=false;
+          cells[n].color=this.color;
+          cells[n].timer=60;
         }
 
         cells=[]; // Reset Cell Array
 
       };
-      hexBoard.prototype.gameOver=function(){
+      hexBoard.prototype.gameOver     = function(){
 
         var retVal = true;
 
@@ -3068,7 +2645,7 @@ var diagrams = function(processingInstance){
 
           };
 
-          function uUP(){
+          function uUp(){
 
             try{
 
@@ -3485,7 +3062,7 @@ var diagrams = function(processingInstance){
 
             case SHAPES.DIAMOND:        diamond();       break;
 
-            case SHAPES.UUP:            uUP();           break;
+            case SHAPES.UUP:            uUp();           break;
 
             case SHAPES.UDOWN:          uDown();         break;
 
@@ -3528,8 +3105,6 @@ var diagrams = function(processingInstance){
             for(var r in this.controls){
               for(var c in this.controls[r]){
 
-                // n++;
-
                 testShape(this.shapes[s].style,this.controls[r][c]);
 
                 if(retVal===false){ break; }
@@ -3557,7 +3132,7 @@ var diagrams = function(processingInstance){
         // }
 
       };
-      hexBoard.prototype.drop = function(){
+      hexBoard.prototype.drop         = function(){
 
         if(this.activeShape!==null &&
            app.focus!==this.id){
@@ -3589,8 +3164,6 @@ var diagrams = function(processingInstance){
 
             app.gameOver=this.gameOver();
 
-            // printLayout();
-
           }
 
         }
@@ -3600,13 +3173,7 @@ var diagrams = function(processingInstance){
         this.activeIndex = null;
 
       };
-      hexBoard.prototype.out      = function(){
 
-        this.hit=false;
-        forEach(this.shapes, 'out');
-        this.activeCell=null;
-
-      };
 
     }
 
@@ -5114,7 +4681,8 @@ var diagrams = function(processingInstance){
           noStroke();
 
           if(app.gameOver){
-            fill(getColor(CLRS.RED,10));
+            fill(getColor(p.color, 100));
+            // fill(getColor(CLRS.RED,10));
           }
           else if(p.timer!==0){
             // stroke(CLRS.RED);
@@ -5147,14 +4715,7 @@ var diagrams = function(processingInstance){
           scale(1,-1);
 
             border();
-          
-            // if(app.debug){
-              // textAlign(CENTER,CENTER);
-              // scale(1,-1);
-              // fill(CLRS.BLACK);
-              // textSize(24);
-              // text(this.parent.layout[this.row][this.col],0,0);
-            // }
+
             /** Circle */
             // stroke(CLRS.BLACK);
             // noFill();
@@ -5162,6 +4723,8 @@ var diagrams = function(processingInstance){
             // ellipse(0,0,d,d);
 
         popMatrix();
+
+
 
       };
       hexCell.prototype.hitTest=function(x,y){
@@ -5532,11 +5095,18 @@ var diagrams = function(processingInstance){
   };
   function play(){
 
-    // frameRate(app.frameRate);
-
     background(128);
 
     forEach(app.controls,'draw');
+
+    if(app.gameOver){
+
+      fill(getColor(CLRS.GREEN, frameCount%255));      
+      textAlign(CENTER,CENTER);
+      textFont(sansFont,150);
+      text('Game Over', width/2, height/2);
+
+    }
 
   };
 
@@ -5547,7 +5117,6 @@ var diagrams = function(processingInstance){
   initialize();
 
   execute=play;
-frameRate(0);
 
   draw=function(){
 
