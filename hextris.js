@@ -50,6 +50,9 @@ var diagrams = function(processingInstance){
               geekred
               ...
 
+      GAMES:
+              Choose Life - Sliding Triangle Game
+            
       - rotating hexagons for row clearance
       
       - Undo Stack
@@ -150,7 +153,7 @@ var diagrams = function(processingInstance){
 
     this.dragging     = false;  //  Is the mouse cursor moving and the left button pressed?
 
-    this.focus        = -1;     //  The ID of the control with focus
+    this.focus        = null;   //  The control with focus
 
     this.mode         = APPMODES.INTRO;
 
@@ -158,7 +161,7 @@ var diagrams = function(processingInstance){
     this.keys         = [];     //  Array holding the value of all keycodes
 
     this.info         = 0;      //  Is the info frame displayed
-    this.telemetry    = 0;      //  Is telemetry visible
+    this.telemetry    = 1;      //  Is telemetry visible
 
     /* Hextris Specific ------------------ */
 
@@ -211,7 +214,7 @@ var diagrams = function(processingInstance){
       VDOWNRIGHT:     23,
       VDOWNLEFT:      24
 
-    }
+    };
 
     var CLRS={
 
@@ -373,70 +376,23 @@ var diagrams = function(processingInstance){
 
     };
 
-    function isFocus(n){ return app.focus===n; }
-
     function getColor(clr, alpha){ return color(red(clr), green(clr), blue(clr), alpha/100*255); };
-
-    function setCell()         {
-
-      // app.activeCell=app.pyramid.controls[app.row][app.col];
-      // app.activeCell.on=!app.activeCell.on;
-
-    };
-
-    function resetAngles()     {
-
-      app.angles=[];
-
-      for(var row=0; row<=app.rows; row++){
-        app.angles[row]=[];
-      }
-
-    };
 
     function reset()           {
 
-      app.dirty = true;
+      app.dirty=true;
 
         app.hexGarden.reset();
-        // resetAngles();
 
       app.dirty=false;
 
     };
-
-    function getDiameter()     { return app.diameter;                 };
 
     function getInfo()         { return app.info;                     };
     function toggleInfo()      { app.info=!app.info;                  };
 
     function getTelemetry()    { return app.telemetry;                };
     function toggleTelemetry() { app.telemetry=!app.telemetry;        };
-
-    function constrainCurrent(){
-
-      app.row=(constrain)(app.row, 0, app.rows);
-      // app.col=(constrain)(app.col, 0, app.pyramid.controls[app.row].length-1);
-
-      // app.activeCell=app.pyramid.controls[app.row][app.col];
-
-    };
-
-    function exists(n)  {
-
-      for(var row in app.angles){
-        for(var col in app.angles[row]){
-
-          if(app.angles[row][col]===n){
-            return true;
-          }
-
-        }
-      }
-
-      return false;
-
-    };
 
     function clickTest(n){ println('click: ' + n);                    };
 
@@ -483,7 +439,7 @@ var diagrams = function(processingInstance){
           if(this.parent.hit){
 
             this.hit=true;
-            app.focus=this.id;
+            app.focus=this;
 
             for(var c in this.controls){ this.controls[c].moved((this.x+x), (this.y+y)); }
 
@@ -534,7 +490,7 @@ var diagrams = function(processingInstance){
       root.prototype=Object.create(control.prototype);
       root.prototype.draw=function(){
 
-        this.active=this.hit && app.focus===this.id;
+        this.active=this.hit && app.focus===this;
 
         pushMatrix();
 
@@ -545,7 +501,7 @@ var diagrams = function(processingInstance){
 
             if(this.hit              ){ fill(this.acolor);   }
             if(app.dragging &&
-               app.hexBoard.activeShape!==null){ cursor(HAND);        }
+               app.hexBoard.activePiece!==null){ cursor(HAND);        }
             else                               { cursor(this.cursor); }
 
               rect(0, 0, this.w, this.h);
@@ -564,7 +520,7 @@ var diagrams = function(processingInstance){
            mouseY<(this.y+y) + this.h){
 
           this.hit=true;
-          app.focus=this.id;
+          app.focus=this;
 
           for(var c in this.controls){ this.controls[c].moved(this.x+x, this.y+y); }
 
@@ -614,7 +570,7 @@ var diagrams = function(processingInstance){
       container.prototype=Object.create(control.prototype);
       container.prototype.draw=function(){
 
-        this.active=this.hit && app.focus===this.id;
+        this.active=this.hit && app.focus===this;
 
         pushMatrix();
 
@@ -687,7 +643,7 @@ var diagrams = function(processingInstance){
 
         if(this.retrieve()){
 
-          this.active=this.hit && app.focus===this.id;
+          this.active=this.hit && app.focus===this;
 
           pushMatrix();
 
@@ -775,7 +731,7 @@ var diagrams = function(processingInstance){
                mouseY<this.y+y + this.h){
 
               this.hit=true;
-              app.focus=this.id;
+              app.focus=this;
 
               for(var c in this.controls){ this.controls[c].moved(this.x+x, this.y+y); }
 
@@ -823,7 +779,7 @@ var diagrams = function(processingInstance){
       toolbar.prototype=Object.create(control.prototype);
       toolbar.prototype.draw=function(){
 
-        this.active=this.hit && app.focus===this.id;
+        this.active=this.hit && app.focus===this;
 
         pushMatrix();
 
@@ -938,11 +894,11 @@ var diagrams = function(processingInstance){
 
           /* app.focus is required to be done after control update in main draw sub */
 
-          var activeShape;
+          var activePiece;
           var activeCell;
 
-          if(app.hexBoard.activeShape!==null){ activeShape=app.hexBoard.activeShape.id; }
-          else                               { activeShape='null';                      }
+          if(app.hexBoard.activePiece!==null){ activePiece=app.hexBoard.activePiece.id; }
+          else                               { activePiece='null';                      }
 
           if(app.hexBoard.activeCell!==null) { activeCell=app.hexBoard.activeCell.id;   }
           else                               { activeCell='null';                       }
@@ -980,10 +936,10 @@ var diagrams = function(processingInstance){
                  app.keys[KEYCODES.ALT]     + '\n' +
                  app.keys[KEYCODES.CONTROL] + '\n' +
                  app.keys[KEYCODES.SHIFT]   + '\n\n\n' +
-                 app.focus                  + '\n' +
+                 app.focus.id               + '\n' +
                  focused                    + '\n' +
                  app.telemetry              + '\n\n\n' +
-                 activeShape                + '\n' +
+                 activePiece                + '\n' +
                  activeCell                 + '\n' +
                  app.dragging               + '\n\n' +
                  app.info                   + '\n\n' +
@@ -999,7 +955,7 @@ var diagrams = function(processingInstance){
 
         };
 
-        this.active=this.hit && app.focus===this.id;
+        this.active=this.hit && app.focus===this;
 
         pushMatrix();
 
@@ -1042,7 +998,7 @@ var diagrams = function(processingInstance){
                mouseY<this.y+y + this.h){
 
               this.hit=true;
-              app.focus=this.id;
+              app.focus=this;
 
               for(var c in this.controls){ this.controls[c].moved(this.x+x+this.offset, this.y+y); }
 
@@ -1071,21 +1027,17 @@ var diagrams = function(processingInstance){
         this.color          = getColor(color(61),100); //  Used to store hexCell default color
 
         this.score          = 0;
-        // this.count      = 0;
-        // this.angle      = 0;
 
-        this.shapes         = [];
+        this.pieces         = [];
         this.scores         = [];
 
         this.activeCell     = null;
-        this.activeShape    = null;
+        this.activePiece    = null;
         this.activeIndex    = null;
 
-        this.position0=new pnt(150, 525);
-        this.position1=new pnt(300, 525);
-        this.position2=new pnt(450, 525);
-
-        // this.locked     = false;
+        this.position0      = new pnt(150, 525);
+        this.position1      = new pnt(300, 525);
+        this.position2      = new pnt(450, 525);
 
         this.reset();
 
@@ -1098,10 +1050,10 @@ var diagrams = function(processingInstance){
         var p=this; //  Reference to the hexBoard control
 
         p.controls=[];
-        p.shapes=[];
+        p.pieces=[];
 
         p.activeCell  = null;
-        p.activeShape = null;
+        p.activePiece = null;
         p.activeIndex = null;
 
         p.layout=[[0,0,0,0,0],         //  Array of Rings
@@ -1237,26 +1189,26 @@ var diagrams = function(processingInstance){
         load();
         link();
         
-        this.loadShapes();
+        this.loadPieces();
         app.gameOver=false;
         this.score=0;
 
       };
-      hexBoard.prototype.loadShapes   =function(){
+      hexBoard.prototype.loadPieces   =function(){
 
         var rand0=SHAPES.LINEBACK;//floor(random(0,24));
         var rand1=SHAPES.LINEBACK;//floor(random(0,24));
         var rand2=SHAPES.SINGLE;//floor(random(0,24));
 
-        this.shapes.push(new shap(0, this, this.position0.x, this.position0.y, HEX_SIZE, HEX_SIZE,
+        this.pieces.push(new piece(0, this, this.position0.x, this.position0.y, HEX_SIZE, HEX_SIZE,
           {style: rand0,
            color: getShapeColor(rand0)}));
 
-        this.shapes.push(new shap(1, this, this.position1.x, this.position1.y, HEX_SIZE, HEX_SIZE,
+        this.pieces.push(new piece(1, this, this.position1.x, this.position1.y, HEX_SIZE, HEX_SIZE,
           {style: rand1,
            color: getShapeColor(rand1)}));
 
-        this.shapes.push(new shap(2, this, this.position2.x, this.position2.y, HEX_SIZE, HEX_SIZE,
+        this.pieces.push(new piece(2, this, this.position2.x, this.position2.y, HEX_SIZE, HEX_SIZE,
           {style: rand2,
            color: getShapeColor(rand2)}));
 
@@ -1265,7 +1217,7 @@ var diagrams = function(processingInstance){
 
         // var p =this;
 
-        // this.active=this.hit && app.focus===this.id;
+        // this.active=this.hit && app.focus===this;
 
         pushMatrix();
 
@@ -1291,7 +1243,7 @@ var diagrams = function(processingInstance){
 
         popMatrix();
 
-        forEach(this.shapes, 'draw');
+        forEach(this.pieces, 'draw');
         forEach(this.scores, 'draw');
 
         if(frameCount%1000===0){ this.purge(); }
@@ -1304,11 +1256,11 @@ var diagrams = function(processingInstance){
         if(this.parent.hit){
 
           if(this.hitTest(x,y)){ this.hit=true;
-                                 app.focus=this.id; }
+                                 app.focus=this; }
           else                 { this.hit=false;    }
 
-          for(var s in this.shapes){
-            this.shapes[s].moved(0,0);
+          for(var s in this.pieces){
+            this.pieces[s].moved(0,0);
           }
             
         }
@@ -1316,22 +1268,22 @@ var diagrams = function(processingInstance){
       };
       hexBoard.prototype.clicked      = function(){
 
-        forEach(this.shapes, 'clicked');
+        forEach(this.pieces, 'clicked');
 
       };
       hexBoard.prototype.dragged      = function(){
 
         if(this.hitTest(mouseX,mouseY)){
-          app.focus=this.id;
+          app.focus=this;
         }
         else{
           this.activeCell=null;
           this.activeID=null;
         }
 
-        forEach(this.shapes, 'dragged');
+        forEach(this.pieces, 'dragged');
 
-        if(this.activeShape!==null){
+        if(this.activePiece!==null){
 
           for(var r in this.controls){
             for(var c in this.controls[r]){
@@ -1350,13 +1302,13 @@ var diagrams = function(processingInstance){
       };
       hexBoard.prototype.released     = function(){
 
-        forEach(this.shapes, 'released');
+        forEach(this.pieces, 'released');
 
       };      
       hexBoard.prototype.out          = function(){
 
         this.hit=false;
-        forEach(this.shapes, 'out');
+        forEach(this.pieces, 'out');
         this.activeCell=null;
 
       };
@@ -1379,7 +1331,7 @@ var diagrams = function(processingInstance){
         }
 
       };      
-      hexBoard.prototype.placeShape   = function(){
+      hexBoard.prototype.dropPiece   = function(){
 
         var cell = this.activeCell;
 
@@ -1590,7 +1542,7 @@ var diagrams = function(processingInstance){
 
         };
 
-        switch(this.activeShape.style){
+        switch(this.activePiece.style){
 
           case SHAPES.SINGLE:         single();         break;
 
@@ -2367,7 +2319,7 @@ var diagrams = function(processingInstance){
 
         };
 
-        switch(this.activeShape.style){
+        switch(this.activePiece.style){
 
           case SHAPES.SINGLE:         single();         break;
 
@@ -2422,26 +2374,26 @@ var diagrams = function(processingInstance){
         // if(i===0){ rand=SHAPES.SINGLE; }
 
         // Create 200 pixels below baseY to allow it to glide into position
-        this.shapes[i].x=this.shapes[i].baseX;
-        this.shapes[i].y=this.shapes[i].baseY+200;
+        this.pieces[i].x=this.pieces[i].baseX;
+        this.pieces[i].y=this.pieces[i].baseY+200;
 
-        this.shapes[i].style=rand;
-        this.shapes[i].color=getShapeColor(rand);
-        this.shapes[i].deltaX=0;
-        this.shapes[i].deltaY=-5;
+        this.pieces[i].style=rand;
+        this.pieces[i].color=getShapeColor(rand);
+        this.pieces[i].deltaX=0;
+        this.pieces[i].deltaY=-5;
 
       };
-      hexBoard.prototype.resetShapes  = function(){
+      hexBoard.prototype.resetPieces  = function(){
 
-        for(var n in this.shapes){
+        for(var n in this.pieces){
 
           var rand=floor(random(0,24));
 
-          this.shapes[n].x=this.shapes[n].baseX;
-          this.shapes[n].y=this.shapes[n].baseY;
+          this.pieces[n].x=this.pieces[n].baseX;
+          this.pieces[n].y=this.pieces[n].baseY;
 
-          this.shapes[n].style=rand;
-          this.shapes[n].color=getShapeColor(rand);
+          this.pieces[n].style=rand;
+          this.pieces[n].color=getShapeColor(rand);
 
         }
 
@@ -2453,10 +2405,6 @@ var diagrams = function(processingInstance){
         var cells=[];
         var multiplier=1;
 
-        // var offsetX=this.x;
-        // var offsetY=this.y;
-
-        // var l=this.layout;
         var p=this;
 
         function val    (row,col){ return p.controls[row][col].on; };
@@ -3100,12 +3048,12 @@ var diagrams = function(processingInstance){
 
           var n=0;
 
-          for(var s in this.shapes){
+          for(var s in this.pieces){
 
             for(var r in this.controls){
               for(var c in this.controls[r]){
 
-                testShape(this.shapes[s].style,this.controls[r][c]);
+                testShape(this.pieces[s].style,this.controls[r][c]);
 
                 if(retVal===false){ break; }
 
@@ -3134,17 +3082,18 @@ var diagrams = function(processingInstance){
       };
       hexBoard.prototype.drop         = function(){
 
-        if(this.activeShape!==null &&
-           app.focus!==this.id){
+        if(this.activePiece!==null &&
+           app.focus!==this){
 
           var ctrls=this.controls;
 
           for(var r in ctrls){
             for(var c in ctrls[r]){
-
-              if(ctrls[r][c].hover &&
-                 this.layout[r][c]!==1){
-                 ctrls[r][c].color=this.activeShape.color;
+              
+              var cell=ctrls[r][c];
+              
+              if(cell.hover){
+                cell.color=this.activePiece.color;
               }
 
             }
@@ -3152,13 +3101,13 @@ var diagrams = function(processingInstance){
 
           if(this.validateDrop()){
 
-            this.scores.push(new score(this.scores.length, this, this.activeShape.x, this.activeShape.y, 10,10,
+            this.scores.push(new score(this.scores.length, this, this.activePiece.x, this.activePiece.y, 10,10,
               { style:  SCORESTYLES.TEXT,
                 font:   monoFont,
                 text:   '40',
                 timer:  30}));
 
-            this.placeShape();
+            this.dropPiece();
             this.tally();
             this.resetShape();
 
@@ -3169,7 +3118,7 @@ var diagrams = function(processingInstance){
         }
 
         this.activeCell  = null;
-        this.activeShape = null;
+        this.activePiece = null;
         this.activeIndex = null;
 
       };
@@ -3200,7 +3149,7 @@ var diagrams = function(processingInstance){
       button.prototype.draw=function(){
 
           this.offset=0;
-          this.active=this.hit && app.focus===this.id;
+          this.active=this.hit && app.focus===this;
 
           pushMatrix();
 
@@ -3246,7 +3195,7 @@ var diagrams = function(processingInstance){
              mouseY<(this.y+y) + this.h){
 
               this.hit=true;
-              app.focus=this.id;
+              app.focus=this;
 
           }
           else{
@@ -3449,7 +3398,7 @@ var diagrams = function(processingInstance){
         text(')', p.w/2+p.offset+3, p.h/2+p.offset);
 
         };
-        this.active=this.hit && app.focus===this.id;
+        this.active=this.hit && app.focus===this;
         this.offset=0;
         this.on=this.retrieve();
 
@@ -3559,7 +3508,7 @@ var diagrams = function(processingInstance){
       hexButton.prototype=Object.create(control.prototype);
       hexButton.prototype.draw=function(){
 
-        this.active=this.hit && app.focus===this.id;
+        this.active=this.hit && app.focus===this;
         this.offset=0;
 
         pushMatrix();
@@ -3664,7 +3613,7 @@ var diagrams = function(processingInstance){
                  triHit1){
 
                 this.hit=true;
-                app.focus=this.id;
+                app.focus=this;
 
               }
               else{
@@ -3750,7 +3699,7 @@ var diagrams = function(processingInstance){
       i_hexButton.prototype=Object.create(control.prototype);
       i_hexButton.prototype.draw=function(){
 
-        this.active=this.hit && app.focus===this.id;
+        this.active=this.hit && app.focus===this;
         this.offset=0;
 
 
@@ -4017,7 +3966,7 @@ var diagrams = function(processingInstance){
                  triHit1){
 
                 this.hit=true;
-                app.focus=this.id;
+                app.focus=this;
 
               }
               else{
@@ -4095,7 +4044,7 @@ var diagrams = function(processingInstance){
         if(this.timer<=0){ return }
 
           this.offset=0;
-          this.active=this.hit && app.focus===this.id;
+          this.active=this.hit && app.focus===this;
 
           pushMatrix();
 
@@ -4149,7 +4098,7 @@ var diagrams = function(processingInstance){
              mouseY<(this.y+y) + this.h){
 
               this.hit=true;
-              app.focus=this.id;
+              app.focus=this;
 
           }
           else{
@@ -4174,10 +4123,10 @@ var diagrams = function(processingInstance){
 
     }
 
-    /* shape                */
+    /* Piece               */
     {
 
-      function shap(id, parent, x, y, w, h, props){
+      function piece(id, parent, x, y, w, h, props){
 
         control.call(this, id, parent, x, y, w, h);
 
@@ -4191,8 +4140,8 @@ var diagrams = function(processingInstance){
         this.color  = props.color;
 
       };
-      shap.prototype=Object.create(control.prototype);
-      shap.prototype.draw=function(){
+      piece.prototype=Object.create(control.prototype);
+      piece.prototype.draw=function(){
 
         var p=this;
 
@@ -4513,7 +4462,7 @@ var diagrams = function(processingInstance){
 
         drawShape();
 
-        if(this.parent.activeShape!==this){
+        if(this.parent.activePiece!==this){
 
           if(this.deltaX===0 &&
              this.deltaY===0){
@@ -4547,7 +4496,7 @@ var diagrams = function(processingInstance){
           fill(CLRS.RED);
           ellipse(this.x,this.y,2,2);
 
-          // if(this.parent.activeShape===this){
+          // if(this.parent.activePiece===this){
             // fill(CLRS.WHITE);
             // textSize(14);
             // text(nf(this.deltaX,1,2) + ', ' +
@@ -4558,19 +4507,19 @@ var diagrams = function(processingInstance){
         }
 
       };
-      shap.prototype.hitTest=function(x,y){
+      piece.prototype.hitTest=function(x,y){
 
         return dist(this.x+x,this.y+y, mouseX,mouseY)<cos(PI/6)*this.w*1.25;
 
       };
-      shap.prototype.moved=function(x,y){
+      piece.prototype.moved=function(x,y){
 
         if(this.hitTest(x,y) &&
-           this.parent.activeShape===null){ this.hit=true;  }
+           this.parent.activePiece===null){ this.hit=true;  }
         else                              { this.hit=false; }
 
       };
-      shap.prototype.dragged=function(x,y){
+      piece.prototype.dragged=function(x,y){
 
         if(this.hit){
 
@@ -4580,7 +4529,7 @@ var diagrams = function(processingInstance){
           this.deltaX=(this.baseX-this.x)/20;
           this.deltaY=(this.baseY-this.y)/20;
 
-          this.parent.activeShape=this;
+          this.parent.activePiece=this;
           this.parent.activeIndex=this.id;
           this.parent.dragging=true;
 
@@ -4592,23 +4541,23 @@ var diagrams = function(processingInstance){
         // }
 
       };
-      shap.prototype.clicked=function(x,y){
+      piece.prototype.clicked=function(x,y){
 
-        // if(this.parent.activeShape===this){
+        // if(this.parent.activePiece===this){
           // this.parent.drop();
         // }
 
       };
-      shap.prototype.released=function(x,y){
+      piece.prototype.released=function(x,y){
 
-        // if(this.parent.activeShape===this){
+        // if(this.parent.activePiece===this){
           this.parent.drop();
         // }
 
       };
-      shap.prototype.out=function(){
+      piece.prototype.out=function(){
 
-        if(this.parent.activeShape===this){
+        if(this.parent.activePiece===this){
           this.parent.drop();
           this.hit=false;
         }
@@ -4670,7 +4619,7 @@ var diagrams = function(processingInstance){
       hexCell.prototype=Object.create(control.prototype);
       hexCell.prototype.draw=function(){
 
-        this.active=this.hit && app.focus===this.id;
+        this.active=this.hit && app.focus===this;
         this.offset=0;
 
         var p=this;
@@ -4682,16 +4631,14 @@ var diagrams = function(processingInstance){
 
           if(app.gameOver){
             fill(getColor(p.color, 100));
-            // fill(getColor(CLRS.RED,10));
           }
           else if(p.timer!==0){
-            // stroke(CLRS.RED);
             strokeWeight(p.timer/30*5);
             fill(getColor(CLRS.WHITE, 75*p.timer/30));
             p.timer--;
           }
-          else if(p.hover && p.parent.activeShape!==null){
-            fill(getColor(p.parent.activeShape.color,50));
+          else if(p.hover && p.parent.activePiece!==null){
+            fill(getColor(p.parent.activePiece.color,50));
           }
           else{
             fill(getColor(p.color, 100));
@@ -4771,9 +4718,9 @@ var diagrams = function(processingInstance){
             this.outerHit=true;
 
             if(this.hitTest(x,y)){ this.hit=true;
-                                   app.focus=this.id;
+                                   app.focus=this;
                                    this.parent.activeCell=this; }
-            else                 { this.hit=false;               }
+            else                 { this.hit=false;              }
 
           }
           else{
@@ -4820,8 +4767,7 @@ var diagrams = function(processingInstance){
 
       /* hexBoard           */
       rt.controls.push(new hexBoard(600, rt, 300, height/2-60, 0, 0,
-        {retrieve:  getDiameter,
-         font:      'sans-serif',
+        {font:      'sans-serif',
          levels:    app.rows,
          cursor:    ARROW,
          color:     CLRS.K_TEAL_2,
@@ -5117,6 +5063,8 @@ var diagrams = function(processingInstance){
   initialize();
 
   execute=play;
+  
+  app.focus=app.hexBoard;
 
   draw=function(){
 
@@ -5176,10 +5124,10 @@ var diagrams = function(processingInstance){
           case app.keys[KEYCODES.PGDN]:       decrementRows();          break;    /* PGDN - Rows--    */
 
           case app.keys[KEYCODES.a] &&
-               app.keys[KEYCODES.CONTROL]:    app.hexGarden.selectAll();  break;    /* CTRL+A Select All */
+               app.keys[KEYCODES.CONTROL]:    app.hexGarden.selectAll();    break;  /* CTRL+A Select All */
 
           case app.keys[KEYCODES.R] ||
-               app.keys[KEYCODES.r]:          app.hexGarden.resetShapes();      break;    /* R or r - Reset */
+               app.keys[KEYCODES.r]:          app.hexGarden.resetPieces();  break;  /* R or r - Reset */
 
           case app.keys[KEYCODES.LEFT] ||
                app.keys[KEYCODES.A]:          left();                   break;    /* LEFT or A        */
@@ -5200,7 +5148,7 @@ var diagrams = function(processingInstance){
           case app.keys[KEYCODES.DOWN] ||
                app.keys[KEYCODES.X]:          down();                   break;    /* DOWN or X        */
 
-          case app.keys[KEYCODES.SPACE]:      setCell();                break;    /* SPACE - Set Cell */
+          case app.keys[KEYCODES.SPACE]:                                break;    /* SPACE            */
 
           default:                                                      break;
 
