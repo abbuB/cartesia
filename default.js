@@ -1,6 +1,23 @@
   /* Constants ================================================================= */
   {
 
+    var APPMODES={
+      INTRO:        0,
+      GAME:         1,
+      EXTRO:        2,
+      INSTRUCTIONS: 3
+    };
+
+    var SCORESTYLES={
+      TEXT:   0,
+      CLICK:  1
+    };
+
+    var SOURCES={
+      DRAGGED:  0,
+      RELEASED: 1
+    }
+
     var KEYCODES={
       BACKSPACE:    8,
       TAB:          9,
@@ -146,11 +163,11 @@
     };
     var SHAPES={
 
-      SINGLE:          0,  //  Single Cell
+      SINGLE:           0,  //  Single Cell
 
-      ROW:             1,  //  4 contiguous horizontal cells
-      ROW_FORWARD:     2,  //  4 cells forward slash (Top is right most)
-      ROW_BACK:        3,  //  4 cells backward slash (Bottom is right most)
+      LINE:             1,  //  4 contiguous horizontal cells
+      LINEFORWARD:      2,  //  4 cells forward slash (Top is right most)
+      LINEBACK:         3,  //  4 cells backward slash (Bottom is right most)
 
       DIAMOND:         4,   //  Diamond shape
 
@@ -346,7 +363,7 @@
     else if ( n%3 === 0 ) { return false; }
     else {
       
-      var r = Math.pow(n,0.5);           //  n rounded to the greatest long r so that r*r<=n
+      var r = Math.pow(n,0.5);                //  n rounded to the greatest long r so that r*r<=n
       var l = 5;
       
       while (l<=r) {
@@ -358,12 +375,14 @@
       
       }
       
-      return true;  // n is prime
+      return true;                            // n is prime
 
       
     }
 
   };
   
+  // default.js
+    
   }
   
