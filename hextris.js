@@ -127,7 +127,7 @@ var diagrams = function(processingInstance){
 
       randomSeed(millis());
 
-      frameRate(80);
+      frameRate(0);
 
       cursor(WAIT);
       strokeCap(SQUARE);
@@ -142,7 +142,7 @@ var diagrams = function(processingInstance){
 
     this.debug        = true;   //  Mode that displays enhanced debugging tools
 
-    this.frameRate    = 70;      //  Refresh speed
+    this.frameRate    = 0;      //  Refresh speed
 
     this.mouseX       = 0;      //  Current mouseX location
     this.mouseY       = 0;      //  Current mouseY location
@@ -328,7 +328,7 @@ var diagrams = function(processingInstance){
   /* Utility Functions ===================================================== */
   {
 
-    function getShapeColor(n){
+    function getPieceColor(n){
 
       var retVal=-1;
 
@@ -1033,7 +1033,6 @@ var diagrams = function(processingInstance){
 
         this.activeCell     = null;
         this.activePiece    = null;
-        this.activeIndex    = null;
 
         this.position0      = new pnt(150, 525);
         this.position1      = new pnt(300, 525);
@@ -1054,7 +1053,6 @@ var diagrams = function(processingInstance){
 
         p.activeCell  = null;
         p.activePiece = null;
-        p.activeIndex = null;
 
         p.layout=[[0,0,0,0,0],         //  Array of Rings
                   [0,0,0,0,0,0],
@@ -1196,21 +1194,21 @@ var diagrams = function(processingInstance){
       };
       hexBoard.prototype.loadPieces   =function(){
 
-        var rand0=SHAPES.LINEBACK;//floor(random(0,24));
-        var rand1=SHAPES.LINEBACK;//floor(random(0,24));
-        var rand2=SHAPES.SINGLE;//floor(random(0,24));
+        var rand0=floor(random(0,24));
+        var rand1=floor(random(0,24));
+        var rand2=floor(random(0,24));
 
         this.pieces.push(new piece(0, this, this.position0.x, this.position0.y, HEX_SIZE, HEX_SIZE,
           {style: rand0,
-           color: getShapeColor(rand0)}));
+           color: getPieceColor(rand0)}));
 
         this.pieces.push(new piece(1, this, this.position1.x, this.position1.y, HEX_SIZE, HEX_SIZE,
           {style: rand1,
-           color: getShapeColor(rand1)}));
+           color: getPieceColor(rand1)}));
 
         this.pieces.push(new piece(2, this, this.position2.x, this.position2.y, HEX_SIZE, HEX_SIZE,
           {style: rand2,
-           color: getShapeColor(rand2)}));
+           color: getPieceColor(rand2)}));
 
       };
       hexBoard.prototype.draw         = function(){
@@ -1293,7 +1291,7 @@ var diagrams = function(processingInstance){
             }
           }
 
-          if(app.focus!==this.id){
+          if(app.focus!=this){
             this.validateDrop();
           }
 
@@ -2366,8 +2364,8 @@ var diagrams = function(processingInstance){
       };
       hexBoard.prototype.resetShape   = function(){
 
-        var i=this.activeIndex;
-
+        var i=this.activePiece.id;
+        
         //  Determine the new shape
         var rand=floor(random(0,24));
 
@@ -2378,7 +2376,7 @@ var diagrams = function(processingInstance){
         this.pieces[i].y=this.pieces[i].baseY+200;
 
         this.pieces[i].style=rand;
-        this.pieces[i].color=getShapeColor(rand);
+        this.pieces[i].color=getPieceColor(rand);
         this.pieces[i].deltaX=0;
         this.pieces[i].deltaY=-5;
 
@@ -2393,7 +2391,7 @@ var diagrams = function(processingInstance){
           this.pieces[n].y=this.pieces[n].baseY;
 
           this.pieces[n].style=rand;
-          this.pieces[n].color=getShapeColor(rand);
+          this.pieces[n].color=getPieceColor(rand);
 
         }
 
@@ -2431,7 +2429,7 @@ var diagrams = function(processingInstance){
 
           };
 
-          function backTally(row){
+          function downRightTally(row){
             
             cell=p.controls[row][0];
 
@@ -2473,10 +2471,33 @@ var diagrams = function(processingInstance){
               multiplier++;
 
             }
-
+            
           }
 
-        }
+          //  Iterate down right
+
+
+            if(downRightTally(row)){
+
+              for(var n in this.controls[row]){
+                cells.push(this.controls[row][n]);
+              }
+
+              var col=floor(this.controls[row].length/2);
+              var len=this.controls[row].length;
+              
+              this.score+=20*len*multiplier;
+
+              this.scores.push(new score(this.scores.length, this, this.controls[row][col].x+p.x,
+                                                                   this.controls[row][col].y+p.y, 0,0,
+                { style:  SCORESTYLES.TEXT,
+                  text:   20*len*multiplier,
+                  font:   serifFont,
+                  timer:  60}));
+
+              multiplier++;
+
+            }
 
         // Clear Cells
         for(var n in cells){
@@ -3000,7 +3021,7 @@ var diagrams = function(processingInstance){
 
           };
 
-          switch(s){
+          switch(s.style){
 
             case SHAPES.SINGLE:         single();        break;
 
@@ -3053,14 +3074,16 @@ var diagrams = function(processingInstance){
             for(var r in this.controls){
               for(var c in this.controls[r]){
 
-                testShape(this.pieces[s].style,this.controls[r][c]);
+                testShape(this.pieces[s], this.controls[r][c]);
 
                 if(retVal===false){ break; }
 
               }
+
               if(retVal===false){ break; }
 
             }
+
             if(retVal===false){ break; }
 
           }
@@ -3087,10 +3110,12 @@ var diagrams = function(processingInstance){
 
           var ctrls=this.controls;
 
+          var cell;
+          
           for(var r in ctrls){
             for(var c in ctrls[r]){
               
-              var cell=ctrls[r][c];
+              cell=ctrls[r][c];
               
               if(cell.hover){
                 cell.color=this.activePiece.color;
@@ -3119,7 +3144,6 @@ var diagrams = function(processingInstance){
 
         this.activeCell  = null;
         this.activePiece = null;
-        this.activeIndex = null;
 
       };
 
@@ -4282,6 +4306,7 @@ var diagrams = function(processingInstance){
               uUp(clr);
 
           };
+          
           function upRight(clr){
 
             rotate(PI/3);
@@ -4530,7 +4555,6 @@ var diagrams = function(processingInstance){
           this.deltaY=(this.baseY-this.y)/20;
 
           this.parent.activePiece=this;
-          this.parent.activeIndex=this.id;
           this.parent.dragging=true;
 
         }
