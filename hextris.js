@@ -2405,15 +2405,10 @@ var diagrams = function(processingInstance){
 
         var p=this;
 
-        function val    (row,col){ return p.controls[row][col].on; };
-        function addCell(row,col){ cells.push(new pt(row,col));    };
-
-        /* Rows */
+        // Rows --------------------------------------------------------------------------------
         {
           
-          function rowTally(row){
-            
-            cell=p.controls[row][0];
+          function rowTally(cell){
 
             while(cell!=null){
 
@@ -2429,9 +2424,43 @@ var diagrams = function(processingInstance){
 
           };
 
-          function downRightTally(row){
+          //  Iterate each row
+          for(var row in this.controls){
             
-            cell=p.controls[row][0];
+            cell=this.controls[row][0];
+
+            if(rowTally(cell)){
+
+              var len=0;
+
+              while(cell!=null){
+                
+                len++;
+                cells.push(cell);
+
+                cell=cell.right;
+
+              }
+
+              var col=floor(this.controls[row].length/2);
+
+              this.score+=20*len*multiplier;
+
+              this.scores.push(new score(this.scores.length, this, this.controls[row][col].x+p.x,
+                                                                   this.controls[row][col].y+p.y, 0,0,
+                { style:  SCORESTYLES.TEXT,
+                  text:   20*len*multiplier,
+                  font:   serifFont,
+                  timer:  60}));
+
+              multiplier++;
+
+            }
+            
+          }
+          
+          // Down Right--------------------------------------------------------------------------------
+          function downRightTally(cell){
 
             while(cell!=null){
 
@@ -2447,22 +2476,27 @@ var diagrams = function(processingInstance){
 
           };
           
-          //  Iterate each row
-          for(var row in this.controls){
+          function downRight(cell){
 
-            if(rowTally(row)){
+            if(downRightTally(cell)){
 
-              for(var n in this.controls[row]){
-                cells.push(this.controls[row][n]);
+              var len=0;
+
+              while(cell!=null){
+                
+                len++;
+                cells.push(cell);
+
+                cell=cell.bottomRight;
+
               }
 
-              var col=floor(this.controls[row].length/2);
-              var len=this.controls[row].length;
-              
-              this.score+=20*len*multiplier;
+              var col=floor(p.controls[0].length/2);
 
-              this.scores.push(new score(this.scores.length, this, this.controls[row][col].x+p.x,
-                                                                   this.controls[row][col].y+p.y, 0,0,
+              p.score+=20*len*multiplier;
+
+              p.scores.push(new score(p.scores.length, p, p.controls[0][col].x+p.x,
+                                                          p.controls[0][col].y+p.y, 0,0,
                 { style:  SCORESTYLES.TEXT,
                   text:   20*len*multiplier,
                   font:   serifFont,
@@ -2471,25 +2505,58 @@ var diagrams = function(processingInstance){
               multiplier++;
 
             }
-            
-          }
 
-          //  Iterate down right
+          };
 
+          downRight(p.controls[0][0]);
+          downRight(p.controls[0][1]);
+          downRight(p.controls[0][2]);
+          downRight(p.controls[0][3]);
+          downRight(p.controls[0][4]);
+          downRight(p.controls[1][0]);
+          downRight(p.controls[2][0]);
+          downRight(p.controls[3][0]);
+          downRight(p.controls[4][0]);
+          
+          // Down Left--------------------------------------------------------------------------------
+          function downLeftTally(cell){
 
-            if(downRightTally(row)){
+            while(cell!=null){
 
-              for(var n in this.controls[row]){
-                cells.push(this.controls[row][n]);
+              if(cell.on===false){
+                return false;
               }
 
-              var col=floor(this.controls[row].length/2);
-              var len=this.controls[row].length;
-              
-              this.score+=20*len*multiplier;
+              cell=cell.bottomLeft;
 
-              this.scores.push(new score(this.scores.length, this, this.controls[row][col].x+p.x,
-                                                                   this.controls[row][col].y+p.y, 0,0,
+            }
+
+            return true;
+
+          };
+
+          
+          function downLeft(cell){
+
+            if(downLeftTally(cell)){
+
+              var len=0;
+
+              while(cell!=null){
+                
+                len++;
+                cells.push(cell);
+
+                cell=cell.bottomLeft;
+
+              }
+
+              var col=floor(p.controls[0].length/2);
+
+              p.score+=20*len*multiplier;
+
+              p.scores.push(new score(p.scores.length, p, p.controls[0][col].x+p.x,
+                                                          p.controls[0][col].y+p.y, 0,0,
                 { style:  SCORESTYLES.TEXT,
                   text:   20*len*multiplier,
                   font:   serifFont,
@@ -2498,6 +2565,20 @@ var diagrams = function(processingInstance){
               multiplier++;
 
             }
+
+          };
+
+          downLeft(p.controls[0][0]);
+          downLeft(p.controls[0][1]);
+          downLeft(p.controls[0][2]);
+          downLeft(p.controls[0][3]);
+          downLeft(p.controls[0][4]);
+          downLeft(p.controls[1][5]);
+          downLeft(p.controls[2][6]);
+          downLeft(p.controls[3][7]);
+          downLeft(p.controls[4][8]);
+
+        }
 
         // Clear Cells
         for(var n in cells){
