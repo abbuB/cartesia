@@ -2400,6 +2400,7 @@ var diagrams = function(processingInstance){
 
         this.score+=40;
 
+        var cell=null;
         var cells=[];
         var multiplier=1;
 
@@ -2451,6 +2452,7 @@ var diagrams = function(processingInstance){
                 { style:  SCORESTYLES.TEXT,
                   text:   20*len*multiplier,
                   font:   serifFont,
+                  delay:  multiplier*30-30,
                   timer:  60}));
 
               multiplier++;
@@ -2492,14 +2494,16 @@ var diagrams = function(processingInstance){
               }
 
               var col=floor(p.controls[0].length/2);
-
+              var row=floor(len/2);
+              
               p.score+=20*len*multiplier;
 
-              p.scores.push(new score(p.scores.length, p, p.controls[0][col].x+p.x,
-                                                          p.controls[0][col].y+p.y, 0,0,
+              p.scores.push(new score(p.scores.length, p, p.controls[row][col].x+p.x,
+                                                          p.controls[row][col].y+p.y, 0,0,
                 { style:  SCORESTYLES.TEXT,
                   text:   20*len*multiplier,
                   font:   serifFont,
+                  delay:  multiplier*30-30,
                   timer:  60}));
 
               multiplier++;
@@ -2560,6 +2564,7 @@ var diagrams = function(processingInstance){
                 { style:  SCORESTYLES.TEXT,
                   text:   20*len*multiplier,
                   font:   serifFont,
+                  delay:  multiplier*30-30,
                   timer:  60}));
 
               multiplier++;
@@ -3211,6 +3216,7 @@ var diagrams = function(processingInstance){
               { style:  SCORESTYLES.TEXT,
                 font:   monoFont,
                 text:   '40',
+                delay:  10,
                 timer:  30}));
 
             this.dropPiece();
@@ -4134,11 +4140,12 @@ var diagrams = function(processingInstance){
         this.cursor   = props.cursor;
 
         this.timer    = props.timer;
+        this.delay    = props.delay || 0;
 
         this.scale    = 1;
 
         textFont(this.font);
-        textSize(100);
+        textSize(60);
                 
         // this.on=false;
 
@@ -4147,7 +4154,8 @@ var diagrams = function(processingInstance){
       score.prototype.draw=function(){
 
         if(this.timer<=0){ return }
-
+        if(this.delay>0){ this.delay--; return }
+          
           this.offset=0;
           this.active=this.hit && app.focus===this;
 
@@ -4168,7 +4176,7 @@ var diagrams = function(processingInstance){
                 // textFont(this.font);
                 // textSize(30);
                 fill(this.color);
-                fill(getColor(CLRS.WHITE,70+this.timer));
+                fill(getColor(CLRS.WHITE,100*this.timer/30));
                 textAlign(CENTER,CENTER);
 
                   text(this.text, this.timer, this.timer);
@@ -4179,7 +4187,11 @@ var diagrams = function(processingInstance){
                   // println(this.parent.scores[0].timer);
 
                 }
-                else{ this.timer--; }
+                else{
+
+                  this.timer--;
+
+                }
 
               }
               else if(this.style===SCORESTYLE.CLICK){
