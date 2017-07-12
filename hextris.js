@@ -179,40 +179,40 @@ var diagrams = function(processingInstance){
 
     var CLRS_S={
 
-      SINGLE:         0,
+      // SINGLE:         0,
 
-      LINE:           1,
-      LINE_FORWARD:   2,
-      LINE_BACK:      3,
+      // LINE:           1,
+      // LINE_FORWARD:   2,
+      // LINE_BACK:      3,
 
-      DIAMOND:        4,
+      // DIAMOND:        4,
 
-      UUP:            5,
-      UDOWN:          6,
+      // UUP:            5,
+      // UDOWN:          6,
 
-      UPRIGHT:        7,
-      DOWNRIGHT:      8,
-      UPLEFT:         9,
-      DOWNLEFT:       10,
+      // UPRIGHT:        7,
+      // DOWNRIGHT:      8,
+      // UPLEFT:         9,
+      // DOWNLEFT:       10,
 
-      ZRIGHT:         11,
-      ZLEFT:          12,
+      // ZRIGHT:         11,
+      // ZLEFT:          12,
 
-      SEVENRIGHT:     13,
-      SEVENLEFT:      14,
+      // SEVENRIGHT:     13,
+      // SEVENLEFT:      14,
 
-      ANGLERIGHT:     15,
-      ANGLELEFT:      16,
+      // ANGLERIGHT:     15,
+      // ANGLELEFT:      16,
 
-      NODEUPRIGHT:    17,
-      NODEUPLEFT:     18,
-      NODEDOWNRIGHT:  19,
-      NODEDOWNLEFT:   20,
+      // NODEUPRIGHT:    17,
+      // NODEUPLEFT:     18,
+      // NODEDOWNRIGHT:  19,
+      // NODEDOWNLEFT:   20,
 
-      VUPRIGHT:       21,
-      VUPLEFT:        22,
-      VDOWNRIGHT:     23,
-      VDOWNLEFT:      24
+      // VUPRIGHT:       21,
+      // VUPLEFT:        22,
+      // VDOWNRIGHT:     23,
+      // VDOWNLEFT:      24
 
     };
 
@@ -336,39 +336,39 @@ var diagrams = function(processingInstance){
 
       switch(n){
 
-        case CLRS_S.SINGLE:         retVal=color(170, 29, 29,255);  break;
+        case SHAPES.SINGLE:         retVal=color(170, 29, 29,255);  break;
 
-        case CLRS_S.LINE:
-        case CLRS_S.LINE_FORWARD:
-        case CLRS_S.LINE_BACK:      retVal=color(158,182, 58,255);  break;
+        case SHAPES.LINE:
+        case SHAPES.LINEFORWARD:
+        case SHAPES.LINEBACK:       retVal=color(158,182, 58,255);  break;
 
-        case CLRS_S.DIAMOND:        retVal=color( 49,204,167,255);  break;
+        case SHAPES.DIAMOND:        retVal=color( 49,204,167,255);  break;
 
-        case CLRS_S.UUP:
-        case CLRS_S.UDOWN:          retVal=color(238,214, 15,128);  break;
+        case SHAPES.UUP:
+        case SHAPES.UDOWN:          retVal=color(238,214, 15,255);  break;
 
-        case CLRS_S.UPRIGHT:
-        case CLRS_S.DOWNRIGHT:
-        case CLRS_S.UPLEFT:
-        case CLRS_S.DOWNLEFT:       retVal=color(238,214, 15,255);  break;
+        case SHAPES.UPRIGHT:        retVal=color(0,  0,255,255);  break;
+        case SHAPES.DOWNRIGHT:
+        case SHAPES.UPLEFT:
+        case SHAPES.DOWNLEFT:       retVal=color(192,  0,255,255);  break;
 
-        case CLRS_S.ZRIGHT:
-        case CLRS_S.ZLEFT:          retVal=color( 29, 86,170,255);  break;
+        case SHAPES.ZRIGHT:
+        case SHAPES.ZLEFT:          retVal=color( 29, 86,170,255);  break;
 
-        case CLRS_S.SEVENRIGHT:
-        case CLRS_S.SEVENLEFT:
-        case CLRS_S.ANGLERIGHT:
-        case CLRS_S.ANGLELEFT:      retVal=color(255, 81,  0,255);  break;
+        case SHAPES.SEVENRIGHT:
+        case SHAPES.SEVENLEFT:
+        case SHAPES.ANGLERIGHT:
+        case SHAPES.ANGLELEFT:      retVal=color(255, 81,  0,255);  break;
 
-        case CLRS_S.NODEUPRIGHT:
-        case CLRS_S.NODEUPLEFT:
-        case CLRS_S.NODEDOWNRIGHT:
-        case CLRS_S.NODEDOWNLEFT:   retVal=color(255, 20,147,255);  break;
+        case SHAPES.NODEUPRIGHT:
+        case SHAPES.NODEUPLEFT:
+        case SHAPES.NODEDOWNRIGHT:
+        case SHAPES.NODEDOWNLEFT:   retVal=color(255, 20,147,255);  break;
 
-        case CLRS_S.VUPRIGHT:
-        case CLRS_S.VUPLEFT:
-        case CLRS_S.VDOWNRIGHT:
-        case CLRS_S.VDOWNLEFT:      retVal=color(255,190,  0,255);  break;
+        case SHAPES.VUPRIGHT:
+        case SHAPES.VUPLEFT:
+        case SHAPES.VDOWNRIGHT:
+        case SHAPES.VDOWNLEFT:      retVal=color(255,190,  0,255);  break;
 
         default:                                                    break;
 
@@ -1246,7 +1246,7 @@ var diagrams = function(processingInstance){
         forEach(this.pieces, 'draw');
         forEach(this.scores, 'draw');
 
-        if(frameCount%1000===0){ this.purge(); }
+        this.purgeScores();
 
       };
       hexBoard.prototype.hitTest      = function(x,y){ return dist(mouseX,mouseY,this.x,this.y)<this.w/2; };
@@ -1347,21 +1347,25 @@ var diagrams = function(processingInstance){
         }
 
       };      
-      hexBoard.prototype.purge        = function(){
+      hexBoard.prototype.purgeScores  = function(){
 
-        var total=0;
+        if(frameCount%1000===0){
+        
+          var total=0;
 
-        for(var n=0; n<this.scores.length; n++){
+          for(var n=0; n<this.scores.length; n++){
 
-          if(this.scores[n].timer!==0){
-            total=1;
-            break;
+            if(this.scores[n].timer!==0){
+              total=1;
+              break;
+            }
+
           }
 
-        }
+          if(total===0){
+            this.scores=[];
+          }
 
-        if(total===0){
-          this.scores=[];
         }
 
       };      
@@ -4535,38 +4539,38 @@ var diagrams = function(processingInstance){
 
               switch(p.style){
 
-                case SHAPES.SINGLE:         single(CLRS.SINGLE);      break;
+                case SHAPES.SINGLE:         single(getPieceColor(SHAPES.SINGLE));               break;
 
-                case SHAPES.LINE:           row(CLRS.LINE);           break;
-                case SHAPES.LINEFORWARD:    forward(CLRS.LINE);       break;
-                case SHAPES.LINEBACK:       back(CLRS.LINE);          break;
+                case SHAPES.LINE:           row(getPieceColor(SHAPES.LINE));                    break;
+                case SHAPES.LINEFORWARD:    forward(getPieceColor(SHAPES.LINEFORWARD));         break;
+                case SHAPES.LINEBACK:       back(getPieceColor(SHAPES.LINEBACK));               break;
 
-                case SHAPES.DIAMOND:        diamond(CLRS.DIAMOND);    break;
-                case SHAPES.ZRIGHT:         zRight(CLRS.Z);           break;
-                case SHAPES.ZLEFT:          zLeft(CLRS.Z);            break;
+                case SHAPES.DIAMOND:        diamond(getPieceColor(SHAPES.DIAMOND));             break;
+                case SHAPES.ZRIGHT:         zRight(getPieceColor(SHAPES.ZRIGHT));               break;
+                case SHAPES.ZLEFT:          zLeft(getPieceColor(SHAPES.ZLEFT));                 break;
 
-                case SHAPES.UUP:            uUp(CLRS.U);              break;
-                case SHAPES.UDOWN:          uDown(CLRS.U);            break;
+                case SHAPES.UUP:            uUp(getPieceColor(SHAPES.UUP));                     break;
+                case SHAPES.UDOWN:          uDown(getPieceColor(SHAPES.UDOWN));                 break;
 
-                case SHAPES.UPRIGHT:        upRight(CLRS.U);          break;
-                case SHAPES.UPLEFT:         upLeft(CLRS.U);           break;
-                case SHAPES.DOWNRIGHT:      downRight(CLRS.U);        break;
-                case SHAPES.DOWNLEFT:       downLeft(CLRS.U);         break;
+                case SHAPES.UPRIGHT:        upRight(getPieceColor(SHAPES.UPRIGHT));             break;
+                case SHAPES.UPLEFT:         upLeft(getPieceColor(SHAPES.UPLEFT));               break;
+                case SHAPES.DOWNRIGHT:      downRight(getPieceColor(SHAPES.DOWNRIGHT));         break;
+                case SHAPES.DOWNLEFT:       downLeft(getPieceColor(SHAPES.DOWNLEFT));           break;
 
-                case SHAPES.SEVENRIGHT:     sevenRight(CLRS.SEVEN);   break;
-                case SHAPES.SEVENLEFT:      sevenLeft(CLRS.SEVEN);    break;
-                case SHAPES.ANGLERIGHT:     angleRight(CLRS.SEVEN);   break;
-                case SHAPES.ANGLELEFT:      angleLeft(CLRS.SEVEN);    break;
+                case SHAPES.SEVENRIGHT:     sevenRight(getPieceColor(SHAPES.SEVENRIGHT));       break;
+                case SHAPES.SEVENLEFT:      sevenLeft(getPieceColor(SHAPES.SEVENLEFT));         break;
+                case SHAPES.ANGLERIGHT:     angleRight(getPieceColor(SHAPES.ANGLERIGHT));       break;
+                case SHAPES.ANGLELEFT:      angleLeft(getPieceColor(SHAPES.ANGLELEFT));         break;
 
-                case SHAPES.NODEDOWNLEFT:   nodeDownLeft(CLRS.NODE);  break;
-                case SHAPES.NODEDOWNRIGHT:  nodeDownRight(CLRS.NODE); break;
-                case SHAPES.NODEUPLEFT:     nodeUpLeft(CLRS.NODE);    break;
-                case SHAPES.NODEUPRIGHT:    nodeUpRight(CLRS.NODE);   break;
+                case SHAPES.NODEDOWNLEFT:   nodeDownLeft(getPieceColor(SHAPES.NODEDOWNLEFT));   break;
+                case SHAPES.NODEDOWNRIGHT:  nodeDownRight(getPieceColor(SHAPES.NODEDOWNRIGHT)); break;
+                case SHAPES.NODEUPLEFT:     nodeUpLeft(getPieceColor(SHAPES.NODEUPLEFT));       break;
+                case SHAPES.NODEUPRIGHT:    nodeUpRight(getPieceColor(SHAPES.NODEUPRIGHT));     break;
 
-                case SHAPES.VDOWNLEFT:      vDownLeft(CLRS.V);        break;
-                case SHAPES.VDOWNRIGHT:     vDownRight(CLRS.V);       break;
-                case SHAPES.VUPLEFT:        vUpLeft(CLRS.V);          break;
-                case SHAPES.VUPRIGHT:       vUpRight(CLRS.V);         break;
+                case SHAPES.VDOWNLEFT:      vDownLeft(getPieceColor(SHAPES.VDOWNLEFT));         break;
+                case SHAPES.VDOWNRIGHT:     vDownRight(getPieceColor(SHAPES.VDOWNRIGHT));       break;
+                case SHAPES.VUPLEFT:        vUpLeft(getPieceColor(SHAPES.VUPLEFT));             break;
+                case SHAPES.VUPRIGHT:       vUpRight(getPieceColor(SHAPES.VUPRIGHT));           break;
 
                 default:                                              break;
 
