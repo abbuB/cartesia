@@ -328,6 +328,8 @@ var diagrams = function(processingInstance){
   /* Utility Functions ===================================================== */
   {
 
+    function getShape(){ return floor(random(0,25)); };
+
     function getPieceColor(n){
 
       var retVal=-1;
@@ -343,7 +345,7 @@ var diagrams = function(processingInstance){
         case CLRS_S.DIAMOND:        retVal=color( 49,204,167,255);  break;
 
         case CLRS_S.UUP:
-        case CLRS_S.UDOWN:
+        case CLRS_S.UDOWN:          retVal=color(238,214, 15,128);  break;
 
         case CLRS_S.UPRIGHT:
         case CLRS_S.DOWNRIGHT:
@@ -378,7 +380,7 @@ var diagrams = function(processingInstance){
 
     function getColor(clr, alpha){ return color(red(clr), green(clr), blue(clr), alpha/100*255); };
 
-    function reset()           {
+    function reset()            {
 
       app.dirty=true;
 
@@ -388,13 +390,13 @@ var diagrams = function(processingInstance){
 
     };
 
-    function getInfo()         { return app.info;                     };
-    function toggleInfo()      { app.info=!app.info;                  };
+    function getInfo()          { return app.info;                     };
+    function toggleInfo()       { app.info=!app.info;                  };
 
-    function getTelemetry()    { return app.telemetry;                };
-    function toggleTelemetry() { app.telemetry=!app.telemetry;        };
+    function getTelemetry()     { return app.telemetry;                };
+    function toggleTelemetry()  { app.telemetry=!app.telemetry;        };
 
-    function clickTest(n){ println('click: ' + n);                    };
+    function clickTest(n)       { println('click: ' + n);                    };
 
   }
 
@@ -1144,7 +1146,7 @@ var diagrams = function(processingInstance){
                 }
                 else{
 
-                  ctrls[r][c].topLeft  = ctrls[r-1][c  ]; 
+                  ctrls[r][c].topLeft  = ctrls[r-1][c]; 
 
                 }
                 
@@ -1194,9 +1196,9 @@ var diagrams = function(processingInstance){
       };
       hexBoard.prototype.loadPieces   =function(){
 
-        var rand0=floor(random(0,24));
-        var rand1=floor(random(0,24));
-        var rand2=floor(random(0,24));
+        var rand0=getShape();
+        var rand1=getShape();
+        var rand2=getShape();
 
         this.pieces.push(new piece(0, this, this.position0.x, this.position0.y, HEX_SIZE, HEX_SIZE,
           {style: rand0,
@@ -1311,6 +1313,40 @@ var diagrams = function(processingInstance){
 
       };
       
+      hexBoard.prototype.resetShape   = function(){
+
+        var i=this.activePiece.id;
+        
+        //  Determine the new shape
+        var rand=getShape();
+
+        // if(i===0){ rand=SHAPES.SINGLE; }
+
+        // Create 200 pixels below baseY to allow it to glide into position
+        this.pieces[i].x=this.pieces[i].baseX;
+        this.pieces[i].y=this.pieces[i].baseY+200;
+
+        this.pieces[i].style=rand;
+        this.pieces[i].color=getPieceColor(rand);
+        this.pieces[i].deltaX=0;
+        this.pieces[i].deltaY=-5;
+
+      };
+      hexBoard.prototype.resetPieces  = function(){
+
+        for(var n in this.pieces){
+
+          var rand=getShape();
+
+          this.pieces[n].x=this.pieces[n].baseX;
+          this.pieces[n].y=this.pieces[n].baseY;
+
+          this.pieces[n].style=rand;
+          this.pieces[n].color=getPieceColor(rand);
+
+        }
+
+      };      
       hexBoard.prototype.purge        = function(){
 
         var total=0;
@@ -1373,7 +1409,7 @@ var diagrams = function(processingInstance){
 
         };
 
-        function uUP(){
+        function uUp(){
 
           cell.left.on        =true;
           cell.right.on       =true;
@@ -1550,7 +1586,7 @@ var diagrams = function(processingInstance){
 
           case SHAPES.DIAMOND:        diamond();        break;
 
-          case SHAPES.UUP:            uUP();            break;
+          case SHAPES.UUP:            uUp();            break;
 
           case SHAPES.UDOWN:          uDown();          break;
 
@@ -1730,7 +1766,7 @@ var diagrams = function(processingInstance){
 
         };
 
-        function uUP(){
+        function uUp(){
 
           try{
 
@@ -2327,7 +2363,7 @@ var diagrams = function(processingInstance){
 
           case SHAPES.DIAMOND:        diamond();        break;
 
-          case SHAPES.UUP:            uUP();            break;
+          case SHAPES.UUP:            uUp();            break;
 
           case SHAPES.UDOWN:          uDown();          break;
 
@@ -2362,40 +2398,7 @@ var diagrams = function(processingInstance){
         return retVal;
 
       };
-      hexBoard.prototype.resetShape   = function(){
 
-        var i=this.activePiece.id;
-        
-        //  Determine the new shape
-        var rand=floor(random(0,24));
-
-        // if(i===0){ rand=SHAPES.SINGLE; }
-
-        // Create 200 pixels below baseY to allow it to glide into position
-        this.pieces[i].x=this.pieces[i].baseX;
-        this.pieces[i].y=this.pieces[i].baseY+200;
-
-        this.pieces[i].style=rand;
-        this.pieces[i].color=getPieceColor(rand);
-        this.pieces[i].deltaX=0;
-        this.pieces[i].deltaY=-5;
-
-      };
-      hexBoard.prototype.resetPieces  = function(){
-
-        for(var n in this.pieces){
-
-          var rand=floor(random(0,24));
-
-          this.pieces[n].x=this.pieces[n].baseX;
-          this.pieces[n].y=this.pieces[n].baseY;
-
-          this.pieces[n].style=rand;
-          this.pieces[n].color=getPieceColor(rand);
-
-        }
-
-      };
       hexBoard.prototype.tally        = function(){
 
         this.score+=40;
@@ -2610,8 +2613,8 @@ var diagrams = function(processingInstance){
             }
             catch(e){
 
-              if(e instanceof TypeError){
-                // Cell doesn't exist
+              if(e instanceof TypeError){ // Cell doesn't exist
+                retVal=true;
               }
               else{ println(e); }
 
@@ -2625,13 +2628,13 @@ var diagrams = function(processingInstance){
               retVal=!(cell.on           ===false &&
                        cell.right.on     ===false &&
                        cell.left.on      ===false &&
-                       cell.left.left.on ===false)
+                       cell.left.left.on ===false);
 
             }
             catch(e){
 
-              if(e instanceof TypeError){
-                // Cell doesn't exist
+              if(e instanceof TypeError){ // Cell doesn't exist
+                retVal=true;
               }
               else{ println(e); }
 
@@ -2645,13 +2648,13 @@ var diagrams = function(processingInstance){
               retVal=!(cell.on                   ===false &&
                        cell.bottomLeft.on        ===false &&
                        cell.topRight.on          ===false &&
-                       cell.topRight.topRight.on ===false)
+                       cell.topRight.topRight.on ===false);
 
             }
             catch(e){
 
-              if(e instanceof TypeError){
-                // Cell doesn't exist
+              if(e instanceof TypeError){ // Cell doesn't exist
+                retVal=true;
               }
               else{ println(e); }
 
@@ -2665,13 +2668,13 @@ var diagrams = function(processingInstance){
               retVal=!(cell.on                 ===false &&
                        cell.bottomRight.on     ===false &&
                        cell.topLeft.on         ===false &&
-                       cell.topLeft.topLeft.on ===false)
+                       cell.topLeft.topLeft.on ===false);
 
             }
             catch(e){
 
-              if(e instanceof TypeError){
-                // Cell doesn't exist
+              if(e instanceof TypeError){ // Cell doesn't exist
+                retVal=true;
               }
               else{ println(e); }
 
@@ -2686,13 +2689,13 @@ var diagrams = function(processingInstance){
               retVal=!(cell.on            ===false &&
                        cell.left.on       ===false &&
                        cell.bottomLeft.on ===false &&
-                       cell.topLeft.on    ===false)
+                       cell.topLeft.on    ===false);
 
             }
             catch(e){
 
-              if(e instanceof TypeError){
-                // Cell doesn't exist
+              if(e instanceof TypeError){ // Cell doesn't exist
+                retVal=true;
               }
               else{ println(e); }
 
@@ -2704,16 +2707,15 @@ var diagrams = function(processingInstance){
 
             try{
 
-              retVal=!(cell.left           ===false &&
-                       cell.right.on       ===false &&
-                       cell.bottomRight.on ===false &&
-                       cell.bottomLeft.on  ===false)
+              retVal=!(cell.left.on         ===false &&
+                       cell.right.on        ===false &&
+                       cell.bottomLeft.on   ===false &&
+                       cell.bottomRight.on  ===false);
 
             }
             catch(e){
 
-              if(e instanceof TypeError){
-                // Cell doesn't exist
+              if(e instanceof TypeError){ // Cell doesn't exist
               }
               else{ println(e); }
 
@@ -2724,16 +2726,15 @@ var diagrams = function(processingInstance){
 
             try{
 
-              retVal=!(cell.left        ===false &&
+              retVal=!(cell.left.on     ===false &&
                        cell.right.on    ===false &&
-                       cell.topRight.on ===false &&
-                       cell.topLeft.on  ===false)
+                       cell.topLeft.on  ===false &&
+                       cell.topRight.on ===false);
 
             }
             catch(e){
 
-              if(e instanceof TypeError){
-                // Cell doesn't exist
+              if(e instanceof TypeError){ // Cell doesn't exist
               }
               else{ println(e); }
 
@@ -2745,16 +2746,15 @@ var diagrams = function(processingInstance){
 
             try{
 
-              retVal=!(cell.left           ===false &&
-                       cell.topLeft.on     ===false &&
-                       cell.bottomRight.on ===false &&
-                       cell.bottomLeft.on  ===false)
+              retVal=!(cell.left.on         ===false &&
+                       cell.topLeft.on      ===false &&
+                       cell.bottomLeft.on   ===false &&
+                       cell.bottomRight.on  ===false);
 
             }
             catch(e){
 
-              if(e instanceof TypeError){
-                // Cell doesn't exist
+              if(e instanceof TypeError){ // Cell doesn't exist
               }
               else{ println(e); }
 
@@ -2765,16 +2765,15 @@ var diagrams = function(processingInstance){
 
             try{
 
-              retVal=!(cell.left          ===false &&
+              retVal=!(cell.left.on       ===false &&
                        cell.bottomLeft.on ===false &&
-                       cell.topRight.on   ===false &&
-                       cell.topLeft.on    ===false)
+                       cell.topLeft.on    ===false &&
+                       cell.topRight.on   ===false);
 
             }
             catch(e){
 
-              if(e instanceof TypeError){
-                // Cell doesn't exist
+              if(e instanceof TypeError){ // Cell doesn't exist
               }
               else{ println(e); }
 
@@ -2788,13 +2787,13 @@ var diagrams = function(processingInstance){
               retVal=!(cell.right.on       ===false &&
                        cell.topRight.on    ===false &&
                        cell.bottomRight.on ===false &&
-                       cell.bottomLeft.on  ===false)
+                       cell.bottomLeft.on  ===false);
 
             }
             catch(e){
 
-              if(e instanceof TypeError){
-                // Cell doesn't exist
+              if(e instanceof TypeError){ // Cell doesn't exist
+                
               }
               else{ println(e); }
 
@@ -2808,13 +2807,13 @@ var diagrams = function(processingInstance){
               retVal=!(cell.right.on       ===false &&
                        cell.bottomRight.on ===false &&
                        cell.topRight.on    ===false &&
-                       cell.topLeft.on     ===false)
+                       cell.topLeft.on     ===false);
 
             }
             catch(e){
 
-              if(e instanceof TypeError){
-                // Cell doesn't exist
+              if(e instanceof TypeError){ // Cell doesn't exist
+                
               }
               else{ println(e); }
 
@@ -2829,13 +2828,13 @@ var diagrams = function(processingInstance){
               retVal=!(cell.on          ===false &&
                        cell.left.on     ===false &&
                        cell.topRight.on ===false &&
-                       cell.topLeft.on  ===false)
+                       cell.topLeft.on  ===false);
 
             }
             catch(e){
 
-              if(e instanceof TypeError){
-                // Cell doesn't exist
+              if(e instanceof TypeError){ // Cell doesn't exist
+                retVal=true;
               }
               else{ println(e); }
 
@@ -2849,13 +2848,13 @@ var diagrams = function(processingInstance){
               retVal=!(cell.on          ===false &&
                        cell.right.on    ===false &&
                        cell.topRight.on ===false &&
-                       cell.topLeft.on  ===false)
+                       cell.topLeft.on  ===false);
 
             }
             catch(e){
 
-              if(e instanceof TypeError){
-                // Cell doesn't exist
+              if(e instanceof TypeError){ // Cell doesn't exist
+                retVal=true;
               }
               else{ println(e); }
 
@@ -2870,13 +2869,13 @@ var diagrams = function(processingInstance){
               retVal=!(cell.on             ===false &&
                        cell.bottomRight.on ===false &&
                        cell.topRight.on    ===false &&
-                       cell.topLeft.on     ===false)
+                       cell.topLeft.on     ===false);
 
             }
             catch(e){
 
-              if(e instanceof TypeError){
-                // Cell doesn't exist
+              if(e instanceof TypeError){ // Cell doesn't exist
+                retVal=true;
               }
               else{ println(e); }
 
@@ -2890,13 +2889,13 @@ var diagrams = function(processingInstance){
               retVal=!(cell.on            ===false &&
                        cell.bottomLeft.on ===false &&
                        cell.topRight.on   ===false &&
-                       cell.topLeft.on    ===false)
+                       cell.topLeft.on    ===false);
 
             }
             catch(e){
 
-              if(e instanceof TypeError){
-                // Cell doesn't exist
+              if(e instanceof TypeError){ // Cell doesn't exist
+                retVal=true;
               }
               else{ println(e); }
 
@@ -2911,13 +2910,13 @@ var diagrams = function(processingInstance){
               retVal=!(cell.on             ===false &&
                        cell.topRight.on    ===false &&
                        cell.bottomRight.on ===false &&
-                       cell.bottomLeft.on  ===false)
+                       cell.bottomLeft.on  ===false);
 
             }
             catch(e){
 
-              if(e instanceof TypeError){
-                // Cell doesn't exist
+              if(e instanceof TypeError){ // Cell doesn't exist
+                retVal=true;
               }
               else{ println(e); }
 
@@ -2931,13 +2930,13 @@ var diagrams = function(processingInstance){
               retVal=!(cell.on             ===false &&
                        cell.topLeft.on     ===false &&
                        cell.bottomRight.on ===false &&
-                       cell.bottomLeft.on  ===false)
+                       cell.bottomLeft.on  ===false);
 
             }
             catch(e){
 
-              if(e instanceof TypeError){
-                // Cell doesn't exist
+              if(e instanceof TypeError){ // Cell doesn't exist
+                retVal=true;
               }
               else{ println(e); }
 
@@ -2952,13 +2951,13 @@ var diagrams = function(processingInstance){
               retVal=!(cell.on          ===false &&
                        cell.left.on     ===false &&
                        cell.right.on    ===false &&
-                       cell.topRight.on ===false)
+                       cell.topRight.on ===false);
 
             }
             catch(e){
 
-              if(e instanceof TypeError){
-                // Cell doesn't exist
+              if(e instanceof TypeError){ // Cell doesn't exist
+                retVal=true;
               }
               else{ println(e); }
 
@@ -2972,13 +2971,13 @@ var diagrams = function(processingInstance){
               retVal=!(cell.on         ===false &&
                        cell.left.on    ===false &&
                        cell.right.on   ===false &&
-                       cell.topLeft.on ===false)
+                       cell.topLeft.on ===false);
 
             }
             catch(e){
 
-              if(e instanceof TypeError){
-                // Cell doesn't exist
+              if(e instanceof TypeError){ // Cell doesn't exist
+                retVal=true;
               }
               else{ println(e); }
 
@@ -2992,13 +2991,13 @@ var diagrams = function(processingInstance){
               retVal=!(cell.on             ===false &&
                        cell.left.on        ===false &&
                        cell.right.on       ===false &&
-                       cell.bottomRight.on ===false)
+                       cell.bottomRight.on ===false);
 
             }
             catch(e){
 
-              if(e instanceof TypeError){
-                // Cell doesn't exist
+              if(e instanceof TypeError){ // Cell doesn't exist
+                retVal=true;
               }
               else{ println(e); }
 
@@ -3012,13 +3011,13 @@ var diagrams = function(processingInstance){
               retVal=!(cell.on            ===false &&
                        cell.left.on       ===false &&
                        cell.right.on      ===false &&
-                       cell.bottomLeft.on ===false)
+                       cell.bottomLeft.on ===false);
 
             }
             catch(e){
 
-              if(e instanceof TypeError){
-                // Cell doesn't exist
+              if(e instanceof TypeError){ // Cell doesn't exist
+                retVal=true;
               }
               else{ println(e); }
 
@@ -3033,13 +3032,13 @@ var diagrams = function(processingInstance){
               retVal=!(cell.on            ===false &&
                        cell.left.on       ===false &&
                        cell.topRight.on   ===false &&
-                       cell.bottomLeft.on ===false)
+                       cell.bottomLeft.on ===false);
 
             }
             catch(e){
 
-              if(e instanceof TypeError){
-                // Cell doesn't exist
+              if(e instanceof TypeError){ // Cell doesn't exist
+                retVal=true;
               }
               else{ println(e); }
 
@@ -3053,13 +3052,13 @@ var diagrams = function(processingInstance){
               retVal=!(cell.on             ===false &&
                        cell.right.on       ===false &&
                        cell.topLeft.on     ===false &&
-                       cell.bottomRight.on ===false)
+                       cell.bottomRight.on ===false);
 
             }
             catch(e){
 
-              if(e instanceof TypeError){
-                // Cell doesn't exist
+              if(e instanceof TypeError){ // Cell doesn't exist
+                retVal=true;
               }
               else{ println(e); }
 
@@ -3073,13 +3072,13 @@ var diagrams = function(processingInstance){
               retVal=!(cell.on             ===false &&
                        cell.left.on        ===false &&
                        cell.topLeft.on     ===false &&
-                       cell.bottomRight.on ===false)
+                       cell.bottomRight.on ===false);
 
             }
             catch(e){
 
-              if(e instanceof TypeError){
-                // Cell doesn't exist
+              if(e instanceof TypeError){ // Cell doesn't exist
+                retVal=true;
               }
               else{ println(e); }
 
@@ -3093,13 +3092,13 @@ var diagrams = function(processingInstance){
               retVal=!(cell.on            ===false &&
                        cell.right.on      ===false &&
                        cell.topRight.on   ===false &&
-                       cell.bottomleft.on ===false)
+                       cell.bottomleft.on ===false);
 
             }
             catch(e){
 
-              if(e instanceof TypeError){
-                // Cell doesn't exist
+              if(e instanceof TypeError){ // Cell doesn't exist
+                retVal=true;
               }
               else{ println(e); }
 
@@ -3179,8 +3178,7 @@ var diagrams = function(processingInstance){
         // }
         // catch(e){
 
-          // if(e instanceof TypeError){
-            // Cell doesn't exist
+          // if(e instanceof TypeError){ // Cell doesn't exist
             // retVal=false;
             // println(e);
           // }
@@ -4747,7 +4745,7 @@ var diagrams = function(processingInstance){
           noStroke();
 
           if(app.gameOver){
-            fill(getColor(p.color, 100));
+            fill(getColor(p.color, 50));
           }
           else if(p.timer!==0){
             strokeWeight(p.timer/30*5);
@@ -4761,7 +4759,7 @@ var diagrams = function(processingInstance){
             fill(getColor(p.color, 100));
           }
 
-          /** Hexagon */
+            /** Hexagon */
             beginShape();
 
               for(var pt=0; pt<6; pt++){
@@ -5164,7 +5162,8 @@ var diagrams = function(processingInstance){
 
     if(app.gameOver){
 
-      fill(getColor(CLRS.GREEN, frameCount%255));      
+      // fill(getColor(CLRS.GREEN, frameCount%255));      
+      fill(getColor(CLRS.GREEN, 50));
       textAlign(CENTER,CENTER);
       textFont(sansFont,150);
       text('Game Over', width/2, height/2);
@@ -5199,7 +5198,18 @@ var diagrams = function(processingInstance){
 
       text(app.hexBoard.scores.length, 500, 60);
       text(nf(global,0,1), 50, 160);
-    // textSize(24);
+
+    // var nums=[];
+
+    // for(var i=0; i<25; i++){
+      // nums[i]=0;
+    // }
+
+    // for(var n=0; n<250000; n++){
+      // nums[floor(random(0,25))]++;      
+    // }
+
+    // println(nums.length + ' | ' + nums);
 
       try{
 
