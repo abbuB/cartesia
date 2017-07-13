@@ -43,26 +43,26 @@ var diagrams = function(processingInstance){
   with (processingInstance){
 /*
 
+  Names:  heXcell
+          geekred
+          ...
+
+  GAMES:
+          Choose Life - Sliding Triangle Game
 
     TO DO:
-      
-      Names:  heXcell
-              geekred
-              ...
 
-      GAMES:
-              Choose Life - Sliding Triangle Game
-            
-      - rotating hexagons for row clearance
-      
-      - Undo Stack
       - High Score
+      - scoring
+      - delayed row highlighting for multiple rows
+      - rotating hexagons for row clearance
+
+      - Undo Stack
+
       - Hints
       - Game Intro
-      - Game Over
-      - Error objects for each specific piece and error context
-      - Highlight rows while tallying
 
+      - Error objects for each specific piece and error context
 
     Research:
 
@@ -70,25 +70,27 @@ var diagrams = function(processingInstance){
     TO DONE:
 
       - Animation for drop outside grid
+      - Highlight rows while tallying
+      - Game Over
 
       Old Mcdonald
       Sick of the farm
-      Wants a new life 
+      Wants a new life
       A new place to go
       But if you strip away the consonants from reinvention
       You get E I E I O
-      
+
       Old Mcdonald
       Tried to give up the booze
       Should have done this a long time ago
       Suck out the vowels of best intentions
       You get E I E I O
-      
+
       No more echos on the farm
       No more duck sounds in the air
       There's a quack quack here
       But there's no quack quack there
-      
+
       Drunk on the insurance money
       From torching the farm
       Old Mcdonald gets a tattoo
@@ -101,7 +103,7 @@ var diagrams = function(processingInstance){
 
 
         textFont(createFont('sans-serif', 14));
-        textFont(createFont(monoFont, 14));
+        textFont(createFont('monoFont', 14));
         textFont(createFont('serif', 14));
         textFont(createFont('fantasy', 14));
         textFont(createFont('cursive', 14));
@@ -110,11 +112,13 @@ var diagrams = function(processingInstance){
 
 */
 
-  var serifFont = createFont('sans-serif', 16);
-  var sansFont  = createFont('sans',       16);
-  var monoFont  = createFont('monospace',  16);
+  var serifFont   = createFont('sans-serif', 16);
+  var sansFont    = createFont('sans',       16);
+  var monoFont    = createFont('monospace',  16);
+  var cursiveFont = createFont('cursive',    16);
+  var fantasyFont = createFont('fantasy',    16);
 
-  var global=this;
+  var globalFRate=this;
 
   const MY_FAV = 7;
   const HEX_SIZE=60;
@@ -347,7 +351,7 @@ var diagrams = function(processingInstance){
         case SHAPES.UUP:
         case SHAPES.UDOWN:          retVal=color(238,214, 15,255);  break;
 
-        case SHAPES.UPRIGHT:        retVal=color(0,  0,255,255);  break;
+        case SHAPES.UPRIGHT:
         case SHAPES.DOWNRIGHT:
         case SHAPES.UPLEFT:
         case SHAPES.DOWNLEFT:       retVal=color(192,  0,255,255);  break;
@@ -945,7 +949,7 @@ var diagrams = function(processingInstance){
                  activeCell                 + '\n' +
                  app.dragging               + '\n\n' +
                  app.info                   + '\n\n' +
-                 nf(global,0,2)             + '\n',
+                 nf(globalFRate,0,2)        + '\n',
                  col2, row0+15);
 
           var txt='Press the left and right arrow keys to increment and decrement integer.';
@@ -1118,7 +1122,7 @@ var diagrams = function(processingInstance){
         function link(){
 
           var ctrls=p.controls;
-          
+
           // try{
 
             for(var r in ctrls){
@@ -1133,23 +1137,23 @@ var diagrams = function(processingInstance){
 
                 //  Top
                 if(r>0){
-                  
+
                   if(r<5){  ctrls[r][c].topRight    = ctrls[r-1][c  ]; }
                   else   {  ctrls[r][c].topRight    = ctrls[r-1][c+1]; }
 
                 }
-                
+
                 if(r<5){
-                  
+
                   if(r>0 && c>0){ ctrls[r][c].topLeft = ctrls[r-1][c-1]; }
 
                 }
                 else{
 
-                  ctrls[r][c].topLeft  = ctrls[r-1][c]; 
+                  ctrls[r][c].topLeft  = ctrls[r-1][c];
 
                 }
-                
+
                 // Bottom
                 if(r<4){
 
@@ -1160,7 +1164,7 @@ var diagrams = function(processingInstance){
                 else if(r===4){
 
                   ctrls[r][c].bottomRight = ctrls[r+1][c  ];
-                  ctrls[r][c].bottomLeft  = ctrls[r+1][c-1];                  
+                  ctrls[r][c].bottomLeft  = ctrls[r+1][c-1];
 
                 }
                 else if(r<ctrls.length-1){
@@ -1185,10 +1189,10 @@ var diagrams = function(processingInstance){
           // }
 
         };
-        
+
         load();
         link();
-        
+
         this.loadPieces();
         app.gameOver=false;
         this.score=0;
@@ -1262,7 +1266,7 @@ var diagrams = function(processingInstance){
           for(var s in this.pieces){
             this.pieces[s].moved(0,0);
           }
-            
+
         }
 
       };
@@ -1304,7 +1308,7 @@ var diagrams = function(processingInstance){
 
         forEach(this.pieces, 'released');
 
-      };      
+      };
       hexBoard.prototype.out          = function(){
 
         this.hit=false;
@@ -1312,11 +1316,11 @@ var diagrams = function(processingInstance){
         this.activeCell=null;
 
       };
-      
+
       hexBoard.prototype.resetShape   = function(){
 
         var i=this.activePiece.id;
-        
+
         //  Determine the new shape
         var rand=getShape();
 
@@ -1346,11 +1350,11 @@ var diagrams = function(processingInstance){
 
         }
 
-      };      
+      };
       hexBoard.prototype.purgeScores  = function(){
 
         if(frameCount%1000===0){
-        
+
           var total=0;
 
           for(var n=0; n<this.scores.length; n++){
@@ -1368,7 +1372,7 @@ var diagrams = function(processingInstance){
 
         }
 
-      };      
+      };
       hexBoard.prototype.dropPiece   = function(){
 
         var cell = this.activeCell;
@@ -1660,7 +1664,7 @@ var diagrams = function(processingInstance){
                cell.right.on    ===false &&
                cell.left.on     ===false &&
                cell.left.left.on===false){
-                 
+
               cell.hover          =true;
               cell.right.hover    =true;
               cell.left.hover     =true;
@@ -2415,7 +2419,7 @@ var diagrams = function(processingInstance){
 
         // Rows --------------------------------------------------------------------------------
         {
-          
+
           function rowTally(cell){
 
             while(cell!=null){
@@ -2434,7 +2438,7 @@ var diagrams = function(processingInstance){
 
           //  Iterate each row
           for(var row in this.controls){
-            
+
             cell=this.controls[row][0];
 
             if(rowTally(cell)){
@@ -2442,7 +2446,7 @@ var diagrams = function(processingInstance){
               var len=0;
 
               while(cell!=null){
-                
+
                 len++;
                 cells.push(cell);
 
@@ -2465,9 +2469,9 @@ var diagrams = function(processingInstance){
               multiplier++;
 
             }
-            
+
           }
-          
+
           // Down Right--------------------------------------------------------------------------------
           function downRightTally(cell){
 
@@ -2484,7 +2488,7 @@ var diagrams = function(processingInstance){
             return true;
 
           };
-          
+
           function downRight(cell){
 
             if(downRightTally(cell)){
@@ -2492,7 +2496,7 @@ var diagrams = function(processingInstance){
               var len=0;
 
               while(cell!=null){
-                
+
                 len++;
                 cells.push(cell);
 
@@ -2502,7 +2506,7 @@ var diagrams = function(processingInstance){
 
               var col=floor(p.controls[0].length/2);
               var row=floor(len/2);
-              
+
               p.score+=20*len*multiplier;
 
               p.scores.push(new score(p.scores.length, p, p.controls[row][col].x+p.x,
@@ -2528,7 +2532,7 @@ var diagrams = function(processingInstance){
           downRight(p.controls[2][0]);
           downRight(p.controls[3][0]);
           downRight(p.controls[4][0]);
-          
+
           // Down Left--------------------------------------------------------------------------------
           function downLeftTally(cell){
 
@@ -2546,7 +2550,7 @@ var diagrams = function(processingInstance){
 
           };
 
-          
+
           function downLeft(cell){
 
             if(downLeftTally(cell)){
@@ -2554,7 +2558,7 @@ var diagrams = function(processingInstance){
               var len=0;
 
               while(cell!=null){
-                
+
                 len++;
                 cells.push(cell);
 
@@ -2797,7 +2801,7 @@ var diagrams = function(processingInstance){
             catch(e){
 
               if(e instanceof TypeError){ // Cell doesn't exist
-                
+
               }
               else{ println(e); }
 
@@ -2817,7 +2821,7 @@ var diagrams = function(processingInstance){
             catch(e){
 
               if(e instanceof TypeError){ // Cell doesn't exist
-                
+
               }
               else{ println(e); }
 
@@ -3199,12 +3203,12 @@ var diagrams = function(processingInstance){
           var ctrls=this.controls;
 
           var cell;
-          
+
           for(var r in ctrls){
             for(var c in ctrls[r]){
-              
+
               cell=ctrls[r][c];
-              
+
               if(cell.hover){
                 cell.color=this.activePiece.color;
               }
@@ -4148,7 +4152,7 @@ var diagrams = function(processingInstance){
 
         textFont(this.font);
         textSize(60);
-                
+
         // this.on=false;
 
       };
@@ -4157,7 +4161,7 @@ var diagrams = function(processingInstance){
 
         if(this.timer<=0){ return }
         if(this.delay>0){ this.delay--; return }
-          
+
           this.offset=0;
           this.active=this.hit && app.focus===this;
 
@@ -4174,7 +4178,7 @@ var diagrams = function(processingInstance){
               if(this.style===SCORESTYLES.TEXT){
 
                 scale(1,-1);
-                
+
                 // textFont(this.font);
                 // textSize(30);
                 fill(this.color);
@@ -4401,7 +4405,7 @@ var diagrams = function(processingInstance){
               uUp(clr);
 
           };
-          
+
           function upRight(clr){
 
             rotate(PI/3);
@@ -4700,11 +4704,11 @@ var diagrams = function(processingInstance){
         this.right        = null;
         this.topRight     = null;
         this.bottomRight  = null;
-        
+
         this.left         = null;
         this.topLeft      = null;
         this.bottomLeft   = null;
-        
+
         this.color        = props.color;
 
         this.hover        = false;
@@ -5143,54 +5147,9 @@ var diagrams = function(processingInstance){
 
   };
 
-  function intro(){
+  function temp(){
 
-
-
-  };
-  function extro(){
-
-
-
-  };
-  function instructions(){
-
-
-
-  };
-  function play(){
-
-    background(128);
-
-    forEach(app.controls,'draw');
-
-    if(app.gameOver){
-
-      // fill(getColor(CLRS.GREEN, frameCount%255));      
-      fill(getColor(CLRS.GREEN, 50));
-      textAlign(CENTER,CENTER);
-      textFont(sansFont,150);
-      text('Game Over', width/2, height/2);
-
-    }
-
-  };
-
-  var execute;
-
-  execute=play;
-
-  initialize();
-
-  execute=play;
-  
-  app.focus=app.hexBoard;
-
-  draw=function(){
-
-    execute();
-
-    global=this.__frameRate;
+    // globalFRate=this.__frameRate;
 
     fill(CLRS.YELLOW);
     textSize(36);
@@ -5201,7 +5160,10 @@ var diagrams = function(processingInstance){
       // text(app.gameOver, 500, 60);
 
       text(app.hexBoard.scores.length, 500, 60);
-      text(nf(global,0,1), 50, 160);
+      
+    textAlign(LEFT,CENTER);
+
+      text(round(globalFRate), 50, 160);
 
     // var nums=[];
 
@@ -5210,7 +5172,7 @@ var diagrams = function(processingInstance){
     // }
 
     // for(var n=0; n<250000; n++){
-      // nums[floor(random(0,25))]++;      
+      // nums[floor(random(0,25))]++;
     // }
 
     // println(nums.length + ' | ' + nums);
@@ -5232,6 +5194,89 @@ var diagrams = function(processingInstance){
       catch(e){
         // println(e);
       }
+
+  };
+
+  function intro(){
+
+    background(32);
+
+    if(app.debug){
+      frameRate(0);
+      temp();
+    }
+
+    pushMatrix();
+      
+      translate(width/2,height/2);
+      
+      // rotate(radians(frameCount%360));
+      
+      fill(CLRS.K_TEAL_2);
+      textFont(sansFont,150);
+      textAlign(CENTER,CENTER);
+      textSize(150);
+
+        text('heXcell', 0, 0);
+
+      
+    
+    popMatrix();
+    
+    cursor(ARROW);
+
+    fill(CLRS.BLACK);
+    textSize(20);
+    textAlign(LEFT,CENTER);
+    
+      text('intro', 20,500);
+      
+  };
+  function extro(){
+
+
+
+  };
+  function instructions(){
+
+
+
+  };
+  function play(){
+
+    background(128);
+
+    forEach(app.controls,'draw');
+
+    if(app.gameOver){
+
+      // fill(getColor(CLRS.GREEN, frameCount%255));
+      fill(getColor(CLRS.GREEN, 50));
+      textAlign(CENTER,CENTER);
+      textFont(sansFont,150);
+      text('Game Over', width/2, height/2);
+
+    }
+
+    temp();
+
+  };
+
+  var execute;
+
+  execute=play;
+
+  initialize();
+
+  execute=intro;  //play;
+
+  app.focus=app.hexBoard;
+
+  draw=function(){
+
+    execute();
+
+    globalFRate=this.__frameRate;
 
   };
 
@@ -5295,6 +5340,8 @@ var diagrams = function(processingInstance){
   {
 
     mouseClicked=function(){
+
+      if(mouseButton===RIGHT){ execute=play; }
 
       forEach(app.controls,'clicked');
 
