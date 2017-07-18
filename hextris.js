@@ -4276,8 +4276,8 @@ var diagrams = function(processingInstance){
           var w=p.w/2*cos(PI/6);
 
 
-          if(app.dragging && p.hit){ f=1;     }
-          else                     { w*=0.85; }
+          if(app.dragging && p.hit){ f=1;    }
+          else                     { w*=0.7; }
 
           var w2=w*2;
 
@@ -4310,7 +4310,8 @@ var diagrams = function(processingInstance){
             fill(clr);
 
             rotate(-PI/3);
-
+            
+            // row(clr);
             var offset=w*f;
 
               drawHexagon(offset+f*3*w, 0, w);
@@ -4331,20 +4332,10 @@ var diagrams = function(processingInstance){
 
             fill(clr);
 
-            var offset=-w*f;
-
-            if(app.dragging && p.hit){
-              drawHexagon(offset,        w+0.75*w, w);
-              drawHexagon(offset+f*1*w,         0, w);
-              drawHexagon(offset-f*1*w,         0, w);
-              drawHexagon(offset,       -w-0.75*w, w);
-            }
-            else{
-              drawHexagon(offset+0,      w*1.33, w);
-              drawHexagon(offset+f*1*w,  0,      w);
-              drawHexagon(offset-f*1*w,  0,      w);
-              drawHexagon(offset+0,     -w*1.33, w);
-            }
+              drawHexagon(              0,                0, w);
+              drawHexagon(-f*cos(   0)*w2, f*sin(     0)*w2, w);
+              drawHexagon(-f*cos(PI/3)*w2, f*sin( -PI/3)*w2, w);
+              drawHexagon(-f*cos(PI/3)*w2, f*sin(2*PI/3)*w2, w);
 
           };
           function zRight(clr){
@@ -4356,24 +4347,9 @@ var diagrams = function(processingInstance){
           };
           function zLeft(clr){
 
-            rotate(-PI/3);
+            rotate(2*PI/3);
 
-            fill(clr);
-
-            var offset=w*f;
-
-            if(app.dragging && p.hit){
-              drawHexagon(offset,       w+0.75*w, w);
-              drawHexagon(offset+f*1*w,        0, w);
-              drawHexagon(offset-f*1*w,        0, w);
-              drawHexagon(offset+0,    -w-0.75*w, w);
-            }
-            else{
-              drawHexagon(offset,       w*1.33, w);
-              drawHexagon(offset+f*1*w,      0, w);
-              drawHexagon(offset-f*1*w,      0, w);
-              drawHexagon(offset,      -w*1.33, w);
-            }
+            diamond(clr);
 
           };
 
@@ -4726,8 +4702,8 @@ var diagrams = function(processingInstance){
           }
 
           for(pt=0; pt<8; pt++){
-            p.dpoints.push(new pnt( cos(radians(30+pt*60))*(w2-5),
-                                    sin(radians(30+pt*60))*(w2-5) ));
+            p.dpoints.push(new pnt( cos(radians(30+pt*60))*(w2-4),
+                                    sin(radians(30+pt*60))*(w2-4) ));
           }
 
           for(pt=0; pt<6; pt++){
