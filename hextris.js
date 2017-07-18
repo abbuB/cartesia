@@ -142,7 +142,6 @@ var diagrams = function(processingInstance){
 
     this.hexBoard     = this.controls[1];
 
-    this.score        = 0;
     this.gameOver     = false;
 
   };
@@ -302,7 +301,7 @@ var diagrams = function(processingInstance){
 
   /* Utility Functions ===================================================== */
   {
-    
+
     function iRandom(n){ return round(random(n));    };
 
     function getShape(){ return floor(random(0,25)); };
@@ -475,7 +474,7 @@ var diagrams = function(processingInstance){
 
           translate(this.x, this.y);
 
-            noStroke();
+            // noStroke();
             fill(this.icolor);
 
             if(this.hit                       ){ fill(this.acolor);   }
@@ -827,7 +826,7 @@ var diagrams = function(processingInstance){
           else{
 
             // fill(getColor(p.color, 80));
-            fill(getColor(CLRS.BLACK,50));
+            fill(getColor(CLRS.BLACK,80));
 
           }
 
@@ -922,7 +921,7 @@ var diagrams = function(processingInstance){
                  activeCell                 + '\n' +
                  app.dragging               + '\n\n' +
                  app.info                   + '\n\n' +
-                 nf(app.frameRate,0,2)      + '\n',
+                 nfc(app.frameRate)         + '\n',
                  col2, row0+15);
 
           var txt='Press the left and right arrow keys to increment and decrement integer.';
@@ -1006,6 +1005,7 @@ var diagrams = function(processingInstance){
         this.color          = getColor(color(61),100); //  Used to store hexCell default color
 
         this.score          = 0;
+        this.highScore      = 0;
 
         this.pieces         = [];
         this.scores         = [];
@@ -1058,7 +1058,7 @@ var diagrams = function(processingInstance){
           var yOffset=w/2;
 
           p.w=w*cos(PI/6)*9;
-          p.w=1500;
+          // p.w=1500;
 
           var x=0;
           var y=0;
@@ -1172,14 +1172,17 @@ var diagrams = function(processingInstance){
 
         this.loadPieces();
         app.gameOver=false;
+
+        if(this.score>this.highScore){ this.highScore=this.score; }
+
         this.score=0;
 
       };
       hexBoard.prototype.loadPieces   =function(){
 
-        var rand0=getShape();
-        var rand1=getShape();
-        var rand2=getShape();
+        var rand0=SHAPES.DIAMOND;//getShape();
+        var rand1=SHAPES.ZLEFT;//getShape();
+        var rand2=SHAPES.ZRIGHT;//getShape();
 
         this.pieces.push(new piece(0, this, this.position0.x, this.position0.y, HEX_SIZE, HEX_SIZE,
           {style: rand0,
@@ -1203,15 +1206,16 @@ var diagrams = function(processingInstance){
         pushMatrix();
 
           translate(this.x, this.y);
-          
+
+          fill(0);
+          // rect(-300,-240,600,600);
+
           if(app.mode===APPMODES.INTRO){
-            
+
             rotate(this.angle);
             this.angle++;
-            
-          }
 
-        // fill(getColor(this.color, 50));
+          }
 
             var ctrls=this.controls;
 
@@ -1223,10 +1227,6 @@ var diagrams = function(processingInstance){
               }
             }
 
-            // stroke(CLRS.BLUE);
-            // fill(getColor(CLRS.RED,10));
-            // ellipse(0,0,this.w,this.w);
-
         popMatrix();
 
         if(app.mode===APPMODES.GAME){
@@ -1235,6 +1235,7 @@ var diagrams = function(processingInstance){
         }
 
         this.purgeScores();
+
 
       };
       hexBoard.prototype.hitTest      = function(x,y){ return dist(mouseX,mouseY,this.x,this.y)<this.w/2; };
@@ -4172,9 +4173,9 @@ var diagrams = function(processingInstance){
                   text(this.text, this.timer, this.timer);
 
                 fill(getColor(CLRS.WHITE,100*this.timer/30));
-                  
+
                   text(this.text, this.timer-1, this.timer-1);
-                  
+
                 if(this.timer<=0){
 
                   // this.parent.scores[0]=null;
@@ -4333,10 +4334,10 @@ var diagrams = function(processingInstance){
             var offset=-w*f;
 
             if(app.dragging && p.hit){
-              drawHexagon(offset+0,      w+0.75*w, w);
-              drawHexagon(offset+f*1*w,  0,        w);
-              drawHexagon(offset-f*1*w,  0,        w);
-              drawHexagon(offset+0,     -w-0.75*w, w);
+              drawHexagon(offset,        w+0.75*w, w);
+              drawHexagon(offset+f*1*w,         0, w);
+              drawHexagon(offset-f*1*w,         0, w);
+              drawHexagon(offset,       -w-0.75*w, w);
             }
             else{
               drawHexagon(offset+0,      w*1.33, w);
@@ -4362,16 +4363,16 @@ var diagrams = function(processingInstance){
             var offset=w*f;
 
             if(app.dragging && p.hit){
-              drawHexagon(offset+0,      w+0.75*w, w);
-              drawHexagon(offset+f*1*w,  0,        w);
-              drawHexagon(offset-f*1*w,  0,        w);
-              drawHexagon(offset+0,     -w-0.75*w, w);
+              drawHexagon(offset,       w+0.75*w, w);
+              drawHexagon(offset+f*1*w,        0, w);
+              drawHexagon(offset-f*1*w,        0, w);
+              drawHexagon(offset+0,    -w-0.75*w, w);
             }
             else{
-              drawHexagon(offset+0,      w*1.33, w);
-              drawHexagon(offset+f*1*w,  0,      w);
-              drawHexagon(offset-f*1*w,  0,      w);
-              drawHexagon(offset+0,     -w*1.33, w);
+              drawHexagon(offset,       w*1.33, w);
+              drawHexagon(offset+f*1*w,      0, w);
+              drawHexagon(offset-f*1*w,      0, w);
+              drawHexagon(offset,      -w*1.33, w);
             }
 
           };
@@ -4703,7 +4704,7 @@ var diagrams = function(processingInstance){
         this.color        = props.color;
 
         this.hover        = false;
-        this.tTime        = 90;        
+        this.tTime        = 90;
         this.timer        = this.tTime;
 
         this.points       = [];
@@ -4730,8 +4731,8 @@ var diagrams = function(processingInstance){
           }
 
           for(pt=0; pt<6; pt++){
-            p.hpoints.push(new pnt( cos(radians(30+pt*60))*(w2-7),
-                                    sin(radians(30+pt*60))*(w2-7) ));
+            p.hpoints.push(new pnt( cos(radians(30+pt*60))*(w2-15),
+                                    sin(radians(30+pt*60))*(w2-15) ));
           }
 
         };
@@ -4751,7 +4752,8 @@ var diagrams = function(processingInstance){
         function border(){
 
           noStroke();
-              stroke(164);
+          stroke(164);
+
           if(app.gameOver){
 
             fill(getColor(p.color, 50));
@@ -4759,16 +4761,15 @@ var diagrams = function(processingInstance){
           }
           else if (app.mode===APPMODES.INTRO){
 
-            // fill(random(164,200));
             fill(getColor(p.color, 15));
 
           }
           else if(app.mode===APPMODES.GAME){
-            
+
             if(p.timer>0){
 
-              strokeWeight(p.timer/30*5);
-              fill(getColor(CLRS.RED, 75*p.timer/30));
+              strokeWeight(5*p.timer/p.tTime);
+              fill(getColor(color(192), p.timer/p.tTime));
               p.timer-=3;
 
             }
@@ -4779,77 +4780,69 @@ var diagrams = function(processingInstance){
             }
             else{
 
-              // if(p.parent.score>=1){
-                // stroke(getColor(p.color,100));
-                // strokeWeight(1);
-              // }
-
               fill(getColor(p.color,100));
               stroke(164);
 
             }
-            
+
           }
           else if(app.mode===APPMODES.EXTRO){
 
-            
+
 
           }
-          
-            /** Hexagon */
+
+          /** Hexagon */
+          beginShape();
+
+            for(var pt in p.dpoints){
+              vertex(p.dpoints[pt].x,
+                     p.dpoints[pt].y);
+            }
+
+          endShape(CLOSE);
+
+          if(app.mode===APPMODES.INTRO){
+
             beginShape();
 
-              for(var pt in p.dpoints){
-                vertex(p.dpoints[pt].x,
-                       p.dpoints[pt].y);
+              for(var pt=0; pt<6; pt++){
+                vertex(p.hpoints[pt].x,
+                       p.hpoints[pt].y);
               }
 
             endShape(CLOSE);
-
-            // noStroke();
-            // noFill();
-            if(app.mode===APPMODES.INTRO){
-
-              beginShape();
-
-                for(var pt=0; pt<6; pt++){
-                  vertex(p.hpoints[pt].x,
-                         p.hpoints[pt].y);
-                }
-
-              endShape(CLOSE);
-            }
+          }
 
         };
 
         pushMatrix();
 
           if(app.mode===APPMODES.INTRO){
-            
+
             if(this.timer>0){
 
               translate(this.x*(this.tTime-this.timer)/this.tTime,
                         this.y*(this.tTime-this.timer)/this.tTime);
-              rotate(4*this.timer);
-              // translate(random(-width/2,width/2),
-                        // random(-height/2,height/2));
 
-              this.timer--; 
-                        
+              rotate(4*this.timer);
+
+              this.timer--;
+
             }
             else{
 
               app.mode=APPMODES.GAME;
 
             }
- 
+
           }
           else{
-  
+
             translate(this.x, this.y);
 
           }
-          
+
           scale(1,-1);
 
             border();
@@ -4940,7 +4933,7 @@ var diagrams = function(processingInstance){
     /* LOAD CONTROLS */
 
       /* root control      */
-      var rt=new root(100, 10, 10, width-20, height-20,
+      var rt=new root(100, 0, 0, width, height,
         {text:      'root',
          acolor:    color(239),
          icolor:    color(239),
@@ -5201,7 +5194,7 @@ var diagrams = function(processingInstance){
 
       /* Telemetry ---------------------------------------------------- */
       var telem=new telemetry(400, rt, width, 31, 200, height-30,
-        {color:     color(72),
+        {color:     color(36),
          font:      serifFont,
          cursor:    ARROW});
 
@@ -5213,19 +5206,25 @@ var diagrams = function(processingInstance){
 
     // globalFRate=this.__frameRate;
 
-    fill(CLRS.YELLOW);
-    textSize(36);
-    textAlign(CENTER,CENTER);
+    fill(CLRS.BLACK);
+    textSize(24);
+    textAlign(CENTER,BOTTOM);
 
-      text(app.hexBoard.score, 50, 60);
+      text(nfc(app.hexBoard.score), 70, 50);
+
+    fill(192);
+    textSize(16);
+    textAlign(CENTER,TOP);
+
+      text(nfc(app.hexBoard.highScore), 70, 50);
 
       // text(app.gameOver, 500, 60);
 
       text(app.hexBoard.scores.length, 500, 60);
 
-    textAlign(LEFT,CENTER);
+    // textAlign(LEFT,CENTER);
 
-      text(round(app.frameRate), 50, 160);
+      // text(round(app.frameRate), 50, 160);
 
     // var nums=[];
 
@@ -5413,7 +5412,7 @@ var diagrams = function(processingInstance){
       if(mouseButton===RIGHT){ execute=play; }
 
       forEach(app.controls,'clicked');
-      
+
       app.mode=APPMODES.GAME;
 
       // switch(mouseButton){
