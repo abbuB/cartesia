@@ -3,7 +3,7 @@
 *
 +stackoverflow.com
 +khanacademy.org
-+whatbadgenext.appspot.com/
++whatbadgenext.appspot.com
 +codecogs.com/latex/eqneditor.php
 +youtube.com
 +mail.google.com
@@ -22,7 +22,7 @@
 +redblobgames.com
 +dailymotion.com
 +pistolslut.com
-+latin-phrases.co.uk/quotes/beginning-end/
++latin-phrases.co.uk/quotes/beginning-end
 +code.org
 +natureofcode.com
 +alssndro.github.io/trianglify-background-generator
@@ -73,35 +73,6 @@ var diagrams = function(processingInstance){
       - Highlight rows while tallying
       - Game Over
 
-      Old Mcdonald
-      Sick of the farm
-      Wants a new life
-      A new place to go
-      But if you strip away the consonants from reinvention
-      You get E I E I O
-
-      Old Mcdonald
-      Tried to give up the booze
-      Should have done this a long time ago
-      Suck out the vowels of best intentions
-      You get E I E I O
-
-      No more echos on the farm
-      No more duck sounds in the air
-      There's a quack quack here
-      But there's no quack quack there
-
-      Drunk on the insurance money
-      From torching the farm
-      Old Mcdonald gets a tattoo
-      It's there amongst the skulls and the livestock
-      It's E I E I O
-
-
-
-
-
-
         textFont(createFont('sans-serif', 14));
         textFont(createFont('monoFont', 14));
         textFont(createFont('serif', 14));
@@ -131,7 +102,7 @@ var diagrams = function(processingInstance){
 
       randomSeed(millis());
 
-      frameRate(0);
+      // frameRate(0);
 
       cursor(WAIT);
       strokeCap(SQUARE);
@@ -146,7 +117,7 @@ var diagrams = function(processingInstance){
 
     this.debug        = true;   //  Mode that displays enhanced debugging tools
 
-    this.frameRate    = 0;      //  Refresh speed
+    this.frameRate    = 100;      //  Refresh speed
 
     this.mouseX       = 0;      //  Current mouseX location
     this.mouseY       = 0;      //  Current mouseY location
@@ -331,6 +302,8 @@ var diagrams = function(processingInstance){
 
   /* Utility Functions ===================================================== */
   {
+    
+    function iRandom(n){ return round(random(n));    };
 
     function getShape(){ return floor(random(0,25)); };
 
@@ -502,10 +475,10 @@ var diagrams = function(processingInstance){
 
           translate(this.x, this.y);
 
-            // noStroke();
+            noStroke();
             fill(this.icolor);
 
-            if(this.hit              ){ fill(this.acolor);   }
+            if(this.hit                       ){ fill(this.acolor);   }
             if(app.dragging &&
                app.hexBoard.activePiece!==null){ cursor(HAND);        }
             else                               { cursor(this.cursor); }
@@ -949,7 +922,7 @@ var diagrams = function(processingInstance){
                  activeCell                 + '\n' +
                  app.dragging               + '\n\n' +
                  app.info                   + '\n\n' +
-                 nf(globalFRate,0,2)        + '\n',
+                 nf(app.frameRate,0,2)      + '\n',
                  col2, row0+15);
 
           var txt='Press the left and right arrow keys to increment and decrement integer.';
@@ -1044,6 +1017,8 @@ var diagrams = function(processingInstance){
         this.position1      = new pnt(300, 525);
         this.position2      = new pnt(450, 525);
 
+        this.angle          = 0;
+
         this.reset();
 
         app.hexBoard=this;
@@ -1098,11 +1073,13 @@ var diagrams = function(processingInstance){
 
               rowArray.push(new hexCell('H'+n, p, x, y, w, w,
                 {execute:   clickTest,
+                 baseX:     0,
+                 baseY:     0,
                  row:       row,
                  col:       col,
                  style:     GLYPHS.TEXT,
                  text:      n,
-                 color:     getColor(color(61),100),
+                 color:     color(214),
                  font:      monoFont,
                  cursor:    ARROW,
                  on:        false}));
@@ -1226,8 +1203,13 @@ var diagrams = function(processingInstance){
         pushMatrix();
 
           translate(this.x, this.y);
-          rotate(this.angle);
-
+          
+          if(app.mode===APPMODES.INTRO){
+            
+            rotate(this.angle);
+            this.angle++;
+            
+          }
 
         // fill(getColor(this.color, 50));
 
@@ -1247,8 +1229,10 @@ var diagrams = function(processingInstance){
 
         popMatrix();
 
-        forEach(this.pieces, 'draw');
-        forEach(this.scores, 'draw');
+        if(app.mode===APPMODES.GAME){
+          forEach(this.pieces, 'draw');
+          forEach(this.scores, 'draw');
+        }
 
         this.purgeScores();
 
@@ -2599,7 +2583,7 @@ var diagrams = function(processingInstance){
         // Clear Cells
         for(var n in cells){
           cells[n].on=false;
-          cells[n].color=this.color;
+          cells[n].color=color(214);
           cells[n].timer=60;
         }
 
@@ -4182,11 +4166,15 @@ var diagrams = function(processingInstance){
                 // textFont(this.font);
                 // textSize(30);
                 fill(this.color);
-                fill(getColor(CLRS.WHITE,100*this.timer/30));
+                fill(getColor(CLRS.BLACK,100*this.timer/30));
                 textAlign(CENTER,CENTER);
 
                   text(this.text, this.timer, this.timer);
 
+                fill(getColor(CLRS.WHITE,100*this.timer/30));
+                  
+                  text(this.text, this.timer-1, this.timer-1);
+                  
                 if(this.timer<=0){
 
                   // this.parent.scores[0]=null;
@@ -4293,8 +4281,8 @@ var diagrams = function(processingInstance){
           var w2=w*2;
 
           noStroke();
-          strokeWeight(2);
-          stroke(getColor(CLRS.BLACK,25));
+          strokeWeight(1);
+          stroke(getColor(CLRS.BLACK,50));
 
           function single(clr){
 
@@ -4610,15 +4598,15 @@ var diagrams = function(processingInstance){
 
         if(this.hit && app.debug){
 
-          /** Circle */
-          fill(getColor(CLRS.BLACK,10));
-          noStroke();
+          // /** Circle */
+          // fill(getColor(CLRS.BLACK,10));
+          // noStroke();
 
-          var d=cos(PI/6)*this.w*0.8;
-          ellipse(this.x,this.y,2*d,2*d);
+          // var d=cos(PI/6)*this.w*0.8;
+          // ellipse(this.x,this.y,2*d,2*d);
 
-          fill(CLRS.RED);
-          ellipse(this.x,this.y,2,2);
+          // fill(CLRS.RED);
+          // ellipse(this.x,this.y,2,2);
 
           // if(this.parent.activePiece===this){
             // fill(CLRS.WHITE);
@@ -4698,7 +4686,10 @@ var diagrams = function(processingInstance){
 
         this.outerHit=false;
 
-        this.row          = Number(props.row);
+        this.baseX        = props.baseX;
+        this.baseY        = props.baseY;
+
+        this.row          = props.row;
         this.col          = Number(props.col);
 
         this.right        = null;
@@ -4712,10 +4703,12 @@ var diagrams = function(processingInstance){
         this.color        = props.color;
 
         this.hover        = false;
-        this.timer        = 0;
+        this.tTime        = 90;        
+        this.timer        = this.tTime;
 
         this.points       = [];
         this.dpoints      = [];
+        this.hpoints      = [];
 
         var p=this;
 
@@ -4724,14 +4717,21 @@ var diagrams = function(processingInstance){
 
           var w2=p.w/2;
 
-          for(var pt=0; pt<6; pt++){
+          var pt=0;
+
+          for(pt=0; pt<6; pt++){
             p.points.push(new pnt( cos(radians(30+pt*60))*w2,
                                    sin(radians(30+pt*60))*w2));
           }
 
-          for(var pt=0; pt<6; pt++){
-            p.dpoints.push(new pnt( cos(radians(30+pt*60))*(w2-3),
-                                    sin(radians(30+pt*60))*(w2-3) ));
+          for(pt=0; pt<8; pt++){
+            p.dpoints.push(new pnt( cos(radians(30+pt*60))*(w2-5),
+                                    sin(radians(30+pt*60))*(w2-5) ));
+          }
+
+          for(pt=0; pt<6; pt++){
+            p.hpoints.push(new pnt( cos(radians(30+pt*60))*(w2-7),
+                                    sin(radians(30+pt*60))*(w2-7) ));
           }
 
         };
@@ -4751,46 +4751,108 @@ var diagrams = function(processingInstance){
         function border(){
 
           noStroke();
-
+              stroke(164);
           if(app.gameOver){
-            fill(getColor(p.color, 50));
-          }
-          else if(p.timer!==0){
-            strokeWeight(p.timer/30*5);
-            fill(getColor(CLRS.WHITE, 75*p.timer/30));
-            p.timer--;
-          }
-          else if(p.hover && p.parent.activePiece!==null){
-            fill(getColor(p.parent.activePiece.color,50));
-          }
-          else{
-            fill(getColor(p.color, 100));
-          }
 
+            fill(getColor(p.color, 50));
+
+          }
+          else if (app.mode===APPMODES.INTRO){
+
+            // fill(random(164,200));
+            fill(getColor(p.color, 15));
+
+          }
+          else if(app.mode===APPMODES.GAME){
+            
+            if(p.timer>0){
+
+              strokeWeight(p.timer/30*5);
+              fill(getColor(CLRS.RED, 75*p.timer/30));
+              p.timer-=3;
+
+            }
+            else if(p.hover && p.parent.activePiece!==null){
+
+              fill(getColor(p.parent.activePiece.color,50));
+
+            }
+            else{
+
+              // if(p.parent.score>=1){
+                // stroke(getColor(p.color,100));
+                // strokeWeight(1);
+              // }
+
+              fill(getColor(p.color,100));
+              stroke(164);
+
+            }
+            
+          }
+          else if(app.mode===APPMODES.EXTRO){
+
+            
+
+          }
+          
             /** Hexagon */
             beginShape();
 
-              for(var pt=0; pt<6; pt++){
+              for(var pt in p.dpoints){
                 vertex(p.dpoints[pt].x,
                        p.dpoints[pt].y);
               }
 
             endShape(CLOSE);
 
+            // noStroke();
+            // noFill();
+            if(app.mode===APPMODES.INTRO){
+
+              beginShape();
+
+                for(var pt=0; pt<6; pt++){
+                  vertex(p.hpoints[pt].x,
+                         p.hpoints[pt].y);
+                }
+
+              endShape(CLOSE);
+            }
+
         };
 
         pushMatrix();
 
-          translate(this.x, this.y);
+          if(app.mode===APPMODES.INTRO){
+            
+            if(this.timer>0){
+
+              translate(this.x*(this.tTime-this.timer)/this.tTime,
+                        this.y*(this.tTime-this.timer)/this.tTime);
+              rotate(4*this.timer);
+              // translate(random(-width/2,width/2),
+                        // random(-height/2,height/2));
+
+              this.timer--; 
+                        
+            }
+            else{
+
+              app.mode=APPMODES.GAME;
+
+            }
+ 
+          }
+          else{
+  
+            translate(this.x, this.y);
+
+          }
+          
           scale(1,-1);
 
             border();
-
-            /** Circle */
-            // stroke(CLRS.BLACK);
-            // noFill();
-            // var d=cos(PI/6)*this.w;
-            // ellipse(0,0,d,d);
 
         popMatrix();
 
@@ -4878,10 +4940,10 @@ var diagrams = function(processingInstance){
     /* LOAD CONTROLS */
 
       /* root control      */
-      var rt=new root(100, 0, 0, width-1, height-1,
+      var rt=new root(100, 10, 10, width-20, height-20,
         {text:      'root',
-         acolor:    getColor(color(33),85),
-         icolor:    getColor(color(33),80),
+         acolor:    color(239),
+         icolor:    color(239),
          font:      monoFont,
          cursor:    ARROW,
          border:    true});
@@ -5160,10 +5222,10 @@ var diagrams = function(processingInstance){
       // text(app.gameOver, 500, 60);
 
       text(app.hexBoard.scores.length, 500, 60);
-      
+
     textAlign(LEFT,CENTER);
 
-      text(round(globalFRate), 50, 160);
+      text(round(app.frameRate), 50, 160);
 
     // var nums=[];
 
@@ -5202,16 +5264,16 @@ var diagrams = function(processingInstance){
     background(32);
 
     if(app.debug){
-      frameRate(0);
+      // frameRate(0);
       temp();
     }
 
     pushMatrix();
-      
+
       translate(width/2,height/2);
-      
+
       // rotate(radians(frameCount%360));
-      
+
       fill(CLRS.K_TEAL_2);
       textFont(sansFont,150);
       textAlign(CENTER,CENTER);
@@ -5219,18 +5281,18 @@ var diagrams = function(processingInstance){
 
         text('heXcell', 0, 0);
 
-      
-    
+
+
     popMatrix();
-    
+
     cursor(ARROW);
 
     fill(CLRS.BLACK);
     textSize(20);
     textAlign(LEFT,CENTER);
-    
+
       text('intro', 20,500);
-      
+
   };
   function extro(){
 
@@ -5244,7 +5306,9 @@ var diagrams = function(processingInstance){
   };
   function play(){
 
-    background(128);
+    // frameRate(0);
+
+    // background(255);
 
     forEach(app.controls,'draw');
 
@@ -5264,19 +5328,24 @@ var diagrams = function(processingInstance){
 
   var execute;
 
-  execute=play;
-
   initialize();
 
-  execute=intro;  //play;
+  execute=play;
 
   app.focus=app.hexBoard;
 
+  // globalFRate=this.__frameRate;
+
+  strokeJoin(MITER);
+  strokeCap(SQUARE);
+
+  frameRate(0);
+
   draw=function(){
 
-    execute();
+    app.frameRate=this.__frameRate;
 
-    globalFRate=this.__frameRate;
+    execute();
 
   };
 
@@ -5344,6 +5413,8 @@ var diagrams = function(processingInstance){
       if(mouseButton===RIGHT){ execute=play; }
 
       forEach(app.controls,'clicked');
+      
+      app.mode=APPMODES.GAME;
 
       // switch(mouseButton){
 
