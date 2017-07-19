@@ -52,6 +52,8 @@ var diagrams = function(processingInstance){
 
     TO DO:
 
+      - Music on/off
+
       - High Score
       - scoring
       - delayed row highlighting for multiple rows
@@ -4264,8 +4266,8 @@ var diagrams = function(processingInstance){
             beginShape();
 
               for(var pt=0; pt<6; pt++){
-                vertex(x+cos(PI/6+pt*PI/3)*(r-3),
-                       y+sin(PI/6+pt*PI/3)*(r-3));
+                vertex(x+cos(PI/6+pt*PI/3)*(r-3.5),
+                       y+sin(PI/6+pt*PI/3)*(r-3.5));
               }
 
             endShape(CLOSE);
@@ -4277,7 +4279,7 @@ var diagrams = function(processingInstance){
 
 
           if(app.dragging && p.hit){ f=1;    }
-          else                     { w*=0.7; }
+          else                     { w*=0.9; }
 
           var w2=w*2;
 
