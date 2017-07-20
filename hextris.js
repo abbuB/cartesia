@@ -52,6 +52,10 @@ var diagrams = function(processingInstance){
 
     TO DO:
 
+      - drop sound
+
+      - new game button
+
       - Music on/off
 
       - High Score
@@ -138,13 +142,13 @@ var diagrams = function(processingInstance){
     this.keys         = [];     //  Array holding the value of all keycodes
 
     this.info         = 0;      //  Is the info frame displayed
-    this.telemetry    = 1;      //  Is telemetry visible
+    this.telemetry    = 0;      //  Is telemetry visible
 
     /* Hextris Specific ------------------ */
 
     this.hexBoard     = this.controls[1];
 
-    this.gameOver     = false;
+    this.gameOver     = true;
 
   };
 
@@ -1182,9 +1186,9 @@ var diagrams = function(processingInstance){
       };
       hexBoard.prototype.loadPieces   =function(){
 
-        var rand0=SHAPES.DIAMOND;//getShape();
-        var rand1=SHAPES.ZLEFT;//getShape();
-        var rand2=SHAPES.ZRIGHT;//getShape();
+        var rand0=getShape();
+        var rand1=getShape();
+        var rand2=getShape();
 
         this.pieces.push(new piece(0, this, this.position0.x, this.position0.y, HEX_SIZE, HEX_SIZE,
           {style: rand0,
@@ -3351,160 +3355,60 @@ var diagrams = function(processingInstance){
         var p=this;
         this.offset=0;
 
-        function triforce(){
-
-          fill(getColor(CLRS.K_TEAL_1,75));
-
-          if(p.parent.hit    ){ fill(getColor(CLRS.WHITE, 75)); }
-          if(p.active || p.on){ fill(getColor(CLRS.WHITE,100)); }
-
-            offset=p.offset;
-
-            pushMatrix();
-
-              scale(0.75,0.75);
-              translate(p.w*0.15,p.h*0.15);
-
-                triangle( p.w/2 + offset, offset,
-                          p.w + offset,   p.h+offset,
-                          offset,         p.h+offset);
-
-                  noStroke();
-
-              fill(getColor(p.parent.color,50));
-
-              if(p.parent.hit    ){ fill(getColor(CLRS.K_TEAL_0, 75)); }
-              if(p.active || p.on){ fill(getColor(CLRS.K_TEAL_0,100)); }
-
-                  triangle( p.w/2 + offset,    p.h+offset,
-                            p.w*0.25 + offset, p.h/2+offset,
-                            p.w*0.75+offset,   p.h/2+offset);
-            popMatrix();
-
-        };
-        function play(){
-
-          fill(getColor(CLRS.K_TEAL_1,50));
-
-          if(p.parent.hit){ fill(getColor(CLRS.WHITE, 75)); }
-          if(p.active    ){ fill(getColor(CLRS.WHITE,100)); }
-
-            offset=p.offset;
-
-            triangle( 15+offset, 10+offset,
-                       5+offset,  5+offset,
-                       5+offset, 15+offset);
-
-        };
-        function settings(){
-
-          fill(getColor(CLRS.K_TEAL_2,50));
-
-          if(p.parent.hit){ fill(getColor(CLRS.WHITE, 75)); }
-          if(p.active    ){ fill(getColor(CLRS.WHITE,100)); }
-
-          noStroke();
-
-            ellipse(p.w/2+p.offset, p.h/2-6+p.offset, 3, 3);
-            ellipse(p.w/2+p.offset, p.h/2,               3, 3);
-            ellipse(p.w/2+p.offset, p.h/2+6+p.offset, 3, 3);
-
-        };
         function reset(){
 
           pushMatrix();
 
             translate(p.w/2,p.h/2);
 
-              var sz=0.67;
-
+              var sz=0.67;              
+              var clr=color(128);
+              
               ellipseMode(CENTER);
 
-              stroke(getColor(CLRS.K_TEAL_1, 50));
+              stroke(getColor(clr, 50));
 
-              if(p.parent.hit){ stroke(getColor(CLRS.WHITE,  75)); }
-              if(p.active)    { stroke(getColor(CLRS.WHITE, 100));
-                                   cursor(p.cursor);               }
+              if(p.active){
+
+                stroke(getColor(clr, 100));
+                cursor(p.cursor);
+
+              }
 
               strokeWeight(1.5);
               noFill();
 
               if(p.active &&
-                 app.left){ rotate(radians(45)); }
+                 app.left){
+
+                rotate(radians(45));
+
+              }
 
                 arc(0, 0, p.w*sz, p.h*sz, radians(60), 2*PI-radians(22.5));
 
-              fill(getColor(CLRS.K_TEAL_0, 100));
+              fill(getColor(clr, 50));
 
-              if(p.parent.hit){ fill(getColor(CLRS.WHITE,  75)); }
-              if(p.active  ){ fill(getColor(CLRS.WHITE, 100)); }
+              if(p.active){ fill(getColor(clr, 100)); }
 
                 pushMatrix();
 
-                  translate(2,0);
+                  translate(4,-5);
+                  rotate(PI/6);
 
-                    triangle(0,  0,
-                             5,  0,
-                             5, -5);
+                    triangle( 0,   0,
+                             10,   0,
+                             10, -10);
 
                 popMatrix();
 
           popMatrix();
 
         };
-        function txt(){
 
-          fill(getColor(CLRS.K_TEAL_2,50));
-
-          if(p.parent.hit    ){ fill(getColor(p.color, 75)); }
-          if(p.active || p.on){ fill(getColor(p.color,100)); }
-
-          textAlign(CENTER,CENTER);
-          textFont(p.font);
-
-          switch(p.text){
-
-            case NAVIGATION.FIRST:          text('|'+CONSTANTS.TRIANGLE_L,                  p.w/2+p.offset, p.h/2+p.offset); break;
-            case NAVIGATION.DECREMENT:      text(CONSTANTS.TRIANGLE_L,                      p.w/2+p.offset, p.h/2+p.offset); break;
-            case NAVIGATION.INCREMENT:      text(CONSTANTS.TRIANGLE_R,                      p.w/2+p.offset, p.h/2+p.offset); break;
-            case NAVIGATION.LAST:           text(CONSTANTS.TRIANGLE_R+'|',                  p.w/2+p.offset, p.h/2+p.offset); break;
-            case NAVIGATION.INCREMENTPAGE:  text(CONSTANTS.TRIANGLE_R+CONSTANTS.TRIANGLE_R, p.w/2+p.offset, p.h/2+p.offset); break;
-            case NAVIGATION.DECREMENTPAGE:  text(CONSTANTS.TRIANGLE_L+CONSTANTS.TRIANGLE_L, p.w/2+p.offset, p.h/2+p.offset); break;
-
-            default:                        text(p.text, p.w/2+p.offset, p.h/2+p.offset);                                    break;
-
-          }
-
-        };
-        function choose(){
-
-          fill(getColor(CLRS.K_TEAL_2,50));
-
-          if(p.parent.hit    ){ fill(getColor(p.color, 75)); }
-          if(p.active || p.on){ fill(getColor(p.color,100)); }
-
-          textFont(p.font);
-          textSize(10);
-          textLeading(10);
-
-          textAlign(CENTER,CENTER);
-
-            text('n\nk', p.w/2+p.offset, p.h/2+p.offset);
-
-          textSize(16);
-
-          textAlign(RIGHT,CENTER);
-
-            text('(', p.w/2+p.offset-3, p.h/2+p.offset);
-
-          textAlign(LEFT,CENTER);
-
-        text(')', p.w/2+p.offset+3, p.h/2+p.offset);
-
-        };
         this.active=this.hit && app.focus===this;
         this.offset=0;
-        this.on=this.retrieve();
+        // this.on=this.retrieve();
 
         pushMatrix();
 
@@ -3518,25 +3422,10 @@ var diagrams = function(processingInstance){
             if(this.active ||
                this.on    ){ fill(getColor(CLRS.BLACK,10)); }
 
-            //  Background
-              rect(this.offset, this.offset, this.w, this.h, 2);
+              //  Background
+              // rect(this.offset, this.offset, this.w, this.h, 2);
 
-
-          // Icon
-          textFont(this.font);
-
-          switch(this.style){
-
-            case GLYPHS.PLAY:      play();      break;
-            case GLYPHS.SETTINGS:  settings();  break;
-            case GLYPHS.RESET:     reset();     break;
-            case GLYPHS.TRIFORCE:  triforce();  break;
-            case GLYPHS.TEXT:      txt();       break;
-            case GLYPHS.CHOOSE:    choose();    break;
-
-            default:                            break;
-
-          };
+            reset();
 
         popMatrix();
 
@@ -4265,9 +4154,11 @@ var diagrams = function(processingInstance){
 
             beginShape();
 
+              r-=3.5; // Reduce size so it doesn't completely cover the cell
+
               for(var pt=0; pt<6; pt++){
-                vertex(x+cos(PI/6+pt*PI/3)*(r-3.5),
-                       y+sin(PI/6+pt*PI/3)*(r-3.5));
+                vertex(x+cos(PI/6+pt*PI/3)*r,
+                       y+sin(PI/6+pt*PI/3)*r);
               }
 
             endShape(CLOSE);
@@ -4277,9 +4168,8 @@ var diagrams = function(processingInstance){
           var f=0.8;
           var w=p.w/2*cos(PI/6);
 
-
           if(app.dragging && p.hit){ f=1;    }
-          else                     { w*=0.9; }
+          else                     { w*=0.8; }
 
           var w2=w*2;
 
@@ -4312,8 +4202,7 @@ var diagrams = function(processingInstance){
             fill(clr);
 
             rotate(-PI/3);
-            
-            // row(clr);
+
             var offset=w*f;
 
               drawHexagon(offset+f*3*w, 0, w);
@@ -4543,7 +4432,7 @@ var diagrams = function(processingInstance){
                 case SHAPES.VUPLEFT:        vUpLeft(getPieceColor(SHAPES.VUPLEFT));             break;
                 case SHAPES.VUPRIGHT:       vUpRight(getPieceColor(SHAPES.VUPRIGHT));           break;
 
-                default:                                              break;
+                default:                                                                        break;
 
               }
 
@@ -4922,13 +4811,20 @@ var diagrams = function(processingInstance){
       app.controls.push(rt);
 
       /* hexBoard           */
-      rt.controls.push(new hexBoard(600, rt, 300, height/2-60, 0, 0,
+      rt.controls.push(new hexBoard(200, rt, 300, height/2-70, 0, 0,
         {font:      'sans-serif',
          levels:    app.rows,
          cursor:    ARROW,
          color:     CLRS.K_TEAL_2,
          size:      0}));
 
+      /* reset button       */
+      rt.controls.push(new i_Button(300, rt, 500, 50, 40, 40,
+        {font:      'sans-serif',
+         cursor:    HAND,
+         execute:   reset,         
+         color:     CLRS.K_TEAL_2}));
+         
       /** Requires a reference to access globally */
       app.hexGarden=rt.controls[0];
 
@@ -5180,10 +5076,13 @@ var diagrams = function(processingInstance){
 
   };
 
+  var n=220;
+  
   function temp(){
 
     // globalFRate=this.__frameRate;
-
+    
+    textFont(sansFont);
     fill(CLRS.BLACK);
     textSize(24);
     textAlign(CENTER,BOTTOM);
@@ -5198,24 +5097,32 @@ var diagrams = function(processingInstance){
 
       // text(app.gameOver, 500, 60);
 
-      text(app.hexBoard.scores.length, 500, 60);
+      // text(app.hexBoard.scores.length, 500, 60);
 
-    // textAlign(LEFT,CENTER);
+    textSize(36);
 
-      // text(round(app.frameRate), 50, 160);
+      text(CONSTANTS.NOTE, 25, 550);
 
-    // var nums=[];
+    textFont(fantasyFont);
+    textSize(60);
+    textAlign(CENTER,CENTER);
+    fill(getColor(color(128,0,0),n/5));
 
-    // for(var i=0; i<25; i++){
-      // nums[i]=0;
-    // }
+    if(n>0){
 
-    // for(var n=0; n<250000; n++){
-      // nums[floor(random(0,25))]++;
-    // }
+      pushMatrix();
+        
+        translate(300,500);
+        scale(n/72,n/72);
 
-    // println(nums.length + ' | ' + nums);
+          text('heXtris', 0, 0);
 
+      popMatrix();
+
+      n--;
+
+    }
+    
       try{
 
         // text(app.hexBoard.scores.length, 500, 60);
@@ -5238,7 +5145,7 @@ var diagrams = function(processingInstance){
 
   function intro(){
 
-    background(32);
+    background(n);
 
     if(app.debug){
       // frameRate(0);
@@ -5294,8 +5201,8 @@ var diagrams = function(processingInstance){
       // fill(getColor(CLRS.GREEN, frameCount%255));
       fill(getColor(CLRS.GREEN, 50));
       textAlign(CENTER,CENTER);
-      textFont(sansFont,150);
-      text('Game Over', width/2, height/2);
+      textFont(sansFont,100);
+      text('Game Over', 300, 300);
 
     }
 
@@ -5323,7 +5230,7 @@ var diagrams = function(processingInstance){
     app.frameRate=this.__frameRate;
 
     execute();
-
+temp();
   };
 
   /* Keyboard Events =========================================================== */
