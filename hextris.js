@@ -1,4 +1,4 @@
-/*  TBD
+/*  Whitelist
 
 *
 +stackoverflow.com
@@ -51,7 +51,9 @@ var diagrams = function(processingInstance){
           Choose Life - Sliding Triangle Game
 
     TO DO:
-
+      
+      - game over graphic
+      
       - drop sound
 
       - new game button
@@ -142,12 +144,13 @@ var diagrams = function(processingInstance){
     this.keys         = [];     //  Array holding the value of all keycodes
 
     this.info         = 0;      //  Is the info frame displayed
-    this.telemetry    = 0;      //  Is telemetry visible
+    this.telemetry    = true;      //  Is telemetry visible
 
     /* Hextris Specific ------------------ */
 
     this.hexBoard     = this.controls[1];
-
+    
+    this.music        = true;
     this.gameOver     = true;
 
   };
@@ -372,13 +375,19 @@ var diagrams = function(processingInstance){
 
     };
 
-    function getInfo()          { return app.info;                     };
-    function toggleInfo()       { app.info=!app.info;                  };
+    function getInfo()          { return app.info;                      };
+    function toggleInfo()       { app.info=!app.info;                   };
 
-    function getTelemetry()     { return app.telemetry;                };
-    function toggleTelemetry()  { app.telemetry=!app.telemetry;        };
+    function getScore()         { return app.hexBoard.score;            };
+    function getHighScore()     { return app.hexBoard.highScore;        };
 
-    function clickTest(n)       { println('click: ' + n);                    };
+    function getMusic()         { return app.music;                     };
+    function setMusic(b)        { return app.music=b;                   };
+
+    function getTelemetry()     { return app.telemetry;                 };
+    function toggleTelemetry()  { app.telemetry=!app.telemetry;         };
+
+    function clickTest(n)       { println('click: ' + n);               };
 
   }
 
@@ -3236,7 +3245,7 @@ var diagrams = function(processingInstance){
 
     /* Controls ============================================================ */
 
-    /* Button               */
+    /* Music                */
     {
 
       function button(id, parent, x, y, w, h, props){
@@ -3328,6 +3337,218 @@ var diagrams = function(processingInstance){
 
     }
 
+    /* Music                */
+    {
+
+      function music(id, parent, x, y, w, h, props){
+
+        control.call(this, id, parent, x, y, w, h);
+
+        this.execute  = props.execute;
+        this.retrieve = props.retrieve;
+
+        this.text     = props.text;
+
+        this.color    = props.color;
+        this.cursor   = props.cursor;
+        this.font     = props.font;
+
+        this.on=false;
+
+      };
+      music.prototype=Object.create(control.prototype);
+      music.prototype.draw=function(){
+
+          this.offset=0;
+          this.active=this.hit && app.focus===this;
+
+          pushMatrix();
+
+            translate(this.x, this.y);
+            scale(1,-1);
+
+              // Border
+              strokeWeight(0.75);
+              fill(getColor(CLRS.ACTIVE, 5));
+              noStroke();
+
+              if(this.active && this.hit){
+                
+                if(app.left){ this.offset=1; }
+                              
+                cursor(this.cursor);
+                fill(getColor(CLRS.ACTIVE, 50));
+                              
+              }
+
+              scale(1,-1);
+          
+              if(this.retrieve()){
+                
+                fill(getColor(CLRS.BLACK,50));
+                
+              }
+              else{
+
+                noFill();
+                stroke(color(192));
+                strokeWeight(3);
+                
+                  ellipse(0, 0, this.w-5, this.w-5);
+                  
+                  line(-15, 15, 15,-15);
+                  
+                fill(color(192));
+
+              }
+
+              textFont(this.font);              
+              textSize(36);
+              textAlign(CENTER,CENTER);
+
+                text(CONSTANTS.NOTE, 0, 0);
+      
+          popMatrix();
+
+      };
+      music.prototype.moved=function(x,y){
+
+        if(this.parent.hit){
+
+          if(dist(mouseX, mouseY,
+                  this.x+x,
+                  this.y+y)<this.w/2){
+
+              this.hit=true;
+              app.focus=this;
+
+          }
+          else{
+
+            this.hit=false;
+
+          }
+
+        }
+
+      };
+      music.prototype.clicked=function(){
+      /* Overridden to maintain on/off value */
+
+        if(this.active){
+
+          this.execute(!this.retrieve());
+
+        }
+
+      };
+
+    }
+    
+    /* High Score           */
+    {
+
+      function highScore(id, parent, x, y, w, h, props){
+
+        control.call(this, id, parent, x, y, w, h);
+
+        this.execute  = props.execute;
+        this.retrieve = props.retrieve;
+
+        this.text     = props.text;
+
+        this.color    = props.color;
+        this.cursor   = props.cursor;
+        this.font     = props.font;
+
+        this.on=false;
+
+      };
+      highScore.prototype=Object.create(control.prototype);
+      highScore.prototype.draw=function(){
+
+          this.offset=0;
+          this.active=this.hit && app.focus===this;
+
+          pushMatrix();
+
+            translate(this.x, this.y);
+            scale(1,-1);
+
+              var score=this.execute();
+              var highScore=this.retrieve();
+
+              // Border
+              strokeWeight(0.75);
+              fill(getColor(CLRS.ACTIVE, 5));
+              noStroke();
+
+              // if(this.hit   ){ fill(getColor(CLRS.ACTIVE, 50)); }
+              if(this.active && this.hit){
+                if(app.left){ this.offset=1; }
+                              cursor(this.cursor);
+                              fill(getColor(CLRS.ACTIVE, 50));
+              }
+
+              stroke(CLRS.BLUE);
+              fill(CLRS.YELLOW);
+
+                // ellipse(0, 0, this.w, this.w);
+              
+              scale(1,-1);
+
+              fill(this.color);
+              
+              textFont(this.font);              
+              textSize(24);
+              textAlign(CENTER,BOTTOM);
+
+                text(nfc(score), 0, 0);
+
+              fill(192);
+
+              textSize(16);
+              textAlign(CENTER,TOP);
+
+                text(nfc(highScore), 0, 0);
+
+          popMatrix();
+
+      };
+      highScore.prototype.moved=function(x,y){
+
+        if(this.parent.hit){
+
+          if(dist(mouseX, mouseY,
+                  this.x+x,
+                  this.y+y)<this.w/2){
+
+              this.hit=true;
+              app.focus=this;
+
+          }
+          else{
+
+            this.hit=false;
+
+          }
+
+        }
+
+      };
+      highScore.prototype.clicked=function(){
+      /* Overridden to maintain on/off value */
+
+        if(this.active){
+
+          this.execute();
+
+        }
+
+      };
+
+    }
+    
     /* Icon Button          */
     {
 
@@ -3335,18 +3556,12 @@ var diagrams = function(processingInstance){
 
         control.call(this, id, parent, x, y, w, h);
 
-        this.style    = props.style;
         this.cursor   = props.cursor;
 
         this.execute  = props.execute;
         this.retrieve = props.retrieve;
 
         this.color    = props.color;
-
-        if(this.style===GLYPHS.TEXT){
-          this.text     = props.text;
-          this.font     = props.font;
-        }
 
       };
       i_Button.prototype=Object.create(control.prototype);
@@ -4823,7 +5038,23 @@ var diagrams = function(processingInstance){
         {font:      'sans-serif',
          cursor:    HAND,
          execute:   reset,         
-         color:     CLRS.K_TEAL_2}));
+         color:     CLRS.BLACK}));
+
+      /* high score       */
+      rt.controls.push(new highScore(400, rt, 50, 50, 100, 100,
+        {font:      'sans-serif',
+         cursor:    HAND,
+         execute:   getScore,
+         retrieve:  getHighScore,
+         color:     CLRS.BLACK}));
+
+      /* music            */
+      rt.controls.push(new music(400, rt, 35, 550, 50, 50,
+        {font:      'sans-serif',
+         cursor:    HAND,
+         execute:   setMusic,
+         retrieve:  getMusic,
+         color:     color(192)}));
          
       /** Requires a reference to access globally */
       app.hexGarden=rt.controls[0];
@@ -5067,7 +5298,7 @@ var diagrams = function(processingInstance){
       }
 
       /* Telemetry ---------------------------------------------------- */
-      var telem=new telemetry(400, rt, width, 31, 200, height-30,
+      var telem=new telemetry(500, rt, width, 31, 200, height-30,
         {color:     color(36),
          font:      serifFont,
          cursor:    ARROW});
@@ -5079,29 +5310,6 @@ var diagrams = function(processingInstance){
   var n=220;
   
   function temp(){
-
-    // globalFRate=this.__frameRate;
-    
-    textFont(sansFont);
-    fill(CLRS.BLACK);
-    textSize(24);
-    textAlign(CENTER,BOTTOM);
-
-      text(nfc(app.hexBoard.score), 70, 50);
-
-    fill(192);
-    textSize(16);
-    textAlign(CENTER,TOP);
-
-      text(nfc(app.hexBoard.highScore), 70, 50);
-
-      // text(app.gameOver, 500, 60);
-
-      // text(app.hexBoard.scores.length, 500, 60);
-
-    textSize(36);
-
-      text(CONSTANTS.NOTE, 25, 550);
 
     textFont(fantasyFont);
     textSize(60);
@@ -5115,31 +5323,13 @@ var diagrams = function(processingInstance){
         translate(300,500);
         scale(n/72,n/72);
 
-          text('heXtris', 0, 0);
+          text('heXcell', 0, 0);
 
       popMatrix();
 
       n--;
 
     }
-    
-      try{
-
-        // text(app.hexBoard.scores.length, 500, 60);
-
-        // var row=Number(app.hexBoard.activeCell.row);
-        // var col=Number(app.hexBoard.activeCell.col);
-
-        // text(row + ', ' +  col, 50, 100);
-
-        // row+=1;
-
-        // text(row + ', ' +  col, 50, 130);
-
-      }
-      catch(e){
-        // println(e);
-      }
 
   };
 
@@ -5230,7 +5420,9 @@ var diagrams = function(processingInstance){
     app.frameRate=this.__frameRate;
 
     execute();
-temp();
+    
+    temp();
+
   };
 
   /* Keyboard Events =========================================================== */
