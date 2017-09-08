@@ -52,9 +52,17 @@ var diagrams = function(processingInstance){
 
     TO DO:
       
-      Keyboard controls for navigation and all functions
-      Touchscreen controls
-      
+      - Shower
+      - Fix Front forks
+      - Laundry
+
+      - Allow for optional orientation of hexagons
+        * pointy top
+        * flat top
+
+      - Keyboard controls for navigation and all functions
+      - Touchscreen controls
+
     Research:
 
 
@@ -67,6 +75,8 @@ var diagrams = function(processingInstance){
 
 */
 
+
+  
   var serifFont   = createFont('sans-serif', 16);
   var sansFont    = createFont('sans',       16);
   var monoFont    = createFont('monospace',  16);
@@ -76,9 +86,77 @@ var diagrams = function(processingInstance){
   var globalFRate=this;
 
   const MY_FAV = 7;
-  const HEX_SIZE=70;
+  const HEX_SIZE=60;
   // const pi=nf(PI,1,10);
 
+  /* Constants ============================================================= */
+  {
+
+    var HEXY_STYLES={
+
+      ORANGE:   0,
+      BLACK:    1,
+      BLUE:     2,
+      ROW:      3,
+      COL:      4,
+      DLEFT:    5,
+      DRIGHT:   6,
+      SPACER:   7
+
+    }
+    var ORIENTATIONS={
+
+      POINTY:   0,
+      FLAT:     1,
+      CUSTOM:   2
+
+    }
+
+    var CLRS={
+
+      H_BACKGROUND: color(231,231,231,255),
+      H_SHADOW:     color(209,209,209,255),
+
+      H_BLUE:       color(  5,164,235,255), H_BLUE_L:     color( 20,156,216,255),
+      H_BLACK:      color( 44, 47, 49,255), H_BLACK_L:    color( 62, 62, 62,255),
+      H_ORANGE:     color(255,159,  0,255), H_ORANGE_L:   color(255,175, 41,255),
+
+      RED:          color(170, 29, 29,255), GREEN:        color(158,182, 58,255),
+      BLUE:         color( 29, 86,170,255), YELLOW:       color(238,214, 15,255),
+      ORANGE:       color(238,136, 15,255), GRAY:         color(128,128,128,255),
+
+      CYAN:         color( 49,204,167,255),
+      PINK:         color(255, 20,147,255),
+
+      TEAL_0:       color( 28,117,138,255), TEAL_0_LT:    color( 28,117,138,128),
+      TEAL_1:       color( 41,171,202,255), TEAL_1_LT:    color( 41,171,202,128),
+      TEAL_2:       color( 88,196,221,255), TEAL_2_LT:    color( 88,196,221,128),
+      TEAL_3:       color(156,220,235,255), TEAL_3_LT:    color(156,220,235,128),
+
+      TRANSPARENT:  color(-1,-1,-1),
+
+      WHITE:        color(255,255,255,255),
+      BLACK:        color(  0,  0,  0,255),
+
+      K_RED:        color(170, 29, 29,255), K_GREEN:      color(158,182, 58,255),
+      K_BLUE:       color( 29, 86,170,255), K_YELLOW:     color(238,214, 15,255),
+      K_ORANGE:     color(238,136, 15,255), GRAY:         color(128,128,128,255),
+
+      BROWN:        color(155,145,135,255),
+
+      RED:          color(255,  0,  0,255), REDORANGE:    color(255, 81,  0,255),
+      ORANGE:       color(255,127,  0,255), YELLOWORANGE: color(255,190,  0,255),
+      YELLOW:       color(255,255,  0,255), YELLOWGREEN:  color(192,255,  0,255),
+
+      GREEN:        color(  0,255,  0,255), BLUEGREEN:    color(  0,127,127,255),
+      BLUE:         color(  0,  0,255,255), BLUEVIOLET:   color( 92,  0,255,255),
+
+      VIOLET:       color(127,  0,255,255), REDVIOLET:    color(191,  0,127,255),
+
+    };
+
+  }
+  
   function application(){
 
     /* Initialize -------------------- */
@@ -126,6 +204,7 @@ var diagrams = function(processingInstance){
 
     this.hexBoard     = this.controls[1];
     
+    this.orientation  = ORIENTATIONS.FLAT;
     this.music        = true;
     this.gameOver     = true;
 
@@ -133,53 +212,6 @@ var diagrams = function(processingInstance){
 
   var app=new application();
 
-  /* Constants ============================================================= */
-  {
-
-    var CLRS={
-
-      H_BACKGROUND: color(231,231,231,255),
-      H_SHADOW:     color(209,209,209,255),
-
-      H_BLUE:       color(  5,164,235,255), H_BLUE_L:     color( 20,156,216,255),
-      H_BLACK:      color( 44, 47, 49,255), H_BLACK_L:    color( 62, 62, 62,255),
-      H_ORANGE:     color(255,159,  0,255), H_ORANGE_L:   color(255,175, 41,255),
-
-      RED:          color(170, 29, 29,255), GREEN:        color(158,182, 58,255),
-      BLUE:         color( 29, 86,170,255), YELLOW:       color(238,214, 15,255),
-      ORANGE:       color(238,136, 15,255), GRAY:         color(128,128,128,255),
-
-      CYAN:         color( 49,204,167,255),
-      PINK:         color(255, 20,147,255),
-
-      TEAL_0:       color( 28,117,138,255), TEAL_0_LT:    color( 28,117,138,128),
-      TEAL_1:       color( 41,171,202,255), TEAL_1_LT:    color( 41,171,202,128),
-      TEAL_2:       color( 88,196,221,255), TEAL_2_LT:    color( 88,196,221,128),
-      TEAL_3:       color(156,220,235,255), TEAL_3_LT:    color(156,220,235,128),
-
-      TRANSPARENT:  color(-1,-1,-1),
-
-      WHITE:        color(255,255,255,255),
-      BLACK:        color(  0,  0,  0,255),
-
-      K_RED:        color(170, 29, 29,255), K_GREEN:      color(158,182, 58,255),
-      K_BLUE:       color( 29, 86,170,255), K_YELLOW:     color(238,214, 15,255),
-      K_ORANGE:     color(238,136, 15,255), GRAY:         color(128,128,128,255),
-
-      BROWN:        color(155,145,135,255),
-
-      RED:          color(255,  0,  0,255), REDORANGE:    color(255, 81,  0,255),
-      ORANGE:       color(255,127,  0,255), YELLOWORANGE: color(255,190,  0,255),
-      YELLOW:       color(255,255,  0,255), YELLOWGREEN:  color(192,255,  0,255),
-
-      GREEN:        color(  0,255,  0,255), BLUEGREEN:    color(  0,127,127,255),
-      BLUE:         color(  0,  0,255,255), BLUEVIOLET:   color( 92,  0,255,255),
-
-      VIOLET:       color(127,  0,255,255), REDVIOLET:    color(191,  0,127,255),
-
-    };
-
-  }
 
   /* Utility Functions ===================================================== */
   {
@@ -860,26 +892,26 @@ var diagrams = function(processingInstance){
 
         p.activeCell = null;
 
-        p.layout=[[1,2,3,4,5],         //  Array of Rings
-                  [0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0],
-                  [0,0,0,0,0],
+        p.layout=[[0,1,2,0,1,2,0,1,2],
+                  [1,0,0,0,0,0,0,0,1],
+                  [1,0,0,0,0,0,0,0,2],
+                  [1,0,0,0,0,0,0,0,1],
+                  [1,0,0,0,0,0,0,0,2],
+                  [1,0,0,0,0,0,0,0,1],
+                  [1,0,0,0,0,0,0,0,2],
+                  [1,0,0,0,0,0,0,0,1],
+                  [1,2,1,2,1,2,1,2,2],
                  ];
 
-        p.hints=[[0,1,2,3,4],
-                 [5,0,0,0,0,0],
-                 [0,0,0,0,0,0,0],
-                 [0,0,0,0,0,0,0,0],
-                 [0,0,0,0,0,0,0,0,0],
-                 [0,0,0,0,0,0,0,0],
-                 [0,0,0,0,0,0,0],
-                 [0,0,0,0,0,0],
-                 [0,0,0,0,0],
+        p.hints=[[ 1, 2, 3, 4, 5, 1, 1, 1, 1],
+                 [-1,-1,-1,-1,-1,-1,-1,-1,-1],
+                 [-1,-1,-1,-1,-1,-1,-1,-1,-1],
+                 [-1,-1,-1,-1,-1,-1,-1,-1,-1],
+                 [-1,-1,-1,-1,-1,-1,-1,-1,-1],
+                 [-1,-1,-1,-1,-1,-1,-1,-1,-1],
+                 [-1,-1,-1,-1,-1,-1,-1,-1,-1],
+                 [-1,-1,-1,-1,-1,-1,-1,-1,-1],
+                 [-1,-1,-1,-1,-1,-1,-1,-1,-1],
                 ];
 
         var rowArray=[];
@@ -890,47 +922,99 @@ var diagrams = function(processingInstance){
           p.controls=[];
 
           var w=HEX_SIZE;
-          var xOffset=w*cos(PI/6);
-          var yOffset=w/2;
-
+          
           p.w=w*cos(PI/6)*9;
-          // p.w=1500;
 
           var x=0;
           var y=0;
-          var style=0;
 
-          for(var row in p.layout){
-            for(var col in p.layout[row]){
+          var xOffset;
+          var yOffset;
+          
+          var row;
+          var col;
+          
+          if(app.orientation===ORIENTATIONS.POINTY){
+            
+            xOffset=w*cos(PI/6);
+            yOffset=w/2;
 
-              if(row<5){ x=col*xOffset-row*xOffset/2-2*xOffset;     }
-              else     { x=col*xOffset+(row-8)*xOffset/2-2*xOffset; }
+            for(row in p.layout){
+              for(col in p.layout[row]){
 
-              y=row*w*0.75-6*yOffset;
+                if(row<5){ x=col*xOffset-row*xOffset/2-2*xOffset;     }
+                else     { x=col*xOffset+(row-8)*xOffset/2-2*xOffset; }
 
-              rowArray.push(new hexCell('H'+n, p, x, y, w, w,
-                {execute:   clickTest,
-                 baseX:     0,
-                 baseY:     0,
-                 row:       row,
-                 col:       col,
-                 style:     p.layout[row][col],
-                 text:      p.hints[row][col],
-                 color:     color(CLRS.H_ORANGE_L),
-                 font:      monoFont,
-                 cursor:    ARROW,
-                 on:        false}));
+                y=row*w*0.75-6*yOffset;
 
-               n++;
+                rowArray.push(new hexCell('H'+n, p, x, y, w, w,
+                  {execute:   clickTest,
+                   baseX:     0,
+                   baseY:     0,
+                   row:       row,
+                   col:       col,
+                   style:     p.layout[row][col],
+                   text:      p.hints[row][col],
+                   color:     color(CLRS.H_ORANGE_L),
+                   font:      monoFont,
+                   cursor:    ARROW,
+                   on:        false}));
+
+                 n++;
+
+              }
+
+              p.controls.push(rowArray);
+
+              rowArray=[];
 
             }
-
-            p.controls.push(rowArray);
-
-            rowArray=[];
-
+          
           }
+          else if(app.orientation===ORIENTATIONS.FLAT){
+            
+            n=0;
 
+            xOffset=w/2;
+            yOffset=w*cos(PI/6);
+            
+            var gOffset=190;
+            
+            for(row in p.layout){
+              for(col in p.layout[row]){
+    
+                x=col*w*0.75-gOffset;    
+                y=row*yOffset-gOffset;
+
+                if(col%2===0){
+                  y-=yOffset/2;
+                }
+
+                rowArray.push(new hexCell('H'+n, p, x, y, w, w,
+                  {execute:   clickTest,
+                   baseX:     0,
+                   baseY:     0,
+                   row:       row,
+                   col:       col,
+                   style:     p.layout[row][col],
+                   text:      p.hints [row][col],
+                   color:     color(CLRS.H_ORANGE_L),
+                   font:      monoFont,
+                   cursor:    ARROW,
+                   on:        false}));
+
+                 n++;
+
+              }
+
+              p.controls.push(rowArray);
+
+              rowArray=[];
+
+            }
+            
+          }
+          
         };
 
         function link(){
@@ -1018,7 +1102,7 @@ var diagrams = function(processingInstance){
 
           translate(this.x, this.y);
           
-          fill(212);
+          fill(202);
           rect(-295,-295,590,590);
 
             var ctrls=this.controls;
@@ -2057,17 +2141,7 @@ var diagrams = function(processingInstance){
     /* Hexagonal Cell       */
     {
 
-      var HEXY_STYLES={
-        
-        ORANGE:  0,
-        BLACK:   1,
-        BLUE:    2,
-        ROW:     3,
-        COL:     4,
-        DLEFT:   5,
-        DRIGHT:  6
 
-      }
 
       function hexCell(id, parent, x, y, w, h, props){
 
@@ -2107,20 +2181,25 @@ var diagrams = function(processingInstance){
           var w2=p.w/2;
 
           var pt=0;
-
+          var ang=0;
+          
+          if(app.orientation===ORIENTATIONS.POINTY){
+            ang=30;
+          }
+            
           for(pt=0; pt<6; pt++){
-            p.points.push(new pnt( cos(radians(30+pt*60))*w2,
-                                   sin(radians(30+pt*60))*w2));
+            p.points.push(new pnt( cos(radians(ang+pt*60))*(w2-10),
+                                   sin(radians(ang+pt*60))*(w2-10) ));
           }
 
           for(pt=0; pt<8; pt++){
-            p.dpoints.push(new pnt( cos(radians(30+pt*60))*(w2-4),
-                                    sin(radians(30+pt*60))*(w2-4) ));
+            p.dpoints.push(new pnt( cos(radians(ang+pt*60))*(w2-3),
+                                    sin(radians(ang+pt*60))*(w2-3) ));
           }
 
           for(pt=0; pt<6; pt++){
-            p.hpoints.push(new pnt( cos(radians(30+pt*60))*(w2-15),
-                                    sin(radians(30+pt*60))*(w2-15) ));
+            p.hpoints.push(new pnt( cos(radians(ang+pt*60))*(w2-5),
+                                    sin(radians(ang+pt*60))*(w2-5) ));
           }
 
         };
@@ -2141,37 +2220,77 @@ var diagrams = function(processingInstance){
           scale(1,-1);
 
             noStroke();
-            stroke(164);
+            
+            fill(232);
 
+            /* Highlight Background */
+            if(this.style<HEXY_STYLES.ROW){
+              
+              
+              beginShape();
+
+                for(var pt in this.dpoints){
+                  vertex(this.dpoints[pt].x,
+                         this.dpoints[pt].y);
+                }
+
+              endShape(CLOSE);
+              
+            }
+            
+            /* Outer Hexagon */
             switch(this.style){
 
               case HEXY_STYLES.ORANGE:  fill(CLRS.H_ORANGE);  break;
               case HEXY_STYLES.BLACK:   fill(CLRS.H_BLACK);   break;
               case HEXY_STYLES.BLUE:    fill(CLRS.H_BLUE);    break;
               
-              case HEXY_STYLES.ROW:     noFill(); noStroke(); break;
-              case HEXY_STYLES.COL:     noFill(); noStroke(); break;
-              case HEXY_STYLES.DLEFT:   noFill(); noStroke(); break;
-              case HEXY_STYLES.DRIGHT:  noFill(); noStroke(); break;
-
+              case HEXY_STYLES.ROW:    
+              case HEXY_STYLES.COL:    
+              case HEXY_STYLES.DLEFT:  
+              case HEXY_STYLES.DRIGHT: 
+              case HEXY_STYLES.SPACER:  noFill();             break;
+              
               default:  break;
 
-            }
-                
-            if(this.hit && this.style<HEXY_STYLES.ROW){
-              fill(getColor(CLRS.H_ORANGE_L,100));
-            }
-
-            /** Hexagon */
+            }                
+            
             beginShape();
 
-              for(var pt in this.dpoints){
-                vertex(this.dpoints[pt].x,
-                       this.dpoints[pt].y);
+              for(var pt in this.hpoints){
+                vertex(this.hpoints[pt].x,
+                       this.hpoints[pt].y);
               }
 
             endShape(CLOSE);
 
+            /* Inner Hexagon */
+            switch(this.style){
+
+              case HEXY_STYLES.ORANGE:  fill(CLRS.H_ORANGE_L);  break;
+              case HEXY_STYLES.BLACK:   fill(CLRS.H_BLACK_L);   break;
+              case HEXY_STYLES.BLUE:    fill(CLRS.H_BLUE_L);    break;
+
+              case HEXY_STYLES.ROW:     
+              case HEXY_STYLES.COL:     
+              case HEXY_STYLES.DLEFT:   
+              case HEXY_STYLES.DRIGHT:  
+              case HEXY_STYLES.SPACER:  noFill();               break;              
+
+              default:  break;
+
+            }           
+
+            beginShape();
+
+              for(var pt in this.points){
+                vertex(this.points[pt].x,
+                       this.points[pt].y);
+              }
+
+            endShape(CLOSE);
+
+          /* Caption */
           pushMatrix();
             
             scale(1,-1);
@@ -2181,15 +2300,35 @@ var diagrams = function(processingInstance){
               if(this.style>HEXY_STYLES.BLUE){
                 fill(CLRS.BLACK);
               }
-              
+
               textSize(16);
               textAlign(CENTER,CENTER);
-                
-                // if(this.style===ROW
-                text(this.text, 0,0);
 
+                if(this.style!==HEXY_STYLES.SPACER &&
+                   this.text!='-1'){
+                  text(this.text, 0,0);
+                }
+                
           popMatrix();
 
+          /* Active Cell */
+          if(this.hit &&
+             this.style<HEXY_STYLES.ROW){
+
+            fill(getColor(CLRS.BLACK,10));
+            
+            /** Hexagon */
+            beginShape();
+
+              for(var pt in this.hpoints){
+                vertex(this.hpoints[pt].x,
+                       this.hpoints[pt].y);
+              }
+
+            endShape(CLOSE);
+            
+          }
+            
         popMatrix();
             
       };
@@ -2230,7 +2369,7 @@ var diagrams = function(processingInstance){
       hexCell.prototype.moved=function(x,y){
       /* Overridden because of the shape */
 
-        if(this.parent.hit){
+        // if(this.parent.hit){
 
           if(this.outerHitTest(x,y)){
 
@@ -2251,7 +2390,7 @@ var diagrams = function(processingInstance){
 
           this.hover=false;
 
-        }
+        // }
 
       };
       hexCell.prototype.clicked=function(){
@@ -2306,13 +2445,13 @@ var diagrams = function(processingInstance){
          execute:   reset,         
          color:     CLRS.BLACK}));
 
-      /* high score       */
-      rt.controls.push(new highScore(400, rt, 50, 50, 100, 100,
-        {font:      'sans-serif',
-         cursor:    HAND,
-         execute:   getScore,
-         retrieve:  getHighScore,
-         color:     CLRS.BLACK}));
+      // /* high score       */
+      // rt.controls.push(new highScore(400, rt, 50, 50, 100, 100,
+        // {font:      'sans-serif',
+         // cursor:    HAND,
+         // execute:   getScore,
+         // retrieve:  getHighScore,
+         // color:     CLRS.BLACK}));
 
       /* music            */
       rt.controls.push(new music(400, rt, 35, 550, 50, 50,
@@ -2462,6 +2601,17 @@ var diagrams = function(processingInstance){
   {
 
     mouseClicked=function(){
+
+      // if(app.orientation===ORIENTATIONS.FLAT){
+        // app.orientation=ORIENTATIONS.POINTY;
+        // app.hexBoard.reset();
+        // println('pointy');
+      // }
+      // else{
+        // app.orientation=ORIENTATIONS.FLAT;
+        // app.hexBoard.reset();
+        // println('flat');
+      // }
 
       if(mouseButton===RIGHT){ execute=play; }
 
