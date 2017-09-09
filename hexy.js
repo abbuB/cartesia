@@ -51,7 +51,7 @@ var diagrams = function(processingInstance){
           Choose Life - Sliding Triangle Game
 
     TO DO:
-      
+
       - Shower
       - Fix Front forks
       - Laundry
@@ -68,7 +68,7 @@ var diagrams = function(processingInstance){
 
     TO DONE:
 
-    
+
     ----------------------------------------------------------------------------------------------------
 
       println( typeof this.color );
@@ -76,7 +76,7 @@ var diagrams = function(processingInstance){
 */
 
 
-  
+
   var serifFont   = createFont('sans-serif', 16);
   var sansFont    = createFont('sans',       16);
   var monoFont    = createFont('monospace',  16);
@@ -156,7 +156,7 @@ var diagrams = function(processingInstance){
     };
 
   }
-  
+
   function application(){
 
     /* Initialize -------------------- */
@@ -203,7 +203,7 @@ var diagrams = function(processingInstance){
     /* Hextris Specific ------------------ */
 
     this.hexBoard     = this.controls[1];
-    
+
     this.orientation  = ORIENTATIONS.FLAT;
     this.music        = true;
     this.gameOver     = true;
@@ -876,12 +876,13 @@ var diagrams = function(processingInstance){
 
         this.angle          = 0;
 
-        this.reset();
         this.layout=[];
         this.hints=[];
-        
+
         app.hexBoard=this;
 
+        this.reset();
+        
       };
       hexBoard.prototype=Object.create(control.prototype);
       hexBoard.prototype.reset        =function(){
@@ -892,27 +893,31 @@ var diagrams = function(processingInstance){
 
         p.activeCell = null;
 
-        p.layout=[[0,1,2,0,1,2,0,1,2],
-                  [1,0,0,0,0,0,0,0,1],
-                  [1,0,0,0,0,0,0,0,2],
-                  [1,0,0,0,0,0,0,0,1],
-                  [1,0,0,0,0,0,0,0,2],
-                  [1,0,0,0,0,0,0,0,1],
-                  [1,0,0,0,0,0,0,0,2],
-                  [1,0,0,0,0,0,0,0,1],
-                  [1,2,1,2,1,2,1,2,2],
+        p.layout=[[ 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7],
+                  [ 7, 7, 7, 7, 7, 7, 7, 1, 7, 7, 7, 7, 7, 7, 7, 7],
+                  [ 7, 7, 7, 7, 7, 0, 0, 0, 0, 0, 7, 7, 7, 7, 7, 7],
+                  [ 7, 7, 7, 0, 0, 0, 0, 0, 0, 0, 0, 2, 7, 7, 7, 7],
+                  [ 7, 7, 7, 0, 0, 0, 0, 0, 0, 0, 0, 1, 7, 7, 7, 7],
+                  [ 7, 7, 7, 0, 0, 0, 0, 0, 0, 0, 0, 2, 7, 7, 7, 7],
+                  [ 7, 7, 7, 0, 0, 0, 0, 0, 0, 0, 0, 1, 7, 7, 7, 7],
+                  [ 7, 7, 7, 0, 0, 0, 0, 0, 0, 0, 0, 2, 7, 7, 7, 7],
+                  [ 7, 7, 7, 7, 0, 0, 0, 0, 0, 0, 0, 7, 7, 7, 7, 7],
+                  [ 7, 7, 7, 7, 7, 7, 0, 1, 0, 7, 7, 7, 7, 7, 7, 7],
+                  [ 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7],
                  ];
-
-        p.hints=[[ 1, 2, 3, 4, 5, 1, 1, 1, 1],
-                 [-1,-1,-1,-1,-1,-1,-1,-1,-1],
-                 [-1,-1,-1,-1,-1,-1,-1,-1,-1],
-                 [-1,-1,-1,-1,-1,-1,-1,-1,-1],
-                 [-1,-1,-1,-1,-1,-1,-1,-1,-1],
-                 [-1,-1,-1,-1,-1,-1,-1,-1,-1],
-                 [-1,-1,-1,-1,-1,-1,-1,-1,-1],
-                 [-1,-1,-1,-1,-1,-1,-1,-1,-1],
-                 [-1,-1,-1,-1,-1,-1,-1,-1,-1],
-                ];
+                 
+        p.hints= [[ 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7],
+                  [ 7, 7, 7, 7, 7, 7, 0, 1, 2, 7, 7, 7, 7, 7, 7, 7],
+                  [ 7, 7, 7, 7, 0, 0, 0, 0, 0, 0, 0, 7, 7, 7, 7, 7],
+                  [ 7, 7, 7, 1, 0, 0, 0, 0, 0, 0, 0, 2, 7, 7, 7, 7],
+                  [ 7, 7, 7, 1, 0, 0, 0, 0, 0, 0, 0, 1, 7, 7, 7, 7],
+                  [ 7, 7, 7, 1, 0, 0, 0, 0, 0, 0, 0, 2, 7, 7, 7, 7],
+                  [ 7, 7, 7, 1, 0, 0, 0, 0, 0, 0, 0, 1, 7, 7, 7, 7],
+                  [ 7, 7, 7, 1, 0, 0, 0, 0, 0, 0, 0, 2, 7, 7, 7, 7],
+                  [ 7, 7, 7, 7, 7, 0, 0, 0, 0, 0, 7, 7, 7, 7, 7, 7],
+                  [ 7, 7, 7, 7, 7, 7, 7, 1, 7, 7, 7, 7, 7, 7, 7, 7],
+                  [ 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7],
+                 ];
 
         var rowArray=[];
         var n=0;
@@ -922,7 +927,7 @@ var diagrams = function(processingInstance){
           p.controls=[];
 
           var w=HEX_SIZE;
-          
+
           p.w=w*cos(PI/6)*9;
 
           var x=0;
@@ -930,12 +935,12 @@ var diagrams = function(processingInstance){
 
           var xOffset;
           var yOffset;
-          
+
           var row;
           var col;
-          
+
           if(app.orientation===ORIENTATIONS.POINTY){
-            
+
             xOffset=w*cos(PI/6);
             yOffset=w/2;
 
@@ -969,21 +974,21 @@ var diagrams = function(processingInstance){
               rowArray=[];
 
             }
-          
+
           }
           else if(app.orientation===ORIENTATIONS.FLAT){
-            
+
             n=0;
 
             xOffset=w/2;
             yOffset=w*cos(PI/6);
-            
-            var gOffset=190;
-            
+
+            var gOffset=270;
+
             for(row in p.layout){
               for(col in p.layout[row]){
-    
-                x=col*w*0.75-gOffset;    
+
+                x=col*w*0.75-gOffset;
                 y=row*yOffset-gOffset;
 
                 if(col%2===0){
@@ -1012,9 +1017,9 @@ var diagrams = function(processingInstance){
               rowArray=[];
 
             }
-            
+
           }
-          
+
         };
 
         function link(){
@@ -1101,24 +1106,26 @@ var diagrams = function(processingInstance){
         pushMatrix();
 
           translate(this.x, this.y);
-          
-          fill(202);
-          rect(-295,-295,590,590);
 
-            var ctrls=this.controls;
+            stroke(31);
+            noFill();
 
-            for(var r in ctrls){
-              for(var c in ctrls[r]){
+            rect(-295,-295,590,590);
 
-                ctrls[r][c].draw();
+              var ctrls=this.controls;
 
+              for(var r in ctrls){
+                for(var c in ctrls[r]){
+
+                  ctrls[r][c].draw();
+
+                }
               }
-            }
 
         popMatrix();
 
       };
-      hexBoard.prototype.hitTest      = function(x,y){ return dist(mouseX,mouseY,this.x,this.y)<this.w/2; };
+      hexBoard.prototype.hitTest      = function(x,y){ return dist(mouseX,mouseY,this.x+x,this.y+y)<this.w/2; };
       hexBoard.prototype.moved        = function(x,y){
       /* Overridden because of the nested controls */
 
@@ -1129,7 +1136,7 @@ var diagrams = function(processingInstance){
           else                 { this.hit=false;    }
 
             var ctrls=this.controls;
-          
+
             for(var r in ctrls){
               for(var c in ctrls[r]){
 
@@ -1144,7 +1151,7 @@ var diagrams = function(processingInstance){
       hexBoard.prototype.clicked      = function(){
 
         var ctrls=this.controls;
-      
+
         for(var r in ctrls){
           for(var c in ctrls[r]){
 
@@ -1293,41 +1300,41 @@ var diagrams = function(processingInstance){
               noStroke();
 
               if(this.active && this.hit){
-                
+
                 if(app.left){ this.offset=1; }
-                              
+
                 cursor(this.cursor);
                 fill(getColor(CLRS.ACTIVE, 50));
-                              
+
               }
 
               scale(1,-1);
-          
+
               if(this.retrieve()){
-                
+
                 fill(getColor(CLRS.BLACK,50));
-                
+
               }
               else{
 
                 noFill();
                 stroke(color(192));
                 strokeWeight(3);
-                
+
                   ellipse(0, 0, this.w-5, this.w-5);
-                  
+
                   line(-15, 15, 15,-15);
-                  
+
                 fill(color(192));
 
               }
 
-              textFont(this.font);              
+              textFont(this.font);
               textSize(36);
               textAlign(CENTER,CENTER);
 
                 text(CONSTANTS.NOTE, 0, 0);
-      
+
           popMatrix();
 
       };
@@ -1364,7 +1371,7 @@ var diagrams = function(processingInstance){
       };
 
     }
-    
+
     /* High Score           */
     {
 
@@ -1414,12 +1421,12 @@ var diagrams = function(processingInstance){
               fill(CLRS.YELLOW);
 
                 // ellipse(0, 0, this.w, this.w);
-              
+
               scale(1,-1);
 
               fill(this.color);
-              
-              textFont(this.font);              
+
+              textFont(this.font);
               textSize(24);
               textAlign(CENTER,BOTTOM);
 
@@ -1468,7 +1475,7 @@ var diagrams = function(processingInstance){
       };
 
     }
-    
+
     /* Icon Button          */
     {
 
@@ -1496,9 +1503,9 @@ var diagrams = function(processingInstance){
 
             translate(p.w/2,p.h/2);
 
-              var sz=0.67;              
+              var sz=0.67;
               var clr=color(128);
-              
+
               ellipseMode(CENTER);
 
               stroke(getColor(clr, 50));
@@ -2141,12 +2148,10 @@ var diagrams = function(processingInstance){
     /* Hexagonal Cell       */
     {
 
-
-
       function hexCell(id, parent, x, y, w, h, props){
 
         control.call(this, id, parent, x, y, w, h);
-        
+
         this.execute      = props.execute;
 
         this.outerHit=false;
@@ -2182,24 +2187,24 @@ var diagrams = function(processingInstance){
 
           var pt=0;
           var ang=0;
-          
+
           if(app.orientation===ORIENTATIONS.POINTY){
             ang=30;
           }
-            
+
           for(pt=0; pt<6; pt++){
-            p.points.push(new pnt( cos(radians(ang+pt*60))*(w2-10),
-                                   sin(radians(ang+pt*60))*(w2-10) ));
+            p.points.push(new pnt( cos(radians(ang+pt*60))*(w2-8),
+                                   sin(radians(ang+pt*60))*(w2-8) ));
           }
 
           for(pt=0; pt<8; pt++){
-            p.dpoints.push(new pnt( cos(radians(ang+pt*60))*(w2-3),
-                                    sin(radians(ang+pt*60))*(w2-3) ));
+            p.dpoints.push(new pnt( cos(radians(ang+pt*60))*(w2-1),
+                                    sin(radians(ang+pt*60))*(w2-1) ));
           }
 
           for(pt=0; pt<6; pt++){
-            p.hpoints.push(new pnt( cos(radians(ang+pt*60))*(w2-5),
-                                    sin(radians(ang+pt*60))*(w2-5) ));
+            p.hpoints.push(new pnt( cos(radians(ang+pt*60))*(w2-3),
+                                    sin(radians(ang+pt*60))*(w2-3) ));
           }
 
         };
@@ -2213,6 +2218,11 @@ var diagrams = function(processingInstance){
         this.active=this.hit && app.focus===this;
         var offset=0;
 
+        if(this.active && this.hit){
+          if(app.left){ this.offset=1; }
+            cursor(this.cursor);
+        }
+
         pushMatrix();
 
           translate(this.x, this.y);
@@ -2220,13 +2230,14 @@ var diagrams = function(processingInstance){
           scale(1,-1);
 
             noStroke();
-            
-            fill(232);
 
-            /* Highlight Background */
+            fill(255);
+
+          /* Highlight Background  -------------------------------------------------- */
+          {
+
             if(this.style<HEXY_STYLES.ROW){
-              
-              
+
               beginShape();
 
                 for(var pt in this.dpoints){
@@ -2235,26 +2246,36 @@ var diagrams = function(processingInstance){
                 }
 
               endShape(CLOSE);
-              
+
             }
             
-            /* Outer Hexagon */
+          }
+
+          /* Outer Hexagon -------------------------------------------------- */
+          {
+
             switch(this.style){
 
               case HEXY_STYLES.ORANGE:  fill(CLRS.H_ORANGE);  break;
               case HEXY_STYLES.BLACK:   fill(CLRS.H_BLACK);   break;
               case HEXY_STYLES.BLUE:    fill(CLRS.H_BLUE);    break;
+
+              case HEXY_STYLES.ROW:
+              case HEXY_STYLES.COL:
+              case HEXY_STYLES.DLEFT:
+              case HEXY_STYLES.DRIGHT:
+              case HEXY_STYLES.SPACER:
               
-              case HEXY_STYLES.ROW:    
-              case HEXY_STYLES.COL:    
-              case HEXY_STYLES.DLEFT:  
-              case HEXY_STYLES.DRIGHT: 
-              case HEXY_STYLES.SPACER:  noFill();             break;
+                noFill();
+                stroke(CLRS.BLACK);
+                strokeWeight(0.125);
               
+                break;
+
               default:  break;
 
-            }                
-            
+            }
+
             beginShape();
 
               for(var pt in this.hpoints){
@@ -2264,22 +2285,28 @@ var diagrams = function(processingInstance){
 
             endShape(CLOSE);
 
-            /* Inner Hexagon */
+          }
+
+          /* Inner Hexagon  -------------------------------------------------- */
+          {
+            
+            noStroke();
+
             switch(this.style){
 
               case HEXY_STYLES.ORANGE:  fill(CLRS.H_ORANGE_L);  break;
               case HEXY_STYLES.BLACK:   fill(CLRS.H_BLACK_L);   break;
               case HEXY_STYLES.BLUE:    fill(CLRS.H_BLUE_L);    break;
 
-              case HEXY_STYLES.ROW:     
-              case HEXY_STYLES.COL:     
-              case HEXY_STYLES.DLEFT:   
-              case HEXY_STYLES.DRIGHT:  
-              case HEXY_STYLES.SPACER:  noFill();               break;              
+              case HEXY_STYLES.ROW:
+              case HEXY_STYLES.COL:
+              case HEXY_STYLES.DLEFT:
+              case HEXY_STYLES.DRIGHT:
+              case HEXY_STYLES.SPACER:  noFill();               break;
 
               default:  break;
 
-            }           
+            }
 
             beginShape();
 
@@ -2290,33 +2317,39 @@ var diagrams = function(processingInstance){
 
             endShape(CLOSE);
 
-          /* Caption */
-          pushMatrix();
-            
-            scale(1,-1);
-            
-              fill(CLRS.WHITE);
-              
-              if(this.style>HEXY_STYLES.BLUE){
-                fill(CLRS.BLACK);
-              }
+          }
 
-              textSize(16);
-              textAlign(CENTER,CENTER);
+          /* Caption  -------------------------------------------------- */
+          {
 
-                if(this.style!==HEXY_STYLES.SPACER &&
-                   this.text!='-1'){
-                  text(this.text, 0,0);
+            pushMatrix();
+
+              scale(1,-1);
+
+                fill(CLRS.WHITE);
+
+                if(this.style>HEXY_STYLES.BLUE){
+                  fill(CLRS.BLACK);
                 }
-                
-          popMatrix();
 
-          /* Active Cell */
+                textSize(16);
+                textAlign(CENTER,CENTER);
+
+                  if(this.style!==HEXY_STYLES.SPACER &&
+                     this.text!='-1'){
+                    text(this.text, 0,0);
+                  }
+
+            popMatrix();
+
+          }
+
+          /* Active Cell  -------------------------------------------------- */
           if(this.hit &&
-             this.style<HEXY_STYLES.ROW){
+             this.style===HEXY_STYLES.ORANGE){
 
-            fill(getColor(CLRS.BLACK,10));
-            
+            fill(getColor(CLRS.BLACK,15));
+
             /** Hexagon */
             beginShape();
 
@@ -2326,29 +2359,32 @@ var diagrams = function(processingInstance){
               }
 
             endShape(CLOSE);
-            
+
           }
-            
+
+          // fill(CLRS.RED);
+          // ellipse(this.hpoints[0].x,this.hpoints[0].y,5,5);
+
         popMatrix();
-            
+
       };
       hexCell.prototype.hitTest=function(x,y){
 
         var retVal=false;
 
-        var rectHit=rectangleHit(new pnt(this.x+this.points[0].x+x, this.y+this.points[0].y+y),
-                                       new pnt(this.x+this.points[2].x+x, this.y+this.points[2].y+y),
-                                       new pnt(this.x+this.points[5].x+x, this.y+this.points[5].y+y),
+        var rectHit=rectangleHit(new pnt(this.x+this.dpoints[1].x+x, this.y+this.dpoints[1].y+y),
+                                       new pnt(this.x+this.dpoints[2].x+x, this.y+this.dpoints[2].y+y),
+                                       new pnt(this.x+this.dpoints[4].x+x, this.y+this.dpoints[4].y+y),
                                        mouseX,mouseY);
 
-              var triHit0=triangleHit(new pnt(this.x+this.points[0].x+x, this.y+this.points[0].y+y),
-                                      new pnt(this.x+this.points[1].x+x, this.y+this.points[1].y+y),
-                                      new pnt(this.x+this.points[2].x+x, this.y+this.points[2].y+y),
+              var triHit0=triangleHit(new pnt(this.x+this.dpoints[0].x+x, this.y+this.dpoints[0].y+y),
+                                      new pnt(this.x+this.dpoints[1].x+x, this.y+this.dpoints[1].y+y),
+                                      new pnt(this.x+this.dpoints[5].x+x, this.y+this.dpoints[5].y+y),
                                       mouseX,mouseY);
 
-              var triHit1=triangleHit(new pnt(this.x+this.points[3].x+x, this.y+this.points[3].y+y),
-                                      new pnt(this.x+this.points[4].x+x, this.y+this.points[4].y+y),
-                                      new pnt(this.x+this.points[5].x+x, this.y+this.points[5].y+y),
+              var triHit1=triangleHit(new pnt(this.x+this.dpoints[2].x+x, this.y+this.dpoints[2].y+y),
+                                      new pnt(this.x+this.dpoints[3].x+x, this.y+this.dpoints[3].y+y),
+                                      new pnt(this.x+this.dpoints[4].x+x, this.y+this.dpoints[4].y+y),
                                       mouseX,mouseY);
         if(rectHit ||
            triHit0 ||
@@ -2394,13 +2430,13 @@ var diagrams = function(processingInstance){
 
       };
       hexCell.prototype.clicked=function(){
-        
+
         if(this.active){
           this.execute(this.id);
         }
 
       };
-      
+
     }
 
   }
@@ -2442,7 +2478,7 @@ var diagrams = function(processingInstance){
       rt.controls.push(new i_Button(300, rt, 500, 50, 40, 40,
         {font:      'sans-serif',
          cursor:    HAND,
-         execute:   reset,         
+         execute:   reset,
          color:     CLRS.BLACK}));
 
       // /* high score       */
