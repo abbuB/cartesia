@@ -97,10 +97,13 @@ var diagrams = function(processingInstance){
       ORANGE:   0,
       BLACK:    1,
       BLUE:     2,
+      
       ROW:      3,
       COL:      4,
+      
       DLEFT:    5,
       DRIGHT:   6,
+      
       SPACER:   7
 
     }
@@ -271,8 +274,8 @@ var diagrams = function(processingInstance){
         this.font     = monoFont; /** default font */
 
       };
-      control.prototype.draw    = function(){};
-      control.prototype.moved   = function(x,y){
+      control.prototype.draw     = function(){};
+      control.prototype.moved    = function(x,y){
 
         if(mouseX>(this.x+x) &&
            mouseX<(this.x+x) + this.w &&
@@ -298,15 +301,15 @@ var diagrams = function(processingInstance){
         }
 
       };
-      control.prototype.clicked = function(){ if(this.hit){ forEach(this.controls, 'clicked'); } };
-      // control.prototype.dragged = function(){ };
-      control.prototype.pressed = function(){ };
-      control.prototype.released= function(){ };
-      control.prototype.over    = function(){ };
-      control.prototype.out     = function(){ this.hit=false; forEach(this.controls, 'out'); };
+      control.prototype.clicked  = function(){ if(this.hit){ forEach(this.controls, 'clicked'); } };
+      control.prototype.rclicked = function(){ if(this.hit){ forEach(this.controls, 'rclicked'); } };      
+      control.prototype.pressed  = function(){ };
+      control.prototype.released = function(){ };
+      control.prototype.over     = function(){ };
+      control.prototype.out      = function(){ this.hit=false; forEach(this.controls, 'out'); };
       // control.prototype.typed=function(){};
-      // control.prototype.rClicked=function(){};
       // control.prototype.cClicked=function(){};
+      // control.prototype.dragged = function(){ };
 
     }
 
@@ -893,30 +896,26 @@ var diagrams = function(processingInstance){
 
         p.activeCell = null;
 
-        p.layout=[[ 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7],
-                  [ 7, 7, 7, 7, 7, 7, 7, 1, 7, 7, 7, 7, 7, 7, 7, 7],
-                  [ 7, 7, 7, 7, 7, 0, 0, 0, 0, 0, 7, 7, 7, 7, 7, 7],
-                  [ 7, 7, 7, 0, 0, 0, 0, 0, 0, 0, 0, 2, 7, 7, 7, 7],
-                  [ 7, 7, 7, 0, 0, 0, 0, 0, 0, 0, 0, 1, 7, 7, 7, 7],
-                  [ 7, 7, 7, 0, 0, 0, 0, 0, 0, 0, 0, 2, 7, 7, 7, 7],
-                  [ 7, 7, 7, 0, 0, 0, 0, 0, 0, 0, 0, 1, 7, 7, 7, 7],
-                  [ 7, 7, 7, 0, 0, 0, 0, 0, 0, 0, 0, 2, 7, 7, 7, 7],
-                  [ 7, 7, 7, 7, 0, 0, 0, 0, 0, 0, 0, 7, 7, 7, 7, 7],
-                  [ 7, 7, 7, 7, 7, 7, 0, 1, 0, 7, 7, 7, 7, 7, 7, 7],
-                  [ 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7],
+        p.layout=[[ 6, 4,-1, 0, 1, 0,-1,-1,-1],
+                  [ 6, 0, 0, 0, 0, 0, 0, 0, 5],
+                  [ 0, 0, 0, 0, 0, 0, 0, 0, 2],
+                  [ 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                  [ 0, 0, 0, 0, 0, 0, 0, 0, 2],
+                  [ 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                  [ 0, 0, 0, 0, 0, 0, 0, 0, 2],
+                  [-1,-1, 0, 0, 0, 0, 0,-1,-1],
+                  [-1,-1,-1,-1, 1,-1,-1,-1,-1],
                  ];
                  
-        p.hints= [[ 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7],
-                  [ 7, 7, 7, 7, 7, 7, 0, 1, 2, 7, 7, 7, 7, 7, 7, 7],
-                  [ 7, 7, 7, 7, 0, 0, 0, 0, 0, 0, 0, 7, 7, 7, 7, 7],
-                  [ 7, 7, 7, 1, 0, 0, 0, 0, 0, 0, 0, 2, 7, 7, 7, 7],
-                  [ 7, 7, 7, 1, 0, 0, 0, 0, 0, 0, 0, 1, 7, 7, 7, 7],
-                  [ 7, 7, 7, 1, 0, 0, 0, 0, 0, 0, 0, 2, 7, 7, 7, 7],
-                  [ 7, 7, 7, 1, 0, 0, 0, 0, 0, 0, 0, 1, 7, 7, 7, 7],
-                  [ 7, 7, 7, 1, 0, 0, 0, 0, 0, 0, 0, 2, 7, 7, 7, 7],
-                  [ 7, 7, 7, 7, 7, 0, 0, 0, 0, 0, 7, 7, 7, 7, 7, 7],
-                  [ 7, 7, 7, 7, 7, 7, 7, 1, 7, 7, 7, 7, 7, 7, 7, 7],
-                  [ 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7],
+        p.hints= [[ 4, 6,-1,-1,-2,-1,-1,-1,-1],
+                  [ 5,-1,-1,-1,-1,-1,-1,-1, 3],
+                  [-1,-1,-1,-1,-1,-1,-1,-1, 2],
+                  [-1,-1,-1,-1,-1,-1,-1,-1, 5],
+                  [-1,-1,-1,-1,-1,-1,-1,-1, 2],
+                  [-1,-1,-1,-1,-1,-1,-1,-1, 3],
+                  [-1,-1,-1,-1,-1,-1,-1,-1, 2],
+                  [-1,-1,-1,-1,-1,-1,-1,-1,-1],
+                  [-1,-1,-1,-1, 1,-1,-1,-1,-1],
                  ];
 
         var rowArray=[];
@@ -983,7 +982,7 @@ var diagrams = function(processingInstance){
             xOffset=w/2;
             yOffset=w*cos(PI/6);
 
-            var gOffset=270;
+            var gOffset=200;
 
             for(row in p.layout){
               for(col in p.layout[row]){
@@ -1161,6 +1160,19 @@ var diagrams = function(processingInstance){
         }
 
       };
+      hexBoard.prototype.rclicked     = function(){
+
+        var ctrls=this.controls;
+
+        for(var r in ctrls){
+          for(var c in ctrls[r]){
+
+            ctrls[r][c].rclicked();
+
+          }
+        }
+
+      };      
       hexBoard.prototype.out          = function(){
 
         this.hit=false;
@@ -2153,7 +2165,7 @@ var diagrams = function(processingInstance){
         control.call(this, id, parent, x, y, w, h);
 
         this.execute      = props.execute;
-
+        
         this.outerHit=false;
 
         this.row          = props.row;
@@ -2170,9 +2182,11 @@ var diagrams = function(processingInstance){
         this.style        = props.style;
         this.text         = props.text;
 
+        this.enabled      = true;
+
         // this.hover        = false;
         // this.tTime        = 0;
-        // this.timer        = this.tTime;
+        this.timer        = this.tTime;
 
         this.points       = [];
         this.dpoints      = [];
@@ -2215,12 +2229,176 @@ var diagrams = function(processingInstance){
       hexCell.prototype=Object.create(control.prototype);
       hexCell.prototype.draw=function(){
 
-        this.active=this.hit && app.focus===this;
+        this.active=this.hit &&
+                    app.focus===this &&
+                    this.style!==HEXY_STYLES.SPACER;
+        
         var offset=0;
-
+        var p=this;
+        
         if(this.active && this.hit){
           if(app.left){ this.offset=1; }
-            cursor(this.cursor);
+          cursor(this.cursor);
+        }
+
+        /* Highlight Background  -------------------------------------------------- */
+        function highlight(){
+
+          if(p.style<HEXY_STYLES.ROW){
+
+            beginShape();
+
+              for(var pt in this.dpoints){
+                vertex(p.dpoints[pt].x,
+                       p.dpoints[pt].y);
+              }
+
+            endShape(CLOSE);
+
+          }
+          
+        }
+        function outerHexagon(){
+
+          switch(p.style){
+
+            case HEXY_STYLES.ORANGE:  fill(CLRS.H_ORANGE);  break;
+            case HEXY_STYLES.BLACK:   fill(CLRS.H_BLACK);   break;
+            case HEXY_STYLES.BLUE:    fill(CLRS.H_BLUE);    break;
+
+            case HEXY_STYLES.ROW:
+            case HEXY_STYLES.COL:
+            case HEXY_STYLES.DLEFT:
+            case HEXY_STYLES.DRIGHT:
+            case HEXY_STYLES.SPACER:
+            
+              noFill();
+              stroke(CLRS.BLACK);
+              strokeWeight(0.125);
+            
+              break;
+
+            default:  break;
+
+          }
+
+          var offset=0;
+
+          if(p.timer>0){ offset=random(0,1.25); p.timer--; }
+
+          beginShape();
+
+            for(var pt in p.hpoints){
+              vertex(p.hpoints[pt].x+offset,
+                     p.hpoints[pt].y+offset);
+            }
+
+          endShape(CLOSE);
+
+        }
+        function innerHexagon(){
+          
+          noStroke();
+
+          switch(p.style){
+
+            case HEXY_STYLES.ORANGE:  fill(CLRS.H_ORANGE_L);  break;
+            case HEXY_STYLES.BLACK:   fill(CLRS.H_BLACK_L);   break;
+            case HEXY_STYLES.BLUE:    fill(CLRS.H_BLUE_L);    break;
+
+            case HEXY_STYLES.ROW:
+            case HEXY_STYLES.COL:
+            case HEXY_STYLES.DLEFT:
+            case HEXY_STYLES.DRIGHT:
+            case HEXY_STYLES.SPACER:  noFill();               break;
+
+            default:  break;
+
+          }
+
+          beginShape();
+
+            for(var pt in p.points){
+              vertex(p.points[pt].x,
+                     p.points[pt].y);
+            }
+
+          endShape(CLOSE);
+
+        }
+        function caption(){
+
+          pushMatrix();
+
+            scale(1,-1);
+
+              fill(CLRS.WHITE);
+
+              if(p.enabled===false &&
+                 p.style!==HEXY_STYLES.BLACK){
+                fill(getColor(CLRS.WHITE,25));
+              }
+
+              if(p.style>HEXY_STYLES.BLUE){
+
+                fill(CLRS.BLACK);
+
+                if(p.enabled===false){
+                  fill(getColor(CLRS.BLACK,25));
+                }
+
+              }
+
+              textSize(16);
+              textAlign(CENTER,CENTER);
+              
+              if(p.text===-2){ p.text='?'; }
+
+                if(p.style!==HEXY_STYLES.SPACER &&
+                   p.text!='-1'){
+                  
+                  if(p.style===HEXY_STYLES.COL){
+                    textAlign(CENTER,TOP);
+                    rotate(0);
+                  }
+                  else if(p.style===HEXY_STYLES.DLEFT){
+                    textAlign(CENTER,TOP);
+                    rotate(PI/3);
+                  }
+                  else if(p.style===HEXY_STYLES.DRIGHT){
+                    textAlign(CENTER,TOP);
+                    rotate(-PI/3);
+                  }
+
+                  text(p.text, 0,0);
+                  
+                }
+
+          popMatrix();
+
+        }
+        function activeCell(){
+          
+          if(p.hit &&
+             p.style===HEXY_STYLES.ORANGE){
+
+            fill(getColor(CLRS.BLACK,15));
+
+            /** Hexagon */
+            beginShape();
+
+              for(var pt in p.hpoints){
+                vertex(p.hpoints[pt].x,
+                       p.hpoints[pt].y);
+              }
+
+            endShape(CLOSE);
+
+          }
+
+          // fill(CLRS.RED);
+          // ellipse(this.hpoints[0].x,this.hpoints[0].y,5,5);
+
         }
 
         pushMatrix();
@@ -2233,137 +2411,11 @@ var diagrams = function(processingInstance){
 
             fill(255);
 
-          /* Highlight Background  -------------------------------------------------- */
-          {
-
-            if(this.style<HEXY_STYLES.ROW){
-
-              beginShape();
-
-                for(var pt in this.dpoints){
-                  vertex(this.dpoints[pt].x,
-                         this.dpoints[pt].y);
-                }
-
-              endShape(CLOSE);
-
-            }
-            
-          }
-
-          /* Outer Hexagon -------------------------------------------------- */
-          {
-
-            switch(this.style){
-
-              case HEXY_STYLES.ORANGE:  fill(CLRS.H_ORANGE);  break;
-              case HEXY_STYLES.BLACK:   fill(CLRS.H_BLACK);   break;
-              case HEXY_STYLES.BLUE:    fill(CLRS.H_BLUE);    break;
-
-              case HEXY_STYLES.ROW:
-              case HEXY_STYLES.COL:
-              case HEXY_STYLES.DLEFT:
-              case HEXY_STYLES.DRIGHT:
-              case HEXY_STYLES.SPACER:
-              
-                noFill();
-                stroke(CLRS.BLACK);
-                strokeWeight(0.125);
-              
-                break;
-
-              default:  break;
-
-            }
-
-            beginShape();
-
-              for(var pt in this.hpoints){
-                vertex(this.hpoints[pt].x,
-                       this.hpoints[pt].y);
-              }
-
-            endShape(CLOSE);
-
-          }
-
-          /* Inner Hexagon  -------------------------------------------------- */
-          {
-            
-            noStroke();
-
-            switch(this.style){
-
-              case HEXY_STYLES.ORANGE:  fill(CLRS.H_ORANGE_L);  break;
-              case HEXY_STYLES.BLACK:   fill(CLRS.H_BLACK_L);   break;
-              case HEXY_STYLES.BLUE:    fill(CLRS.H_BLUE_L);    break;
-
-              case HEXY_STYLES.ROW:
-              case HEXY_STYLES.COL:
-              case HEXY_STYLES.DLEFT:
-              case HEXY_STYLES.DRIGHT:
-              case HEXY_STYLES.SPACER:  noFill();               break;
-
-              default:  break;
-
-            }
-
-            beginShape();
-
-              for(var pt in this.points){
-                vertex(this.points[pt].x,
-                       this.points[pt].y);
-              }
-
-            endShape(CLOSE);
-
-          }
-
-          /* Caption  -------------------------------------------------- */
-          {
-
-            pushMatrix();
-
-              scale(1,-1);
-
-                fill(CLRS.WHITE);
-
-                if(this.style>HEXY_STYLES.BLUE){
-                  fill(CLRS.BLACK);
-                }
-
-                textSize(16);
-                textAlign(CENTER,CENTER);
-
-                  if(this.style!==HEXY_STYLES.SPACER &&
-                     this.text!='-1'){
-                    text(this.text, 0,0);
-                  }
-
-            popMatrix();
-
-          }
-
-          /* Active Cell  -------------------------------------------------- */
-          if(this.hit &&
-             this.style===HEXY_STYLES.ORANGE){
-
-            fill(getColor(CLRS.BLACK,15));
-
-            /** Hexagon */
-            beginShape();
-
-              for(var pt in this.hpoints){
-                vertex(this.hpoints[pt].x,
-                       this.hpoints[pt].y);
-              }
-
-            endShape(CLOSE);
-
-          }
-
-          // fill(CLRS.RED);
-          // ellipse(this.hpoints[0].x,this.hpoints[0].y,5,5);
+          highlight();
+          outerHexagon();
+          innerHexagon();
+          caption();
+          activeCell();
 
         popMatrix();
 
@@ -2413,7 +2465,13 @@ var diagrams = function(processingInstance){
 
             if(this.hitTest(x,y)){ this.hit=true;
                                    app.focus=this;
-                                   this.parent.activeCell=this; }
+                                   this.parent.activeCell=this;
+
+                                   if(this.style===HEXY_STYLES.ORANGE){
+                                     this.timer=5;
+                                   }
+
+                                 }
             else                 { this.hit=false;              }
 
           }
@@ -2433,6 +2491,14 @@ var diagrams = function(processingInstance){
 
         if(this.active){
           this.execute(this.id);
+        }
+
+      };
+      hexCell.prototype.rclicked=function(){
+
+        if(this.active){
+          this.enabled=!this.enabled;
+          println("rclick: " + this.enabled);          
         }
 
       };
@@ -2651,18 +2717,18 @@ var diagrams = function(processingInstance){
 
       if(mouseButton===RIGHT){ execute=play; }
 
-      forEach(app.controls,'clicked');
+      // forEach(app.controls,'clicked');
 
       app.mode=APPMODES.GAME;
 
-      // switch(mouseButton){
+      switch(mouseButton){
 
-        // case LEFT:    forEach(app.controls,'clicked');  break;
-        // case RIGHT:   forEach(app.controls,'rclicked'); break;
+        case LEFT:    forEach(app.controls,'clicked');  break;
+        case RIGHT:   forEach(app.controls,'rclicked'); break;
         // case CENTER:  forEach(app.controls,'cclicked'); break;
 
-        // default:     break;
-      // }
+        default:     break;
+      }
 
     };
     mousePressed=function(){
