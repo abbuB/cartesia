@@ -94,17 +94,16 @@ var diagrams = function(processingInstance){
 
     var HEXY_STYLES={
 
-      ORANGE:   0,
-      BLACK:    1,
-      BLUE:     2,
-      
+      BLACK:    0,
+      BLUE:     1,
+
+      SPACER:   2,
+
       ROW:      3,
       COL:      4,
-      
+
       DLEFT:    5,
-      DRIGHT:   6,
-      
-      SPACER:   7
+      DRIGHT:   6
 
     }
     var ORIENTATIONS={
@@ -302,7 +301,7 @@ var diagrams = function(processingInstance){
 
       };
       control.prototype.clicked  = function(){ if(this.hit){ forEach(this.controls, 'clicked'); } };
-      control.prototype.rclicked = function(){ if(this.hit){ forEach(this.controls, 'rclicked'); } };      
+      control.prototype.rclicked = function(){ if(this.hit){ forEach(this.controls, 'rclicked'); } };
       control.prototype.pressed  = function(){ };
       control.prototype.released = function(){ };
       control.prototype.over     = function(){ };
@@ -511,7 +510,7 @@ var diagrams = function(processingInstance){
                 text("Pascal's Triangle", this.w/2, 30);
 
               var txt0="In mathematics, Pascal's triangle is a triangular array of the binomial coefficients.";
-              var txt1="The first and last cell in each row contains 1 (one) and every other cell is the sum of the two adjacent cells above.";
+              var txt1="The first and last ";
               var txt2='';
               var txt3='';
               var txt4='en.wikipedia.org/wiki/Pascal%27s_triangle';
@@ -879,13 +878,14 @@ var diagrams = function(processingInstance){
 
         this.angle          = 0;
 
-        this.layout=[];
-        this.hints=[];
+        this.layout=[];               //  array of the layout of hexcells
+        this.hints=[];                //  array of nexCell hints
+        this.lines=[];                //  array of hexCells with highlight lines activated
 
         app.hexBoard=this;
 
         this.reset();
-        
+
       };
       hexBoard.prototype=Object.create(control.prototype);
       hexBoard.prototype.reset        =function(){
@@ -896,26 +896,52 @@ var diagrams = function(processingInstance){
 
         p.activeCell = null;
 
-        p.layout=[[ 6, 4,-1, 0, 1, 0,-1,-1,-1],
-                  [ 6, 0, 0, 0, 0, 0, 0, 0, 5],
-                  [ 0, 0, 0, 0, 0, 0, 0, 0, 2],
-                  [ 0, 0, 0, 0, 0, 0, 0, 0, 1],
-                  [ 0, 0, 0, 0, 0, 0, 0, 0, 2],
-                  [ 0, 0, 0, 0, 0, 0, 0, 0, 1],
-                  [ 0, 0, 0, 0, 0, 0, 0, 0, 2],
-                  [-1,-1, 0, 0, 0, 0, 0,-1,-1],
-                  [-1,-1,-1,-1, 1,-1,-1,-1,-1],
+// var HEXY_STYLES={
+
+// BLACK:    0,
+// BLUE:     1,
+
+// SPACER:   2,
+
+// ROW:      3,
+// COL:      4,
+
+// DLEFT:    5,
+// DRIGHT:   6
+
+// }
+
+        p.layout=[[2,2,2,1,1,1,2,2,2],
+                  [2,1,1,1,1,1,1,1,2],
+                  [1,1,1,1,1,1,1,1,1],
+                  [1,1,1,1,1,1,1,1,1],
+                  [1,1,1,1,0,1,1,1,1],
+                  [1,1,1,1,1,1,1,1,1],
+                  [1,1,1,1,1,1,1,1,1],
+                  [2,2,1,1,1,1,1,2,2],
+                  [2,2,2,2,1,2,2,2,2],
                  ];
-                 
-        p.hints= [[ 4, 6,-1,-1,-2,-1,-1,-1,-1],
-                  [ 5,-1,-1,-1,-1,-1,-1,-1, 3],
-                  [-1,-1,-1,-1,-1,-1,-1,-1, 2],
-                  [-1,-1,-1,-1,-1,-1,-1,-1, 5],
-                  [-1,-1,-1,-1,-1,-1,-1,-1, 2],
-                  [-1,-1,-1,-1,-1,-1,-1,-1, 3],
-                  [-1,-1,-1,-1,-1,-1,-1,-1, 2],
-                  [-1,-1,-1,-1,-1,-1,-1,-1,-1],
-                  [-1,-1,-1,-1, 1,-1,-1,-1,-1],
+
+        p.style =[[2,2,2,1,1,1,2,2,2],
+                  [2,1,1,1,1,1,1,1,2],
+                  [1,1,1,1,1,1,1,1,1],
+                  [1,1,1,1,1,1,1,1,1],
+                  [1,1,1,1,0,1,1,1,1],
+                  [1,1,1,1,1,1,1,1,1],
+                  [1,1,1,1,1,1,1,1,1],
+                  [2,2,1,1,1,1,1,2,2],
+                  [2,2,2,2,1,2,2,2,2],
+                 ];
+
+        p.text  =[[4,6,0,0,2,0,0,0,0],
+                  [5,0,0,0,0,0,0,0,3],
+                  [0,0,0,0,0,0,0,0,2],
+                  [0,0,0,0,0,0,0,0,5],
+                  [0,0,0,0,0,0,0,0,2],
+                  [0,0,0,0,0,0,0,0,3],
+                  [0,0,0,0,0,0,0,0,2],
+                  [0,0,0,0,0,0,0,0,0],
+                  [0,0,0,0,1,0,0,0,0],
                  ];
 
         var rowArray=[];
@@ -957,8 +983,9 @@ var diagrams = function(processingInstance){
                    baseY:     0,
                    row:       row,
                    col:       col,
-                   style:     p.layout[row][col],
-                   text:      p.hints[row][col],
+                   layout:    p.layout[row][col],
+                   style:     p.style[row][col],
+                   text:      p.text[row][col],
                    color:     color(CLRS.H_ORANGE_L),
                    font:      monoFont,
                    cursor:    ARROW,
@@ -1000,8 +1027,9 @@ var diagrams = function(processingInstance){
                    baseY:     0,
                    row:       row,
                    col:       col,
-                   style:     p.layout[row][col],
-                   text:      p.hints [row][col],
+                   layout:    p.layout[row][col],
+                   style:     p.style[row][col],
+                   text:      p.text[row][col],
                    color:     color(CLRS.H_ORANGE_L),
                    font:      monoFont,
                    cursor:    ARROW,
@@ -1100,7 +1128,63 @@ var diagrams = function(processingInstance){
       };
       hexBoard.prototype.draw         = function(){
 
+        var p=this;
+
+        function drawGuideLines(){
+
+          strokeWeight(6);
+          stroke(getColor(CLRS.WHITE,25));
+
+          for(var l in p.lines){
+
+            switch(p.lines[l].style){
+
+              case HEXY_STYLES.COL:
+
+                line(p.lines[l].x, p.lines[l].y + (HEX_SIZE-2)/2,
+                     p.lines[l].x, height);
+
+                break;
+
+              case HEXY_STYLES.DLEFT:
+
+                var x=p.lines[l].x;
+                var y=p.lines[l].y;
+                var offsetX=cos(PI-PI/6)*(HEX_SIZE-2)/2;
+                var offsetY=sin(PI-PI/6)*(HEX_SIZE-2)/2;
+
+                line(x+offsetX,
+                     y+offsetY,
+                     x+offsetX+600*tan(PI-PI/3),
+                     y+offsetY+600);
+
+
+                break;
+
+              case HEXY_STYLES.DRIGHT:
+
+                var x=p.lines[l].x;
+                var y=p.lines[l].y;
+                var offsetX=cos(PI/6)*(HEX_SIZE-2)/2;
+                var offsetY=sin(PI/6)*(HEX_SIZE-2)/2;
+
+                line(x+offsetX,
+                     y+offsetY,
+                     x+offsetX+600*tan(PI/3),
+                     y+offsetY+600);
+
+                break;
+
+              default:  break;
+
+            }
+
+          };
+
+        };
+
         this.active=this.hit && app.focus===this;
+        this.lines=[];
 
         pushMatrix();
 
@@ -1108,6 +1192,7 @@ var diagrams = function(processingInstance){
 
             stroke(31);
             noFill();
+            fill(200);
 
             rect(-295,-295,590,590);
 
@@ -1116,9 +1201,17 @@ var diagrams = function(processingInstance){
               for(var r in ctrls){
                 for(var c in ctrls[r]){
 
+                  if(ctrls[r][c].line){
+                    this.lines.push(ctrls[r][c]);
+                  }
+
                   ctrls[r][c].draw();
 
                 }
+              }
+
+              if(this.lines.length>0){
+                drawGuideLines();
               }
 
         popMatrix();
@@ -1172,7 +1265,7 @@ var diagrams = function(processingInstance){
           }
         }
 
-      };      
+      };
       hexBoard.prototype.out          = function(){
 
         this.hit=false;
@@ -2165,7 +2258,7 @@ var diagrams = function(processingInstance){
         control.call(this, id, parent, x, y, w, h);
 
         this.execute      = props.execute;
-        
+
         this.outerHit=false;
 
         this.row          = props.row;
@@ -2179,10 +2272,12 @@ var diagrams = function(processingInstance){
         this.topLeft      = null;
         this.bottomLeft   = null;
 
+        this.layout       = props.layout;
         this.style        = props.style;
         this.text         = props.text;
 
         this.enabled      = true;
+        this.line         = false;
 
         // this.hover        = false;
         // this.tTime        = 0;
@@ -2232,23 +2327,43 @@ var diagrams = function(processingInstance){
         this.active=this.hit &&
                     app.focus===this &&
                     this.style!==HEXY_STYLES.SPACER;
-        
+
         var offset=0;
         var p=this;
-        
+
         if(this.active && this.hit){
           if(app.left){ this.offset=1; }
           cursor(this.cursor);
         }
 
+
+// var HEXY_STYLES={
+
+  // BLACK:    0,
+  // BLUE:     1,
+
+  // SPACER:   2,
+
+  // ROW:      3,
+  // COL:      4,
+
+  // DLEFT:    5,
+  // DRIGHT:   6
+
+// }
+
         /* Highlight Background  -------------------------------------------------- */
         function highlight(){
 
-          if(p.style<HEXY_STYLES.ROW){
+          if(p.layout<4  &&
+             p.layout>-1){
+
+            noStroke();
+            fill(CLRS.WHITE);
 
             beginShape();
 
-              for(var pt in this.dpoints){
+              for(var pt in p.dpoints){
                 vertex(p.dpoints[pt].x,
                        p.dpoints[pt].y);
               }
@@ -2256,26 +2371,25 @@ var diagrams = function(processingInstance){
             endShape(CLOSE);
 
           }
-          
+
         }
         function outerHexagon(){
 
           switch(p.style){
 
-            case HEXY_STYLES.ORANGE:  fill(CLRS.H_ORANGE);  break;
-            case HEXY_STYLES.BLACK:   fill(CLRS.H_BLACK);   break;
-            case HEXY_STYLES.BLUE:    fill(CLRS.H_BLUE);    break;
+            case HEXY_STYLES.BLACK:   fill(CLRS.H_ORANGE);  break;
+            case HEXY_STYLES.BLUE:    fill(CLRS.H_ORANGE);  break;
 
             case HEXY_STYLES.ROW:
             case HEXY_STYLES.COL:
             case HEXY_STYLES.DLEFT:
             case HEXY_STYLES.DRIGHT:
             case HEXY_STYLES.SPACER:
-            
+
               noFill();
               stroke(CLRS.BLACK);
               strokeWeight(0.125);
-            
+
               break;
 
             default:  break;
@@ -2297,33 +2411,36 @@ var diagrams = function(processingInstance){
 
         }
         function innerHexagon(){
-          
-          noStroke();
 
-          switch(p.style){
+          if(p.layout>-1){
 
-            case HEXY_STYLES.ORANGE:  fill(CLRS.H_ORANGE_L);  break;
-            case HEXY_STYLES.BLACK:   fill(CLRS.H_BLACK_L);   break;
-            case HEXY_STYLES.BLUE:    fill(CLRS.H_BLUE_L);    break;
+            noStroke();
 
-            case HEXY_STYLES.ROW:
-            case HEXY_STYLES.COL:
-            case HEXY_STYLES.DLEFT:
-            case HEXY_STYLES.DRIGHT:
-            case HEXY_STYLES.SPACER:  noFill();               break;
+            switch(p.style){
 
-            default:  break;
+              case HEXY_STYLES.BLACK:   fill(CLRS.H_ORANGE_L);   break;
+              case HEXY_STYLES.BLUE:    fill(CLRS.H_ORANGE_L);    break;
 
-          }
+              case HEXY_STYLES.ROW:
+              case HEXY_STYLES.COL:
+              case HEXY_STYLES.DLEFT:
+              case HEXY_STYLES.DRIGHT:
+              case HEXY_STYLES.SPACER:  noFill();               break;
 
-          beginShape();
+              default:  break;
 
-            for(var pt in p.points){
-              vertex(p.points[pt].x,
-                     p.points[pt].y);
             }
 
-          endShape(CLOSE);
+            beginShape();
+
+              for(var pt in p.points){
+                vertex(p.points[pt].x,
+                       p.points[pt].y);
+              }
+
+            endShape(CLOSE);
+
+          }
 
         }
         function caption(){
@@ -2351,12 +2468,12 @@ var diagrams = function(processingInstance){
 
               textSize(16);
               textAlign(CENTER,CENTER);
-              
+
               if(p.text===-2){ p.text='?'; }
 
                 if(p.style!==HEXY_STYLES.SPACER &&
                    p.text!='-1'){
-                  
+
                   if(p.style===HEXY_STYLES.COL){
                     textAlign(CENTER,TOP);
                     rotate(0);
@@ -2371,16 +2488,16 @@ var diagrams = function(processingInstance){
                   }
 
                   text(p.text, 0,0);
-                  
+
                 }
 
           popMatrix();
 
         }
         function activeCell(){
-          
+
           if(p.hit &&
-             p.style===HEXY_STYLES.ORANGE){
+             p.layout===1){
 
             fill(getColor(CLRS.BLACK,15));
 
@@ -2407,15 +2524,11 @@ var diagrams = function(processingInstance){
 
           scale(1,-1);
 
-            noStroke();
-
-            fill(255);
-
-          highlight();
-          outerHexagon();
-          innerHexagon();
-          caption();
-          activeCell();
+            highlight();
+            outerHexagon();
+            innerHexagon();
+            caption();
+            activeCell();
 
         popMatrix();
 
@@ -2467,12 +2580,12 @@ var diagrams = function(processingInstance){
                                    app.focus=this;
                                    this.parent.activeCell=this;
 
-                                   if(this.style===HEXY_STYLES.ORANGE){
+                                   if(this.layout===1){
                                      this.timer=5;
                                    }
 
                                  }
-            else                 { this.hit=false;              }
+            else                 { this.hit=false; }
 
           }
           else{
@@ -2490,7 +2603,14 @@ var diagrams = function(processingInstance){
       hexCell.prototype.clicked=function(){
 
         if(this.active){
+
+          if(this.style>HEXY_STYLES.BLUE &&
+             this.style<HEXY_STYLES.SPACER){
+               this.line=!this.line;
+             }
+
           this.execute(this.id);
+
         }
 
       };
@@ -2498,7 +2618,7 @@ var diagrams = function(processingInstance){
 
         if(this.active){
           this.enabled=!this.enabled;
-          println("rclick: " + this.enabled);          
+          this.line=false;
         }
 
       };
@@ -2533,7 +2653,7 @@ var diagrams = function(processingInstance){
       app.controls.push(rt);
 
       /* hexBoard           */
-      rt.controls.push(new hexBoard(200, rt, (width-200)/2, height/2, 0, 0,
+      rt.controls.push(new hexBoard(200, rt, 300, height/2, 0, 0,
         {font:      'sans-serif',
          levels:    app.rows,
          cursor:    ARROW,
