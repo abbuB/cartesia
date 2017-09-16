@@ -69,7 +69,7 @@ var diagrams = function(processingInstance){
     TO DONE:
 
 
-    ----------------------------------------------------------------------------------------------------
+    ---------------------------------------------------------------------
 
       println( typeof this.color );
 
@@ -200,11 +200,13 @@ var diagrams = function(processingInstance){
     this.keys         = [];     //  Array holding the value of all keycodes
 
     this.info         = 0;      //  Is the info frame displayed
-    this.telemetry    = true;      //  Is telemetry visible
+    this.telemetry    = true;   //  Is telemetry visible
 
     /* Hextris Specific ------------------ */
 
     this.hexBoard     = this.controls[1];
+    this.remaining    = 0;      //  How many blue cells need to be uncovered
+    this.errors       = 0;      //  How many mistaken clicks occurred
 
     this.orientation  = ORIENTATIONS.FLAT;
     this.music        = true;
@@ -220,7 +222,9 @@ var diagrams = function(processingInstance){
 
     function iRandom(n)           { return round(random(n));    };
 
-    function getColor(clr, alpha) { return color(red(clr), green(clr), blue(clr), alpha/100*255); };
+    function getColor(clr, alpha) {
+      return color(red(clr), green(clr), blue(clr), alpha/100*255);
+    };
 
     function reset()              {
 
@@ -252,7 +256,8 @@ var diagrams = function(processingInstance){
       var control=function(id, parent, x, y, w, h){
 
         /* explicit properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-        this.id       = id;       /** Unique identification number -- Change to GUID for production) */
+        this.id       = id;       /** Unique identification number --
+                                      Change to GUID for production) */
 
         this.parent   = parent;   /** parent control (acts as a container) */
 
@@ -509,7 +514,7 @@ var diagrams = function(processingInstance){
 
                 text("Pascal's Triangle", this.w/2, 30);
 
-              var txt0="In mathematics, Pascal's triangle is a triangular array of the binomial coefficients.";
+              var txt0="In mathematics, Pascal's triangle";
               var txt1="The first and last ";
               var txt2='';
               var txt3='';
@@ -913,35 +918,35 @@ var diagrams = function(processingInstance){
 
         p.layout=[[2,2,2,1,1,1,2,2,2],
                   [2,1,1,1,1,1,1,1,2],
-                  [1,1,1,1,1,1,1,1,1],
-                  [1,1,1,1,1,1,1,1,1],
                   [1,1,1,1,0,1,1,1,1],
-                  [1,1,1,1,1,1,1,1,1],
-                  [1,1,1,1,1,1,1,1,1],
+                  [1,0,1,0,0,0,1,1,1],
+                  [1,1,0,1,0,1,1,1,1],
+                  [1,1,1,0,1,0,1,1,1],
+                  [1,1,1,1,0,1,1,1,1],
                   [2,2,1,1,1,1,1,2,2],
                   [2,2,2,2,1,2,2,2,2],
                  ];
 
-        p.style =[[2,2,2,1,1,1,2,2,2],
-                  [2,1,1,1,1,1,1,1,2],
-                  [1,1,1,1,1,1,1,1,1],
-                  [1,1,1,1,1,1,1,1,1],
+        p.style =[[4,4,6,1,0,1,5,4,4],
+                  [6,1,1,0,1,0,1,1,5],
+                  [1,1,0,1,0,1,0,1,1],
+                  [1,0,1,0,1,0,1,0,1],
+                  [1,1,0,1,0,1,0,1,1],
+                  [1,1,1,0,1,0,1,1,1],
                   [1,1,1,1,0,1,1,1,1],
-                  [1,1,1,1,1,1,1,1,1],
-                  [1,1,1,1,1,1,1,1,1],
                   [2,2,1,1,1,1,1,2,2],
                   [2,2,2,2,1,2,2,2,2],
                  ];
 
-        p.text  =[[4,6,0,0,2,0,0,0,0],
-                  [5,0,0,0,0,0,0,0,3],
-                  [0,0,0,0,0,0,0,0,2],
-                  [0,0,0,0,0,0,0,0,5],
-                  [0,0,0,0,0,0,0,0,2],
-                  [0,0,0,0,0,0,0,0,3],
-                  [0,0,0,0,0,0,0,0,2],
-                  [0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,1,0,0,0,0],
+        p.text  =[[4,6,7,1,2,1,1,3,5],
+                  [5,1,1,2,3,2,2,4,3],
+                  [1,2,2,3,4,3,3,5,2],
+                  [2,3,3,4,5,4,4,6,5],
+                  [3,4,4,5,6,5,5,7,2],
+                  [4,5,5,6,7,6,6,8,3],
+                  [5,6,6,7,8,7,7,9,2],
+                  [6,7,7,8,9,0,0,0,0],
+                  [7,8,8,9,11,9,0,1,0],
                  ];
 
         var rowArray=[];
@@ -1182,7 +1187,27 @@ var diagrams = function(processingInstance){
           };
 
         };
+        
+        function calculateRemaining(){
+          
+          app.remaining=0;
+          
+          var total=0;
+          
+          for(var r in p.layout){
+            for(var c in p.layout[r]){
 
+              if(p.layout[r][c]===1){
+                total++;
+              }
+
+            }
+          }          
+
+          app.remaining=total;
+
+        };
+        
         this.active=this.hit && app.focus===this;
         this.lines=[];
 
@@ -1214,10 +1239,14 @@ var diagrams = function(processingInstance){
                 drawGuideLines();
               }
 
+              calculateRemaining();          
+
         popMatrix();
 
       };
-      hexBoard.prototype.hitTest      = function(x,y){ return dist(mouseX,mouseY,this.x+x,this.y+y)<this.w/2; };
+      hexBoard.prototype.hitTest      = function(x,y){
+        return dist(mouseX,mouseY,this.x+x,this.y+y)<this.w/2;
+      };
       hexBoard.prototype.moved        = function(x,y){
       /* Overridden because of the nested controls */
 
@@ -2275,7 +2304,8 @@ var diagrams = function(processingInstance){
         this.layout       = props.layout;
         this.style        = props.style;
         this.text         = props.text;
-
+        
+        this.guessed      = false;
         this.enabled      = true;
         this.line         = false;
 
@@ -2355,8 +2385,7 @@ var diagrams = function(processingInstance){
         /* Highlight Background  -------------------------------------------------- */
         function highlight(){
 
-          if(p.layout<4  &&
-             p.layout>-1){
+          if(p.layout<2){
 
             noStroke();
             fill(CLRS.WHITE);
@@ -2375,24 +2404,28 @@ var diagrams = function(processingInstance){
         }
         function outerHexagon(){
 
-          switch(p.style){
+          switch(p.layout){
 
-            case HEXY_STYLES.BLACK:   fill(CLRS.H_ORANGE);  break;
-            case HEXY_STYLES.BLUE:    fill(CLRS.H_ORANGE);  break;
+            case 0:
 
-            case HEXY_STYLES.ROW:
-            case HEXY_STYLES.COL:
-            case HEXY_STYLES.DLEFT:
-            case HEXY_STYLES.DRIGHT:
-            case HEXY_STYLES.SPACER:
+              if     (p.style===HEXY_STYLES.BLACK){ fill(CLRS.H_BLACK); }
+              else if(p.style===HEXY_STYLES.BLUE ){ fill(CLRS.H_BLUE);  }
+
+              break;
+
+            case 1:
+
+              fill(CLRS.H_ORANGE);
+
+              break;
+
+            default:
 
               noFill();
               stroke(CLRS.BLACK);
               strokeWeight(0.125);
 
-              break;
-
-            default:  break;
+            break;
 
           }
 
@@ -2412,22 +2445,28 @@ var diagrams = function(processingInstance){
         }
         function innerHexagon(){
 
-          if(p.layout>-1){
-
             noStroke();
 
-            switch(p.style){
+            switch(p.layout){
 
-              case HEXY_STYLES.BLACK:   fill(CLRS.H_ORANGE_L);   break;
-              case HEXY_STYLES.BLUE:    fill(CLRS.H_ORANGE_L);    break;
+              case 0:
 
-              case HEXY_STYLES.ROW:
-              case HEXY_STYLES.COL:
-              case HEXY_STYLES.DLEFT:
-              case HEXY_STYLES.DRIGHT:
-              case HEXY_STYLES.SPACER:  noFill();               break;
+                if     (p.style===HEXY_STYLES.BLACK){ fill(CLRS.H_BLACK); }
+                else if(p.style===HEXY_STYLES.BLUE ){ fill(CLRS.H_BLUE);  }
+                
+                break;
+                
+              case 1:
+              
+                fill(CLRS.H_ORANGE);
+                
+                break;
 
-              default:  break;
+              default:
+
+                noFill();
+
+                break;
 
             }
 
@@ -2439,8 +2478,6 @@ var diagrams = function(processingInstance){
               }
 
             endShape(CLOSE);
-
-          }
 
         }
         function caption(){
@@ -2472,7 +2509,7 @@ var diagrams = function(processingInstance){
               if(p.text===-2){ p.text='?'; }
 
                 if(p.style!==HEXY_STYLES.SPACER &&
-                   p.text!='-1'){
+                   p.text!='0'){
 
                   if(p.style===HEXY_STYLES.COL){
                     textAlign(CENTER,TOP);
@@ -2488,6 +2525,7 @@ var diagrams = function(processingInstance){
                   }
 
                   text(p.text, 0,0);
+// text(p.guessed, 0,0);
 
                 }
 
@@ -2524,11 +2562,11 @@ var diagrams = function(processingInstance){
 
           scale(1,-1);
 
-            highlight();
+            if(this.layout<HEXY_STYLES.SPACER){ highlight();    }
             outerHexagon();
-            innerHexagon();
+            if(this.style<HEXY_STYLES.SPACER){ innerHexagon(); }
             caption();
-            activeCell();
+            if(this.style<HEXY_STYLES.SPACER){ activeCell();   }
 
         popMatrix();
 
@@ -2538,19 +2576,19 @@ var diagrams = function(processingInstance){
         var retVal=false;
 
         var rectHit=rectangleHit(new pnt(this.x+this.dpoints[1].x+x, this.y+this.dpoints[1].y+y),
-                                       new pnt(this.x+this.dpoints[2].x+x, this.y+this.dpoints[2].y+y),
-                                       new pnt(this.x+this.dpoints[4].x+x, this.y+this.dpoints[4].y+y),
-                                       mouseX,mouseY);
+                                 new pnt(this.x+this.dpoints[2].x+x, this.y+this.dpoints[2].y+y),
+                                 new pnt(this.x+this.dpoints[4].x+x, this.y+this.dpoints[4].y+y),
+                                 mouseX,mouseY);
 
-              var triHit0=triangleHit(new pnt(this.x+this.dpoints[0].x+x, this.y+this.dpoints[0].y+y),
-                                      new pnt(this.x+this.dpoints[1].x+x, this.y+this.dpoints[1].y+y),
-                                      new pnt(this.x+this.dpoints[5].x+x, this.y+this.dpoints[5].y+y),
-                                      mouseX,mouseY);
+        var triHit0=triangleHit(new pnt(this.x+this.dpoints[0].x+x, this.y+this.dpoints[0].y+y),
+                                new pnt(this.x+this.dpoints[1].x+x, this.y+this.dpoints[1].y+y),
+                                new pnt(this.x+this.dpoints[5].x+x, this.y+this.dpoints[5].y+y),
+                                mouseX,mouseY);
 
-              var triHit1=triangleHit(new pnt(this.x+this.dpoints[2].x+x, this.y+this.dpoints[2].y+y),
-                                      new pnt(this.x+this.dpoints[3].x+x, this.y+this.dpoints[3].y+y),
-                                      new pnt(this.x+this.dpoints[4].x+x, this.y+this.dpoints[4].y+y),
-                                      mouseX,mouseY);
+        var triHit1=triangleHit(new pnt(this.x+this.dpoints[2].x+x, this.y+this.dpoints[2].y+y),
+                                new pnt(this.x+this.dpoints[3].x+x, this.y+this.dpoints[3].y+y),
+                                new pnt(this.x+this.dpoints[4].x+x, this.y+this.dpoints[4].y+y),
+                                mouseX,mouseY);
         if(rectHit ||
            triHit0 ||
            triHit1){
@@ -2581,7 +2619,7 @@ var diagrams = function(processingInstance){
                                    this.parent.activeCell=this;
 
                                    if(this.layout===1){
-                                     this.timer=5;
+                                     // this.timer=5;
                                    }
 
                                  }
@@ -2603,11 +2641,23 @@ var diagrams = function(processingInstance){
       hexCell.prototype.clicked=function(){
 
         if(this.active){
+          
+          if(this.layout!==HEXY_STYLES.SPACER){
+                      
+            if(this.layout===1 &&
+               this.style ===HEXY_STYLES.BLUE){
+              this.layout=0;
+              this.parent.layout[this.row][this.col]=0;
+            }
+            else{
+              app.errors++;
+            }
+          
+          }
 
-          if(this.style>HEXY_STYLES.BLUE &&
-             this.style<HEXY_STYLES.SPACER){
+          if(this.style>HEXY_STYLES.SPACER){
                this.line=!this.line;
-             }
+          } 
 
           this.execute(this.id);
 
@@ -2617,8 +2667,26 @@ var diagrams = function(processingInstance){
       hexCell.prototype.rclicked=function(){
 
         if(this.active){
-          this.enabled=!this.enabled;
+          
+          // if(this.layout<HEXY_STYLES.SPACER){
+          
+            if(this.layout===1 &&
+               this.style ===HEXY_STYLES.BLACK){
+              this.layout=0;
+              this.parent.layout[this.row][this.col]=0;                 
+              // this.guessed=true;
+            }
+            else{
+              app.errors++;
+            }
+          
+          // }
+
+          if(this.layout>1){
+            this.enabled=!this.enabled;
+          }
           this.line=false;
+
         }
 
       };
@@ -2737,6 +2805,13 @@ var diagrams = function(processingInstance){
       text('Game Over', 300, 300);
 
     }
+    
+    textSize(24);
+    textAlign(RIGHT,CENTER);    
+    fill(CLRS.BLACK);
+    
+      text('Remaining: ' + app.remaining, 590,550);
+      text('Errors:   '  + app.errors,    590,575);
 
   };
 
