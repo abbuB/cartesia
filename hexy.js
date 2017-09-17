@@ -888,6 +888,9 @@ var diagrams = function(processingInstance){
         this.lines          = [];   //  array of hexCells with highlight lines activated
         this.halos          = [];   //  array of hexCells with a halo activated
 
+        this.clrOffset      = 0;
+        this.clrIncr        = 0.5;
+        
         app.hexBoard=this;
 
         this.reset();
@@ -1207,14 +1210,22 @@ var diagrams = function(processingInstance){
           app.remaining=total;
 
         };
+        
+        
+        
         function drawHalos(){
 
           stroke(CLRS.RED);
           strokeWeight(1);          
           noStroke();
-          
-          fill(getColor(CLRS.WHITE,40));
-          
+
+          fill(getColor(CLRS.WHITE,40+p.clrOffset));
+
+          p.clrOffset+=p.clrIncr;
+
+          if(p.clrOffset===15 ||
+             p.clrOffset===0){ p.clrIncr*=-1; }
+
           var w=HEX_SIZE;
           
           var x=0;
@@ -1222,6 +1233,8 @@ var diagrams = function(processingInstance){
           
           var yOffset=0;
           var xOffset=0.25*w;
+          var sinP3=w*sin(PI/3);
+          var cosP3=w/2*cos(PI/3);
           
           for(var h in p.halos){
             
@@ -1230,41 +1243,41 @@ var diagrams = function(processingInstance){
             
             beginShape();
 
-              vertex(x-cos(PI/3)*w/2,     y-w*sin(PI/3)*2.5);
-              vertex(x-w/2,               y-w*sin(PI/3)*2  );
-              vertex(x-w,                 y-w*sin(PI/3)*2  );
-              vertex(x-w*1.25,            y-w*sin(PI/3)*1.5);
-              vertex(x-w*1.75,            y-w*sin(PI/3)*1.5);
-              vertex(x-w*2,               y-w*sin(PI/3)*1  );
-              vertex(x-w*1.75,            y-w*sin(PI/3)*0.5);
+              vertex(x-cosP3,  y-sinP3*2.5);
+              vertex(x-w/2,    y-sinP3*2  );
+              vertex(x-w,      y-sinP3*2  );
+              vertex(x-w*1.25, y-sinP3*1.5);
+              vertex(x-w*1.75, y-sinP3*1.5);
+              vertex(x-w*2,    y-sinP3*1  );
+              vertex(x-w*1.75, y-sinP3*0.5);
               
-              vertex(x-w*2,               y);
+              vertex(x-w*2,    y);
               
-              vertex(x-w*1.75,            y+w*sin(PI/3)*0.5);
-              vertex(x-w*2,               y+w*sin(PI/3)*1  );
-              vertex(x-w*1.75,            y+w*sin(PI/3)*1.5);
-              vertex(x-w*1.25,            y+w*sin(PI/3)*1.5);
-              vertex(x-w,                 y+w*sin(PI/3)*2  );
-              vertex(x-w/2,               y+w*sin(PI/3)*2  );
-              vertex(x-cos(PI/3)*w/2,     y+w*sin(PI/3)*2.5);
-              
-              vertex(x+cos(PI/3)*w/2,     y+w*sin(PI/3)*2.5);
-              vertex(x+w/2,               y+w*sin(PI/3)*2  );
-              vertex(x+w,                 y+w*sin(PI/3)*2  );
-              vertex(x+w*1.25,            y+w*sin(PI/3)*1.5);
-              vertex(x+w*1.75,            y+w*sin(PI/3)*1.5);
-              vertex(x+w*2,               y+w*sin(PI/3)*1  );
-              vertex(x+w*1.75,            y+w*sin(PI/3)*0.5);
+              vertex(x-w*1.75, y+sinP3*0.5);
+              vertex(x-w*2,    y+sinP3*1  );
+              vertex(x-w*1.75, y+sinP3*1.5);
+              vertex(x-w*1.25, y+sinP3*1.5);
+              vertex(x-w,      y+sinP3*2  );
+              vertex(x-w/2,    y+sinP3*2  );
+              vertex(x-cosP3,  y+sinP3*2.5);
 
-              vertex(x+w*2,               y);
+              vertex(x+cosP3,  y+sinP3*2.5);
+              vertex(x+w/2,    y+sinP3*2  );
+              vertex(x+w,      y+sinP3*2  );
+              vertex(x+w*1.25, y+sinP3*1.5);
+              vertex(x+w*1.75, y+sinP3*1.5);
+              vertex(x+w*2,    y+sinP3*1  );
+              vertex(x+w*1.75, y+sinP3*0.5);
 
-              vertex(x+w*1.75,            y-w*sin(PI/3)*0.5);
-              vertex(x+w*2,               y-w*sin(PI/3)*1  );
-              vertex(x+w*1.75,            y-w*sin(PI/3)*1.5);
-              vertex(x+w*1.25,            y-w*sin(PI/3)*1.5);
-              vertex(x+w,                 y-w*sin(PI/3)*2  );
-              vertex(x+w/2,               y-w*sin(PI/3)*2  );
-              vertex(x+cos(PI/3)*w/2,     y-w*sin(PI/3)*2.5);
+              vertex(x+w*2,    y);
+
+              vertex(x+w*1.75, y-sinP3*0.5);
+              vertex(x+w*2,    y-sinP3*1  );
+              vertex(x+w*1.75, y-sinP3*1.5);
+              vertex(x+w*1.25, y-sinP3*1.5);
+              vertex(x+w,      y-sinP3*2  );
+              vertex(x+w/2,    y-sinP3*2  );
+              vertex(x+cosP3,  y-sinP3*2.5);
               
             endShape(CLOSE);
 
