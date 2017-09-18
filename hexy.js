@@ -52,10 +52,14 @@ var diagrams = function(processingInstance){
 
     TO DO:
 
-      - Shower
-      - Fix Front forks
-      - Laundry
+      - Level indicator
+      - Manu navigation
+      - Score display controls
+      - Restart control
+      - Expanding halos
 
+      - ***** Remove Dragging from all controls *****
+      
       - Allow for optional orientation of hexagons
         * pointy top
         * flat top
@@ -876,12 +880,12 @@ var diagrams = function(processingInstance){
 
         this.color          = getColor(color(61),100); //  Used to store hexCell default color
 
-        this.score          = 0;
-        this.highScore      = 0;
+        // this.score          = 0;
+        // this.highScore      = 0;
 
         this.activeCell     = null;
 
-        this.angle          = 0;
+        // this.angle          = 0;
 
         this.layout         = [];   //  array of the layout of hexcells
         this.hints          = [];   //  array of nexCell hints
@@ -890,7 +894,7 @@ var diagrams = function(processingInstance){
 
         this.clrOffset      = 0;
         this.clrIncr        = 0.5;
-        
+
         app.hexBoard=this;
 
         this.reset();
@@ -899,62 +903,67 @@ var diagrams = function(processingInstance){
       hexBoard.prototype=Object.create(control.prototype);
       hexBoard.prototype.reset        =function(){
 
-        var p=this; //  Reference to the hexBoard control
+/**
 
-        p.controls=[];
+  var HEXY_STYLES={
 
-        p.activeCell = null;
+    BLACK:    0,
+    BLUE:     1,
 
-// var HEXY_STYLES={
+    SPACER:   2,
 
-//   BLACK:    0,
-//   BLUE:     1,
+    ROW:      3,
+    COL:      4,
 
-//   SPACER:   2,
+    DLEFT:    5,
+    DRIGHT:   6
 
-//   ROW:      3,
-//   COL:      4,
+  }
 
-//   DLEFT:    5,
-//   DRIGHT:   6
+*/
+        var p=this;           //  Set a reference to the hexBoard control
 
-// }
+        this.controls=[];        //  Clear the controls array
+        this.activeCell = null;  //  Clear the active hexCell
 
-        p.layout=[[2,2,2,1,1,1,2,2,2],
-                  [2,1,1,0,0,0,1,1,2],
-                  [1,1,0,0,0,0,0,1,1],
-                  [1,1,0,0,0,0,0,1,1],
-                  [1,1,0,0,0,0,0,1,1],
-                  [1,1,1,1,0,1,1,1,1],
-                  [1,1,1,1,1,1,1,1,1],
-                  [2,2,1,1,1,1,1,2,2],
-                  [2,2,2,2,1,2,2,2,2],
-                 ];
+        this.layout=[
+                     [2,2,2,1,1,1,2,2,2],
+                     [2,1,1,0,0,0,1,1,2],
+                     [1,1,0,0,0,0,0,1,1],
+                     [1,1,0,0,0,0,0,1,1],
+                     [1,1,0,0,0,0,0,1,1],
+                     [1,1,1,1,0,1,1,1,1],
+                     [1,1,1,1,1,1,1,1,1],
+                     [2,2,1,1,1,1,1,2,2],
+                     [2,2,2,2,1,2,2,2,2],
+                    ];
 
-        p.style =[[4,4,6,1,0,1,5,4,4],
-                  [6,1,1,0,1,0,1,1,5],
-                  [1,1,0,1,0,1,0,1,1],
-                  [1,0,1,0,1,0,1,0,1],
-                  [1,1,0,1,0,1,0,1,1],
-                  [1,1,1,0,1,0,1,1,1],
-                  [1,1,1,1,0,1,1,1,1],
-                  [2,2,1,1,1,1,1,2,2],
-                  [2,2,2,2,1,2,2,2,2],
-                 ];
+        this.style =[
+                     [4,4,6,1,0,1,5,4,4],
+                     [6,1,1,0,1,0,1,1,5],
+                     [1,1,0,1,0,1,0,1,1],
+                     [1,0,1,0,1,0,1,0,1],
+                     [1,1,0,1,0,1,0,1,1],
+                     [1,1,1,0,1,0,1,1,1],
+                     [1,1,1,1,0,1,1,1,1],
+                     [2,2,1,1,1,1,1,2,2],
+                     [2,2,2,2,1,2,2,2,2],
+                    ];
 
-        p.text  =[[4,6,7,0,0,0,1,3,5],
-                  [5,0,0,0,5,0,0,0,3],
-                  [0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,5,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,5,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0],
-                 ];
+        this.text  =[
+                     [4,6,7,0,0,0,1,3,5],
+                     [5,0,0,0,5,0,0,0,3],
+                     [0,0,0,0,0,0,0,0,0],
+                     [0,0,0,0,5,0,0,0,0],
+                     [0,0,0,0,0,0,0,0,0],
+                     [0,0,0,0,5,0,0,0,0],
+                     [0,0,0,0,0,0,0,0,0],
+                     [0,0,0,0,0,0,0,0,0],
+                     [0,0,0,0,0,0,0,0,0],
+                    ];
 
-        var rowArray=[];
-        var n=0;
+        var rowArray=[];  // Temporary 1-D array to hold each successive row before adding to the corresponding 2-D array
+        var n=0;          // Iterator
 
         function load(){
 
@@ -962,7 +971,8 @@ var diagrams = function(processingInstance){
 
           var w=HEX_SIZE;
 
-          p.w=w*cos(PI/6)*9;
+          // p.w=w*cos(PI/6)*9;
+          // p.h=p.w;
 
           var x=0;
           var y=0;
@@ -1018,7 +1028,7 @@ var diagrams = function(processingInstance){
             xOffset=w/2;
             yOffset=w*cos(PI/6);
 
-            var gOffset=190;
+            var gOffset=0;
 
             for(row in p.layout){
               for(col in p.layout[row]){
@@ -1032,17 +1042,13 @@ var diagrams = function(processingInstance){
 
                 rowArray.push(new hexCell('H'+n, p, x, y, w, w,
                   {execute:   clickTest,
-                   baseX:     0,
-                   baseY:     0,
                    row:       row,
                    col:       col,
                    layout:    p.layout[row][col],
                    style:     p.style[row][col],
                    text:      p.text[row][col],
-                   color:     color(CLRS.H_ORANGE_L),
                    font:      monoFont,
-                   cursor:    ARROW,
-                   on:        false}));
+                   cursor:    HAND}));
 
                  n++;
 
@@ -1190,13 +1196,13 @@ var diagrams = function(processingInstance){
 
           };
 
-        };        
+        };
         function calculateRemaining(){
-          
+
           app.remaining=0;
-          
+
           var total=0;
-          
+
           for(var r in p.layout){
             for(var c in p.layout[r]){
 
@@ -1205,18 +1211,15 @@ var diagrams = function(processingInstance){
               }
 
             }
-          }          
+          }
 
           app.remaining=total;
 
         };
-        
-        
-        
         function drawHalos(){
 
           stroke(CLRS.RED);
-          strokeWeight(1);          
+          strokeWeight(1);
           noStroke();
 
           fill(getColor(CLRS.WHITE,40+p.clrOffset));
@@ -1227,20 +1230,20 @@ var diagrams = function(processingInstance){
              p.clrOffset===0){ p.clrIncr*=-1; }
 
           var w=HEX_SIZE;
-          
+
           var x=0;
           var y=0;
-          
+
           var yOffset=0;
           var xOffset=0.25*w;
           var sinP3=w*sin(PI/3);
           var cosP3=w/2*cos(PI/3);
-          
+
           for(var h in p.halos){
-            
+
             x=p.halos[h].x;
             y=p.halos[h].y;
-            
+
             beginShape();
 
               vertex(x-cosP3,  y-sinP3*2.5);
@@ -1250,9 +1253,9 @@ var diagrams = function(processingInstance){
               vertex(x-w*1.75, y-sinP3*1.5);
               vertex(x-w*2,    y-sinP3*1  );
               vertex(x-w*1.75, y-sinP3*0.5);
-              
+
               vertex(x-w*2,    y);
-              
+
               vertex(x-w*1.75, y+sinP3*0.5);
               vertex(x-w*2,    y+sinP3*1  );
               vertex(x-w*1.75, y+sinP3*1.5);
@@ -1278,7 +1281,7 @@ var diagrams = function(processingInstance){
               vertex(x+w,      y-sinP3*2  );
               vertex(x+w/2,    y-sinP3*2  );
               vertex(x+cosP3,  y-sinP3*2.5);
-              
+
             endShape(CLOSE);
 
           }
@@ -1295,9 +1298,11 @@ var diagrams = function(processingInstance){
 
             stroke(31);
             noFill();
-            fill(200);
+            fill(232);
+            // noStroke();
 
-            rect(-295,-295,590,590);
+            rect(this.x,   this.y,
+                 this.w-1, this.h-1);
 
               var ctrls=this.controls;
 
@@ -1311,7 +1316,7 @@ var diagrams = function(processingInstance){
                   if(ctrls[r][c].halo){
                     this.halos.push(ctrls[r][c]);
                   }
-                  
+
                   ctrls[r][c].draw();
 
                 }
@@ -1323,9 +1328,9 @@ var diagrams = function(processingInstance){
               if(this.halos.length>0){
                 drawHalos();
               }
-              
-              calculateRemaining();          
-              
+
+              calculateRemaining();
+
         popMatrix();
 
       };
@@ -1385,6 +1390,16 @@ var diagrams = function(processingInstance){
         this.hit=false;
         this.activeCell=null;
 
+        var ctrls=this.controls;
+
+        for(var r in ctrls){
+          for(var c in ctrls[r]){
+
+            ctrls[r][c].out();
+
+          }
+        }
+        
       };
 
     }
@@ -2380,17 +2395,17 @@ var diagrams = function(processingInstance){
 
         this.top          = null;
         this.bottom       = null;
-        
+
         this.topRight     = null;
         this.bottomRight  = null;
-        
+
         this.topLeft      = null;
         this.bottomLeft   = null;
 
         this.layout       = props.layout;
         this.style        = props.style;
         this.text         = props.text;
-        
+
         this.halo         = false;
         this.enabled      = true;
         this.line         = false;
@@ -2402,6 +2417,8 @@ var diagrams = function(processingInstance){
         this.points       = [];
         this.dpoints      = [];
         this.hpoints      = [];
+
+        this.dirty        = false;
 
         var p=this;
 
@@ -2517,7 +2534,13 @@ var diagrams = function(processingInstance){
 
           var offset=0;
 
-          if(p.timer>0){ offset=random(0,1.25); p.timer--; }
+          if(p.timer>0 &&
+             p.dirty===false){
+            offset=random(0,1.5);
+            p.timer--;
+            if(p.timer<=0){ p.dirty=true; }
+            
+          }
 
           beginShape();
 
@@ -2539,13 +2562,13 @@ var diagrams = function(processingInstance){
 
                 if     (p.style===HEXY_STYLES.BLACK){ fill(CLRS.H_BLACK_L); }
                 else if(p.style===HEXY_STYLES.BLUE ){ fill(CLRS.H_BLUE_L);  }
-                
+
                 break;
-                
+
               case 1:
-              
+
                 fill(CLRS.H_ORANGE_L);
-                
+
                 break;
 
               default:
@@ -2575,7 +2598,7 @@ var diagrams = function(processingInstance){
               if(p.style<HEXY_STYLES.SPACER){
 
                 fill(CLRS.WHITE);
-              
+
                 if(p.enabled===false){
                   fill(getColor(CLRS.WHITE,25));
                 }
@@ -2612,9 +2635,6 @@ var diagrams = function(processingInstance){
                     textAlign(CENTER,TOP);
                     rotate(-PI/3);
                   }
-
-                  //  ***** Temporary *****
-                  // if(p.halo){ fill(CLRS.RED); }
 
                   if(p.text!==0){
                     text(p.text, 0,0);
@@ -2712,9 +2732,8 @@ var diagrams = function(processingInstance){
             if(this.hitTest(x,y)){ this.hit=true;
                                    app.focus=this;
                                    this.parent.activeCell=this;
-
                                    if(this.layout===1){
-                                     // this.timer=5;
+                                     this.timer=5;
                                    }
 
                                  }
@@ -2722,7 +2741,9 @@ var diagrams = function(processingInstance){
 
           }
           else{
-
+            
+            this.dirty=false;
+            this.timer=0;
             this.outerHit=false;
             this.hit=false;
 
@@ -2736,9 +2757,9 @@ var diagrams = function(processingInstance){
       hexCell.prototype.clicked=function(){
 
         if(this.active){
-          
+
           if(this.layout!==HEXY_STYLES.SPACER){
-                      
+
             if(this.layout===1){
 
               if(this.style===HEXY_STYLES.BLUE){
@@ -2765,15 +2786,15 @@ var diagrams = function(processingInstance){
             }
 
           }
-          
+
           { //  Toggle Line Display
             if(this.style>HEXY_STYLES.SPACER){
               this.line=!this.line;
-            } 
-          
+            }
+
           }
-          
-          this.execute(this.id);
+
+          // this.execute(this.id);
 
         }
 
@@ -2790,27 +2811,27 @@ var diagrams = function(processingInstance){
           if(this.style>HEXY_STYLES.BLUE){
             this.enabled=!this.enabled;
           }
-          
+
           if(this.layout<HEXY_STYLES.SPACER){
-          
+
             if(this.layout===1 &&
                this.style===HEXY_STYLES.BLACK){
               this.layout=0;
               this.parent.layout[this.row][this.col]=0;
             }
             else{
-              
+
               if(this.layout===1){
                 app.errors++;
               }
               else{
-                
+
               }
-              
+
             }
-          
+
           }
-          
+
           this.line=false;
 
         }
@@ -2847,9 +2868,8 @@ var diagrams = function(processingInstance){
       app.controls.push(rt);
 
       /* hexBoard           */
-      rt.controls.push(new hexBoard(200, rt, 300, height/2, 0, 0,
+      rt.controls.push(new hexBoard(200, rt, 0, 0, 600, 600,
         {font:      'sans-serif',
-         levels:    app.rows,
          cursor:    ARROW,
          color:     CLRS.K_TEAL_2,
          size:      0}));
@@ -2931,13 +2951,31 @@ var diagrams = function(processingInstance){
       text('Game Over', 300, 300);
 
     }
-    
-    textSize(24);
-    textAlign(RIGHT,CENTER);    
+
+    textSize(20);
+    textAlign(CENTER,CENTER);
     fill(CLRS.BLACK);
+
+      text('Remaining',   520,460);      
+      text('Mistakes',    520,530);
+
+    textSize(36);
     
-      text('Remaining: ' + app.remaining, 590,550);
-      text('Errors:   '  + app.errors,    590,575);
+      text(app.remaining, 520,490);
+      text(app.errors,    520,560);
+
+    textFont(sansFont,64);
+    // textSize(64);
+    fill(getColor(CLRS.BLACK,5));
+
+      pushMatrix();
+        
+        translate(34,300);
+        rotate(PI/2);
+        
+          text('Level 3-1', 0, 0);
+
+      popMatrix();
 
   };
 
