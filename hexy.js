@@ -52,6 +52,7 @@ var diagrams = function(processingInstance){
 
     TO DO:
 
+      - dynamically add text to cells with linking
       - Level indicator
       - Manu navigation
       - Score display controls
@@ -927,39 +928,54 @@ var diagrams = function(processingInstance){
         this.activeCell = null;  //  Clear the active hexCell
 
         this.layout=[
-                     [2,2,2,1,1,1,2,2,2],
-                     [2,1,1,0,0,0,1,1,2],
-                     [1,1,0,0,0,0,0,1,1],
-                     [1,1,0,0,0,0,0,1,1],
-                     [1,1,0,0,0,0,0,1,1],
-                     [1,1,1,1,0,1,1,1,1],
-                     [1,1,1,1,1,1,1,1,1],
-                     [2,2,1,1,1,1,1,2,2],
-                     [2,2,2,2,1,2,2,2,2],
+                     [2,2,2,2,2,2,2,2,2,2,2,2,2],
+                     [2,2,2,2,2,2,2,2,2,2,2,2,2],
+                     [2,2,2,2,2,1,1,1,2,2,2,2,2],
+                     [2,2,2,1,1,0,0,0,1,1,2,2,2],
+                     [2,2,1,1,0,0,0,0,0,1,1,2,2],
+                     [2,2,1,1,0,0,0,0,0,1,1,2,2],
+                     [2,2,1,1,0,0,0,0,0,1,1,2,2],
+                     [2,2,1,1,1,1,0,1,1,1,1,2,2],
+                     [2,2,1,1,1,1,1,1,1,1,1,2,2],
+                     [2,2,2,2,1,1,1,1,1,2,2,2,2],
+                     [2,2,2,2,2,2,1,2,2,2,2,2,2],
+                     [2,2,2,2,2,2,2,2,2,2,2,2,2],
+                     [2,2,2,2,2,2,2,2,2,2,2,2,2],
+                     [2,2,2,2,2,2,2,2,2,2,2,2,2],
                     ];
 
         this.style =[
-                     [4,4,6,1,0,1,5,4,4],
-                     [6,1,1,0,1,0,1,1,5],
-                     [1,1,0,1,0,1,0,1,1],
-                     [1,0,1,0,1,0,1,0,1],
-                     [1,1,0,1,0,1,0,1,1],
-                     [1,1,1,0,1,0,1,1,1],
-                     [1,1,1,1,0,1,1,1,1],
-                     [2,2,1,1,1,1,1,2,2],
-                     [2,2,2,2,1,2,2,2,2],
+                     [2,2,2,2,2,2,2,2,2,2,2,2,2],
+                     [2,2,2,2,2,2,2,2,2,2,2,2,2],
+                     [2,2,4,4,6,1,0,1,5,4,4,2,2],
+                     [2,2,6,1,1,0,1,0,1,1,5,2,2],
+                     [2,2,1,1,0,1,0,1,0,1,1,2,2],
+                     [2,2,1,0,1,0,1,0,1,0,1,2,2],
+                     [2,2,1,1,0,1,0,1,0,1,1,2,2],
+                     [2,2,1,1,1,0,1,0,1,1,1,2,2],
+                     [2,2,1,1,1,1,0,1,1,1,1,2,2],
+                     [2,2,2,2,1,1,1,1,1,2,2,2,2],
+                     [2,2,2,2,2,2,1,2,2,2,2,2,2],
+                     [2,2,2,2,2,2,2,2,2,2,2,2,2],
+                     [2,2,2,2,2,2,2,2,2,2,2,2,2],
+                     [2,2,2,2,2,2,2,2,2,2,2,2,2],
                     ];
 
         this.text  =[
-                     [4,6,7,0,0,0,1,3,5],
-                     [5,0,0,0,5,0,0,0,3],
-                     [0,0,0,0,0,0,0,0,0],
-                     [0,0,0,0,5,0,0,0,0],
-                     [0,0,0,0,0,0,0,0,0],
-                     [0,0,0,0,5,0,0,0,0],
-                     [0,0,0,0,0,0,0,0,0],
-                     [0,0,0,0,0,0,0,0,0],
-                     [0,0,0,0,0,0,0,0,0],
+                     [2,2,2,2,2,2,2,2,2,2,2,2,2],
+                     [2,2,2,2,2,2,2,2,2,2,2,2,2],
+                     [0,0,4,6,7,0,0,0,1,3,5,0,0],
+                     [0,0,5,0,0,0,5,0,0,0,3,0,0],
+                     [0,0,0,0,0,0,0,0,0,0,0,0,0],
+                     [0,0,0,0,0,0,5,0,0,0,0,0,0],
+                     [0,0,0,0,0,0,0,0,0,0,0,0,0],
+                     [0,0,0,0,0,0,5,0,0,0,0,0,0],
+                     [0,0,0,0,0,0,0,0,0,0,0,0,0],
+                     [0,0,0,0,0,0,0,0,0,0,0,0,0],
+                     [0,0,0,0,0,0,0,0,0,0,0,0,0],
+                     [0,0,0,0,0,0,0,0,0,0,0,0,0],
+                     [0,0,0,0,0,0,0,0,0,0,0,0,0],
+                     [2,2,2,2,2,2,2,2,2,2,2,2,2],
                     ];
 
         var rowArray=[];  // Temporary 1-D array to hold each successive row before adding to the corresponding 2-D array
@@ -971,94 +987,52 @@ var diagrams = function(processingInstance){
 
           var w=HEX_SIZE;
 
-          // p.w=w*cos(PI/6)*9;
-          // p.h=p.w;
-
           var x=0;
           var y=0;
 
+          var xMargin;
+          var yMargin;
+
           var xOffset;
           var yOffset;
-
+    
           var row;
           var col;
 
-          if(app.orientation===ORIENTATIONS.POINTY){
+          n=0;
 
-            xOffset=w*cos(PI/6);
-            yOffset=w/2;
+          yOffset = w*cos(PI/6);
+          
+          xMargin = w/2     + (p.w-(w+w*(p.layout[0].length-1)*0.75))/2;
+          yMargin = yOffset +  p.h/2 - (p.layout.length-1)*yOffset/2; 
 
-            for(row in p.layout){
-              for(col in p.layout[row]){
+          for(row in p.layout){
+            for(col in p.layout[row]){
 
-                if(row<5){ x=col*xOffset-row*xOffset/2-2*xOffset;     }
-                else     { x=col*xOffset+(row-8)*xOffset/2-2*xOffset; }
+              x = xMargin + col*w*0.75;
+              y = yMargin + row*w*cos(PI/6);
 
-                y=row*w*0.75-6*yOffset;
-
-                rowArray.push(new hexCell('H'+n, p, x, y, w, w,
-                  {execute:   clickTest,
-                   baseX:     0,
-                   baseY:     0,
-                   row:       row,
-                   col:       col,
-                   layout:    p.layout[row][col],
-                   style:     p.style[row][col],
-                   text:      p.text[row][col],
-                   color:     color(CLRS.H_ORANGE_L),
-                   font:      monoFont,
-                   cursor:    ARROW,
-                   on:        false}));
-
-                 n++;
-
+              if(col%2===0){
+                y-=yOffset/2;
               }
 
-              p.controls.push(rowArray);
+              rowArray.push(new hexCell('H'+n, p, x, y, w, w,
+                {execute:   clickTest,
+                 row:       row,
+                 col:       col,
+                 layout:    p.layout[row][col],
+                 style:     p.style[row][col],
+                 text:      p.text[row][col],
+                 font:      monoFont,
+                 cursor:    HAND}));
 
-              rowArray=[];
+               n++;
 
             }
 
-          }
-          else if(app.orientation===ORIENTATIONS.FLAT){
+            p.controls.push(rowArray);
 
-            n=0;
-
-            xOffset=w/2;
-            yOffset=w*cos(PI/6);
-
-            var gOffset=0;
-
-            for(row in p.layout){
-              for(col in p.layout[row]){
-
-                x=col*w*0.75-gOffset;
-                y=row*yOffset-gOffset;
-
-                if(col%2===0){
-                  y-=yOffset/2;
-                }
-
-                rowArray.push(new hexCell('H'+n, p, x, y, w, w,
-                  {execute:   clickTest,
-                   row:       row,
-                   col:       col,
-                   layout:    p.layout[row][col],
-                   style:     p.style[row][col],
-                   text:      p.text[row][col],
-                   font:      monoFont,
-                   cursor:    HAND}));
-
-                 n++;
-
-              }
-
-              p.controls.push(rowArray);
-
-              rowArray=[];
-
-            }
+            rowArray=[];
 
           }
 
@@ -2614,7 +2588,8 @@ var diagrams = function(processingInstance){
                 }
 
               }
-
+              
+              textFont(p.font,16);
               textSize(16);
               textAlign(CENTER,CENTER);
 
@@ -2732,7 +2707,8 @@ var diagrams = function(processingInstance){
             if(this.hitTest(x,y)){ this.hit=true;
                                    app.focus=this;
                                    this.parent.activeCell=this;
-                                   if(this.layout===1){
+                                   if(this.layout===1 &&
+                                      this.timer===0){
                                      this.timer=5;
                                    }
 
