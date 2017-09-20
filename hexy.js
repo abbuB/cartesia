@@ -736,7 +736,7 @@ var diagrams = function(processingInstance){
 
           textAlign(LEFT,TOP);
           textSize(10);
-          textLeading(13);
+          textLeading(12);
 
           fill(getColor(CLRS.TEAL_2,75));
 
@@ -799,7 +799,7 @@ var diagrams = function(processingInstance){
 
           textAlign(LEFT,TOP);
           textSize(10);
-          textLeading(13);
+          textLeading(12);
 
           fill(getColor(CLRS.TEAL_2,75));
 
@@ -833,8 +833,11 @@ var diagrams = function(processingInstance){
 
         this.active=this.hit && app.focus===this;
 
+        if     ( app.telemetry && this.offset>-200){ this.offset-=10; }
+        else if(!app.telemetry && this.offset<0   ){ this.offset+=10; }
+            
         var p=this;
-         
+        
         var row0 = 30;
         var row1 = 90;
 
@@ -847,9 +850,6 @@ var diagrams = function(processingInstance){
           translate(this.x, this.y);
 
             if(this.active){ cursor(this.cursor); }
-
-            if     ( app.telemetry && this.offset>-200){ this.offset-=10; }
-            else if(!app.telemetry && this.offset<0   ){ this.offset+=10; }
 
             textFont(this.font);
 
@@ -1083,48 +1083,59 @@ var diagrams = function(processingInstance){
                 r/=1;
                 c/=1;
 
-                //  Left/Right
-                if(c<ctrls[r].length){ ctrls[r][c].right  = ctrls[r][c+1]; }
-                if(c>0              ){ ctrls[r][c].left   = ctrls[r][c-1]; }
-
-                //  Top
-                if(r>0){
-
-                  if(r<5){  ctrls[r][c].topRight    = ctrls[r-1][c  ]; }
-                  else   {  ctrls[r][c].topRight    = ctrls[r-1][c+1]; }
-
-                }
-
-                if(r<5){
-
-                  if(r>0 && c>0){ ctrls[r][c].topLeft = ctrls[r-1][c-1]; }
-
-                }
-                else{
-
-                  ctrls[r][c].topLeft  = ctrls[r-1][c];
+                //  Top Bottom
+                {
+                  
+                  // Top                  
+                  if(r>0              ){ ctrls[r][c].top    = ctrls[r-1][c]; }
+                  
+                  // Bottom
+                  if(r<ctrls[r].length){ ctrls[r][c].bottom = ctrls[r+1][c]; }
 
                 }
 
-                // Bottom
-                if(r<4){
-
-                  ctrls[r][c].bottomRight = ctrls[r+1][c+1];
-                  ctrls[r][c].bottomLeft  = ctrls[r+1][c];
-
-                }
-                else if(r===4){
-
-                  ctrls[r][c].bottomRight = ctrls[r+1][c  ];
-                  ctrls[r][c].bottomLeft  = ctrls[r+1][c-1];
+                 // Left
+                if(c>0 && r>0){
+                  
+                  if(c%2===0){
+                    ctrls[r][c].topLeft = ctrls[r-1][c-1];  
+                  }
+                  else if(r%2===1){
+                    ctrls[r][c].topLeft = ctrls[r  ][c-1];
+                  }
 
                 }
-                else if(r<ctrls.length-1){
 
-                  ctrls[r][c].bottomRight = ctrls[r+1][c];
-                  ctrls[r][c].bottomLeft  = ctrls[r+1][c-1];
+                // if(r<5){
 
-                }
+                  // if(r>0 && c>0){ ctrls[r][c].topLeft = ctrls[r-1][c-1]; }
+
+                // }
+                // else{
+
+                  // ctrls[r][c].topLeft  = ctrls[r-1][c];
+
+                // }
+
+                // Right
+                // if(r<4){
+
+                  // ctrls[r][c].bottomRight = ctrls[r+1][c+1];
+                  // ctrls[r][c].bottomLeft  = ctrls[r+1][c];
+
+                // }
+                // else if(r===4){
+
+                  // ctrls[r][c].bottomRight = ctrls[r+1][c  ];
+                  // ctrls[r][c].bottomLeft  = ctrls[r+1][c-1];
+
+                // }
+                // else if(r<ctrls.length-1){
+
+                  // ctrls[r][c].bottomRight = ctrls[r+1][c];
+                  // ctrls[r][c].bottomLeft  = ctrls[r+1][c-1];
+
+                // }
 
               }
             }
@@ -1345,6 +1356,8 @@ var diagrams = function(processingInstance){
 
         popMatrix();
 
+
+        
       };
       hexBoard.prototype.hitTest      = function(x,y){
         return dist(mouseX,mouseY,this.x+x,this.y+y)<this.w/2;
@@ -2472,8 +2485,8 @@ var diagrams = function(processingInstance){
       hexCell.prototype.draw=function(){
 
         this.active=this.hit &&
-                    app.focus===this &&
-                    this.style!==HEXY_STYLES.SPACER;
+                    app.focus===this;// &&
+                    // this.style!==HEXY_STYLES.SPACER;
 
         var offset=0;
         var p=this;
@@ -2718,7 +2731,7 @@ var diagrams = function(processingInstance){
                 }
 
               endShape();
-
+              
               this.clickRadius-=5;
 
               // var offset=HEX_SIZE-this.clickRadius;
@@ -2748,10 +2761,28 @@ var diagrams = function(processingInstance){
                        // this.points[0].x, this.points[0].y+offset);
                        
               // this.clickRadius-=1;
-
+            
             }
             
         popMatrix();
+
+        if(this.active){
+          noStroke();
+
+          if(this.top!==null){
+            fill(CLRS.BLACK);
+            ellipse(this.top.x, this.top.y, 10, 10);
+          }
+          if(this.bottom!==null){
+            fill(CLRS.RED);
+            ellipse(this.bottom.x, this.bottom.y, 10, 10);
+          }
+          if(this.topLeft!==null){
+            fill(CLRS.ORANGE);
+            ellipse(this.topLeft.x, this.topLeft.y, 10, 10);
+          }
+          
+        }
 
       };
       hexCell.prototype.hitTest=function(x,y){
