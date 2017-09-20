@@ -51,10 +51,13 @@ var diagrams = function(processingInstance){
           Choose Life - Sliding Triangle Game
 
     TO DO:
-
+      
+      - refresh screen on mouse movement
+      - click sounds for blue and black hexCells
+      - uncover animations triangles
       - dynamically add text to cells with linking
       - Level indicator
-      - Manu navigation
+      - Menu navigation
       - Score display controls
       - Restart control
       - Expanding halos
@@ -171,7 +174,7 @@ var diagrams = function(processingInstance){
 
       randomSeed(millis());
 
-      // frameRate(0);
+      frameRate(0);
 
       cursor(WAIT);
       strokeCap(SQUARE);
@@ -186,13 +189,13 @@ var diagrams = function(processingInstance){
 
     this.debug        = true;   //  Mode that displays enhanced debugging tools
 
-    this.frameRate    = 100;      //  Refresh speed
+    this.frameRate    = 0;      //  Refresh speed
 
     this.mouseX       = 0;      //  Current mouseX location
     this.mouseY       = 0;      //  Current mouseY location
 
-    this.left         = false;  //  Is the left mouse button pressed
-    this.right        = false;  //  Is the right mouse button pressed
+    this.left         = false;  //  Is the left   mouse button pressed
+    this.right        = false;  //  Is the right  mouse button pressed
     this.center       = false;  //  Is the center mouse button pressed
 
     this.dragging     = false;  //  Is the mouse cursor moving and the left button pressed?
@@ -202,10 +205,12 @@ var diagrams = function(processingInstance){
     this.mode         = APPMODES.INTRO;
 
     this.controls     = [];     //  Collection of controls in the app
+    this.controlCount = 0;
+
     this.keys         = [];     //  Array holding the value of all keycodes
 
     this.info         = 0;      //  Is the info frame displayed
-    this.telemetry    = true;   //  Is telemetry visible
+    this.telemetry    = false;   //  Is telemetry visible
 
     /* Hextris Specific ------------------ */
 
@@ -215,7 +220,7 @@ var diagrams = function(processingInstance){
 
     this.orientation  = ORIENTATIONS.FLAT;
     this.music        = true;
-    this.gameOver     = true;
+    this.level        = '3-1';
 
   };
 
@@ -260,6 +265,8 @@ var diagrams = function(processingInstance){
 
       var control=function(id, parent, x, y, w, h){
 
+        app.controlCount++;
+      
         /* explicit properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
         this.id       = id;       /** Unique identification number --
                                       Change to GUID for production) */
@@ -359,6 +366,9 @@ var diagrams = function(processingInstance){
                app.hexBoard.activePiece!==null){ cursor(HAND);        }
             else                               { cursor(this.cursor); }
 
+            fill(192);
+            noStroke();
+            
               rect(0, 0, this.w, this.h);
 
             forEach(this.controls, 'draw');
@@ -683,135 +693,155 @@ var diagrams = function(processingInstance){
       telemetry.prototype=Object.create(control.prototype);
       telemetry.prototype.draw=function(){
 
-        // if(app.telemetry===false &&
-           // this.offset===0){ return; }
+        if(app.telemetry===false &&
+           this.offset===0 &&
+           app.debug===false){ return; }
 
         // Border
-        var border=function(p){
+        function border(){
 
           strokeWeight(1);
           stroke(getColor(p.clr,100));
 
           noStroke();
 
-          if(p.hit){
+          if(p.hit){ fill(getColor(CLRS.BLACK,100)); }
+          else     { fill(getColor(CLRS.BLACK,80));  }
 
-            // fill(getColor(p.color, 85));
-            fill(getColor(CLRS.BLACK,100));
-
-          }
-          else{
-
-            // fill(getColor(p.color, 80));
-            fill(getColor(CLRS.BLACK,80));
-
-          }
-
-          rect(p.offset, 0, p.w, p.h);
+          fill(getColor(CLRS.BLACK,50));
+          
+            if(p.hit){
+              fill(getColor(CLRS.BLACK,70));
+            }
+            
+            rect(p.offset, 0, p.w, p.h, 5);
 
         };
+        
+        function title(){
 
-        //  Properties
-        var properties=function(p){
-
-          var row0=30;
-
-          var col0=p.offset+20;
-          var col1=p.offset+30;
-          var col2=p.offset+170;
-
-          if     ( app.telemetry && p.offset>-200){ p.offset-=10; }
-          else if(!app.telemetry && p.offset<0   ){ p.offset+=10; }
-
-          if(this.hit){ fill(getColor(CLRS.WHITE,80)); }
-          else        { fill(getColor(CLRS.WHITE,60)); }
-
-          /* Title ------------------------- */
           textAlign(CENTER,CENTER);
-          textSize(12);
+          textSize(14);
+
           fill(CLRS.WHITE);
 
-            text('Debug Telemetry',     p.w/2+p.offset, 20);
+            text('Telemetry', p.w/2+p.offset, 20);
 
-          /* Mouse Coordinates ------------------------- */
-          textSize(10);
+        };
+        function environment(){
+
+          fill(getColor(CLRS.BLACK,50));
+
+            rect(p.offset+10,  35, p.w-20, 365, 3);
+
           textAlign(LEFT,TOP);
-          textLeading(14);
+          textSize(10);
+          textLeading(13);
 
           fill(getColor(CLRS.TEAL_2,75));
 
-            text('Mouse Coordinates \n\n\n\n' +
-                 'Mouse Buttons     \n\n\n\n\n' +
-                 'Keys              \n\n\n\n\n' +
-                 'Controls          \n\n\n\n\n' +
-                 'App               \n\n\n\n',
-                 col1, row0+15);
-
-          /* app.focus is required to be done after control update in main draw sub */
-
-          var activePiece;
-          var activeCell;
-
-          // if(app.hexBoard.activePiece!==null){ activePiece=app.hexBoard.activePiece.id; }
-          // else                               { activePiece='null';                      }
-
-          if(app.hexBoard.activeCell!==null) { activeCell=app.hexBoard.activeCell.id;   }
-          else                               { activeCell='null';                       }
+            text('\n'             + 'Cursor Coordinates' +
+                 '\n\n\n\n'       + 'Mouse Buttons'      +
+                 '\n\n\n\n\n\n\n' + 'Keys'               +
+                 '\n\n\n\n\n'     + 'Environment',
+                 col0, row0);
 
           fill(getColor(CLRS.WHITE,75));
 
-            text('              \n' +
-                 'x:            \n' +
-                 'y:            \n\n\n' +
-                 'Left:         \n' +
-                 'Right:        \n' +
-                 'Center:       \n\n\n' +
-                 'Alt:          \n' +
-                 'Control:      \n' +
-                 'Shift:        \n\n\n' +
-                 'Focus:        \n' +
-                 'Focused:      \n' +
-                 'Telemetry:    \n\n\n' +
-                 'Active Shape: \n' +
-                 'Active Cell:  \n' +
-                 'Dragging:     \n\n' +
-                 'Info:         \n\n' +
-                 'Frame Rate:   \n',
-                 col1, row0+15);
+            text('\n\n'   + 'x:'             +
+                 '\n'     + 'y:'             +
+                 '\n\n\n' + 'Left:'          +
+                 '\n'     + 'Right:'         +
+                 '\n'     + 'Center:'        +
+                 '\n\n'   + 'Dragging:'      +
+                 '\n\n\n' + 'Alt:'           +
+                 '\n'     + 'Control:'       +
+                 '\n'     + 'Shift:'         +
+                 '\n\n\n' + 'Width:'         +
+                 '\n'     + 'Height:'        +
+                 '\n\n'   + 'Screen Width:'  +
+                 '\n'     + 'Screen Height:' +
+                 '\n\n'   + 'Focused:'       +
+                 '\n\n'   + 'Frame Count:'   +
+                 '\n'     + 'FrameRate:',
+                 col1, row0);
 
           fill(getColor(CLRS.YELLOW,75));
           textAlign(RIGHT,TOP);
 
-            text('\n' +
-                 mouseX                     + '\n' +
-                 mouseY                     + '\n\n\n' +
-                 app.left                   + '\n' +
-                 app.right                  + '\n' +
-                 app.center                 + '\n\n\n' +
-                 app.keys[KEYCODES.ALT]     + '\n' +
-                 app.keys[KEYCODES.CONTROL] + '\n' +
-                 app.keys[KEYCODES.SHIFT]   + '\n\n\n' +
-                 app.focus.id               + '\n' +
-                 focused                    + '\n' +
-                 app.telemetry              + '\n\n\n' +
-                 activePiece                + '\n' +
-                 activeCell                 + '\n' +
-                 app.dragging               + '\n\n' +
-                 app.info                   + '\n\n' +
-                 nfc(app.frameRate)         + '\n',
-                 col2, row0+15);
+            text('\n\n'   + mouseX                     +
+                 '\n'     + mouseY                     +
+                 '\n\n\n' + app.left                   +
+                 '\n'     + app.right                  +
+                 '\n'     + app.center                 +
+                 '\n\n'   + app.dragging               +
+                 '\n\n\n' + app.keys[KEYCODES.ALT]     +
+                 '\n'     + app.keys[KEYCODES.CONTROL] +
+                 '\n'     + app.keys[KEYCODES.SHIFT]   +
+                 '\n\n\n' + width                      +
+                 '\n'     + height                     +
+                 '\n\n'   + screen.width               +
+                 '\n'     + screen.height              +
+                 '\n\n'   + focused                    +
+                 '\n\n'   + frameCount                 +
+                 '\n'     + nf(app.frameRate,1,1),
 
-          var txt='Press the left and right arrow keys to increment and decrement integer.';
+                 col2, row0);
+                 
+        };
+        function appSpecific(){
+          
+          var top=410;
+          
+          fill(getColor(CLRS.BLACK,50));
 
-          textSize(11);
-          textAlign(LEFT,BOTTOM);
+            rect(p.offset+10,  top, p.w-20, 170, 3);
 
-            text(txt, p.offset+17, p.h-55, p.w-20, 100);
+          textAlign(LEFT,TOP);
+          textSize(10);
+          textLeading(13);
+
+          fill(getColor(CLRS.TEAL_2,75));
+
+            text('\n'       + 'Controls' +
+                 '\n\n\n\n' + 'Score'    +
+                 '\n\n\n\n' + 'Misc',
+                 col0, top);
+
+          fill(getColor(CLRS.WHITE,75));
+
+            text('\n\n'   + 'Count:'     +
+                 '\n'     + 'Active:'    +
+                 '\n\n\n' + 'Remaining:' +
+                 '\n'     + 'Mistakes:'  +
+                 '\n\n\n' + 'Music:'     +
+                 '\n'     + 'Level:',
+                 col1, top);
+
+          fill(getColor(CLRS.YELLOW,75));
+          textAlign(RIGHT,TOP);
+
+            text('\n\n'   + app.controlCount +
+                 '\n'     + app.focus.id     +
+                 '\n\n\n' + app.remaining    +
+                 '\n'     + app.errors       +
+                 '\n\n\n' + app.music        +
+                 '\n'     + app.level,
+                 col2, top);
 
         };
 
         this.active=this.hit && app.focus===this;
 
+        var p=this;
+         
+        var row0 = 30;
+        var row1 = 90;
+
+        var col0 = this.offset+20;
+        var col1 = this.offset+25;
+        var col2 = this.offset+170;
+            
         pushMatrix();
 
           translate(this.x, this.y);
@@ -823,10 +853,13 @@ var diagrams = function(processingInstance){
 
             textFont(this.font);
 
-            border(this);
-            properties(this);
+            border();
 
-            forEach(this.controls, 'draw');
+            title();
+            environment();
+            appSpecific();
+
+            // forEach(this.controls, 'draw');
 
             // /* The following is outside the properties function because
                // it has to be done after the child controls are drawn to
@@ -888,11 +921,11 @@ var diagrams = function(processingInstance){
 
         // this.angle          = 0;
 
-        this.layout         = [];   //  array of the layout of hexcells
-        this.hints          = [];   //  array of nexCell hints
-        this.lines          = [];   //  array of hexCells with highlight lines activated
-        this.halos          = [];   //  array of hexCells with a halo activated
-
+        this.layout         = [];   //  Array of the layout of hexcells
+        this.hints          = [];   //  Array of nexCell hints
+        this.lines          = [];   //  Array of hexCells with highlight lines activated
+        this.halos          = [];   //  Array of hexCells with a halo activated
+        
         this.clrOffset      = 0;
         this.clrIncr        = 0.5;
 
@@ -931,11 +964,11 @@ var diagrams = function(processingInstance){
                      [2,2,2,2,2,2,2,2,2,2,2,2,2],
                      [2,2,2,2,2,2,2,2,2,2,2,2,2],
                      [2,2,2,2,2,1,1,1,2,2,2,2,2],
-                     [2,2,2,1,1,0,0,0,1,1,2,2,2],
-                     [2,2,1,1,0,0,0,0,0,1,1,2,2],
-                     [2,2,1,1,0,0,0,0,0,1,1,2,2],
-                     [2,2,1,1,0,0,0,0,0,1,1,2,2],
-                     [2,2,1,1,1,1,0,1,1,1,1,2,2],
+                     [2,2,2,1,1,1,1,1,1,1,2,2,2],
+                     [2,2,1,1,1,1,1,1,1,1,1,2,2],
+                     [2,2,1,1,1,1,1,1,1,1,1,2,2],
+                     [2,2,1,1,1,0,2,0,1,1,1,2,2],
+                     [2,2,1,1,1,1,1,1,1,1,1,2,2],
                      [2,2,1,1,1,1,1,1,1,1,1,2,2],
                      [2,2,2,2,1,1,1,1,1,2,2,2,2],
                      [2,2,2,2,2,2,1,2,2,2,2,2,2],
@@ -947,23 +980,23 @@ var diagrams = function(processingInstance){
         this.style =[
                      [2,2,2,2,2,2,2,2,2,2,2,2,2],
                      [2,2,2,2,2,2,2,2,2,2,2,2,2],
-                     [2,2,4,4,6,1,0,1,5,4,4,2,2],
-                     [2,2,6,1,1,0,1,0,1,1,5,2,2],
-                     [2,2,1,1,0,1,0,1,0,1,1,2,2],
-                     [2,2,1,0,1,0,1,0,1,0,1,2,2],
-                     [2,2,1,1,0,1,0,1,0,1,1,2,2],
-                     [2,2,1,1,1,0,1,0,1,1,1,2,2],
-                     [2,2,1,1,1,1,0,1,1,1,1,2,2],
-                     [2,2,2,2,1,1,1,1,1,2,2,2,2],
-                     [2,2,2,2,2,2,1,2,2,2,2,2,2],
+                     [2,2,4,4,6,0,1,1,5,4,4,2,2],
+                     [2,2,6,0,0,0,1,1,1,1,5,2,2],
+                     [2,2,0,0,0,0,1,1,1,1,1,2,2],
+                     [2,2,0,0,0,0,1,1,1,1,1,2,2],
+                     [2,2,0,0,0,0,0,1,1,1,1,2,2],
+                     [2,2,0,0,0,0,0,1,1,1,1,2,2],
+                     [2,2,0,0,0,0,0,1,1,1,1,2,2],
+                     [2,2,2,2,0,0,0,1,1,2,2,2,2],
+                     [2,2,2,2,2,2,0,2,2,2,2,2,2],
                      [2,2,2,2,2,2,2,2,2,2,2,2,2],
                      [2,2,2,2,2,2,2,2,2,2,2,2,2],
                      [2,2,2,2,2,2,2,2,2,2,2,2,2],
                     ];
 
         this.text  =[
-                     [2,2,2,2,2,2,2,2,2,2,2,2,2],
-                     [2,2,2,2,2,2,2,2,2,2,2,2,2],
+                     [0,0,0,0,0,0,0,0,0,0,0,0,0],
+                     [0,0,0,0,0,0,0,0,0,0,0,0,0],
                      [0,0,4,6,7,0,0,0,1,3,5,0,0],
                      [0,0,5,0,0,0,5,0,0,0,3,0,0],
                      [0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -975,7 +1008,7 @@ var diagrams = function(processingInstance){
                      [0,0,0,0,0,0,0,0,0,0,0,0,0],
                      [0,0,0,0,0,0,0,0,0,0,0,0,0],
                      [0,0,0,0,0,0,0,0,0,0,0,0,0],
-                     [2,2,2,2,2,2,2,2,2,2,2,2,2],
+                     [0,0,0,0,0,0,0,0,0,0,0,0,0],
                     ];
 
         var rowArray=[];  // Temporary 1-D array to hold each successive row before adding to the corresponding 2-D array
@@ -1261,6 +1294,11 @@ var diagrams = function(processingInstance){
           }
 
         };
+        function drawClicked(){
+          
+          
+          
+        };
 
         this.active=this.hit && app.focus===this;
         this.lines=[];
@@ -1302,7 +1340,7 @@ var diagrams = function(processingInstance){
               if(this.halos.length>0){
                 drawHalos();
               }
-
+              
               calculateRemaining();
 
         popMatrix();
@@ -2355,7 +2393,7 @@ var diagrams = function(processingInstance){
 
     /* Hexagonal Cell       */
     {
-
+      
       function hexCell(id, parent, x, y, w, h, props){
 
         control.call(this, id, parent, x, y, w, h);
@@ -2383,6 +2421,8 @@ var diagrams = function(processingInstance){
         this.halo         = false;
         this.enabled      = true;
         this.line         = false;
+
+        this.clickRadius  = 0;
 
         // this.hover        = false;
         // this.tTime        = 0;
@@ -2644,6 +2684,8 @@ var diagrams = function(processingInstance){
 
         }
 
+        noStroke();
+        
         pushMatrix();
 
           translate(this.x, this.y);
@@ -2657,7 +2699,58 @@ var diagrams = function(processingInstance){
             if(this.style<HEXY_STYLES.SPACER){ innerHexagon(); }
             caption();
             if(this.style<HEXY_STYLES.SPACER){ activeCell();   }
+            
+            if(this.clickRadius>0){ 
+              
+              noStroke();
 
+              fill(CLRS.H_ORANGE_L);
+
+              var w=this.clickRadius/2;
+
+              rotate(radians(this.clickRadius)*3);
+
+              beginShape();
+
+                for(var pt=0; pt<6; pt++){
+                  vertex(cos(radians(pt*60))*w,
+                         sin(radians(pt*60))*w );
+                }
+
+              endShape();
+
+              this.clickRadius-=5;
+
+              // var offset=HEX_SIZE-this.clickRadius;
+
+              // triangle(0,                -offset,
+                       // this.points[0].x, this.points[0].y-offset,
+                       // this.points[1].x, this.points[1].y-offset);
+
+              // triangle(0,                +offset,
+                       // this.points[1].x, this.points[1].y+offset,
+                       // this.points[2].x, this.points[2].y+offset);
+
+              // triangle(0,                -offset,
+                       // this.points[2].x, this.points[2].y-offset,
+                       // this.points[3].x, this.points[3].y-offset);
+
+              // triangle(0,                +offset,
+                       // this.points[3].x, this.points[3].y+offset,
+                       // this.points[4].x, this.points[4].y+offset);
+
+              // triangle(0,                -offset,
+                       // this.points[4].x, this.points[4].y-offset,
+                       // this.points[5].x, this.points[5].y-offset);
+
+              // triangle(0,                +offset,
+                       // this.points[5].x, this.points[5].y+offset,
+                       // this.points[0].x, this.points[0].y+offset);
+                       
+              // this.clickRadius-=1;
+
+            }
+            
         popMatrix();
 
       };
@@ -2743,6 +2836,8 @@ var diagrams = function(processingInstance){
                 this.layout=0;
                 this.parent.layout[this.row][this.col]=0;
 
+                this.clickRadius=HEX_SIZE-10;
+
               }
               else if(this.style===HEXY_STYLES.BLACK){
                 app.errors++;
@@ -2792,8 +2887,12 @@ var diagrams = function(processingInstance){
 
             if(this.layout===1 &&
                this.style===HEXY_STYLES.BLACK){
+              
               this.layout=0;
               this.parent.layout[this.row][this.col]=0;
+              
+              this.clickRadius=HEX_SIZE;
+
             }
             else{
 
@@ -2896,7 +2995,7 @@ var diagrams = function(processingInstance){
       }
 
       /* Telemetry ---------------------------------------------------- */
-      var telem=new telemetry(500, rt, width, 31, 200, height-30,
+      var telem=new telemetry(500, rt, width-195, 5, 190, height-10,
         {color:     color(36),
          font:      serifFont,
          cursor:    ARROW});
@@ -2914,7 +3013,7 @@ var diagrams = function(processingInstance){
 
     // frameRate(0);
 
-    // background(255);
+    // background(16);
 
     forEach(app.controls,'draw');
 
@@ -2942,7 +3041,7 @@ var diagrams = function(processingInstance){
 
     textFont(sansFont,64);
     // textSize(64);
-    fill(getColor(CLRS.BLACK,5));
+    fill(getColor(CLRS.BLACK,15));
 
       pushMatrix();
         
@@ -2963,12 +3062,10 @@ var diagrams = function(processingInstance){
 
   app.focus=app.hexBoard;
 
-  globalFRate=this.__frameRate;
+  // globalFRate=this.__frameRate;
 
   strokeJoin(MITER);
   strokeCap(SQUARE);
-
-  frameRate(0);
 
   draw=function(){
 
