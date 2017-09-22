@@ -94,7 +94,8 @@ var diagrams = function(processingInstance){
   var globalFRate=this;
 
   const MY_FAV = 7;
-  const HEX_SIZE=60;
+  // const HEX_SIZE=60;
+  var HEX_SIZE=60;
   // const pi=nf(PI,1,10);
 
   /* Constants ============================================================= */
@@ -973,8 +974,7 @@ var diagrams = function(processingInstance){
                      [2,2,2,2,1,1,1,1,1,2,2,2,2],
                      [2,2,2,2,2,2,1,2,2,2,2,2,2],
                      [2,2,2,2,2,2,2,2,2,2,2,2,2],
-                     [2,2,2,2,2,2,2,2,2,2,2,2,2],
-                     [2,2,2,2,2,2,2,2,2,2,2,2,2],
+                     [2,2,2,2,2,2,2,2,2,2,2,2,2]
                     ];
 
         this.style =[
@@ -990,8 +990,7 @@ var diagrams = function(processingInstance){
                      [2,2,2,2,0,0,0,1,1,2,2,2,2],
                      [2,2,2,2,2,2,0,2,2,2,2,2,2],
                      [2,2,2,2,2,2,2,2,2,2,2,2,2],
-                     [2,2,2,2,2,2,2,2,2,2,2,2,2],
-                     [2,2,2,2,2,2,2,2,2,2,2,2,2],
+                     [2,2,2,2,2,2,2,2,2,2,2,2,2]
                     ];
 
         this.text  =[
@@ -1007,8 +1006,7 @@ var diagrams = function(processingInstance){
                      [0,0,0,0,0,0,0,0,0,0,0,0,0],
                      [0,0,0,0,0,0,0,0,0,0,0,0,0],
                      [0,0,0,0,0,0,0,0,0,0,0,0,0],
-                     [0,0,0,0,0,0,0,0,0,0,0,0,0],
-                     [0,0,0,0,0,0,0,0,0,0,0,0,0],
+                     [0,0,0,0,0,0,0,0,0,0,0,0,0]
                     ];
 
         var rowArray=[];  // Temporary 1-D array to hold each successive row before adding to the corresponding 2-D array
@@ -1017,7 +1015,9 @@ var diagrams = function(processingInstance){
         function load(){
 
           p.controls=[];
-
+          
+          HEX_SIZE=width/(p.layout.length+5);
+          
           var w=HEX_SIZE;
 
           var x=0;
@@ -1074,70 +1074,104 @@ var diagrams = function(processingInstance){
         function link(){
 
           var ctrls=p.controls;
-
+          var total;
+          
           // try{
 
             for(var r in ctrls){
               for(var c in ctrls[r]){
-
+                
+                total=0;
+                
                 r/=1;
                 c/=1;
 
-                //  Top Bottom
+                //  Top / Bottom
                 {
                   
                   // Top                  
-                  if(r>0              ){ ctrls[r][c].top    = ctrls[r-1][c]; }
+                  if(r>0){
+                    ctrls[r][c].top= ctrls[r-1][c];
+                    total++;
+                  }
                   
                   // Bottom
-                  if(r<ctrls[r].length){ ctrls[r][c].bottom = ctrls[r+1][c]; }
+                  if(r<ctrls[r].length-1){
+                    ctrls[r][c].bottom = ctrls[r+1][c];
+                    total++;
+                  }
 
                 }
 
-                 // Left
-                if(c>0 && r>0){
+                // Left / Right
+                {
                   
-                  if(c%2===0){
-                    ctrls[r][c].topLeft = ctrls[r-1][c-1];  
+                  //  Top Left
+                  if(c>0 &&
+                     r>0){
+                    
+                    if(c%2===0){
+                      ctrls[r][c].topLeft = ctrls[r-1][c-1];  
+                      total++;
+                    }
+                    else if(c%2===1){
+                      ctrls[r][c].topLeft = ctrls[r][c-1];
+                      total++;
+                    }
+
                   }
-                  else if(r%2===1){
-                    ctrls[r][c].topLeft = ctrls[r  ][c-1];
+                  
+                  //  Bottom Left
+                  if(c>0 &&
+                     r<ctrls[0].length-1){
+                    
+                    if(c%2===0){
+                      ctrls[r][c].bottomLeft = ctrls[r][c-1];
+                      total++;
+                    }
+                    else if(c%2===1){
+                      ctrls[r][c].bottomLeft = ctrls[r+1][c-1];
+                      total++;
+                    }
+
+                  }                  
+
+                  //  Top Right
+                  if(c<ctrls[0].length-1 &&
+                     r>0){
+                    
+                    if(c%2===0){
+                      ctrls[r][c].topRight = ctrls[r-1][c+1];  
+                      total++;
+                    }
+                    else if(c%2===1){
+                      ctrls[r][c].topRight = ctrls[r][c+1];
+                      total++;
+                    }
+
                   }
+
+                  //  Bottom Right
+                  if(c<ctrls[0].length-1 &&
+                     r<ctrls[0].length-1){
+
+                    if(c%2===0){
+                      ctrls[r][c].bottomRight = ctrls[r][c+1];
+                      total++;
+                    }
+                    else if(c%2===1){
+                      ctrls[r][c].bottomRight = ctrls[r+1][c+1];
+                      total++;
+                    }
+
+                  }  
+                  
+                  ctrls[r][c].total=total;
 
                 }
-
-                // if(r<5){
-
-                  // if(r>0 && c>0){ ctrls[r][c].topLeft = ctrls[r-1][c-1]; }
-
-                // }
-                // else{
-
-                  // ctrls[r][c].topLeft  = ctrls[r-1][c];
-
-                // }
-
-                // Right
-                // if(r<4){
-
-                  // ctrls[r][c].bottomRight = ctrls[r+1][c+1];
-                  // ctrls[r][c].bottomLeft  = ctrls[r+1][c];
-
-                // }
-                // else if(r===4){
-
-                  // ctrls[r][c].bottomRight = ctrls[r+1][c  ];
-                  // ctrls[r][c].bottomLeft  = ctrls[r+1][c-1];
-
-                // }
-                // else if(r<ctrls.length-1){
-
-                  // ctrls[r][c].bottomRight = ctrls[r+1][c];
-                  // ctrls[r][c].bottomLeft  = ctrls[r+1][c-1];
-
-                // }
 
               }
+
             }
 
           // }
@@ -1155,7 +1189,7 @@ var diagrams = function(processingInstance){
 
         load();
         link();
-
+        
         app.gameOver=false;
 
       };
@@ -2427,6 +2461,8 @@ var diagrams = function(processingInstance){
         this.topLeft      = null;
         this.bottomLeft   = null;
 
+        this.total        = 0;
+
         this.layout       = props.layout;
         this.style        = props.style;
         this.text         = props.text;
@@ -2477,7 +2513,7 @@ var diagrams = function(processingInstance){
           }
 
         };
-
+        
         reset();
 
       };
@@ -2669,7 +2705,7 @@ var diagrams = function(processingInstance){
                   }
 
                 }
-
+text(p.total,0,0);
           popMatrix();
 
         }
@@ -2768,18 +2804,30 @@ var diagrams = function(processingInstance){
 
         if(this.active){
           noStroke();
-
+          strokeWeight(5);
           if(this.top!==null){
-            fill(CLRS.BLACK);
-            ellipse(this.top.x, this.top.y, 10, 10);
+            stroke(CLRS.BLACK);
+            line(this.top.x, this.top.y, this.x, this.y);
           }
           if(this.bottom!==null){
-            fill(CLRS.RED);
-            ellipse(this.bottom.x, this.bottom.y, 10, 10);
+            stroke(CLRS.RED);
+            line(this.bottom.x, this.bottom.y, this.x, this.y);
           }
           if(this.topLeft!==null){
-            fill(CLRS.ORANGE);
-            ellipse(this.topLeft.x, this.topLeft.y, 10, 10);
+            stroke(CLRS.ORANGE);
+            line(this.topLeft.x, this.topLeft.y, this.x, this.y);
+          }
+          if(this.bottomLeft!==null){
+            stroke(CLRS.YELLOW);
+            line(this.bottomLeft.x, this.bottomLeft.y, this.x, this.y);
+          }
+          if(this.topRight!==null){
+            stroke(CLRS.GREEN);
+            line(this.topRight.x, this.topRight.y, this.x, this.y);
+          }
+          if(this.bottomRight!==null){
+            stroke(CLRS.BLUE);
+            line(this.bottomRight.x, this.bottomRight.y, this.x, this.y);
           }
           
         }
