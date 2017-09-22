@@ -964,15 +964,15 @@ var diagrams = function(processingInstance){
         this.layout=[
                      [2,2,2,2,2,2,2,2,2,2,2,2,2],
                      [2,2,2,2,2,2,2,2,2,2,2,2,2],
-                     [2,2,2,2,2,1,1,1,2,2,2,2,2],
-                     [2,2,2,1,1,1,1,1,1,1,2,2,2],
-                     [2,2,1,1,1,1,1,1,1,1,1,2,2],
-                     [2,2,1,1,1,1,1,1,1,1,1,2,2],
-                     [2,2,1,1,1,0,2,0,1,1,1,2,2],
-                     [2,2,1,1,1,1,1,1,1,1,1,2,2],
-                     [2,2,1,1,1,1,1,1,1,1,1,2,2],
-                     [2,2,2,2,1,1,1,1,1,2,2,2,2],
-                     [2,2,2,2,2,2,1,2,2,2,2,2,2],
+                     [2,2,2,2,2,0,0,0,2,2,2,2,2],
+                     [2,2,2,0,0,0,0,0,0,0,2,2,2],
+                     [2,2,0,0,0,0,0,0,0,0,0,2,2],
+                     [2,2,0,0,0,0,0,0,0,0,0,2,2],
+                     [2,2,0,0,0,0,0,0,0,0,0,2,2],
+                     [2,2,0,0,0,0,0,0,0,0,0,2,2],
+                     [2,2,0,0,0,0,0,0,0,0,0,2,2],
+                     [2,2,2,2,0,0,0,0,0,2,2,2,2],
+                     [2,2,2,2,2,2,0,2,2,2,2,2,2],
                      [2,2,2,2,2,2,2,2,2,2,2,2,2],
                      [2,2,2,2,2,2,2,2,2,2,2,2,2]
                     ];
@@ -993,15 +993,31 @@ var diagrams = function(processingInstance){
                      [2,2,2,2,2,2,2,2,2,2,2,2,2]
                     ];
 
+        // this.text  =[
+                     // [0,0,0,0,0,0,0,0,0,0,0,0,0],
+                     // [0,0,0,0,0,0,0,0,0,0,0,0,0],
+                     // [0,0,4,6,7,0,0,0,1,3,5,0,0],
+                     // [0,0,5,0,0,0,0,0,0,0,3,0,0],
+                     // [0,0,0,0,0,0,0,0,0,0,0,0,0],
+                     // [0,0,0,0,0,0,0,0,0,0,0,0,0],
+                     // [0,0,0,0,0,0,0,0,0,0,0,0,0],
+                     // [0,0,0,0,0,0,0,0,0,0,0,0,0],
+                     // [0,0,0,0,0,0,0,0,0,0,0,0,0],
+                     // [0,0,0,0,0,0,0,0,0,0,0,0,0],
+                     // [0,0,0,0,0,0,0,0,0,0,0,0,0],
+                     // [0,0,0,0,0,0,0,0,0,0,0,0,0],
+                     // [0,0,0,0,0,0,0,0,0,0,0,0,0]
+                    // ];
+                    
         this.text  =[
                      [0,0,0,0,0,0,0,0,0,0,0,0,0],
                      [0,0,0,0,0,0,0,0,0,0,0,0,0],
-                     [0,0,4,6,7,0,0,0,1,3,5,0,0],
-                     [0,0,5,0,0,0,5,0,0,0,3,0,0],
                      [0,0,0,0,0,0,0,0,0,0,0,0,0],
-                     [0,0,0,0,0,0,5,0,0,0,0,0,0],
                      [0,0,0,0,0,0,0,0,0,0,0,0,0],
-                     [0,0,0,0,0,0,5,0,0,0,0,0,0],
+                     [0,0,0,0,0,0,0,0,0,0,0,0,0],
+                     [0,0,0,0,0,0,0,0,0,0,0,0,0],
+                     [0,0,0,0,0,0,0,0,0,0,0,0,0],
+                     [0,0,0,0,0,0,0,0,0,0,0,0,0],
                      [0,0,0,0,0,0,0,0,0,0,0,0,0],
                      [0,0,0,0,0,0,0,0,0,0,0,0,0],
                      [0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -1074,8 +1090,9 @@ var diagrams = function(processingInstance){
         function link(){
 
           var ctrls=p.controls;
+          var ctrl;
           var total;
-          
+
           // try{
 
             for(var r in ctrls){
@@ -1091,14 +1108,30 @@ var diagrams = function(processingInstance){
                   
                   // Top                  
                   if(r>0){
+                    
                     ctrls[r][c].top= ctrls[r-1][c];
-                    total++;
+                    
+                    ctrl=ctrls[r][c].top;
+                    
+                    if(ctrl.layout===0 ||
+                       ctrl.layout===1){
+                      total++;
+                    }
+                    
                   }
-                  
+
                   // Bottom
                   if(r<ctrls[r].length-1){
+
                     ctrls[r][c].bottom = ctrls[r+1][c];
-                    total++;
+
+                    ctrl=ctrls[r][c].bottom;
+                    
+                    if(ctrl.layout===0 ||
+                       ctrl.layout===1){
+                      total++;
+                    }
+
                   }
 
                 }
@@ -1107,61 +1140,125 @@ var diagrams = function(processingInstance){
                 {
                   
                   //  Top Left
-                  if(c>0 &&
-                     r>0){
+                  if(c>0){
                     
-                    if(c%2===0){
+                    if(c%2===0 &&
+                       r>0){
+
                       ctrls[r][c].topLeft = ctrls[r-1][c-1];  
-                      total++;
+                      
+                      ctrl=ctrls[r][c].topLeft;
+                      
+                      if(ctrl.layout===0 ||
+                         ctrl.layout===1){
+                        total++;
+                      }
+                    
                     }
                     else if(c%2===1){
+                      
                       ctrls[r][c].topLeft = ctrls[r][c-1];
-                      total++;
+                      
+                      ctrl=ctrls[r][c].topLeft;
+                      
+                      if(ctrl.layout===0 ||
+                         ctrl.layout===1){
+                        total++;
+                      }
+                    
                     }
 
                   }
                   
                   //  Bottom Left
-                  if(c>0 &&
-                     r<ctrls[0].length-1){
+                  if(c>0){
                     
                     if(c%2===0){
+
                       ctrls[r][c].bottomLeft = ctrls[r][c-1];
-                      total++;
+                      
+                      ctrl=ctrls[r][c].bottomLeft;
+                      
+                      if(ctrl.layout===0 ||
+                         ctrl.layout===1){
+                        total++;
+                      }
+
                     }
-                    else if(c%2===1){
+                    else if(c%2===1 &&
+                            r<ctrls[0].length-1){
+                      
                       ctrls[r][c].bottomLeft = ctrls[r+1][c-1];
-                      total++;
+
+                      ctrl=ctrls[r][c].bottomLeft;
+                     
+                      if(ctrl.layout===0 ||
+                         ctrl.layout===1){
+                        total++;
+                      }
+
                     }
 
                   }                  
 
                   //  Top Right
-                  if(c<ctrls[0].length-1 &&
-                     r>0){
+                  if(c<ctrls[0].length-1){
                     
-                    if(c%2===0){
+                    if(c%2===0 &&
+                       r>0){
+
                       ctrls[r][c].topRight = ctrls[r-1][c+1];  
-                      total++;
+
+                      ctrl=ctrls[r][c].topRight;
+                      
+                      if(ctrl.layout===0 ||
+                         ctrl.layout===1){
+                        total++;
+                      }
+
                     }
                     else if(c%2===1){
+
                       ctrls[r][c].topRight = ctrls[r][c+1];
-                      total++;
+                    
+                      ctrl=ctrls[r][c].topRight;
+                      
+                      if(ctrl.layout===0 ||
+                         ctrl.layout===1){
+                        total++;
+                      }
+                      
                     }
 
                   }
 
                   //  Bottom Right
-                  if(c<ctrls[0].length-1 &&
-                     r<ctrls[0].length-1){
+                  if(c<ctrls[0].length-1){
 
                     if(c%2===0){
+
                       ctrls[r][c].bottomRight = ctrls[r][c+1];
-                      total++;
+                      
+                      ctrl=ctrls[r][c].bottomRight;
+                      
+                      if(ctrl.layout===0 ||
+                         ctrl.layout===1){
+                        total++;
+                      }
+                      
                     }
-                    else if(c%2===1){
+                    else if(c%2===1 &&
+                            r<ctrls[0].length-1){
+
                       ctrls[r][c].bottomRight = ctrls[r+1][c+1];
-                      total++;
+
+                      ctrl=ctrls[r][c].bottomRight;
+                      
+                      if(ctrl.layout===0 ||
+                         ctrl.layout===1){
+                           total++;
+                      }
+
                     }
 
                   }  
@@ -1185,11 +1282,28 @@ var diagrams = function(processingInstance){
 
           // }
 
-        };
+        };        
+        function randomizeStyle(){
+          
+          var style=p.style;
 
+          for(var r in style){
+            for(var c in style[r]){
+            
+              if(style[r][c]===0 ||
+                 style[r][c]===1){
+                style[r][c]=round(random(0,1));
+              }   
+                 
+            }
+          }
+          
+        };
+        
+        randomizeStyle();
         load();
         link();
-        
+
         app.gameOver=false;
 
       };
