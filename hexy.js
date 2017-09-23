@@ -993,22 +993,6 @@ var diagrams = function(processingInstance){
                      [2,2,2,2,2,2,2,2,2,2,2,2,2]
                     ];
 
-        // this.text  =[
-                     // [0,0,0,0,0,0,0,0,0,0,0,0,0],
-                     // [0,0,0,0,0,0,0,0,0,0,0,0,0],
-                     // [0,0,4,6,7,0,0,0,1,3,5,0,0],
-                     // [0,0,5,0,0,0,0,0,0,0,3,0,0],
-                     // [0,0,0,0,0,0,0,0,0,0,0,0,0],
-                     // [0,0,0,0,0,0,0,0,0,0,0,0,0],
-                     // [0,0,0,0,0,0,0,0,0,0,0,0,0],
-                     // [0,0,0,0,0,0,0,0,0,0,0,0,0],
-                     // [0,0,0,0,0,0,0,0,0,0,0,0,0],
-                     // [0,0,0,0,0,0,0,0,0,0,0,0,0],
-                     // [0,0,0,0,0,0,0,0,0,0,0,0,0],
-                     // [0,0,0,0,0,0,0,0,0,0,0,0,0],
-                     // [0,0,0,0,0,0,0,0,0,0,0,0,0]
-                    // ];
-                    
         this.text  =[
                      [0,0,0,0,0,0,0,0,0,0,0,0,0],
                      [0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -1109,12 +1093,10 @@ var diagrams = function(processingInstance){
                   // Top                  
                   if(r>0){
                     
-                    ctrls[r][c].top= ctrls[r-1][c];
-                    
+                    ctrls[r][c].top= ctrls[r-1][c];                    
                     ctrl=ctrls[r][c].top;
                     
-                    if(ctrl.layout===0 ||
-                       ctrl.layout===1){
+                    if(ctrl.style===1){
                       total++;
                     }
                     
@@ -1127,8 +1109,7 @@ var diagrams = function(processingInstance){
 
                     ctrl=ctrls[r][c].bottom;
                     
-                    if(ctrl.layout===0 ||
-                       ctrl.layout===1){
+                    if(ctrl.style===1){
                       total++;
                     }
 
@@ -1149,8 +1130,7 @@ var diagrams = function(processingInstance){
                       
                       ctrl=ctrls[r][c].topLeft;
                       
-                      if(ctrl.layout===0 ||
-                         ctrl.layout===1){
+                      if(ctrl.style===1){
                         total++;
                       }
                     
@@ -1161,8 +1141,7 @@ var diagrams = function(processingInstance){
                       
                       ctrl=ctrls[r][c].topLeft;
                       
-                      if(ctrl.layout===0 ||
-                         ctrl.layout===1){
+                      if(ctrl.style===1){
                         total++;
                       }
                     
@@ -1179,8 +1158,7 @@ var diagrams = function(processingInstance){
                       
                       ctrl=ctrls[r][c].bottomLeft;
                       
-                      if(ctrl.layout===0 ||
-                         ctrl.layout===1){
+                      if(ctrl.style===1){
                         total++;
                       }
 
@@ -1192,8 +1170,7 @@ var diagrams = function(processingInstance){
 
                       ctrl=ctrls[r][c].bottomLeft;
                      
-                      if(ctrl.layout===0 ||
-                         ctrl.layout===1){
+                      if(ctrl.style===1){
                         total++;
                       }
 
@@ -1211,8 +1188,7 @@ var diagrams = function(processingInstance){
 
                       ctrl=ctrls[r][c].topRight;
                       
-                      if(ctrl.layout===0 ||
-                         ctrl.layout===1){
+                      if(ctrl.style===1){
                         total++;
                       }
 
@@ -1223,8 +1199,7 @@ var diagrams = function(processingInstance){
                     
                       ctrl=ctrls[r][c].topRight;
                       
-                      if(ctrl.layout===0 ||
-                         ctrl.layout===1){
+                      if(ctrl.style===1){
                         total++;
                       }
                       
@@ -1241,8 +1216,7 @@ var diagrams = function(processingInstance){
                       
                       ctrl=ctrls[r][c].bottomRight;
                       
-                      if(ctrl.layout===0 ||
-                         ctrl.layout===1){
+                      if(ctrl.style===1){
                         total++;
                       }
                       
@@ -1254,8 +1228,7 @@ var diagrams = function(processingInstance){
 
                       ctrl=ctrls[r][c].bottomRight;
                       
-                      if(ctrl.layout===0 ||
-                         ctrl.layout===1){
+                      if(ctrl.style===1){
                            total++;
                       }
 
@@ -3260,6 +3233,51 @@ text(p.total,0,0);
   strokeJoin(MITER);
   strokeCap(SQUARE);
 
+  
+
+  /** Testing *.hexcell file format ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+  
+
+      // Double up the \ character because it is an escape character and the first one won't be recognised  
+      var HEX_SYMBOLS={
+        
+        BLANK:            '.',
+        BLACK:            'o',
+        BLACK_REVEALED:   'O',
+        BLUE:             'x',
+        BLUE_REVEALED:    'X',        
+        DOWN_RIGHT:       '\\',
+        DOWN_CENTER:      '|',
+        DOWN_LEFT:        '/',
+        NUMBER:           '+',
+        CONSECUTIVE:      'c',        
+        NOT_CONSECUTIVE:  'n'
+
+      };
+
+
+      
+      var f="............................|+..............|+......|+..................................|+..........|+../+..............|+......................o...o...o...x...x...x...x...o+..o+..o+..x.......................x...x...o+..x+..x...o+..x...on..oc..oc..o+..x...................o+..o+..on..o...x...o+..x...o...x...x...x...x...o...............|+..o...o+..x...x+..x...o...o+..oc..x...x...x...x+..|+..............o+..o...x...x+..o...o+..o+..o+..x...x...o+..x...x...............x...x...x...oc..x...on..o+..x...x...x+..o+..on..o+..o+..........o...o+..o...o...o.......x+..o+..o+......x...x...x...o+..o.......\\+..x...on..on..o+..........o+..o+..........x...o...o...o+..........o...x...oc..x...o.......x...o+..x...|n..o+..x...x...x...x...........x+..x...o+..x...x...x+..x...o+..x+..o...x...o+..o+..o...........x...o+..x...oc..o...o+..x...x...x...x...o...o...o+..on..o+..........o+..x...o...o+..on..o+..o...o+..o...x+..o...o+..x...o+..........o...o...o...o+..oc..x...o+..On..o+..x...o+..x+..on..o...x...........o+..x...x...x...o+..x...o...x...o...o...o...x...o+..o+..........x+..x...x.......x...oc..x.......x...o...o.......o...x...x...........on..o+..........o...oc../+..|+..x+..x...........o...o+..........o...x...on......x...o...o+..|n..x...x...x.......x...o...o+..........o...x...o+..x...o...oc..x...x...x...o+..o...o...o...x...........x...x+..o+..x...o+..x...o+..On..oc..o+..x...o...o+..oc..o...........x...o+..o...x+..o+..x...x...o+..o+..o...o+..oc..o...x...........o...x+..x...oc..o+..x...x...o+..o+..o...x...oc..x...o+..x...........o...o...o+..o...o+..o...o...o...x...x...o+..x...o+..o+..........x...x...o+..o+..o+......o+..on..x.......o+..x...o...o...x...........o+..on..o+..x...|+......x...x.......|n..on..x...x...oc..........o...on..oc..x+..x...|n..o+..o+..x.......o+..o+..x+..o+..x...........o+..x...o...oc..on..x...o+..x...x...x...x...x...o...x...............o+..x...x+..o...x...o...x...x...o+..o+..x...o+..o+..................o...x...oc..x+..oc..x...o+..o+..o+..on..on..x+..................o+..x...x...o...oc..o...oc..o...o...o+..o+..x+..o+..................o+..x...o+..x+..o...x...o...o+..x...x...o+..x.......................o...o...x...x...x...x...o...o...o...x...o+............";
+      
+      var first="";
+      var secnd;
+      
+      for(var n=0; n<f.length-1; n+=2){
+        
+        first+=f.substring(n,n+1);
+        secnd+=f.substring(n+1,n+2);
+  
+      }
+
+      // println(f.substring(n, n+66));
+      
+println(first.length);
+println(secnd.length);
+
+  /** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+
+
   draw=function(){
 
     app.frameRate=this.__frameRate;
@@ -3494,10 +3512,47 @@ text(p.total,0,0);
 
 
 
+/*
 
+Hexcells level v1
+A Giant Scoop of Vanilla #3
+mathgrant
 
+............................|+..............|+......|+............
+......................|+..........|+../+..............|+..........
+............o...o...o...x...x...x...x...o+..o+..o+..x.............
+..........x...x...o+..x+..x...o+..x...on..oc..oc..o+..x...........
+........o+..o+..on..o...x...o+..x...o...x...x...x...x...o.........
+......|+..o...o+..x...x+..x...o...o+..oc..x...x...x...x+..|+......
+........o+..o...x...x+..o...o+..o+..o+..x...x...o+..x...x.........
+......x...x...x...oc..x...on..o+..x...x...x+..o+..on..o+..o+......
+....o...o+..o...o...o.......x+..o+..o+......x...x...x...o+..o.....
+..\\+..x...on..on..o+..........o+..o+..........x...o...o...o+......
+....o...x...oc..x...o.......x...o+..x...|n..o+..x...x...x...x.....
+......x+..x...o+..x...x...x+..x...o+..x+..o...x...o+..o+..o.......
+....x...o+..x...oc..o...o+..x...x...x...x...o...o...o+..on..o+....
+......o+..x...o...o+..on..o+..o...o+..o...x+..o...o+..x...o+......
+....o...o...o...o+..oc..x...o+..On..o+..x...o+..x+..on..o...x.....
+......o+..x...x...x...o+..x...o...x...o...o...o...x...o+..o+......
+....x+..x...x.......x...oc..x.......x...o...o.......o...x...x.....
+......on..o+..........o...oc../+..|+..x+..x...........o...o+......
+....o...x...on......x...o...o+..|n..x...x...x.......x...o...o+....
+......o...x...o+..x...o...oc..x...x...x...o+..o...o...o...x.......
+....x...x+..o+..x...o+..x...o+..On..oc..o+..x...o...o+..oc..o.....
+......x...o+..o...x+..o+..x...x...o+..o+..o...o+..oc..o...x.......
+....o...x+..x...oc..o+..x...x...o+..o+..o...x...oc..x...o+..x.....
+......o...o...o+..o...o+..o...o...o...x...x...o+..x...o+..o+......
+....x...x...o+..o+..o+......o+..on..x.......o+..x...o...o...x.....
+......o+..on..o+..x...|+......x...x.......|n..on..x...x...oc......
+....o...on..oc..x+..x...|n..o+..o+..x.......o+..o+..x+..o+..x.....
+......o+..x...o...oc..on..x...o+..x...x...x...x...x...o...x.......
+........o+..x...x+..o...x...o...x...x...o+..o+..x...o+..o+........
+..........o...x...oc..x+..oc..x...o+..o+..o+..on..on..x+..........
+........o+..x...x...o...oc..o...oc..o...o...o+..o+..x+..o+........
+..........o+..x...o+..x+..o...x...o...o+..x...x...o+..x...........
+............o...o...x...x...x...x...o...o...o...x...o+............
 
-
+*/
 
 
 /**
