@@ -79,11 +79,15 @@ var diagrams = function(processingInstance){
 
     ---------------------------------------------------------------------
 
-      println( typeof this.color );
+      print( typeof this.color );
 
 */
 
-
+  function print(s){
+    
+    console.log(s);
+    
+  };
 
   var serifFont   = createFont('sans-serif', 16);
   var sansFont    = createFont('sans',       16);
@@ -101,20 +105,83 @@ var diagrams = function(processingInstance){
   /* Constants ============================================================= */
   {
 
-    var HEXY_STYLES={
+    // var HEXY_SYMBOLS={
 
-      BLACK:    0,
-      BLUE:     1,
+      // BLACK:    0,
+      // BLUE:     1,
 
-      SPACER:   2,
+      // SPACER:   2,
 
-      ROW:      3,
-      COL:      4,
+      // ROW:      3,
+      // COL:      4,
 
-      DLEFT:    5,
-      DRIGHT:   6
+      // DLEFT:    5,
+      // DRIGHT:   6
 
-    }
+    // }
+    var HEXY_SYMBOLS={
+
+      // Double up the \ character because it is an escape character and the first one won't be recognised
+
+      BLANK:            '.',
+
+      BLACK:            'o',
+      BLACK_REVEALED:   'O',
+      BLUE:             'x',
+      BLUE_REVEALED:    'X',
+      DOWN_RIGHT:       '\\',
+      DOWN_CENTER:      '|',
+      DOWN_LEFT:        '/',
+
+      NUMBER:           '+',
+      CONSECUTIVE:      'c',
+      NOT_CONSECUTIVE:  'n'
+
+    };
+    var puzzles=[".|..............................................|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.",
+                 "..|.............................................|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.",
+                 "...|............................................|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.",
+                 "....|...........................................|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.",
+                 ".....|..........................................|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.",
+                 "......|.........................................|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.",
+                 ".......|........................................|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.",
+                 "........|.......................................|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.",
+                 ".........|......................................|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.",
+                 "..........|.....................................|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.",
+                 "...........|....................................|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.",
+                 "............|...................................|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.",
+                 ".............|..................................|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.",
+                 "..............|.................................|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.",
+                 "...............|................................|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.",
+                 "................|...............................|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.",
+                 ".................|..............................|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.",
+                 "..................|.............................|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.",
+                 "...................|............................|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.",
+                 "....................|...........................|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.",
+                 ".....................|..........................|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.",
+                 "......................|.........................|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.",
+                 ".......................|........................|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.",
+                 "........................|.......................|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.",
+                 ".........................|......................|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.",
+                 "..........................|.....................|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.",
+                 "...........................|....................|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.",
+                 "............................|...................|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.",
+                 ".............................|..................|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.",
+                 "..............................|.................|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.",
+                 "...............................|................|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.",
+                 "................................|...............|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.",
+                 ".................................|..............|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.",
+                 "..................................|.............|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.",
+                 "...................................|............|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.",
+                 "....................................|...........|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.",
+                 ".....................................|..........|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.",
+                 "......................................|.........|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.",
+                 ".......................................|........|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.",
+                 "........................................|.......|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.",
+                 ".........................................|......|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.",
+                 "..........................................|.....|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+."
+                ];
+
     var ORIENTATIONS={
 
       POINTY:   0,
@@ -211,17 +278,21 @@ var diagrams = function(processingInstance){
     this.keys         = [];     //  Array holding the value of all keycodes
 
     this.info         = 0;      //  Is the info frame displayed
-    this.telemetry    = false;   //  Is telemetry visible
+    this.telemetry    = false;  //  Is telemetry visible
 
     /* Hextris Specific ------------------ */
 
     this.hexBoard     = this.controls[1];
+
+    this.puzzle       = 0;      //  Index of the current puzzle layout
+
     this.remaining    = 0;      //  How many blue cells need to be uncovered
     this.errors       = 0;      //  How many mistaken clicks occurred
 
     this.orientation  = ORIENTATIONS.FLAT;
+
     this.music        = true;
-    this.level        = '3-1';
+    this.level        = 0;      //  Levels 0 - 35 ( 6 groups of 6 = 36 total)
 
   };
 
@@ -254,7 +325,31 @@ var diagrams = function(processingInstance){
     function getTelemetry()       { return app.telemetry;                 };
     function toggleTelemetry()    { app.telemetry=!app.telemetry;         };
 
-    function clickTest(n)         { println('click: ' + n);               };
+    function clickTest(n)         { print('click: ' + n);               };
+
+    function incrementPuzzle()    {
+
+      app.puzzle++;
+      
+      if(app.puzzle>puzzles.length-1){  app.puzzle=0; }
+
+      app.puzzle=constrain(app.puzzle, 0, puzzles.length-1);
+
+    };
+    function decrementPuzzle()    {
+
+      app.puzzle--;
+
+      if(app.puzzle<0){  app.puzzle=puzzles.length-1; }
+
+      app.puzzle=constrain(app.puzzle, 0, puzzles.length-1);
+
+    };
+    function selectPuzzle(n)      {
+
+      app.puzzle=constrain(n, 0, puzzles.length-1);
+
+    };
 
   }
 
@@ -938,75 +1033,61 @@ var diagrams = function(processingInstance){
       hexBoard.prototype=Object.create(control.prototype);
       hexBoard.prototype.reset        =function(){
 
-/**
-
-  var HEXY_STYLES={
-
-    BLACK:    0,
-    BLUE:     1,
-
-    SPACER:   2,
-
-    ROW:      3,
-    COL:      4,
-
-    DLEFT:    5,
-    DRIGHT:   6
-
-  }
-
-*/
         var p=this;           //  Set a reference to the hexBoard control
 
         this.controls=[];        //  Clear the controls array
         this.activeCell = null;  //  Clear the active hexCell
 
+    // var HEXY_SYMBOLS={
+
+      // Double up the \ character because it is an escape character and the first one won't be recognised
+
+      // BLANK:            '.',
+      // BLACK:            'o',
+      // BLACK_REVEALED:   'O',
+      // BLUE:             'x',
+      // BLUE_REVEALED:    'X',
+      // DOWN_RIGHT:       '\\',
+      // DOWN_CENTER:      '|',
+      // DOWN_LEFT:        '/',
+
+      // BLANK:            '.',
+      // NUMBER:           '+',
+      // CONSECUTIVE:      'c',
+      // NOT_CONSECUTIVE:  'n'
+
+    // };
+
         this.layout=[
-                     [2,2,2,2,2,2,2,2,2,2,2,2,2],
-                     [2,2,2,2,2,2,2,2,2,2,2,2,2],
-                     [2,2,2,2,2,0,0,0,2,2,2,2,2],
-                     [2,2,2,0,0,0,0,0,0,0,2,2,2],
-                     [2,2,0,0,0,0,0,0,0,0,0,2,2],
-                     [2,2,0,0,0,0,0,0,0,0,0,2,2],
-                     [2,2,0,0,0,0,0,0,0,0,0,2,2],
-                     [2,2,0,0,0,0,0,0,0,0,0,2,2],
-                     [2,2,0,0,0,0,0,0,0,0,0,2,2],
-                     [2,2,2,2,0,0,0,0,0,2,2,2,2],
-                     [2,2,2,2,2,2,0,2,2,2,2,2,2],
-                     [2,2,2,2,2,2,2,2,2,2,2,2,2],
-                     [2,2,2,2,2,2,2,2,2,2,2,2,2]
+                     ['.','.','.','.','.','.','.','.','.','.','.','.','.'],
+                     ['.','.','.','.','.','.','.','.','.','.','.','.','.'],
+                     ['.','.','.','.','.','X','o','O','.','.','.','.','.'],
+                     ['.','.','.','o','x','x','x','x','x','x','.','.','.'],
+                     ['.','.','o','o','x','x','x','x','x','x','x','.','.'],
+                     ['.','.','O','o','x','x','x','x','x','x','x','.','.'],
+                     ['.','.','o','o','x','x','x','x','x','x','x','.','.'],
+                     ['.','.','O','o','x','x','x','x','x','x','x','.','.'],
+                     ['.','.','o','o','x','x','x','x','x','x','x','.','.'],
+                     ['.','.','.','.','x','x','x','x','x','.','.','.','.'],
+                     ['.','.','.','.','.','.','x','.','.','.','.','.','.'],
+                     ['.','.','.','.','.','.','.','.','.','.','.','.','.'],
+                     ['.','.','.','.','.','.','.','.','.','.','.','.','.']
                     ];
 
         this.style =[
-                     [2,2,2,2,2,2,2,2,2,2,2,2,2],
-                     [2,2,2,2,2,2,2,2,2,2,2,2,2],
-                     [2,2,4,4,6,0,1,1,5,4,4,2,2],
-                     [2,2,6,0,0,0,1,1,1,1,5,2,2],
-                     [2,2,0,0,0,0,1,1,1,1,1,2,2],
-                     [2,2,0,0,0,0,1,1,1,1,1,2,2],
-                     [2,2,0,0,0,0,0,1,1,1,1,2,2],
-                     [2,2,0,0,0,0,0,1,1,1,1,2,2],
-                     [2,2,0,0,0,0,0,1,1,1,1,2,2],
-                     [2,2,2,2,0,0,0,1,1,2,2,2,2],
-                     [2,2,2,2,2,2,0,2,2,2,2,2,2],
-                     [2,2,2,2,2,2,2,2,2,2,2,2,2],
-                     [2,2,2,2,2,2,2,2,2,2,2,2,2]
-                    ];
-
-        this.text  =[
-                     [0,0,0,0,0,0,0,0,0,0,0,0,0],
-                     [0,0,0,0,0,0,0,0,0,0,0,0,0],
-                     [0,0,0,0,0,0,0,0,0,0,0,0,0],
-                     [0,0,0,0,0,0,0,0,0,0,0,0,0],
-                     [0,0,0,0,0,0,0,0,0,0,0,0,0],
-                     [0,0,0,0,0,0,0,0,0,0,0,0,0],
-                     [0,0,0,0,0,0,0,0,0,0,0,0,0],
-                     [0,0,0,0,0,0,0,0,0,0,0,0,0],
-                     [0,0,0,0,0,0,0,0,0,0,0,0,0],
-                     [0,0,0,0,0,0,0,0,0,0,0,0,0],
-                     [0,0,0,0,0,0,0,0,0,0,0,0,0],
-                     [0,0,0,0,0,0,0,0,0,0,0,0,0],
-                     [0,0,0,0,0,0,0,0,0,0,0,0,0]
+                     ['.','.','.','.','.','.','.','.','.','.','.','.','.'],
+                     ['.','.','.','.','.','.','.','.','.','.','.','.','.'],
+                     [',',',','|','|','|','+','+','+','|','|','|',',',','],
+                     [',',',','|','+','+','+','+','+','+','+','\\',',',','],
+                     [',',',','+','+','+','+','+','+','+','+','+',',',','],
+                     [',',',','+','+','+','+','+','+','+','+','+',',',','],
+                     [',',',','+','+','+','+','+','+','+','+','+',',',','],
+                     [',',',','+','+','+','+','+','+','+','+','+',',',','],
+                     [',',',','+','+','+','+','+','+','+','+','+',',',','],
+                     [',',',',',',',','+','+','+','+','+',',',',',',',','],
+                     [',',',',',',',',',',',','+',',',',',',',',',',',','],
+                     ['.','.','.','.','.','.','.','.','.','.','.','.','.'],
+                     ['.','.','.','.','.','.','.','.','.','.','.','.','.']
                     ];
 
         var rowArray=[];  // Temporary 1-D array to hold each successive row before adding to the corresponding 2-D array
@@ -1016,7 +1097,7 @@ var diagrams = function(processingInstance){
 
           p.controls=[];
           
-          HEX_SIZE=width/(p.layout.length+5);
+          HEX_SIZE=width/(p.layout.length+3);
           
           var w=HEX_SIZE;
 
@@ -1037,7 +1118,7 @@ var diagrams = function(processingInstance){
           yOffset = w*cos(PI/6);
           
           xMargin = w/2     + (p.w-(w+w*(p.layout[0].length-1)*0.75))/2;
-          yMargin = yOffset +  p.h/2 - (p.layout.length-1)*yOffset/2; 
+          yMargin = yOffset +  p.h/2 - (p.layout.length-1)*yOffset/2-w/2;
 
           for(row in p.layout){
             for(col in p.layout[row]){
@@ -1055,7 +1136,6 @@ var diagrams = function(processingInstance){
                  col:       col,
                  layout:    p.layout[row][col],
                  style:     p.style[row][col],
-                 text:      p.text[row][col],
                  font:      monoFont,
                  cursor:    HAND}));
 
@@ -1249,9 +1329,9 @@ var diagrams = function(processingInstance){
 
             // if(e instanceof TypeError){
               // Cell doesn't exist
-              // println('Type Error');
+              // print('Type Error');
             // }
-            // else{ println(e); }
+            // else{ print(e); }
 
           // }
 
@@ -1273,7 +1353,7 @@ var diagrams = function(processingInstance){
           
         };
         
-        randomizeStyle();
+        // randomizeStyle();
         load();
         link();
 
@@ -1293,14 +1373,14 @@ var diagrams = function(processingInstance){
 
             switch(p.lines[l].style){
 
-              case HEXY_STYLES.COL:
+              case HEXY_SYMBOLS.COL:
 
                 line(p.lines[l].x, p.lines[l].y + (HEX_SIZE-2)/2,
                      p.lines[l].x, height);
 
                 break;
 
-              case HEXY_STYLES.DLEFT:
+              case HEXY_SYMBOLS.DLEFT:
 
                 var x=p.lines[l].x;
                 var y=p.lines[l].y;
@@ -1315,7 +1395,7 @@ var diagrams = function(processingInstance){
 
                 break;
 
-              case HEXY_STYLES.DRIGHT:
+              case HEXY_SYMBOLS.DRIGHT:
 
                 var x=p.lines[l].x;
                 var y=p.lines[l].y;
@@ -1476,8 +1556,6 @@ var diagrams = function(processingInstance){
               calculateRemaining();
 
         popMatrix();
-
-
         
       };
       hexBoard.prototype.hitTest      = function(x,y){
@@ -2609,7 +2687,7 @@ var diagrams = function(processingInstance){
 
         this.active=this.hit &&
                     app.focus===this;// &&
-                    // this.style!==HEXY_STYLES.SPACER;
+                    // this.style!==HEXY_SYMBOLS.SPACER;
 
         var offset=0;
         var p=this;
@@ -2619,26 +2697,31 @@ var diagrams = function(processingInstance){
           cursor(this.cursor);
         }
 
+// var HEXY_SYMBOLS={
 
-// var HEXY_STYLES={
+  // Double up the \ character because it is an escape character and the first one won't be recognised
 
-  // BLACK:    0,
-  // BLUE:     1,
+  // BLANK:            '.',
+  // BLACK:            'o',
+  // BLACK_REVEALED:   'O',
+  // BLUE:             'x',
+  // BLUE_REVEALED:    'X',
+  // DOWN_RIGHT:       '\\',
+  // DOWN_CENTER:      '|',
+  // DOWN_LEFT:        '/',
 
-  // SPACER:   2,
-
-  // ROW:      3,
-  // COL:      4,
-
-  // DLEFT:    5,
-  // DRIGHT:   6
-
-// }
-
+  // BLANK:            '.',
+  // NUMBER:           '+',
+  // CONSECUTIVE:      'c',
+  // NOT_CONSECUTIVE:  'n'
+  
         /* Highlight Background  -------------------------------------------------- */
         function highlight(){
 
-          if(p.layout<2){
+          if(p.layout===HEXY_SYMBOLS.BLACK ||
+             p.layout===HEXY_SYMBOLS.BLACK_REVEALED ||
+             p.layout===HEXY_SYMBOLS.BLUE ||
+             p.layout===HEXY_SYMBOLS.BLUE_REVEALED){
 
             noStroke();
             fill(CLRS.WHITE);
@@ -2646,8 +2729,8 @@ var diagrams = function(processingInstance){
             beginShape();
 
               for(var pt in p.dpoints){
-                vertex(p.dpoints[pt].x,
-                       p.dpoints[pt].y);
+                vertex(p.dpoints[pt].x-0.5,
+                       p.dpoints[pt].y-0.5);
               }
 
             endShape(CLOSE);
@@ -2657,20 +2740,14 @@ var diagrams = function(processingInstance){
         }
         function outerHexagon(){
 
+          noStroke();
+
           switch(p.layout){
 
-            case 0:
-
-              if     (p.style===HEXY_STYLES.BLACK){ fill(CLRS.H_BLACK); }
-              else if(p.style===HEXY_STYLES.BLUE ){ fill(CLRS.H_BLUE);  }
-
-              break;
-
-            case 1:
-
-              fill(CLRS.H_ORANGE);
-
-              break;
+            case HEXY_SYMBOLS.BLACK:          fill(CLRS.H_ORANGE);  break;
+            case HEXY_SYMBOLS.BLUE:           fill(CLRS.H_ORANGE);  break;
+            case HEXY_SYMBOLS.BLACK_REVEALED: fill(CLRS.H_BLACK);   break;
+            case HEXY_SYMBOLS.BLUE_REVEALED:  fill(CLRS.H_BLUE);    break;
 
             default:
 
@@ -2708,24 +2785,12 @@ var diagrams = function(processingInstance){
 
             switch(p.layout){
 
-              case 0:
+              case HEXY_SYMBOLS.BLACK:          fill(CLRS.H_ORANGE_L);  break;
+              case HEXY_SYMBOLS.BLUE:           fill(CLRS.H_ORANGE_L);  break;
+              case HEXY_SYMBOLS.BLACK_REVEALED: fill(CLRS.H_BLACK_L);   break;
+              case HEXY_SYMBOLS.BLUE_REVEALED:  fill(CLRS.H_BLUE_L);    break;
 
-                if     (p.style===HEXY_STYLES.BLACK){ fill(CLRS.H_BLACK_L); }
-                else if(p.style===HEXY_STYLES.BLUE ){ fill(CLRS.H_BLUE_L);  }
-
-                break;
-
-              case 1:
-
-                fill(CLRS.H_ORANGE_L);
-
-                break;
-
-              default:
-
-                noFill();
-
-                break;
+              default:                          noFill();               break;
 
             }
 
@@ -2745,7 +2810,7 @@ var diagrams = function(processingInstance){
 
             scale(1,-1);
 
-              if(p.style<HEXY_STYLES.SPACER){
+              if(p.style<HEXY_SYMBOLS.BLANK){
 
                 fill(CLRS.WHITE);
 
@@ -2755,7 +2820,7 @@ var diagrams = function(processingInstance){
 
               }
 
-              if(p.style>HEXY_STYLES.BLUE){
+              if(p.style>HEXY_SYMBOLS.BLUE){
 
                 fill(CLRS.BLACK);
 
@@ -2764,42 +2829,43 @@ var diagrams = function(processingInstance){
                 }
 
               }
-              
+
               textFont(p.font,16);
               textSize(16);
               textAlign(CENTER,CENTER);
 
               if(p.text===-2){ p.text='?'; }
 
-                if(p.style!==HEXY_STYLES.SPACER &&
+                if(p.layout===HEXY_SYMBOLS.BLANK &&
                    p.text!=='0'){
 
-                  if(p.style===HEXY_STYLES.COL){
+                  if(p.style===HEXY_SYMBOLS.DOWN_CENTER){
                     textAlign(CENTER,TOP);
                     rotate(0);
                   }
-                  else if(p.style===HEXY_STYLES.DLEFT){
+                  else if(p.style===HEXY_SYMBOLS.DOWN_LEFT){
                     textAlign(CENTER,TOP);
                     rotate(PI/3);
                   }
-                  else if(p.style===HEXY_STYLES.DRIGHT){
+                  else if(p.style===HEXY_SYMBOLS.DOWN_RIGHT){
                     textAlign(CENTER,TOP);
                     rotate(-PI/3);
                   }
 
-                  if(p.text!==0){
+                  if(p.text!==''){
                     text(p.text, 0,0);
                   }
 
                 }
-text(p.total,0,0);
+
           popMatrix();
 
         }
         function activeCell(){
 
           if(p.hit &&
-             p.layout===1){
+             (p.layout===HEXY_SYMBOLS.BLUE ||
+              p.layout===HEXY_SYMBOLS.BLACK)){
 
             fill(getColor(CLRS.BLACK,15));
 
@@ -2815,9 +2881,6 @@ text(p.total,0,0);
 
           }
 
-          // fill(CLRS.RED);
-          // ellipse(this.hpoints[0].x,this.hpoints[0].y,5,5);
-
         }
 
         noStroke();
@@ -2828,13 +2891,11 @@ text(p.total,0,0);
 
           scale(1,-1);
 
-            if(this.layout<HEXY_STYLES.SPACER){
-              highlight();
-            }
+            highlight();
             outerHexagon();
-            if(this.style<HEXY_STYLES.SPACER){ innerHexagon(); }
+            innerHexagon();
             caption();
-            if(this.style<HEXY_STYLES.SPACER){ activeCell();   }
+            activeCell();
             
             if(this.clickRadius>0){ 
               
@@ -2846,14 +2907,14 @@ text(p.total,0,0);
 
               rotate(radians(this.clickRadius)*3);
 
-              beginShape();
+              // beginShape();
 
-                for(var pt=0; pt<6; pt++){
-                  vertex(cos(radians(pt*60))*w,
-                         sin(radians(pt*60))*w );
-                }
+                // for(var pt=0; pt<6; pt++){
+                  // vertex(cos(radians(pt*60))*w,
+                         // sin(radians(pt*60))*w );
+                // }
 
-              endShape();
+              // endShape();
               
               this.clickRadius-=5;
 
@@ -2889,64 +2950,56 @@ text(p.total,0,0);
             
         popMatrix();
 
-        if(this.active){
-          noStroke();
-          strokeWeight(5);
-          if(this.top!==null){
-            stroke(CLRS.BLACK);
-            line(this.top.x, this.top.y, this.x, this.y);
-          }
-          if(this.bottom!==null){
-            stroke(CLRS.RED);
-            line(this.bottom.x, this.bottom.y, this.x, this.y);
-          }
-          if(this.topLeft!==null){
-            stroke(CLRS.ORANGE);
-            line(this.topLeft.x, this.topLeft.y, this.x, this.y);
-          }
-          if(this.bottomLeft!==null){
-            stroke(CLRS.YELLOW);
-            line(this.bottomLeft.x, this.bottomLeft.y, this.x, this.y);
-          }
-          if(this.topRight!==null){
-            stroke(CLRS.GREEN);
-            line(this.topRight.x, this.topRight.y, this.x, this.y);
-          }
-          if(this.bottomRight!==null){
-            stroke(CLRS.BLUE);
-            line(this.bottomRight.x, this.bottomRight.y, this.x, this.y);
-          }
+        // if(this.active){
+          // noStroke();
+          // strokeWeight(5);
+          // if(this.top!==null){
+            // stroke(CLRS.BLACK);
+            // line(this.top.x, this.top.y, this.x, this.y);
+          // }
+          // if(this.bottom!==null){
+            // stroke(CLRS.RED);
+            // line(this.bottom.x, this.bottom.y, this.x, this.y);
+          // }
+          // if(this.topLeft!==null){
+            // stroke(CLRS.ORANGE);
+            // line(this.topLeft.x, this.topLeft.y, this.x, this.y);
+          // }
+          // if(this.bottomLeft!==null){
+            // stroke(CLRS.YELLOW);
+            // line(this.bottomLeft.x, this.bottomLeft.y, this.x, this.y);
+          // }
+          // if(this.topRight!==null){
+            // stroke(CLRS.GREEN);
+            // line(this.topRight.x, this.topRight.y, this.x, this.y);
+          // }
+          // if(this.bottomRight!==null){
+            // stroke(CLRS.BLUE);
+            // line(this.bottomRight.x, this.bottomRight.y, this.x, this.y);
+          // }
           
-        }
+        // }
 
       };
       hexCell.prototype.hitTest=function(x,y){
 
-        var retVal=false;
-
         var rectHit=rectangleHit(new pnt(this.x+this.dpoints[1].x+x, this.y+this.dpoints[1].y+y),
                                  new pnt(this.x+this.dpoints[2].x+x, this.y+this.dpoints[2].y+y),
                                  new pnt(this.x+this.dpoints[4].x+x, this.y+this.dpoints[4].y+y),
-                                 mouseX,mouseY);
+                                 mouseX, mouseY);
 
-        var triHit0=triangleHit(new pnt(this.x+this.dpoints[0].x+x, this.y+this.dpoints[0].y+y),
-                                new pnt(this.x+this.dpoints[1].x+x, this.y+this.dpoints[1].y+y),
-                                new pnt(this.x+this.dpoints[5].x+x, this.y+this.dpoints[5].y+y),
-                                mouseX,mouseY);
+        var triHit0=triangleHit( new pnt(this.x+this.dpoints[0].x+x, this.y+this.dpoints[0].y+y),
+                                 new pnt(this.x+this.dpoints[1].x+x, this.y+this.dpoints[1].y+y),
+                                 new pnt(this.x+this.dpoints[5].x+x, this.y+this.dpoints[5].y+y),
+                                 mouseX, mouseY);
 
-        var triHit1=triangleHit(new pnt(this.x+this.dpoints[2].x+x, this.y+this.dpoints[2].y+y),
-                                new pnt(this.x+this.dpoints[3].x+x, this.y+this.dpoints[3].y+y),
-                                new pnt(this.x+this.dpoints[4].x+x, this.y+this.dpoints[4].y+y),
-                                mouseX,mouseY);
-        if(rectHit ||
-           triHit0 ||
-           triHit1){
-
-          retVal=true;
-
-        }
-
-        return retVal;
+        var triHit1=triangleHit( new pnt(this.x+this.dpoints[2].x+x, this.y+this.dpoints[2].y+y),
+                                 new pnt(this.x+this.dpoints[3].x+x, this.y+this.dpoints[3].y+y),
+                                 new pnt(this.x+this.dpoints[4].x+x, this.y+this.dpoints[4].y+y),
+                                 mouseX, mouseY);
+        return (rectHit ||
+                triHit0 ||
+                triHit1);
 
       };
       hexCell.prototype.outerHitTest=function(x,y){
@@ -2993,39 +3046,20 @@ text(p.total,0,0);
 
         if(this.active){
 
-          if(this.layout!==HEXY_STYLES.SPACER){
+          if(this.layout===HEXY_SYMBOLS.BLUE){
 
-            if(this.layout===1){
+            this.layout=HEXY_SYMBOLS.BLUE_REVEALED;
+            // this.parent.layout[this.row][this.col]=0;
 
-              if(this.style===HEXY_STYLES.BLUE){
+            this.clickRadius=HEX_SIZE-10;
 
-                this.layout=0;
-                this.parent.layout[this.row][this.col]=0;
-
-                this.clickRadius=HEX_SIZE-10;
-
-              }
-              else if(this.style===HEXY_STYLES.BLACK){
-                app.errors++;
-              }
-
-            }
-            else if(this.layout===0){
-
-              if(this.style===HEXY_STYLES.BLUE &&
-                 this.text!==0){
-                this.halo=!this.halo;
-              }
-              else if(this.style===HEXY_STYLES.BLACK){
-
-              }
-
-            }
-
+          }
+          else if(this.layout===HEXY_SYMBOLS.BLACK){
+            app.errors++;
           }
 
           { //  Toggle Line Display
-            if(this.style>HEXY_STYLES.SPACER){
+            if(this.layout>HEXY_SYMBOLS.SPACER){
               this.line=!this.line;
             }
 
@@ -3040,34 +3074,23 @@ text(p.total,0,0);
 
         if(this.active){
 
-          if(this.layout===0 &&
-             this.style===HEXY_STYLES.BLUE){
+          // if(this.style===HEXY_SYMBOLS.BLUE){
             this.enabled=!this.enabled;
+          // }
+
+          if(this.layout===HEXY_SYMBOLS.BLACK){
+
+            this.layout=HEXY_SYMBOLS.BLACK_REVEALED;
+            
+            // this.clickRadius=HEX_SIZE;
+
           }
+          else{
 
-          if(this.style>HEXY_STYLES.BLUE){
-            this.enabled=!this.enabled;
-          }
-
-          if(this.layout<HEXY_STYLES.SPACER){
-
-            if(this.layout===1 &&
-               this.style===HEXY_STYLES.BLACK){
-              
-              this.layout=0;
-              this.parent.layout[this.row][this.col]=0;
-              
-              this.clickRadius=HEX_SIZE;
-
+            if(this.layout===HEXY_SYMBOLS.BLUE){
+              app.errors++;
             }
             else{
-
-              if(this.layout===1){
-                app.errors++;
-              }
-              else{
-
-              }
 
             }
 
@@ -3218,6 +3241,12 @@ text(p.total,0,0);
 
       popMatrix();
 
+    textSize(24);
+    textAlign(CENTER,CENTER);
+    fill(CLRS.RED);
+
+      text(app.puzzle, 30, 30);
+      
   };
 
   var execute;
@@ -3233,46 +3262,72 @@ text(p.total,0,0);
   strokeJoin(MITER);
   strokeCap(SQUARE);
 
-  
+  /*
+    var HEXY_SYMBOLS={
+
+      // Double up the \ character because it is an escape character and the first one won't be recognised
+
+      BLANK:            '.',
+      BLACK:            'o',
+      BLACK_REVEALED:   'O',
+      BLUE:             'x',
+      BLUE_REVEALED:    'X',
+      DOWN_RIGHT:       '\\',
+      DOWN_CENTER:      '|',
+      DOWN_LEFT:        '/',
+
+      BLANK:            '.',
+      NUMBER:           '+',
+      CONSECUTIVE:      'c',
+      NOT_CONSECUTIVE:  'n'
+
+    };
+
+  */
 
   /** Testing *.hexcell file format ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-  
 
-      // Double up the \ character because it is an escape character and the first one won't be recognised  
-      var HEX_SYMBOLS={
-        
-        BLANK:            '.',
-        BLACK:            'o',
-        BLACK_REVEALED:   'O',
-        BLUE:             'x',
-        BLUE_REVEALED:    'X',        
-        DOWN_RIGHT:       '\\',
-        DOWN_CENTER:      '|',
-        DOWN_LEFT:        '/',
-        NUMBER:           '+',
-        CONSECUTIVE:      'c',        
-        NOT_CONSECUTIVE:  'n'
+      var f="................................................|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.";
 
-      };
+      // var f="............................|+..............|+......|+..................................|+..........|+../+..............|+......................o...o...o...x...x...x...x...o+..o+..o+..x.......................x...x...o+..x+..x...o+..x...on..oc..oc..o+..x...................o+..o+..on..o...x...o+..x...o...x...x...x...x...o...............|+..o...o+..x...x+..x...o...o+..oc..x...x...x...x+..|+..............o+..o...x...x+..o...o+..o+..o+..x...x...o+..x...x...............x...x...x...oc..x...on..o+..x...x...x+..o+..on..o+..o+..........o...o+..o...o...o.......x+..o+..o+......x...x...x...o+..o.......\\+..x...on..on..o+..........o+..o+..........x...o...o...o+..........o...x...oc..x...o.......x...o+..x...|n..o+..x...x...x...x...........x+..x...o+..x...x...x+..x...o+..x+..o...x...o+..o+..o...........x...o+..x...oc..o...o+..x...x...x...x...o...o...o+..on..o+..........o+..x...o...o+..on..o+..o...o+..o...x+..o...o+..x...o+..........o...o...o...o+..oc..x...o+..On..o+..x...o+..x+..on..o...x...........o+..x...x...x...o+..x...o...x...o...o...o...x...o+..o+..........x+..x...x.......x...oc..x.......x...o...o.......o...x...x...........on..o+..........o...oc../+..|+..x+..x...........o...o+..........o...x...on......x...o...o+..|n..x...x...x.......x...o...o+..........o...x...o+..x...o...oc..x...x...x...o+..o...o...o...x...........x...x+..o+..x...o+..x...o+..On..oc..o+..x...o...o+..oc..o...........x...o+..o...x+..o+..x...x...o+..o+..o...o+..oc..o...x...........o...x+..x...oc..o+..x...x...o+..o+..o...x...oc..x...o+..x...........o...o...o+..o...o+..o...o...o...x...x...o+..x...o+..o+..........x...x...o+..o+..o+......o+..on..x.......o+..x...o...o...x...........o+..on..o+..x...|+......x...x.......|n..on..x...x...oc..........o...on..oc..x+..x...|n..o+..o+..x.......o+..o+..x+..o+..x...........o+..x...o...oc..on..x...o+..x...x...x...x...x...o...x...............o+..x...x+..o...x...o...x...x...o+..o+..x...o+..o+..................o...x...oc..x+..oc..x...o+..o+..o+..on..on..x+..................o+..x...x...o...oc..o...oc..o...o...o+..o+..x+..o+..................o+..x...o+..x+..o...x...o...o+..x...x...o+..x.......................o...o...x...x...x...x...o...o...o...x...o+............";
 
+      var first='';
+      var secnd='';
 
-      
-      var f="............................|+..............|+......|+..................................|+..........|+../+..............|+......................o...o...o...x...x...x...x...o+..o+..o+..x.......................x...x...o+..x+..x...o+..x...on..oc..oc..o+..x...................o+..o+..on..o...x...o+..x...o...x...x...x...x...o...............|+..o...o+..x...x+..x...o...o+..oc..x...x...x...x+..|+..............o+..o...x...x+..o...o+..o+..o+..x...x...o+..x...x...............x...x...x...oc..x...on..o+..x...x...x+..o+..on..o+..o+..........o...o+..o...o...o.......x+..o+..o+......x...x...x...o+..o.......\\+..x...on..on..o+..........o+..o+..........x...o...o...o+..........o...x...oc..x...o.......x...o+..x...|n..o+..x...x...x...x...........x+..x...o+..x...x...x+..x...o+..x+..o...x...o+..o+..o...........x...o+..x...oc..o...o+..x...x...x...x...o...o...o+..on..o+..........o+..x...o...o+..on..o+..o...o+..o...x+..o...o+..x...o+..........o...o...o...o+..oc..x...o+..On..o+..x...o+..x+..on..o...x...........o+..x...x...x...o+..x...o...x...o...o...o...x...o+..o+..........x+..x...x.......x...oc..x.......x...o...o.......o...x...x...........on..o+..........o...oc../+..|+..x+..x...........o...o+..........o...x...on......x...o...o+..|n..x...x...x.......x...o...o+..........o...x...o+..x...o...oc..x...x...x...o+..o...o...o...x...........x...x+..o+..x...o+..x...o+..On..oc..o+..x...o...o+..oc..o...........x...o+..o...x+..o+..x...x...o+..o+..o...o+..oc..o...x...........o...x+..x...oc..o+..x...x...o+..o+..o...x...oc..x...o+..x...........o...o...o+..o...o+..o...o...o...x...x...o+..x...o+..o+..........x...x...o+..o+..o+......o+..on..x.......o+..x...o...o...x...........o+..on..o+..x...|+......x...x.......|n..on..x...x...oc..........o...on..oc..x+..x...|n..o+..o+..x.......o+..o+..x+..o+..x...........o+..x...o...oc..on..x...o+..x...x...x...x...x...o...x...............o+..x...x+..o...x...o...x...x...o+..o+..x...o+..o+..................o...x...oc..x+..oc..x...o+..o+..o+..on..on..x+..................o+..x...x...o...oc..o...oc..o...o...o+..o+..x+..o+..................o+..x...o+..x+..o...x...o...o+..x...x...o+..x.......................o...o...x...x...x...x...o...o...o...x...o+............";
-      
-      var first="";
-      var secnd;
-      
-      for(var n=0; n<f.length-1; n+=2){
-        
-        first+=f.substring(n,n+1);
-        secnd+=f.substring(n+1,n+2);
-  
+      for(var n=0; n<f.length; n+=2){
+
+        first+=f.substring(  n, n+1);
+        secnd+=f.substring(n+1, n+2);
+
       }
 
-      // println(f.substring(n, n+66));
-      
-println(first.length);
-println(secnd.length);
+print(f.length);
+
+print(first);
+print(first.length);
+
+print(secnd);
+print(secnd.length);
+
+      var arrFirst=[];
+      var arrSecond=[];
+
+      for(var n=0; n<first.length; n+=13){
+
+        arrFirst.push( split(first.substring(n, n+13),''));
+        arrSecond.push(split(secnd.substring(n, n+13),''));
+
+      }
+
+  for(var row=0; row<arrFirst.length; row++){
+    print(arrFirst[row]);
+  }
+
+print(arrFirst.length);
+
+print(arrSecond);
+print(arrSecond.length);
+print(arrSecond.length);
 
   /** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
@@ -3311,10 +3366,10 @@ println(secnd.length);
           case app.keys[KEYCODES.R] ||
                app.keys[KEYCODES.r]:          app.hexBoard.reset();     break;  /* R or r - Reset */
 
-          // case app.keys[KEYCODES.LEFT] ||
-               // app.keys[KEYCODES.A]:          left();                   break;    /* LEFT or A        */
-          // case app.keys[KEYCODES.RIGHT] ||
-               // app.keys[KEYCODES.D]:          right();                  break;    /* RIGHT or D       */
+          case app.keys[KEYCODES.LEFT] ||
+               app.keys[KEYCODES.A]:          decrementPuzzle();        break;    /* LEFT or A        */
+          case app.keys[KEYCODES.RIGHT] ||
+               app.keys[KEYCODES.D]:          incrementPuzzle();        break;    /* RIGHT or D       */
 
           // case app.keys[KEYCODES.UP] &&
                // app.keys[KEYCODES.CONTROL] ||
@@ -3337,7 +3392,7 @@ println(secnd.length);
         }
 
     };
-    keyTyped=function()   { /* println('typed ' + (key) + ' ' + keyCode); */  };
+    keyTyped=function()   { /* print('typed ' + (key) + ' ' + keyCode); */  };
     keyReleased=function(){ app.keys[keyCode]=false;                          };
 
   }
@@ -3350,12 +3405,12 @@ println(secnd.length);
       // if(app.orientation===ORIENTATIONS.FLAT){
         // app.orientation=ORIENTATIONS.POINTY;
         // app.hexBoard.reset();
-        // println('pointy');
+        // print('pointy');
       // }
       // else{
         // app.orientation=ORIENTATIONS.FLAT;
         // app.hexBoard.reset();
-        // println('flat');
+        // print('flat');
       // }
 
       if(mouseButton===RIGHT){ execute=play; }
@@ -3513,6 +3568,34 @@ println(secnd.length);
 
 
 /*
+
+..........................
+......................|+..
+............o...o...o...x.
+..........x...x...o+..x+..
+........o+..o+..on..o...x.
+......|+..o...o+..x...x+..
+........o+..o...x...x+..o.
+......x...x...x...oc..x...
+....o...o+..o...o...o.....
+..\\+..x...on..on..o+.....
+....o...x...oc..x...o.....
+......x+..x...o+..x...x...
+....x...o+..x...oc..o...o+
+
+......o+..x...o...o+..on..
+....o...o...o...o+..oc..x.
+......o+..x...x...x...o+..
+....x+..x...x.......x...oc
+......on..o+..........o...
+....o...x...on......x...o.
+......o...x...o+..x...o...
+....x...x+..o+..x...o+..x.
+......x...o+..o...x+..o+..
+....o...x+..x...oc..o+..x.
+......o...o...o+..o...o+..
+....x...x...o+..o+..o+....
+......o+..on..o+..x...|+..
 
 Hexcells level v1
 A Giant Scoop of Vanilla #3
