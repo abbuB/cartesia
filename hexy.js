@@ -51,7 +51,7 @@ var diagrams = function(processingInstance){
           Choose Life - Sliding Triangle Game
 
     TO DO:
-      
+
       - refresh screen on mouse movement
       - click sounds for blue and black hexCells
       - uncover animations triangles
@@ -63,7 +63,7 @@ var diagrams = function(processingInstance){
       - Expanding halos
 
       - ***** Remove Dragging from all controls *****
-      
+
       - Allow for optional orientation of hexagons
         * pointy top
         * flat top
@@ -84,9 +84,9 @@ var diagrams = function(processingInstance){
 */
 
   function print(s){
-    
+
     console.log(s);
-    
+
   };
 
   var serifFont   = createFont('sans-serif', 16);
@@ -330,7 +330,7 @@ var diagrams = function(processingInstance){
     function incrementPuzzle()    {
 
       app.puzzle++;
-      
+
       if(app.puzzle>puzzles.length-1){  app.puzzle=0; }
 
       app.puzzle=constrain(app.puzzle, 0, puzzles.length-1);
@@ -362,7 +362,7 @@ var diagrams = function(processingInstance){
       var control=function(id, parent, x, y, w, h){
 
         app.controlCount++;
-      
+
         /* explicit properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
         this.id       = id;       /** Unique identification number --
                                       Change to GUID for production) */
@@ -464,7 +464,7 @@ var diagrams = function(processingInstance){
 
             fill(192);
             noStroke();
-            
+
               rect(0, 0, this.w, this.h);
 
             forEach(this.controls, 'draw');
@@ -805,15 +805,15 @@ var diagrams = function(processingInstance){
           else     { fill(getColor(CLRS.BLACK,80));  }
 
           fill(getColor(CLRS.BLACK,50));
-          
+
             if(p.hit){
               fill(getColor(CLRS.BLACK,70));
             }
-            
+
             rect(p.offset, 0, p.w, p.h, 5);
 
         };
-        
+
         function title(){
 
           textAlign(CENTER,CENTER);
@@ -883,12 +883,12 @@ var diagrams = function(processingInstance){
                  '\n'     + nf(app.frameRate,1,1),
 
                  col2, row0);
-                 
+
         };
         function appSpecific(){
-          
+
           var top=410;
-          
+
           fill(getColor(CLRS.BLACK,50));
 
             rect(p.offset+10,  top, p.w-20, 170, 3);
@@ -931,16 +931,16 @@ var diagrams = function(processingInstance){
 
         if     ( app.telemetry && this.offset>-200){ this.offset-=10; }
         else if(!app.telemetry && this.offset<0   ){ this.offset+=10; }
-            
+
         var p=this;
-        
+
         var row0 = 30;
         var row1 = 90;
 
         var col0 = this.offset+20;
         var col1 = this.offset+25;
         var col2 = this.offset+170;
-            
+
         pushMatrix();
 
           translate(this.x, this.y);
@@ -1018,10 +1018,11 @@ var diagrams = function(processingInstance){
         // this.angle          = 0;
 
         this.layout         = [];   //  Array of the layout of hexcells
-        this.hints          = [];   //  Array of nexCell hints
+        this.text           = [];   //  Array of nexCell hints
+
         this.lines          = [];   //  Array of hexCells with highlight lines activated
         this.halos          = [];   //  Array of hexCells with a halo activated
-        
+
         this.clrOffset      = 0;
         this.clrIncr        = 0.5;
 
@@ -1059,35 +1060,35 @@ var diagrams = function(processingInstance){
     // };
 
         this.layout=[
-                     ['.','.','.','.','.','.','.','.','.','.','.','.','.'],
-                     ['.','.','.','.','.','.','.','.','.','.','.','.','.'],
-                     ['.','.','.','.','.','X','o','O','.','.','.','.','.'],
-                     ['.','.','.','o','x','x','x','x','x','x','.','.','.'],
-                     ['.','.','o','o','x','x','x','x','x','x','x','.','.'],
-                     ['.','.','O','o','x','x','x','x','x','x','x','.','.'],
-                     ['.','.','o','o','x','x','x','x','x','x','x','.','.'],
-                     ['.','.','O','o','x','x','x','x','x','x','x','.','.'],
-                     ['.','.','o','o','x','x','x','x','x','x','x','.','.'],
-                     ['.','.','.','.','x','x','x','x','x','.','.','.','.'],
-                     ['.','.','.','.','.','.','x','.','.','.','.','.','.'],
-                     ['.','.','.','.','.','.','.','.','.','.','.','.','.'],
-                     ['.','.','.','.','.','.','.','.','.','.','.','.','.']
+                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+                     ['.', '.', '.', '.', '.', 'X', 'o', 'O', '.', '.', '.', '.', '.'],
+                     ['.', '.', '.', 'o', 'x', 'x', 'x', 'x', 'x', 'x', '.', '.', '.'],
+                     ['.', '.', 'o', 'o', 'x', 'x', 'x', 'x', 'x', 'x', 'x', '.', '.'],
+                     ['.', '.', 'O', 'o', 'x', 'x', 'x', 'x', 'x', 'x', 'x', '.', '.'],
+                     ['.', '.', 'o', 'o', 'x', 'x', 'x', 'x', 'x', 'x', 'x', '.', '.'],
+                     ['.', '.', 'O', 'o', 'x', 'x', 'x', 'x', 'x', 'x', 'x', '.', '.'],
+                     ['.', '.', 'o', 'o', 'x', 'x', 'x', 'x', 'x', 'x', 'x', '.', '.'],
+                     ['.', '.', '.', '.', 'x', 'x', 'x', 'x', 'x', '.', '.', '.', '.'],
+                     ['.', '.', '.', '.', '.', '.', 'x', '.', '.', '.', '.', '.', '.'],
+                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.']
                     ];
 
-        this.style =[
-                     ['.','.','.','.','.','.','.','.','.','.','.','.','.'],
-                     ['.','.','.','.','.','.','.','.','.','.','.','.','.'],
-                     [',',',','|','|','|','+','+','+','|','|','|',',',','],
-                     [',',',','|','+','+','+','+','+','+','+','\\',',',','],
-                     [',',',','+','+','+','+','+','+','+','+','+',',',','],
-                     [',',',','+','+','+','+','+','+','+','+','+',',',','],
-                     [',',',','+','+','+','+','+','+','+','+','+',',',','],
-                     [',',',','+','+','+','+','+','+','+','+','+',',',','],
-                     [',',',','+','+','+','+','+','+','+','+','+',',',','],
-                     [',',',',',',',','+','+','+','+','+',',',',',',',','],
-                     [',',',',',',',',',',',','+',',',',',',',',',',',','],
-                     ['.','.','.','.','.','.','.','.','.','.','.','.','.'],
-                     ['.','.','.','.','.','.','.','.','.','.','.','.','.']
+        this.text  =[
+                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+                     ['.', '.', '|', '|', '|', '+', '+', '+', '|', '|', '|', '.', '.'],
+                     ['.', '.', '\\', '+', '+', '+', '+', '+', '+', '+', '/', '.', '.'],
+                     ['.', '.', '+', '+', '+', '+', '+', '+', '+', '+', '+', '.', '.'],
+                     ['.', '.', '+', '+', '+', '+', '+', '+', '+', '+', '+', '.', '.'],
+                     ['.', '.', '+', '+', '+', '+', '+', '+', '+', '+', '+', '.', '.'],
+                     ['.', '.', '+', '+', '+', '+', '+', '+', '+', '+', '+', '.', '.'],
+                     ['.', '.', '+', '+', '+', '+', '+', '+', '+', '+', '+', '.', '.'],
+                     ['.', '.', '.', '.', '+', '+', '+', '+', '+', '.', '.', '.', '.'],
+                     ['.', '.', '.', '.', '.', '.', '+', '.', '.', '.', '.', '.', '.'],
+                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.']
                     ];
 
         var rowArray=[];  // Temporary 1-D array to hold each successive row before adding to the corresponding 2-D array
@@ -1096,9 +1097,9 @@ var diagrams = function(processingInstance){
         function load(){
 
           p.controls=[];
-          
+
           HEX_SIZE=width/(p.layout.length+3);
-          
+
           var w=HEX_SIZE;
 
           var x=0;
@@ -1109,14 +1110,14 @@ var diagrams = function(processingInstance){
 
           var xOffset;
           var yOffset;
-    
+
           var row;
           var col;
 
           n=0;
 
           yOffset = w*cos(PI/6);
-          
+
           xMargin = w/2     + (p.w-(w+w*(p.layout[0].length-1)*0.75))/2;
           yMargin = yOffset +  p.h/2 - (p.layout.length-1)*yOffset/2-w/2;
 
@@ -1135,7 +1136,7 @@ var diagrams = function(processingInstance){
                  row:       row,
                  col:       col,
                  layout:    p.layout[row][col],
-                 style:     p.style[row][col],
+                 text:      p.text[row][col],
                  font:      monoFont,
                  cursor:    HAND}));
 
@@ -1161,25 +1162,26 @@ var diagrams = function(processingInstance){
 
             for(var r in ctrls){
               for(var c in ctrls[r]){
-                
+
                 total=0;
-                
+
                 r/=1;
                 c/=1;
 
                 //  Top / Bottom
                 {
-                  
-                  // Top                  
+
+                  // Top
                   if(r>0){
-                    
-                    ctrls[r][c].top= ctrls[r-1][c];                    
+
+                    ctrls[r][c].top= ctrls[r-1][c];
                     ctrl=ctrls[r][c].top;
-                    
-                    if(ctrl.style===1){
+
+                    if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
+                       ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
                       total++;
                     }
-                    
+
                   }
 
                   // Bottom
@@ -1188,8 +1190,9 @@ var diagrams = function(processingInstance){
                     ctrls[r][c].bottom = ctrls[r+1][c];
 
                     ctrl=ctrls[r][c].bottom;
-                    
-                    if(ctrl.style===1){
+
+                    if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
+                       ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
                       total++;
                     }
 
@@ -1199,76 +1202,81 @@ var diagrams = function(processingInstance){
 
                 // Left / Right
                 {
-                  
+
                   //  Top Left
                   if(c>0){
-                    
+
                     if(c%2===0 &&
                        r>0){
 
-                      ctrls[r][c].topLeft = ctrls[r-1][c-1];  
-                      
+                      ctrls[r][c].topLeft = ctrls[r-1][c-1];
+
                       ctrl=ctrls[r][c].topLeft;
-                      
-                      if(ctrl.style===1){
+
+                      if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
+                         ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
                         total++;
                       }
-                    
+
                     }
                     else if(c%2===1){
-                      
+
                       ctrls[r][c].topLeft = ctrls[r][c-1];
-                      
+
                       ctrl=ctrls[r][c].topLeft;
-                      
-                      if(ctrl.style===1){
+
+                      if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
+                         ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
                         total++;
                       }
-                    
+
                     }
 
                   }
-                  
+
                   //  Bottom Left
                   if(c>0){
-                    
+
                     if(c%2===0){
 
                       ctrls[r][c].bottomLeft = ctrls[r][c-1];
-                      
+
                       ctrl=ctrls[r][c].bottomLeft;
-                      
-                      if(ctrl.style===1){
+
+                      if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
+                         ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
                         total++;
                       }
 
                     }
                     else if(c%2===1 &&
                             r<ctrls[0].length-1){
-                      
+
                       ctrls[r][c].bottomLeft = ctrls[r+1][c-1];
 
                       ctrl=ctrls[r][c].bottomLeft;
-                     
-                      if(ctrl.style===1){
+
+                      if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
+                         ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
                         total++;
                       }
 
                     }
 
-                  }                  
+                  }
 
                   //  Top Right
                   if(c<ctrls[0].length-1){
-                    
+
                     if(c%2===0 &&
                        r>0){
 
-                      ctrls[r][c].topRight = ctrls[r-1][c+1];  
+                      ctrls[r][c].topRight = ctrls[r-1][c+1];
 
                       ctrl=ctrls[r][c].topRight;
-                      
-                      if(ctrl.style===1){
+
+                      if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
+                         ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
                         total++;
                       }
 
@@ -1276,13 +1284,14 @@ var diagrams = function(processingInstance){
                     else if(c%2===1){
 
                       ctrls[r][c].topRight = ctrls[r][c+1];
-                    
+
                       ctrl=ctrls[r][c].topRight;
-                      
-                      if(ctrl.style===1){
+
+                      if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
+                         ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
                         total++;
                       }
-                      
+
                     }
 
                   }
@@ -1293,13 +1302,14 @@ var diagrams = function(processingInstance){
                     if(c%2===0){
 
                       ctrls[r][c].bottomRight = ctrls[r][c+1];
-                      
+
                       ctrl=ctrls[r][c].bottomRight;
-                      
-                      if(ctrl.style===1){
+
+                      if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
+                         ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
                         total++;
                       }
-                      
+
                     }
                     else if(c%2===1 &&
                             r<ctrls[0].length-1){
@@ -1307,18 +1317,227 @@ var diagrams = function(processingInstance){
                       ctrls[r][c].bottomRight = ctrls[r+1][c+1];
 
                       ctrl=ctrls[r][c].bottomRight;
-                      
-                      if(ctrl.style===1){
-                           total++;
+
+                      if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
+                         ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
+                        total++;
                       }
 
                     }
 
-                  }  
-                  
-                  ctrls[r][c].total=total;
+                  }
+
+                  ctrls[r][c].count=total;
 
                 }
+
+
+                // Double Ring Count (dCount) -------------------------
+
+                var dCount=total;
+
+                if(ctrls[r][c]!==null){
+                  if(ctrls[r][c].top!==null){
+                    if(ctrls[r][c].top.top!==null){
+
+                      ctrl=ctrls[r][c].top.top;
+
+                      if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
+                         ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
+                         dCount++;
+                      }
+                    }
+                  }
+                }
+
+                if(ctrls[r][c]!==null){
+                  if(ctrls[r][c].bottom!==null){
+                    if(ctrls[r][c].bottom.bottom!==null){
+
+                      ctrl=ctrls[r][c].bottom.bottom;
+
+                      if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
+                         ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
+                         dCount++;
+                      }
+
+                    }
+                  }
+                }
+
+                // -------------------------
+
+                if(ctrls[r][c]!==null){
+                  if(ctrls[r][c].topLeft!==null){
+                    if(ctrls[r][c].topLeft.topLeft!==null){
+
+                      ctrl=ctrls[r][c].topLeft.topLeft;
+
+                      if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
+                         ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
+                         dCount++;
+                      }
+
+                    }
+                  }
+                }
+
+                if(ctrls[r][c]!==null){
+                  if(ctrls[r][c].bottomLeft!==null){
+                    if(ctrls[r][c].bottomLeft.bottomLeft!==null){
+
+                      ctrl=ctrls[r][c].bottomLeft.bottomLeft;
+
+                      if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
+                         ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
+                         dCount++;
+                      }
+
+                    }
+                  }
+                }
+
+                // -------------------------
+
+                if(ctrls[r][c]!==null){
+                  if(ctrls[r][c].topRight!==null){
+                    if(ctrls[r][c].topRight.topRight!==null){
+
+                      ctrl=ctrls[r][c].topRight.topRight;
+
+                      if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
+                         ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
+                         dCount++;
+                      }
+
+                    }
+                  }
+                }
+
+                if(ctrls[r][c]!==null){
+                  if(ctrls[r][c].bottomRight!==null){
+                    if(ctrls[r][c].bottomRight.bottomRight!==null){
+
+                      ctrl=ctrls[r][c].bottomRight.bottomRight;
+
+                      if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
+                         ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
+                         dCount++;
+                      }
+
+                    }
+                  }
+                }
+
+                // -------------------------
+
+                if(ctrls[r][c]!==null){
+                  if(ctrls[r][c].top!==null){
+                    if(ctrls[r][c].top.top!==null){
+                      if(ctrls[r][c].top.top.bottomLeft!==null){
+
+                        ctrl=ctrls[r][c].top.top.bottomLeft;
+
+                        if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
+                           ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
+                           dCount++;
+                        }
+
+                      }
+                    }
+                  }
+                }
+
+                if(ctrls[r][c]!==null){
+                  if(ctrls[r][c].top!==null){
+                    if(ctrls[r][c].top.top!==null){
+                      if(ctrls[r][c].top.top.bottomRight!==null){
+
+                        ctrl=ctrls[r][c].top.top.bottomRight;
+
+                        if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
+                           ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
+                           dCount++;
+                        }
+
+                      }
+                    }
+                  }
+                }
+
+                // -------------------------
+
+                if(ctrls[r][c]!==null){
+                  if(ctrls[r][c].bottom!==null){
+                    if(ctrls[r][c].bottom.bottom!==null){
+                      if(ctrls[r][c].bottom.bottom.topLeft!==null){
+
+                        ctrl=ctrls[r][c].bottom.bottom.topLeft;
+
+                        if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
+                           ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
+                           dCount++;
+                        }
+
+                      }
+                    }
+                  }
+                }
+
+                if(ctrls[r][c]!==null){
+                  if(ctrls[r][c].bottom!==null){
+                    if(ctrls[r][c].bottom.bottom!==null){
+                      if(ctrls[r][c].bottom.bottom.topRight!==null){
+
+                        ctrl=ctrls[r][c].bottom.bottom.topRight;
+
+                        if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
+                           ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
+                           dCount++;
+                        }
+
+                      }
+                    }
+                  }
+                }
+
+                // -------------------------
+
+                if(ctrls[r][c]!==null){
+                  if(ctrls[r][c].topRight!==null){
+                    if(ctrls[r][c].topRight.topRight!==null){
+                      if(ctrls[r][c].topRight.topRight.bottom!==null){
+
+                        ctrl=ctrls[r][c].topRight.topRight.bottom;
+
+                        if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
+                           ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
+                           dCount++;
+                        }
+
+                      }
+                    }
+                  }
+                }
+
+                if(ctrls[r][c]!==null){
+                  if(ctrls[r][c].topLeft!==null){
+                    if(ctrls[r][c].topLeft.topLeft!==null){
+                      if(ctrls[r][c].topLeft.topLeft.bottom!==null){
+
+                        ctrl=ctrls[r][c].topLeft.topLeft.bottom;
+
+                        if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
+                           ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
+                           dCount++;
+                        }
+
+                      }
+                    }
+                  }
+                }
+
+                ctrls[r][c].dCount=dCount;
 
               }
 
@@ -1335,24 +1554,24 @@ var diagrams = function(processingInstance){
 
           // }
 
-        };        
+        };
         function randomizeStyle(){
-          
-          var style=p.style;
 
-          for(var r in style){
-            for(var c in style[r]){
-            
-              if(style[r][c]===0 ||
-                 style[r][c]===1){
-                style[r][c]=round(random(0,1));
-              }   
-                 
+          var layout=p.layout;
+
+          for(var r in layout){
+            for(var c in layout[r]){
+
+              if(layout[r][c]===0 ||
+                 layout[r][c]===1){
+                layout[r][c]=round(random(0,1));
+              }
+
             }
           }
-          
+
         };
-        
+
         // randomizeStyle();
         load();
         link();
@@ -1507,12 +1726,13 @@ var diagrams = function(processingInstance){
 
         };
         function drawClicked(){
-          
-          
-          
+
+
+
         };
 
-        this.active=this.hit && app.focus===this;
+        this.active=this.hit &&
+                    app.focus===this;
         this.lines=[];
         this.halos=[];
 
@@ -1552,11 +1772,11 @@ var diagrams = function(processingInstance){
               if(this.halos.length>0){
                 drawHalos();
               }
-              
+
               calculateRemaining();
 
         popMatrix();
-        
+
       };
       hexBoard.prototype.hitTest      = function(x,y){
         return dist(mouseX,mouseY,this.x+x,this.y+y)<this.w/2;
@@ -1623,7 +1843,7 @@ var diagrams = function(processingInstance){
 
           }
         }
-        
+
       };
 
     }
@@ -2605,7 +2825,7 @@ var diagrams = function(processingInstance){
 
     /* Hexagonal Cell       */
     {
-      
+
       function hexCell(id, parent, x, y, w, h, props){
 
         control.call(this, id, parent, x, y, w, h);
@@ -2617,6 +2837,13 @@ var diagrams = function(processingInstance){
         this.row          = props.row;
         this.col          = Number(props.col);
 
+        this.points       = [];
+        this.dpoints      = [];
+        this.hpoints      = [];
+
+        this.dirty        = false;
+
+        //  Adjacent cells ---------------
         this.top          = null;
         this.bottom       = null;
 
@@ -2626,14 +2853,17 @@ var diagrams = function(processingInstance){
         this.topLeft      = null;
         this.bottomLeft   = null;
 
-        this.total        = 0;
+        // ------------------------------
 
-        this.layout       = props.layout;
-        this.style        = props.style;
-        this.text         = props.text;
+        this.layout       = props.layout;   //  Type of cell
+        this.text         = props.text;     //  Hint
+
+        this.count        = 0;              //  # of blue cells in surrounding ring
+        this.dCount       = 0;              //  # of blue cells in surrounding 2 rings
+
+        this.enabled      = true;
 
         this.halo         = false;
-        this.enabled      = true;
         this.line         = false;
 
         this.clickRadius  = 0;
@@ -2642,43 +2872,37 @@ var diagrams = function(processingInstance){
         // this.tTime        = 0;
         this.timer        = this.tTime;
 
-        this.points       = [];
-        this.dpoints      = [];
-        this.hpoints      = [];
-
-        this.dirty        = false;
-
         var p=this;
 
         /* Initialize */
         function reset(){
 
-          var w2=p.w/2;
+          var d2=p.w/2;  // Half diameter
 
           var pt=0;
           var ang=0;
 
-          if(app.orientation===ORIENTATIONS.POINTY){
-            ang=30;
-          }
+          // if(app.orientation===ORIENTATIONS.POINTY){
+            // ang=30;
+          // }
 
           for(pt=0; pt<6; pt++){
-            p.points.push(new pnt( cos(radians(ang+pt*60))*(w2-8),
-                                   sin(radians(ang+pt*60))*(w2-8) ));
+            p.points.push(new pnt( cos(radians(ang+pt*60))*(d2-8),
+                                   sin(radians(ang+pt*60))*(d2-8) ));
           }
 
           for(pt=0; pt<8; pt++){
-            p.dpoints.push(new pnt( cos(radians(ang+pt*60))*(w2-1),
-                                    sin(radians(ang+pt*60))*(w2-1) ));
+            p.dpoints.push(new pnt( cos(radians(ang+pt*60))*(d2-1),
+                                    sin(radians(ang+pt*60))*(d2-1) ));
           }
 
           for(pt=0; pt<6; pt++){
-            p.hpoints.push(new pnt( cos(radians(ang+pt*60))*(w2-3),
-                                    sin(radians(ang+pt*60))*(w2-3) ));
+            p.hpoints.push(new pnt( cos(radians(ang+pt*60))*(d2-3),
+                                    sin(radians(ang+pt*60))*(d2-3) ));
           }
 
         };
-        
+
         reset();
 
       };
@@ -2686,8 +2910,8 @@ var diagrams = function(processingInstance){
       hexCell.prototype.draw=function(){
 
         this.active=this.hit &&
-                    app.focus===this;// &&
-                    // this.style!==HEXY_SYMBOLS.SPACER;
+                    app.focus===this &&
+                    this.style!==HEXY_SYMBOLS.BLANK;
 
         var offset=0;
         var p=this;
@@ -2714,8 +2938,7 @@ var diagrams = function(processingInstance){
   // NUMBER:           '+',
   // CONSECUTIVE:      'c',
   // NOT_CONSECUTIVE:  'n'
-  
-        /* Highlight Background  -------------------------------------------------- */
+
         function highlight(){
 
           if(p.layout===HEXY_SYMBOLS.BLACK ||
@@ -2749,13 +2972,9 @@ var diagrams = function(processingInstance){
             case HEXY_SYMBOLS.BLACK_REVEALED: fill(CLRS.H_BLACK);   break;
             case HEXY_SYMBOLS.BLUE_REVEALED:  fill(CLRS.H_BLUE);    break;
 
-            default:
-
-              noFill();
-              stroke(CLRS.BLACK);
-              strokeWeight(0.125);
-
-            break;
+            default:                          noFill();
+                                              stroke(CLRS.BLACK);
+                                              strokeWeight(0.125);  break;
 
           }
 
@@ -2766,7 +2985,7 @@ var diagrams = function(processingInstance){
             offset=random(0,1.5);
             p.timer--;
             if(p.timer<=0){ p.dirty=true; }
-            
+
           }
 
           beginShape();
@@ -2810,53 +3029,63 @@ var diagrams = function(processingInstance){
 
             scale(1,-1);
 
-              if(p.style<HEXY_SYMBOLS.BLANK){
+              // switch(p.layout){
 
-                fill(CLRS.WHITE);
+                // case HEXY_SYMBOLS.BLACK_REVEALED: break;
 
-                if(p.enabled===false){
-                  fill(getColor(CLRS.WHITE,25));
-                }
+                  // switch(p.text){
 
-              }
+                    // case HEXY_SYMBOLS.NUMBER:           break;
+                    // case HEXY_SYMBOLS.CONSECUTIVE:      break;
+                    // case HEXY_SYMBOLS.NOT_CONSECUTIVE:  break;
 
-              if(p.style>HEXY_SYMBOLS.BLUE){
+                    // case HEXY_SYMBOLS.BLANK:
 
-                fill(CLRS.BLACK);
+                    // default:  break;
 
-                if(p.enabled===false){
-                  fill(getColor(CLRS.BLACK,25));
-                }
+                  // }
 
-              }
+                // case HEXY_SYMBOLS.BLUE_REVEALED:  break;
+
+                  // switch(p.text){
+
+                    // case HEXY_SYMBOLS.NUMBER:           break;
+                    // case HEXY_SYMBOLS.CONSECUTIVE:      break;
+                    // case HEXY_SYMBOLS.NOT_CONSECUTIVE:  break;
+
+                    // case HEXY_SYMBOLS.BLANK:
+
+                    // default:  break;
+
+                  // }
+
+                // case HEXY_SYMBOLS.DOWN_RIGHT:     break;
+                // case HEXY_SYMBOLS.DOWN_CENTER:    break;
+                // case HEXY_SYMBOLS.DOWN_LEFT:      break;
+
+              // }
 
               textFont(p.font,16);
               textSize(16);
               textAlign(CENTER,CENTER);
 
-              if(p.text===-2){ p.text='?'; }
-
-                if(p.layout===HEXY_SYMBOLS.BLANK &&
-                   p.text!=='0'){
-
-                  if(p.style===HEXY_SYMBOLS.DOWN_CENTER){
-                    textAlign(CENTER,TOP);
-                    rotate(0);
-                  }
-                  else if(p.style===HEXY_SYMBOLS.DOWN_LEFT){
-                    textAlign(CENTER,TOP);
-                    rotate(PI/3);
-                  }
-                  else if(p.style===HEXY_SYMBOLS.DOWN_RIGHT){
-                    textAlign(CENTER,TOP);
-                    rotate(-PI/3);
-                  }
-
-                  if(p.text!==''){
-                    text(p.text, 0,0);
-                  }
-
+                if(p.layout===HEXY_SYMBOLS.DOWN_CENTER){
+                  textAlign(CENTER,TOP);
+                  rotate(0);
                 }
+                else if(p.layout===HEXY_SYMBOLS.DOWN_LEFT){
+                  textAlign(CENTER,TOP);
+                  rotate(PI/3);
+                }
+                else if(p.layout===HEXY_SYMBOLS.DOWN_RIGHT){
+                  textAlign(CENTER,TOP);
+                  rotate(-PI/3);
+                }
+
+                // if(p.text!=='.'){
+                  fill(CLRS.RED);
+                  text(p.dCount, 0,0);
+                // }
 
           popMatrix();
 
@@ -2867,6 +3096,7 @@ var diagrams = function(processingInstance){
              (p.layout===HEXY_SYMBOLS.BLUE ||
               p.layout===HEXY_SYMBOLS.BLACK)){
 
+            noStroke();
             fill(getColor(CLRS.BLACK,15));
 
             /** Hexagon */
@@ -2884,7 +3114,7 @@ var diagrams = function(processingInstance){
         }
 
         noStroke();
-        
+
         pushMatrix();
 
           translate(this.x, this.y);
@@ -2896,9 +3126,9 @@ var diagrams = function(processingInstance){
             innerHexagon();
             caption();
             activeCell();
-            
-            if(this.clickRadius>0){ 
-              
+
+            if(this.clickRadius>0){
+
               noStroke();
 
               fill(CLRS.H_ORANGE_L);
@@ -2915,7 +3145,7 @@ var diagrams = function(processingInstance){
                 // }
 
               // endShape();
-              
+
               this.clickRadius-=5;
 
               // var offset=HEX_SIZE-this.clickRadius;
@@ -2943,11 +3173,11 @@ var diagrams = function(processingInstance){
               // triangle(0,                +offset,
                        // this.points[5].x, this.points[5].y+offset,
                        // this.points[0].x, this.points[0].y+offset);
-                       
+
               // this.clickRadius-=1;
-            
+
             }
-            
+
         popMatrix();
 
         // if(this.active){
@@ -2977,7 +3207,7 @@ var diagrams = function(processingInstance){
             // stroke(CLRS.BLUE);
             // line(this.bottomRight.x, this.bottomRight.y, this.x, this.y);
           // }
-          
+
         // }
 
       };
@@ -3029,7 +3259,7 @@ var diagrams = function(processingInstance){
 
           }
           else{
-            
+
             this.dirty=false;
             this.timer=0;
             this.outerHit=false;
@@ -3081,7 +3311,7 @@ var diagrams = function(processingInstance){
           if(this.layout===HEXY_SYMBOLS.BLACK){
 
             this.layout=HEXY_SYMBOLS.BLACK_REVEALED;
-            
+
             // this.clickRadius=HEX_SIZE;
 
           }
@@ -3220,11 +3450,11 @@ var diagrams = function(processingInstance){
     textAlign(CENTER,CENTER);
     fill(CLRS.BLACK);
 
-      text('Remaining',   520,460);      
+      text('Remaining',   520,460);
       text('Mistakes',    520,530);
 
     textSize(36);
-    
+
       text(app.remaining, 520,490);
       text(app.errors,    520,560);
 
@@ -3233,10 +3463,10 @@ var diagrams = function(processingInstance){
     fill(getColor(CLRS.BLACK,15));
 
       pushMatrix();
-        
+
         translate(34,300);
         rotate(PI/2);
-        
+
           text('Level 3-1', 0, 0);
 
       popMatrix();
@@ -3246,7 +3476,7 @@ var diagrams = function(processingInstance){
     fill(CLRS.RED);
 
       text(app.puzzle, 30, 30);
-      
+
   };
 
   var execute;
