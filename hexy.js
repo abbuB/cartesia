@@ -1062,12 +1062,12 @@ var diagrams = function(processingInstance){
         this.layout=[
                      ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
                      ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
-                     ['.', '.', '.', '.', '.', 'X', 'o', 'O', '.', '.', '.', '.', '.'],
+                     ['.', '.', '.', '.', '.', 'o', 'x', 'o', '.', '.', '.', '.', '.'],
                      ['.', '.', '.', 'o', 'x', 'x', 'x', 'x', 'x', 'x', '.', '.', '.'],
                      ['.', '.', 'o', 'o', 'x', 'x', 'x', 'x', 'x', 'x', 'x', '.', '.'],
-                     ['.', '.', 'O', 'o', 'x', 'x', 'x', 'x', 'x', 'x', 'x', '.', '.'],
                      ['.', '.', 'o', 'o', 'x', 'x', 'x', 'x', 'x', 'x', 'x', '.', '.'],
-                     ['.', '.', 'O', 'o', 'x', 'x', 'x', 'x', 'x', 'x', 'x', '.', '.'],
+                     ['.', '.', 'o', 'o', 'x', 'x', 'o', 'x', 'x', 'x', 'x', '.', '.'],
+                     ['.', '.', 'o', 'o', 'x', 'x', 'x', 'x', 'x', 'x', 'x', '.', '.'],
                      ['.', '.', 'o', 'o', 'x', 'x', 'x', 'x', 'x', 'x', 'x', '.', '.'],
                      ['.', '.', '.', '.', 'x', 'x', 'x', 'x', 'x', '.', '.', '.', '.'],
                      ['.', '.', '.', '.', '.', '.', 'x', '.', '.', '.', '.', '.', '.'],
@@ -1155,10 +1155,8 @@ var diagrams = function(processingInstance){
         function link(){
 
           var ctrls=p.controls;
-          var ctrl;
-          var total;
-
-          // try{
+          var ctrl=null;
+          var total=0;
 
             for(var r in ctrls){
               for(var c in ctrls[r]){
@@ -1331,12 +1329,31 @@ var diagrams = function(processingInstance){
 
                 }
 
+              }
 
-                // Double Ring Count (dCount) -------------------------
+            }
 
-                var dCount=total;
+        };
+        
+        // Double Ring Count (dCount) -------------------------
+        function dLink(){
+          
+          var ctrls=p.controls;
+          var ctrl=null;
+          var total=0;
+
+            for(var r in ctrls){
+              for(var c in ctrls[r]){
+
+                total=0;
+
+                r/=1;
+                c/=1;
+                
+                dCount=ctrls[r][c].count;
 
                 if(ctrls[r][c]!==null){
+                  
                   if(ctrls[r][c].top!==null){
                     if(ctrls[r][c].top.top!==null){
 
@@ -1346,11 +1363,10 @@ var diagrams = function(processingInstance){
                          ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
                          dCount++;
                       }
+                      
                     }
                   }
-                }
 
-                if(ctrls[r][c]!==null){
                   if(ctrls[r][c].bottom!==null){
                     if(ctrls[r][c].bottom.bottom!==null){
 
@@ -1363,11 +1379,9 @@ var diagrams = function(processingInstance){
 
                     }
                   }
-                }
 
                 // -------------------------
 
-                if(ctrls[r][c]!==null){
                   if(ctrls[r][c].topLeft!==null){
                     if(ctrls[r][c].topLeft.topLeft!==null){
 
@@ -1380,9 +1394,7 @@ var diagrams = function(processingInstance){
 
                     }
                   }
-                }
 
-                if(ctrls[r][c]!==null){
                   if(ctrls[r][c].bottomLeft!==null){
                     if(ctrls[r][c].bottomLeft.bottomLeft!==null){
 
@@ -1395,11 +1407,10 @@ var diagrams = function(processingInstance){
 
                     }
                   }
-                }
+
 
                 // -------------------------
 
-                if(ctrls[r][c]!==null){
                   if(ctrls[r][c].topRight!==null){
                     if(ctrls[r][c].topRight.topRight!==null){
 
@@ -1412,9 +1423,7 @@ var diagrams = function(processingInstance){
 
                     }
                   }
-                }
 
-                if(ctrls[r][c]!==null){
                   if(ctrls[r][c].bottomRight!==null){
                     if(ctrls[r][c].bottomRight.bottomRight!==null){
 
@@ -1427,134 +1436,100 @@ var diagrams = function(processingInstance){
 
                     }
                   }
-                }
 
                 // -------------------------
 
-                if(ctrls[r][c]!==null){
                   if(ctrls[r][c].top!==null){
-                    if(ctrls[r][c].top.top!==null){
-                      if(ctrls[r][c].top.top.bottomLeft!==null){
+                    if(ctrls[r][c].top.topLeft!==null){
 
-                        ctrl=ctrls[r][c].top.top.bottomLeft;
+                      ctrl=ctrls[r][c].top.topLeft;
 
-                        if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
-                           ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
-                           dCount++;
-                        }
-
+                      if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
+                         ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
+                         dCount++;
                       }
+
                     }
                   }
-                }
 
-                if(ctrls[r][c]!==null){
                   if(ctrls[r][c].top!==null){
-                    if(ctrls[r][c].top.top!==null){
-                      if(ctrls[r][c].top.top.bottomRight!==null){
+                    if(ctrls[r][c].top.topRight!==null){
 
-                        ctrl=ctrls[r][c].top.top.bottomRight;
+                      ctrl=ctrls[r][c].top.topRight;
 
-                        if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
-                           ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
-                           dCount++;
-                        }
-
+                      if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
+                         ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
+                         dCount++;
                       }
+
                     }
                   }
-                }
 
                 // -------------------------
 
-                if(ctrls[r][c]!==null){
                   if(ctrls[r][c].bottom!==null){
-                    if(ctrls[r][c].bottom.bottom!==null){
-                      if(ctrls[r][c].bottom.bottom.topLeft!==null){
+                    if(ctrls[r][c].bottom.bottomLeft!==null){
 
-                        ctrl=ctrls[r][c].bottom.bottom.topLeft;
+                      ctrl=ctrls[r][c].bottom.bottomLeft;
 
-                        if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
-                           ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
-                           dCount++;
-                        }
-
+                      if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
+                         ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
+                         dCount++;
                       }
+
                     }
                   }
-                }
 
-                if(ctrls[r][c]!==null){
                   if(ctrls[r][c].bottom!==null){
-                    if(ctrls[r][c].bottom.bottom!==null){
-                      if(ctrls[r][c].bottom.bottom.topRight!==null){
+                    if(ctrls[r][c].bottom.bottomRight!==null){
 
-                        ctrl=ctrls[r][c].bottom.bottom.topRight;
+                      ctrl=ctrls[r][c].bottom.bottomRight;
 
-                        if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
-                           ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
-                           dCount++;
-                        }
-
+                      if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
+                         ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
+                         dCount++;
                       }
+
                     }
                   }
-                }
 
                 // -------------------------
 
-                if(ctrls[r][c]!==null){
                   if(ctrls[r][c].topRight!==null){
-                    if(ctrls[r][c].topRight.topRight!==null){
-                      if(ctrls[r][c].topRight.topRight.bottom!==null){
+                    if(ctrls[r][c].topRight.bottomRight!==null){
 
-                        ctrl=ctrls[r][c].topRight.topRight.bottom;
+                      ctrl=ctrls[r][c].topRight.bottomRight;
 
-                        if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
-                           ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
-                           dCount++;
-                        }
-
+                      if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
+                         ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
+                         dCount++;
                       }
+
                     }
                   }
-                }
 
-                if(ctrls[r][c]!==null){
                   if(ctrls[r][c].topLeft!==null){
-                    if(ctrls[r][c].topLeft.topLeft!==null){
-                      if(ctrls[r][c].topLeft.topLeft.bottom!==null){
+                    if(ctrls[r][c].topLeft.bottomLeft!==null){
 
-                        ctrl=ctrls[r][c].topLeft.topLeft.bottom;
+                      ctrl=ctrls[r][c].topLeft.bottomLeft;
 
-                        if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
-                           ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
-                           dCount++;
-                        }
-
+                      if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
+                         ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
+                         dCount++;
                       }
+
                     }
                   }
+
                 }
 
                 ctrls[r][c].dCount=dCount;
 
               }
-
             }
 
-          // }
-          // catch(e){
-
-            // if(e instanceof TypeError){
-              // Cell doesn't exist
-              // print('Type Error');
-            // }
-            // else{ print(e); }
-
-          // }
-
         };
+
         function randomizeStyle(){
 
           var layout=p.layout;
@@ -1575,6 +1550,7 @@ var diagrams = function(processingInstance){
         // randomizeStyle();
         load();
         link();
+        dLink();
 
         app.gameOver=false;
 
@@ -3181,8 +3157,10 @@ var diagrams = function(processingInstance){
         popMatrix();
 
         // if(this.active){
+          
           // noStroke();
           // strokeWeight(5);
+          
           // if(this.top!==null){
             // stroke(CLRS.BLACK);
             // line(this.top.x, this.top.y, this.x, this.y);
