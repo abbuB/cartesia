@@ -1062,15 +1062,15 @@ var diagrams = function(processingInstance){
         this.layout=[
                      ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
                      ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
-                     ['.', '.', '.', '.', '.', 'o', 'x', 'o', '.', '.', '.', '.', '.'],
-                     ['.', '.', '.', 'o', 'x', 'x', 'x', 'x', 'x', 'x', '.', '.', '.'],
-                     ['.', '.', 'o', 'o', 'x', 'x', 'x', 'x', 'x', 'x', 'x', '.', '.'],
-                     ['.', '.', 'o', 'o', 'x', 'x', 'x', 'x', 'x', 'x', 'x', '.', '.'],
-                     ['.', '.', 'o', 'o', 'x', 'x', 'o', 'x', 'x', 'x', 'x', '.', '.'],
-                     ['.', '.', 'o', 'o', 'x', 'x', 'x', 'x', 'x', 'x', 'x', '.', '.'],
-                     ['.', '.', 'o', 'o', 'x', 'x', 'x', 'x', 'x', 'x', 'x', '.', '.'],
-                     ['.', '.', '.', '.', 'x', 'x', 'x', 'x', 'x', '.', '.', '.', '.'],
-                     ['.', '.', '.', '.', '.', '.', 'x', '.', '.', '.', '.', '.', '.'],
+                     ['.', '.', '|', '|', '|', 'o', 'X', 'o', '|', '|', '|', '.', '.'],
+                     ['.', '.', '\\', 'x', 'o', 'x', 'O', 'x', 'o', 'x', '/', '.', '.'],
+                     ['.', '.', 'x', 'o', 'x', 'o', 'X', 'o', 'x', 'o', 'x', '.', '.'],
+                     ['.', '.', 'o', 'x', 'o', 'x', 'O', 'x', 'o', 'x', 'o', '.', '.'],
+                     ['.', '.', 'x', 'o', 'x', 'o', 'X', 'o', 'x', 'o', 'x', '.', '.'],
+                     ['.', '.', 'o', 'x', 'o', 'x', '\\', 'x', 'o', 'x', 'o', '.', '.'],
+                     ['.', '.', 'x', 'o', 'x', 'o', 'X', 'o', 'x', 'o', 'x', '.', '.'],
+                     ['.', '.', '.', '.', 'o', 'x', 'O', 'x', 'o', '.', '.', '.', '.'],
+                     ['.', '.', '.', '.', '.', '.', 'X', '.', '.', '.', '.', '.', '.'],
                      ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
                      ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.']
                     ];
@@ -1078,15 +1078,15 @@ var diagrams = function(processingInstance){
         this.text  =[
                      ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
                      ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
-                     ['.', '.', '|', '|', '|', '+', '+', '+', '|', '|', '|', '.', '.'],
-                     ['.', '.', '\\', '+', '+', '+', '+', '+', '+', '+', '/', '.', '.'],
-                     ['.', '.', '+', '+', '+', '+', '+', '+', '+', '+', '+', '.', '.'],
-                     ['.', '.', '+', '+', '+', '+', '+', '+', '+', '+', '+', '.', '.'],
-                     ['.', '.', '+', '+', '+', '+', '+', '+', '+', '+', '+', '.', '.'],
-                     ['.', '.', '+', '+', '+', '+', '+', '+', '+', '+', '+', '.', '.'],
-                     ['.', '.', '+', '+', '+', '+', '+', '+', '+', '+', '+', '.', '.'],
-                     ['.', '.', '.', '.', '+', '+', '+', '+', '+', '.', '.', '.', '.'],
-                     ['.', '.', '.', '.', '.', '.', '+', '.', '.', '.', '.', '.', '.'],
+                     ['.', '.', 'c', 'n', '+', '+', 'c', '+', '.', '.', 'c', '.', '.'],
+                     ['.', '.', 'n', 'n', '.', '+', 'n', '+', '.', '.', 'n', '.', '.'],
+                     ['.', '.', '.', '.', '.', '+', 'c', '+', '.', '.', '.', '.', '.'],
+                     ['.', '.', '.', '.', '.', '+', 'n', '+', '.', '.', '.', '.', '.'],
+                     ['.', '.', '.', '.', 'c', 'c', 'n', 'n', '.', '.', '.', '.', '.'],
+                     ['.', '.', '.', '.', '.', '+', 'c', '+', '.', '.', '.', '.', '.'],
+                     ['.', '.', '.', '.', '.', '+', 'n', '+', '.', '.', '.', '.', '.'],
+                     ['.', '.', '.', '.', '.', '+', 'c', '+', '.', '.', '.', '.', '.'],
+                     ['.', '.', '.', '.', '.', '.', 'n', '.', '.', '.', '.', '.', '.'],
                      ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
                      ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.']
                     ];
@@ -1616,11 +1616,12 @@ var diagrams = function(processingInstance){
           app.remaining=0;
 
           var total=0;
+          var ctrls=p.controls;
+  
+          for(var r in ctrls){
+            for(var c in ctrls[r]){
 
-          for(var r in p.layout){
-            for(var c in p.layout[r]){
-
-              if(p.layout[r][c]===1){
+              if(ctrls[r][c].layout==='x'){
                 total++;
               }
 
@@ -2936,7 +2937,7 @@ var diagrams = function(processingInstance){
 
           }
 
-        }
+        };
         function outerHexagon(){
 
           noStroke();
@@ -2973,7 +2974,7 @@ var diagrams = function(processingInstance){
 
           endShape(CLOSE);
 
-        }
+        };
         function innerHexagon(){
 
             noStroke();
@@ -2998,74 +2999,97 @@ var diagrams = function(processingInstance){
 
             endShape(CLOSE);
 
-        }
+        };
         function caption(){
+          
+          function wrapText(n){
+            
+            var retVal=n;
+            
+            if      (p.text===HEXY_SYMBOLS.CONSECUTIVE    ){ retVal="{" + retVal + "}"; }
+            else if (p.text===HEXY_SYMBOLS.NOT_CONSECUTIVE){ retVal="-" + retVal + "-"; }
 
+            return retVal;
+
+          };
+          
           pushMatrix();
 
             scale(1,-1);
-
-              // switch(p.layout){
-
-                // case HEXY_SYMBOLS.BLACK_REVEALED: break;
-
-                  // switch(p.text){
-
-                    // case HEXY_SYMBOLS.NUMBER:           break;
-                    // case HEXY_SYMBOLS.CONSECUTIVE:      break;
-                    // case HEXY_SYMBOLS.NOT_CONSECUTIVE:  break;
-
-                    // case HEXY_SYMBOLS.BLANK:
-
-                    // default:  break;
-
-                  // }
-
-                // case HEXY_SYMBOLS.BLUE_REVEALED:  break;
-
-                  // switch(p.text){
-
-                    // case HEXY_SYMBOLS.NUMBER:           break;
-                    // case HEXY_SYMBOLS.CONSECUTIVE:      break;
-                    // case HEXY_SYMBOLS.NOT_CONSECUTIVE:  break;
-
-                    // case HEXY_SYMBOLS.BLANK:
-
-                    // default:  break;
-
-                  // }
-
-                // case HEXY_SYMBOLS.DOWN_RIGHT:     break;
-                // case HEXY_SYMBOLS.DOWN_CENTER:    break;
-                // case HEXY_SYMBOLS.DOWN_LEFT:      break;
-
-              // }
 
               textFont(p.font,16);
               textSize(16);
               textAlign(CENTER,CENTER);
 
-                if(p.layout===HEXY_SYMBOLS.DOWN_CENTER){
-                  textAlign(CENTER,TOP);
-                  rotate(0);
-                }
-                else if(p.layout===HEXY_SYMBOLS.DOWN_LEFT){
-                  textAlign(CENTER,TOP);
-                  rotate(PI/3);
-                }
-                else if(p.layout===HEXY_SYMBOLS.DOWN_RIGHT){
-                  textAlign(CENTER,TOP);
-                  rotate(-PI/3);
-                }
+              switch(p.layout){
 
-                // if(p.text!=='.'){
-                  fill(CLRS.RED);
-                  text(p.dCount, 0,0);
-                // }
+                case HEXY_SYMBOLS.BLANK:
+
+                  break;
+
+                case HEXY_SYMBOLS.BLACK:            if(p.text!==HEXY_SYMBOLS.BLANK){
+                                                      fill(CLRS.WHITE);
+                                                      text(wrapText(p.count),0,0);
+                                                    }
+
+                                                    break;
+                                                    
+                case HEXY_SYMBOLS.BLACK_REVEALED:   if(p.text!==HEXY_SYMBOLS.BLANK){
+                                                      fill(CLRS.WHITE);
+                                                      text(wrapText(p.count),0,0);
+                                                    }
+
+                                                    break;
+
+                case HEXY_SYMBOLS.BLUE:             if(p.text!==HEXY_SYMBOLS.BLANK){
+                                                      fill(CLRS.WHITE);
+                                                      text(wrapText(p.count),0,0);
+                                                    }
+
+                                                    break;
+
+                case HEXY_SYMBOLS.BLUE_REVEALED:    if(p.text!==HEXY_SYMBOLS.BLANK){                                                      
+                                                      fill(CLRS.WHITE);
+                                                      text(wrapText(p.count),0,0);                                                      
+                                                    }
+
+                                                    break;
+                  
+                case HEXY_SYMBOLS.DOWN_CENTER:      if(p.text!==HEXY_SYMBOLS.BLANK){
+                                                      textAlign(CENTER,TOP);
+                                                      rotate(0);
+                                                      fill(CLRS.BLACK);
+                                                      text(wrapText(p.count),0,0);
+                                                    }
+
+                                                    break;
+
+                case HEXY_SYMBOLS.DOWN_LEFT:        if(p.text!==HEXY_SYMBOLS.BLANK){                
+                                                      textAlign(CENTER,TOP);
+                                                      rotate(PI/3);
+                                                      fill(CLRS.BLACK);
+                                                      text(wrapText(p.count),0,0);
+                                                    }
+                                                    
+                                                    break;
+              
+                case HEXY_SYMBOLS.DOWN_RIGHT:       if(p.text!==HEXY_SYMBOLS.BLANK){                  
+                                                      textAlign(CENTER,TOP);
+                                                      rotate(-PI/3);
+                                                      fill(CLRS.BLACK);
+                                                      text(wrapText(p.count),0,0);
+                                                      
+                                                    } 
+                                                    
+                                                    break;
+
+                default:    break;
+
+              }
 
           popMatrix();
 
-        }
+        };
         function activeCell(){
 
           if(p.hit &&
@@ -3087,7 +3111,7 @@ var diagrams = function(processingInstance){
 
           }
 
-        }
+        };
 
         noStroke();
 
@@ -3105,13 +3129,13 @@ var diagrams = function(processingInstance){
 
             if(this.clickRadius>0){
 
-              noStroke();
+              // noStroke();
 
-              fill(CLRS.H_ORANGE_L);
+              // fill(CLRS.H_ORANGE_L);
 
-              var w=this.clickRadius/2;
+              // var w=this.clickRadius/2;
 
-              rotate(radians(this.clickRadius)*3);
+              // rotate(radians(this.clickRadius)*3);
 
               // beginShape();
 
@@ -3122,7 +3146,7 @@ var diagrams = function(processingInstance){
 
               // endShape();
 
-              this.clickRadius-=5;
+              // this.clickRadius-=5;
 
               // var offset=HEX_SIZE-this.clickRadius;
 
@@ -3454,6 +3478,17 @@ var diagrams = function(processingInstance){
     fill(CLRS.RED);
 
       text(app.puzzle, 30, 30);
+
+    if(app.remaining===0){
+      
+      fill(CLRS.GREEN);
+      
+      textSize(64);
+      textAlign(CENTER,CENTER);
+      
+        text('Game Over', 300,100);
+
+    }
 
   };
 
