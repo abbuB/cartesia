@@ -1066,7 +1066,7 @@ var diagrams = function(processingInstance){
                      ['.', '.', '\\', 'x', 'o', 'x', 'O', 'x', 'o', 'x', '/', '.', '.'],
                      ['.', '.', 'x', 'o', 'x', 'o', 'X', 'o', 'x', 'o', 'x', '.', '.'],
                      ['.', '.', 'o', 'x', 'o', 'x', 'O', 'x', 'o', 'x', 'o', '.', '.'],
-                     ['.', '.', 'x', 'o', 'x', 'o', 'X', 'o', 'x', 'o', 'x', '.', '.'],
+                     ['.', '.', 'x', 'o', '|', '/', 'X', 'o', 'x', 'o', 'x', '.', '.'],
                      ['.', '.', 'o', 'x', 'o', 'x', '\\', 'x', 'o', 'x', 'o', '.', '.'],
                      ['.', '.', 'x', 'o', 'x', 'o', 'X', 'o', 'x', 'o', 'x', '.', '.'],
                      ['.', '.', '.', '.', 'o', 'x', 'O', 'x', 'o', '.', '.', '.', '.'],
@@ -1333,10 +1333,9 @@ var diagrams = function(processingInstance){
 
             }
 
-        };
-        
-        // Double Ring Count (dCount) -------------------------
-        function dLink(){
+        };        
+        function doubleLink(){
+          // Double Ring Count (dCount) -------------------------  
           
           var ctrls=p.controls;
           var ctrl=null;
@@ -1529,7 +1528,86 @@ var diagrams = function(processingInstance){
             }
 
         };
+        function columnCounts(){
 
+          var ctrls=p.controls;
+          var layout=null;
+          var total=0;
+
+            for(var r in ctrls){
+              for(var c in ctrls[r]){
+                
+                switch(ctrls[r][c].layout){
+                
+                  case HEXY_SYMBOLS.DOWN_CENTER:                    
+       
+                    ctrl=ctrls[r][c].bottom;
+
+                      while(ctrl!==null){
+
+                        if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
+                           ctrl.layout===HEXY_SYMBOLS.BLUE){
+                          total++;
+                        }
+                           
+                        ctrl=ctrl.bottom;
+                           
+                      }
+                      
+                      ctrls[r][c].count=total;
+
+                    break;
+
+                  case HEXY_SYMBOLS.DOWN_LEFT:
+                    
+                    ctrl=ctrls[r][c].bottomLeft;
+
+                      while(ctrl!==null){
+
+                        if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
+                           ctrl.layout===HEXY_SYMBOLS.BLUE){
+                          total++;
+                        }
+                           
+                        ctrl=ctrl.bottomLeft;
+                           
+                      }
+                      
+                      ctrls[r][c].count=total;
+                      
+                    break;
+                  
+                  case HEXY_SYMBOLS.DOWN_RIGHT:
+                    
+                    ctrl=ctrls[r][c].bottomRight;
+
+                      while(ctrl!==null){
+
+                        if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
+                           ctrl.layout===HEXY_SYMBOLS.BLUE){
+                          total++;
+                        }
+                           
+                        ctrl=ctrl.bottomRight;
+                           
+                      }
+                      
+                      ctrls[r][c].count=total;
+                      
+                    break;
+                    
+                  default:
+                    
+                    break;
+
+                }
+                
+                total=0;
+                
+              }
+            }
+
+        };       
         function randomizeStyle(){
 
           var layout=p.layout;
@@ -1550,8 +1628,9 @@ var diagrams = function(processingInstance){
         // randomizeStyle();
         load();
         link();
-        dLink();
-
+        doubleLink();
+        columnCounts();
+        
         app.gameOver=false;
 
       };
@@ -2837,7 +2916,7 @@ var diagrams = function(processingInstance){
 
         this.count        = 0;              //  # of blue cells in surrounding ring
         this.dCount       = 0;              //  # of blue cells in surrounding 2 rings
-
+        
         this.enabled      = true;
 
         this.halo         = false;
@@ -3544,13 +3623,13 @@ var diagrams = function(processingInstance){
 
       }
 
-print(f.length);
+// print(f.length);
 
-print(first);
-print(first.length);
+// print(first);
+// print(first.length);
 
-print(secnd);
-print(secnd.length);
+// print(secnd);
+// print(secnd.length);
 
       var arrFirst=[];
       var arrSecond=[];
@@ -3563,14 +3642,14 @@ print(secnd.length);
       }
 
   for(var row=0; row<arrFirst.length; row++){
-    print(arrFirst[row]);
+    // print(arrFirst[row]);
   }
 
-print(arrFirst.length);
+// print(arrFirst.length);
 
-print(arrSecond);
-print(arrSecond.length);
-print(arrSecond.length);
+// print(arrSecond);
+// print(arrSecond.length);
+// print(arrSecond.length);
 
   /** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
