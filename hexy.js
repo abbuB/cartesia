@@ -255,46 +255,47 @@ var diagrams = function(processingInstance){
 
     }
 
-    this.dirty        = false;  //  Has a reset occurred
+    this.dirty        = false;              //  Has a reset occurred
 
-    this.debug        = true;   //  Mode that displays enhanced debugging tools
+    this.debug        = true;               //  Mode that displays enhanced debugging tools
 
-    this.frameRate    = 0;      //  Refresh speed
+    this.frameRate    = 0;                  //  Refresh speed
 
-    this.mouseX       = 0;      //  Current mouseX location
-    this.mouseY       = 0;      //  Current mouseY location
+    this.mouseX       = 0;                  //  Current mouseX location
+    this.mouseY       = 0;                  //  Current mouseY location
 
-    this.left         = false;  //  Is the left   mouse button pressed
-    this.right        = false;  //  Is the right  mouse button pressed
-    this.center       = false;  //  Is the center mouse button pressed
+    this.left         = false;              //  Is the left   mouse button pressed
+    this.right        = false;              //  Is the right  mouse button pressed
+    this.center       = false;              //  Is the center mouse button pressed
 
-    this.dragging     = false;  //  Is the mouse cursor moving and the left button pressed?
+    this.dragging     = false;              //  Is the mouse cursor moving and the left button pressed?
 
-    this.focus        = null;   //  The control with focus
+    this.focus        = null;               //  The control with focus
 
     this.mode         = APPMODES.INTRO;
 
-    this.controls     = [];     //  Collection of controls in the app
+    this.controls     = [];                 //  Collection of controls in the app
     this.controlCount = 0;
 
-    this.keys         = [];     //  Array holding the value of all keycodes
+    this.keys         = [];                 //  Array holding the value of all keycodes
 
-    this.info         = 0;      //  Is the info frame displayed
-    this.telemetry    = false;  //  Is telemetry visible
+    this.info         = 0;                  //  Is the info frame displayed
+    this.telemetry    = false;              //  Is telemetry visible
 
     /* Hextris Specific ------------------ */
 
     this.hexBoard     = this.controls[1];
 
-    this.puzzle       = 0;      //  Index of the current puzzle layout
+    this.puzzle       = 0;                  //  Index of the current puzzle layout
 
-    this.remaining    = 0;      //  How many blue cells need to be uncovered
-    this.errors       = 0;      //  How many mistaken clicks occurred
+    this.remaining    = 0;                  //  How many blue cells need to be uncovered
+    this.covered      = 0;                  //  How many black cells need to be uncovered
+    this.errors       = 0;                  //  How many mistaken clicks occurred
 
     this.orientation  = ORIENTATIONS.FLAT;
 
     this.music        = true;
-    this.level        = 0;      //  Levels 0 - 35 ( 6 groups of 6 = 36 total)
+    this.level        = 0;                  //  Levels 0 - 42 ( 7 groups of 6 = 42 total)
 
   };
 
@@ -1642,16 +1643,18 @@ var diagrams = function(processingInstance){
 
         function drawGuideLines(){
 
+          var offset=(HEX_SIZE-2)/2;
+          
           strokeWeight(6);
           stroke(getColor(CLRS.WHITE,25));
 
           for(var l in p.lines){
-
+            
             switch(p.lines[l].layout){
 
-              case HEXY_SYMBOLS.DOWN:
+              case HEXY_SYMBOLS.DOWN_CENTER:
 
-                line(p.lines[l].x, p.lines[l].y + (HEX_SIZE-2)/2,
+                line(p.lines[l].x, p.lines[l].y + offset,
                      p.lines[l].x, height);
 
                 break;
@@ -1660,8 +1663,8 @@ var diagrams = function(processingInstance){
 
                 var x=p.lines[l].x;
                 var y=p.lines[l].y;
-                var offsetX=cos(PI-PI/6)*(HEX_SIZE-2)/2;
-                var offsetY=sin(PI-PI/6)*(HEX_SIZE-2)/2;
+                var offsetX=cos(PI-PI/6)*offset;
+                var offsetY=sin(PI-PI/6)*offset;
 
                 line(x+offsetX,
                      y+offsetY,
@@ -1675,8 +1678,8 @@ var diagrams = function(processingInstance){
 
                 var x=p.lines[l].x;
                 var y=p.lines[l].y;
-                var offsetX=cos(PI/6)*(HEX_SIZE-2)/2;
-                var offsetY=sin(PI/6)*(HEX_SIZE-2)/2;
+                var offsetX=cos(PI/6)*offset;
+                var offsetY=sin(PI/6)*offset;
 
                 line(x+offsetX,
                      y+offsetY,
@@ -1695,8 +1698,10 @@ var diagrams = function(processingInstance){
         function calculateRemaining(){
 
           app.remaining=0;
-
+          app.covered=0;
+          
           var total=0;
+          var covered=0;          
           var ctrls=p.controls;
 
           for(var r in ctrls){
@@ -1706,10 +1711,15 @@ var diagrams = function(processingInstance){
                 total++;
               }
 
+              if(ctrls[r][c].layout==='o'){
+                covered++;
+              }
+              
             }
           }
 
           app.remaining=total;
+          app.covered=covered;
 
         };
         function drawHalos(){
@@ -3391,7 +3401,7 @@ var diagrams = function(processingInstance){
 
           { //  Toggle Line Display
 
-            if(this.layout===HEXY_SYMBOLS.DOWN ||
+            if(this.layout===HEXY_SYMBOLS.DOWN_CENTER ||
                this.layout===HEXY_SYMBOLS.DOWN_LEFT ||
                this.layout===HEXY_SYMBOLS.DOWN_RIGHT){
               this.line=!this.line;
@@ -3434,8 +3444,9 @@ var diagrams = function(processingInstance){
           else if(this.layout===HEXY_SYMBOLS.BLUE){
             app.errors++;
           }
-
-          this.line=false;
+          
+          // Should the line automatically be dismissed when the cell is disabled?
+          // this.line=false;
 
         }
 
@@ -3586,7 +3597,8 @@ var diagrams = function(processingInstance){
 
       text(app.puzzle, 30, 30);
 
-    if(app.remaining===0){
+    if(app.remaining===0 &&
+       app.covered  ===0){
 
       fill(CLRS.GREEN);
 
