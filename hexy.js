@@ -51,7 +51,9 @@ var diagrams = function(processingInstance){
           Choose Life - Sliding Triangle Game
 
     TO DO:
-
+      
+      - determine how consecutive and non-consecutive are specified
+      
       - refresh screen on mouse movement
       - click sounds for blue and black hexCells
       - uncover animations triangles
@@ -383,7 +385,7 @@ var diagrams = function(processingInstance){
         this.active   = false;    /** active = hit and focus */
         this.offset   = 0;        /** offset distance when clicked */
 
-        this.font     = monoFont; /** default font */
+        this.font     = serifFont; /** default font */
 
       };
       control.prototype.draw     = function(){};
@@ -1078,14 +1080,14 @@ var diagrams = function(processingInstance){
         this.text  =[
                      ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
                      ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
-                     ['.', '.', 'c', 'n', '+', '+', 'c', '+', '.', '.', 'c', '.', '.'],
+                     ['.', '.', 'c', 'n', '+', '+', '+', '+', '.', '.', 'c', '.', '.'],
                      ['.', '.', 'n', 'n', '.', '+', 'n', '+', '.', '.', 'n', '.', '.'],
-                     ['.', '.', '.', '.', '.', '+', 'c', '+', '.', '.', '.', '.', '.'],
+                     ['.', '.', '.', '.', '.', '+', '+', '+', '.', '.', '.', '.', '.'],
                      ['.', '.', '.', '.', '.', '+', 'n', '+', '.', '.', '.', '.', '.'],
                      ['.', '.', '.', '.', 'c', 'c', 'n', 'n', '.', '.', '.', '.', '.'],
-                     ['.', '.', '.', '.', '.', '+', 'c', '+', '.', '.', '.', '.', '.'],
+                     ['.', '.', '.', '.', '.', '+', '.', '+', '.', '.', '.', '.', '.'],
                      ['.', '.', '.', '.', '.', '+', 'n', '+', '.', '.', '.', '.', '.'],
-                     ['.', '.', '.', '.', '.', '+', 'c', '+', '.', '.', '.', '.', '.'],
+                     ['.', '.', '.', '.', '.', '+', '.', '+', '.', '.', '.', '.', '.'],
                      ['.', '.', '.', '.', '.', '.', 'n', '.', '.', '.', '.', '.', '.'],
                      ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
                      ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.']
@@ -1098,7 +1100,7 @@ var diagrams = function(processingInstance){
 
           p.controls=[];
 
-          HEX_SIZE=width/(p.layout.length+3);
+          HEX_SIZE=width/(p.layout.length+2);
 
           var w=HEX_SIZE;
 
@@ -1137,7 +1139,7 @@ var diagrams = function(processingInstance){
                  col:       col,
                  layout:    p.layout[row][col],
                  text:      p.text[row][col],
-                 font:      monoFont,
+                 font:      sansFont,
                  cursor:    HAND}));
 
                n++;
@@ -1333,10 +1335,10 @@ var diagrams = function(processingInstance){
 
             }
 
-        };        
+        };
         function doubleLink(){
-          // Double Ring Count (dCount) -------------------------  
-          
+          // Double Ring Count (dCount) -------------------------
+
           var ctrls=p.controls;
           var ctrl=null;
           var total=0;
@@ -1348,11 +1350,11 @@ var diagrams = function(processingInstance){
 
                 r/=1;
                 c/=1;
-                
+
                 dCount=ctrls[r][c].count;
 
                 if(ctrls[r][c]!==null){
-                  
+
                   if(ctrls[r][c].top!==null){
                     if(ctrls[r][c].top.top!==null){
 
@@ -1362,7 +1364,7 @@ var diagrams = function(processingInstance){
                          ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
                          dCount++;
                       }
-                      
+
                     }
                   }
 
@@ -1536,11 +1538,11 @@ var diagrams = function(processingInstance){
 
             for(var r in ctrls){
               for(var c in ctrls[r]){
-                
+
                 switch(ctrls[r][c].layout){
-                
-                  case HEXY_SYMBOLS.DOWN_CENTER:                    
-       
+
+                  case HEXY_SYMBOLS.DOWN_CENTER:
+
                     ctrl=ctrls[r][c].bottom;
 
                       while(ctrl!==null){
@@ -1549,17 +1551,17 @@ var diagrams = function(processingInstance){
                            ctrl.layout===HEXY_SYMBOLS.BLUE){
                           total++;
                         }
-                           
+
                         ctrl=ctrl.bottom;
-                           
+
                       }
-                      
+
                       ctrls[r][c].count=total;
 
                     break;
 
                   case HEXY_SYMBOLS.DOWN_LEFT:
-                    
+
                     ctrl=ctrls[r][c].bottomLeft;
 
                       while(ctrl!==null){
@@ -1568,17 +1570,17 @@ var diagrams = function(processingInstance){
                            ctrl.layout===HEXY_SYMBOLS.BLUE){
                           total++;
                         }
-                           
+
                         ctrl=ctrl.bottomLeft;
-                           
+
                       }
-                      
+
                       ctrls[r][c].count=total;
-                      
+
                     break;
-                  
+
                   case HEXY_SYMBOLS.DOWN_RIGHT:
-                    
+
                     ctrl=ctrls[r][c].bottomRight;
 
                       while(ctrl!==null){
@@ -1587,27 +1589,27 @@ var diagrams = function(processingInstance){
                            ctrl.layout===HEXY_SYMBOLS.BLUE){
                           total++;
                         }
-                           
+
                         ctrl=ctrl.bottomRight;
-                           
+
                       }
-                      
+
                       ctrls[r][c].count=total;
-                      
+
                     break;
-                    
+
                   default:
-                    
+
                     break;
 
                 }
-                
+
                 total=0;
-                
+
               }
             }
 
-        };       
+        };
         function randomizeStyle(){
 
           var layout=p.layout;
@@ -1630,7 +1632,7 @@ var diagrams = function(processingInstance){
         link();
         doubleLink();
         columnCounts();
-        
+
         app.gameOver=false;
 
       };
@@ -1645,16 +1647,16 @@ var diagrams = function(processingInstance){
 
           for(var l in p.lines){
 
-            switch(p.lines[l].style){
+            switch(p.lines[l].layout){
 
-              case HEXY_SYMBOLS.COL:
+              case HEXY_SYMBOLS.DOWN:
 
                 line(p.lines[l].x, p.lines[l].y + (HEX_SIZE-2)/2,
                      p.lines[l].x, height);
 
                 break;
 
-              case HEXY_SYMBOLS.DLEFT:
+              case HEXY_SYMBOLS.DOWN_LEFT:
 
                 var x=p.lines[l].x;
                 var y=p.lines[l].y;
@@ -1669,7 +1671,7 @@ var diagrams = function(processingInstance){
 
                 break;
 
-              case HEXY_SYMBOLS.DRIGHT:
+              case HEXY_SYMBOLS.DOWN_RIGHT:
 
                 var x=p.lines[l].x;
                 var y=p.lines[l].y;
@@ -1696,7 +1698,7 @@ var diagrams = function(processingInstance){
 
           var total=0;
           var ctrls=p.controls;
-  
+
           for(var r in ctrls){
             for(var c in ctrls[r]){
 
@@ -2916,7 +2918,7 @@ var diagrams = function(processingInstance){
 
         this.count        = 0;              //  # of blue cells in surrounding ring
         this.dCount       = 0;              //  # of blue cells in surrounding 2 rings
-        
+
         this.enabled      = true;
 
         this.halo         = false;
@@ -3080,89 +3082,104 @@ var diagrams = function(processingInstance){
 
         };
         function caption(){
-          
+
           function wrapText(n){
-            
+
             var retVal=n;
-            
+
             if      (p.text===HEXY_SYMBOLS.CONSECUTIVE    ){ retVal="{" + retVal + "}"; }
             else if (p.text===HEXY_SYMBOLS.NOT_CONSECUTIVE){ retVal="-" + retVal + "-"; }
 
             return retVal;
 
           };
-          
+
           pushMatrix();
 
             scale(1,-1);
 
               textFont(p.font,16);
-              textSize(16);
+              textSize(14);
               textAlign(CENTER,CENTER);
 
               switch(p.layout){
 
-                case HEXY_SYMBOLS.BLANK:
-
-                  break;
-
-                case HEXY_SYMBOLS.BLACK:            if(p.text!==HEXY_SYMBOLS.BLANK){
-                                                      fill(CLRS.WHITE);
-                                                      text(wrapText(p.count),0,0);
-                                                    }
-
+                case HEXY_SYMBOLS.BLANK:            /*  Blank never has text            */
                                                     break;
+
+                case HEXY_SYMBOLS.BLACK:            /*  Black never has text            */
+                                                    break;
+
+                case HEXY_SYMBOLS.BLUE:             /*  Blue never has text             */
+                                                    break;
+
+                case HEXY_SYMBOLS.BLACK_REVEALED:   /*  Black revealed always has text  */
+                                                    fill(CLRS.WHITE);
+
+                                                    if(!p.enabled){ fill(getColor(CLRS.WHITE,25)); }
                                                     
-                case HEXY_SYMBOLS.BLACK_REVEALED:   if(p.text!==HEXY_SYMBOLS.BLANK){
+                                                    if(p.text===HEXY_SYMBOLS.BLANK){ text('?',0,0);               }
+                                                    else                           { text(wrapText(p.count),0,0); }
+
+                                                    break;
+
+                case HEXY_SYMBOLS.BLUE_REVEALED:    /* Blue revealed has text with number symbol */
+                                                    if(p.text===HEXY_SYMBOLS.NUMBER){
+                                                      
                                                       fill(CLRS.WHITE);
-                                                      text(wrapText(p.count),0,0);
-                                                    }
-
-                                                    break;
-
-                case HEXY_SYMBOLS.BLUE:             if(p.text!==HEXY_SYMBOLS.BLANK){
-                                                      fill(CLRS.WHITE);
-                                                      text(wrapText(p.count),0,0);
-                                                    }
-
-                                                    break;
-
-                case HEXY_SYMBOLS.BLUE_REVEALED:    if(p.text!==HEXY_SYMBOLS.BLANK){                                                      
-                                                      fill(CLRS.WHITE);
-                                                      text(wrapText(p.count),0,0);                                                      
-                                                    }
-
-                                                    break;
-                  
-                case HEXY_SYMBOLS.DOWN_CENTER:      if(p.text!==HEXY_SYMBOLS.BLANK){
-                                                      textAlign(CENTER,TOP);
-                                                      rotate(0);
-                                                      fill(CLRS.BLACK);
-                                                      text(wrapText(p.count),0,0);
-                                                    }
-
-                                                    break;
-
-                case HEXY_SYMBOLS.DOWN_LEFT:        if(p.text!==HEXY_SYMBOLS.BLANK){                
-                                                      textAlign(CENTER,TOP);
-                                                      rotate(PI/3);
-                                                      fill(CLRS.BLACK);
-                                                      text(wrapText(p.count),0,0);
-                                                    }
-                                                    
-                                                    break;
-              
-                case HEXY_SYMBOLS.DOWN_RIGHT:       if(p.text!==HEXY_SYMBOLS.BLANK){                  
-                                                      textAlign(CENTER,TOP);
-                                                      rotate(-PI/3);
-                                                      fill(CLRS.BLACK);
+                                                      if(!p.enabled){ fill(getColor(CLRS.WHITE,25)); }
+                                                      
                                                       text(wrapText(p.count),0,0);
                                                       
-                                                    } 
-                                                    
+                                                    }
+
                                                     break;
 
-                default:    break;
+                case HEXY_SYMBOLS.DOWN_CENTER:      /* Always has text */
+                                                    if(p.text!==HEXY_SYMBOLS.BLANK){
+                                                      
+                                                      textAlign(CENTER,TOP);                                                      
+                                                      rotate(0);
+                                                      
+                                                      fill(CLRS.BLACK);
+                                                      if(!p.enabled){ fill(getColor(CLRS.BLACK,25)); }
+                                                      
+                                                      text(wrapText(p.count),0,0);
+                                                      
+                                                    }
+
+                                                    break;
+
+                case HEXY_SYMBOLS.DOWN_LEFT:        /* Always has text */
+                                                    if(p.text!==HEXY_SYMBOLS.BLANK){
+                                                      
+                                                      textAlign(CENTER,TOP);
+                                                      rotate(PI/3);
+                                                      
+                                                      fill(CLRS.BLACK);
+                                                      if(!p.enabled){ fill(getColor(CLRS.BLACK,25)); }
+                                                      
+                                                      text(wrapText(p.count),0,0);
+                                                    }
+
+                                                    break;
+
+                case HEXY_SYMBOLS.DOWN_RIGHT:       /* Always has text */
+                                                    if(p.text!==HEXY_SYMBOLS.BLANK){
+                                                      
+                                                      textAlign(CENTER,TOP);
+                                                      rotate(-PI/3);
+                                                      
+                                                      fill(CLRS.BLACK);
+                                                      if(!p.enabled){ fill(getColor(CLRS.BLACK,25)); }
+                                                      
+                                                      text(wrapText(p.count),0,0);
+
+                                                    }
+
+                                                    break;
+
+                default:                            break;
 
               }
 
@@ -3192,6 +3209,42 @@ var diagrams = function(processingInstance){
 
         };
 
+        function drawLinks(){
+
+          if(p.active){
+
+            noStroke();
+            strokeWeight(5);
+
+            if(p.top!==null){
+              stroke(CLRS.BLACK);
+              line(p.top.x, p.top.y, p.x, p.y);
+            }
+            if(p.bottom!==null){
+              stroke(CLRS.RED);
+              line(p.bottom.x, p.bottom.y, p.x, p.y);
+            }
+            if(p.topLeft!==null){
+              stroke(CLRS.ORANGE);
+              line(p.topLeft.x, p.topLeft.y, p.x, p.y);
+            }
+            if(p.bottomLeft!==null){
+              stroke(CLRS.YELLOW);
+              line(p.bottomLeft.x, p.bottomLeft.y, p.x, p.y);
+            }
+            if(p.topRight!==null){
+              stroke(CLRS.GREEN);
+              line(p.topRight.x, p.topRight.y, p.x, p.y);
+            }
+            if(p.bottomRight!==null){
+              stroke(CLRS.BLUE);
+              line(p.bottomRight.x, p.bottomRight.y, p.x, p.y);
+            }
+
+          }
+
+        };
+            
         noStroke();
 
         pushMatrix();
@@ -3208,24 +3261,24 @@ var diagrams = function(processingInstance){
 
             if(this.clickRadius>0){
 
-              // noStroke();
+              noStroke();
 
-              // fill(CLRS.H_ORANGE_L);
+              fill(CLRS.H_ORANGE_L);
 
-              // var w=this.clickRadius/2;
+              var w=this.clickRadius/2;
 
-              // rotate(radians(this.clickRadius)*3);
+              rotate(radians(this.clickRadius)*3);
 
-              // beginShape();
+              beginShape();
 
-                // for(var pt=0; pt<6; pt++){
-                  // vertex(cos(radians(pt*60))*w,
-                         // sin(radians(pt*60))*w );
-                // }
+                for(var pt=0; pt<6; pt++){
+                  vertex(cos(radians(pt*60))*w,
+                         sin(radians(pt*60))*w );
+                }
 
-              // endShape();
+              endShape();
 
-              // this.clickRadius-=5;
+              this.clickRadius-=5;
 
               // var offset=HEX_SIZE-this.clickRadius;
 
@@ -3259,37 +3312,7 @@ var diagrams = function(processingInstance){
 
         popMatrix();
 
-        // if(this.active){
-          
-          // noStroke();
-          // strokeWeight(5);
-          
-          // if(this.top!==null){
-            // stroke(CLRS.BLACK);
-            // line(this.top.x, this.top.y, this.x, this.y);
-          // }
-          // if(this.bottom!==null){
-            // stroke(CLRS.RED);
-            // line(this.bottom.x, this.bottom.y, this.x, this.y);
-          // }
-          // if(this.topLeft!==null){
-            // stroke(CLRS.ORANGE);
-            // line(this.topLeft.x, this.topLeft.y, this.x, this.y);
-          // }
-          // if(this.bottomLeft!==null){
-            // stroke(CLRS.YELLOW);
-            // line(this.bottomLeft.x, this.bottomLeft.y, this.x, this.y);
-          // }
-          // if(this.topRight!==null){
-            // stroke(CLRS.GREEN);
-            // line(this.topRight.x, this.topRight.y, this.x, this.y);
-          // }
-          // if(this.bottomRight!==null){
-            // stroke(CLRS.BLUE);
-            // line(this.bottomRight.x, this.bottomRight.y, this.x, this.y);
-          // }
-
-        // }
+        // drawLinks();
 
       };
       hexCell.prototype.hitTest=function(x,y){
@@ -3357,23 +3380,34 @@ var diagrams = function(processingInstance){
 
         if(this.active){
 
+          { // Toggle Halo display
+            
+            if(this.layout===HEXY_SYMBOLS.BLUE_REVEALED &&
+               this.text  ===HEXY_SYMBOLS.NUMBER){
+              this.halo=!this.halo;
+            }
+               
+          }
+
+          { //  Toggle Line Display
+
+            if(this.layout===HEXY_SYMBOLS.DOWN ||
+               this.layout===HEXY_SYMBOLS.DOWN_LEFT ||
+               this.layout===HEXY_SYMBOLS.DOWN_RIGHT){
+              this.line=!this.line;
+            }
+
+          }
+
           if(this.layout===HEXY_SYMBOLS.BLUE){
 
             this.layout=HEXY_SYMBOLS.BLUE_REVEALED;
-            // this.parent.layout[this.row][this.col]=0;
 
             this.clickRadius=HEX_SIZE-10;
 
           }
           else if(this.layout===HEXY_SYMBOLS.BLACK){
             app.errors++;
-          }
-
-          { //  Toggle Line Display
-            if(this.layout>HEXY_SYMBOLS.SPACER){
-              this.line=!this.line;
-            }
-
           }
 
           // this.execute(this.id);
@@ -3385,26 +3419,20 @@ var diagrams = function(processingInstance){
 
         if(this.active){
 
-          // if(this.style===HEXY_SYMBOLS.BLUE){
+          if(this.layout!==HEXY_SYMBOLS.BLUE &&
+             this.layout!==HEXY_SYMBOLS.BLACK){
             this.enabled=!this.enabled;
-          // }
+          }
 
           if(this.layout===HEXY_SYMBOLS.BLACK){
 
             this.layout=HEXY_SYMBOLS.BLACK_REVEALED;
 
-            // this.clickRadius=HEX_SIZE;
+            this.clickRadius=HEX_SIZE-10;
 
           }
-          else{
-
-            if(this.layout===HEXY_SYMBOLS.BLUE){
-              app.errors++;
-            }
-            else{
-
-            }
-
+          else if(this.layout===HEXY_SYMBOLS.BLUE){
+            app.errors++;
           }
 
           this.line=false;
@@ -3559,12 +3587,12 @@ var diagrams = function(processingInstance){
       text(app.puzzle, 30, 30);
 
     if(app.remaining===0){
-      
+
       fill(CLRS.GREEN);
-      
+
       textSize(64);
       textAlign(CENTER,CENTER);
-      
+
         text('Game Over', 300,100);
 
     }
@@ -3810,11 +3838,11 @@ var diagrams = function(processingInstance){
     };
     mouseOut=function(){
 
-      app.dragging=false;
+      // app.dragging=false;
 
-      forEach(app.controls,'out');
+      // forEach(app.controls,'out');
 
-      app.focus=-1;
+      // app.focus=-1;
 
     };
     mouseOver=function(){
