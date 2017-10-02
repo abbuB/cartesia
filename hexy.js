@@ -107,20 +107,6 @@ var diagrams = function(processingInstance){
   /* Constants ============================================================= */
   {
 
-    // var HEXY_SYMBOLS={
-
-      // BLACK:    0,
-      // BLUE:     1,
-
-      // SPACER:   2,
-
-      // ROW:      3,
-      // COL:      4,
-
-      // DLEFT:    5,
-      // DRIGHT:   6
-
-    // }
     var HEXY_SYMBOLS={
 
       // Double up the \ character because it is an escape character and the first one won't be recognised
@@ -254,48 +240,56 @@ var diagrams = function(processingInstance){
       size(800, 600); // set size of canvas
 
     }
+    
+    /* Platform Constants */
+    {
 
-    this.dirty        = false;              //  Has a reset occurred
+      this.dirty        = false;              //  Has a reset occurred
 
-    this.debug        = true;               //  Mode that displays enhanced debugging tools
+      this.debug        = true;               //  Mode that displays enhanced debugging tools
 
-    this.frameRate    = 0;                  //  Refresh speed
+      this.frameRate    = 0;                  //  Refresh speed
 
-    this.mouseX       = 0;                  //  Current mouseX location
-    this.mouseY       = 0;                  //  Current mouseY location
+      this.mouseX       = 0;                  //  Current mouseX location
+      this.mouseY       = 0;                  //  Current mouseY location
 
-    this.left         = false;              //  Is the left   mouse button pressed
-    this.right        = false;              //  Is the right  mouse button pressed
-    this.center       = false;              //  Is the center mouse button pressed
+      this.left         = false;              //  Is the left   mouse button pressed
+      this.right        = false;              //  Is the right  mouse button pressed
+      this.center       = false;              //  Is the center mouse button pressed
 
-    this.dragging     = false;              //  Is the mouse cursor moving and the left button pressed?
+      this.dragging     = false;              //  Is the mouse cursor moving and the left button pressed?
 
-    this.focus        = null;               //  The control with focus
+      this.focus        = null;               //  The control with focus
 
-    this.mode         = APPMODES.INTRO;
+      this.controls     = [];                 //  Collection of controls in the app
+      this.controlCount = 0;
 
-    this.controls     = [];                 //  Collection of controls in the app
-    this.controlCount = 0;
+      this.keys         = [];                 //  Array holding the value of all keycodes
 
-    this.keys         = [];                 //  Array holding the value of all keycodes
+      this.info         = 0;                  //  Is the info frame displayed
+      this.telemetry    = false;              //  Is telemetry visible
 
-    this.info         = 0;                  //  Is the info frame displayed
-    this.telemetry    = false;              //  Is telemetry visible
-
+    }
+    
     /* Hextris Specific ------------------ */
+    {
 
-    this.hexBoard     = this.controls[1];
+      this.mode         = APPMODES.CREATE;
+      
+      this.hexBoard     = this.controls[1];
 
-    this.puzzle       = 0;                  //  Index of the current puzzle layout
+      this.puzzle       = 0;                  //  Index of the current puzzle layout
 
-    this.remaining    = 0;                  //  How many blue cells need to be uncovered
-    this.covered      = 0;                  //  How many black cells need to be uncovered
-    this.errors       = 0;                  //  How many mistaken clicks occurred
+      this.remaining    = 0;                  //  How many blue cells need to be uncovered
+      this.covered      = 0;                  //  How many black cells need to be uncovered
+      this.errors       = 0;                  //  How many mistaken clicks occurred
 
-    this.orientation  = ORIENTATIONS.FLAT;
+      this.orientation  = ORIENTATIONS.FLAT;
 
-    this.music        = true;
-    this.level        = 0;                  //  Levels 0 - 42 ( 7 groups of 6 = 42 total)
+      this.music        = true;
+      this.level        = 0;                  //  Levels 0 - 42 ( 7 groups of 6 = 42 total)
+
+    }
 
   };
 
@@ -3389,39 +3383,82 @@ var diagrams = function(processingInstance){
       hexCell.prototype.clicked=function(){
 
         if(this.active){
-
-          { // Toggle Halo display
+          
+          if(app.mode===APPMODES.CREATE){
             
-            if(this.layout===HEXY_SYMBOLS.BLUE_REVEALED &&
-               this.text  ===HEXY_SYMBOLS.NUMBER){
-              this.halo=!this.halo;
+            if     (this.layout===HEXY_SYMBOLS.BLANK){
+              this.layout=HEXY_SYMBOLS.BLACK;
             }
-               
+            else if(this.layout===HEXY_SYMBOLS.BLACK){
+              this.layout=HEXY_SYMBOLS.BLACK_REVEALED;
+            }
+            else if(this.layout===HEXY_SYMBOLS.BLACK_REVEALED){
+              this.layout=HEXY_SYMBOLS.BLUE;
+            }
+            else if(this.layout===HEXY_SYMBOLS.BLUE){
+              this.layout=HEXY_SYMBOLS.BLUE_REVEALED;
+            }
+            else if(this.layout===HEXY_SYMBOLS.BLUE_REVEALED){
+              this.layout=HEXY_SYMBOLS.DOWN_RIGHT;
+              this.parent.columnCounts();
+            }
+            else if(this.layout===HEXY_SYMBOLS.DOWN_RIGHT){
+              this.layout=HEXY_SYMBOLS.DOWN_CENTER;
+            }
+            else if(this.layout===HEXY_SYMBOLS.DOWN_CENTER){
+              this.layout=HEXY_SYMBOLS.DOWN_LEFT;
+            }
+            else if(this.layout===HEXY_SYMBOLS.DOWN_LEFT){
+              this.layout=HEXY_SYMBOLS.BLANK;
+            }            
+            
+            // BLANK:            '.',
+
+            // BLACK:            'o',
+            // BLACK_REVEALED:   'O',
+            // BLUE:             'x',
+            // BLUE_REVEALED:    'X',
+            // DOWN_RIGHT:       '\\',
+            // DOWN_CENTER:      '|',
+            // DOWN_LEFT:        '/',
+            
           }
-
-          { //  Toggle Line Display
-
-            if(this.layout===HEXY_SYMBOLS.DOWN_CENTER ||
-               this.layout===HEXY_SYMBOLS.DOWN_LEFT ||
-               this.layout===HEXY_SYMBOLS.DOWN_RIGHT){
-              this.line=!this.line;
+          else if(app.mode===APPMODES.GAME){
+            
+            { // Toggle Halo display
+              
+              if(this.layout===HEXY_SYMBOLS.BLUE_REVEALED &&
+                 this.text  ===HEXY_SYMBOLS.NUMBER){
+                this.halo=!this.halo;
+              }
+                 
             }
 
+            { //  Toggle Line Display
+
+              if(this.layout===HEXY_SYMBOLS.DOWN_CENTER ||
+                 this.layout===HEXY_SYMBOLS.DOWN_LEFT ||
+                 this.layout===HEXY_SYMBOLS.DOWN_RIGHT){
+                this.line=!this.line;
+              }
+
+            }
+
+            if(this.layout===HEXY_SYMBOLS.BLUE){
+
+              this.layout=HEXY_SYMBOLS.BLUE_REVEALED;
+
+              this.clickRadius=HEX_SIZE-10;
+
+            }
+            else if(this.layout===HEXY_SYMBOLS.BLACK){
+              app.errors++;
+            }
+
+            // this.execute(this.id);
+            
           }
-
-          if(this.layout===HEXY_SYMBOLS.BLUE){
-
-            this.layout=HEXY_SYMBOLS.BLUE_REVEALED;
-
-            this.clickRadius=HEX_SIZE-10;
-
-          }
-          else if(this.layout===HEXY_SYMBOLS.BLACK){
-            app.errors++;
-          }
-
-          // this.execute(this.id);
-
+          
         }
 
       };
@@ -3779,7 +3816,7 @@ var diagrams = function(processingInstance){
 
       // forEach(app.controls,'clicked');
 
-      app.mode=APPMODES.GAME;
+      app.mode=APPMODES.CREATE;
 
       switch(mouseButton){
 
