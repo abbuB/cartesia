@@ -51,10 +51,10 @@ var diagrams = function(processingInstance){
           Choose Life - Sliding Triangle Game
 
     TO DO:
-      
+
       - undo/redo
       - determine how consecutive and non-consecutive are specified
-      
+
       - refresh screen on mouse movement
       - click sounds for blue and black hexCells
       - uncover animations triangles
@@ -108,7 +108,7 @@ var diagrams = function(processingInstance){
   /* Constants ============================================================= */
   {
 
-    var HEXY_SYMBOLS={
+    var HEXY_TYPES={
 
       // Double up the \ character because it is an escape character and the first one won't be recognised
 
@@ -118,6 +118,7 @@ var diagrams = function(processingInstance){
       BLACK_REVEALED:   'O',
       BLUE:             'x',
       BLUE_REVEALED:    'X',
+
       DOWN_RIGHT:       '\\',
       DOWN_CENTER:      '|',
       DOWN_LEFT:        '/',
@@ -241,7 +242,7 @@ var diagrams = function(processingInstance){
       size(800, 600); // set size of canvas
 
     }
-    
+
     /* Platform Constants */
     {
 
@@ -271,12 +272,12 @@ var diagrams = function(processingInstance){
       this.telemetry    = false;              //  Is telemetry visible
 
     }
-    
+
     /* Hextris Specific ------------------ */
     {
 
       this.mode         = APPMODES.CREATE;
-      
+
       this.hexBoard     = this.controls[1];
 
       this.puzzle       = 0;                  //  Index of the current puzzle layout
@@ -300,25 +301,25 @@ var diagrams = function(processingInstance){
   /* Utility Functions ===================================================== */
   {
 
-    function iRandom(n)           { return round(random(n));    };
+    function iRandom(n)           { return round(random(n));                                    };
 
     function getColor(clr, alpha) {
       return color(red(clr), green(clr), blue(clr), alpha/100*255);
     };
 
-    function getInfo()            { return app.info;                      };
-    function toggleInfo()         { app.info=!app.info;                   };
+    function getInfo()            { return app.info;                                            };
+    function toggleInfo()         { app.info=!app.info;                                         };
 
-    function getScore()           { return app.hexBoard.score;            };
-    function getHighScore()       { return app.hexBoard.highScore;        };
+    function getScore()           { return app.hexBoard.score;                                  };
+    function getHighScore()       { return app.hexBoard.highScore;                              };
 
-    function getMusic()           { return app.music;                     };
-    function setMusic(b)          { return app.music=b;                   };
+    function getMusic()           { return app.music;                                           };
+    function setMusic(b)          { return app.music=b;                                         };
 
-    function getTelemetry()       { return app.telemetry;                 };
-    function toggleTelemetry()    { app.telemetry=!app.telemetry;         };
+    function getTelemetry()       { return app.telemetry;                                       };
+    function toggleTelemetry()    { app.telemetry=!app.telemetry;                               };
 
-    function clickTest(n)         { print('click: ' + n);                 };
+    function clickTest(n)         { print('click: ' + n);                                       };
 
     function incrementPuzzle()    {
 
@@ -345,14 +346,14 @@ var diagrams = function(processingInstance){
     };
 
     function up(){
-      
+
       if(app.hexBoard.activeCell.top!==null){
         app.hexBoard.activeCell=app.hexBoard.activeCell.top;
       }
 
     };
     function down(){
-      
+
       if(app.hexBoard.activeCell.bottom!==null){
         app.hexBoard.activeCell=app.hexBoard.activeCell.bottom;
       }
@@ -360,59 +361,62 @@ var diagrams = function(processingInstance){
     };
 
     function upRight(){
-      
+
       if(app.hexBoard.activeCell.topRight!==null){
         app.hexBoard.activeCell=app.hexBoard.activeCell.topRight;
       }
 
     };
     function downRight(){
-      
+
       if(app.hexBoard.activeCell.bottomRight!==null){
         app.hexBoard.activeCell=app.hexBoard.activeCell.bottomRight;
       }
 
     };
-    
+
     function upLeft(){
-      
+
       if(app.hexBoard.activeCell.topLeft!==null){
         app.hexBoard.activeCell=app.hexBoard.activeCell.topLeft;
       }
 
     };
     function downLeft(){
-      
+
       if(app.hexBoard.activeCell.bottomLeft!==null){
         app.hexBoard.activeCell=app.hexBoard.activeCell.bottomLeft;
       }
 
     };
-    
-    function incrementCellLayout(){ app.hexBoard.activeCell.incrementCellLayout();  };
-    function decrementCellLayout(){ app.hexBoard.activeCell.decrementCellLayout();  };
 
-    function incrementAll(){
+    function incrementCellLayout(){ app.hexBoard.activeCell.incrementCellLayout();              };
+    function decrementCellLayout(){ app.hexBoard.activeCell.decrementCellLayout();              };
 
+    function setBlackRevealed()   { app.hexBoard.activeCell.layout=HEXY_TYPES.BLACK_REVEALED; };
+    function setBlack()           { app.hexBoard.activeCell.layout=HEXY_TYPES.BLACK;          };
+
+    function setBlueRevealed()    { app.hexBoard.activeCell.layout=HEXY_TYPES.BLUE_REVEALED;  };
+    function setBlue()            { app.hexBoard.activeCell.layout=HEXY_TYPES.BLUE;           };
+
+    function setDownCenter()      { app.hexBoard.activeCell.layout=HEXY_TYPES.DOWN_CENTER;    };
+    function setDownLeft()        { app.hexBoard.activeCell.layout=HEXY_TYPES.DOWN_LEFT;      };
+    function setDownRight()       { app.hexBoard.activeCell.layout=HEXY_TYPES.DOWN_RIGHT;     };
+
+    function setBlank()           { app.hexBoard.activeCell.text=HEXY_TYPES.BLANK;            };
+    function setNumber()          { app.hexBoard.activeCell.text=HEXY_TYPES.NUMBER;           };
+    function setConsecutive()     { app.hexBoard.activeCell.text=HEXY_TYPES.CONSECUTIVE;      };
+    function setNonConsecutive()  { app.hexBoard.activeCell.text=HEXY_TYPES.NOT_CONSECUTIVE;  };
+
+    function clearLayout()        { app.hexBoard.clearLayout();                               };
+
+    function toggleCreate()       {
+
+      if(app.mode===APPMODES.GAME){ app.mode=APPMODES.CREATE; }
+      else                        { app.mode=APPMODES.GAME;   }
 
     };
-    function reset()            { app.hexBoard.incrementAll();                                  };
 
-    function setBlack()         { app.hexBoard.activeCell.layout=HEXY_SYMBOLS.BLACK;            };
-    function setBlackRevealed() { app.hexBoard.activeCell.layout=HEXY_SYMBOLS.BLACK_REVEALED;   };
-
-    function setBlueRevealed()  { app.hexBoard.activeCell.layout=HEXY_SYMBOLS.BLUE;             };
-    function setBlue()          { app.hexBoard.activeCell.layout=HEXY_SYMBOLS.BLUE_REVEALED;    };
-
-    function setDownCenter()    { app.hexBoard.activeCell.layout=HEXY_SYMBOLS.DOWN_CENTER;      };
-    function setDownLeft()      { app.hexBoard.activeCell.layout=HEXY_SYMBOLS.DOWN_LEFT;        };
-    function setDownRight()     { app.hexBoard.activeCell.layout=HEXY_SYMBOLS.DOWN_RIGHT;       };
-
-    function setNumber()        { app.hexBoard.activeCell.layout=HEXY_SYMBOLS.NUMBER;           };
-    function setConsecutive()   { app.hexBoard.activeCell.layout=HEXY_SYMBOLS.CONSECUTIVE;      };
-    function setNonConsecutive(){ app.hexBoard.activeCell.layout=HEXY_SYMBOLS.NOT_CONSECUTIVE;  };
-    
-    
   }
 
   /* Containers/Controls =================================================== */
@@ -1101,7 +1105,7 @@ var diagrams = function(processingInstance){
         this.controls=[];        //  Clear the controls array
         this.activeCell = null;  //  Clear the active hexCell
 
-    // var HEXY_SYMBOLS={
+    // var HEXY_TYPES={
 
       // Double up the \ character because it is an escape character and the first one won't be recognised
 
@@ -1237,8 +1241,8 @@ var diagrams = function(processingInstance){
                     ctrls[r][c].top= ctrls[r-1][c];
                     ctrl=ctrls[r][c].top;
 
-                    if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
-                       ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
+                    if(ctrl.layout===HEXY_TYPES.BLUE ||
+                       ctrl.layout===HEXY_TYPES.BLUE_REVEALED){
                       total++;
                     }
 
@@ -1251,8 +1255,8 @@ var diagrams = function(processingInstance){
 
                     ctrl=ctrls[r][c].bottom;
 
-                    if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
-                       ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
+                    if(ctrl.layout===HEXY_TYPES.BLUE ||
+                       ctrl.layout===HEXY_TYPES.BLUE_REVEALED){
                       total++;
                     }
 
@@ -1273,8 +1277,8 @@ var diagrams = function(processingInstance){
 
                       ctrl=ctrls[r][c].topLeft;
 
-                      if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
-                         ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
+                      if(ctrl.layout===HEXY_TYPES.BLUE ||
+                         ctrl.layout===HEXY_TYPES.BLUE_REVEALED){
                         total++;
                       }
 
@@ -1285,8 +1289,8 @@ var diagrams = function(processingInstance){
 
                       ctrl=ctrls[r][c].topLeft;
 
-                      if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
-                         ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
+                      if(ctrl.layout===HEXY_TYPES.BLUE ||
+                         ctrl.layout===HEXY_TYPES.BLUE_REVEALED){
                         total++;
                       }
 
@@ -1303,8 +1307,8 @@ var diagrams = function(processingInstance){
 
                       ctrl=ctrls[r][c].bottomLeft;
 
-                      if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
-                         ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
+                      if(ctrl.layout===HEXY_TYPES.BLUE ||
+                         ctrl.layout===HEXY_TYPES.BLUE_REVEALED){
                         total++;
                       }
 
@@ -1316,8 +1320,8 @@ var diagrams = function(processingInstance){
 
                       ctrl=ctrls[r][c].bottomLeft;
 
-                      if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
-                         ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
+                      if(ctrl.layout===HEXY_TYPES.BLUE ||
+                         ctrl.layout===HEXY_TYPES.BLUE_REVEALED){
                         total++;
                       }
 
@@ -1335,8 +1339,8 @@ var diagrams = function(processingInstance){
 
                       ctrl=ctrls[r][c].topRight;
 
-                      if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
-                         ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
+                      if(ctrl.layout===HEXY_TYPES.BLUE ||
+                         ctrl.layout===HEXY_TYPES.BLUE_REVEALED){
                         total++;
                       }
 
@@ -1347,8 +1351,8 @@ var diagrams = function(processingInstance){
 
                       ctrl=ctrls[r][c].topRight;
 
-                      if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
-                         ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
+                      if(ctrl.layout===HEXY_TYPES.BLUE ||
+                         ctrl.layout===HEXY_TYPES.BLUE_REVEALED){
                         total++;
                       }
 
@@ -1365,8 +1369,8 @@ var diagrams = function(processingInstance){
 
                       ctrl=ctrls[r][c].bottomRight;
 
-                      if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
-                         ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
+                      if(ctrl.layout===HEXY_TYPES.BLUE ||
+                         ctrl.layout===HEXY_TYPES.BLUE_REVEALED){
                         total++;
                       }
 
@@ -1378,8 +1382,8 @@ var diagrams = function(processingInstance){
 
                       ctrl=ctrls[r][c].bottomRight;
 
-                      if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
-                         ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
+                      if(ctrl.layout===HEXY_TYPES.BLUE ||
+                         ctrl.layout===HEXY_TYPES.BLUE_REVEALED){
                         total++;
                       }
 
@@ -1420,8 +1424,8 @@ var diagrams = function(processingInstance){
 
                       ctrl=ctrls[r][c].top.top;
 
-                      if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
-                         ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
+                      if(ctrl.layout===HEXY_TYPES.BLUE ||
+                         ctrl.layout===HEXY_TYPES.BLUE_REVEALED){
                          dCount++;
                       }
 
@@ -1433,8 +1437,8 @@ var diagrams = function(processingInstance){
 
                       ctrl=ctrls[r][c].bottom.bottom;
 
-                      if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
-                         ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
+                      if(ctrl.layout===HEXY_TYPES.BLUE ||
+                         ctrl.layout===HEXY_TYPES.BLUE_REVEALED){
                          dCount++;
                       }
 
@@ -1448,8 +1452,8 @@ var diagrams = function(processingInstance){
 
                       ctrl=ctrls[r][c].topLeft.topLeft;
 
-                      if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
-                         ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
+                      if(ctrl.layout===HEXY_TYPES.BLUE ||
+                         ctrl.layout===HEXY_TYPES.BLUE_REVEALED){
                          dCount++;
                       }
 
@@ -1461,8 +1465,8 @@ var diagrams = function(processingInstance){
 
                       ctrl=ctrls[r][c].bottomLeft.bottomLeft;
 
-                      if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
-                         ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
+                      if(ctrl.layout===HEXY_TYPES.BLUE ||
+                         ctrl.layout===HEXY_TYPES.BLUE_REVEALED){
                          dCount++;
                       }
 
@@ -1477,8 +1481,8 @@ var diagrams = function(processingInstance){
 
                       ctrl=ctrls[r][c].topRight.topRight;
 
-                      if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
-                         ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
+                      if(ctrl.layout===HEXY_TYPES.BLUE ||
+                         ctrl.layout===HEXY_TYPES.BLUE_REVEALED){
                          dCount++;
                       }
 
@@ -1490,8 +1494,8 @@ var diagrams = function(processingInstance){
 
                       ctrl=ctrls[r][c].bottomRight.bottomRight;
 
-                      if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
-                         ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
+                      if(ctrl.layout===HEXY_TYPES.BLUE ||
+                         ctrl.layout===HEXY_TYPES.BLUE_REVEALED){
                          dCount++;
                       }
 
@@ -1505,8 +1509,8 @@ var diagrams = function(processingInstance){
 
                       ctrl=ctrls[r][c].top.topLeft;
 
-                      if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
-                         ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
+                      if(ctrl.layout===HEXY_TYPES.BLUE ||
+                         ctrl.layout===HEXY_TYPES.BLUE_REVEALED){
                          dCount++;
                       }
 
@@ -1518,8 +1522,8 @@ var diagrams = function(processingInstance){
 
                       ctrl=ctrls[r][c].top.topRight;
 
-                      if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
-                         ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
+                      if(ctrl.layout===HEXY_TYPES.BLUE ||
+                         ctrl.layout===HEXY_TYPES.BLUE_REVEALED){
                          dCount++;
                       }
 
@@ -1533,8 +1537,8 @@ var diagrams = function(processingInstance){
 
                       ctrl=ctrls[r][c].bottom.bottomLeft;
 
-                      if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
-                         ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
+                      if(ctrl.layout===HEXY_TYPES.BLUE ||
+                         ctrl.layout===HEXY_TYPES.BLUE_REVEALED){
                          dCount++;
                       }
 
@@ -1546,8 +1550,8 @@ var diagrams = function(processingInstance){
 
                       ctrl=ctrls[r][c].bottom.bottomRight;
 
-                      if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
-                         ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
+                      if(ctrl.layout===HEXY_TYPES.BLUE ||
+                         ctrl.layout===HEXY_TYPES.BLUE_REVEALED){
                          dCount++;
                       }
 
@@ -1561,8 +1565,8 @@ var diagrams = function(processingInstance){
 
                       ctrl=ctrls[r][c].topRight.bottomRight;
 
-                      if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
-                         ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
+                      if(ctrl.layout===HEXY_TYPES.BLUE ||
+                         ctrl.layout===HEXY_TYPES.BLUE_REVEALED){
                          dCount++;
                       }
 
@@ -1574,8 +1578,8 @@ var diagrams = function(processingInstance){
 
                       ctrl=ctrls[r][c].topLeft.bottomLeft;
 
-                      if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
-                         ctrl.layout===HEXY_SYMBOLS.BLUE_REVEALED){
+                      if(ctrl.layout===HEXY_TYPES.BLUE ||
+                         ctrl.layout===HEXY_TYPES.BLUE_REVEALED){
                          dCount++;
                       }
 
@@ -1601,14 +1605,14 @@ var diagrams = function(processingInstance){
 
                 switch(ctrls[r][c].layout){
 
-                  case HEXY_SYMBOLS.DOWN_CENTER:
+                  case HEXY_TYPES.DOWN_CENTER:
 
                     ctrl=ctrls[r][c].bottom;
 
                       while(ctrl!==null){
 
-                        if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
-                           ctrl.layout===HEXY_SYMBOLS.BLUE){
+                        if(ctrl.layout===HEXY_TYPES.BLUE ||
+                           ctrl.layout===HEXY_TYPES.BLUE){
                           total++;
                         }
 
@@ -1620,14 +1624,14 @@ var diagrams = function(processingInstance){
 
                     break;
 
-                  case HEXY_SYMBOLS.DOWN_LEFT:
+                  case HEXY_TYPES.DOWN_LEFT:
 
                     ctrl=ctrls[r][c].bottomLeft;
 
                       while(ctrl!==null){
 
-                        if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
-                           ctrl.layout===HEXY_SYMBOLS.BLUE){
+                        if(ctrl.layout===HEXY_TYPES.BLUE ||
+                           ctrl.layout===HEXY_TYPES.BLUE){
                           total++;
                         }
 
@@ -1639,14 +1643,14 @@ var diagrams = function(processingInstance){
 
                     break;
 
-                  case HEXY_SYMBOLS.DOWN_RIGHT:
+                  case HEXY_TYPES.DOWN_RIGHT:
 
                     ctrl=ctrls[r][c].bottomRight;
 
                       while(ctrl!==null){
 
-                        if(ctrl.layout===HEXY_SYMBOLS.BLUE ||
-                           ctrl.layout===HEXY_SYMBOLS.BLUE){
+                        if(ctrl.layout===HEXY_TYPES.BLUE ||
+                           ctrl.layout===HEXY_TYPES.BLUE){
                           total++;
                         }
 
@@ -1703,22 +1707,22 @@ var diagrams = function(processingInstance){
         function drawGuideLines(){
 
           var offset=(HEX_SIZE-2)/2;
-          
+
           strokeWeight(6);
           stroke(getColor(CLRS.WHITE,25));
 
           for(var l in p.lines){
-            
+
             switch(p.lines[l].layout){
 
-              case HEXY_SYMBOLS.DOWN_CENTER:
+              case HEXY_TYPES.DOWN_CENTER:
 
                 line(p.lines[l].x, p.lines[l].y + offset,
                      p.lines[l].x, height);
 
                 break;
 
-              case HEXY_SYMBOLS.DOWN_LEFT:
+              case HEXY_TYPES.DOWN_LEFT:
 
                 var x=p.lines[l].x;
                 var y=p.lines[l].y;
@@ -1733,7 +1737,7 @@ var diagrams = function(processingInstance){
 
                 break;
 
-              case HEXY_SYMBOLS.DOWN_RIGHT:
+              case HEXY_TYPES.DOWN_RIGHT:
 
                 var x=p.lines[l].x;
                 var y=p.lines[l].y;
@@ -1758,9 +1762,9 @@ var diagrams = function(processingInstance){
 
           app.remaining=0;
           app.covered=0;
-          
+
           var total=0;
-          var covered=0;          
+          var covered=0;
           var ctrls=p.controls;
 
           for(var r in ctrls){
@@ -1773,7 +1777,7 @@ var diagrams = function(processingInstance){
               if(ctrls[r][c].layout==='o'){
                 covered++;
               }
-              
+
             }
           }
 
@@ -1972,20 +1976,20 @@ var diagrams = function(processingInstance){
         }
 
       };
-      hexBoard.prototype.incrementAll = function(){
+      hexBoard.prototype.clearLayout  = function(){
 
         var ctrls=this.controls;
 
         for(var r in ctrls){
           for(var c in ctrls[r]){
 
-            ctrls[r][c].layout=HEXY_SYMBOLS.BLANK;
+            ctrls[r][c].layout=HEXY_TYPES.BLANK;
 
           }
         }
 
       };
-      
+
     }
 
     /* Controls ============================================================ */
@@ -2980,7 +2984,7 @@ var diagrams = function(processingInstance){
         this.points       = [];
         this.dpoints      = [];
         this.hpoints      = [];
-        
+
         this.bpoints      = [];
 
         this.dirty        = false;
@@ -3032,7 +3036,7 @@ var diagrams = function(processingInstance){
             p.bpoints.push(new pnt( cos(radians(ang+pt*60))*(d2),
                                     sin(radians(ang+pt*60))*(d2) ));
           }
-          
+
           for(pt=0; pt<6; pt++){
             p.points.push(new pnt( cos(radians(ang+pt*60))*(d2-8),
                                    sin(radians(ang+pt*60))*(d2-8) ));
@@ -3058,7 +3062,7 @@ var diagrams = function(processingInstance){
 
         this.active=this.hit &&
                     app.focus===this &&
-                    this.style!==HEXY_SYMBOLS.BLANK;
+                    this.style!==HEXY_TYPES.BLANK;
 
         var offset=0;
         var p=this;
@@ -3068,7 +3072,7 @@ var diagrams = function(processingInstance){
           cursor(this.cursor);
         }
 
-// var HEXY_SYMBOLS={
+// var HEXY_TYPES={
 
   // Double up the \ character because it is an escape character and the first one won't be recognised
 
@@ -3088,10 +3092,10 @@ var diagrams = function(processingInstance){
 
         function highlight(){
 
-          if(p.layout===HEXY_SYMBOLS.BLACK ||
-             p.layout===HEXY_SYMBOLS.BLACK_REVEALED ||
-             p.layout===HEXY_SYMBOLS.BLUE ||
-             p.layout===HEXY_SYMBOLS.BLUE_REVEALED){
+          if(p.layout===HEXY_TYPES.BLACK ||
+             p.layout===HEXY_TYPES.BLACK_REVEALED ||
+             p.layout===HEXY_TYPES.BLUE ||
+             p.layout===HEXY_TYPES.BLUE_REVEALED){
 
             noStroke();
             fill(CLRS.WHITE);
@@ -3111,49 +3115,110 @@ var diagrams = function(processingInstance){
         function outerHexagon(){
 
           noStroke();
+        
+          if(app.mode===APPMODES.CREATE){
 
-          switch(p.layout){
+            switch(p.layout){
 
-            case HEXY_SYMBOLS.BLACK:          fill(CLRS.H_ORANGE);  break;
-            case HEXY_SYMBOLS.BLUE:           fill(CLRS.H_ORANGE);  break;
-            case HEXY_SYMBOLS.BLACK_REVEALED: fill(CLRS.H_BLACK);   break;
-            case HEXY_SYMBOLS.BLUE_REVEALED:  fill(CLRS.H_BLUE);    break;
+              case HEXY_TYPES.BLACK:          stroke(CLRS.H_ORANGE);
+                                                strokeWeight(2.5);
+                                                fill(CLRS.H_BLACK);   break;
 
-            default:                          noFill();
-                                              stroke(CLRS.BLACK);
-                                              strokeWeight(0.125);  break;
-          }
+              case HEXY_TYPES.BLUE:           stroke(CLRS.H_ORANGE);
+                                                strokeWeight(2.5);
+                                                fill(CLRS.H_BLUE);   break;
+              
+              case HEXY_TYPES.BLACK_REVEALED: fill(CLRS.H_BLACK);   break;
+              case HEXY_TYPES.BLUE_REVEALED:  fill(CLRS.H_BLUE);    break;
 
-          var offset=0;
-
-          if(p.timer>0 &&
-             p.dirty===false){
-            offset=random(0,1.5);
-            p.timer--;
-            if(p.timer<=0){ p.dirty=true; }
-
-          }
-
-          beginShape();
-
-            for(var pt in p.hpoints){
-              vertex(p.hpoints[pt].x+offset,
-                     p.hpoints[pt].y+offset);
+              default:                          noFill();
+                                                stroke(CLRS.BLACK);
+                                                strokeWeight(0.125);  break;
             }
 
-          endShape(CLOSE);
+            beginShape();
+
+              for(var pt in p.hpoints){
+                vertex(p.hpoints[pt].x,
+                       p.hpoints[pt].y);
+              }
+
+            endShape(CLOSE);
+            
+          }
+          else{
+
+            switch(p.layout){
+
+              case HEXY_TYPES.BLACK:          fill(CLRS.H_ORANGE);  break;
+              case HEXY_TYPES.BLUE:           fill(CLRS.H_ORANGE);  break;
+              case HEXY_TYPES.BLACK_REVEALED: fill(CLRS.H_BLACK);   break;
+              case HEXY_TYPES.BLUE_REVEALED:  fill(CLRS.H_BLUE);    break;
+
+              default:                          noFill();
+                                                stroke(CLRS.BLACK);
+                                                strokeWeight(0.125);  break;
+            }
+
+            var offset=0;
+
+            if(p.timer>0 &&
+               p.dirty===false){
+              offset=random(0,1.5);
+              p.timer--;
+              if(p.timer<=0){ p.dirty=true; }
+
+            }
+
+            beginShape();
+
+              for(var pt in p.hpoints){
+                vertex(p.hpoints[pt].x+offset,
+                       p.hpoints[pt].y+offset);
+              }
+
+            endShape(CLOSE);
+
+          }
 
         };
         function innerHexagon(){
+          
+          if(app.mode===APPMODES.CREATE){
+            
+            noStroke();
+
+            switch(p.layout){
+
+              case HEXY_TYPES.BLACK:          fill(CLRS.H_BLACK_L); break;
+              case HEXY_TYPES.BLUE:           fill(CLRS.H_BLUE_L);  break;
+              case HEXY_TYPES.BLACK_REVEALED: fill(CLRS.H_BLACK_L); break;
+              case HEXY_TYPES.BLUE_REVEALED:  fill(CLRS.H_BLUE_L);  break;
+
+              default:                          noFill();             break;
+
+            }
+
+            beginShape();
+
+              for(var pt in p.points){
+                vertex(p.points[pt].x,
+                       p.points[pt].y);
+              }
+
+            endShape(CLOSE);
+            
+          }
+          else{
 
             noStroke();
 
             switch(p.layout){
 
-              case HEXY_SYMBOLS.BLACK:          fill(CLRS.H_ORANGE_L);  break;
-              case HEXY_SYMBOLS.BLUE:           fill(CLRS.H_ORANGE_L);  break;
-              case HEXY_SYMBOLS.BLACK_REVEALED: fill(CLRS.H_BLACK_L);   break;
-              case HEXY_SYMBOLS.BLUE_REVEALED:  fill(CLRS.H_BLUE_L);    break;
+              case HEXY_TYPES.BLACK:          fill(CLRS.H_ORANGE_L);  break;
+              case HEXY_TYPES.BLUE:           fill(CLRS.H_ORANGE_L);  break;
+              case HEXY_TYPES.BLACK_REVEALED: fill(CLRS.H_BLACK_L);   break;
+              case HEXY_TYPES.BLUE_REVEALED:  fill(CLRS.H_BLUE_L);    break;
 
               default:                          noFill();               break;
 
@@ -3168,6 +3233,8 @@ var diagrams = function(processingInstance){
 
             endShape(CLOSE);
 
+          }
+
         };
         function caption(){
 
@@ -3175,8 +3242,8 @@ var diagrams = function(processingInstance){
 
             var retVal=n;
 
-            if      (p.text===HEXY_SYMBOLS.CONSECUTIVE    ){ retVal="{" + retVal + "}"; }
-            else if (p.text===HEXY_SYMBOLS.NOT_CONSECUTIVE){ retVal="-" + retVal + "-"; }
+            if      (p.text===HEXY_TYPES.CONSECUTIVE    ){ retVal="{" + retVal + "}"; }
+            else if (p.text===HEXY_TYPES.NOT_CONSECUTIVE){ retVal="-" + retVal + "-"; }
 
             return retVal;
 
@@ -3192,75 +3259,70 @@ var diagrams = function(processingInstance){
 
               switch(p.layout){
 
-                case HEXY_SYMBOLS.BLANK:            /*  Blank never has text            */
-                                                    break;
+                case HEXY_TYPES.BLANK:            break;  /*  Blank never has text            */
+                case HEXY_TYPES.BLACK:            break;  /*  Black never has text            */
+                case HEXY_TYPES.BLUE:             break;  /*  Blue never has text             */
 
-                case HEXY_SYMBOLS.BLACK:            /*  Black never has text            */
-                                                    break;
-
-                case HEXY_SYMBOLS.BLUE:             /*  Blue never has text             */
-                                                    break;
-
-                case HEXY_SYMBOLS.BLACK_REVEALED:   /*  Black revealed always has text  */
+                case HEXY_TYPES.BLACK_REVEALED:   /*  Black revealed always has text  */
                                                     fill(CLRS.WHITE);
 
                                                     if(!p.enabled){ fill(getColor(CLRS.WHITE,25)); }
-                                                    
-                                                    if(p.text===HEXY_SYMBOLS.BLANK){ text('?',0,0);               }
+
+                                                    if(p.text===HEXY_TYPES.BLANK){ text('?',0,0);               }
                                                     else                           { text(wrapText(p.count),0,0); }
 
                                                     break;
 
-                case HEXY_SYMBOLS.BLUE_REVEALED:    /* Blue revealed has text with number symbol */
-                                                    if(p.text===HEXY_SYMBOLS.NUMBER){
-                                                      
+                case HEXY_TYPES.BLUE_REVEALED:    /* Blue revealed has text with number symbol */
+                                                    if(p.text===HEXY_TYPES.NUMBER){
+
                                                       fill(CLRS.WHITE);
                                                       if(!p.enabled){ fill(getColor(CLRS.WHITE,25)); }
-                                                      
+
                                                       text(wrapText(p.count),0,0);
-                                                      
+
                                                     }
 
                                                     break;
 
-                case HEXY_SYMBOLS.DOWN_CENTER:      /* Always has text */
-                                                    if(p.text!==HEXY_SYMBOLS.BLANK){
-                                                      
-                                                      textAlign(CENTER,TOP);                                                      
+                case HEXY_TYPES.DOWN_CENTER:      /* Always has text */
+                                                    if(p.text!==HEXY_TYPES.BLANK){
+
+                                                      textAlign(CENTER,TOP);
                                                       rotate(0);
-                                                      
+
                                                       fill(CLRS.BLACK);
                                                       if(!p.enabled){ fill(getColor(CLRS.BLACK,25)); }
-                                                      
+
                                                       text(wrapText(p.count),0,0);
-                                                      
+
                                                     }
 
                                                     break;
 
-                case HEXY_SYMBOLS.DOWN_LEFT:        /* Always has text */
-                                                    if(p.text!==HEXY_SYMBOLS.BLANK){
-                                                      
+                case HEXY_TYPES.DOWN_LEFT:        /* Always has text */
+                                                    if(p.text!==HEXY_TYPES.BLANK){
+
                                                       textAlign(CENTER,TOP);
                                                       rotate(PI/3);
-                                                      
+
                                                       fill(CLRS.BLACK);
                                                       if(!p.enabled){ fill(getColor(CLRS.BLACK,25)); }
-                                                      
+
                                                       text(wrapText(p.count),0,0);
                                                     }
 
                                                     break;
 
-                case HEXY_SYMBOLS.DOWN_RIGHT:       /* Always has text */
-                                                    if(p.text!==HEXY_SYMBOLS.BLANK){
-                                                      
+                case HEXY_TYPES.DOWN_RIGHT:       /* Always has text */
+                                                    if(p.text!==HEXY_TYPES.BLANK){
+
                                                       textAlign(CENTER,TOP);
                                                       rotate(-PI/3);
-                                                      
+
                                                       fill(CLRS.BLACK);
                                                       if(!p.enabled){ fill(getColor(CLRS.BLACK,25)); }
-                                                      
+
                                                       text(wrapText(p.count),0,0);
 
                                                     }
@@ -3275,10 +3337,11 @@ var diagrams = function(processingInstance){
 
         };
         function activeCell(){
-
-          if(p.hit &&
-             (p.layout===HEXY_SYMBOLS.BLUE ||
-              p.layout===HEXY_SYMBOLS.BLACK)){
+          
+          if(app.mode!==APPMODES.CREATE &&
+             p.hit &&
+             (p.layout===HEXY_TYPES.BLUE ||
+              p.layout===HEXY_TYPES.BLACK)){
 
             noStroke();
             fill(getColor(CLRS.BLACK,15));
@@ -3332,7 +3395,7 @@ var diagrams = function(processingInstance){
           }
 
         };
-            
+
         noStroke();
 
         pushMatrix();
@@ -3347,7 +3410,8 @@ var diagrams = function(processingInstance){
             caption();
             activeCell();
 
-            if(app.hexBoard.activeCell===this){
+            if(app.hexBoard.activeCell===this &&
+               app.mode===APPMODES.CREATE){
 
               noFill();
               strokeWeight(1.5);
@@ -3360,10 +3424,10 @@ var diagrams = function(processingInstance){
                          this.bpoints[pt].y);
                 }
 
-              endShape(CLOSE);              
+              endShape(CLOSE);
 
               // ellipse(0,0,10,10);
-              
+
             }
 
             if(this.clickRadius>0){
@@ -3486,87 +3550,53 @@ var diagrams = function(processingInstance){
       hexCell.prototype.clicked=function(){
 
         if(this.active){
-          
+
           if(app.mode===APPMODES.CREATE){
 
             this.incrementCellLayout();
-
+            this.recalculate();
+            
           }
           else if(app.mode===APPMODES.GAME){
-            
+
             { // Toggle Halo display
-              
-              if(this.layout===HEXY_SYMBOLS.BLUE_REVEALED &&
-                 this.text  ===HEXY_SYMBOLS.NUMBER){
+
+              if(this.layout===HEXY_TYPES.BLUE_REVEALED &&
+                 this.text  ===HEXY_TYPES.NUMBER){
                 this.halo=!this.halo;
               }
-                 
+
             }
 
             { //  Toggle Line Display
 
-              if(this.layout===HEXY_SYMBOLS.DOWN_CENTER ||
-                 this.layout===HEXY_SYMBOLS.DOWN_LEFT ||
-                 this.layout===HEXY_SYMBOLS.DOWN_RIGHT){
+              if(this.layout===HEXY_TYPES.DOWN_CENTER ||
+                 this.layout===HEXY_TYPES.DOWN_LEFT ||
+                 this.layout===HEXY_TYPES.DOWN_RIGHT){
                 this.line=!this.line;
               }
 
             }
 
-            if(this.layout===HEXY_SYMBOLS.BLUE){
+            if(this.layout===HEXY_TYPES.BLUE){
 
-              this.layout=HEXY_SYMBOLS.BLUE_REVEALED;
+              this.layout=HEXY_TYPES.BLUE_REVEALED;
 
               this.clickRadius=HEX_SIZE-10;
 
             }
-            else if(this.layout===HEXY_SYMBOLS.BLACK){
+            else if(this.layout===HEXY_TYPES.BLACK){
               app.errors++;
             }
 
             // this.execute(this.id);
-            
+
           }
-          
-        }
-
-      };
-      hexCell.prototype.incrementCellLayout=function(){
-        
-        switch(this.layout){
-
-          case HEXY_SYMBOLS.BLANK:          this.layout=HEXY_SYMBOLS.BLACK;           break;
-          case HEXY_SYMBOLS.BLACK:          this.layout=HEXY_SYMBOLS.BLACK_REVEALED;  break;
-          case HEXY_SYMBOLS.BLACK_REVEALED: this.layout=HEXY_SYMBOLS.BLUE;            break;
-          case HEXY_SYMBOLS.BLUE:           this.layout=HEXY_SYMBOLS.BLUE_REVEALED;   break;
-          case HEXY_SYMBOLS.BLUE_REVEALED:  this.layout=HEXY_SYMBOLS.DOWN_RIGHT;      break;
-          case HEXY_SYMBOLS.DOWN_RIGHT:     this.layout=HEXY_SYMBOLS.DOWN_CENTER;     break;
-          case HEXY_SYMBOLS.DOWN_CENTER:    this.layout=HEXY_SYMBOLS.DOWN_LEFT;       break;
-          case HEXY_SYMBOLS.DOWN_LEFT:      this.layout=HEXY_SYMBOLS.BLANK;           break;
-
-          default:                                                                    break;
 
         }
 
       };
-      hexCell.prototype.decrementCellLayout=function(){
-        
-        switch(this.layout){
 
-          case HEXY_SYMBOLS.BLANK:          this.layout=HEXY_SYMBOLS.DOWN_LEFT;       break;
-          case HEXY_SYMBOLS.BLACK:          this.layout=HEXY_SYMBOLS.BLANK;           break;
-          case HEXY_SYMBOLS.BLACK_REVEALED: this.layout=HEXY_SYMBOLS.BLACK;           break;
-          case HEXY_SYMBOLS.BLUE:           this.layout=HEXY_SYMBOLS.BLACK_REVEALED;  break;
-          case HEXY_SYMBOLS.BLUE_REVEALED:  this.layout=HEXY_SYMBOLS.BLUE;            break;
-          case HEXY_SYMBOLS.DOWN_RIGHT:     this.layout=HEXY_SYMBOLS.BLUE_REVEALED;   break;
-          case HEXY_SYMBOLS.DOWN_CENTER:    this.layout=HEXY_SYMBOLS.DOWN_RIGHT;      break;
-          case HEXY_SYMBOLS.DOWN_LEFT:      this.layout=HEXY_SYMBOLS.DOWN_CENTER;     break;
-
-          default:                                                                    break;
-
-        }
-
-      };      
       hexCell.prototype.rclicked=function(){
 
         if(this.active){
@@ -3574,29 +3604,110 @@ var diagrams = function(processingInstance){
           if(app.mode===APPMODES.CREATE){
 
             this.decrementCellLayout();
+            this.recalculate();
 
           }
-          else if(app.modes===APPMODES.GAME){
-            
-            if(this.layout!==HEXY_SYMBOLS.BLUE &&
-               this.layout!==HEXY_SYMBOLS.BLACK){
+          else if(app.mode===APPMODES.GAME){
+
+            if(this.layout!==HEXY_TYPES.BLUE &&
+               this.layout!==HEXY_TYPES.BLACK){
               this.enabled=!this.enabled;
             }
 
-            if(this.layout===HEXY_SYMBOLS.BLACK){
+            if(this.layout===HEXY_TYPES.BLACK){
 
-              this.layout=HEXY_SYMBOLS.BLACK_REVEALED;
+              this.layout=HEXY_TYPES.BLACK_REVEALED;
 
               this.clickRadius=HEX_SIZE-10;
 
             }
-            else if(this.layout===HEXY_SYMBOLS.BLUE){
+            else if(this.layout===HEXY_TYPES.BLUE){
               app.errors++;
             }
 
           }
           /* Should the line automatically be dismissed when the cell is disabled? */
           // this.line=false;
+
+        }
+
+      };
+      hexCell.prototype.incrementCellLayout=function(){
+
+        switch(this.layout){
+
+          case HEXY_TYPES.BLANK:          this.layout=HEXY_TYPES.BLACK;           break;
+          case HEXY_TYPES.BLACK:          this.layout=HEXY_TYPES.BLACK_REVEALED;  break;
+          case HEXY_TYPES.BLACK_REVEALED: this.layout=HEXY_TYPES.BLUE;            break;
+          case HEXY_TYPES.BLUE:           this.layout=HEXY_TYPES.BLUE_REVEALED;   break;
+          case HEXY_TYPES.BLUE_REVEALED:  this.layout=HEXY_TYPES.DOWN_RIGHT;      break;
+          case HEXY_TYPES.DOWN_RIGHT:     this.layout=HEXY_TYPES.DOWN_CENTER;     break;
+          case HEXY_TYPES.DOWN_CENTER:    this.layout=HEXY_TYPES.DOWN_LEFT;       break;
+          case HEXY_TYPES.DOWN_LEFT:      this.layout=HEXY_TYPES.BLANK;           break;
+
+          default:                                                                break;
+
+        }
+
+      };
+      hexCell.prototype.decrementCellLayout=function(){
+
+        switch(this.layout){
+
+          case HEXY_TYPES.BLANK:          this.layout=HEXY_TYPES.DOWN_LEFT;       break;
+          case HEXY_TYPES.BLACK:          this.layout=HEXY_TYPES.BLANK;           break;
+          case HEXY_TYPES.BLACK_REVEALED: this.layout=HEXY_TYPES.BLACK;           break;
+          case HEXY_TYPES.BLUE:           this.layout=HEXY_TYPES.BLACK_REVEALED;  break;
+          case HEXY_TYPES.BLUE_REVEALED:  this.layout=HEXY_TYPES.BLUE;            break;
+          case HEXY_TYPES.DOWN_RIGHT:     this.layout=HEXY_TYPES.BLUE_REVEALED;   break;
+          case HEXY_TYPES.DOWN_CENTER:    this.layout=HEXY_TYPES.DOWN_RIGHT;      break;
+          case HEXY_TYPES.DOWN_LEFT:      this.layout=HEXY_TYPES.DOWN_CENTER;     break;
+
+          default:                                                                break;
+
+        }
+
+      };
+      hexCell.prototype.recalculate=function(){
+
+        // Count
+        {
+
+          var total=0;
+
+          if(this.top!==null &&
+             (this.top.layout===HEXY_TYPES.BLUE ||
+              this.top.layout===HEXY_TYPES.BLUE_REVEALED)){
+            total++;
+          }
+          if(this.bottom!==null &&
+             (this.bottom.layout===HEXY_TYPES.BLUE ||
+              this.bottom.layout===HEXY_TYPES.BLUE_REVEALED)){
+            total++;
+          }
+          
+          if(this.topRight!==null &&
+             (this.topRight.layout===HEXY_TYPES.BLUE ||
+              this.topRight.layout===HEXY_TYPES.BLUE_REVEALED)){
+            total++;
+          }
+          if(this.topLeft!==null &&
+             (this.topLeft.layout===HEXY_TYPES.BLUE ||
+              this.topLeft.layout===HEXY_TYPES.BLUE_REVEALED)){
+            total++;
+          }
+          if(this.bottomRight!==null &&
+             (this.bottomRight.layout===HEXY_TYPES.BLUE ||
+              this.bottomRight.layout===HEXY_TYPES.BLUE_REVEALED)){
+            total++;
+          }
+          if(this.bottomLeft!==null &&
+             (this.bottomLeft.layout===HEXY_TYPES.BLUE ||
+              this.bottomLeft.layout===HEXY_TYPES.BLUE_REVEALED)){
+            total++;
+          }
+
+          this.count=total;
 
         }
 
@@ -3642,7 +3753,7 @@ var diagrams = function(processingInstance){
       rt.controls.push(new i_Button(300, rt, 500, 50, 40, 40,
         {font:      'sans-serif',
          cursor:    HAND,
-         execute:   reset,
+         execute:   clearLayout,
          color:     CLRS.BLACK}));
 
       // /* high score       */
@@ -3776,7 +3887,7 @@ var diagrams = function(processingInstance){
   strokeCap(SQUARE);
 
   /*
-    var HEXY_SYMBOLS={
+    var HEXY_TYPES={
 
       // Double up the \ character because it is an escape character and the first one won't be recognised
 
@@ -3799,20 +3910,20 @@ var diagrams = function(processingInstance){
   */
 
   /** Testing *.hexcell file format ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-
-      var f="................................................|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.";
+  {
+      // var f="................................................|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.";
 
       // var f="............................|+..............|+......|+..................................|+..........|+../+..............|+......................o...o...o...x...x...x...x...o+..o+..o+..x.......................x...x...o+..x+..x...o+..x...on..oc..oc..o+..x...................o+..o+..on..o...x...o+..x...o...x...x...x...x...o...............|+..o...o+..x...x+..x...o...o+..oc..x...x...x...x+..|+..............o+..o...x...x+..o...o+..o+..o+..x...x...o+..x...x...............x...x...x...oc..x...on..o+..x...x...x+..o+..on..o+..o+..........o...o+..o...o...o.......x+..o+..o+......x...x...x...o+..o.......\\+..x...on..on..o+..........o+..o+..........x...o...o...o+..........o...x...oc..x...o.......x...o+..x...|n..o+..x...x...x...x...........x+..x...o+..x...x...x+..x...o+..x+..o...x...o+..o+..o...........x...o+..x...oc..o...o+..x...x...x...x...o...o...o+..on..o+..........o+..x...o...o+..on..o+..o...o+..o...x+..o...o+..x...o+..........o...o...o...o+..oc..x...o+..On..o+..x...o+..x+..on..o...x...........o+..x...x...x...o+..x...o...x...o...o...o...x...o+..o+..........x+..x...x.......x...oc..x.......x...o...o.......o...x...x...........on..o+..........o...oc../+..|+..x+..x...........o...o+..........o...x...on......x...o...o+..|n..x...x...x.......x...o...o+..........o...x...o+..x...o...oc..x...x...x...o+..o...o...o...x...........x...x+..o+..x...o+..x...o+..On..oc..o+..x...o...o+..oc..o...........x...o+..o...x+..o+..x...x...o+..o+..o...o+..oc..o...x...........o...x+..x...oc..o+..x...x...o+..o+..o...x...oc..x...o+..x...........o...o...o+..o...o+..o...o...o...x...x...o+..x...o+..o+..........x...x...o+..o+..o+......o+..on..x.......o+..x...o...o...x...........o+..on..o+..x...|+......x...x.......|n..on..x...x...oc..........o...on..oc..x+..x...|n..o+..o+..x.......o+..o+..x+..o+..x...........o+..x...o...oc..on..x...o+..x...x...x...x...x...o...x...............o+..x...x+..o...x...o...x...x...o+..o+..x...o+..o+..................o...x...oc..x+..oc..x...o+..o+..o+..on..on..x+..................o+..x...x...o...oc..o...oc..o...o...o+..o+..x+..o+..................o+..x...o+..x+..o...x...o...o+..x...x...o+..x.......................o...o...x...x...x...x...o...o...o...x...o+............";
 
-      var first='';
-      var secnd='';
+      // var first='';
+      // var secnd='';
 
-      for(var n=0; n<f.length; n+=2){
+      // for(var n=0; n<f.length; n+=2){
 
-        first+=f.substring(  n, n+1);
-        secnd+=f.substring(n+1, n+2);
+        // first+=f.substring(  n, n+1);
+        // secnd+=f.substring(n+1, n+2);
 
-      }
+      // }
 
 // print(f.length);
 
@@ -3822,19 +3933,19 @@ var diagrams = function(processingInstance){
 // print(secnd);
 // print(secnd.length);
 
-      var arrFirst=[];
-      var arrSecond=[];
+      // var arrFirst=[];
+      // var arrSecond=[];
 
-      for(var n=0; n<first.length; n+=13){
+      // for(var n=0; n<first.length; n+=13){
 
-        arrFirst.push( split(first.substring(n, n+13),''));
-        arrSecond.push(split(secnd.substring(n, n+13),''));
+        // arrFirst.push( split(first.substring(n, n+13),''));
+        // arrSecond.push(split(secnd.substring(n, n+13),''));
 
-      }
+      // }
 
-  for(var row=0; row<arrFirst.length; row++){
+  // for(var row=0; row<arrFirst.length; row++){
     // print(arrFirst[row]);
-  }
+  // }
 
 // print(arrFirst.length);
 
@@ -3842,6 +3953,7 @@ var diagrams = function(processingInstance){
 // print(arrSecond.length);
 // print(arrSecond.length);
 
+  }
   /** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 
@@ -3859,63 +3971,62 @@ var diagrams = function(processingInstance){
 
     keyPressed=function(){
 
+print(keyCode);
+
       app.keys[keyCode]=true;
 
         switch(true){
 
-          case app.keys[KEYCODES.F1]:           toggleInfo();             break;    /* F1 - Info        */
-          case app.keys[KEYCODES.F2]:           toggleTelemetry();        break;    /* F2 - Telemetry   */
-          
-          // case app.keys[KEYCODES.F3]:         toggleChoose();           break;    /* F3 - Choose      */
-          // case app.keys[KEYCODES.F4]:         toggleSierpinski();       break;    /* F4 - Sierpinski  */
-          case app.keys[KEYCODES.F5]:           reset();                  break;    /* F5 - Reset       */
-          // case app.keys[KEYCODES.F6]:         toggleSigma();            break;    /* F6 - Sigma       */
+          case app.keys[KEYCODES.F1]:           toggleInfo();             break;    /* F1 - Info          */
+          case app.keys[KEYCODES.F2]:           toggleTelemetry();        break;    /* F2 - Telemetry     */
+          case app.keys[KEYCODES.F3]:           toggleCreate();           break;    /* F3 - Toggle Create */
 
-          // case app.keys[KEYCODES.PGUP]:       incrementRows();          break;    /* PGUP - Rows++    */
-          // case app.keys[KEYCODES.PGDN]:       decrementRows();            break;    /* PGDN - Rows--    */
+          case app.keys[KEYCODES.CONTROL] &&
+               app.keys[KEYCODES.F5]:           clearLayout();            break;    /* CTRL +F5           */
 
-          case app.keys[KEYCODES.a] &&
-               app.keys[KEYCODES.CONTROL]:      incrementAll();           break;  /* CTRL+A Select All */
+          case app.keys[KEYCODES.A]:            decrementPuzzle();        break;    /* A                  */
+          case app.keys[KEYCODES.D]:            incrementPuzzle();        break;    /* D                  */
 
-          case app.keys[KEYCODES.A]:            decrementPuzzle();        break;    /* LEFT or A        */               
-          case app.keys[KEYCODES.D]:            incrementPuzzle();        break;    /* RIGHT or D       */
-
-          case app.keys[KEYCODES.UP]:           up();                     break;
-          case app.keys[KEYCODES.DOWN]:         down();                   break;
+          case app.keys[KEYCODES.UP]:           up();                     break;    /* Up                 */
+          case app.keys[KEYCODES.DOWN]:         down();                   break;    /* Down               */
 
           case app.keys[KEYCODES.RIGHT] &&
-               app.keys[KEYCODES.CONTROL]:      downRight();              break;               
-          case app.keys[KEYCODES.RIGHT]:        upRight();                break;
+               app.keys[KEYCODES.CONTROL]:      downRight();              break;    /* Down Right         */
+          case app.keys[KEYCODES.RIGHT]:        upRight();                break;    /* Up Right           */
 
           case app.keys[KEYCODES.LEFT] &&
-               app.keys[KEYCODES.CONTROL]:      downLeft();               break;
-          case app.keys[KEYCODES.LEFT]:         upLeft();                 break;
+               app.keys[KEYCODES.CONTROL]:      downLeft();               break;    /* Down Left          */
+          case app.keys[KEYCODES.LEFT]:         upLeft();                 break;    /* Up Left            */
+
+          case app.keys[KEYCODES.O] &&
+               app.keys[KEYCODES.SHIFT]:        setBlackRevealed();       break;    /* Black Revealed     */
+          case app.keys[KEYCODES.O]:            setBlack();               break;    /* Black              */
+          case app.keys[KEYCODES.X] &&
+               app.keys[KEYCODES.SHIFT]:        setBlueRevealed();        break;    /* Blue Revealed      */
+          case app.keys[KEYCODES.X]:            setBlue();                break;    /* BLUE               */
+
+          case app.keys[KEYCODES.DOWN_CENTER]:  setDownCenter;            break;    /* Down Center        */
+          case app.keys[KEYCODES.DOWN_LEFT]:    setDownLeft;              break;    /* Down Left          */
+          case app.keys[KEYCODES.DOWN_RIGHT]:   setDownRight();           break;    /* Down Right         */
+
+          case app.keys[KEYCODES.B]:            setBlank();               break;    /* Blank              */
+          case app.keys[KEYCODES.PLUS] ||
+               app.keys[KEYCODES.T] ||
+               app.keys[KEYCODES.t]:            setNumber();              break;    /* Number             */
+
+          case app.keys[KEYCODES.N]:            setConsecutive();         break;    /* Consecutive        */
+          case app.keys[KEYCODES.C]:            setNonConsecutive();      break;    /* Non-Consecutive    */
 
           case app.keys[KEYCODES.SPACE] &&
-               app.keys[KEYCODES.CONTROL]:      decrementCellLayout();    break;          
-          case app.keys[KEYCODES.SPACE]:        incrementCellLayout();    break;
-
-          case app.keys[KEYCODES.O]:            setBlackRevealed();       break;
-          case app.keys[KEYCODES.o]:            setBlack();               break;
-
-          case app.keys[KEYCODES.X]:            setBlue();                break;
-          case app.keys[KEYCODES.x]:            setBlueRevealed();        break;
-
-          case app.keys[KEYCODES.DOWN_CENTER]:  setDownCenter;            break;
-          case app.keys[KEYCODES.DOWN_LEFT]:    setDownLeft;              break;
-          case app.keys[KEYCODES.DOWN_RIGHT]:   setDownRight();           break;
-
-          case app.keys[KEYCODES.PLUS]:         setNumber();              break;
-
-          case app.keys[KEYCODES.N]:            setConsecutive();         break;
-          case app.keys[KEYCODES.C]:            setNonConsecutive();      break;
+               app.keys[KEYCODES.CONTROL]:      decrementCellLayout();    break;    /* Decrement Layout   */
+          case app.keys[KEYCODES.SPACE]:        incrementCellLayout();    break;    /* Increment Layout   */
 
           default:                                                        break;
 
         }
 
     };
-    keyTyped=function()   { /* print('typed ' + (key) + ' ' + keyCode); */  };
+    keyTyped=function()   { /* print('typed ' + (key) + ' ' + keyCode); */    };
     keyReleased=function(){ app.keys[keyCode]=false;                          };
 
   }
@@ -3940,7 +4051,7 @@ var diagrams = function(processingInstance){
 
       // forEach(app.controls,'clicked');
 
-      app.mode=APPMODES.CREATE;
+      // app.mode=APPMODES.CREATE;
 
       switch(mouseButton){
 
