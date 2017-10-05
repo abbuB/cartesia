@@ -44,6 +44,9 @@ var diagrams = function(processingInstance){
 /*
 
   Names:  Hexy
+          Hexstasy
+          Hexstatic
+          You hexy thing
           geekred
           ...
 
@@ -51,7 +54,7 @@ var diagrams = function(processingInstance){
           Choose Life - Sliding Triangle Game
 
     TO DO:
-
+    
       - undo/redo
       - determine how consecutive and non-consecutive are specified
 
@@ -1295,6 +1298,331 @@ var diagrams = function(processingInstance){
 
         };
 
+        function randomizeStyle(){
+
+          var layout=p.layout;
+
+          for(var r in layout){
+            for(var c in layout[r]){
+
+              if(layout[r][c]===0 ||
+                 layout[r][c]===1){
+                layout[r][c]=round(random(0,1));
+              }
+
+            }
+          }
+
+        };
+
+        // randomizeStyle();
+        load();
+        
+        this.update();
+        
+        // link();
+        // doubleLink();
+        // columnCounts();
+
+        app.gameOver=false;
+
+      };
+      hexBoard.prototype.draw         = function(){
+
+        var p=this;
+
+        function drawGuideLines(){
+
+          var offset=(HEX_SIZE-2)/2;
+
+          strokeWeight(6);
+          stroke(getColor(CLRS.WHITE,25));
+
+          for(var l in p.lines){
+
+            switch(p.lines[l].layout){
+
+              case HEXY_TYPES.DOWN_CENTER:
+
+                line(p.lines[l].x, p.lines[l].y + offset,
+                     p.lines[l].x, height);
+
+                break;
+
+              case HEXY_TYPES.DOWN_LEFT:
+
+                var x=p.lines[l].x;
+                var y=p.lines[l].y;
+                var offsetX=cos(PI-PI/6)*offset;
+                var offsetY=sin(PI-PI/6)*offset;
+
+                line(x+offsetX,
+                     y+offsetY,
+                     x+offsetX+600*tan(PI-PI/3),
+                     y+offsetY+600);
+
+
+                break;
+
+              case HEXY_TYPES.DOWN_RIGHT:
+
+                var x=p.lines[l].x;
+                var y=p.lines[l].y;
+                var offsetX=cos(PI/6)*offset;
+                var offsetY=sin(PI/6)*offset;
+
+                line(x+offsetX,
+                     y+offsetY,
+                     x+offsetX+600*tan(PI/3),
+                     y+offsetY+600);
+
+                break;
+
+              default:  break;
+
+            }
+
+          };
+
+        };
+        function calculateRemaining(){
+
+          app.remaining=0;
+          app.covered=0;
+
+          var total=0;
+          var covered=0;
+          var ctrls=p.controls;
+
+          for(var r in ctrls){
+            for(var c in ctrls[r]){
+
+              if(ctrls[r][c].layout==='x'){
+                total++;
+              }
+
+              if(ctrls[r][c].layout==='o'){
+                covered++;
+              }
+
+            }
+          }
+
+          app.remaining=total;
+          app.covered=covered;
+
+        };
+        function drawHalos(){
+
+          stroke(CLRS.RED);
+          strokeWeight(1);
+          noStroke();
+
+          fill(getColor(CLRS.WHITE,40+p.clrOffset));
+
+          p.clrOffset+=p.clrIncr;
+
+          if(p.clrOffset===15 ||
+             p.clrOffset===0){ p.clrIncr*=-1; }
+
+          var w=HEX_SIZE;
+
+          var x=0;
+          var y=0;
+
+          var yOffset=0;
+          var xOffset=0.25*w;
+          var sinP3=w*sin(PI/3);
+          var cosP3=w/2*cos(PI/3);
+
+          for(var h in p.halos){
+
+            x=p.halos[h].x;
+            y=p.halos[h].y;
+
+            beginShape();
+
+              vertex(x-cosP3,  y-sinP3*2.5);
+              vertex(x-w/2,    y-sinP3*2  );
+              vertex(x-w,      y-sinP3*2  );
+              vertex(x-w*1.25, y-sinP3*1.5);
+              vertex(x-w*1.75, y-sinP3*1.5);
+              vertex(x-w*2,    y-sinP3*1  );
+              vertex(x-w*1.75, y-sinP3*0.5);
+
+              vertex(x-w*2,    y);
+
+              vertex(x-w*1.75, y+sinP3*0.5);
+              vertex(x-w*2,    y+sinP3*1  );
+              vertex(x-w*1.75, y+sinP3*1.5);
+              vertex(x-w*1.25, y+sinP3*1.5);
+              vertex(x-w,      y+sinP3*2  );
+              vertex(x-w/2,    y+sinP3*2  );
+              vertex(x-cosP3,  y+sinP3*2.5);
+
+              vertex(x+cosP3,  y+sinP3*2.5);
+              vertex(x+w/2,    y+sinP3*2  );
+              vertex(x+w,      y+sinP3*2  );
+              vertex(x+w*1.25, y+sinP3*1.5);
+              vertex(x+w*1.75, y+sinP3*1.5);
+              vertex(x+w*2,    y+sinP3*1  );
+              vertex(x+w*1.75, y+sinP3*0.5);
+
+              vertex(x+w*2,    y);
+
+              vertex(x+w*1.75, y-sinP3*0.5);
+              vertex(x+w*2,    y-sinP3*1  );
+              vertex(x+w*1.75, y-sinP3*1.5);
+              vertex(x+w*1.25, y-sinP3*1.5);
+              vertex(x+w,      y-sinP3*2  );
+              vertex(x+w/2,    y-sinP3*2  );
+              vertex(x+cosP3,  y-sinP3*2.5);
+
+            endShape(CLOSE);
+
+          }
+
+        };
+        function drawClicked(){
+
+
+
+        };
+
+        this.active=this.hit &&
+                    app.focus===this;
+        this.lines=[];
+        this.halos=[];
+
+        pushMatrix();
+
+          translate(this.x, this.y);
+
+            stroke(31);
+            noFill();
+            fill(232);
+            // noStroke();
+
+            rect(this.x,   this.y,
+                 this.w-1, this.h-1);
+
+              var ctrls=this.controls;
+
+              for(var r in ctrls){
+                for(var c in ctrls[r]){
+
+                  if(ctrls[r][c].line){
+                    this.lines.push(ctrls[r][c]);
+                  }
+
+                  if(ctrls[r][c].halo){
+                    this.halos.push(ctrls[r][c]);
+                  }
+
+                  ctrls[r][c].draw();
+
+                }
+              }
+
+              if(this.lines.length>0){
+                drawGuideLines();
+              }
+              if(this.halos.length>0){
+                drawHalos();
+              }
+
+              calculateRemaining();
+
+        popMatrix();
+
+      };
+      hexBoard.prototype.hitTest      = function(x,y){
+        return dist(mouseX,mouseY,this.x+x,this.y+y)<this.w/2;
+      };
+      hexBoard.prototype.moved        = function(x,y){
+      /* Overridden because of the nested controls */
+
+        if(this.parent.hit){
+
+          if(this.hitTest(x,y)){ this.hit=true;
+                                 app.focus=this; }
+          else                 { this.hit=false;    }
+
+            var ctrls=this.controls;
+
+            for(var r in ctrls){
+              for(var c in ctrls[r]){
+
+                ctrls[r][c].moved(this.x+x, this.y+y);
+
+              }
+            }
+
+        }
+
+      };
+      hexBoard.prototype.clicked      = function(){
+
+        var ctrls=this.controls;
+
+        for(var r in ctrls){
+          for(var c in ctrls[r]){
+
+            ctrls[r][c].clicked();
+
+          }
+        }
+
+      };
+      hexBoard.prototype.rclicked     = function(){
+
+        var ctrls=this.controls;
+
+        for(var r in ctrls){
+          for(var c in ctrls[r]){
+
+            ctrls[r][c].rclicked();
+
+          }
+        }
+
+      };
+      hexBoard.prototype.out          = function(){
+
+        this.hit=false;
+        this.activeCell=null;
+
+        var ctrls=this.controls;
+
+        for(var r in ctrls){
+          for(var c in ctrls[r]){
+
+            ctrls[r][c].out();
+
+          }
+        }
+
+      };
+      hexBoard.prototype.clearLayout  = function(){
+
+        var ctrls=this.controls;
+
+        for(var r in ctrls){
+          for(var c in ctrls[r]){
+
+            ctrls[r][c].layout=HEXY_TYPES.BLANK;
+
+          }
+        }
+
+      };  
+      hexBoard.prototype.update=function(){
+
+        var p=this;           //  Set a reference to the hexBoard control
+
+        // this.controls=[];        //  Clear the controls array
+        // this.activeCell = null;  //  Clear the active hexCell
+
         function link(){
 
           var ctrls=p.controls;
@@ -1689,7 +2017,7 @@ var diagrams = function(processingInstance){
                       while(ctrl!==null){
 
                         if(ctrl.layout===HEXY_TYPES.BLUE ||
-                           ctrl.layout===HEXY_TYPES.BLUE){
+                           ctrl.layout===HEXY_TYPES.BLUE_REVEALED){
                           total++;
                         }
 
@@ -1708,7 +2036,7 @@ var diagrams = function(processingInstance){
                       while(ctrl!==null){
 
                         if(ctrl.layout===HEXY_TYPES.BLUE ||
-                           ctrl.layout===HEXY_TYPES.BLUE){
+                           ctrl.layout===HEXY_TYPES.BLUE_REVEALED){
                           total++;
                         }
 
@@ -1727,7 +2055,7 @@ var diagrams = function(processingInstance){
                       while(ctrl!==null){
 
                         if(ctrl.layout===HEXY_TYPES.BLUE ||
-                           ctrl.layout===HEXY_TYPES.BLUE){
+                           ctrl.layout===HEXY_TYPES.BLUE_REVEALED){
                           total++;
                         }
 
@@ -1751,319 +2079,10 @@ var diagrams = function(processingInstance){
             }
 
         };
-        function randomizeStyle(){
 
-          var layout=p.layout;
-
-          for(var r in layout){
-            for(var c in layout[r]){
-
-              if(layout[r][c]===0 ||
-                 layout[r][c]===1){
-                layout[r][c]=round(random(0,1));
-              }
-
-            }
-          }
-
-        };
-
-        // randomizeStyle();
-        load();
         link();
         doubleLink();
         columnCounts();
-
-        app.gameOver=false;
-
-      };
-      hexBoard.prototype.draw         = function(){
-
-        var p=this;
-
-        function drawGuideLines(){
-
-          var offset=(HEX_SIZE-2)/2;
-
-          strokeWeight(6);
-          stroke(getColor(CLRS.WHITE,25));
-
-          for(var l in p.lines){
-
-            switch(p.lines[l].layout){
-
-              case HEXY_TYPES.DOWN_CENTER:
-
-                line(p.lines[l].x, p.lines[l].y + offset,
-                     p.lines[l].x, height);
-
-                break;
-
-              case HEXY_TYPES.DOWN_LEFT:
-
-                var x=p.lines[l].x;
-                var y=p.lines[l].y;
-                var offsetX=cos(PI-PI/6)*offset;
-                var offsetY=sin(PI-PI/6)*offset;
-
-                line(x+offsetX,
-                     y+offsetY,
-                     x+offsetX+600*tan(PI-PI/3),
-                     y+offsetY+600);
-
-
-                break;
-
-              case HEXY_TYPES.DOWN_RIGHT:
-
-                var x=p.lines[l].x;
-                var y=p.lines[l].y;
-                var offsetX=cos(PI/6)*offset;
-                var offsetY=sin(PI/6)*offset;
-
-                line(x+offsetX,
-                     y+offsetY,
-                     x+offsetX+600*tan(PI/3),
-                     y+offsetY+600);
-
-                break;
-
-              default:  break;
-
-            }
-
-          };
-
-        };
-        function calculateRemaining(){
-
-          app.remaining=0;
-          app.covered=0;
-
-          var total=0;
-          var covered=0;
-          var ctrls=p.controls;
-
-          for(var r in ctrls){
-            for(var c in ctrls[r]){
-
-              if(ctrls[r][c].layout==='x'){
-                total++;
-              }
-
-              if(ctrls[r][c].layout==='o'){
-                covered++;
-              }
-
-            }
-          }
-
-          app.remaining=total;
-          app.covered=covered;
-
-        };
-        function drawHalos(){
-
-          stroke(CLRS.RED);
-          strokeWeight(1);
-          noStroke();
-
-          fill(getColor(CLRS.WHITE,40+p.clrOffset));
-
-          p.clrOffset+=p.clrIncr;
-
-          if(p.clrOffset===15 ||
-             p.clrOffset===0){ p.clrIncr*=-1; }
-
-          var w=HEX_SIZE;
-
-          var x=0;
-          var y=0;
-
-          var yOffset=0;
-          var xOffset=0.25*w;
-          var sinP3=w*sin(PI/3);
-          var cosP3=w/2*cos(PI/3);
-
-          for(var h in p.halos){
-
-            x=p.halos[h].x;
-            y=p.halos[h].y;
-
-            beginShape();
-
-              vertex(x-cosP3,  y-sinP3*2.5);
-              vertex(x-w/2,    y-sinP3*2  );
-              vertex(x-w,      y-sinP3*2  );
-              vertex(x-w*1.25, y-sinP3*1.5);
-              vertex(x-w*1.75, y-sinP3*1.5);
-              vertex(x-w*2,    y-sinP3*1  );
-              vertex(x-w*1.75, y-sinP3*0.5);
-
-              vertex(x-w*2,    y);
-
-              vertex(x-w*1.75, y+sinP3*0.5);
-              vertex(x-w*2,    y+sinP3*1  );
-              vertex(x-w*1.75, y+sinP3*1.5);
-              vertex(x-w*1.25, y+sinP3*1.5);
-              vertex(x-w,      y+sinP3*2  );
-              vertex(x-w/2,    y+sinP3*2  );
-              vertex(x-cosP3,  y+sinP3*2.5);
-
-              vertex(x+cosP3,  y+sinP3*2.5);
-              vertex(x+w/2,    y+sinP3*2  );
-              vertex(x+w,      y+sinP3*2  );
-              vertex(x+w*1.25, y+sinP3*1.5);
-              vertex(x+w*1.75, y+sinP3*1.5);
-              vertex(x+w*2,    y+sinP3*1  );
-              vertex(x+w*1.75, y+sinP3*0.5);
-
-              vertex(x+w*2,    y);
-
-              vertex(x+w*1.75, y-sinP3*0.5);
-              vertex(x+w*2,    y-sinP3*1  );
-              vertex(x+w*1.75, y-sinP3*1.5);
-              vertex(x+w*1.25, y-sinP3*1.5);
-              vertex(x+w,      y-sinP3*2  );
-              vertex(x+w/2,    y-sinP3*2  );
-              vertex(x+cosP3,  y-sinP3*2.5);
-
-            endShape(CLOSE);
-
-          }
-
-        };
-        function drawClicked(){
-
-
-
-        };
-
-        this.active=this.hit &&
-                    app.focus===this;
-        this.lines=[];
-        this.halos=[];
-
-        pushMatrix();
-
-          translate(this.x, this.y);
-
-            stroke(31);
-            noFill();
-            fill(232);
-            // noStroke();
-
-            rect(this.x,   this.y,
-                 this.w-1, this.h-1);
-
-              var ctrls=this.controls;
-
-              for(var r in ctrls){
-                for(var c in ctrls[r]){
-
-                  if(ctrls[r][c].line){
-                    this.lines.push(ctrls[r][c]);
-                  }
-
-                  if(ctrls[r][c].halo){
-                    this.halos.push(ctrls[r][c]);
-                  }
-
-                  ctrls[r][c].draw();
-
-                }
-              }
-
-              if(this.lines.length>0){
-                drawGuideLines();
-              }
-              if(this.halos.length>0){
-                drawHalos();
-              }
-
-              calculateRemaining();
-
-        popMatrix();
-
-      };
-      hexBoard.prototype.hitTest      = function(x,y){
-        return dist(mouseX,mouseY,this.x+x,this.y+y)<this.w/2;
-      };
-      hexBoard.prototype.moved        = function(x,y){
-      /* Overridden because of the nested controls */
-
-        if(this.parent.hit){
-
-          if(this.hitTest(x,y)){ this.hit=true;
-                                 app.focus=this; }
-          else                 { this.hit=false;    }
-
-            var ctrls=this.controls;
-
-            for(var r in ctrls){
-              for(var c in ctrls[r]){
-
-                ctrls[r][c].moved(this.x+x, this.y+y);
-
-              }
-            }
-
-        }
-
-      };
-      hexBoard.prototype.clicked      = function(){
-
-        var ctrls=this.controls;
-
-        for(var r in ctrls){
-          for(var c in ctrls[r]){
-
-            ctrls[r][c].clicked();
-
-          }
-        }
-
-      };
-      hexBoard.prototype.rclicked     = function(){
-
-        var ctrls=this.controls;
-
-        for(var r in ctrls){
-          for(var c in ctrls[r]){
-
-            ctrls[r][c].rclicked();
-
-          }
-        }
-
-      };
-      hexBoard.prototype.out          = function(){
-
-        this.hit=false;
-        this.activeCell=null;
-
-        var ctrls=this.controls;
-
-        for(var r in ctrls){
-          for(var c in ctrls[r]){
-
-            ctrls[r][c].out();
-
-          }
-        }
-
-      };
-      hexBoard.prototype.clearLayout  = function(){
-
-        var ctrls=this.controls;
-
-        for(var r in ctrls){
-          for(var c in ctrls[r]){
-
-            ctrls[r][c].layout=HEXY_TYPES.BLANK;
-
-          }
-        }
 
       };
 
@@ -3741,6 +3760,8 @@ var diagrams = function(processingInstance){
 
         }
 
+        this.parent.update();
+
       };
       hexCell.prototype.decrementCellLayout=function(){
 
@@ -3773,68 +3794,13 @@ var diagrams = function(processingInstance){
           default:                                                                break;
 
         }
-
+        
+        this.parent.update();
+        
       };
       hexCell.prototype.recalculate=function(){
 
-        // Count
-        {
-          
-          if(this.layout===HEXY_TYPES.BLACK ||
-             this.layout===HEXY_TYPES.BLACK ||
-             this.layout===HEXY_TYPES.BLACK ||
-             this.layout===HEXY_TYPES.BLACK ||
-             this.layout===HEXY_TYPES.BLACK){
-        
-            var total=0;
-
-              if(this.top!==null &&
-                 (this.top.layout===HEXY_TYPES.BLUE ||
-                  this.top.layout===HEXY_TYPES.BLUE_REVEALED)){
-                total++;
-              }
-              if(this.bottom!==null &&
-                 (this.bottom.layout===HEXY_TYPES.BLUE ||
-                  this.bottom.layout===HEXY_TYPES.BLUE_REVEALED)){
-                total++;
-              }
-              
-              if(this.topRight!==null &&
-                 (this.topRight.layout===HEXY_TYPES.BLUE ||
-                  this.topRight.layout===HEXY_TYPES.BLUE_REVEALED)){
-                total++;
-              }
-              if(this.topLeft!==null &&
-                 (this.topLeft.layout===HEXY_TYPES.BLUE ||
-                  this.topLeft.layout===HEXY_TYPES.BLUE_REVEALED)){
-                total++;
-              }
-              if(this.bottomRight!==null &&
-                 (this.bottomRight.layout===HEXY_TYPES.BLUE ||
-                  this.bottomRight.layout===HEXY_TYPES.BLUE_REVEALED)){
-                total++;
-              }
-              if(this.bottomLeft!==null &&
-                 (this.bottomLeft.layout===HEXY_TYPES.BLUE ||
-                  this.bottomLeft.layout===HEXY_TYPES.BLUE_REVEALED)){
-                total++;
-              }
-
-              this.count=total;
-
-          }
-         
-          else if(this.layout===HEXY_TYPES.DOWN_CENTER){
-             
-          }
-          else if(this.layout===HEXY_TYPES.DOWN_CENTER){
-             
-          }
-          else if(this.layout===HEXY_TYPES.DOWN_CENTER){
-           
-          }
-              
-        }
+        this.parent.update();
 
       };
 
@@ -4107,9 +4073,10 @@ print(keyCode);
           case app.keys[KEYCODES.F2]:           toggleTelemetry();        break;    /* F2 - Telemetry     */
           case app.keys[KEYCODES.F3]:           toggleCreate();           break;    /* F3 - Toggle Create */
           case app.keys[KEYCODES.F4]:           printLayout();            break;    /* F4 - Print Layout  */
-          
+
           case app.keys[KEYCODES.CONTROL] &&
-               app.keys[KEYCODES.F5]:           clearLayout();            break;    /* CTRL +F5           */
+               app.keys[KEYCODES.F5]:           clearLayout();            break;    /* CTRL + F5          */
+          case app.keys[KEYCODES.F6]:           app.hexBoard.reset();     break;    /* F6 - reset layout  */
 
           case app.keys[KEYCODES.A]:            decrementPuzzle();        break;    /* A                  */
           case app.keys[KEYCODES.D]:            incrementPuzzle();        break;    /* D                  */
