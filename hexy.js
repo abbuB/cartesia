@@ -3713,15 +3713,30 @@ var diagrams = function(processingInstance){
 
         switch(this.layout){
 
-          case HEXY_TYPES.BLANK:          this.layout=HEXY_TYPES.BLACK;           break;
-          case HEXY_TYPES.BLACK:          this.layout=HEXY_TYPES.BLACK_REVEALED;  break;
-          case HEXY_TYPES.BLACK_REVEALED: this.layout=HEXY_TYPES.BLUE;            break;
-          case HEXY_TYPES.BLUE:           this.layout=HEXY_TYPES.BLUE_REVEALED;   break;
-          case HEXY_TYPES.BLUE_REVEALED:  this.layout=HEXY_TYPES.DOWN_RIGHT;      break;
-          case HEXY_TYPES.DOWN_RIGHT:     this.layout=HEXY_TYPES.DOWN_CENTER;     break;
-          case HEXY_TYPES.DOWN_CENTER:    this.layout=HEXY_TYPES.DOWN_LEFT;       break;
-          case HEXY_TYPES.DOWN_LEFT:      this.layout=HEXY_TYPES.BLANK;           break;
-
+          case HEXY_TYPES.BLANK:          this.layout=HEXY_TYPES.BLACK;           
+                                          this.text=HEXY_TYPES.NUMBER;             break;
+                                          
+          case HEXY_TYPES.BLACK:          this.layout=HEXY_TYPES.BLACK_REVEALED;
+                                          this.text=HEXY_TYPES.NUMBER;            break;
+                                          
+          case HEXY_TYPES.BLACK_REVEALED: this.layout=HEXY_TYPES.BLUE;
+                                          this.text=HEXY_TYPES.BLANK;             break;
+                                          
+          case HEXY_TYPES.BLUE:           this.layout=HEXY_TYPES.BLUE_REVEALED;
+                                          this.text=HEXY_TYPES.BLANK;             break;
+                                          
+          case HEXY_TYPES.BLUE_REVEALED:  this.layout=HEXY_TYPES.DOWN_RIGHT;
+                                          this.text=HEXY_TYPES.NUMBER;            break;
+                                          
+          case HEXY_TYPES.DOWN_RIGHT:     this.layout=HEXY_TYPES.DOWN_CENTER;
+                                          this.text=HEXY_TYPES.NUMBER;            break;
+                                          
+          case HEXY_TYPES.DOWN_CENTER:    this.layout=HEXY_TYPES.DOWN_LEFT;
+                                          this.text=HEXY_TYPES.NUMBER;            break;
+                                          
+          case HEXY_TYPES.DOWN_LEFT:      this.layout=HEXY_TYPES.BLANK;
+                                          this.text=HEXY_TYPES.BLANK;             break;
+                                          
           default:                                                                break;
 
         }
@@ -3731,14 +3746,29 @@ var diagrams = function(processingInstance){
 
         switch(this.layout){
 
-          case HEXY_TYPES.BLANK:          this.layout=HEXY_TYPES.DOWN_LEFT;       break;
-          case HEXY_TYPES.BLACK:          this.layout=HEXY_TYPES.BLANK;           break;
-          case HEXY_TYPES.BLACK_REVEALED: this.layout=HEXY_TYPES.BLACK;           break;
-          case HEXY_TYPES.BLUE:           this.layout=HEXY_TYPES.BLACK_REVEALED;  break;
-          case HEXY_TYPES.BLUE_REVEALED:  this.layout=HEXY_TYPES.BLUE;            break;
-          case HEXY_TYPES.DOWN_RIGHT:     this.layout=HEXY_TYPES.BLUE_REVEALED;   break;
-          case HEXY_TYPES.DOWN_CENTER:    this.layout=HEXY_TYPES.DOWN_RIGHT;      break;
-          case HEXY_TYPES.DOWN_LEFT:      this.layout=HEXY_TYPES.DOWN_CENTER;     break;
+          case HEXY_TYPES.BLANK:          this.layout=HEXY_TYPES.DOWN_LEFT;
+                                          this.text=HEXY_TYPES.NUMBER;            break;
+                                          
+          case HEXY_TYPES.BLACK:          this.layout=HEXY_TYPES.BLANK;
+                                          this.text=HEXY_TYPES.BLANK;             break;
+                                          
+          case HEXY_TYPES.BLACK_REVEALED: this.layout=HEXY_TYPES.BLACK;
+                                          this.text=HEXY_TYPES.NUMBER;            break;
+                                                    
+          case HEXY_TYPES.BLUE:           this.layout=HEXY_TYPES.BLACK_REVEALED;
+                                          this.text=HEXY_TYPES.NUMBER;            break;
+                                          
+          case HEXY_TYPES.BLUE_REVEALED:  this.layout=HEXY_TYPES.BLUE;
+                                          this.text=HEXY_TYPES.BLANK;             break;
+                                                    
+          case HEXY_TYPES.DOWN_RIGHT:     this.layout=HEXY_TYPES.BLUE_REVEALED;
+                                          this.text=HEXY_TYPES.BLANK;             break;
+          
+          case HEXY_TYPES.DOWN_CENTER:    this.layout=HEXY_TYPES.DOWN_RIGHT;
+                                          this.text=HEXY_TYPES.NUMBER;            break;
+                                          
+          case HEXY_TYPES.DOWN_LEFT:      this.layout=HEXY_TYPES.DOWN_CENTER;
+                                          this.text=HEXY_TYPES.NUMBER;            break;
 
           default:                                                                break;
 
@@ -3749,43 +3779,61 @@ var diagrams = function(processingInstance){
 
         // Count
         {
-
-          var total=0;
-
-          if(this.top!==null &&
-             (this.top.layout===HEXY_TYPES.BLUE ||
-              this.top.layout===HEXY_TYPES.BLUE_REVEALED)){
-            total++;
-          }
-          if(this.bottom!==null &&
-             (this.bottom.layout===HEXY_TYPES.BLUE ||
-              this.bottom.layout===HEXY_TYPES.BLUE_REVEALED)){
-            total++;
-          }
           
-          if(this.topRight!==null &&
-             (this.topRight.layout===HEXY_TYPES.BLUE ||
-              this.topRight.layout===HEXY_TYPES.BLUE_REVEALED)){
-            total++;
-          }
-          if(this.topLeft!==null &&
-             (this.topLeft.layout===HEXY_TYPES.BLUE ||
-              this.topLeft.layout===HEXY_TYPES.BLUE_REVEALED)){
-            total++;
-          }
-          if(this.bottomRight!==null &&
-             (this.bottomRight.layout===HEXY_TYPES.BLUE ||
-              this.bottomRight.layout===HEXY_TYPES.BLUE_REVEALED)){
-            total++;
-          }
-          if(this.bottomLeft!==null &&
-             (this.bottomLeft.layout===HEXY_TYPES.BLUE ||
-              this.bottomLeft.layout===HEXY_TYPES.BLUE_REVEALED)){
-            total++;
-          }
+          if(this.layout===HEXY_TYPES.BLACK ||
+             this.layout===HEXY_TYPES.BLACK ||
+             this.layout===HEXY_TYPES.BLACK ||
+             this.layout===HEXY_TYPES.BLACK ||
+             this.layout===HEXY_TYPES.BLACK){
+        
+            var total=0;
 
-          this.count=total;
+              if(this.top!==null &&
+                 (this.top.layout===HEXY_TYPES.BLUE ||
+                  this.top.layout===HEXY_TYPES.BLUE_REVEALED)){
+                total++;
+              }
+              if(this.bottom!==null &&
+                 (this.bottom.layout===HEXY_TYPES.BLUE ||
+                  this.bottom.layout===HEXY_TYPES.BLUE_REVEALED)){
+                total++;
+              }
+              
+              if(this.topRight!==null &&
+                 (this.topRight.layout===HEXY_TYPES.BLUE ||
+                  this.topRight.layout===HEXY_TYPES.BLUE_REVEALED)){
+                total++;
+              }
+              if(this.topLeft!==null &&
+                 (this.topLeft.layout===HEXY_TYPES.BLUE ||
+                  this.topLeft.layout===HEXY_TYPES.BLUE_REVEALED)){
+                total++;
+              }
+              if(this.bottomRight!==null &&
+                 (this.bottomRight.layout===HEXY_TYPES.BLUE ||
+                  this.bottomRight.layout===HEXY_TYPES.BLUE_REVEALED)){
+                total++;
+              }
+              if(this.bottomLeft!==null &&
+                 (this.bottomLeft.layout===HEXY_TYPES.BLUE ||
+                  this.bottomLeft.layout===HEXY_TYPES.BLUE_REVEALED)){
+                total++;
+              }
 
+              this.count=total;
+
+          }
+         
+          else if(this.layout===HEXY_TYPES.DOWN_CENTER){
+             
+          }
+          else if(this.layout===HEXY_TYPES.DOWN_CENTER){
+             
+          }
+          else if(this.layout===HEXY_TYPES.DOWN_CENTER){
+           
+          }
+              
         }
 
       };
@@ -4054,6 +4102,7 @@ print(keyCode);
 
         switch(true){
 
+          /*  Function Keys                                                                               */
           case app.keys[KEYCODES.F1]:           toggleInfo();             break;    /* F1 - Info          */
           case app.keys[KEYCODES.F2]:           toggleTelemetry();        break;    /* F2 - Telemetry     */
           case app.keys[KEYCODES.F3]:           toggleCreate();           break;    /* F3 - Toggle Create */
@@ -4065,6 +4114,7 @@ print(keyCode);
           case app.keys[KEYCODES.A]:            decrementPuzzle();        break;    /* A                  */
           case app.keys[KEYCODES.D]:            incrementPuzzle();        break;    /* D                  */
 
+          /*  Navigation                                                                                  */
           case app.keys[KEYCODES.UP]:           up();                     break;    /* Up                 */
           case app.keys[KEYCODES.DOWN]:         down();                   break;    /* Down               */
 
@@ -4076,6 +4126,7 @@ print(keyCode);
                app.keys[KEYCODES.CONTROL]:      downLeft();               break;    /* Down Left          */
           case app.keys[KEYCODES.LEFT]:         upLeft();                 break;    /* Up Left            */
 
+          /*  Cell Options                                                                                */
           case app.keys[KEYCODES.O] &&
                app.keys[KEYCODES.SHIFT]:        setBlackRevealed();       break;    /* Black Revealed     */
           case app.keys[KEYCODES.O]:            setBlack();               break;    /* Black              */
