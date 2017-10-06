@@ -304,7 +304,7 @@ var diagrams = function(processingInstance){
     /* Platform Constants */
     {
 
-      this.dirty        = false;              //  Has a reset occurred
+      this.dirty        = true;              //  Has a reset occurred
 
       this.debug        = true;               //  Mode that displays enhanced debugging tools
 
@@ -334,7 +334,7 @@ var diagrams = function(processingInstance){
     /* Hextris Specific ------------------ */
     {
 
-      this.mode         = APPMODES.CREATE;
+      this.mode         = APPMODES.GAME;
 
       this.hexBoard     = this.controls[1];
 
@@ -472,6 +472,13 @@ var diagrams = function(processingInstance){
 
       if(app.mode===APPMODES.GAME){ app.mode=APPMODES.CREATE; }
       else                        { app.mode=APPMODES.GAME;   }
+
+    };
+
+    function reset()              {
+
+      app.hexBoard.reset();
+      app.errors=0;
 
     };
 
@@ -3527,7 +3534,9 @@ var diagrams = function(processingInstance){
             }
 
             if(this.clickRadius>0){
-
+              print(this.clickRadius);
+              // app.dirty=true;
+              
               noStroke();
 
               fill(CLRS.H_ORANGE_L);
@@ -3574,6 +3583,11 @@ var diagrams = function(processingInstance){
                        // this.points[0].x, this.points[0].y+offset);
 
               // this.clickRadius-=1;
+
+            }
+            else{
+
+              app.dirty=false;
 
             }
 
@@ -3647,6 +3661,8 @@ var diagrams = function(processingInstance){
 
         if(this.active){
 
+          app.dirty=true;
+
           if(app.mode===APPMODES.CREATE){
 
             this.incrementCellLayout();
@@ -3696,7 +3712,7 @@ var diagrams = function(processingInstance){
       hexCell.prototype.rclicked=function(){
 
         if(this.active){
-
+app.dirty=true;
           if(app.mode===APPMODES.CREATE){
 
             this.decrementCellLayout();
@@ -3733,7 +3749,7 @@ var diagrams = function(processingInstance){
         switch(this.layout){
 
           case HEXY_TYPES.BLANK:          this.layout=HEXY_TYPES.BLACK;           
-                                          this.text=HEXY_TYPES.NUMBER;             break;
+                                          this.text=HEXY_TYPES.NUMBER;            break;
                                           
           case HEXY_TYPES.BLACK:          this.layout=HEXY_TYPES.BLACK_REVEALED;
                                           this.text=HEXY_TYPES.NUMBER;            break;
@@ -3760,7 +3776,7 @@ var diagrams = function(processingInstance){
 
         }
 
-        this.parent.update();
+        // this.parent.update();
 
       };
       hexCell.prototype.decrementCellLayout=function(){
@@ -3795,7 +3811,7 @@ var diagrams = function(processingInstance){
 
         }
         
-        this.parent.update();
+        // this.parent.update();
         
       };
       hexCell.prototype.recalculate=function(){
@@ -4053,7 +4069,7 @@ var diagrams = function(processingInstance){
 
     app.frameRate=this.__frameRate;
 
-    execute();
+    if(app.dirty){ execute(); }
 
   };
 
@@ -4076,7 +4092,7 @@ print(keyCode);
 
           case app.keys[KEYCODES.CONTROL] &&
                app.keys[KEYCODES.F5]:           clearLayout();            break;    /* CTRL + F5          */
-          case app.keys[KEYCODES.F6]:           app.hexBoard.reset();     break;    /* F6 - reset layout  */
+          case app.keys[KEYCODES.F6]:           reset();                  break;    /* F6 - reset layout  */
 
           case app.keys[KEYCODES.A]:            decrementPuzzle();        break;    /* A                  */
           case app.keys[KEYCODES.D]:            incrementPuzzle();        break;    /* D                  */
@@ -4121,6 +4137,8 @@ print(keyCode);
 
         }
 
+        app.dirty=true;
+
     };
     keyTyped=function()   { /* print('typed ' + (key) + ' ' + keyCode); */    };
     keyReleased=function(){ app.keys[keyCode]=false;                          };
@@ -4143,7 +4161,7 @@ print(keyCode);
         // print('flat');
       // }
 
-      if(mouseButton===RIGHT){ execute=play; }
+      // if(mouseButton===RIGHT){ execute=play; }
 
       // forEach(app.controls,'clicked');
 
@@ -4156,8 +4174,11 @@ print(keyCode);
         // case CENTER:  forEach(app.controls,'cclicked'); break;
 
         default:     break;
+
       }
 
+      app.dirty=true;
+      
     };
     mousePressed=function(){
 
@@ -4194,11 +4215,13 @@ print(keyCode);
 
     };
     mouseMoved=function(){
-
+    
       app.mouseX=mouseX;
       app.mouseX=mouseY;
 
       for(var c in app.controls){ app.controls[c].moved(0,0); }
+
+      app.dirty=true;
 
     };
     mouseDragged=function(){
@@ -4224,11 +4247,15 @@ print(keyCode);
 
       // app.focus=-1;
 
+      app.dirty=true;
+
     };
     mouseOver=function(){
 
       // forEach(app.controls,'over');
       // app.focus=-2;
+
+      app.dirty=true;
 
     };
 
