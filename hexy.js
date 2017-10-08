@@ -36,6 +36,7 @@
 +hex.frvr.com
 +mynoise.net
 +developer.mozilla.org
++docs.oracle.com
 
 */
 
@@ -55,6 +56,11 @@ var diagrams = function(processingInstance){
 
     TO DO:
     
+      - score controls
+      - navigate puzzles controls
+      - sounds/music controls
+      - restart game controls
+
       - undo/redo
       - determine how consecutive and non-consecutive are specified
 
@@ -304,7 +310,9 @@ var diagrams = function(processingInstance){
     /* Platform Constants */
     {
 
-      this.dirty        = true;              //  Has a reset occurred
+      this.updateCtrls  = new ArrayList();
+
+      this.dirty        = false;              //  Has a reset occurred
 
       this.debug        = true;               //  Mode that displays enhanced debugging tools
 
@@ -368,12 +376,15 @@ var diagrams = function(processingInstance){
     function getInfo()            { return app.info;                                            };
     function toggleInfo()         { app.info=!app.info;                                         };
 
-    function getScore()           { return app.hexBoard.score;                                  };
-    function getHighScore()       { return app.hexBoard.highScore;                              };
+    function getRemaining()       { return app.remaining;                                       };
+    function getMistakes()        { return app.errors;                                          };
 
     function getMusic()           { return app.music;                                           };
     function setMusic(b)          { return app.music=b;                                         };
 
+    function getScore()           { return app.score;                                           };
+    function setScore(b)          { return app.score=b;                                         };
+    
     function getTelemetry()       { return app.telemetry;                                       };
     function toggleTelemetry()    { app.telemetry=!app.telemetry;                               };
 
@@ -990,7 +1001,8 @@ var diagrams = function(processingInstance){
                  '\n'     + 'Screen Height:' +
                  '\n\n'   + 'Focused:'       +
                  '\n\n'   + 'Frame Count:'   +
-                 '\n'     + 'FrameRate:',
+                 '\n'     + 'FrameRate:'     +
+                 '\n\n'   + 'Update Count:',
                  col1, row0);
 
           fill(getColor(CLRS.YELLOW,75));
@@ -1011,8 +1023,8 @@ var diagrams = function(processingInstance){
                  '\n'     + screen.height              +
                  '\n\n'   + focused                    +
                  '\n\n'   + frameCount                 +
-                 '\n'     + nf(app.frameRate,1,1),
-
+                 '\n'     + nf(app.frameRate,1,1)      +
+                 '\n\n'  + app.updateCtrls.size(),
                  col2, row0);
 
         };
@@ -1115,7 +1127,7 @@ var diagrams = function(processingInstance){
               this.hit=true;
               app.focus=this;
 
-              for(var c in this.controls){ this.controls[c].moved(this.x+x+this.offset, this.y+y); }
+              // for(var c in this.controls){ this.controls[c].moved(this.x+x+this.offset, this.y+y); }
 
             }
             else{
@@ -1142,7 +1154,7 @@ var diagrams = function(processingInstance){
         this.color          = getColor(color(61),100); //  Used to store hexCell default color
 
         // this.score          = 0;
-        // this.highScore      = 0;
+        // this.score      = 0;
 
         this.activeCell     = null;
 
@@ -2297,10 +2309,10 @@ var diagrams = function(processingInstance){
 
     }
 
-    /* High Score           */
+    /* Score           */
     {
 
-      function highScore(id, parent, x, y, w, h, props){
+      function score(id, parent, x, y, w, h, props){
 
         control.call(this, id, parent, x, y, w, h);
 
@@ -2316,8 +2328,8 @@ var diagrams = function(processingInstance){
         this.on=false;
 
       };
-      highScore.prototype=Object.create(control.prototype);
-      highScore.prototype.draw=function(){
+      score.prototype=Object.create(control.prototype);
+      score.prototype.draw=function(){
 
           this.offset=0;
           this.active=this.hit && app.focus===this;
@@ -2327,47 +2339,38 @@ var diagrams = function(processingInstance){
             translate(this.x, this.y);
             scale(1,-1);
 
-              var score=this.execute();
-              var highScore=this.retrieve();
-
-              // Border
-              strokeWeight(0.75);
-              fill(getColor(CLRS.ACTIVE, 5));
-              noStroke();
-
-              // if(this.hit   ){ fill(getColor(CLRS.ACTIVE, 50)); }
-              if(this.active && this.hit){
-                if(app.left){ this.offset=1; }
-                              cursor(this.cursor);
-                              fill(getColor(CLRS.ACTIVE, 50));
-              }
-
-              stroke(CLRS.BLUE);
-              fill(CLRS.YELLOW);
-
-                // ellipse(0, 0, this.w, this.w);
+              textFont(this.font);
+              textSize(20);
+              
+              var categories='Remaining' + '\n\n' +
+                             'Mistakes';
+              var values    =this.execute() + '\n\n' +
+                             this.retrieve();
+                             
+              var w=textWidth(categories)+20;
+              
+              stroke(this.color);
+              strokeWeight(1);
+              fill(getColor(this.color, 65));
+        
+                rect(0, 0, w, 105, 3);
 
               scale(1,-1);
 
-              fill(this.color);
+              fill(getColor(CLRS.WHITE,75));
+              textAlign(RIGHT,TOP);
 
-              textFont(this.font);
-              textSize(24);
-              textAlign(CENTER,BOTTOM);
+                text(categories,  w-10, -100);
 
-                text(nfc(score), 0, 0);
+              fill(getColor(CLRS.YELLOW,75));                                  
+              textAlign(RIGHT,TOP);
 
-              fill(192);
-
-              textSize(16);
-              textAlign(CENTER,TOP);
-
-                text(nfc(highScore), 0, 0);
+                text(values,      w-10, -76);
 
           popMatrix();
 
       };
-      highScore.prototype.moved=function(x,y){
+      score.prototype.moved=function(x,y){
 
         if(this.parent.hit){
 
@@ -2388,7 +2391,7 @@ var diagrams = function(processingInstance){
         }
 
       };
-      highScore.prototype.clicked=function(){
+      score.prototype.clicked=function(){
       /* Overridden to maintain on/off value */
 
         if(this.active){
@@ -3363,7 +3366,19 @@ var diagrams = function(processingInstance){
               switch(p.layout){
 
                 case HEXY_TYPES.BLANK:            break;  /*  Blank never has text            */
-                case HEXY_TYPES.BLACK:            break;  /*  Black never has text            */
+                
+                case HEXY_TYPES.BLACK:            /*  Black only has text when editing        */
+                                                  if(app.mode===APPMODES.CREATE){
+
+                                                    fill(CLRS.WHITE);
+
+                                                    if(p.text===HEXY_TYPES.BLANK){ text('?',0,0);               }
+                                                    else                         { text(wrapText(p.count),0,0); }
+                                                  
+                                                  }
+                                                  
+                                                  break;
+                                                    
                 case HEXY_TYPES.BLUE:             break;  /*  Blue never has text             */
 
                 case HEXY_TYPES.BLACK_REVEALED:   /*  Black revealed always has text  */
@@ -3372,7 +3387,7 @@ var diagrams = function(processingInstance){
                                                     if(!p.enabled){ fill(getColor(CLRS.WHITE,25)); }
 
                                                     if(p.text===HEXY_TYPES.BLANK){ text('?',0,0);               }
-                                                    else                           { text(wrapText(p.count),0,0); }
+                                                    else                         { text(wrapText(p.count),0,0); }
 
                                                     break;
 
@@ -3534,8 +3549,8 @@ var diagrams = function(processingInstance){
             }
 
             if(this.clickRadius>0){
-              print(this.clickRadius);
-              // app.dirty=true;
+
+// print(this.clickRadius);
               
               noStroke();
 
@@ -3586,8 +3601,12 @@ var diagrams = function(processingInstance){
 
             }
             else{
+              
+              // if(app.updateCtrls.get(0)===this.id){
+                
+                // app.updateCtrls.remove(this.id);
 
-              app.dirty=false;
+              // }
 
             }
 
@@ -3661,7 +3680,7 @@ var diagrams = function(processingInstance){
 
         if(this.active){
 
-          app.dirty=true;
+          app.updateCtrls.add(this.id);
 
           if(app.mode===APPMODES.CREATE){
 
@@ -3712,7 +3731,9 @@ var diagrams = function(processingInstance){
       hexCell.prototype.rclicked=function(){
 
         if(this.active){
-app.dirty=true;
+
+          app.updateCtrls.add(this.id);
+
           if(app.mode===APPMODES.CREATE){
 
             this.decrementCellLayout();
@@ -3860,16 +3881,8 @@ app.dirty=true;
       rt.controls.push(new i_Button(300, rt, 500, 50, 40, 40,
         {font:      'sans-serif',
          cursor:    HAND,
-         execute:   clearLayout,
+         execute:   reset,
          color:     CLRS.BLACK}));
-
-      // /* high score       */
-      // rt.controls.push(new highScore(400, rt, 50, 50, 100, 100,
-        // {font:      'sans-serif',
-         // cursor:    HAND,
-         // execute:   getScore,
-         // retrieve:  getHighScore,
-         // color:     CLRS.BLACK}));
 
       /* music            */
       rt.controls.push(new music(400, rt, 35, 550, 50, 50,
@@ -3878,6 +3891,14 @@ app.dirty=true;
          execute:   setMusic,
          retrieve:  getMusic,
          color:     color(192)}));
+
+      /* score            */
+      rt.controls.push(new score(400, rt, 475, 590, 50, 50,
+        {font:      'sans-serif',
+         cursor:    HAND,
+         execute:   getRemaining,
+         retrieve:  getMistakes,
+         color:     CLRS.H_BLUE}));
 
       /* SplashScreen ------------------------------------------------- */
       {
@@ -3934,25 +3955,14 @@ app.dirty=true;
 
     }
 
-    textSize(20);
-    textAlign(CENTER,CENTER);
-    fill(CLRS.BLACK);
-
-      text('Remaining',   520,460);
-      text('Mistakes',    520,530);
-
-    textSize(36);
-
-      text(app.remaining, 520,490);
-      text(app.errors,    520,560);
-
     textFont(sansFont,64);
-    // textSize(64);
-    fill(getColor(CLRS.BLACK,15));
+    textSize(64);
+    textAlign(CENTER,CENTER);
+    fill(getColor(CLRS.H_BLUE,25));
 
       pushMatrix();
 
-        translate(34,300);
+        translate(32,300);
         rotate(PI/2);
 
           text('Level 3-2', 0, 0);
@@ -4063,13 +4073,26 @@ app.dirty=true;
   }
   /** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
+  // var balls = new ArrayList();  // Create an empty ArrayList
 
+  // balls.add("A");
+
+  // print(balls.get(0));
 
   draw=function(){
 
     app.frameRate=this.__frameRate;
 
-    if(app.dirty){ execute(); }
+    // if(app.updateCtrls.size()>0){ 
+    execute();
+    // }
+
+    // if(frameCount%10===0){
+      // print(round(this.__frameRate));
+      // if(app.updateCtrls.size()>0){
+// print(app.updateCtrls.size());
+      // }
+    // }
 
   };
 
@@ -4126,8 +4149,8 @@ print(keyCode);
                app.keys[KEYCODES.T] ||
                app.keys[KEYCODES.t]:            setNumber();              break;    /* Number             */
 
-          case app.keys[KEYCODES.N]:            setConsecutive();         break;    /* Consecutive        */
-          case app.keys[KEYCODES.C]:            setNonConsecutive();      break;    /* Non-Consecutive    */
+          case app.keys[KEYCODES.C]:            setConsecutive();         break;    /* Consecutive        */
+          case app.keys[KEYCODES.N]:            setNonConsecutive();      break;    /* Non-Consecutive    */
 
           case app.keys[KEYCODES.SPACE] &&
                app.keys[KEYCODES.CONTROL]:      decrementCellLayout();    break;    /* Decrement Layout   */
@@ -4136,8 +4159,6 @@ print(keyCode);
           default:                                                        break;
 
         }
-
-        app.dirty=true;
 
     };
     keyTyped=function()   { /* print('typed ' + (key) + ' ' + keyCode); */    };
@@ -4177,8 +4198,6 @@ print(keyCode);
 
       }
 
-      app.dirty=true;
-      
     };
     mousePressed=function(){
 
@@ -4221,7 +4240,7 @@ print(keyCode);
 
       for(var c in app.controls){ app.controls[c].moved(0,0); }
 
-      app.dirty=true;
+      execute();
 
     };
     mouseDragged=function(){
@@ -4247,7 +4266,7 @@ print(keyCode);
 
       // app.focus=-1;
 
-      app.dirty=true;
+      execute();
 
     };
     mouseOver=function(){
@@ -4255,7 +4274,7 @@ print(keyCode);
       // forEach(app.controls,'over');
       // app.focus=-2;
 
-      app.dirty=true;
+      execute();
 
     };
 
