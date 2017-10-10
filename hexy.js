@@ -52,10 +52,14 @@ var diagrams = function(processingInstance){
           ...
 
   GAMES:
+
+          Hex grid least/greatest path moving right or down
           Choose Life - Sliding Triangle Game
+          ...
 
     TO DO:
-    
+      
+      - background grid
       - score controls
       - navigate puzzles controls
       - sounds/music controls
@@ -183,7 +187,7 @@ var diagrams = function(processingInstance){
       BLUE:             'x',
       BLUE_REVEALED:    'X',
 
-      DOWN_RIGHT:       '\\',
+      DOWN_RIGHT:       '>',
       DOWN_CENTER:      '|',
       DOWN_LEFT:        '/',
 
@@ -492,6 +496,10 @@ var diagrams = function(processingInstance){
       app.errors=0;
 
     };
+
+    function replay()             { print('replay');                                          };
+    function menu()               { print('menu');                                            };
+    function next()               { print('next');                                            };
 
   }
 
@@ -1151,7 +1159,7 @@ var diagrams = function(processingInstance){
 
         control.call(this, id, parent, x, y, w, h);
 
-        this.color          = getColor(color(61),100); //  Used to store hexCell default color
+        this.color          = props.color;
 
         // this.score          = 0;
         // this.score      = 0;
@@ -1177,48 +1185,10 @@ var diagrams = function(processingInstance){
       hexBoard.prototype=Object.create(control.prototype);
       hexBoard.prototype.reset        =function(){
 
-        var p=this;           //  Set a reference to the hexBoard control
+        var p=this;             //  Set a reference to the hexBoard control
 
-        this.controls=[];        //  Clear the controls array
-        this.activeCell = null;  //  Clear the active hexCell
-
-    // var HEXY_TYPES={
-
-      // Double up the \ character because it is an escape character and the first one won't be recognised
-
-      // BLANK:            '.',
-      // BLACK:            'o',
-      // BLACK_REVEALED:   'O',
-      // BLUE:             'x',
-      // BLUE_REVEALED:    'X',
-      // DOWN_RIGHT:       '\\',
-      // DOWN_CENTER:      '|',
-      // DOWN_LEFT:        '/',
-
-      // BLANK:            '.',
-      // NUMBER:           '+',
-      // CONSECUTIVE:      'c',
-      // NOT_CONSECUTIVE:  'n'
-
-    // };
-
-        // this.layout=[
-                     // ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
-                     // ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
-                     // ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
-                     // ['.', '.', '.', '|', '|', '|', 'o', 'X', 'o', '|', '|', '|', '.', '.', '.'],
-                     // ['.', '.', '.', '\\', 'x', 'o', 'x', 'O', 'x', 'o', 'x', '/', '.', '.', '.'],
-                     // ['.', '.', '.', 'x', 'o', 'x', 'o', 'X', 'o', 'x', 'o', 'x', '.', '.', '.'],
-                     // ['.', '.', '.', 'o', 'x', 'o', 'x', 'O', 'x', 'o', 'x', 'o', '.', '.', '.'],
-                     // ['.', '.', '.', 'x', 'o', '|', '/', 'X', 'o', 'x', 'o', 'x', '.', '.', '.'],
-                     // ['.', '.', '.', 'o', 'x', 'o', 'x', '\\', 'x', 'o', 'x', 'o', '.', '.', '.'],
-                     // ['.', '.', '.', 'x', 'o', 'x', 'o', 'X', 'o', 'x', 'o', 'x', '.', '.', '.'],
-                     // ['.', '.', '.', '.', '.', 'o', 'x', 'O', 'x', 'o', '.', '.', '.', '.', '.'],
-                     // ['.', '.', '.', '.', '.', '.', '.', 'X', '.', '.', '.', '.', '.', '.', '.'],
-                     // ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
-                     // ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
-                     // ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.']
-                    // ];
+        this.controls=[];       //  Clear the controls array
+        this.activeCell = null; //  Clear the active hexCell
 
         this.layout=[
                      ['.', '.', '.', '.', '.', '.', '.', '|', '.', '.', '.', '.', '.', '.', '.'],
@@ -1228,17 +1198,17 @@ var diagrams = function(processingInstance){
                      ['.', 'x', 'o', 'o', 'o', 'o', 'o', 'o', 'o', 'o', 'o', 'x', 'o', 'o', '.'],
                      ['.', 'o', 'o', 'o', 'o', 'o', 'o', 'x', 'o', 'x', 'o', 'o', 'o', 'o', '.'],
                      ['.', 'o', 'o', 'o', 'o', 'o', 'o', 'o', 'o', 'o', 'o', 'o', 'o', 'o', '.'],
-                     ['\\', 'x', 'o', 'o', 'o', 'o', 'o', 'O', 'o', 'o', 'o', 'o', 'x', 'o', '.'],
+                     ['>', 'x', 'o', 'o', 'o', 'o', 'o', 'O', 'o', 'o', 'o', 'o', 'x', 'o', '.'],
                      ['.', 'o', 'x', 'x', 'o', 'o', 'x', 'x', 'o', 'o', 'x', 'o', 'o', 'o', '.'],
-                     ['\\', 'o', 'o', 'o', 'o', 'x', 'o', 'o', 'o', 'x', 'o', 'x', 'x', 'o', '/'],
-                     ['\\', 'o', 'x', 'o', 'o', 'o', 'o', 'O', 'o', 'o', 'o', 'o', 'o', 'x', '/'],
+                     ['>', 'o', 'o', 'o', 'o', 'x', 'o', 'o', 'o', 'x', 'o', 'x', 'x', 'o', '/'],
+                     ['>', 'o', 'x', 'o', 'o', 'o', 'o', 'O', 'o', 'o', 'o', 'o', 'o', 'x', '/'],
                      ['.', '.', 'o', 'o', 'o', 'x', 'o', 'x', 'o', 'o', 'o', 'o', 'o', '.', '.'],
-                     ['.', '.', '.', '.', 'o', 'o', 'x', 'O', 'x', 'o', 'o', '.', '.', '.', '.'],
+                     ['.', '.', '.', '.', 'o', 'o', 'x', 'O', 'x', 'o', 'o', '.', '.', '.', '.'],                     
                      ['.', '.', '.', '.', '.', '.', 'o', 'x', 'x', '.', '.', '.', '.', '.', '.'],
                      ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
                     ];
 
-        this.text  =[
+        this.text  =[                     
                      ['.', '.', '.', '.', '.', '.', '.', '+', '.', '.', '.', '.', '.', '.', '.'],
                      ['.', '.', '.', '.', '.', '+', '.', '.', '.', '+', '.', '.', '.', '.', '.'],
                      ['.', '.', '.', '+', '+', '+', '.', '.', '.', '+', '+', '+', '.', '.', '.'],
@@ -1263,7 +1233,7 @@ var diagrams = function(processingInstance){
 
           p.controls=[];
 
-          HEX_SIZE=width/(p.layout.length+5);
+          HEX_SIZE=width/(p.layout.length+2);
 
           var w=HEX_SIZE;
 
@@ -1290,7 +1260,7 @@ var diagrams = function(processingInstance){
             for(col in p.layout[row]){
 
               x = xMargin + col*w*0.75;
-              y = yMargin + row*w*cos(PI/6);
+              y = yMargin + row*yOffset;
 
               if(col%2===0){
                 y-=yOffset/2;
@@ -1518,9 +1488,7 @@ var diagrams = function(processingInstance){
           translate(this.x, this.y);
 
             stroke(31);
-            noFill();
-            fill(232);
-            // noStroke();
+            fill(this.color);
 
             rect(this.x,   this.y,
                  this.w-1, this.h-1);
@@ -2242,7 +2210,11 @@ var diagrams = function(processingInstance){
 
                 cursor(this.cursor);
                 fill(getColor(CLRS.ACTIVE, 50));
-
+                
+                fill(getColor(CLRS.BLACK,5));
+                
+                  ellipse(0,0,this.w,this.w);
+                
               }
 
               scale(1,-1);
@@ -2396,7 +2368,7 @@ var diagrams = function(processingInstance){
 
         if(this.active){
 
-          this.execute();
+          // this.execute();
 
         }
 
@@ -2404,10 +2376,10 @@ var diagrams = function(processingInstance){
 
     }
 
-    /* Icon Button          */
+    /* Hexy Button          */
     {
 
-      function i_Button(id, parent, x, y, w, h, props){
+      function hexy_Button(id, parent, x, y, w, h, props){
 
         control.call(this, id, parent, x, y, w, h);
 
@@ -2419,8 +2391,8 @@ var diagrams = function(processingInstance){
         this.color    = props.color;
 
       };
-      i_Button.prototype=Object.create(control.prototype);
-      i_Button.prototype.draw=function(){
+      hexy_Button.prototype=Object.create(control.prototype);
+      hexy_Button.prototype.draw=function(){
 
         var p=this;
         this.offset=0;
@@ -2439,7 +2411,12 @@ var diagrams = function(processingInstance){
               stroke(getColor(clr, 50));
 
               if(p.active){
-
+                
+                noStroke();
+                fill(getColor(CLRS.BLACK,5));
+                
+                  ellipse(0, 0, p.w, p.w);
+                  
                 stroke(getColor(clr, 100));
                 cursor(p.cursor);
 
@@ -2484,13 +2461,118 @@ var diagrams = function(processingInstance){
 
           translate(this.x, this.y);
 
-            noStroke();
-            noFill();
+            stroke(CLRS.BLACK);
+            strokeWeight(0.5);
+            fill(CLRS.WHITE);
 
             if(this.active){ cursor(this.cursor);
                              if(app.left){ this.offset=1; } }
-            if(this.active ||
-               this.on    ){ fill(getColor(CLRS.BLACK,10)); }
+
+              //  Background
+              rect(this.offset, this.offset, this.w, this.h, 3);
+
+            reset();
+
+        popMatrix();
+
+      };
+      /** Overridden for execute */
+      hexy_Button.prototype.clicked=function(){ if(this.active){ this.execute(); } };
+
+    }
+    
+    /* Icon Button          */
+    {
+
+      function i_Button(id, parent, x, y, w, h, props){
+
+        control.call(this, id, parent, x, y, w, h);
+
+        this.cursor   = props.cursor;
+
+        this.execute  = props.execute;
+        this.retrieve = props.retrieve;
+
+        this.color    = props.color;
+
+      };
+      i_Button.prototype=Object.create(control.prototype);
+      i_Button.prototype.draw=function(){
+
+        var p=this;
+        this.offset=0;
+
+        function reset(){
+
+          pushMatrix();
+
+            translate(p.w/2,p.h/2);
+
+              var sz=0.67;
+              var clr=color(128);
+
+              ellipseMode(CENTER);
+
+              stroke(getColor(clr, 50));
+
+              if(p.active){
+                
+                noStroke();
+                fill(getColor(CLRS.BLACK,5));
+                
+                  ellipse(0, 0, p.w, p.w);
+                  
+                stroke(getColor(clr, 100));
+                cursor(p.cursor);
+
+              }
+
+              strokeWeight(1.5);
+              noFill();
+
+              if(p.active &&
+                 app.left){
+
+                rotate(radians(45));
+
+              }
+
+                arc(0, 0, p.w*sz, p.h*sz, radians(60), 2*PI-radians(22.5));
+
+              fill(getColor(clr, 50));
+
+              if(p.active){ fill(getColor(clr, 100)); }
+
+                pushMatrix();
+
+                  translate(4,-5);
+                  rotate(PI/6);
+
+                    triangle( 0,   0,
+                             10,   0,
+                             10, -10);
+
+                popMatrix();
+
+          popMatrix();
+
+        };
+
+        this.active=this.hit && app.focus===this;
+        this.offset=0;
+        // this.on=this.retrieve();
+
+        pushMatrix();
+
+          translate(this.x, this.y);
+
+            // noStroke();
+            // noFill();
+
+            // if(this.active){ cursor(this.cursor);
+                             // if(app.left){ this.offset=1; } }
+            // if(this.active ||
+               // this.on    ){ fill(getColor(CLRS.BLACK,10)); }
 
               //  Background
               // rect(this.offset, this.offset, this.w, this.h, 2);
@@ -3221,25 +3303,27 @@ var diagrams = function(processingInstance){
         function outerHexagon(){
 
           noStroke();
-        
+
           if(app.mode===APPMODES.CREATE){
 
             switch(p.layout){
 
               case HEXY_TYPES.BLACK:          stroke(CLRS.H_ORANGE);
-                                                strokeWeight(2.5);
-                                                fill(CLRS.H_BLACK);   break;
+                                              strokeWeight(2.5);
+                                              fill(CLRS.H_BLACK);     break;
 
               case HEXY_TYPES.BLUE:           stroke(CLRS.H_ORANGE);
-                                                strokeWeight(2.5);
-                                                fill(CLRS.H_BLUE);   break;
-              
-              case HEXY_TYPES.BLACK_REVEALED: fill(CLRS.H_BLACK);   break;
-              case HEXY_TYPES.BLUE_REVEALED:  fill(CLRS.H_BLUE);    break;
+                                              strokeWeight(2.5);
+                                              fill(CLRS.H_BLUE);      break;
 
-              default:                          noFill();
-                                                stroke(CLRS.BLACK);
-                                                strokeWeight(0.125);  break;
+              case HEXY_TYPES.BLACK_REVEALED: fill(CLRS.H_BLACK);     break;
+              case HEXY_TYPES.BLUE_REVEALED:  fill(CLRS.H_BLUE);      break;
+
+              default:                        noFill();
+                                              stroke(CLRS.BLACK);
+                                              strokeWeight(0.125);   
+                                              noStroke();
+                                              break;
             }
 
             beginShape();
@@ -3261,9 +3345,11 @@ var diagrams = function(processingInstance){
               case HEXY_TYPES.BLACK_REVEALED: fill(CLRS.H_BLACK);   break;
               case HEXY_TYPES.BLUE_REVEALED:  fill(CLRS.H_BLUE);    break;
 
-              default:                          noFill();
-                                                stroke(CLRS.BLACK);
-                                                strokeWeight(0.125);  break;
+              default:                        noFill();
+                                              stroke(CLRS.BLACK);
+                                              strokeWeight(0.125); 
+                                              noStroke();
+                                              break;
             }
 
             var offset=0;
@@ -3326,7 +3412,7 @@ var diagrams = function(processingInstance){
               case HEXY_TYPES.BLACK_REVEALED: fill(CLRS.H_BLACK_L);   break;
               case HEXY_TYPES.BLUE_REVEALED:  fill(CLRS.H_BLUE_L);    break;
 
-              default:                          noFill();               break;
+              default:                        noFill();               break;
 
             }
 
@@ -3522,7 +3608,7 @@ var diagrams = function(processingInstance){
 
           scale(1,-1);
 
-            // highlight();
+            highlight();
             outerHexagon();
             innerHexagon();
             caption();
@@ -3873,19 +3959,19 @@ var diagrams = function(processingInstance){
       /* hexBoard           */
       rt.controls.push(new hexBoard(200, rt, 0, 0, 600, 600,
         {font:      'sans-serif',
+         color:     color(222),
          cursor:    ARROW,
-         color:     CLRS.K_TEAL_2,
          size:      0}));
-
+      
       /* reset button       */
-      rt.controls.push(new i_Button(300, rt, 500, 50, 40, 40,
+      rt.controls.push(new i_Button(300, rt, 550, 550, 40, 40,
         {font:      'sans-serif',
          cursor:    HAND,
          execute:   reset,
          color:     CLRS.BLACK}));
 
       /* music            */
-      rt.controls.push(new music(400, rt, 35, 550, 50, 50,
+      rt.controls.push(new music(400, rt, 35, 565, 50, 50,
         {font:      'sans-serif',
          cursor:    HAND,
          execute:   setMusic,
@@ -3893,12 +3979,33 @@ var diagrams = function(processingInstance){
          color:     color(192)}));
 
       /* score            */
-      rt.controls.push(new score(400, rt, 475, 590, 50, 50,
+      rt.controls.push(new score(500, rt, 475, 115, 50, 50,
         {font:      'sans-serif',
          cursor:    HAND,
          execute:   getRemaining,
          retrieve:  getMistakes,
          color:     CLRS.H_BLUE}));
+
+      /* replay button       */
+      rt.controls.push(new hexy_Button(600, rt, 100, 420, 126, 100,
+        {font:      'sans-serif',
+         cursor:    HAND,
+         execute:   replay,
+         color:     CLRS.BLACK}));
+
+      /* menu button       */
+      rt.controls.push(new hexy_Button(700, rt, 236, 420, 126, 100,
+        {font:      'sans-serif',
+         cursor:    HAND,
+         execute:   menu,
+         color:     CLRS.BLACK}));
+
+      /* next button       */
+      rt.controls.push(new hexy_Button(800, rt, 372, 420, 126, 100,
+        {font:      'sans-serif',
+         cursor:    HAND,
+         execute:   next,
+         color:     CLRS.BLACK}));
 
       /* SplashScreen ------------------------------------------------- */
       {
@@ -3923,7 +4030,7 @@ var diagrams = function(processingInstance){
       }
 
       /* Telemetry ---------------------------------------------------- */
-      var telem=new telemetry(500, rt, width-195, 5, 190, height-10,
+      var telem=new telemetry(900, rt, width-195, 5, 190, height-10,
         {color:     color(36),
          font:      serifFont,
          cursor:    ARROW});
@@ -3937,6 +4044,66 @@ var diagrams = function(processingInstance){
   function intro(){ };
   function extro(){ };
   function instructions(){ };
+  
+  function menu(){ print('next'); };
+  function reload(){ print('next'); };
+  function next(){ print('next'); };
+  
+  function getPuzzleNumber(){
+
+    return ((app.puzzle-(app.puzzle%6))/6+1) + '-' + (app.puzzle%6+1);
+
+  };
+  
+  function puzzleComplete(){
+    
+    //  Background
+    noStroke();
+    fill(getColor(CLRS.WHITE,50));
+
+      rect(0,0,width,height);
+    
+    // Puzzle Complete
+    stroke(CLRS.BLACK);
+    strokeWeight(0.25);
+    
+    fill(getColor(CLRS.WHITE,100));
+    
+      rect(100,100,400,100, 3);
+
+    textSize(36);
+    textAlign(CENTER,CENTER);
+
+    fill(getColor(CLRS.BLACK,50));
+    
+      text('Puzzle Complete', 300,130);
+    
+    fill(CLRS.BLACK);
+
+      text(getPuzzleNumber(), 300,170);
+    
+    // Summary
+    fill(getColor(CLRS.WHITE,100));
+    
+      rect(100, 210, 400, 200, 3);
+    
+    // Replay
+    fill(getColor(CLRS.WHITE,100));
+    
+      // rect(100, 420, 126, 100, 3);
+      
+    // Menu
+    fill(getColor(CLRS.WHITE,100));
+    
+      // rect(236, 420, 126, 100, 3);
+      
+    // Next Puzzle
+    fill(getColor(CLRS.WHITE,100));
+    
+      // rect(372, 420, 126, 100, 3);
+      
+  };
+  
   function play(){
 
     // frameRate(0);
@@ -3945,48 +4112,37 @@ var diagrams = function(processingInstance){
 
     forEach(app.controls,'draw');
 
-    if(app.gameOver){
+    // if(app.gameOver){
 
       // fill(getColor(CLRS.GREEN, frameCount%255));
-      fill(getColor(CLRS.GREEN, 50));
-      textAlign(CENTER,CENTER);
-      textFont(sansFont,100);
-      text('Game Over', 300, 300);
+      // fill(getColor(CLRS.GREEN, 50));
+      // textAlign(CENTER,CENTER);
+      // textFont(sansFont,100);
+      // text('Game Over', 300, 300);
 
-    }
+    // }
 
     textFont(sansFont,64);
-    textSize(64);
-    textAlign(CENTER,CENTER);
-    fill(getColor(CLRS.H_BLUE,25));
+    textSize(36);
+    textAlign(LEFT,TOP);
+    fill(getColor(CLRS.BLACK,15));
 
       pushMatrix();
 
-        translate(32,300);
-        rotate(PI/2);
+        translate(10,5);
+        // rotate(-PI/6);
 
-          text('Level 3-2', 0, 0);
+          text('Level ' + getPuzzleNumber(), 0, 0);
 
       popMatrix();
 
-    textSize(24);
-    textAlign(CENTER,CENTER);
-    fill(CLRS.RED);
+    // if(app.remaining===0 &&
+       // app.covered  ===0 &&
+       // app.mode!==APPMODES.CREATE){
 
-      text(app.puzzle, 30, 30);
+      puzzleComplete();
 
-    if(app.remaining===0 &&
-       app.covered  ===0 &&
-       app.mode!==APPMODES.CREATE){
-
-      fill(CLRS.GREEN);
-
-      textSize(64);
-      textAlign(CENTER,CENTER);
-
-        text('Game Over', 300,100);
-
-    }
+    // }
 
   };
 
@@ -4083,10 +4239,9 @@ var diagrams = function(processingInstance){
 
     app.frameRate=this.__frameRate;
 
-    // if(app.updateCtrls.size()>0){ 
     execute();
-    // }
 
+// text(nf(app.frameRate),30,100);
     // if(frameCount%10===0){
       // print(round(this.__frameRate));
       // if(app.updateCtrls.size()>0){
@@ -4240,7 +4395,7 @@ print(keyCode);
 
       for(var c in app.controls){ app.controls[c].moved(0,0); }
 
-      execute();
+      // execute();
 
     };
     mouseDragged=function(){
@@ -4266,7 +4421,7 @@ print(keyCode);
 
       // app.focus=-1;
 
-      execute();
+      // execute();
 
     };
     mouseOver=function(){
@@ -4274,7 +4429,7 @@ print(keyCode);
       // forEach(app.controls,'over');
       // app.focus=-2;
 
-      execute();
+      // execute();
 
     };
 
