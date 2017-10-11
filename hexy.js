@@ -688,13 +688,13 @@ var diagrams = function(processingInstance){
           translate(this.x, this.y);
 
             noStroke();
-            fill(getColor(this.color, 5));
+            fill(getColor(this.color, 50));
             // textFont(createFont(this.font,16));
 
-            if(this.hit   ){ fill(getColor(this.color, 10));   }
+            // if(this.hit   ){ fill(getColor(this.color, 50));   }
             if(this.active){ cursor(this.cursor);              }
-            if(this.border){ strokeWeight(1);
-                             stroke(getColor(this.color, 50)); }
+            // if(this.border){ strokeWeight(1);
+                             // stroke(getColor(this.color, 50)); }
 
               rect(0, 0, this.w, this.h, this.execute);
 
@@ -706,6 +706,76 @@ var diagrams = function(processingInstance){
 
     }
 
+    /* Puzzle Complete            */
+    {
+
+      function puzzleComplete(id, parent, x, y, w, h, props){
+
+        control.call(this, id, parent, x, y, w, h);
+
+        this.text   = props.text;
+        this.color  = props.color;
+        this.cursor = props.cursor;
+        this.border = props.border;
+
+        this.font   = props.font;
+
+        /* replay button       */
+        this.controls.push(new hexy_Button(610, this, 100, 420, 126, 100,
+          {font:      'sans-serif',
+           style:     'replay',
+           text:      'replay',
+           cursor:    HAND,
+           execute:   replay,
+           color:     CLRS.BLACK}));
+
+        /* menu button       */
+        this.controls.push(new hexy_Button(620, this, 236, 420, 126, 100,
+          {font:      'sans-serif',
+           style:     'menu',
+           text:      'menu',
+           cursor:    HAND,
+           execute:   menu,
+           color:     CLRS.BLACK}));
+
+        /* next button       */
+        this.controls.push(new hexy_Button(630, this, 372, 420, 126, 100,
+          {font:      'sans-serif',        
+           style:     'next',
+           text:      'next',
+           cursor:    HAND,
+           execute:   next,
+           color:     CLRS.BLACK}));
+           
+      };
+      puzzleComplete.prototype=Object.create(control.prototype);
+      puzzleComplete.prototype.draw=function(){
+
+        this.active=this.hit && app.focus===this;
+
+        pushMatrix();
+
+          translate(this.x, this.y);
+
+            noStroke();
+            fill(getColor(this.color, 50));
+            // textFont(createFont(this.font,16));
+
+            // if(this.hit   ){ fill(getColor(this.color, 50));   }
+            if(this.active){ cursor(this.cursor);              }
+            // if(this.border){ strokeWeight(1);
+                             // stroke(getColor(this.color, 50)); }
+
+              rect(0, 0, this.w, this.h, this.execute);
+
+            forEach(this.controls, 'draw');
+
+        popMatrix();
+
+      };
+
+    }
+    
     /* Splash Screen        */
     {
 
@@ -2382,8 +2452,9 @@ var diagrams = function(processingInstance){
       function hexy_Button(id, parent, x, y, w, h, props){
 
         control.call(this, id, parent, x, y, w, h);
-        
-        this.style=props.style;
+
+        this.style    = props.style;
+        this.text     = props.text;
 
         this.cursor   = props.cursor;
 
@@ -2399,79 +2470,118 @@ var diagrams = function(processingInstance){
         var p=this;
         this.offset=0;
 
-        function reset(){
-
-          pushMatrix();
-
-            translate(p.w/2,p.h/2);
-
-              var sz=0.67;
-              var clr=color(128);
-
-              ellipseMode(CENTER);
-
-              stroke(getColor(clr, 50));
-
-              if(p.active){
-                
-                noStroke();
-                fill(getColor(CLRS.BLACK,5));
-                
-                  ellipse(0, 0, p.w, p.w);
-                  
-                stroke(getColor(clr, 100));
-                cursor(p.cursor);
-
-              }
-
-              strokeWeight(1.5);
-              noFill();
-
-              if(p.active &&
-                 app.left){
-
-                rotate(radians(45));
-
-              }
-
-                arc(0, 0, p.w*sz, p.h*sz, radians(60), 2*PI-radians(22.5));
-
-              fill(getColor(clr, 50));
-
-              if(p.active){ fill(getColor(clr, 100)); }
-
-                pushMatrix();
-
-                  translate(4,-5);
-                  rotate(PI/6);
-
-                    triangle( 0,   0,
-                             10,   0,
-                             10, -10);
-
-                popMatrix();
-
-          popMatrix();
-
-        };
         function replay(){
           
-          fill(CLRS.BLACK);
-          textAlign(LEFT,TOP);
+          // Arrows
+          fill(getColor(CLRS.BLACK, 50));
+          
+          if(p.active){ fill(CLRS.BLACK); }
+          
+          textAlign(CENTER,CENTER);
+          textSize(24);
+
+            text(CONSTANTS.TRIANGLE_DOWN, p.w/2+p.offset+18, p.h/2+p.offset-1);
+
+          textSize(14);
             
+            fill(CLRS.WHITE);
+            
+            // text(CONSTANTS.TRIANGLE_DOWN, 2*p.w/3+p.offset, p.h/2+p.offset-5);
+
+          // Line
+          noFill();          
+          stroke(getColor(CLRS.BLACK,50));
+          
+          if(p.active){ stroke(CLRS.BLACK); }
+          
+            arc(p.w/2+p.offset, p.h/2+p.offset,
+                40,             40,
+                radians(60),    2*PI-radians(22.5));
+            
+          //  Text
+          fill(getColor(CLRS.BLACK, 50));
+          
+          if(p.active){ fill(CLRS.BLACK); }
+          
+          textAlign(LEFT,TOP);
+          textSize(16);
+          
             rotate(PI/2);
-            text('replay', 5+p.offset, -25-p.offset);
+            text(p.text, 5+p.offset, -20-p.offset);
           
         };
         function menu(){
-          text('menu', 0, 0);
+
+          function drawHexagon(x,y,sz){
+  
+            var ang=0;
+
+            beginShape();
+              
+              for(pt=0; pt<6; pt++){
+                vertex( x+cos(radians(ang+pt*60))*(sz)+p.offset,
+                        y+sin(radians(ang+pt*60))*(sz)+p.offset );
+              }
+            
+            endShape(CLOSE);
+            
+          };
+          
+          //  Hexagons
+          noFill();
+          stroke(getColor(CLRS.BLACK, 50));
+          strokeWeight(1);
+          
+          if(p.active){ stroke(CLRS.BLACK); }
+            
+            for(var ang=0; ang<6; ang++){
+              drawHexagon(p.w/2+cos(radians(ang*60+30))*20,
+                          p.h/2+sin(radians(ang*60+30))*20,
+                          10);
+            }
+                        
+          //  Text
+          fill(getColor(CLRS.BLACK, 50));
+          
+          if(p.active){ fill(CLRS.BLACK); }
+          
+          
+          textAlign(LEFT,TOP);
+          textSize(16);
+          
+            rotate(PI/2);
+            text(p.text, 5+p.offset, -20-p.offset);
           
         };
         function next(){
-          text('next', 0, 0);
+
+          fill(getColor(CLRS.BLACK, 50));
           
+          if(p.active){ fill(CLRS.BLACK); }
+          
+          textAlign(CENTER,CENTER);
+          textSize(48);
+
+            text(CONSTANTS.TRIANGLE_R, p.w/2+p.offset, p.h/2+p.offset);
+
+          textSize(36);
+            
+            fill(CLRS.WHITE);
+            
+            text(CONSTANTS.TRIANGLE_R, p.w/2+p.offset-1, p.h/2+p.offset+1);
+
+          fill(getColor(CLRS.BLACK, 50));
+          
+          if(p.active){ fill(CLRS.BLACK); }
+          
+          textAlign(LEFT,TOP);
+          textSize(16);
+          
+            rotate(PI/2);
+            text(p.text, 5+p.offset, -20-p.offset);
+
         };
-        
+
         this.active=this.hit && app.focus===this;
         this.offset=0;
         // this.on=this.retrieve();
@@ -2480,19 +2590,21 @@ var diagrams = function(processingInstance){
 
           translate(this.x, this.y);
 
-            stroke(CLRS.BLACK);
-            strokeWeight(0.5);
-            fill(CLRS.WHITE);
-
             if(this.active){ cursor(this.cursor);
                              if(app.left){ this.offset=1; } }
 
-              //  Background
+            // Border
+            stroke(getColor(CLRS.BLACK,75));
+            strokeWeight(0.5);
+            fill(CLRS.WHITE);
+
+            if(p.active){ stroke(CLRS.BLACK); }
+
               rect(this.offset, this.offset, this.w, this.h, 3);
 
             if     (this.style==='replay'){ replay(); }
-            else if(this.style==='menu')  { menu();   }
-            else if(this.style==='next')  { next();   }
+            else if(this.style==='menu'  ){ menu();   }
+            else if(this.style==='next'  ){ next();   }
 
         popMatrix();
 
@@ -3276,7 +3388,7 @@ var diagrams = function(processingInstance){
         var offset=0;
         var p=this;
 
-        if(this.active && this.hit){
+        if(this.active){
           if(app.left){ this.offset=1; }
           cursor(this.cursor);
         }
@@ -3563,8 +3675,8 @@ var diagrams = function(processingInstance){
         };
         function activeCell(){
           
-          if(app.mode!==APPMODES.CREATE &&
-             p.hit &&
+          if(p.active && 
+             app.mode!==APPMODES.CREATE &&
              (p.layout===HEXY_TYPES.BLUE ||
               p.layout===HEXY_TYPES.BLACK)){
 
@@ -4007,29 +4119,17 @@ var diagrams = function(processingInstance){
          retrieve:  getMistakes,
          color:     CLRS.H_BLUE}));
 
-      /* replay button       */
-      rt.controls.push(new hexy_Button(600, rt, 100, 420, 126, 100,
-        {font:      'sans-serif',
-         style:     'replay',
-         cursor:    HAND,
-         execute:   replay,
-         color:     CLRS.BLACK}));
+      /* PuzzleComplete      */
+      var pc=new puzzleComplete(600, rt, 0, 0, width, height,
+        {text:      'puzzle complete',
+         color:     CLRS.WHITE,
+         font:      monoFont,
+         cursor:    ARROW,
+         border:    true});
 
-      /* menu button       */
-      rt.controls.push(new hexy_Button(700, rt, 236, 420, 126, 100,
-        {font:      'sans-serif',
-         style:     'menu',
-         cursor:    HAND,
-         execute:   menu,
-         color:     CLRS.BLACK}));
+      app.controls.push(pc);
+         
 
-      /* next button       */
-      rt.controls.push(new hexy_Button(800, rt, 372, 420, 126, 100,
-        {font:      'sans-serif',        
-         style:     'next',
-         cursor:    HAND,
-         execute:   next,
-         color:     CLRS.BLACK}));
 
       /* SplashScreen ------------------------------------------------- */
       {
@@ -4075,13 +4175,13 @@ var diagrams = function(processingInstance){
 
   };
   
-  function puzzleComplete(){
+  function pComplete(){
     
     //  Background
     noStroke();
     fill(getColor(CLRS.WHITE,50));
 
-      rect(0,0,width,height);
+      // rect(0,0,width,height);
     
     // Puzzle Complete
     stroke(CLRS.BLACK);
@@ -4106,21 +4206,6 @@ var diagrams = function(processingInstance){
     fill(getColor(CLRS.WHITE,100));
     
       rect(100, 210, 400, 200, 3);
-    
-    // Replay
-    fill(getColor(CLRS.WHITE,100));
-    
-      // rect(100, 420, 126, 100, 3);
-      
-    // Menu
-    fill(getColor(CLRS.WHITE,100));
-    
-      // rect(236, 420, 126, 100, 3);
-      
-    // Next Puzzle
-    fill(getColor(CLRS.WHITE,100));
-    
-      // rect(372, 420, 126, 100, 3);
       
   };
   
@@ -4160,7 +4245,7 @@ var diagrams = function(processingInstance){
        // app.covered  ===0 &&
        // app.mode!==APPMODES.CREATE){
 
-      puzzleComplete();
+      pComplete();
 
     // }
 
