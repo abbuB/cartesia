@@ -2382,6 +2382,8 @@ var diagrams = function(processingInstance){
       function hexy_Button(id, parent, x, y, w, h, props){
 
         control.call(this, id, parent, x, y, w, h);
+        
+        this.style=props.style;
 
         this.cursor   = props.cursor;
 
@@ -2452,7 +2454,24 @@ var diagrams = function(processingInstance){
           popMatrix();
 
         };
-
+        function replay(){
+          
+          fill(CLRS.BLACK);
+          textAlign(LEFT,TOP);
+            
+            rotate(PI/2);
+            text('replay', 5+p.offset, -25-p.offset);
+          
+        };
+        function menu(){
+          text('menu', 0, 0);
+          
+        };
+        function next(){
+          text('next', 0, 0);
+          
+        };
+        
         this.active=this.hit && app.focus===this;
         this.offset=0;
         // this.on=this.retrieve();
@@ -2471,7 +2490,9 @@ var diagrams = function(processingInstance){
               //  Background
               rect(this.offset, this.offset, this.w, this.h, 3);
 
-            reset();
+            if     (this.style==='replay'){ replay(); }
+            else if(this.style==='menu')  { menu();   }
+            else if(this.style==='next')  { next();   }
 
         popMatrix();
 
@@ -3989,6 +4010,7 @@ var diagrams = function(processingInstance){
       /* replay button       */
       rt.controls.push(new hexy_Button(600, rt, 100, 420, 126, 100,
         {font:      'sans-serif',
+         style:     'replay',
          cursor:    HAND,
          execute:   replay,
          color:     CLRS.BLACK}));
@@ -3996,13 +4018,15 @@ var diagrams = function(processingInstance){
       /* menu button       */
       rt.controls.push(new hexy_Button(700, rt, 236, 420, 126, 100,
         {font:      'sans-serif',
+         style:     'menu',
          cursor:    HAND,
          execute:   menu,
          color:     CLRS.BLACK}));
 
       /* next button       */
       rt.controls.push(new hexy_Button(800, rt, 372, 420, 126, 100,
-        {font:      'sans-serif',
+        {font:      'sans-serif',        
+         style:     'next',
          cursor:    HAND,
          execute:   next,
          color:     CLRS.BLACK}));
@@ -4044,10 +4068,6 @@ var diagrams = function(processingInstance){
   function intro(){ };
   function extro(){ };
   function instructions(){ };
-  
-  function menu(){ print('next'); };
-  function reload(){ print('next'); };
-  function next(){ print('next'); };
   
   function getPuzzleNumber(){
 
