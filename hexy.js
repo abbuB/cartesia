@@ -343,12 +343,23 @@ var diagrams = function(processingInstance){
 
     }
 
-    /* Hextris Specific ------------------ */
+    /* Hexy Specific ------------------ */
     {
 
-      this.mode         = APPMODES.GAME;
+      this.mode         = APPMODES.GAME;      //  
 
-      this.hexBoard     = this.controls[1];
+      this.score        = 35;                //  The number of total hexes acquired
+
+      this.levelScores  = { 0:  5,    7: 40,   14:  75,   21: 110,   28: 145,   35:  180,
+                            1: 10,    8: 45,   15:  80,   22: 115,   29: 150,   36:  185,
+                            2: 15,    9: 50,   16:  85,   23: 120,   30: 155,   37:  190,
+                            3: 20,   10: 55,   17:  90,   24: 125,   31: 160,   38:  195,
+                            4: 25,   11: 60,   18:  95,   25: 130,   32: 165,   39:  200,
+                            5: 30,   12: 65,   19: 100,   26: 135,   33: 170,   40:  205,
+                            6: 35,   13: 70,   20: 105,   27: 140,   34: 175,   41:  210
+                          };
+
+      this.hexBoard     = this.controls[1];   //  global hexBoard variable
 
       this.puzzle       = 0;                  //  Index of the current puzzle layout
 
@@ -466,22 +477,22 @@ var diagrams = function(processingInstance){
     function incrementCellLayout(){ app.hexBoard.activeCell.incrementCellLayout();              };
     function decrementCellLayout(){ app.hexBoard.activeCell.decrementCellLayout();              };
 
-    function setBlackRevealed()   { app.hexBoard.activeCell.layout=HEXY_TYPES.BLACK_REVEALED; };
-    function setBlack()           { app.hexBoard.activeCell.layout=HEXY_TYPES.BLACK;          };
+    function setBlackRevealed()   { app.hexBoard.activeCell.layout=HEXY_TYPES.BLACK_REVEALED;   };
+    function setBlack()           { app.hexBoard.activeCell.layout=HEXY_TYPES.BLACK;            };
 
-    function setBlueRevealed()    { app.hexBoard.activeCell.layout=HEXY_TYPES.BLUE_REVEALED;  };
-    function setBlue()            { app.hexBoard.activeCell.layout=HEXY_TYPES.BLUE;           };
+    function setBlueRevealed()    { app.hexBoard.activeCell.layout=HEXY_TYPES.BLUE_REVEALED;    };
+    function setBlue()            { app.hexBoard.activeCell.layout=HEXY_TYPES.BLUE;             };
 
-    function setDownCenter()      { app.hexBoard.activeCell.layout=HEXY_TYPES.DOWN_CENTER;    };
-    function setDownLeft()        { app.hexBoard.activeCell.layout=HEXY_TYPES.DOWN_LEFT;      };
-    function setDownRight()       { app.hexBoard.activeCell.layout=HEXY_TYPES.DOWN_RIGHT;     };
+    function setDownCenter()      { app.hexBoard.activeCell.layout=HEXY_TYPES.DOWN_CENTER;      };
+    function setDownLeft()        { app.hexBoard.activeCell.layout=HEXY_TYPES.DOWN_LEFT;        };
+    function setDownRight()       { app.hexBoard.activeCell.layout=HEXY_TYPES.DOWN_RIGHT;       };
 
-    function setBlank()           { app.hexBoard.activeCell.text=HEXY_TYPES.BLANK;            };
-    function setNumber()          { app.hexBoard.activeCell.text=HEXY_TYPES.NUMBER;           };
-    function setConsecutive()     { app.hexBoard.activeCell.text=HEXY_TYPES.CONSECUTIVE;      };
-    function setNonConsecutive()  { app.hexBoard.activeCell.text=HEXY_TYPES.NOT_CONSECUTIVE;  };
+    function setBlank()           { app.hexBoard.activeCell.text=HEXY_TYPES.BLANK;              };
+    function setNumber()          { app.hexBoard.activeCell.text=HEXY_TYPES.NUMBER;             };
+    function setConsecutive()     { app.hexBoard.activeCell.text=HEXY_TYPES.CONSECUTIVE;        };
+    function setNonConsecutive()  { app.hexBoard.activeCell.text=HEXY_TYPES.NOT_CONSECUTIVE;    };
 
-    function clearLayout()        { app.hexBoard.clearLayout();                               };
+    function clearLayout()        { app.hexBoard.clearLayout();                                 };
 
     function toggleCreate()       {
 
@@ -497,9 +508,13 @@ var diagrams = function(processingInstance){
 
     };
 
-    function replay()             { print('replay');                                          };
-    function menu()               { print('menu');                                            };
-    function next()               { print('next');                                            };
+    function replay()             { print('replay');                                            };
+    function menu()               { print('menu');                                              };
+    function next()               { print('next');                                              };
+
+    function getScore()           { return app.score;                                           };
+
+    function loadPuzzle(n)        { print('load puzzle: ' + n);                                 };
 
   }
 
@@ -713,12 +728,12 @@ var diagrams = function(processingInstance){
 
         control.call(this, id, parent, x, y, w, h);
 
-        this.text   = props.text;
-        this.color  = props.color;
-        this.cursor = props.cursor;
-        this.border = props.border;
+        this.text     = props.text;
+        this.color    = props.color;
+        this.cursor   = props.cursor;
+        this.border   = props.border;
 
-        this.font   = props.font;
+        this.font     = props.font;
 
         /* replay button       */
         this.controls.push(new hexy_Button(610, this, 100, 420, 126, 100,
@@ -842,13 +857,6 @@ var diagrams = function(processingInstance){
       };
 
     }
-
-    
-    function loadPuzzle(n){
-      
-      print('load puzzle: ' + n);
-      
-    };
     
     /* Puzzle Select        */
     {
@@ -857,54 +865,82 @@ var diagrams = function(processingInstance){
 
         control.call(this, id, parent, x, y, w, h);
 
-        this.text   = props.text;
-        this.color  = props.color;
-        this.cursor = props.cursor;
-        this.border = props.border;
+        this.text     = props.text;
+        this.color    = props.color;
+        this.cursor   = props.cursor;
+        this.border   = props.border;
 
-        this.font   = props.font;
+        this.font     = props.font;
+
+        this.retrieve = props.retrieve;
 
         //  Load Hexagon Buttons
-        pushMatrix();
+        var txt;
 
-          translate(150,225);
-            
-            stroke(CLRS.H_BLUE);
-            strokeWeight(2);
-            fill(CLRS.H_BLUE_L);
-            
-            var txt;
-            
-            var sz=40;
-            var n=0;
+        var sz=55;
+        var incr=3.5;
+        var n=0;
+        var x1=0;
+        var y1=0;
+        var baseX=300;
+        var baseY=300;
 
-              for(var row=0; row<6; row++){
-                for(var col=0; col<7; col++){  
-                  
-                  txt=col+','+row;
-                  
-                  /* puzzle button       */
-                  this.controls.push(new puzzle_Button('H'+txt, this, this.x+200+col*50, this.y+200+row*50, sz, sz,
-                    {font:      'sans-serif',
-                     style:     'replay',
-                     text:      n,
-                     cursor:    HAND,
-                     execute:   loadPuzzle,
-                     color:     CLRS.BLACK}));
+          for(var row=0; row<6; row++){
+            for(var col=0; col<7; col++){
 
-                  n++;
+              if((n+1)%7===0){
 
-                }
+                x1 = baseX + cos(radians(270+row*60))*incr*sz;
+                y1 = baseY + sin(radians(270+row*60))*incr*sz;
+
+              }
+              else{
+
+                x1 = baseX + cos(radians(270+row*60))*incr*sz + cos(radians(270+col*60))*sz*1.1;
+                y1 = baseY + sin(radians(270+row*60))*incr*sz + sin(radians(270+col*60))*sz*1.1;
+
               }
 
-        popMatrix();
+              txt=(row/1+1) + '-' + col/1;
+              
+              /* puzzle button       */
+              this.controls.push(new puzzle_Button('H'+txt, this, x1, y1, sz, sz,
+                {font:      'sans-serif',
+                 style:     'replay',
+                 text:      txt,
+                 index:     n,
+                 threshold: app.levelScores[n],
+                 retrieve:  getScore,
+                 cursor:    HAND,
+                 execute:   loadPuzzle,
+                 color:     CLRS.BLACK}));
+
+              n++;
+
+            }
+          }
 
       };
       puzzleSelect.prototype=Object.create(control.prototype);
       puzzleSelect.prototype.draw=function(){
 
         this.active = this.hit && app.focus===this;
+        
+        var p =this;
+         
+        function drawScore(){
 
+          textSize(48);
+          fill(CLRS.GRAY);
+
+            text(p.retrieve(), (p.w-200)/2+2, p.h/2+2);
+
+          fill(CLRS.H_BLUE);
+
+            text(p.retrieve(), (p.w-200)/2, p.h/2);
+          
+        };
+        
         pushMatrix();
 
           translate(this.x, this.y);
@@ -917,6 +953,8 @@ var diagrams = function(processingInstance){
 
             // Draw Controls
             forEach(this.controls, 'draw');
+
+            drawScore();
 
         popMatrix();
 
@@ -2606,27 +2644,37 @@ var diagrams = function(processingInstance){
 
         control.call(this, id, parent, x, y, w, h);
 
-        this.style    = props.style;
-        this.text     = props.text;
+        this.style     = props.style;
+        this.text      = props.text;
 
-        this.cursor   = props.cursor;
+        this.cursor    = props.cursor;
 
-        this.execute  = props.execute;
-        this.retrieve = props.retrieve;
+        this.execute   = props.execute;
+        this.retrieve  = props.retrieve;
 
-        this.color    = props.color;
+        this.color     = props.color;
 
+        this.threshold = props.threshold;
+        
         /* Initialize */
         var w2=this.w/2;
         
-        this.points=[];
-        
-        this.points.push(new pnt(cos(radians(   0))*w2, sin(radians(   0))*w2));
-        this.points.push(new pnt(cos(radians(  60))*w2, sin(radians(  60))*w2));
-        this.points.push(new pnt(cos(radians( 120))*w2, sin(radians( 120))*w2));
-        this.points.push(new pnt(cos(radians( 180))*w2, sin(radians( 180))*w2));
-        this.points.push(new pnt(cos(radians(-120))*w2, sin(radians(-120))*w2));
-        this.points.push(new pnt(cos(radians( -60))*w2, sin(radians( -60))*w2));
+        this.points    = [];
+        this.interior  = [];
+        this.shadow    = [];
+
+        for(pt=0; pt<6; pt++){
+
+          this.points.push(  new pnt( cos(radians(pt*60))*(w2),
+                                      sin(radians(pt*60))*(w2) ));
+
+          this.interior.push(new pnt( cos(radians(pt*60))*(w2-5),
+                                      sin(radians(pt*60))*(w2-5) ));
+
+          this.shadow.push(  new pnt( cos(radians(pt*60))*(w2+5),
+                                      sin(radians(pt*60))*(w2+5) ));
+                                      
+        }
 
       };
       puzzle_Button.prototype=Object.create(control.prototype);
@@ -2646,29 +2694,81 @@ var diagrams = function(processingInstance){
               if(app.left){ offset=1; }
             }
 
-            strokeWeight(2.5);
-            noStroke();
-            fill(getColor(CLRS.H_BLUE,100));
+            function exterior(){
+            
+              strokeWeight(2);
+              noStroke();
+              // stroke(CLRS.H_BLUE);
+              fill(getColor(CLRS.H_BLUE,100));
 
-            if(p.active){
-              stroke(getColor(CLRS.BLACK,25));
-              fill(getColor(CLRS.H_BLUE_L,100));
-            }
-
-            // drawHexagon
-            beginShape();
-              
-              for(var n in this.points){
-                vertex(this.points[n].x+offset,this.points[n].y+offset);
+              if(p.active){
+                stroke(getColor(CLRS.BLACK,25));
+                // fill(getColor(CLRS.H_BLUE_L,100));
               }
 
-            endShape(CLOSE);
+              beginShape();
+                
+                for(var n in p.points){
+                  vertex(p.points[n].x+offset, p.points[n].y+offset);
+                }
 
-            textSize(12);
-            textAlign(CENTER,CENTER);            
-            fill(CLRS.BLACK);
+              endShape(CLOSE);
+            
+            }
+            
+            noStroke();
+            
+            function interior(){
 
-              text(this.text,offset,offset);
+              fill(getColor(CLRS.H_BLUE_L,100));
+              
+              beginShape();
+                
+                for(var n in p.points){
+                  vertex(p.interior[n].x+offset, p.interior[n].y+offset);
+                }
+
+              endShape(CLOSE);
+            
+            };
+            
+            function shadow(){
+
+              fill(getColor(CLRS.GRAY,20));
+              
+              beginShape();
+                
+                for(var n in p.points){
+                  vertex(p.shadow[n].x+offset, p.shadow[n].y+offset);
+                }
+
+              endShape(CLOSE);
+            
+            };
+            
+            function label(){
+
+              textSize(14);
+              textAlign(CENTER,CENTER);         
+
+              fill(CLRS.GRAY);
+
+                text(p.text, offset+1, offset+1);
+                
+              fill(CLRS.WHITE);
+
+                text(p.text, offset, offset);
+
+            };
+            
+            if(p.retrieve()>=p.threshold){
+
+              exterior();
+              interior();
+              shadow();
+              label();
+
+            }
 
         popMatrix();
 
@@ -3146,7 +3246,7 @@ var diagrams = function(processingInstance){
 
       };
       hexButton.prototype.moved=function(x,y){
-      /* Overridden because of the shap */
+      /* Overridden because of the shape */
 
         if(this.parent.hit){
 
@@ -4416,9 +4516,10 @@ var diagrams = function(processingInstance){
       /* PuzzleSelect      */
       rt.controls.push(new puzzleSelect(600, rt, 0, 0, width, height,
         {text:      'Puzzle Select',
+         retrieve:  getScore,
          color:     CLRS.WHITE,
          font:      monoFont,
-         cursor:    ARROW,
+         cursor:    ARROW,         
          border:    true}));
          
       // app.controls.push(ps);
@@ -4600,6 +4701,7 @@ var diagrams = function(processingInstance){
 
   // print(balls.get(0));
 
+  
   draw=function(){
 
     app.frameRate=this.__frameRate;
@@ -4615,6 +4717,12 @@ var diagrams = function(processingInstance){
     // }
 
   };
+
+  // app.levelScores[31]=1111;
+
+  for (var n in app.levelScores){
+    print(app.levelScores[n]);
+  }
 
   /* Keyboard Events =========================================================== */
   {
