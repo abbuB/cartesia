@@ -348,19 +348,21 @@ var diagrams = function(processingInstance){
 
       this.mode         = APPMODES.GAME;      //  
 
-      this.score        = 35;                //  The number of total hexes acquired
+      this.score        = 0;                  //  The number of total hexes acquired
 
-      this.levelScores  = { 0:  5,    7: 40,   14:  75,   21: 110,   28: 145,   35:  180,
-                            1: 10,    8: 45,   15:  80,   22: 115,   29: 150,   36:  185,
-                            2: 15,    9: 50,   16:  85,   23: 120,   30: 155,   37:  190,
-                            3: 20,   10: 55,   17:  90,   24: 125,   31: 160,   38:  195,
-                            4: 25,   11: 60,   18:  95,   25: 130,   32: 165,   39:  200,
-                            5: 30,   12: 65,   19: 100,   26: 135,   33: 170,   40:  205,
-                            6: 35,   13: 70,   20: 105,   27: 140,   34: 175,   41:  210
+      this.levelScores  = {
+                            0: 0,   7: 35,  14: 70,  21: 105,  28: 140,  35: 175,
+                            1: 0,   8: 35,  15: 70,  22: 105,  29: 140,  36: 175,
+                            2: 0,   9: 35,  16: 70,  23: 105,  30: 140,  37: 175,
+                            3: 0,  10: 35,  17: 70,  24: 105,  31: 140,  38: 175,
+                            4: 0,  11: 35,  18: 70,  25: 105,  32: 140,  39: 175,
+                            5: 0,  12: 35,  19: 70,  26: 105,  33: 140,  40: 175,
+                            6: 0,  13: 35,  20: 70,  27: 105,  34: 140,  41: 175
                           };
 
-      this.hexBoard     = this.controls[1];   //  global hexBoard variable
-
+      this.hexBoard;                          //  This is set in the hexBoard control initialization
+      this.transition;                        //  This is set in the transition control initialization
+      
       this.puzzle       = 0;                  //  Index of the current puzzle layout
 
       this.remaining    = 0;                  //  How many blue cells need to be uncovered
@@ -2715,11 +2717,10 @@ var diagrams = function(processingInstance){
               endShape(CLOSE);
             
             }
-            
-            noStroke();
-            
             function interior(){
 
+              noStroke();
+            
               fill(getColor(CLRS.H_BLUE_L,100));
               
               beginShape();
@@ -2730,10 +2731,10 @@ var diagrams = function(processingInstance){
 
               endShape(CLOSE);
             
-            };
-            
+            };            
             function shadow(){
 
+              noStroke();
               fill(getColor(CLRS.GRAY,20));
               
               beginShape();
@@ -2744,10 +2745,10 @@ var diagrams = function(processingInstance){
 
               endShape(CLOSE);
             
-            };
-            
+            };            
             function label(){
 
+              noStroke();
               textSize(14);
               textAlign(CENTER,CENTER);         
 
@@ -2760,6 +2761,48 @@ var diagrams = function(processingInstance){
                 text(p.text, offset, offset);
 
             };
+            function lock(){
+
+              strokeWeight(2);
+              noStroke();
+              fill(getColor(CLRS.BLACK,100));
+
+              if(p.active){
+                stroke(getColor(CLRS.BLACK,25));
+              }
+
+              beginShape();
+                
+                for(var n in p.points){
+                  vertex(p.points[n].x+offset, p.points[n].y+offset);
+                  
+                }
+
+              endShape(CLOSE);              
+
+              strokeWeight(2);
+              noStroke();
+              fill(64);
+              
+              beginShape();
+                
+                for(var n in p.points){
+                  vertex(p.interior[n].x+offset, p.interior[n].y+offset);                  
+                }
+  
+              endShape(CLOSE);
+
+              stroke(CLRS.BLACK);
+              fill(64);
+              
+                rect(-4, -12, 8, 12, 5);
+                
+              stroke(CLRS.BLACK);
+              fill(32);
+              
+                rect(-6, -4, 12, 12, 2);
+                
+            };
             
             if(p.retrieve()>=p.threshold){
 
@@ -2767,6 +2810,11 @@ var diagrams = function(processingInstance){
               interior();
               shadow();
               label();
+
+            }
+            else{
+
+              lock();
 
             }
 
@@ -2824,7 +2872,9 @@ var diagrams = function(processingInstance){
 
       };      
       /** Overridden for execute */
-      puzzle_Button.prototype.clicked=function(){ if(this.active){ this.execute(this.text); } };
+      puzzle_Button.prototype.clicked=function(){ 
+      
+      if(this.active){ this.execute(this.text); app.score+=5;} };
 
     }
     
@@ -4446,6 +4496,140 @@ var diagrams = function(processingInstance){
 
     }
 
+    var TRANSITION_TYPES={
+
+      FADE:     0,
+      SLIDE:    1,
+      CENTER:   2,
+      EDGES:    3,
+      HEXAGON:  4
+
+    };
+
+    /* Transition           */
+    {
+
+      function transition(id, parent, x, y, w, h, props){
+
+        control.call(this, id, parent, x, y, w, h);
+
+        this.color    = props.color;
+
+        this.timer    = 0;
+
+        this.type     = props.type;
+
+        this.incr     = -2;
+
+        app.transition=this;
+
+      };
+      transition.prototype=Object.create(control.prototype);
+      transition.prototype.draw=function(){
+
+          var p=this;
+          
+          this.active=this.hit && app.focus===this;
+
+          pushMatrix();
+
+            translate(this.x, this.y);
+            // scale(1,-1);
+
+            function fade(){
+              
+              fill(getColor(p.color,p.timer));
+              noStroke();
+              
+                rect(0, 0, p.w, p.h);
+
+            };
+            function slide(){
+
+              fill(p.color);
+              noStroke();
+                
+              var w=p.timer/100*p.w;
+                
+                rect(0, 0, w, p.h);
+                
+            };
+            function center(){
+
+              fill(p.color);
+              noStroke();
+              
+              var w=p.timer/100*p.w;
+              var h=p.timer/100*p.h;
+                
+                rect((p.w-w)/2, (p.h-h)/2, w, h);
+              
+            };
+            function edges(){
+              
+              fill(p.color);
+              noStroke();
+              
+              var left    = -p.timer/100*p.w/2;
+              var right   =  p.w/2+p.timer/100*p.w/2;
+              var top     =  -p.timer/100*p.h/2;
+              var bottom  =  p.h/2+p.timer/100*p.h/2;
+
+                rect(right, 0,      p.w/2, p.h);    // right
+                rect(left,  0,      p.w/2, p.h);    // left
+                rect(0,     bottom, p.w,   p.h);    // bottom
+                rect(0,     top,    p.w,   p.h/2);  // top
+
+            };
+            function hexagon(){
+
+              fill(p.color);
+              noStroke();
+              
+              var m=p.timer*5;
+              
+              beginShape();
+
+                for(var n=0; n<6; n++){
+
+                  vertex(p.w/2+m*cos(n*PI/3),
+                         p.h/2+m*sin(n*PI/3));
+
+                }
+
+              endShape(CLOSE);
+
+            };
+            
+            if(this.on){
+              
+              switch(this.type){
+
+                case TRANSITION_TYPES.FADE:     fade();     break;
+                case TRANSITION_TYPES.SLIDE:    slide();    break;
+                case TRANSITION_TYPES.CENTER:   center();   break;
+                case TRANSITION_TYPES.EDGES:    edges();    break;
+                case TRANSITION_TYPES.HEXAGON:  hexagon();  break;
+
+                default:                                    break;
+
+              }
+
+              if(this.timer>=100 ||
+                 this.timer<=0){
+                this.incr*=-1;
+              }
+
+              this.timer+=this.incr;
+
+            }
+            
+          popMatrix();
+
+      };
+
+    }
+
   }
 
   /********************************************************************************
@@ -4556,6 +4740,13 @@ var diagrams = function(processingInstance){
 
       rt.controls.push(telem);
 
+      /* Transition ---------------------------------------------------- */
+      var trans=new transition(1000, rt, 0, 0, width-200, height,
+        {color:     CLRS.H_BLUE_L,
+         type:      TRANSITION_TYPES.FADE});
+
+      rt.controls.push(trans);
+      
   };
 
   // var n=220;
@@ -4717,6 +4908,11 @@ var diagrams = function(processingInstance){
     // }
 
   };
+
+  print( typeof app.transition );
+  
+app.transition.on=false;
+app.transition.type=TRANSITION_TYPES.HEXAGON;
 
   // app.levelScores[31]=1111;
 
