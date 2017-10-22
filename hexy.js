@@ -179,8 +179,6 @@ var diagrams = function(processingInstance){
 
     var HEXY_TYPES={
 
-      // Double up the \ character because it is an escape character and the first one won't be recognised
-
       BLANK:            '.',
 
       BLACK:            'o',
@@ -188,7 +186,7 @@ var diagrams = function(processingInstance){
       BLUE:             'x',
       BLUE_REVEALED:    'X',
 
-      DOWN_RIGHT:       '>',
+      DOWN_RIGHT:       '>', // Double up the \ character because it is an escape character and the first one won't be recognised
       DOWN_CENTER:      '|',
       DOWN_LEFT:        '/',
 
@@ -294,9 +292,12 @@ var diagrams = function(processingInstance){
 
   }
 
+  
+
+
   function application(){
 
-    /* Initialize -------------------- */
+    /* Initialize          -------------------- */
     {
 
       randomSeed(millis());
@@ -312,7 +313,7 @@ var diagrams = function(processingInstance){
 
     }
 
-    /* Platform Constants */
+    /* Platform Constants  -------------------- */
     {
 
       this.updateCtrls  = new ArrayList();
@@ -344,7 +345,7 @@ var diagrams = function(processingInstance){
 
     }
 
-    /* Hexy Specific ------------------ */
+    /* Hexy Specific       ------------------ */
     {
 
       this.mode         = APPMODES.GAME;      //
@@ -384,27 +385,39 @@ var diagrams = function(processingInstance){
 
   /* Utility Functions ===================================================== */
   {
-    
-    /* Misc             -------------------------------------------------- */
+
+    /* Misc            -------------------------------------------------- */
     {
-
-      function iRandom(n)           { return round(random(n));                                      };
-
-      function getColor(clr, alpha) { return color(red(clr), green(clr), blue(clr), alpha/100*255); };
-
-      function clickTest(n)         { print('click: ' + n);                                         };
       
-      function getInfo()            { return app.info;                                              };
-      function toggleInfo()         { app.info=!app.info;                                           };
+      var controlCount=-1;
+      
+      function getGUID(){
 
-      function getMusic()           { return app.music;                                             };
-      function setMusic(b)          { return app.music=b;                                           };
+        controlCount++;
+      
+        return ('C'+controlCount);
 
-      function getScore()           { return app.score;                                             };
-      function setScore(b)          { return app.score=b;                                           };
+      }
+  
+      function getPuzzleNumber()    { return ((app.puzzle-(app.puzzle%6))/6+1)+ '-' +(app.puzzle%6+1); };
 
-      function getTelemetry()       { return app.telemetry;                                         };
-      function toggleTelemetry()    { app.telemetry=!app.telemetry;                                 };
+      function iRandom(n)           { return round(random(n));                                         };
+
+      function getColor(clr, alpha) { return color(red(clr), green(clr), blue(clr), alpha/100*255);    };
+
+      function clickTest(n)         { print('click: ' + n);                                            };
+      
+      function getInfo()            { return app.info;                                                 };
+      function toggleInfo()         { app.info=!app.info;                                              };
+
+      function getMusic()           { return app.music;                                                };
+      function setMusic(b)          { return app.music=b;                                              };
+
+      function getScore()           { return app.score;                                                };
+      function setScore(b)          { return app.score=b;                                              };
+
+      function getTelemetry()       { return app.telemetry;                                            };
+      function toggleTelemetry()    { app.telemetry=!app.telemetry;                                    };
 
     }
 
@@ -565,27 +578,26 @@ var diagrams = function(processingInstance){
 
         /* explicit properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
         this.id       = id;         /** Unique identification number --
-                                        Change to GUID for production) */
+                                        Change to GUID for production)        */
+        this.parent   = parent;     /** parent control (acts as a container)  */
 
-        this.parent   = parent;     /** parent control (acts as a container) */
-
-        this.x        = x;          /** left     */
-        this.y        = y;          /** top      */
-        this.w        = w;          /** width    */
-        this.h        = h;          /** height   */
+        this.x        = x;          /** left                                  */
+        this.y        = y;          /** top                                   */
+        this.w        = w;          /** width                                 */
+        this.h        = h;          /** height                                */
 
         /* inherent properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-        this.controls = [];         /** array of child controls */
+        this.controls = [];         /** array of child controls               */
 
-        this.on       = false;      /** is the control on or off */
-        this.hit      = false;      /** mouse is over the control */
+        this.on       = false;      /** is the control on or off              */
+        this.hit      = false;      /** mouse is over the control             */
+        this.cursor   = ARROW,      /** cursor when mouse is over the control */
+        this.visible  = true;       /** is the control currently displayed    */
 
-        this.visible  = false;      /** is the control currently displayed */
+        this.active   = false;      /** active = hit and focus and visible    */
+        this.offset   = 0;          /** offset distance when clicked          */
 
-        this.active   = false;      /** active = hit and focus and visible */
-        this.offset   = 0;          /** offset distance when clicked */
-
-        this.font     = serifFont;  /** default font */
+        this.font     = serifFont;  /** default font                          */
 
       };
       control.prototype.draw     = function(){};
@@ -617,63 +629,63 @@ var diagrams = function(processingInstance){
           }
 
       };
-      control.prototype.clicked  = function(){ if(this.hit){ forEach(this.controls, 'clicked'); } };
+      control.prototype.clicked  = function(){ if(this.hit){ forEach(this.controls, 'clicked');  } };
       control.prototype.rclicked = function(){ if(this.hit){ forEach(this.controls, 'rclicked'); } };
       control.prototype.pressed  = function(){ };
       control.prototype.released = function(){ };
       control.prototype.over     = function(){ };
-      control.prototype.out      = function(){ this.hit=false; forEach(this.controls, 'out'); };
+      control.prototype.out      = function(){ this.hit=false; forEach(this.controls, 'out');      };
       // control.prototype.typed=function(){};
       // control.prototype.cClicked=function(){};
       // control.prototype.dragged = function(){ };
 
     }
 
-    /* Containers ========================================================== */
+    /** Containers ========================================================== */
 
-    /* root                 */
+    /** root            -------------------------------------------------- */
     {
       /* Identical to a container control except is doesn't have a parent */
       function root(id, x, y, w, h, props){
 
         control.call(this, id, null, x, y, w, h);
 
-        this.text   = props.text;
-
-        this.color = props.color;
-
-        this.border = props.border;
-
-        this.cursor = props.cursor;
-
-        this.font   = props.font;
+        this.color   = props.color;
+        this.border  = props.border;
 
       };
       root.prototype=Object.create(control.prototype);
       root.prototype.draw=function(){
+        
+        if(this.visible===false){ return; }
+        
+          this.active=this.hit &&
+                      app.focus===this;
 
-        this.active=this.hit && app.focus===this;
+          pushMatrix();
 
-        pushMatrix();
+            translate(this.x, this.y);
 
-          translate(this.x, this.y);
+              if(this.active){
+                cursor(this.cursor);
+              }
 
-            // noStroke();
-            fill(this.icolor);
+              noStroke();
+              fill(this.color);
 
-            if(this.hit                       ){ fill(this.acolor);   }
-            if(app.dragging &&
-               app.hexBoard.activePiece!==null){ cursor(HAND);        }
-            else                               { cursor(this.cursor); }
+              if(this.border &&
+                 this.active){
+                
+                strokeWeight(1);
+                stroke(0);
 
-            fill(192);
-            noStroke();
+              }
 
-              rect(0, 0, this.w, this.h);
+                rect(0, 0, this.w, this.h);
 
-            forEach(this.controls, 'draw');
+              forEach(this.controls, 'draw');
 
-        popMatrix();
+          popMatrix();
 
       };
       root.prototype.moved=function(x,y){
@@ -701,105 +713,86 @@ var diagrams = function(processingInstance){
           }
 
       };
-      root.prototype.dragged = function(){
-
-        // if(this.hit){ forEach(this.controls, 'dragged'); }
-
-      };
-      root.prototype.pressed= function(){
-
-        app.dragging=true;
-
-      };
-      root.prototype.released= function(){
-
-        if(this.hit){ forEach(this.controls, 'released'); }
-
-      };
 
     }
 
-    /* Container            */
+    /** Container       -------------------------------------------------- */
     {
 
       function container(id, parent, x, y, w, h, props){
 
         control.call(this, id, parent, x, y, w, h);
 
-        this.text   = props.text;
-        this.color  = props.color;
-        this.cursor = props.cursor;
-        this.border = props.border;
-
-        this.font   = props.font;
-
+        this.color   = props.color;        
+        this.border  = props.border;
+        
       };
       container.prototype=Object.create(control.prototype);
       container.prototype.draw=function(){
 
-        this.active=this.hit && app.focus===this;
+        if(this.visible===false){ return; }
+        
+          this.active=this.hit &&
+                      app.focus===this;
 
-        pushMatrix();
+          pushMatrix();
 
-          translate(this.x, this.y);
+            translate(this.x, this.y);
 
-            noStroke();
-            fill(getColor(this.color, 50));
-            // textFont(createFont(this.font,16));
+              if(this.active){ cursor(this.cursor); }
 
-            // if(this.hit   ){ fill(getColor(this.color, 50));   }
-            if(this.active){ cursor(this.cursor);              }
-            // if(this.border){ strokeWeight(1);
-                             // stroke(getColor(this.color, 50)); }
+              fill(this.color);
 
-              rect(0, 0, this.w, this.h, this.execute);
+              strokeWeight(0);
+              noStroke();
 
-            forEach(this.controls, 'draw');
+              if(this.border){
 
-        popMatrix();
+                stroke(CLRS.H_BLUE);
+                strokeWeight(11);
+
+              }
+
+                rect(1, 1, this.w-2, this.h-2);
+
+              forEach(this.controls, 'draw');
+
+          popMatrix();
 
       };
 
     }
 
-    /* Puzzle Complete      */
+    /** Puzzle Complete -------------------------------------------------- */
     {
 
       function puzzleComplete(id, parent, x, y, w, h, props){
 
         control.call(this, id, parent, x, y, w, h);
 
-        this.text     = props.text;
-        this.color    = props.color;
-        this.cursor   = props.cursor;
-        this.border   = props.border;
-        
-        this.font     = props.font;
-
-        this.visible  = props.visible;
+        this.text    = props.text;
+        this.color   = props.color;
+        this.visible = true;
 
         /* replay button       */
-        this.controls.push(new hexy_Button(610, this, 100, 420, 126, 100,
-          {font:      'sans-serif',
-           style:     'replay',
+        this.controls.push(new hexy_Button(getGUID(), this, 100, 420, 126, 100,
+          {style:     'replay',
            text:      'replay',
            cursor:    HAND,
            execute:   replay,
            color:     CLRS.BLACK}));
 
         /* menu button       */
-        this.controls.push(new hexy_Button(620, this, 236, 420, 126, 100,
-          {font:      'sans-serif',
-           style:     'menu',
+        this.controls.push(new hexy_Button(getGUID(), this, 236, 420, 126, 100,
+          {style:     'menu',
            text:      'menu',
            cursor:    HAND,
            execute:   menu,
            color:     CLRS.BLACK}));
 
         /* next button       */
-        this.controls.push(new hexy_Button(630, this, 372, 420, 126, 100,
-          {font:      'sans-serif',
-           style:     'next',
+        this.controls.push(new hexy_Button(getGUID(), this, 372, 420, 126, 100,
+          {style:     'next',
            text:      'next',
            cursor:    HAND,
            execute:   next,
@@ -811,100 +804,100 @@ var diagrams = function(processingInstance){
 
         if(this.visible===false){ return; }
               
-        this.active = this.hit &&
-                      app.focus===this;
+          this.active = this.hit &&
+                        app.focus===this;
 
-        pushMatrix();
+          pushMatrix();
 
-          translate(this.x, this.y);
+            translate(this.x, this.y);
 
-            // textFont(createFont(this.font,16));
+              // textFont(createFont(this.font,16));
 
-            // if(this.hit   ){ fill(getColor(this.color, 50));   }
-            // if(this.active){ cursor(this.cursor);              }
-            // if(this.border){ strokeWeight(1);
-                             // stroke(getColor(this.color, 50)); }
+              if(this.hit   ){ fill(getColor(this.color, 50));   }
+              if(this.active){ cursor(this.cursor);              }
+              // if(this.border){ strokeWeight(1);
+                               // stroke(getColor(this.color, 50)); }
 
-            //  Background
-            noStroke();
-            fill(getColor(this.color,50));
+              //  Background
+              noStroke();
+              fill(getColor(this.color,50));
 
-              rect(0, 0, this.w, this.h, 100);
+                rect(0, 0, this.w, this.h);
 
-            // Title
-            stroke(CLRS.BLACK);
-            strokeWeight(0.25);
+              // Title
+              stroke(CLRS.BLACK);
+              strokeWeight(0.25);
 
-            fill(getColor(CLRS.WHITE,100));
+              fill(getColor(CLRS.WHITE,100));
 
-              rect(100,100,400,100, 3);
+                rect(100,100,400,100, 3);
 
-            textSize(36);
-            textAlign(CENTER,CENTER);
+              textSize(36);
+              textAlign(CENTER,CENTER);
 
-            fill(getColor(CLRS.BLACK,50));
+              fill(getColor(CLRS.BLACK,50));
 
-              text('Puzzle Complete', 300,130);
+                text(this.text, 300,130);
 
-            fill(CLRS.BLACK);
+              fill(CLRS.BLACK);
 
-              text(getPuzzleNumber(), 300,170);
+                text(getPuzzleNumber(), 300,170);
 
-            // Summary
-            fill(getColor(CLRS.WHITE,100));
+              // Summary
+              fill(getColor(CLRS.WHITE,100));
 
-              rect(100, 210, 400, 200, 3);
+                rect(100, 210, 400, 200, 3);
 
-            textSize(36);
-            fill(getColor(CLRS.BLACK,25));
+              textSize(36);
+              fill(getColor(CLRS.BLACK,25));
 
-            pushMatrix();
+              pushMatrix();
 
-              translate(120, 330);
-              rotate(-PI/2);
+                translate(120, 330);
+                rotate(-PI/2);
 
-                text('Mistakes:', 0, 0);
+                  text('Mistakes:', 0, 0);
 
-              rotate(PI/2);
+                rotate(PI/2);
 
-                text(app.errors, 5, -95);
+                  text(app.errors, 5, -95);
 
-            popMatrix();
+              popMatrix();
 
 
-            //  Hexagons
-            pushMatrix();
+              //  Hexagons
+              pushMatrix();
 
-              translate(150,225);
+                translate(150,225);
 
-                stroke(CLRS.H_BLUE);
-                strokeWeight(2);
-                fill(CLRS.H_BLUE_L);
+                  stroke(CLRS.H_BLUE);
+                  strokeWeight(2);
+                  fill(CLRS.H_BLUE_L);
 
-                var sz=35;
+                  var sz=35;
 
-                  for(var row=0; row<5; row++){
-                    for(var col=0; col<5; col++){
+                    for(var row=0; row<5; row++){
+                      for(var col=0; col<5; col++){
 
-                      rect(col*sz,row*sz,sz-5,sz-5);
+                        rect(col*sz,row*sz,sz-5,sz-5);
 
+                      }
                     }
-                  }
 
 
-            popMatrix();
+              popMatrix();
 
 
-            // Draw Controls
-            forEach(this.controls, 'draw');
+              // Draw Controls
+              forEach(this.controls, 'draw');
 
-        popMatrix();
+          popMatrix();
 
       };
-
+      
     }
 
-    /* Puzzle Select        */
+    /** Puzzle Select   -------------------------------------------------- */
     {
 
       function puzzleSelect(id, parent, x, y, w, h, props){
@@ -1013,7 +1006,7 @@ print(this.id);
 
     }
 
-    /* Splash Screen        */
+    /** Splash Screen   -------------------------------------------------- */
     {
 
       function splash(id, parent, x, y, w, h, props){
@@ -1178,7 +1171,7 @@ print(this.id);
 
     }
 
-    /* Toolbar              */
+    /** Toolbar         -------------------------------------------------- */
     {
 
       function toolbar(id, parent, x, y, w, h, props){
@@ -1228,7 +1221,7 @@ print(this.id);
 
     }
 
-    /* Telemetry            */
+    /** Telemetry       -------------------------------------------------- */
     {
 
       function telemetry(id, parent, x, y, w, h, props){
@@ -1438,8 +1431,8 @@ print(this.id);
       telemetry.prototype.moved=function(x,y){
       /* Overridden because of the dynamic x-coordinate offset */
 
-        if(app.telemetry===false &&
-           this.offset===0){ return; }
+        // if(app.telemetry===false &&
+           // this.offset===0){ return; }
 
           if(this.parent.hit){
 
@@ -1468,7 +1461,7 @@ print(this.id);
 
     }
 
-    /* Hex board            */
+    /** Hex board       -------------------------------------------------- */
     {
 
       function hexBoard(id, parent, x, y, w, h, props){
@@ -2397,7 +2390,7 @@ print(this.id);
 
     /* Controls ============================================================ */
 
-    /* Button               */
+    /** Button          -------------------------------------------------- */
     {
 
       function button(id, parent, x, y, w, h, props){
@@ -2495,7 +2488,7 @@ print(this.id);
 
     }
 
-    /* Music                */
+    /** Music           -------------------------------------------------- */
     {
 
       function music(id, parent, x, y, w, h, props){
@@ -2614,7 +2607,7 @@ print(this.id);
 
     }
 
-    /* Score                */
+    /** Score           -------------------------------------------------- */
     {
 
       function score(id, parent, x, y, w, h, props){
@@ -2715,7 +2708,7 @@ print(this.id);
 
     }
 
-    /* Puzzle Button        */
+    /** Puzzle Button   -------------------------------------------------- */
     {
 
       function puzzle_Button(id, parent, x, y, w, h, props){
@@ -2973,11 +2966,11 @@ print(this.id);
 
     }
 
-    /* Hexy Button          */
+    /** Hexy Button     -------------------------------------------------- */
     {
 
       function hexy_Button(id, parent, x, y, w, h, props){
-
+print(id);
         control.call(this, id, parent, x, y, w, h);
 
         this.style    = props.style;
@@ -2986,11 +2979,11 @@ print(this.id);
         this.cursor   = props.cursor;
 
         this.execute  = props.execute;
-        this.retrieve = props.retrieve;
+        // this.retrieve = props.retrieve;
 
         this.color    = props.color;
         
-        this.visible  = props.visible;
+        // this.visible  = props.visible;
 
       };
       hexy_Button.prototype=Object.create(control.prototype);
@@ -3025,11 +3018,11 @@ print(this.id);
 
             if(p.active){ stroke(CLRS.BLACK); }
 
-              ellipse(p.w/2+p.offset, p.h/2+p.offset, 10, 10);
+              // ellipse(p.w/2+p.offset, p.h/2+p.offset, 10, 10);
 
-              // arc(p.w/2+p.offset, p.h/2+p.offset,
-                  // 40,             40,
-                  // radians(60),    2*PI-radians(22.5));
+              arc(p.w/2+p.offset, p.h/2+p.offset,
+                  40,             40,
+                  radians(60),    2*PI-radians(22.5));
 
             //  Text
             fill(getColor(CLRS.BLACK, 50));
@@ -3149,7 +3142,7 @@ print(this.id);
 
     }
 
-    /* Icon Button          */
+    /** Icon Button     -------------------------------------------------- */
     {
 
       function i_Button(id, parent, x, y, w, h, props){
@@ -3257,7 +3250,7 @@ print(this.id);
 
     }
 
-    /* Hexagon Button       */
+    /** Hexagon Button  -------------------------------------------------- */
     {
 
       function hexButton(id, parent, x, y, w, h, props){
@@ -3479,7 +3472,7 @@ print(this.id);
 
     }
 
-    /* Icon Hexagon Button  */
+    /** Icon Hex Button -------------------------------------------------- */
     {
 
       function i_hexButton(id, parent, x, y, w, h, props){
@@ -3838,7 +3831,7 @@ print(this.id);
 
     }
 
-    /* Hexagonal Cell       */
+    /** Hexagonal Cell  -------------------------------------------------- */
     {
 
       function hexCell(id, parent, x, y, w, h, props){
@@ -4617,7 +4610,7 @@ print(this.id);
 
     }
 
-    /* Transition           */
+    /** Transition      -------------------------------------------------- */
     {
 
       function transition(id, parent, x, y, w, h, props){
@@ -4795,33 +4788,30 @@ print(this.id);
     /* LOAD CONTROLS */
 
       /* root control      */
-      var rt=new root(100, 0, 0, width, height,
-        {text:      'root',
-         visible:   true,
-         font:      monoFont,
-         cursor:    ARROW,
+      var rt=new root(getGUID(), 0, 0, width, height,
+        {color:     color(192),
          border:    true});
 
       app.controls.push(rt);
 
       /* hexBoard           */
-      rt.controls.push(new hexBoard(200, rt, 0, 0, 600, 600,
-        {font:      'sans-serif',
-         color:     color(222),
-         visible:   true,
-         cursor:    ARROW,
-         size:      0}));
+      // rt.controls.push(new hexBoard(getGUID(), rt, 0, 0, 600, 600,
+        // {font:      'sans-serif',
+         // color:     color(222),
+         // visible:   true,
+         // cursor:    ARROW,
+         // size:      0}));
 
       /* reset button       */
-      rt.controls.push(new i_Button(300, rt, 550, 550, 40, 40,
-        {font:      'sans-serif',
-         cursor:    HAND,
-         visible:   true,
-         execute:   reset,
-         color:     CLRS.BLACK}));
+      // rt.controls.push(new i_Button(getGUID(), rt, 550, 550, 40, 40,
+        // {font:      'sans-serif',
+         // cursor:    HAND,
+         // visible:   true,
+         // execute:   reset,
+         // color:     CLRS.BLACK}));
 
       /* music            */
-      // rt.controls.push(new music(400, rt, 35, 565, 50, 50,
+      // rt.controls.push(new music(getGUID(), rt, 35, 565, 50, 50,
         // {font:      'sans-serif',
          // cursor:    HAND,
          // visible:   true,
@@ -4830,7 +4820,7 @@ print(this.id);
          // color:     color(192)}));
 
       /* score            */
-      // rt.controls.push(new score(500, rt, 475, 115, 50, 50,
+      // rt.controls.push(new score(getGUID(), rt, 475, 115, 50, 50,
         // {font:      'sans-serif',
          // visible:   true,
          // cursor:    HAND,
@@ -4839,18 +4829,15 @@ print(this.id);
          // color:     CLRS.H_BLUE}));
 
       /* PuzzleComplete      */
-      // var pc=new puzzleComplete(600, rt, 0, 0, width, height,
-        // {text:      'puzzle complete',
-         // color:     CLRS.WHITE,
-         // font:      monoFont,
-         // visible:   true,
-         // cursor:    ARROW,
-         // border:    true});
+      var pc=new puzzleComplete(getGUID(), rt, 100, 100, width-20, height-20,
+        {text:      'Puzzle Complete',
+         color:     CLRS.WHITE,
+         visible:    false});
 
-      // app.controls.push(pc);
+      app.controls.push(pc);
 
       /* PuzzleSelect      */
-      // var ps=new puzzleSelect(600, rt, 0, 0, width, height,
+      // var ps=new puzzleSelect(getGUID(), rt, 0, 0, width, height,
         // {text:      'Puzzle Select',
          // retrieve:  getScore,
          // color:     CLRS.WHITE,
@@ -4867,14 +4854,14 @@ print(this.id);
       {
 
         // /* Splash Screen   */
-        // var splashScreen=new splash(500, rt, width/2-200, height/2-200, 400, 400,
+        // var splashScreen=new splash(getGUID(), rt, width/2-200, height/2-200, 400, 400,
           // {color:     CLRS.BLACK,
            // font:      monoFont,
            // retrieve:  getInfo,
            // cursor:    CROSS});
 
           // /* Close         */
-          // splashScreen.controls.push(new button(510, splashScreen, 180, 360, 120, 20,
+          // splashScreen.controls.push(new button(getGUID(), splashScreen, 180, 360, 120, 20,
             // {text:      'Close',
              // font:      monoFont,
              // execute:   toggleInfo,
@@ -4886,7 +4873,7 @@ print(this.id);
       }
 
       /* Telemetry ---------------------------------------------------- */
-      var telem=new telemetry(900, rt, width-195, 5, 190, height-10,
+      var telem=new telemetry(getGUID(), rt, width-195, 5, 190, height-10,
         {color:     color(36),
          font:      serifFont,
          visible:   true,
@@ -4895,7 +4882,7 @@ print(this.id);
       rt.controls.push(telem);
 
       /* Transition ---------------------------------------------------- */
-      // var trans=new transition(1000, rt, 0, 0, width-200, height,
+      // var trans=new transition(getGUID(), rt, 0, 0, width-200, height,
         // {color:     CLRS.H_BLUE_L,
          // visible:   true,
          // type:      TRANSITION_TYPES.FADE});
@@ -4904,49 +4891,29 @@ print(this.id);
 
   };
 
-  // var n=220;
-
   function intro(){ };
   function extro(){ };
   function instructions(){ };
 
-  function getPuzzleNumber(){
-
-    return ((app.puzzle-(app.puzzle%6))/6+1) + '-' + (app.puzzle%6+1);
-
-  };
-
   function play(){
 
-    // frameRate(0);
-
-    // background(16);
-
+    
+  
     forEach(app.controls,'draw');
 
-    // if(app.gameOver){
+    // textFont(sansFont,64);
+    // textSize(36);
+    // textAlign(LEFT,TOP);
+    // fill(getColor(CLRS.BLACK,15));
 
-      // fill(getColor(CLRS.GREEN, frameCount%255));
-      // fill(getColor(CLRS.GREEN, 50));
-      // textAlign(CENTER,CENTER);
-      // textFont(sansFont,100);
-      // text('Game Over', 300, 300);
+      // pushMatrix();
 
-    // }
-
-    textFont(sansFont,64);
-    textSize(36);
-    textAlign(LEFT,TOP);
-    fill(getColor(CLRS.BLACK,15));
-
-      pushMatrix();
-
-        translate(10,5);
+        // translate(10,5);
         // rotate(-PI/6);
 
-          text('Level ' + getPuzzleNumber(), 0, 0);
+          // text('Level ' + getPuzzleNumber(), 0, 0);
 
-      popMatrix();
+      // popMatrix();
 
     // if(app.remaining===0 &&
        // app.covered  ===0 &&
@@ -4957,42 +4924,6 @@ print(this.id);
     // }
 
   };
-
-  var execute;
-
-  initialize();
-
-  execute=play;
-
-  app.focus=app.hexBoard;
-
-  // globalFRate=this.__frameRate;
-
-  strokeJoin(MITER);
-  strokeCap(SQUARE);
-
-  /*
-    var HEXY_TYPES={
-
-      // Double up the \ character because it is an escape character and the first one won't be recognised
-
-      BLANK:            '.',
-      BLACK:            'o',
-      BLACK_REVEALED:   'O',
-      BLUE:             'x',
-      BLUE_REVEALED:    'X',
-      DOWN_RIGHT:       '\\',
-      DOWN_CENTER:      '|',
-      DOWN_LEFT:        '/',
-
-      BLANK:            '.',
-      NUMBER:           '+',
-      CONSECUTIVE:      'c',
-      NOT_CONSECUTIVE:  'n'
-
-    };
-
-  */
 
   /** Testing *.hexcell file format ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
   {
@@ -5041,19 +4972,24 @@ print(this.id);
   }
   /** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
+  var execute;
+
+  initialize();
+
+  execute=play;
+
+  app.focus=app.hexBoard;
+
+  strokeJoin(MITER);
+  strokeCap(SQUARE);
+  
   draw=function(){
+
+    background(255);
 
     app.frameRate=this.__frameRate;
 
     execute();
-
-// text(nf(app.frameRate),30,100);
-    // if(frameCount%10===0){
-      // print(round(this.__frameRate));
-      // if(app.updateCtrls.size()>0){
-// print(app.updateCtrls.size());
-      // }
-    // }
 
   };
 
@@ -5145,8 +5081,8 @@ print(keyCode);
 
       switch(mouseButton){
 
-        case LEFT:    forEach(app.controls,'clicked');  break;
-        case RIGHT:   forEach(app.controls,'rclicked'); break;
+        case LEFT:    forEach(app.controls, 'clicked' ); break;
+        case RIGHT:   forEach(app.controls, 'rclicked'); break;
         // case CENTER:  forEach(app.controls,'cclicked'); break;
 
         default:     break;
@@ -5183,8 +5119,6 @@ print(keyCode);
       app.right  = false;
       app.center = false;
 
-      app.dragging=false;
-
     };
     mouseMoved=function(){
 
@@ -5198,8 +5132,6 @@ print(keyCode);
 
     };
     mouseOut=function(){
-
-      app.dragging=false;
 
       forEach(app.controls,'out');
 
@@ -5215,99 +5147,9 @@ print(keyCode);
     };
 
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  
+  
 /*
-
-..........................
-......................|+..
-............o...o...o...x.
-..........x...x...o+..x+..
-........o+..o+..on..o...x.
-......|+..o...o+..x...x+..
-........o+..o...x...x+..o.
-......x...x...x...oc..x...
-....o...o+..o...o...o.....
-..\\+..x...on..on..o+.....
-....o...x...oc..x...o.....
-......x+..x...o+..x...x...
-....x...o+..x...oc..o...o+
-
-......o+..x...o...o+..on..
-....o...o...o...o+..oc..x.
-......o+..x...x...x...o+..
-....x+..x...x.......x...oc
-......on..o+..........o...
-....o...x...on......x...o.
-......o...x...o+..x...o...
-....x...x+..o+..x...o+..x.
-......x...o+..o...x+..o+..
-....o...x+..x...oc..o+..x.
-......o...o...o+..o...o+..
-....x...x...o+..o+..o+....
-......o+..on..o+..x...|+..
 
 Hexcells level v1
 A Giant Scoop of Vanilla #3
@@ -5348,7 +5190,6 @@ mathgrant
 ............o...o...x...x...x...x...o...o...o...x...o+............
 
 */
-
 
 /**
 
