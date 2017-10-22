@@ -58,7 +58,8 @@ var diagrams = function(processingInstance){
           ...
 
     TO DO:
-      
+
+      - implement timer
       - background grid
       - score controls
       - navigate puzzles controls
@@ -108,27 +109,27 @@ var diagrams = function(processingInstance){
 
     var row = "[";
     var str = '';
-    
+
     println('[');
 
     for(var r=0; r<app.hexBoard.controls.length; r++){
       for(var c=0; c<app.hexBoard.controls[r].length; c++){
-        
+
         str=app.hexBoard.controls[r][c].layout;
-        
+
         if(str==="\\"){ str="\\\\"; }
-        
+
         if(c===app.hexBoard.controls[r].length-1){
           row=row + "'" + str + "'";;
         }
         else{
           row=row + "'" + str + "', ";
-        }  
+        }
 
       }
-      
+
       subset(row, 0, row.length);
-      
+
       println(row + '],');
       row="[";
 
@@ -138,8 +139,8 @@ var diagrams = function(processingInstance){
 
   };
 
-  /** 
-  
+  /**
+
 [
 ['.', '.', '.', '.', '.', '.', '.', 'o', '.', '.', '.', '.', '.', '.', '.'],
 ['.', '.', '.', '.', '.', '.', '.', 'o', '.', '.', '.', '.', '.', '.', '.'],
@@ -346,7 +347,7 @@ var diagrams = function(processingInstance){
     /* Hexy Specific ------------------ */
     {
 
-      this.mode         = APPMODES.GAME;      //  
+      this.mode         = APPMODES.GAME;      //
 
       this.score        = 0;                  //  The number of total hexes acquired
 
@@ -360,9 +361,9 @@ var diagrams = function(processingInstance){
                             6: 0,  13: 35,  20: 70,  27: 105,  34: 140,  41: 175
                           };
 
-      this.hexBoard;                          //  This is set in the hexBoard control initialization
-      this.transition;                        //  This is set in the transition control initialization
-      
+      this.hexBoard;                          //  Set in the hexBoard control initialization
+      this.transition;                        //  Set in the transition control initialization
+
       this.puzzle       = 0;                  //  Index of the current puzzle layout
 
       this.remaining    = 0;                  //  How many blue cells need to be uncovered
@@ -383,147 +384,179 @@ var diagrams = function(processingInstance){
 
   /* Utility Functions ===================================================== */
   {
-
-    function iRandom(n)           { return round(random(n));                                    };
-
-    function getColor(clr, alpha) {
-      return color(red(clr), green(clr), blue(clr), alpha/100*255);
-    };
-
-    function getInfo()            { return app.info;                                            };
-    function toggleInfo()         { app.info=!app.info;                                         };
-
-    function getRemaining()       { return app.remaining;                                       };
-    function getMistakes()        { return app.errors;                                          };
-
-    function getMusic()           { return app.music;                                           };
-    function setMusic(b)          { return app.music=b;                                         };
-
-    function getScore()           { return app.score;                                           };
-    function setScore(b)          { return app.score=b;                                         };
     
-    function getTelemetry()       { return app.telemetry;                                       };
-    function toggleTelemetry()    { app.telemetry=!app.telemetry;                               };
+    /* Misc             -------------------------------------------------- */
+    {
 
-    function clickTest(n)         { print('click: ' + n);                                       };
+      function iRandom(n)           { return round(random(n));                                      };
 
-    function incrementPuzzle()    {
+      function getColor(clr, alpha) { return color(red(clr), green(clr), blue(clr), alpha/100*255); };
 
-      app.puzzle++;
+      function clickTest(n)         { print('click: ' + n);                                         };
+      
+      function getInfo()            { return app.info;                                              };
+      function toggleInfo()         { app.info=!app.info;                                           };
 
-      if(app.puzzle>puzzles.length-1){  app.puzzle=0; }
+      function getMusic()           { return app.music;                                             };
+      function setMusic(b)          { return app.music=b;                                           };
 
-      app.puzzle=constrain(app.puzzle, 0, puzzles.length-1);
+      function getScore()           { return app.score;                                             };
+      function setScore(b)          { return app.score=b;                                           };
 
-    };
-    function decrementPuzzle()    {
+      function getTelemetry()       { return app.telemetry;                                         };
+      function toggleTelemetry()    { app.telemetry=!app.telemetry;                                 };
 
-      app.puzzle--;
+    }
 
-      if(app.puzzle<0){  app.puzzle=puzzles.length-1; }
+    /* Scoring         -------------------------------------------------- */
+    {
 
-      app.puzzle=constrain(app.puzzle, 0, puzzles.length-1);
+      function getRemaining()       { return app.remaining;                                         };
+      function getMistakes()        { return app.errors;                                            };
+      function getScore()           { return app.score;                                             };
 
-    };
-    function selectPuzzle(n)      {
+    }
 
-      app.puzzle=constrain(n, 0, puzzles.length-1);
+    /* Puzzles         -------------------------------------------------- */
+    {
 
-    };
+      function incrementPuzzle()    {
 
-    function up(){
+        app.puzzle++;
 
-      if(app.hexBoard.activeCell.top!==null){
-        app.hexBoard.activeCell=app.hexBoard.activeCell.top;
-      }
+        if(app.puzzle>puzzles.length-1){  app.puzzle=0; }
 
-    };
-    function down(){
+        app.puzzle=constrain(app.puzzle, 0, puzzles.length-1);
 
-      if(app.hexBoard.activeCell.bottom!==null){
-        app.hexBoard.activeCell=app.hexBoard.activeCell.bottom;
-      }
+      };
+      function decrementPuzzle()    {
 
-    };
+        app.puzzle--;
 
-    function upRight(){
+        if(app.puzzle<0){  app.puzzle=puzzles.length-1; }
 
-      if(app.hexBoard.activeCell.topRight!==null){
-        app.hexBoard.activeCell=app.hexBoard.activeCell.topRight;
-      }
+        app.puzzle=constrain(app.puzzle, 0, puzzles.length-1);
 
-    };
-    function downRight(){
+      };
+      function selectPuzzle(n)      {
 
-      if(app.hexBoard.activeCell.bottomRight!==null){
-        app.hexBoard.activeCell=app.hexBoard.activeCell.bottomRight;
-      }
+        // app.puzzle=constrain(n, 0, puzzles.length-1);
 
-    };
+      };
+      function loadPuzzle(n)        {
 
-    function upLeft(){
+        app.puzzle=constrain(n, 0, puzzles.length-1);
 
-      if(app.hexBoard.activeCell.topLeft!==null){
-        app.hexBoard.activeCell=app.hexBoard.activeCell.topLeft;
-      }
+        print('load puzzle: ' + n);
 
-    };
-    function downLeft(){
+      };
 
-      if(app.hexBoard.activeCell.bottomLeft!==null){
-        app.hexBoard.activeCell=app.hexBoard.activeCell.bottomLeft;
-      }
+    }
 
-    };
+    /* Puzzle Complete -------------------------------------------------- */
+    {
 
-    function incrementCellLayout(){ app.hexBoard.activeCell.incrementCellLayout();              };
-    function decrementCellLayout(){ app.hexBoard.activeCell.decrementCellLayout();              };
+      function replay()             { print('replay');                                              };
+      function menu()               { print('menu');                                                };
+      function next()               { print('next');                                                };
 
-    function setBlackRevealed()   { app.hexBoard.activeCell.layout=HEXY_TYPES.BLACK_REVEALED;   };
-    function setBlack()           { app.hexBoard.activeCell.layout=HEXY_TYPES.BLACK;            };
+    }
+    
+    /* Transition      -------------------------------------------------- */
+    {
+      
+      function up(){
 
-    function setBlueRevealed()    { app.hexBoard.activeCell.layout=HEXY_TYPES.BLUE_REVEALED;    };
-    function setBlue()            { app.hexBoard.activeCell.layout=HEXY_TYPES.BLUE;             };
+        if(app.hexBoard.activeCell.top!==null){
+          app.hexBoard.activeCell=app.hexBoard.activeCell.top;
+        }
 
-    function setDownCenter()      { app.hexBoard.activeCell.layout=HEXY_TYPES.DOWN_CENTER;      };
-    function setDownLeft()        { app.hexBoard.activeCell.layout=HEXY_TYPES.DOWN_LEFT;        };
-    function setDownRight()       { app.hexBoard.activeCell.layout=HEXY_TYPES.DOWN_RIGHT;       };
+      };
+      function down(){
 
-    function setBlank()           { app.hexBoard.activeCell.text=HEXY_TYPES.BLANK;              };
-    function setNumber()          { app.hexBoard.activeCell.text=HEXY_TYPES.NUMBER;             };
-    function setConsecutive()     { app.hexBoard.activeCell.text=HEXY_TYPES.CONSECUTIVE;        };
-    function setNonConsecutive()  { app.hexBoard.activeCell.text=HEXY_TYPES.NOT_CONSECUTIVE;    };
+        if(app.hexBoard.activeCell.bottom!==null){
+          app.hexBoard.activeCell=app.hexBoard.activeCell.bottom;
+        }
 
-    function clearLayout()        { app.hexBoard.clearLayout();                                 };
+      };
 
-    function toggleCreate()       {
+      function upRight(){
 
-      if(app.mode===APPMODES.GAME){ app.mode=APPMODES.CREATE; }
-      else                        { app.mode=APPMODES.GAME;   }
+        if(app.hexBoard.activeCell.topRight!==null){
+          app.hexBoard.activeCell=app.hexBoard.activeCell.topRight;
+        }
 
-    };
+      };
+      function downRight(){
 
-    function reset()              {
+        if(app.hexBoard.activeCell.bottomRight!==null){
+          app.hexBoard.activeCell=app.hexBoard.activeCell.bottomRight;
+        }
 
-      app.hexBoard.reset();
-      app.errors=0;
+      };
 
-    };
+      function upLeft(){
 
-    function replay()             { print('replay');                                            };
-    function menu()               { print('menu');                                              };
-    function next()               { print('next');                                              };
+        if(app.hexBoard.activeCell.topLeft!==null){
+          app.hexBoard.activeCell=app.hexBoard.activeCell.topLeft;
+        }
 
-    function getScore()           { return app.score;                                           };
+      };
+      function downLeft(){
 
-    function loadPuzzle(n)        { print('load puzzle: ' + n);                                 };
+        if(app.hexBoard.activeCell.bottomLeft!==null){
+          app.hexBoard.activeCell=app.hexBoard.activeCell.bottomLeft;
+        }
+
+      };
+
+    }
+    
+    /* Edit            -------------------------------------------------- */
+    {
+        
+      function incrementCellLayout(){ app.hexBoard.activeCell.incrementCellLayout();                };
+      function decrementCellLayout(){ app.hexBoard.activeCell.decrementCellLayout();                };
+
+      function setBlackRevealed()   { app.hexBoard.activeCell.layout=HEXY_TYPES.BLACK_REVEALED;     };
+      function setBlack()           { app.hexBoard.activeCell.layout=HEXY_TYPES.BLACK;              };
+
+      function setBlueRevealed()    { app.hexBoard.activeCell.layout=HEXY_TYPES.BLUE_REVEALED;      };
+      function setBlue()            { app.hexBoard.activeCell.layout=HEXY_TYPES.BLUE;               };
+
+      function setDownCenter()      { app.hexBoard.activeCell.layout=HEXY_TYPES.DOWN_CENTER;        };
+      function setDownLeft()        { app.hexBoard.activeCell.layout=HEXY_TYPES.DOWN_LEFT;          };
+      function setDownRight()       { app.hexBoard.activeCell.layout=HEXY_TYPES.DOWN_RIGHT;         };
+
+      function setBlank()           { app.hexBoard.activeCell.text=HEXY_TYPES.BLANK;                };
+      function setNumber()          { app.hexBoard.activeCell.text=HEXY_TYPES.NUMBER;               };
+      function setConsecutive()     { app.hexBoard.activeCell.text=HEXY_TYPES.CONSECUTIVE;          };
+      function setNonConsecutive()  { app.hexBoard.activeCell.text=HEXY_TYPES.NOT_CONSECUTIVE;      };
+
+      function clearLayout()        { app.hexBoard.clearLayout();                                   };
+
+      function toggleCreate()       {
+
+        if(app.mode===APPMODES.GAME){ app.mode=APPMODES.CREATE; }
+        else                        { app.mode=APPMODES.GAME;   }
+
+      };
+
+      function reset()              {
+
+        app.hexBoard.reset();
+        app.errors=0;
+
+      };
+      
+    }
 
   }
 
   /* Containers/Controls =================================================== */
   {
 
-    /* Default              */
+    /* Control - default              */
     {
 
       var control=function(id, parent, x, y, w, h){
@@ -544,10 +577,12 @@ var diagrams = function(processingInstance){
         /* inherent properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
         this.controls = [];         /** array of child controls */
 
-        this.on       = false;      /** Is the control on or off */
+        this.on       = false;      /** is the control on or off */
         this.hit      = false;      /** mouse is over the control */
 
-        this.active   = false;      /** active = hit and focus */
+        this.visible  = false;      /** is the control currently displayed */
+
+        this.active   = false;      /** active = hit and focus and visible */
         this.offset   = 0;          /** offset distance when clicked */
 
         this.font     = serifFont;  /** default font */
@@ -556,28 +591,30 @@ var diagrams = function(processingInstance){
       control.prototype.draw     = function(){};
       control.prototype.moved    = function(x,y){
 
-        if(mouseX>(this.x+x) &&
-           mouseX<(this.x+x) + this.w &&
-           mouseY>(this.y+y) &&
-           mouseY<(this.y+y) + this.h){
+        if(this.visible===false){ return; }
+        
+          if(mouseX>(this.x+x) &&
+             mouseX<(this.x+x) + this.w &&
+             mouseY>(this.y+y) &&
+             mouseY<(this.y+y) + this.h){
 
-          if(this.parent.hit){
+            if(this.parent.hit){
 
-            this.hit=true;
-            app.focus=this;
+              this.hit=true;
+              app.focus=this;
 
-            for(var c in this.controls){ this.controls[c].moved((this.x+x), (this.y+y)); }
+              for(var c in this.controls){ this.controls[c].moved((this.x+x), (this.y+y)); }
+
+            }
 
           }
+          else{
 
-        }
-        else{
+            this.hit=false;
 
-          this.hit=false;
+            for(var c in this.controls){ this.controls[c].hit=false; }
 
-          for(var c in this.controls){ this.controls[c].hit=false; }
-
-        }
+          }
 
       };
       control.prototype.clicked  = function(){ if(this.hit){ forEach(this.controls, 'clicked'); } };
@@ -606,9 +643,9 @@ var diagrams = function(processingInstance){
         this.color = props.color;
 
         this.border = props.border;
-        
+
         this.cursor = props.cursor;
-        
+
         this.font   = props.font;
 
       };
@@ -641,25 +678,27 @@ var diagrams = function(processingInstance){
       };
       root.prototype.moved=function(x,y){
       /* Required because root control doesn't have a parent */
+        
+        if(this.visible===false){ return; }
+          
+          if(mouseX>(this.x+x) &&
+             mouseX<(this.x+x) + this.w &&
+             mouseY>(this.y+y) &&
+             mouseY<(this.y+y) + this.h){
 
-        if(mouseX>(this.x+x) &&
-           mouseX<(this.x+x) + this.w &&
-           mouseY>(this.y+y) &&
-           mouseY<(this.y+y) + this.h){
+            this.hit=true;
+            app.focus=this;
 
-          this.hit=true;
-          app.focus=this;
+            for(var c in this.controls){ this.controls[c].moved(this.x+x, this.y+y); }
 
-          for(var c in this.controls){ this.controls[c].moved(this.x+x, this.y+y); }
+          }
+          else{
 
-        }
-        else{
+            this.hit=false;
 
-          this.hit=false;
+            for(var c in this.controls){ this.controls[c].hit=false; }
 
-          for(var c in this.controls){ this.controls[c].hit=false; }
-
-        }
+          }
 
       };
       root.prototype.dragged = function(){
@@ -734,8 +773,10 @@ var diagrams = function(processingInstance){
         this.color    = props.color;
         this.cursor   = props.cursor;
         this.border   = props.border;
-
+        
         this.font     = props.font;
+
+        this.visible  = props.visible;
 
         /* replay button       */
         this.controls.push(new hexy_Button(610, this, 100, 420, 126, 100,
@@ -757,18 +798,21 @@ var diagrams = function(processingInstance){
 
         /* next button       */
         this.controls.push(new hexy_Button(630, this, 372, 420, 126, 100,
-          {font:      'sans-serif',        
+          {font:      'sans-serif',
            style:     'next',
            text:      'next',
            cursor:    HAND,
            execute:   next,
            color:     CLRS.BLACK}));
-           
+
       };
       puzzleComplete.prototype=Object.create(control.prototype);
       puzzleComplete.prototype.draw=function(){
 
-        this.active = this.hit && app.focus===this;
+        if(this.visible===false){ return; }
+              
+        this.active = this.hit &&
+                      app.focus===this;
 
         pushMatrix();
 
@@ -784,31 +828,31 @@ var diagrams = function(processingInstance){
             //  Background
             noStroke();
             fill(getColor(this.color,50));
-            
+
               rect(0, 0, this.w, this.h, 100);
 
             // Title
             stroke(CLRS.BLACK);
             strokeWeight(0.25);
-            
+
             fill(getColor(CLRS.WHITE,100));
-            
+
               rect(100,100,400,100, 3);
 
             textSize(36);
             textAlign(CENTER,CENTER);
 
             fill(getColor(CLRS.BLACK,50));
-            
+
               text('Puzzle Complete', 300,130);
-            
+
             fill(CLRS.BLACK);
 
               text(getPuzzleNumber(), 300,170);
-            
+
             // Summary
             fill(getColor(CLRS.WHITE,100));
-            
+
               rect(100, 210, 400, 200, 3);
 
             textSize(36);
@@ -822,7 +866,7 @@ var diagrams = function(processingInstance){
                 text('Mistakes:', 0, 0);
 
               rotate(PI/2);
-                
+
                 text(app.errors, 5, -95);
 
             popMatrix();
@@ -832,25 +876,25 @@ var diagrams = function(processingInstance){
             pushMatrix();
 
               translate(150,225);
-                
+
                 stroke(CLRS.H_BLUE);
                 strokeWeight(2);
                 fill(CLRS.H_BLUE_L);
-                
+
                 var sz=35;
-                
+
                   for(var row=0; row<5; row++){
-                    for(var col=0; col<5; col++){  
+                    for(var col=0; col<5; col++){
 
                       rect(col*sz,row*sz,sz-5,sz-5);
 
                     }
                   }
-              
-            
+
+
             popMatrix();
-            
-            
+
+
             // Draw Controls
             forEach(this.controls, 'draw');
 
@@ -859,7 +903,7 @@ var diagrams = function(processingInstance){
       };
 
     }
-    
+
     /* Puzzle Select        */
     {
 
@@ -876,16 +920,18 @@ var diagrams = function(processingInstance){
 
         this.retrieve = props.retrieve;
 
+        this.visible  = props.visible;
+        
         //  Load Hexagon Buttons
         var txt;
 
-        var sz=55;
-        var incr=3.5;
-        var n=0;
-        var x1=0;
-        var y1=0;
-        var baseX=300;
-        var baseY=300;
+        var sz    =  55;
+        var incr  = 3.5;
+        var n     =   0;
+        var x1    =   0;
+        var y1    =   0;
+        var baseX = 300;
+        var baseY = 300;
 
           for(var row=0; row<6; row++){
             for(var col=0; col<7; col++){
@@ -904,8 +950,8 @@ var diagrams = function(processingInstance){
               }
 
               txt=(row/1+1) + '-' + col/1;
-              
-              /* puzzle button       */
+
+              // puzzle button
               this.controls.push(new puzzle_Button('H'+txt, this, x1, y1, sz, sz,
                 {font:      'sans-serif',
                  style:     'replay',
@@ -925,45 +971,48 @@ var diagrams = function(processingInstance){
       };
       puzzleSelect.prototype=Object.create(control.prototype);
       puzzleSelect.prototype.draw=function(){
+     
+        if(this.visible===false){ return; }
+print(this.id);   
+          this.active = this.hit &&
+                        app.focus===this;
 
-        this.active = this.hit && app.focus===this;
-        
-        var p =this;
-         
-        function drawScore(){
+          var p =this;
 
-          textSize(48);
-          fill(CLRS.GRAY);
+          function drawScore(){
 
-            text(p.retrieve(), (p.w-200)/2+2, p.h/2+2);
+            textSize(48);
+            fill(CLRS.GRAY);
 
-          fill(CLRS.H_BLUE);
+              text(p.retrieve(), (p.w-200)/2+2, p.h/2+2);
 
-            text(p.retrieve(), (p.w-200)/2, p.h/2);
-          
-        };
-        
-        pushMatrix();
+            fill(CLRS.H_BLUE);
 
-          translate(this.x, this.y);
+              text(p.retrieve(), (p.w-200)/2, p.h/2);
 
-            //  Background
-            noStroke();
-            fill(getColor(this.color,75));
+          };
 
-              rect(0, 0, this.w, this.h, 100);
+          pushMatrix();
 
-            // Draw Controls
-            forEach(this.controls, 'draw');
+            translate(this.x, this.y);
 
-            drawScore();
+              //  Background
+              noStroke();
+              fill(getColor(this.color,75));
 
-        popMatrix();
+                rect(0, 0, this.w, this.h, 100);
+
+              // Draw Controls
+              forEach(this.controls, 'draw');
+
+              drawScore();
+
+          popMatrix();
 
       };
 
     }
-    
+
     /* Splash Screen        */
     {
 
@@ -1186,9 +1235,11 @@ var diagrams = function(processingInstance){
 
         control.call(this, id, parent, x, y, w, h);
 
-        this.color  = props.color;
-        this.cursor = props.cursor;
-        this.font   = props.font;
+        this.color   = props.color;
+        this.cursor  = props.cursor;
+        this.font    = props.font;
+
+        this.visible = props.visible;
 
         /*  Dynamic x-coordinate */
         this.offset = 0;
@@ -1197,189 +1248,191 @@ var diagrams = function(processingInstance){
       telemetry.prototype=Object.create(control.prototype);
       telemetry.prototype.draw=function(){
 
-        if(app.telemetry===false &&
-           this.offset===0 &&
-           app.debug===false){ return; }
+        if(this.visible===false){ return; }
 
-        // Border
-        function border(){
+          if(app.telemetry===false &&
+             this.offset===0 &&
+             app.debug===false){ return; }
 
-          strokeWeight(1);
-          stroke(getColor(p.clr,100));
+          // Border
+          function border(){
 
-          noStroke();
+            strokeWeight(1);
+            stroke(getColor(p.clr,100));
 
-          if(p.hit){ fill(getColor(CLRS.BLACK,100)); }
-          else     { fill(getColor(CLRS.BLACK,80));  }
+            noStroke();
 
-          fill(getColor(CLRS.BLACK,50));
+            if(p.hit){ fill(getColor(CLRS.BLACK,100)); }
+            else     { fill(getColor(CLRS.BLACK,80));  }
 
-            if(p.hit){
-              fill(getColor(CLRS.BLACK,70));
-            }
+            fill(getColor(CLRS.BLACK,50));
 
-            rect(p.offset, 0, p.w, p.h, 5);
+              if(p.hit){
+                fill(getColor(CLRS.BLACK,70));
+              }
 
-        };
+              rect(p.offset, 0, p.w, p.h, 5);
 
-        function title(){
+          };
 
-          textAlign(CENTER,CENTER);
-          textSize(14);
+          function title(){
 
-          fill(CLRS.WHITE);
+            textAlign(CENTER,CENTER);
+            textSize(14);
 
-            text('Telemetry', p.w/2+p.offset, 20);
+            fill(CLRS.WHITE);
 
-        };
-        function environment(){
+              text('Telemetry', p.w/2+p.offset, 20);
 
-          fill(getColor(CLRS.BLACK,50));
+          };
+          function environment(){
 
-            rect(p.offset+10,  35, p.w-20, 365, 3);
+            fill(getColor(CLRS.BLACK,50));
 
-          textAlign(LEFT,TOP);
-          textSize(10);
-          textLeading(12);
+              rect(p.offset+10,  35, p.w-20, 365, 3);
 
-          fill(getColor(CLRS.TEAL_2,75));
+            textAlign(LEFT,TOP);
+            textSize(10);
+            textLeading(12);
 
-            text('\n'             + 'Cursor Coordinates' +
-                 '\n\n\n\n'       + 'Mouse Buttons'      +
-                 '\n\n\n\n\n\n\n' + 'Keys'               +
-                 '\n\n\n\n\n'     + 'Environment',
-                 col0, row0);
+            fill(getColor(CLRS.TEAL_2,75));
 
-          fill(getColor(CLRS.WHITE,75));
+              text('\n'             + 'Cursor Coordinates' +
+                   '\n\n\n\n'       + 'Mouse Buttons'      +
+                   '\n\n\n\n\n\n\n' + 'Keys'               +
+                   '\n\n\n\n\n'     + 'Environment',
+                   col0, row0);
 
-            text('\n\n'   + 'x:'             +
-                 '\n'     + 'y:'             +
-                 '\n\n\n' + 'Left:'          +
-                 '\n'     + 'Right:'         +
-                 '\n'     + 'Center:'        +
-                 '\n\n'   + 'Dragging:'      +
-                 '\n\n\n' + 'Alt:'           +
-                 '\n'     + 'Control:'       +
-                 '\n'     + 'Shift:'         +
-                 '\n\n\n' + 'Width:'         +
-                 '\n'     + 'Height:'        +
-                 '\n\n'   + 'Screen Width:'  +
-                 '\n'     + 'Screen Height:' +
-                 '\n\n'   + 'Focused:'       +
-                 '\n\n'   + 'Frame Count:'   +
-                 '\n'     + 'FrameRate:'     +
-                 '\n\n'   + 'Update Count:',
-                 col1, row0);
+            fill(getColor(CLRS.WHITE,75));
 
-          fill(getColor(CLRS.YELLOW,75));
-          textAlign(RIGHT,TOP);
+              text('\n\n'   + 'x:'             +
+                   '\n'     + 'y:'             +
+                   '\n\n\n' + 'Left:'          +
+                   '\n'     + 'Right:'         +
+                   '\n'     + 'Center:'        +
+                   '\n\n'   + 'Dragging:'      +
+                   '\n\n\n' + 'Alt:'           +
+                   '\n'     + 'Control:'       +
+                   '\n'     + 'Shift:'         +
+                   '\n\n\n' + 'Width:'         +
+                   '\n'     + 'Height:'        +
+                   '\n\n'   + 'Screen Width:'  +
+                   '\n'     + 'Screen Height:' +
+                   '\n\n'   + 'Focused:'       +
+                   '\n\n'   + 'Frame Count:'   +
+                   '\n'     + 'FrameRate:'     +
+                   '\n\n'   + 'Update Count:',
+                   col1, row0);
 
-            text('\n\n'   + mouseX                     +
-                 '\n'     + mouseY                     +
-                 '\n\n\n' + app.left                   +
-                 '\n'     + app.right                  +
-                 '\n'     + app.center                 +
-                 '\n\n'   + app.dragging               +
-                 '\n\n\n' + app.keys[KEYCODES.ALT]     +
-                 '\n'     + app.keys[KEYCODES.CONTROL] +
-                 '\n'     + app.keys[KEYCODES.SHIFT]   +
-                 '\n\n\n' + width                      +
-                 '\n'     + height                     +
-                 '\n\n'   + screen.width               +
-                 '\n'     + screen.height              +
-                 '\n\n'   + focused                    +
-                 '\n\n'   + frameCount                 +
-                 '\n'     + nf(app.frameRate,1,1)      +
-                 '\n\n'  + app.updateCtrls.size(),
-                 col2, row0);
+            fill(getColor(CLRS.YELLOW,75));
+            textAlign(RIGHT,TOP);
 
-        };
-        function appSpecific(){
+              text('\n\n'   + mouseX                     +
+                   '\n'     + mouseY                     +
+                   '\n\n\n' + app.left                   +
+                   '\n'     + app.right                  +
+                   '\n'     + app.center                 +
+                   '\n\n'   + app.dragging               +
+                   '\n\n\n' + app.keys[KEYCODES.ALT]     +
+                   '\n'     + app.keys[KEYCODES.CONTROL] +
+                   '\n'     + app.keys[KEYCODES.SHIFT]   +
+                   '\n\n\n' + width                      +
+                   '\n'     + height                     +
+                   '\n\n'   + screen.width               +
+                   '\n'     + screen.height              +
+                   '\n\n'   + focused                    +
+                   '\n\n'   + frameCount                 +
+                   '\n'     + nf(app.frameRate,1,1)      +
+                   '\n\n'  + app.updateCtrls.size(),
+                   col2, row0);
 
-          var top=410;
+          };
+          function appSpecific(){
 
-          fill(getColor(CLRS.BLACK,50));
+            var top=410;
 
-            rect(p.offset+10,  top, p.w-20, 170, 3);
+            fill(getColor(CLRS.BLACK,50));
 
-          textAlign(LEFT,TOP);
-          textSize(10);
-          textLeading(12);
+              rect(p.offset+10,  top, p.w-20, 170, 3);
 
-          fill(getColor(CLRS.TEAL_2,75));
+            textAlign(LEFT,TOP);
+            textSize(10);
+            textLeading(12);
 
-            text('\n'       + 'Controls' +
-                 '\n\n\n\n' + 'Score'    +
-                 '\n\n\n\n' + 'Misc',
-                 col0, top);
+            fill(getColor(CLRS.TEAL_2,75));
 
-          fill(getColor(CLRS.WHITE,75));
+              text('\n'       + 'Controls' +
+                   '\n\n\n\n' + 'Score'    +
+                   '\n\n\n\n' + 'Misc',
+                   col0, top);
 
-            text('\n\n'   + 'Count:'     +
-                 '\n'     + 'Active:'    +
-                 '\n\n\n' + 'Remaining:' +
-                 '\n'     + 'Mistakes:'  +
-                 '\n\n\n' + 'Music:'     +
-                 '\n'     + 'Level:',
-                 col1, top);
+            fill(getColor(CLRS.WHITE,75));
 
-          fill(getColor(CLRS.YELLOW,75));
-          textAlign(RIGHT,TOP);
+              text('\n\n'   + 'Count:'     +
+                   '\n'     + 'Active:'    +
+                   '\n\n\n' + 'Remaining:' +
+                   '\n'     + 'Mistakes:'  +
+                   '\n\n\n' + 'Music:'     +
+                   '\n'     + 'Level:',
+                   col1, top);
 
-            var id;
+            fill(getColor(CLRS.YELLOW,75));
+            textAlign(RIGHT,TOP);
 
-            if(app.focus!==undefined){ id=app.focus.id; }
-            else                     { id= -1;          }
+              var id;
 
-            text('\n\n'   + app.controlCount +
-                 '\n'     + id               +
-                 '\n\n\n' + app.remaining    +
-                 '\n'     + app.errors       +
-                 '\n\n\n' + app.music        +
-                 '\n'     + app.level,
-                 col2, top);
+              if(app.focus!==undefined){ id=app.focus.id; }
+              else                     { id= -1;          }
 
-        };
+              text('\n\n'   + app.controlCount +
+                   '\n'     + id               +
+                   '\n\n\n' + app.remaining    +
+                   '\n'     + app.errors       +
+                   '\n\n\n' + app.music        +
+                   '\n'     + app.level,
+                   col2, top);
 
-        this.active=this.hit && app.focus===this;
+          };
 
-        if     ( app.telemetry && this.offset>-200){ this.offset-=10; }
-        else if(!app.telemetry && this.offset<0   ){ this.offset+=10; }
+          this.active=this.hit && app.focus===this;
 
-        var p=this;
+          if     ( app.telemetry && this.offset>-200){ this.offset-=10; }
+          else if(!app.telemetry && this.offset<0   ){ this.offset+=10; }
 
-        var row0 = 30;
-        var row1 = 90;
+          var p=this;
 
-        var col0 = this.offset+20;
-        var col1 = this.offset+25;
-        var col2 = this.offset+170;
+          var row0 = 30;
+          var row1 = 90;
 
-        pushMatrix();
+          var col0 = this.offset+20;
+          var col1 = this.offset+25;
+          var col2 = this.offset+170;
 
-          translate(this.x, this.y);
+          pushMatrix();
 
-            if(this.active){ cursor(this.cursor); }
+            translate(this.x, this.y);
 
-            textFont(this.font);
+              if(this.active){ cursor(this.cursor); }
 
-            border();
+              textFont(this.font);
 
-            title();
-            environment();
-            appSpecific();
+              border();
 
-            // forEach(this.controls, 'draw');
+              title();
+              environment();
+              appSpecific();
 
-            // /* The following is outside the properties function because
-               // it has to be done after the child controls are drawn to
-               // maintain proper control focus                              */
-            // fill(getColor(CLRS.YELLOW,75));
+              // forEach(this.controls, 'draw');
 
-            // textSize(11);
-            // textAlign(RIGHT,CENTER);
+              // /* The following is outside the properties function because
+                 // it has to be done after the child controls are drawn to
+                 // maintain proper control focus                              */
+              // fill(getColor(CLRS.YELLOW,75));
 
-        popMatrix();
+              // textSize(11);
+              // textAlign(RIGHT,CENTER);
+
+          popMatrix();
 
       };
       telemetry.prototype.moved=function(x,y){
@@ -1423,6 +1476,8 @@ var diagrams = function(processingInstance){
         control.call(this, id, parent, x, y, w, h);
 
         this.color          = props.color;
+        
+        this.visible        = props.visible;
 
         // this.score          = 0;
         // this.score      = 0;
@@ -1466,12 +1521,12 @@ var diagrams = function(processingInstance){
                      ['>', 'o', 'o', 'o', 'o', 'x', 'o', 'o', 'o', 'x', 'o', 'x', 'x', 'o', '/'],
                      ['>', 'o', 'x', 'o', 'o', 'o', 'o', 'O', 'o', 'o', 'o', 'o', 'o', 'x', '/'],
                      ['.', '.', 'o', 'o', 'o', 'x', 'o', 'x', 'o', 'o', 'o', 'o', 'o', '.', '.'],
-                     ['.', '.', '.', '.', 'o', 'o', 'x', 'O', 'x', 'o', 'o', '.', '.', '.', '.'],                     
+                     ['.', '.', '.', '.', 'o', 'o', 'x', 'O', 'x', 'o', 'o', '.', '.', '.', '.'],
                      ['.', '.', '.', '.', '.', '.', 'o', 'x', 'x', '.', '.', '.', '.', '.', '.'],
                      ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
                     ];
 
-        this.text  =[                     
+        this.text  =[
                      ['.', '.', '.', '.', '.', '.', '.', '+', '.', '.', '.', '.', '.', '.', '.'],
                      ['.', '.', '.', '.', '.', '+', '.', '.', '.', '+', '.', '.', '.', '.', '.'],
                      ['.', '.', '.', '+', '+', '+', '.', '.', '.', '+', '+', '+', '.', '.', '.'],
@@ -1569,9 +1624,9 @@ var diagrams = function(processingInstance){
 
         // randomizeStyle();
         load();
-        
+
         this.update();
-        
+
         // link();
         // doubleLink();
         // columnCounts();
@@ -1581,209 +1636,211 @@ var diagrams = function(processingInstance){
       };
       hexBoard.prototype.draw         = function(){
 
-        var p=this;
+        if(this.visible===false){ return; }
+              
+          var p=this;
 
-        function drawGuideLines(){
+          function drawGuideLines(){
 
-          var offset=(HEX_SIZE-2)/2;
+            var offset=(HEX_SIZE-2)/2;
 
-          strokeWeight(6);
-          stroke(getColor(CLRS.WHITE,25));
+            strokeWeight(6);
+            stroke(getColor(CLRS.WHITE,25));
 
-          for(var l in p.lines){
+            for(var l in p.lines){
 
-            switch(p.lines[l].layout){
+              switch(p.lines[l].layout){
 
-              case HEXY_TYPES.DOWN_CENTER:
+                case HEXY_TYPES.DOWN_CENTER:
 
-                line(p.lines[l].x, p.lines[l].y + offset,
-                     p.lines[l].x, height);
+                  line(p.lines[l].x, p.lines[l].y + offset,
+                       p.lines[l].x, height);
 
-                break;
+                  break;
 
-              case HEXY_TYPES.DOWN_LEFT:
+                case HEXY_TYPES.DOWN_LEFT:
 
-                var x=p.lines[l].x;
-                var y=p.lines[l].y;
-                var offsetX=cos(PI-PI/6)*offset;
-                var offsetY=sin(PI-PI/6)*offset;
+                  var x=p.lines[l].x;
+                  var y=p.lines[l].y;
+                  var offsetX=cos(PI-PI/6)*offset;
+                  var offsetY=sin(PI-PI/6)*offset;
 
-                line(x+offsetX,
-                     y+offsetY,
-                     x+offsetX+600*tan(PI-PI/3),
-                     y+offsetY+600);
+                  line(x+offsetX,
+                       y+offsetY,
+                       x+offsetX+600*tan(PI-PI/3),
+                       y+offsetY+600);
 
 
-                break;
+                  break;
 
-              case HEXY_TYPES.DOWN_RIGHT:
+                case HEXY_TYPES.DOWN_RIGHT:
 
-                var x=p.lines[l].x;
-                var y=p.lines[l].y;
-                var offsetX=cos(PI/6)*offset;
-                var offsetY=sin(PI/6)*offset;
+                  var x=p.lines[l].x;
+                  var y=p.lines[l].y;
+                  var offsetX=cos(PI/6)*offset;
+                  var offsetY=sin(PI/6)*offset;
 
-                line(x+offsetX,
-                     y+offsetY,
-                     x+offsetX+600*tan(PI/3),
-                     y+offsetY+600);
+                  line(x+offsetX,
+                       y+offsetY,
+                       x+offsetX+600*tan(PI/3),
+                       y+offsetY+600);
 
-                break;
+                  break;
 
-              default:  break;
+                default:  break;
+
+              }
+
+            };
+
+          };
+          function calculateRemaining(){
+
+            app.remaining=0;
+            app.covered=0;
+
+            var total=0;
+            var covered=0;
+            var ctrls=p.controls;
+
+            for(var r in ctrls){
+              for(var c in ctrls[r]){
+
+                if(ctrls[r][c].layout==='x'){
+                  total++;
+                }
+
+                if(ctrls[r][c].layout==='o'){
+                  covered++;
+                }
+
+              }
+            }
+
+            app.remaining=total;
+            app.covered=covered;
+
+          };
+          function drawHalos(){
+
+            stroke(CLRS.RED);
+            strokeWeight(1);
+            noStroke();
+
+            fill(getColor(CLRS.WHITE,40+p.clrOffset));
+
+            p.clrOffset+=p.clrIncr;
+
+            if(p.clrOffset===15 ||
+               p.clrOffset===0){ p.clrIncr*=-1; }
+
+            var w=HEX_SIZE;
+
+            var x=0;
+            var y=0;
+
+            var yOffset=0;
+            var xOffset=0.25*w;
+            var sinP3=w*sin(PI/3);
+            var cosP3=w/2*cos(PI/3);
+
+            for(var h in p.halos){
+
+              x=p.halos[h].x;
+              y=p.halos[h].y;
+
+              beginShape();
+
+                vertex(x-cosP3,  y-sinP3*2.5);
+                vertex(x-w/2,    y-sinP3*2  );
+                vertex(x-w,      y-sinP3*2  );
+                vertex(x-w*1.25, y-sinP3*1.5);
+                vertex(x-w*1.75, y-sinP3*1.5);
+                vertex(x-w*2,    y-sinP3*1  );
+                vertex(x-w*1.75, y-sinP3*0.5);
+
+                vertex(x-w*2,    y);
+
+                vertex(x-w*1.75, y+sinP3*0.5);
+                vertex(x-w*2,    y+sinP3*1  );
+                vertex(x-w*1.75, y+sinP3*1.5);
+                vertex(x-w*1.25, y+sinP3*1.5);
+                vertex(x-w,      y+sinP3*2  );
+                vertex(x-w/2,    y+sinP3*2  );
+                vertex(x-cosP3,  y+sinP3*2.5);
+
+                vertex(x+cosP3,  y+sinP3*2.5);
+                vertex(x+w/2,    y+sinP3*2  );
+                vertex(x+w,      y+sinP3*2  );
+                vertex(x+w*1.25, y+sinP3*1.5);
+                vertex(x+w*1.75, y+sinP3*1.5);
+                vertex(x+w*2,    y+sinP3*1  );
+                vertex(x+w*1.75, y+sinP3*0.5);
+
+                vertex(x+w*2,    y);
+
+                vertex(x+w*1.75, y-sinP3*0.5);
+                vertex(x+w*2,    y-sinP3*1  );
+                vertex(x+w*1.75, y-sinP3*1.5);
+                vertex(x+w*1.25, y-sinP3*1.5);
+                vertex(x+w,      y-sinP3*2  );
+                vertex(x+w/2,    y-sinP3*2  );
+                vertex(x+cosP3,  y-sinP3*2.5);
+
+              endShape(CLOSE);
 
             }
 
           };
-
-        };
-        function calculateRemaining(){
-
-          app.remaining=0;
-          app.covered=0;
-
-          var total=0;
-          var covered=0;
-          var ctrls=p.controls;
-
-          for(var r in ctrls){
-            for(var c in ctrls[r]){
-
-              if(ctrls[r][c].layout==='x'){
-                total++;
-              }
-
-              if(ctrls[r][c].layout==='o'){
-                covered++;
-              }
-
-            }
-          }
-
-          app.remaining=total;
-          app.covered=covered;
-
-        };
-        function drawHalos(){
-
-          stroke(CLRS.RED);
-          strokeWeight(1);
-          noStroke();
-
-          fill(getColor(CLRS.WHITE,40+p.clrOffset));
-
-          p.clrOffset+=p.clrIncr;
-
-          if(p.clrOffset===15 ||
-             p.clrOffset===0){ p.clrIncr*=-1; }
-
-          var w=HEX_SIZE;
-
-          var x=0;
-          var y=0;
-
-          var yOffset=0;
-          var xOffset=0.25*w;
-          var sinP3=w*sin(PI/3);
-          var cosP3=w/2*cos(PI/3);
-
-          for(var h in p.halos){
-
-            x=p.halos[h].x;
-            y=p.halos[h].y;
-
-            beginShape();
-
-              vertex(x-cosP3,  y-sinP3*2.5);
-              vertex(x-w/2,    y-sinP3*2  );
-              vertex(x-w,      y-sinP3*2  );
-              vertex(x-w*1.25, y-sinP3*1.5);
-              vertex(x-w*1.75, y-sinP3*1.5);
-              vertex(x-w*2,    y-sinP3*1  );
-              vertex(x-w*1.75, y-sinP3*0.5);
-
-              vertex(x-w*2,    y);
-
-              vertex(x-w*1.75, y+sinP3*0.5);
-              vertex(x-w*2,    y+sinP3*1  );
-              vertex(x-w*1.75, y+sinP3*1.5);
-              vertex(x-w*1.25, y+sinP3*1.5);
-              vertex(x-w,      y+sinP3*2  );
-              vertex(x-w/2,    y+sinP3*2  );
-              vertex(x-cosP3,  y+sinP3*2.5);
-
-              vertex(x+cosP3,  y+sinP3*2.5);
-              vertex(x+w/2,    y+sinP3*2  );
-              vertex(x+w,      y+sinP3*2  );
-              vertex(x+w*1.25, y+sinP3*1.5);
-              vertex(x+w*1.75, y+sinP3*1.5);
-              vertex(x+w*2,    y+sinP3*1  );
-              vertex(x+w*1.75, y+sinP3*0.5);
-
-              vertex(x+w*2,    y);
-
-              vertex(x+w*1.75, y-sinP3*0.5);
-              vertex(x+w*2,    y-sinP3*1  );
-              vertex(x+w*1.75, y-sinP3*1.5);
-              vertex(x+w*1.25, y-sinP3*1.5);
-              vertex(x+w,      y-sinP3*2  );
-              vertex(x+w/2,    y-sinP3*2  );
-              vertex(x+cosP3,  y-sinP3*2.5);
-
-            endShape(CLOSE);
-
-          }
-
-        };
-        function drawClicked(){
+          function drawClicked(){
 
 
 
-        };
+          };
 
-        this.active=this.hit &&
-                    app.focus===this;
-        this.lines=[];
-        this.halos=[];
+          this.active=this.hit &&
+                      app.focus===this;
+          this.lines=[];
+          this.halos=[];
 
-        pushMatrix();
+          pushMatrix();
 
-          translate(this.x, this.y);
+            translate(this.x, this.y);
 
-            stroke(31);
-            fill(this.color);
+              stroke(31);
+              fill(this.color);
 
-            rect(this.x,   this.y,
-                 this.w-1, this.h-1);
+              rect(this.x,   this.y,
+                   this.w-1, this.h-1);
 
-              var ctrls=this.controls;
+                var ctrls=this.controls;
 
-              for(var r in ctrls){
-                for(var c in ctrls[r]){
+                for(var r in ctrls){
+                  for(var c in ctrls[r]){
 
-                  if(ctrls[r][c].line){
-                    this.lines.push(ctrls[r][c]);
+                    if(ctrls[r][c].line){
+                      this.lines.push(ctrls[r][c]);
+                    }
+
+                    if(ctrls[r][c].halo){
+                      this.halos.push(ctrls[r][c]);
+                    }
+
+                    ctrls[r][c].draw();
+
                   }
-
-                  if(ctrls[r][c].halo){
-                    this.halos.push(ctrls[r][c]);
-                  }
-
-                  ctrls[r][c].draw();
-
                 }
-              }
 
-              if(this.lines.length>0){
-                drawGuideLines();
-              }
-              if(this.halos.length>0){
-                drawHalos();
-              }
+                if(this.lines.length>0){
+                  drawGuideLines();
+                }
+                if(this.halos.length>0){
+                  drawHalos();
+                }
 
-              calculateRemaining();
+                calculateRemaining();
 
-        popMatrix();
+          popMatrix();
 
       };
       hexBoard.prototype.hitTest      = function(x,y){
@@ -1865,7 +1922,7 @@ var diagrams = function(processingInstance){
           }
         }
 
-      };  
+      };
       hexBoard.prototype.update=function(){
 
         var p=this;           //  Set a reference to the hexBoard control
@@ -2353,12 +2410,16 @@ var diagrams = function(processingInstance){
         this.color    = props.color;
         this.cursor   = props.cursor;
         this.font     = props.font;
+        
+        this.visible  = props.visible;
 
         this.on=false;
 
       };
       button.prototype=Object.create(control.prototype);
       button.prototype.draw=function(){
+        
+        if(this.visible===false){ return; }
 
           this.offset=0;
           this.active=this.hit && app.focus===this;
@@ -2401,6 +2462,8 @@ var diagrams = function(processingInstance){
 
         if(this.parent.hit){
 
+          if(this.visible===false){ return; }
+        
           if(mouseX>(this.x+x) &&
              mouseX<(this.x+x) + this.w &&
              mouseY>(this.y+y) &&
@@ -2448,14 +2511,19 @@ var diagrams = function(processingInstance){
         this.cursor   = props.cursor;
         this.font     = props.font;
 
-        this.on=false;
+        this.visible  = props.visible;
+        
+        this.on       = false;
 
       };
       music.prototype=Object.create(control.prototype);
       music.prototype.draw=function(){
 
+        if(this.visible===false){ return; }
+
           this.offset=0;
-          this.active=this.hit && app.focus===this;
+          this.active=this.hit &&
+                      app.focus===this;
 
           pushMatrix();
 
@@ -2473,11 +2541,11 @@ var diagrams = function(processingInstance){
 
                 cursor(this.cursor);
                 fill(getColor(CLRS.ACTIVE, 50));
-                
+
                 fill(getColor(CLRS.BLACK,5));
-                
+
                   ellipse(0,0,this.w,this.w);
-                
+
               }
 
               scale(1,-1);
@@ -2513,6 +2581,8 @@ var diagrams = function(processingInstance){
       music.prototype.moved=function(x,y){
 
         if(this.parent.hit){
+          
+          if(this.visible===false){ return; }
 
           if(dist(mouseX, mouseY,
                   this.x+x,
@@ -2559,12 +2629,16 @@ var diagrams = function(processingInstance){
         this.color    = props.color;
         this.cursor   = props.cursor;
         this.font     = props.font;
-
-        this.on=false;
+        
+        this.visible  = props.visible;
+        
+        this.on       = false;
 
       };
       score.prototype=Object.create(control.prototype);
       score.prototype.draw=function(){
+
+        if(this.visible===false){ return; }
 
           this.offset=0;
           this.active=this.hit && app.focus===this;
@@ -2576,18 +2650,18 @@ var diagrams = function(processingInstance){
 
               textFont(this.font);
               textSize(20);
-              
+
               var categories='Remaining' + '\n\n' +
                              'Mistakes';
               var values    =this.execute() + '\n\n' +
                              this.retrieve();
-                             
+
               var w=textWidth(categories)+20;
-              
+
               stroke(this.color);
               strokeWeight(1);
               fill(getColor(this.color, 65));
-        
+
                 rect(0, 0, w, 105, 3);
 
               scale(1,-1);
@@ -2597,7 +2671,7 @@ var diagrams = function(processingInstance){
 
                 text(categories,  w-10, -100);
 
-              fill(getColor(CLRS.YELLOW,75));                                  
+              fill(getColor(CLRS.YELLOW,75));
               textAlign(RIGHT,TOP);
 
                 text(values,      w-10, -76);
@@ -2609,6 +2683,8 @@ var diagrams = function(processingInstance){
 
         if(this.parent.hit){
 
+          if(this.visible===false){ return; }
+        
           if(dist(mouseX, mouseY,
                   this.x+x,
                   this.y+y)<this.w/2){
@@ -2645,6 +2721,8 @@ var diagrams = function(processingInstance){
       function puzzle_Button(id, parent, x, y, w, h, props){
 
         control.call(this, id, parent, x, y, w, h);
+        
+        this.index     = props.index;
 
         this.style     = props.style;
         this.text      = props.text;
@@ -2657,10 +2735,12 @@ var diagrams = function(processingInstance){
         this.color     = props.color;
 
         this.threshold = props.threshold;
-        
+
+        this.visible   = props.visible;
+
         /* Initialize */
         var w2=this.w/2;
-        
+
         this.points    = [];
         this.interior  = [];
         this.shadow    = [];
@@ -2675,209 +2755,224 @@ var diagrams = function(processingInstance){
 
           this.shadow.push(  new pnt( cos(radians(pt*60))*(w2+5),
                                       sin(radians(pt*60))*(w2+5) ));
-                                      
+
         }
 
       };
       puzzle_Button.prototype=Object.create(control.prototype);
       puzzle_Button.prototype.draw=function(){
+        
+        if(this.visible===false){ return; }
+        
+          var p=this;
+          var offset=this.offset=0;
 
-        var p=this;
-        var offset=this.offset=0;
+          this.active=this.hit &&
+                      app.focus===this;
 
-        this.active=this.hit && app.focus===this;
+          pushMatrix();
 
-        pushMatrix();
+            translate(this.x, this.y);
 
-          translate(this.x, this.y);
-
-            if(this.active){
-              cursor(this.cursor);
-              if(app.left){ offset=1; }
-            }
-
-            function exterior(){
-            
-              strokeWeight(2);
-              noStroke();
-              // stroke(CLRS.H_BLUE);
-              fill(getColor(CLRS.H_BLUE,100));
-
-              if(p.active){
-                stroke(getColor(CLRS.BLACK,25));
-                // fill(getColor(CLRS.H_BLUE_L,100));
+              if(this.active){
+                cursor(this.cursor);
+                if(app.left){ offset=1; }
               }
 
-              beginShape();
-                
-                for(var n in p.points){
-                  vertex(p.points[n].x+offset, p.points[n].y+offset);
+              function exterior(){
+
+                strokeWeight(2);
+                noStroke();
+                // stroke(CLRS.H_BLUE);
+                fill(getColor(CLRS.H_BLUE,100));
+
+                if(p.active){
+                  stroke(getColor(CLRS.BLACK,25));
+                  // fill(getColor(CLRS.H_BLUE_L,100));
                 }
 
-              endShape(CLOSE);
-            
-            }
-            function interior(){
+                beginShape();
 
-              noStroke();
-            
-              fill(getColor(CLRS.H_BLUE_L,100));
-              
-              beginShape();
-                
-                for(var n in p.points){
-                  vertex(p.interior[n].x+offset, p.interior[n].y+offset);
+                  for(var n in p.points){
+                    vertex(p.points[n].x+offset, p.points[n].y+offset);
+                  }
+
+                endShape(CLOSE);
+
+              }
+              function interior(){
+
+                noStroke();
+
+                fill(getColor(CLRS.H_BLUE_L,100));
+
+                beginShape();
+
+                  for(var n in p.points){
+                    vertex(p.interior[n].x+offset, p.interior[n].y+offset);
+                  }
+
+                endShape(CLOSE);
+
+              };
+              function shadow(){
+
+                noStroke();
+                fill(getColor(CLRS.GRAY,20));
+
+                beginShape();
+
+                  for(var n in p.points){
+                    vertex(p.shadow[n].x+offset, p.shadow[n].y+offset);
+                  }
+
+                endShape(CLOSE);
+
+              };
+              function label(){
+
+                noStroke();
+                textSize(14);
+                textAlign(CENTER,CENTER);
+
+                fill(CLRS.GRAY);
+
+                  text(p.text, offset+1, offset+1);
+
+                fill(CLRS.WHITE);
+
+                  text(p.text, offset, offset);
+
+              };
+              function lock(){
+
+                strokeWeight(2);
+                noStroke();
+                fill(getColor(CLRS.BLACK,100));
+
+                if(p.active){
+                  stroke(getColor(CLRS.BLACK,25));
                 }
 
-              endShape(CLOSE);
-            
-            };            
-            function shadow(){
+                beginShape();
 
-              noStroke();
-              fill(getColor(CLRS.GRAY,20));
-              
-              beginShape();
-                
-                for(var n in p.points){
-                  vertex(p.shadow[n].x+offset, p.shadow[n].y+offset);
-                }
+                  for(var n in p.points){
+                    vertex(p.points[n].x+offset, p.points[n].y+offset);
 
-              endShape(CLOSE);
-            
-            };            
-            function label(){
+                  }
 
-              noStroke();
-              textSize(14);
-              textAlign(CENTER,CENTER);         
+                endShape(CLOSE);
 
-              fill(CLRS.GRAY);
+                strokeWeight(2);
+                noStroke();
+                fill(64);
 
-                text(p.text, offset+1, offset+1);
-                
-              fill(CLRS.WHITE);
+                beginShape();
 
-                text(p.text, offset, offset);
+                  for(var n in p.points){
+                    vertex(p.interior[n].x+offset, p.interior[n].y+offset);
+                  }
 
-            };
-            function lock(){
+                endShape(CLOSE);
 
-              strokeWeight(2);
-              noStroke();
-              fill(getColor(CLRS.BLACK,100));
+                stroke(CLRS.BLACK);
+                fill(64);
 
-              if(p.active){
-                stroke(getColor(CLRS.BLACK,25));
+                  rect(-4, -12, 8, 12, 5);
+
+                stroke(CLRS.BLACK);
+                fill(32);
+
+                  rect(-6, -4, 12, 12, 2);
+
+              };
+
+              if(p.retrieve()>=p.threshold){
+
+                exterior();
+                interior();
+                shadow();
+                label();
+
+              }
+              else{
+
+                lock();
+
               }
 
-              beginShape();
-                
-                for(var n in p.points){
-                  vertex(p.points[n].x+offset, p.points[n].y+offset);
-                  
-                }
-
-              endShape(CLOSE);              
-
-              strokeWeight(2);
-              noStroke();
-              fill(64);
-              
-              beginShape();
-                
-                for(var n in p.points){
-                  vertex(p.interior[n].x+offset, p.interior[n].y+offset);                  
-                }
-  
-              endShape(CLOSE);
-
-              stroke(CLRS.BLACK);
-              fill(64);
-              
-                rect(-4, -12, 8, 12, 5);
-                
-              stroke(CLRS.BLACK);
-              fill(32);
-              
-                rect(-6, -4, 12, 12, 2);
-                
-            };
-            
-            if(p.retrieve()>=p.threshold){
-
-              exterior();
-              interior();
-              shadow();
-              label();
-
-            }
-            else{
-
-              lock();
-
-            }
-
-        popMatrix();
+          popMatrix();
 
       };
       puzzle_Button.prototype.moved=function(x,y){
       /* Overridden because of the shap */
 
-        if(this.parent.hit){
+        if(this.visible===false){ return; }
 
-          if(dist(mouseX, mouseY,
-                  this.x+x,
-                  this.y+y)<this.w/2){
+          if(this.parent.hit){
 
-            this.outerHit=true;
+            if(dist(mouseX, mouseY,
+                    this.x+x,
+                    this.y+y)<this.w/2){
 
-              var rectHit=rectangleHit(new pnt(this.x+this.points[1].x+x, this.y+this.points[1].y+y),
-                                       new pnt(this.x+this.points[2].x+x, this.y+this.points[2].y+y),
-                                       new pnt(this.x+this.points[4].x+x, this.y+this.points[4].y+y),
-                                       mouseX,mouseY);
+              this.outerHit=true;
 
-              var triHit0=triangleHit(new pnt(this.x+this.points[0].x+x, this.y+this.points[0].y+y),
-                                      new pnt(this.x+this.points[1].x+x, this.y+this.points[1].y+y),
-                                      new pnt(this.x+this.points[5].x+x, this.y+this.points[5].y+y),
-                                      mouseX,mouseY);
+                var rectHit=rectangleHit(new pnt(this.x+this.points[1].x+x, this.y+this.points[1].y+y),
+                                         new pnt(this.x+this.points[2].x+x, this.y+this.points[2].y+y),
+                                         new pnt(this.x+this.points[4].x+x, this.y+this.points[4].y+y),
+                                         mouseX,mouseY);
 
-              var triHit1=triangleHit(new pnt(this.x+this.points[2].x+x, this.y+this.points[2].y+y),
-                                      new pnt(this.x+this.points[3].x+x, this.y+this.points[3].y+y),
-                                      new pnt(this.x+this.points[4].x+x, this.y+this.points[4].y+y),
-                                      mouseX,mouseY);
-              if(rectHit ||
-                 triHit0 ||
-                 triHit1){
+                var triHit0=triangleHit(new pnt(this.x+this.points[0].x+x, this.y+this.points[0].y+y),
+                                        new pnt(this.x+this.points[1].x+x, this.y+this.points[1].y+y),
+                                        new pnt(this.x+this.points[5].x+x, this.y+this.points[5].y+y),
+                                        mouseX,mouseY);
 
-                this.hit=true;
-                app.focus=this;
+                var triHit1=triangleHit(new pnt(this.x+this.points[2].x+x, this.y+this.points[2].y+y),
+                                        new pnt(this.x+this.points[3].x+x, this.y+this.points[3].y+y),
+                                        new pnt(this.x+this.points[4].x+x, this.y+this.points[4].y+y),
+                                        mouseX,mouseY);
+                if(rectHit ||
+                   triHit0 ||
+                   triHit1){
 
-              }
-              else{
+                  this.hit=true;
+                  app.focus=this;
 
-                this.hit=false;
+                }
+                else{
 
-              }
+                  this.hit=false;
+
+                }
+
+            }
+            else{
+
+              this.outerHit=false;
+              this.hit=false;
+
+            }
 
           }
-          else{
 
-            this.outerHit=false;
-            this.hit=false;
+      };
+      /** Overridden for execute */
+      puzzle_Button.prototype.clicked=function(){
 
-          }
+        if(this.active){
+
+          this.execute(this.index);
+
+          app.score+=5;
+          
+          this.parent.visible=false;
 
         }
 
-      };      
-      /** Overridden for execute */
-      puzzle_Button.prototype.clicked=function(){ 
-      
-      if(this.active){ this.execute(this.text); app.score+=5;} };
+      };
 
     }
-    
+
     /* Hexy Button          */
     {
 
@@ -2894,160 +2989,166 @@ var diagrams = function(processingInstance){
         this.retrieve = props.retrieve;
 
         this.color    = props.color;
+        
+        this.visible  = props.visible;
 
       };
       hexy_Button.prototype=Object.create(control.prototype);
       hexy_Button.prototype.draw=function(){
 
-        var p=this;
-        this.offset=0;
+        if(this.visible===false){ return; }
+      
+          var p=this;
+          this.offset=0;
 
-        function replay(){
-          
-          // Arrows
-          fill(getColor(CLRS.BLACK, 50));
-          
-          if(p.active){ fill(CLRS.BLACK); }
-          
-          textAlign(CENTER,CENTER);
-          textSize(24);
+          function replay(){
 
-            text(CONSTANTS.TRIANGLE_DOWN, p.w/2+p.offset+18, p.h/2+p.offset-1);
+            // Arrows
+            fill(getColor(CLRS.BLACK, 50));
 
-          textSize(14);
-            
-            fill(CLRS.WHITE);
-            
-            text(CONSTANTS.TRIANGLE_DOWN, 2*p.w/3+p.offset, p.h/2+p.offset-5);
+            if(p.active){ fill(CLRS.BLACK); }
 
-          // Line
-          noFill();
-          stroke(getColor(CLRS.BLACK,50));
+            textAlign(CENTER,CENTER);
+            textSize(24);
 
-          if(p.active){ stroke(CLRS.BLACK); }
-            
-            ellipse(p.w/2+p.offset, p.h/2+p.offset, 10, 10);
-            
-            // arc(p.w/2+p.offset, p.h/2+p.offset,
-                // 40,             40,
-                // radians(60),    2*PI-radians(22.5));
-            
-          //  Text
-          fill(getColor(CLRS.BLACK, 50));
-          
-          if(p.active){ fill(CLRS.BLACK); }
-          
-          textAlign(LEFT,TOP);
-          textSize(10);
-          
-            rotate(PI/2);
-            text(p.text, 5+p.offset, -20-p.offset);
-          
-        };
-        function menu(){
+              text(CONSTANTS.TRIANGLE_DOWN, p.w/2+p.offset+18, p.h/2+p.offset-1);
 
-          function drawHexagon(x,y,sz){
-  
-            var ang=0;
+            textSize(14);
 
-            beginShape();
-              
-              for(pt=0; pt<6; pt++){
-                vertex( x+cos(radians(ang+pt*60))*(sz)+p.offset,
-                        y+sin(radians(ang+pt*60))*(sz)+p.offset );
-              }
-            
-            endShape(CLOSE);
-            
-          };
-          
-          //  Hexagons
-          noFill();
-          stroke(getColor(CLRS.BLACK, 50));
-          strokeWeight(1);
-          
-          if(p.active){ stroke(CLRS.BLACK); }
-            
-            for(var ang=0; ang<6; ang++){
-              drawHexagon(p.w/2+cos(radians(ang*60+30))*20,
-                          p.h/2+sin(radians(ang*60+30))*20,
-                          10);
-            }
-                        
-          //  Text
-          fill(getColor(CLRS.BLACK, 50));
-          
-          if(p.active){ fill(CLRS.BLACK); }
-          
-          
-          textAlign(LEFT,TOP);
-          textSize(16);
-          
-            rotate(PI/2);
-            text(p.text, 5+p.offset, -20-p.offset);
-          
-        };
-        function next(){
+              fill(CLRS.WHITE);
 
-          fill(getColor(CLRS.BLACK, 50));
-          
-          if(p.active){ fill(CLRS.BLACK); }
-          
-          textAlign(CENTER,CENTER);
-          textSize(48);
+              text(CONSTANTS.TRIANGLE_DOWN, 2*p.w/3+p.offset, p.h/2+p.offset-5);
 
-            text(CONSTANTS.TRIANGLE_R, p.w/2+p.offset, p.h/2+p.offset);
-
-          textSize(36);
-            
-            fill(CLRS.WHITE);
-            
-            text(CONSTANTS.TRIANGLE_R, p.w/2+p.offset-1, p.h/2+p.offset+1);
-
-          fill(getColor(CLRS.BLACK, 50));
-          
-          if(p.active){ fill(CLRS.BLACK); }
-          
-          textAlign(LEFT,TOP);
-          textSize(16);
-          
-            rotate(PI/2);
-            text(p.text, 5+p.offset, -20-p.offset);
-
-        };
-
-        this.active=this.hit && app.focus===this;
-        this.offset=0;
-        // this.on=this.retrieve();
-
-        pushMatrix();
-
-          translate(this.x, this.y);
-
-            if(this.active){ cursor(this.cursor);
-                             if(app.left){ this.offset=1; } }
-
-            // Border
-            stroke(getColor(CLRS.BLACK,75));
-            strokeWeight(0.5);
-            fill(CLRS.WHITE);
+            // Line
+            noFill();
+            stroke(getColor(CLRS.BLACK,50));
 
             if(p.active){ stroke(CLRS.BLACK); }
 
-              rect(this.offset, this.offset, this.w, this.h, 3);
+              ellipse(p.w/2+p.offset, p.h/2+p.offset, 10, 10);
 
-            if     (this.style==='replay'){ replay(); }
-            else if(this.style==='menu'  ){ menu();   }
-            else if(this.style==='next'  ){ next();   }
+              // arc(p.w/2+p.offset, p.h/2+p.offset,
+                  // 40,             40,
+                  // radians(60),    2*PI-radians(22.5));
 
-        popMatrix();
+            //  Text
+            fill(getColor(CLRS.BLACK, 50));
+
+            if(p.active){ fill(CLRS.BLACK); }
+
+            textAlign(LEFT,TOP);
+            textSize(10);
+
+              rotate(PI/2);
+              text(p.text, 5+p.offset, -20-p.offset);
+
+          };
+          function menu(){
+
+            function drawHexagon(x,y,sz){
+
+              var ang=0;
+
+              beginShape();
+
+                for(pt=0; pt<6; pt++){
+                  vertex( x+cos(radians(ang+pt*60))*(sz)+p.offset,
+                          y+sin(radians(ang+pt*60))*(sz)+p.offset );
+                }
+
+              endShape(CLOSE);
+
+            };
+
+            //  Hexagons
+            noFill();
+            stroke(getColor(CLRS.BLACK, 50));
+            strokeWeight(1);
+
+            if(p.active){ stroke(CLRS.BLACK); }
+
+              for(var ang=0; ang<6; ang++){
+                drawHexagon(p.w/2+cos(radians(ang*60+30))*20,
+                            p.h/2+sin(radians(ang*60+30))*20,
+                            10);
+              }
+
+            //  Text
+            fill(getColor(CLRS.BLACK, 50));
+
+            if(p.active){ fill(CLRS.BLACK); }
+
+
+            textAlign(LEFT,TOP);
+            textSize(16);
+
+              rotate(PI/2);
+              text(p.text, 5+p.offset, -20-p.offset);
+
+          };
+          function next(){
+
+            fill(getColor(CLRS.BLACK, 50));
+
+            if(p.active){ fill(CLRS.BLACK); }
+
+            textAlign(CENTER,CENTER);
+            textSize(48);
+
+              text(CONSTANTS.TRIANGLE_R, p.w/2+p.offset, p.h/2+p.offset);
+
+            textSize(36);
+
+              fill(CLRS.WHITE);
+
+              text(CONSTANTS.TRIANGLE_R, p.w/2+p.offset-1, p.h/2+p.offset+1);
+
+            fill(getColor(CLRS.BLACK, 50));
+
+            if(p.active){ fill(CLRS.BLACK); }
+
+            textAlign(LEFT,TOP);
+            textSize(16);
+
+              rotate(PI/2);
+              text(p.text, 5+p.offset, -20-p.offset);
+
+          };
+
+          this.active=this.hit &&
+                      app.focus===this;
+          
+          this.offset=0;
+          // this.on=this.retrieve();
+
+          pushMatrix();
+
+            translate(this.x, this.y);
+
+              if(this.active){ cursor(this.cursor);
+                               if(app.left){ this.offset=1; } }
+
+              // Border
+              stroke(getColor(CLRS.BLACK,75));
+              strokeWeight(0.5);
+              fill(CLRS.WHITE);
+
+              if(p.active){ stroke(CLRS.BLACK); }
+
+                rect(this.offset, this.offset, this.w, this.h, 3);
+
+              if     (this.style==='replay'){ replay(); }
+              else if(this.style==='menu'  ){ menu();   }
+              else if(this.style==='next'  ){ next();   }
+
+          popMatrix();
 
       };
       /** Overridden for execute */
       hexy_Button.prototype.clicked=function(){ if(this.active){ this.execute(this.text); } };
 
     }
-    
+
     /* Icon Button          */
     {
 
@@ -3065,88 +3166,90 @@ var diagrams = function(processingInstance){
       };
       i_Button.prototype=Object.create(control.prototype);
       i_Button.prototype.draw=function(){
+        
+        if(this.visible===false){ return; }
+        
+          var p=this;
+          this.offset=0;
 
-        var p=this;
-        this.offset=0;
+          function reset(){
 
-        function reset(){
+            pushMatrix();
+
+              translate(p.w/2,p.h/2);
+
+                var sz=0.67;
+                var clr=color(128);
+
+                ellipseMode(CENTER);
+
+                stroke(getColor(clr, 50));
+
+                if(p.active){
+
+                  noStroke();
+                  fill(getColor(CLRS.BLACK,5));
+
+                    ellipse(0, 0, p.w, p.w);
+
+                  stroke(getColor(clr, 100));
+                  cursor(p.cursor);
+
+                }
+
+                strokeWeight(1.5);
+                noFill();
+
+                if(p.active &&
+                   app.left){
+
+                  rotate(radians(45));
+
+                }
+
+                  arc(0, 0, p.w*sz, p.h*sz, radians(60), 2*PI-radians(22.5));
+
+                fill(getColor(clr, 50));
+
+                if(p.active){ fill(getColor(clr, 100)); }
+
+                  pushMatrix();
+
+                    translate(4,-5);
+                    rotate(PI/6);
+
+                      triangle( 0,   0,
+                               10,   0,
+                               10, -10);
+
+                  popMatrix();
+
+            popMatrix();
+
+          };
+
+          this.active=this.hit && app.focus===this;
+          this.offset=0;
+          // this.on=this.retrieve();
 
           pushMatrix();
 
-            translate(p.w/2,p.h/2);
+            translate(this.x, this.y);
 
-              var sz=0.67;
-              var clr=color(128);
+              // noStroke();
+              // noFill();
 
-              ellipseMode(CENTER);
+              // if(this.active){ cursor(this.cursor);
+                               // if(app.left){ this.offset=1; } }
+              // if(this.active ||
+                 // this.on    ){ fill(getColor(CLRS.BLACK,10)); }
 
-              stroke(getColor(clr, 50));
+                //  Background
+                // rect(this.offset, this.offset, this.w, this.h, 2);
 
-              if(p.active){
-                
-                noStroke();
-                fill(getColor(CLRS.BLACK,5));
-                
-                  ellipse(0, 0, p.w, p.w);
-                  
-                stroke(getColor(clr, 100));
-                cursor(p.cursor);
-
-              }
-
-              strokeWeight(1.5);
-              noFill();
-
-              if(p.active &&
-                 app.left){
-
-                rotate(radians(45));
-
-              }
-
-                arc(0, 0, p.w*sz, p.h*sz, radians(60), 2*PI-radians(22.5));
-
-              fill(getColor(clr, 50));
-
-              if(p.active){ fill(getColor(clr, 100)); }
-
-                pushMatrix();
-
-                  translate(4,-5);
-                  rotate(PI/6);
-
-                    triangle( 0,   0,
-                             10,   0,
-                             10, -10);
-
-                popMatrix();
+              reset();
 
           popMatrix();
-
-        };
-
-        this.active=this.hit && app.focus===this;
-        this.offset=0;
-        // this.on=this.retrieve();
-
-        pushMatrix();
-
-          translate(this.x, this.y);
-
-            // noStroke();
-            // noFill();
-
-            // if(this.active){ cursor(this.cursor);
-                             // if(app.left){ this.offset=1; } }
-            // if(this.active ||
-               // this.on    ){ fill(getColor(CLRS.BLACK,10)); }
-
-              //  Background
-              // rect(this.offset, this.offset, this.w, this.h, 2);
-
-            reset();
-
-        popMatrix();
 
       };
       /** Overridden for execute */
@@ -3182,6 +3285,8 @@ var diagrams = function(processingInstance){
 
         this.active   = false;
         this.on       = props.on;
+        this.visible  = props.visible;
+
         this.choose   = true;
 
         this.textSize = 0;
@@ -3220,85 +3325,90 @@ var diagrams = function(processingInstance){
       hexButton.prototype=Object.create(control.prototype);
       hexButton.prototype.draw=function(){
 
-        this.active=this.hit && app.focus===this;
-        this.offset=0;
+        if(this.visible===false){ return; }
 
-        pushMatrix();
+          this.active=this.hit &&
+                      app.focus===this;
+          this.offset=0;
 
-          translate(this.x, this.y);
-          scale(1,-1);
+          pushMatrix();
 
-            // Border
-            strokeWeight(0.5);
-
-            stroke(getColor(this.color, 50));
-            fill  (getColor(this.color,  5));
-
-            if(this.active){
-
-              if(app.left){ this.offset=1; }
-
-              strokeWeight(1.5);
-              cursor(this.cursor);
-
-              if(app.pyramid===this.parent){
-                app.row=this.row;
-                app.col=this.col;
-              }
-
-            };
-
-            if(app.row===this.row &&
-               app.col===this.col){
-              strokeWeight(2);
-            };
-
-            stroke(getColor(this.color,100));
-
-            //  Sierpinski grid
-            if(app.sierpinski &&
-               this.integer%2!==0){ fill(getColor(this.color, 25)); }
-
-            if(this.on){ fill(getColor(this.color, 30)); }
-
-              var offset=this.offset;
-
-            /** Hexagon */
-              beginShape();
-
-                vertex(this.p1.x+offset, this.p1.y-offset);
-                vertex(this.p2.x+offset, this.p2.y-offset);
-                vertex(this.p3.x+offset, this.p3.y-offset);
-                vertex(this.p4.x+offset, this.p4.y-offset);
-                vertex(this.p5.x+offset, this.p5.y-offset);
-                vertex(this.p6.x+offset, this.p6.y-offset);
-
-              endShape(CLOSE);
-
-            /** Circle */
-            // var d=cos(PI/6)*this.w;
-            // ellipse(0,0,d,d);
-
-            // Caption
-            fill(getColor(CLRS.YELLOW,40));
-
-            if(this.on){ fill(getColor(CLRS.WHITE,100)); }
-
+            translate(this.x, this.y);
             scale(1,-1);
-            textAlign(CENTER,CENTER);
-            textSize(this.textSize);
 
-            if(app.choose){ textLeading(this.textSize);
-                            text(this.row + "\n" + this.col, this.offset, this.offset);   }
-            else          { text(this.integer, this.offset, this.offset);                 }
+              // Border
+              strokeWeight(0.5);
 
-        popMatrix();
+              stroke(getColor(this.color, 50));
+              fill  (getColor(this.color,  5));
+
+              if(this.active){
+
+                if(app.left){ this.offset=1; }
+
+                strokeWeight(1.5);
+                cursor(this.cursor);
+
+                if(app.pyramid===this.parent){
+                  app.row=this.row;
+                  app.col=this.col;
+                }
+
+              };
+
+              if(app.row===this.row &&
+                 app.col===this.col){
+                strokeWeight(2);
+              };
+
+              stroke(getColor(this.color,100));
+
+              //  Sierpinski grid
+              if(app.sierpinski &&
+                 this.integer%2!==0){ fill(getColor(this.color, 25)); }
+
+              if(this.on){ fill(getColor(this.color, 30)); }
+
+                var offset=this.offset;
+
+              /** Hexagon */
+                beginShape();
+
+                  vertex(this.p1.x+offset, this.p1.y-offset);
+                  vertex(this.p2.x+offset, this.p2.y-offset);
+                  vertex(this.p3.x+offset, this.p3.y-offset);
+                  vertex(this.p4.x+offset, this.p4.y-offset);
+                  vertex(this.p5.x+offset, this.p5.y-offset);
+                  vertex(this.p6.x+offset, this.p6.y-offset);
+
+                endShape(CLOSE);
+
+              /** Circle */
+              // var d=cos(PI/6)*this.w;
+              // ellipse(0,0,d,d);
+
+              // Caption
+              fill(getColor(CLRS.YELLOW,40));
+
+              if(this.on){ fill(getColor(CLRS.WHITE,100)); }
+
+              scale(1,-1);
+              textAlign(CENTER,CENTER);
+              textSize(this.textSize);
+
+              if(app.choose){ textLeading(this.textSize);
+                              text(this.row + "\n" + this.col, this.offset, this.offset);   }
+              else          { text(this.integer, this.offset, this.offset);                 }
+
+          popMatrix();
 
       };
       hexButton.prototype.moved=function(x,y){
       /* Overridden because of the shape */
 
         if(this.parent.hit){
+          
+          if(this.visible===false){ return; }
 
           if(dist(mouseX, mouseY,
                   this.x+x,
@@ -3389,6 +3499,7 @@ var diagrams = function(processingInstance){
         this.font     = props.font;
 
         this.active   = false;
+        this.visible  = props.visible;
 
         this.text     = props.text;
 
@@ -3411,247 +3522,252 @@ var diagrams = function(processingInstance){
       i_hexButton.prototype=Object.create(control.prototype);
       i_hexButton.prototype.draw=function(){
 
-        this.active=this.hit && app.focus===this;
-        this.offset=0;
+        if(this.visible===false){ return; }
+        
+          this.active=this.hit &&
+                      app.focus===this;
+          this.offset=0;
 
 
-        var p=this;
-        var offset=0;
+          var p=this;
+          var offset=0;
 
-        function triforce(){
+          function triforce(){
 
-          fill(getColor(CLRS.K_TEAL_1,75));
+            fill(getColor(CLRS.K_TEAL_1,75));
 
-          // if(p.parent.hit){ fill(getColor(CLRS.WHITE, 75)); }
-          if(p.active    ){ fill(getColor(CLRS.WHITE,75)); }
+            // if(p.parent.hit){ fill(getColor(CLRS.WHITE, 75)); }
+            if(p.active    ){ fill(getColor(CLRS.WHITE,75)); }
 
-            offset=p.offset;
+              offset=p.offset;
 
-            pushMatrix();
+              pushMatrix();
 
-              scale(0.5,0.5);
+                scale(0.5,0.5);
 
-              triangle( offset,        p.h/2-offset+5,
-                        p.w/2+offset, -p.h/2-offset+5,
-                       -p.w/2+offset, -p.h/2-offset+5);
+                triangle( offset,        p.h/2-offset+5,
+                          p.w/2+offset, -p.h/2-offset+5,
+                         -p.w/2+offset, -p.h/2-offset+5);
 
-            popMatrix();
+              popMatrix();
+
+              noStroke();
+
+            fill(getColor(p.color,50));
+
+            // if(p.parent.hit){ fill(getColor(CLRS.K_TEAL_0, 75)); }
+            if(p.active    ){ fill(getColor(CLRS.K_TEAL_0,100)); }
+
+              pushMatrix();
+
+                scale(0.5,0.5);
+
+                  triangle( offset,           -p.h/2-offset+5,
+                            -p.w*0.25+offset, -offset+5,
+                             p.w*0.25+offset, -offset+5);
+
+              popMatrix();
+
+          };
+          function play(){
+
+            fill(getColor(CLRS.K_TEAL_1,50));
+
+            if(p.parent.hit){ fill(getColor(CLRS.WHITE, 75)); }
+            if(p.active    ){ fill(getColor(CLRS.WHITE,100)); }
+
+              offset=p.offset;
+
+              triangle( 15+offset, 10+offset,
+                         5+offset,  5+offset,
+                         5+offset, 15+offset);
+
+          };
+          function settings(){
+
+            fill(getColor(CLRS.K_TEAL_1,50));
+
+            if(p.parent.hit){ fill(getColor(CLRS.WHITE, 75)); }
+            if(p.active    ){ fill(getColor(CLRS.WHITE,100)); }
 
             noStroke();
 
-          fill(getColor(p.color,50));
+              ellipse(p.w/2+p.offset, p.h/2-6+p.offset, 3, 3);
+              ellipse(p.w/2+p.offset, p.h/2,               3, 3);
+              ellipse(p.w/2+p.offset, p.h/2+6+p.offset, 3, 3);
 
-          // if(p.parent.hit){ fill(getColor(CLRS.K_TEAL_0, 75)); }
-          if(p.active    ){ fill(getColor(CLRS.K_TEAL_0,100)); }
+          };
+          function reset(){
 
-            pushMatrix();
+            var sz=0.5;
 
-              scale(0.5,0.5);
+            ellipseMode(CENTER);
 
-                triangle( offset,           -p.h/2-offset+5,
-                          -p.w*0.25+offset, -offset+5,
-                           p.w*0.25+offset, -offset+5);
+            stroke(getColor(CLRS.WHITE, 50));
 
-            popMatrix();
+            // if(p.parent.hit){ stroke(getColor(CLRS.WHITE,  75)); }
+            if(p.active)    { stroke(getColor(CLRS.WHITE, 75));
+                                 cursor(p.cursor);               }
 
-        };
-        function play(){
+            strokeWeight(1.5);
+            noFill();
 
-          fill(getColor(CLRS.K_TEAL_1,50));
+            if(p.running){
 
-          if(p.parent.hit){ fill(getColor(CLRS.WHITE, 75)); }
-          if(p.active    ){ fill(getColor(CLRS.WHITE,100)); }
+              rotate(radians(p.rotation));
 
-            offset=p.offset;
+              p.rotation-=40;
 
-            triangle( 15+offset, 10+offset,
-                       5+offset,  5+offset,
-                       5+offset, 15+offset);
+              if(abs(p.rotation)>359){
 
-        };
-        function settings(){
+                p.running=false;
+                p.rotation=0;
 
-          fill(getColor(CLRS.K_TEAL_1,50));
-
-          if(p.parent.hit){ fill(getColor(CLRS.WHITE, 75)); }
-          if(p.active    ){ fill(getColor(CLRS.WHITE,100)); }
-
-          noStroke();
-
-            ellipse(p.w/2+p.offset, p.h/2-6+p.offset, 3, 3);
-            ellipse(p.w/2+p.offset, p.h/2,               3, 3);
-            ellipse(p.w/2+p.offset, p.h/2+6+p.offset, 3, 3);
-
-        };
-        function reset(){
-
-          var sz=0.5;
-
-          ellipseMode(CENTER);
-
-          stroke(getColor(CLRS.WHITE, 50));
-
-          // if(p.parent.hit){ stroke(getColor(CLRS.WHITE,  75)); }
-          if(p.active)    { stroke(getColor(CLRS.WHITE, 75));
-                               cursor(p.cursor);               }
-
-          strokeWeight(1.5);
-          noFill();
-
-          if(p.running){
-
-            rotate(radians(p.rotation));
-
-            p.rotation-=40;
-
-            if(abs(p.rotation)>359){
-
-              p.running=false;
-              p.rotation=0;
+              }
 
             }
 
-          }
+              arc(0, 0, p.w*sz, p.h*sz, radians(22.5), 2*PI-radians(45));
 
-            arc(0, 0, p.w*sz, p.h*sz, radians(22.5), 2*PI-radians(45));
+            fill(getColor(CLRS.WHITE, 50));
 
-          fill(getColor(CLRS.WHITE, 50));
+            // if(p.parent.hit){ fill(getColor(CLRS.WHITE,  75)); }
+            if(p.active  ){ fill(getColor(CLRS.WHITE, 75)); }
 
-          // if(p.parent.hit){ fill(getColor(CLRS.WHITE,  75)); }
-          if(p.active  ){ fill(getColor(CLRS.WHITE, 75)); }
+            p.offset=0;
 
-          p.offset=0;
+              pushMatrix();
 
-            pushMatrix();
+                translate(6,0);
 
-              translate(6,0);
+                  triangle(0, 0,
+                           6, 0,
+                           6, 6);
 
-                triangle(0, 0,
-                         6, 0,
-                         6, 6);
+              popMatrix();
 
-            popMatrix();
+          };
+          function txt(){
 
-        };
-        function txt(){
+            fill(getColor(CLRS.WHITE,50));
 
-          fill(getColor(CLRS.WHITE,50));
+            // if(p.parent.hit       ){ fill(getColor(p.color, 75)); }
+            if(p.active || p.on){ fill(getColor(CLRS.WHITE,75)); }
 
-          // if(p.parent.hit       ){ fill(getColor(p.color, 75)); }
-          if(p.active || p.on){ fill(getColor(CLRS.WHITE,75)); }
+            textAlign(CENTER,CENTER);
+            textFont(p.font);
+            textSize(20);
 
-          textAlign(CENTER,CENTER);
-          textFont(p.font);
-          textSize(20);
+            switch(p.text){
 
-          switch(p.text){
+              case HEXNAV.LEFT:       text(CONSTANTS.TRIANGLE_L,  -p.offset, -p.offset); break;
+              case HEXNAV.RIGHT:      text(CONSTANTS.TRIANGLE_R, 2*p.offset, -p.offset); break;
 
-            case HEXNAV.LEFT:       text(CONSTANTS.TRIANGLE_L,  -p.offset, -p.offset); break;
-            case HEXNAV.RIGHT:      text(CONSTANTS.TRIANGLE_R, 2*p.offset, -p.offset); break;
+              case HEXNAV.UP_LEFT:    pushMatrix();
 
-            case HEXNAV.UP_LEFT:    pushMatrix();
+                                        rotate(-PI/4);
+                                        text(CONSTANTS.TRIANGLE_L,
+                                        -p.offset, -p.offset);
 
-                                      rotate(-PI/4);
-                                      text(CONSTANTS.TRIANGLE_L,
-                                      -p.offset, -p.offset);
+                                      popMatrix();  break;
 
-                                    popMatrix();  break;
+              case HEXNAV.UP_RIGHT:   pushMatrix();
 
-            case HEXNAV.UP_RIGHT:   pushMatrix();
+                                        rotate(PI/4);
+                                        text(CONSTANTS.TRIANGLE_R,
+                                        p.offset, p.offset);
 
-                                      rotate(PI/4);
-                                      text(CONSTANTS.TRIANGLE_R,
-                                      p.offset, p.offset);
+                                      popMatrix();  break;
 
-                                    popMatrix();  break;
+              case HEXNAV.DOWN_LEFT:  pushMatrix();
 
-            case HEXNAV.DOWN_LEFT:  pushMatrix();
+                                        rotate(PI/4);
+                                        text(CONSTANTS.TRIANGLE_L,
+                                        -p.offset, -p.offset);
 
-                                      rotate(PI/4);
-                                      text(CONSTANTS.TRIANGLE_L,
-                                      -p.offset, -p.offset);
+                                      popMatrix();  break;
 
-                                    popMatrix();  break;
+              case HEXNAV.DOWN_RIGHT: pushMatrix();
 
-            case HEXNAV.DOWN_RIGHT: pushMatrix();
+                                        rotate(-PI/4);
+                                        text(CONSTANTS.TRIANGLE_R,
+                                        p.offset, -p.offset);
 
-                                      rotate(-PI/4);
-                                      text(CONSTANTS.TRIANGLE_R,
-                                      p.offset, -p.offset);
+                                      popMatrix();  break;
 
-                                    popMatrix();  break;
+              default:                text(p.text, p.offset, -p.offset); break;
 
-            default:                text(p.text, p.offset, -p.offset); break;
-
-          }
-
-        };
-
-        pushMatrix();
-
-          translate(this.x, this.y);
-          scale(1,-1);
-
-            // Border
-            strokeWeight(0.5);
-
-            stroke(getColor(this.color, 40));
-            fill  (getColor(this.color, 15));
-
-            if(this.active){
-
-              if(app.left &&
-                 this.style!==GLYPHS.RESET){ this.offset=1; }
-
-              strokeWeight(1.5);
-              cursor(this.cursor);
-
-            };
-
-            stroke(getColor(this.color,75));
-
-            var OS=this.offset;
-
-            /** Hexagon */
-              beginshap();
-
-                vertex(this.p1.x+OS, this.p1.y-OS);
-                vertex(this.p2.x+OS, this.p2.y-OS);
-                vertex(this.p3.x+OS, this.p3.y-OS);
-                vertex(this.p4.x+OS, this.p4.y-OS);
-                vertex(this.p5.x+OS, this.p5.y-OS);
-                vertex(this.p6.x+OS, this.p6.y-OS);
-
-              endshap(CLOSE);
-
-            /** Circle */
-            // var d=cos(PI/6)*this.w;
-            // ellipse(0,0,d,d);
-
-            // Caption
-          // Icon
-          textFont(this.font);
-
-          switch(this.style){
-
-            case GLYPHS.PLAY:      play();      break;
-            case GLYPHS.SETTINGS:  settings();  break;
-            case GLYPHS.RESET:     reset();     break;
-            case GLYPHS.TRIFORCE:  triforce();  break;
-            case GLYPHS.TEXT:      txt();       break;
-
-            default:                            break;
+            }
 
           };
 
+          pushMatrix();
 
-        popMatrix();
+            translate(this.x, this.y);
+            scale(1,-1);
+
+              // Border
+              strokeWeight(0.5);
+
+              stroke(getColor(this.color, 40));
+              fill  (getColor(this.color, 15));
+
+              if(this.active){
+
+                if(app.left &&
+                   this.style!==GLYPHS.RESET){ this.offset=1; }
+
+                strokeWeight(1.5);
+                cursor(this.cursor);
+
+              };
+
+              stroke(getColor(this.color,75));
+
+              var OS=this.offset;
+
+              /** Hexagon */
+                beginshap();
+
+                  vertex(this.p1.x+OS, this.p1.y-OS);
+                  vertex(this.p2.x+OS, this.p2.y-OS);
+                  vertex(this.p3.x+OS, this.p3.y-OS);
+                  vertex(this.p4.x+OS, this.p4.y-OS);
+                  vertex(this.p5.x+OS, this.p5.y-OS);
+                  vertex(this.p6.x+OS, this.p6.y-OS);
+
+                endshap(CLOSE);
+
+              /** Circle */
+              // var d=cos(PI/6)*this.w;
+              // ellipse(0,0,d,d);
+
+              // Caption
+            // Icon
+            textFont(this.font);
+
+            switch(this.style){
+
+              case GLYPHS.PLAY:      play();      break;
+              case GLYPHS.SETTINGS:  settings();  break;
+              case GLYPHS.RESET:     reset();     break;
+              case GLYPHS.TRIFORCE:  triforce();  break;
+              case GLYPHS.TEXT:      txt();       break;
+
+              default:                            break;
+
+            };
+
+
+          popMatrix();
 
       };
       i_hexButton.prototype.moved=function(x,y){
       /* Overridden because of the shape */
 
         if(this.parent.hit){
+
+          if(this.visible===false){ return; }
 
           if(dist(mouseX, mouseY,
                   this.x+x,
@@ -3763,6 +3879,7 @@ var diagrams = function(processingInstance){
         this.dCount       = 0;              //  # of blue cells in surrounding 2 rings
 
         this.enabled      = true;
+        this.visible      = props.visible;
 
         this.halo         = false;
         this.line         = false;
@@ -3814,456 +3931,458 @@ var diagrams = function(processingInstance){
       };
       hexCell.prototype=Object.create(control.prototype);
       hexCell.prototype.draw=function(){
+        
+        if(this.visible===false){ return; }
 
-        this.active=this.hit &&
-                    app.focus===this &&
-                    this.style!==HEXY_TYPES.BLANK;
+          this.active=this.hit &&
+                      app.focus===this &&
+                      this.style!==HEXY_TYPES.BLANK;
 
-        var offset=0;
-        var p=this;
+          var offset=0;
+          var p=this;
 
-        if(this.active){
-          if(app.left){ this.offset=1; }
-          cursor(this.cursor);
-        }
-
-// var HEXY_TYPES={
-
-  // Double up the \ character because it is an escape character and the first one won't be recognised
-
-  // BLANK:            '.',
-  // BLACK:            'o',
-  // BLACK_REVEALED:   'O',
-  // BLUE:             'x',
-  // BLUE_REVEALED:    'X',
-  // DOWN_RIGHT:       '\\',
-  // DOWN_CENTER:      '|',
-  // DOWN_LEFT:        '/',
-
-  // BLANK:            '.',
-  // NUMBER:           '+',
-  // CONSECUTIVE:      'c',
-  // NOT_CONSECUTIVE:  'n'
-
-        function highlight(){
-
-          if(p.layout===HEXY_TYPES.BLACK ||
-             p.layout===HEXY_TYPES.BLACK_REVEALED ||
-             p.layout===HEXY_TYPES.BLUE ||
-             p.layout===HEXY_TYPES.BLUE_REVEALED){
-
-            noStroke();
-            fill(CLRS.WHITE);
-
-            beginShape();
-
-              for(var pt in p.dpoints){
-                vertex(p.dpoints[pt].x-0.5,
-                       p.dpoints[pt].y-0.5);
-              }
-
-            endShape(CLOSE);
-
+          if(this.active){
+            if(app.left){ this.offset=1; }
+            cursor(this.cursor);
           }
 
-        };
-        function outerHexagon(){
-
-          noStroke();
-
-          if(app.mode===APPMODES.CREATE){
-
-            switch(p.layout){
-
-              case HEXY_TYPES.BLACK:          stroke(CLRS.H_ORANGE);
-                                              strokeWeight(2.5);
-                                              fill(CLRS.H_BLACK);     break;
-
-              case HEXY_TYPES.BLUE:           stroke(CLRS.H_ORANGE);
-                                              strokeWeight(2.5);
-                                              fill(CLRS.H_BLUE);      break;
-
-              case HEXY_TYPES.BLACK_REVEALED: fill(CLRS.H_BLACK);     break;
-              case HEXY_TYPES.BLUE_REVEALED:  fill(CLRS.H_BLUE);      break;
-
-              default:                        noFill();
-                                              stroke(CLRS.BLACK);
-                                              strokeWeight(0.125);   
-                                              noStroke();
-                                              break;
-            }
-
-            beginShape();
-
-              for(var pt in p.hpoints){
-                vertex(p.hpoints[pt].x,
-                       p.hpoints[pt].y);
-              }
-
-            endShape(CLOSE);
-            
-          }
-          else{
-
-            switch(p.layout){
-
-              case HEXY_TYPES.BLACK:          fill(CLRS.H_ORANGE);  break;
-              case HEXY_TYPES.BLUE:           fill(CLRS.H_ORANGE);  break;
-              case HEXY_TYPES.BLACK_REVEALED: fill(CLRS.H_BLACK);   break;
-              case HEXY_TYPES.BLUE_REVEALED:  fill(CLRS.H_BLUE);    break;
-
-              default:                        noFill();
-                                              stroke(CLRS.BLACK);
-                                              strokeWeight(0.125); 
-                                              noStroke();
-                                              break;
-            }
-
-            var offset=0;
-
-            if(p.timer>0 &&
-               p.dirty===false){
-              offset=random(0,1.5);
-              p.timer--;
-              if(p.timer<=0){ p.dirty=true; }
-
-            }
-
-            beginShape();
-
-              for(var pt in p.hpoints){
-                vertex(p.hpoints[pt].x+offset,
-                       p.hpoints[pt].y+offset);
-              }
-
-            endShape(CLOSE);
-
-          }
-
-        };
-        function innerHexagon(){
-          
-          if(app.mode===APPMODES.CREATE){
-            
-            noStroke();
-
-            switch(p.layout){
-
-              case HEXY_TYPES.BLACK:          fill(CLRS.H_BLACK_L); break;
-              case HEXY_TYPES.BLUE:           fill(CLRS.H_BLUE_L);  break;
-              case HEXY_TYPES.BLACK_REVEALED: fill(CLRS.H_BLACK_L); break;
-              case HEXY_TYPES.BLUE_REVEALED:  fill(CLRS.H_BLUE_L);  break;
-
-              default:                          noFill();             break;
-
-            }
-
-            beginShape();
-
-              for(var pt in p.points){
-                vertex(p.points[pt].x,
-                       p.points[pt].y);
-              }
-
-            endShape(CLOSE);
-            
-          }
-          else{
-
-            noStroke();
-
-            switch(p.layout){
-
-              case HEXY_TYPES.BLACK:          fill(CLRS.H_ORANGE_L);  break;
-              case HEXY_TYPES.BLUE:           fill(CLRS.H_ORANGE_L);  break;
-              case HEXY_TYPES.BLACK_REVEALED: fill(CLRS.H_BLACK_L);   break;
-              case HEXY_TYPES.BLUE_REVEALED:  fill(CLRS.H_BLUE_L);    break;
-
-              default:                        noFill();               break;
-
-            }
-
-            beginShape();
-
-              for(var pt in p.points){
-                vertex(p.points[pt].x,
-                       p.points[pt].y);
-              }
-
-            endShape(CLOSE);
-
-          }
-
-        };
-        function caption(){
-
-          function wrapText(n){
-
-            var retVal=n;
-
-            if      (p.text===HEXY_TYPES.CONSECUTIVE    ){ retVal="{" + retVal + "}"; }
-            else if (p.text===HEXY_TYPES.NOT_CONSECUTIVE){ retVal="-" + retVal + "-"; }
-
-            return retVal;
-
-          };
-
-          pushMatrix();
-
-            scale(1,-1);
-
-              textFont(p.font,16);
-              textSize(14);
-              textAlign(CENTER,CENTER);
-
-              switch(p.layout){
-
-                case HEXY_TYPES.BLANK:            break;  /*  Blank never has text            */
-                
-                case HEXY_TYPES.BLACK:            /*  Black only has text when editing        */
-                                                  if(app.mode===APPMODES.CREATE){
-
-                                                    fill(CLRS.WHITE);
-
-                                                    if(p.text===HEXY_TYPES.BLANK){ text('?',0,0);               }
-                                                    else                         { text(wrapText(p.count),0,0); }
-                                                  
-                                                  }
-                                                  
-                                                  break;
-                                                    
-                case HEXY_TYPES.BLUE:             break;  /*  Blue never has text             */
-
-                case HEXY_TYPES.BLACK_REVEALED:   /*  Black revealed always has text  */
-                                                    fill(CLRS.WHITE);
-
-                                                    if(!p.enabled){ fill(getColor(CLRS.WHITE,25)); }
-
-                                                    if(p.text===HEXY_TYPES.BLANK){ text('?',0,0);               }
-                                                    else                         { text(wrapText(p.count),0,0); }
-
-                                                    break;
-
-                case HEXY_TYPES.BLUE_REVEALED:    /* Blue revealed has text with number symbol */
-                                                    if(p.text===HEXY_TYPES.NUMBER){
-
-                                                      fill(CLRS.WHITE);
-                                                      if(!p.enabled){ fill(getColor(CLRS.WHITE,25)); }
-
-                                                      text(wrapText(p.count),0,0);
-
-                                                    }
-
-                                                    break;
-
-                case HEXY_TYPES.DOWN_CENTER:      /* Always has text */
-                                                    if(p.text!==HEXY_TYPES.BLANK){
-
-                                                      textAlign(CENTER,TOP);
-                                                      rotate(0);
-
-                                                      fill(CLRS.BLACK);
-                                                      if(!p.enabled){ fill(getColor(CLRS.BLACK,25)); }
-
-                                                      text(wrapText(p.count),0,0);
-
-                                                    }
-
-                                                    break;
-
-                case HEXY_TYPES.DOWN_LEFT:        /* Always has text */
-                                                    if(p.text!==HEXY_TYPES.BLANK){
-
-                                                      textAlign(CENTER,TOP);
-                                                      rotate(PI/3);
-
-                                                      fill(CLRS.BLACK);
-                                                      if(!p.enabled){ fill(getColor(CLRS.BLACK,25)); }
-
-                                                      text(wrapText(p.count),0,0);
-                                                    }
-
-                                                    break;
-
-                case HEXY_TYPES.DOWN_RIGHT:       /* Always has text */
-                                                    if(p.text!==HEXY_TYPES.BLANK){
-
-                                                      textAlign(CENTER,TOP);
-                                                      rotate(-PI/3);
-
-                                                      fill(CLRS.BLACK);
-                                                      if(!p.enabled){ fill(getColor(CLRS.BLACK,25)); }
-
-                                                      text(wrapText(p.count),0,0);
-
-                                                    }
-
-                                                    break;
-
-                default:                            break;
-
-              }
-
-          popMatrix();
-
-        };
-        function activeCell(){
-          
-          if(p.active && 
-             app.mode!==APPMODES.CREATE &&
-             (p.layout===HEXY_TYPES.BLUE ||
-              p.layout===HEXY_TYPES.BLACK)){
-
-            noStroke();
-            fill(getColor(CLRS.BLACK,15));
-
-            /** Hexagon */
-            beginShape();
-
-              for(var pt in p.hpoints){
-                vertex(p.hpoints[pt].x,
-                       p.hpoints[pt].y);
-              }
-
-            endShape(CLOSE);
-
-          }
-
-        };
-
-        function drawLinks(){
-
-          if(p.active){
-
-            noStroke();
-            strokeWeight(5);
-
-            if(p.top!==null){
-              stroke(CLRS.BLACK);
-              line(p.top.x, p.top.y, p.x, p.y);
-            }
-            if(p.bottom!==null){
-              stroke(CLRS.RED);
-              line(p.bottom.x, p.bottom.y, p.x, p.y);
-            }
-            if(p.topLeft!==null){
-              stroke(CLRS.ORANGE);
-              line(p.topLeft.x, p.topLeft.y, p.x, p.y);
-            }
-            if(p.bottomLeft!==null){
-              stroke(CLRS.YELLOW);
-              line(p.bottomLeft.x, p.bottomLeft.y, p.x, p.y);
-            }
-            if(p.topRight!==null){
-              stroke(CLRS.GREEN);
-              line(p.topRight.x, p.topRight.y, p.x, p.y);
-            }
-            if(p.bottomRight!==null){
-              stroke(CLRS.BLUE);
-              line(p.bottomRight.x, p.bottomRight.y, p.x, p.y);
-            }
-
-          }
-
-        };
-
-        noStroke();
-
-        pushMatrix();
-
-          translate(this.x, this.y);
-
-          scale(1,-1);
-
-            highlight();
-            outerHexagon();
-            innerHexagon();
-            caption();
-            activeCell();
-
-            if(app.hexBoard.activeCell===this &&
-               app.mode===APPMODES.CREATE){
-
-              noFill();
-              strokeWeight(1.5);
-              stroke(CLRS.GRAY);
+  // var HEXY_TYPES={
+
+    // Double up the \ character because it is an escape character and the first one won't be recognised
+
+    // BLANK:            '.',
+    // BLACK:            'o',
+    // BLACK_REVEALED:   'O',
+    // BLUE:             'x',
+    // BLUE_REVEALED:    'X',
+    // DOWN_RIGHT:       '\\',
+    // DOWN_CENTER:      '|',
+    // DOWN_LEFT:        '/',
+
+    // BLANK:            '.',
+    // NUMBER:           '+',
+    // CONSECUTIVE:      'c',
+    // NOT_CONSECUTIVE:  'n'
+
+          function highlight(){
+
+            if(p.layout===HEXY_TYPES.BLACK ||
+               p.layout===HEXY_TYPES.BLACK_REVEALED ||
+               p.layout===HEXY_TYPES.BLUE ||
+               p.layout===HEXY_TYPES.BLUE_REVEALED){
+
+              noStroke();
+              fill(CLRS.WHITE);
 
               beginShape();
 
-                for(var pt in this.bpoints){
-                  vertex(this.bpoints[pt].x,
-                         this.bpoints[pt].y);
+                for(var pt in p.dpoints){
+                  vertex(p.dpoints[pt].x-0.5,
+                         p.dpoints[pt].y-0.5);
                 }
 
               endShape(CLOSE);
 
-              // ellipse(0,0,10,10);
-
             }
 
-            if(this.clickRadius>0){
+          };
+          function outerHexagon(){
 
-// print(this.clickRadius);
-              
-              noStroke();
+            noStroke();
 
-              fill(CLRS.H_ORANGE_L);
+            if(app.mode===APPMODES.CREATE){
 
-              var w=this.clickRadius/2;
+              switch(p.layout){
 
-              rotate(radians(this.clickRadius)*3);
+                case HEXY_TYPES.BLACK:          stroke(CLRS.H_ORANGE);
+                                                strokeWeight(2.5);
+                                                fill(CLRS.H_BLACK);     break;
+
+                case HEXY_TYPES.BLUE:           stroke(CLRS.H_ORANGE);
+                                                strokeWeight(2.5);
+                                                fill(CLRS.H_BLUE);      break;
+
+                case HEXY_TYPES.BLACK_REVEALED: fill(CLRS.H_BLACK);     break;
+                case HEXY_TYPES.BLUE_REVEALED:  fill(CLRS.H_BLUE);      break;
+
+                default:                        noFill();
+                                                stroke(CLRS.BLACK);
+                                                strokeWeight(0.125);
+                                                noStroke();
+                                                break;
+              }
 
               beginShape();
 
-                for(var pt=0; pt<6; pt++){
-                  vertex(cos(radians(pt*60))*w,
-                         sin(radians(pt*60))*w );
+                for(var pt in p.hpoints){
+                  vertex(p.hpoints[pt].x,
+                         p.hpoints[pt].y);
                 }
 
-              endShape();
-
-              this.clickRadius-=5;
-
-              // var offset=HEX_SIZE-this.clickRadius;
-
-              // triangle(0,                -offset,
-                       // this.points[0].x, this.points[0].y-offset,
-                       // this.points[1].x, this.points[1].y-offset);
-
-              // triangle(0,                +offset,
-                       // this.points[1].x, this.points[1].y+offset,
-                       // this.points[2].x, this.points[2].y+offset);
-
-              // triangle(0,                -offset,
-                       // this.points[2].x, this.points[2].y-offset,
-                       // this.points[3].x, this.points[3].y-offset);
-
-              // triangle(0,                +offset,
-                       // this.points[3].x, this.points[3].y+offset,
-                       // this.points[4].x, this.points[4].y+offset);
-
-              // triangle(0,                -offset,
-                       // this.points[4].x, this.points[4].y-offset,
-                       // this.points[5].x, this.points[5].y-offset);
-
-              // triangle(0,                +offset,
-                       // this.points[5].x, this.points[5].y+offset,
-                       // this.points[0].x, this.points[0].y+offset);
-
-              // this.clickRadius-=1;
+              endShape(CLOSE);
 
             }
             else{
-              
-              // if(app.updateCtrls.get(0)===this.id){
-                
-                // app.updateCtrls.remove(this.id);
 
-              // }
+              switch(p.layout){
+
+                case HEXY_TYPES.BLACK:          fill(CLRS.H_ORANGE);  break;
+                case HEXY_TYPES.BLUE:           fill(CLRS.H_ORANGE);  break;
+                case HEXY_TYPES.BLACK_REVEALED: fill(CLRS.H_BLACK);   break;
+                case HEXY_TYPES.BLUE_REVEALED:  fill(CLRS.H_BLUE);    break;
+
+                default:                        noFill();
+                                                stroke(CLRS.BLACK);
+                                                strokeWeight(0.125);
+                                                noStroke();
+                                                break;
+              }
+
+              var offset=0;
+
+              if(p.timer>0 &&
+                 p.dirty===false){
+                offset=random(0,1.5);
+                p.timer--;
+                if(p.timer<=0){ p.dirty=true; }
+
+              }
+
+              beginShape();
+
+                for(var pt in p.hpoints){
+                  vertex(p.hpoints[pt].x+offset,
+                         p.hpoints[pt].y+offset);
+                }
+
+              endShape(CLOSE);
 
             }
 
-        popMatrix();
+          };
+          function innerHexagon(){
+
+            if(app.mode===APPMODES.CREATE){
+
+              noStroke();
+
+              switch(p.layout){
+
+                case HEXY_TYPES.BLACK:          fill(CLRS.H_BLACK_L); break;
+                case HEXY_TYPES.BLUE:           fill(CLRS.H_BLUE_L);  break;
+                case HEXY_TYPES.BLACK_REVEALED: fill(CLRS.H_BLACK_L); break;
+                case HEXY_TYPES.BLUE_REVEALED:  fill(CLRS.H_BLUE_L);  break;
+
+                default:                          noFill();             break;
+
+              }
+
+              beginShape();
+
+                for(var pt in p.points){
+                  vertex(p.points[pt].x,
+                         p.points[pt].y);
+                }
+
+              endShape(CLOSE);
+
+            }
+            else{
+
+              noStroke();
+
+              switch(p.layout){
+
+                case HEXY_TYPES.BLACK:          fill(CLRS.H_ORANGE_L);  break;
+                case HEXY_TYPES.BLUE:           fill(CLRS.H_ORANGE_L);  break;
+                case HEXY_TYPES.BLACK_REVEALED: fill(CLRS.H_BLACK_L);   break;
+                case HEXY_TYPES.BLUE_REVEALED:  fill(CLRS.H_BLUE_L);    break;
+
+                default:                        noFill();               break;
+
+              }
+
+              beginShape();
+
+                for(var pt in p.points){
+                  vertex(p.points[pt].x,
+                         p.points[pt].y);
+                }
+
+              endShape(CLOSE);
+
+            }
+
+          };
+          function caption(){
+
+            function wrapText(n){
+
+              var retVal=n;
+
+              if      (p.text===HEXY_TYPES.CONSECUTIVE    ){ retVal="{" + retVal + "}"; }
+              else if (p.text===HEXY_TYPES.NOT_CONSECUTIVE){ retVal="-" + retVal + "-"; }
+
+              return retVal;
+
+            };
+
+            pushMatrix();
+
+              scale(1,-1);
+
+                textFont(p.font,16);
+                textSize(14);
+                textAlign(CENTER,CENTER);
+
+                switch(p.layout){
+
+                  case HEXY_TYPES.BLANK:            break;  /*  Blank never has text            */
+
+                  case HEXY_TYPES.BLACK:            /*  Black only has text when editing        */
+                                                    if(app.mode===APPMODES.CREATE){
+
+                                                      fill(CLRS.WHITE);
+
+                                                      if(p.text===HEXY_TYPES.BLANK){ text('?',0,0);               }
+                                                      else                         { text(wrapText(p.count),0,0); }
+
+                                                    }
+
+                                                    break;
+
+                  case HEXY_TYPES.BLUE:             break;  /*  Blue never has text             */
+
+                  case HEXY_TYPES.BLACK_REVEALED:   /*  Black revealed always has text  */
+                                                      fill(CLRS.WHITE);
+
+                                                      if(!p.enabled){ fill(getColor(CLRS.WHITE,25)); }
+
+                                                      if(p.text===HEXY_TYPES.BLANK){ text('?',0,0);               }
+                                                      else                         { text(wrapText(p.count),0,0); }
+
+                                                      break;
+
+                  case HEXY_TYPES.BLUE_REVEALED:    /* Blue revealed has text with number symbol */
+                                                      if(p.text===HEXY_TYPES.NUMBER){
+
+                                                        fill(CLRS.WHITE);
+                                                        if(!p.enabled){ fill(getColor(CLRS.WHITE,25)); }
+
+                                                        text(wrapText(p.count),0,0);
+
+                                                      }
+
+                                                      break;
+
+                  case HEXY_TYPES.DOWN_CENTER:      /* Always has text */
+                                                      if(p.text!==HEXY_TYPES.BLANK){
+
+                                                        textAlign(CENTER,TOP);
+                                                        rotate(0);
+
+                                                        fill(CLRS.BLACK);
+                                                        if(!p.enabled){ fill(getColor(CLRS.BLACK,25)); }
+
+                                                        text(wrapText(p.count),0,0);
+
+                                                      }
+
+                                                      break;
+
+                  case HEXY_TYPES.DOWN_LEFT:        /* Always has text */
+                                                      if(p.text!==HEXY_TYPES.BLANK){
+
+                                                        textAlign(CENTER,TOP);
+                                                        rotate(PI/3);
+
+                                                        fill(CLRS.BLACK);
+                                                        if(!p.enabled){ fill(getColor(CLRS.BLACK,25)); }
+
+                                                        text(wrapText(p.count),0,0);
+                                                      }
+
+                                                      break;
+
+                  case HEXY_TYPES.DOWN_RIGHT:       /* Always has text */
+                                                      if(p.text!==HEXY_TYPES.BLANK){
+
+                                                        textAlign(CENTER,TOP);
+                                                        rotate(-PI/3);
+
+                                                        fill(CLRS.BLACK);
+                                                        if(!p.enabled){ fill(getColor(CLRS.BLACK,25)); }
+
+                                                        text(wrapText(p.count),0,0);
+
+                                                      }
+
+                                                      break;
+
+                  default:                            break;
+
+                }
+
+            popMatrix();
+
+          };
+          function activeCell(){
+
+            if(p.active &&
+               app.mode!==APPMODES.CREATE &&
+               (p.layout===HEXY_TYPES.BLUE ||
+                p.layout===HEXY_TYPES.BLACK)){
+
+              noStroke();
+              fill(getColor(CLRS.BLACK,15));
+
+              /** Hexagon */
+              beginShape();
+
+                for(var pt in p.hpoints){
+                  vertex(p.hpoints[pt].x,
+                         p.hpoints[pt].y);
+                }
+
+              endShape(CLOSE);
+
+            }
+
+          };
+
+          function drawLinks(){
+
+            if(p.active){
+
+              noStroke();
+              strokeWeight(5);
+
+              if(p.top!==null){
+                stroke(CLRS.BLACK);
+                line(p.top.x, p.top.y, p.x, p.y);
+              }
+              if(p.bottom!==null){
+                stroke(CLRS.RED);
+                line(p.bottom.x, p.bottom.y, p.x, p.y);
+              }
+              if(p.topLeft!==null){
+                stroke(CLRS.ORANGE);
+                line(p.topLeft.x, p.topLeft.y, p.x, p.y);
+              }
+              if(p.bottomLeft!==null){
+                stroke(CLRS.YELLOW);
+                line(p.bottomLeft.x, p.bottomLeft.y, p.x, p.y);
+              }
+              if(p.topRight!==null){
+                stroke(CLRS.GREEN);
+                line(p.topRight.x, p.topRight.y, p.x, p.y);
+              }
+              if(p.bottomRight!==null){
+                stroke(CLRS.BLUE);
+                line(p.bottomRight.x, p.bottomRight.y, p.x, p.y);
+              }
+
+            }
+
+          };
+
+          noStroke();
+
+          pushMatrix();
+
+            translate(this.x, this.y);
+
+            scale(1,-1);
+
+              highlight();
+              outerHexagon();
+              innerHexagon();
+              caption();
+              activeCell();
+
+              if(app.hexBoard.activeCell===this &&
+                 app.mode===APPMODES.CREATE){
+
+                noFill();
+                strokeWeight(1.5);
+                stroke(CLRS.GRAY);
+
+                beginShape();
+
+                  for(var pt in this.bpoints){
+                    vertex(this.bpoints[pt].x,
+                           this.bpoints[pt].y);
+                  }
+
+                endShape(CLOSE);
+
+                // ellipse(0,0,10,10);
+
+              }
+
+              if(this.clickRadius>0){
+
+  // print(this.clickRadius);
+
+                noStroke();
+
+                fill(CLRS.H_ORANGE_L);
+
+                var w=this.clickRadius/2;
+
+                rotate(radians(this.clickRadius)*3);
+
+                beginShape();
+
+                  for(var pt=0; pt<6; pt++){
+                    vertex(cos(radians(pt*60))*w,
+                           sin(radians(pt*60))*w );
+                  }
+
+                endShape();
+
+                this.clickRadius-=5;
+
+                // var offset=HEX_SIZE-this.clickRadius;
+
+                // triangle(0,                -offset,
+                         // this.points[0].x, this.points[0].y-offset,
+                         // this.points[1].x, this.points[1].y-offset);
+
+                // triangle(0,                +offset,
+                         // this.points[1].x, this.points[1].y+offset,
+                         // this.points[2].x, this.points[2].y+offset);
+
+                // triangle(0,                -offset,
+                         // this.points[2].x, this.points[2].y-offset,
+                         // this.points[3].x, this.points[3].y-offset);
+
+                // triangle(0,                +offset,
+                         // this.points[3].x, this.points[3].y+offset,
+                         // this.points[4].x, this.points[4].y+offset);
+
+                // triangle(0,                -offset,
+                         // this.points[4].x, this.points[4].y-offset,
+                         // this.points[5].x, this.points[5].y-offset);
+
+                // triangle(0,                +offset,
+                         // this.points[5].x, this.points[5].y+offset,
+                         // this.points[0].x, this.points[0].y+offset);
+
+                // this.clickRadius-=1;
+
+              }
+              else{
+
+                // if(app.updateCtrls.get(0)===this.id){
+
+                  // app.updateCtrls.remove(this.id);
+
+                // }
+
+              }
+
+          popMatrix();
 
         // drawLinks();
 
@@ -4298,6 +4417,8 @@ var diagrams = function(processingInstance){
       /* Overridden because of the shape */
 
         // if(this.parent.hit){
+          
+          if(this.visible===false){ return; }
 
           if(this.outerHitTest(x,y)){
 
@@ -4339,7 +4460,7 @@ var diagrams = function(processingInstance){
 
             this.incrementCellLayout();
             this.recalculate();
-            
+
           }
           else if(app.mode===APPMODES.GAME){
 
@@ -4422,30 +4543,30 @@ var diagrams = function(processingInstance){
 
         switch(this.layout){
 
-          case HEXY_TYPES.BLANK:          this.layout=HEXY_TYPES.BLACK;           
+          case HEXY_TYPES.BLANK:          this.layout=HEXY_TYPES.BLACK;
                                           this.text=HEXY_TYPES.NUMBER;            break;
-                                          
+
           case HEXY_TYPES.BLACK:          this.layout=HEXY_TYPES.BLACK_REVEALED;
                                           this.text=HEXY_TYPES.NUMBER;            break;
-                                          
+
           case HEXY_TYPES.BLACK_REVEALED: this.layout=HEXY_TYPES.BLUE;
                                           this.text=HEXY_TYPES.BLANK;             break;
-                                          
+
           case HEXY_TYPES.BLUE:           this.layout=HEXY_TYPES.BLUE_REVEALED;
                                           this.text=HEXY_TYPES.BLANK;             break;
-                                          
+
           case HEXY_TYPES.BLUE_REVEALED:  this.layout=HEXY_TYPES.DOWN_RIGHT;
                                           this.text=HEXY_TYPES.NUMBER;            break;
-                                          
+
           case HEXY_TYPES.DOWN_RIGHT:     this.layout=HEXY_TYPES.DOWN_CENTER;
                                           this.text=HEXY_TYPES.NUMBER;            break;
-                                          
+
           case HEXY_TYPES.DOWN_CENTER:    this.layout=HEXY_TYPES.DOWN_LEFT;
                                           this.text=HEXY_TYPES.NUMBER;            break;
-                                          
+
           case HEXY_TYPES.DOWN_LEFT:      this.layout=HEXY_TYPES.BLANK;
                                           this.text=HEXY_TYPES.BLANK;             break;
-                                          
+
           default:                                                                break;
 
         }
@@ -4459,34 +4580,34 @@ var diagrams = function(processingInstance){
 
           case HEXY_TYPES.BLANK:          this.layout=HEXY_TYPES.DOWN_LEFT;
                                           this.text=HEXY_TYPES.NUMBER;            break;
-                                          
+
           case HEXY_TYPES.BLACK:          this.layout=HEXY_TYPES.BLANK;
                                           this.text=HEXY_TYPES.BLANK;             break;
-                                          
+
           case HEXY_TYPES.BLACK_REVEALED: this.layout=HEXY_TYPES.BLACK;
                                           this.text=HEXY_TYPES.NUMBER;            break;
-                                                    
+
           case HEXY_TYPES.BLUE:           this.layout=HEXY_TYPES.BLACK_REVEALED;
                                           this.text=HEXY_TYPES.NUMBER;            break;
-                                          
+
           case HEXY_TYPES.BLUE_REVEALED:  this.layout=HEXY_TYPES.BLUE;
                                           this.text=HEXY_TYPES.BLANK;             break;
-                                                    
+
           case HEXY_TYPES.DOWN_RIGHT:     this.layout=HEXY_TYPES.BLUE_REVEALED;
                                           this.text=HEXY_TYPES.BLANK;             break;
-          
+
           case HEXY_TYPES.DOWN_CENTER:    this.layout=HEXY_TYPES.DOWN_RIGHT;
                                           this.text=HEXY_TYPES.NUMBER;            break;
-                                          
+
           case HEXY_TYPES.DOWN_LEFT:      this.layout=HEXY_TYPES.DOWN_CENTER;
                                           this.text=HEXY_TYPES.NUMBER;            break;
 
           default:                                                                break;
 
         }
-        
+
         // this.parent.update();
-        
+
       };
       hexCell.prototype.recalculate=function(){
 
@@ -4495,16 +4616,6 @@ var diagrams = function(processingInstance){
       };
 
     }
-
-    var TRANSITION_TYPES={
-
-      FADE:     0,
-      SLIDE:    1,
-      CENTER:   2,
-      EDGES:    3,
-      HEXAGON:  4
-
-    };
 
     /* Transition           */
     {
@@ -4521,15 +4632,21 @@ var diagrams = function(processingInstance){
 
         this.incr     = -2;
 
+        this.visible  = props.visible;
+
         app.transition=this;
 
       };
       transition.prototype=Object.create(control.prototype);
       transition.prototype.draw=function(){
+        
+        if(this.visible===false){ return; }
 
           var p=this;
-          
-          this.active=this.hit && app.focus===this;
+
+          this.active=this.hit &&
+                      app.focus===this &&
+                      this.visible===true;
 
           pushMatrix();
 
@@ -4537,10 +4654,10 @@ var diagrams = function(processingInstance){
             // scale(1,-1);
 
             function fade(){
-              
+
               fill(getColor(p.color,p.timer));
               noStroke();
-              
+
                 rect(0, 0, p.w, p.h);
 
             };
@@ -4548,28 +4665,28 @@ var diagrams = function(processingInstance){
 
               fill(p.color);
               noStroke();
-                
+
               var w=p.timer/100*p.w;
-                
+
                 rect(0, 0, w, p.h);
-                
+
             };
             function center(){
 
               fill(p.color);
               noStroke();
-              
+
               var w=p.timer/100*p.w;
               var h=p.timer/100*p.h;
-                
+
                 rect((p.w-w)/2, (p.h-h)/2, w, h);
-              
+
             };
             function edges(){
-              
+
               fill(p.color);
               noStroke();
-              
+
               var left    = -p.timer/100*p.w/2;
               var right   =  p.w/2+p.timer/100*p.w/2;
               var top     =  -p.timer/100*p.h/2;
@@ -4585,9 +4702,9 @@ var diagrams = function(processingInstance){
 
               fill(p.color);
               noStroke();
-              
+
               var m=p.timer*5;
-              
+
               beginShape();
 
                 for(var n=0; n<6; n++){
@@ -4600,9 +4717,9 @@ var diagrams = function(processingInstance){
               endShape(CLOSE);
 
             };
-            
+
             if(this.on){
-              
+
               switch(this.type){
 
                 case TRANSITION_TYPES.FADE:     fade();     break;
@@ -4623,8 +4740,39 @@ var diagrams = function(processingInstance){
               this.timer+=this.incr;
 
             }
-            
+
           popMatrix();
+
+      };
+      transition.prototype.moved= function(x,y){
+print(this.id);
+        if(this.visible===false){ return; }
+
+          if(mouseX>(this.x+x) &&
+             mouseX<(this.x+x) + this.w &&
+             mouseY>(this.y+y) &&
+             mouseY<(this.y+y) + this.h){
+
+            if(this.parent.hit){
+
+              this.hit=true;
+
+              if(this.on){
+                app.focus=this;
+              }
+
+              for(var c in this.controls){ this.controls[c].moved((this.x+x), (this.y+y)); }
+
+            }
+
+          }
+          else{
+
+            this.hit=false;
+
+            for(var c in this.controls){ this.controls[c].hit=false; }
+
+          }
 
       };
 
@@ -4649,8 +4797,7 @@ var diagrams = function(processingInstance){
       /* root control      */
       var rt=new root(100, 0, 0, width, height,
         {text:      'root',
-         acolor:    color(239),
-         icolor:    color(239),
+         visible:   true,
          font:      monoFont,
          cursor:    ARROW,
          border:    true});
@@ -4658,30 +4805,34 @@ var diagrams = function(processingInstance){
       app.controls.push(rt);
 
       /* hexBoard           */
-      // rt.controls.push(new hexBoard(200, rt, 0, 0, 600, 600,
-        // {font:      'sans-serif',
-         // color:     color(222),
-         // cursor:    ARROW,
-         // size:      0}));
-      
+      rt.controls.push(new hexBoard(200, rt, 0, 0, 600, 600,
+        {font:      'sans-serif',
+         color:     color(222),
+         visible:   true,
+         cursor:    ARROW,
+         size:      0}));
+
       /* reset button       */
       rt.controls.push(new i_Button(300, rt, 550, 550, 40, 40,
         {font:      'sans-serif',
          cursor:    HAND,
+         visible:   true,
          execute:   reset,
          color:     CLRS.BLACK}));
 
       /* music            */
-      rt.controls.push(new music(400, rt, 35, 565, 50, 50,
-        {font:      'sans-serif',
-         cursor:    HAND,
-         execute:   setMusic,
-         retrieve:  getMusic,
-         color:     color(192)}));
+      // rt.controls.push(new music(400, rt, 35, 565, 50, 50,
+        // {font:      'sans-serif',
+         // cursor:    HAND,
+         // visible:   true,
+         // execute:   setMusic,
+         // retrieve:  getMusic,
+         // color:     color(192)}));
 
       /* score            */
       // rt.controls.push(new score(500, rt, 475, 115, 50, 50,
         // {font:      'sans-serif',
+         // visible:   true,
          // cursor:    HAND,
          // execute:   getRemaining,
          // retrieve:  getMistakes,
@@ -4692,22 +4843,24 @@ var diagrams = function(processingInstance){
         // {text:      'puzzle complete',
          // color:     CLRS.WHITE,
          // font:      monoFont,
+         // visible:   true,
          // cursor:    ARROW,
          // border:    true});
 
       // app.controls.push(pc);
-         
+
       /* PuzzleSelect      */
-      rt.controls.push(new puzzleSelect(600, rt, 0, 0, width, height,
-        {text:      'Puzzle Select',
-         retrieve:  getScore,
-         color:     CLRS.WHITE,
-         font:      monoFont,
-         cursor:    ARROW,         
-         border:    true}));
-         
+      // var ps=new puzzleSelect(600, rt, 0, 0, width, height,
+        // {text:      'Puzzle Select',
+         // retrieve:  getScore,
+         // color:     CLRS.WHITE,
+         // font:      monoFont,
+         // visible:   true,
+         // cursor:    ARROW,
+         // border:    true});
+
       // app.controls.push(ps);
-         
+
 
 
       /* SplashScreen ------------------------------------------------- */
@@ -4736,17 +4889,19 @@ var diagrams = function(processingInstance){
       var telem=new telemetry(900, rt, width-195, 5, 190, height-10,
         {color:     color(36),
          font:      serifFont,
+         visible:   true,
          cursor:    ARROW});
 
       rt.controls.push(telem);
 
       /* Transition ---------------------------------------------------- */
-      var trans=new transition(1000, rt, 0, 0, width-200, height,
-        {color:     CLRS.H_BLUE_L,
-         type:      TRANSITION_TYPES.FADE});
+      // var trans=new transition(1000, rt, 0, 0, width-200, height,
+        // {color:     CLRS.H_BLUE_L,
+         // visible:   true,
+         // type:      TRANSITION_TYPES.FADE});
 
-      rt.controls.push(trans);
-      
+      // rt.controls.push(trans);
+
   };
 
   // var n=220;
@@ -4754,13 +4909,13 @@ var diagrams = function(processingInstance){
   function intro(){ };
   function extro(){ };
   function instructions(){ };
-  
+
   function getPuzzleNumber(){
 
     return ((app.puzzle-(app.puzzle%6))/6+1) + '-' + (app.puzzle%6+1);
 
   };
-  
+
   function play(){
 
     // frameRate(0);
@@ -4886,13 +5041,6 @@ var diagrams = function(processingInstance){
   }
   /** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-  // var balls = new ArrayList();  // Create an empty ArrayList
-
-  // balls.add("A");
-
-  // print(balls.get(0));
-
-  
   draw=function(){
 
     app.frameRate=this.__frameRate;
@@ -4910,9 +5058,9 @@ var diagrams = function(processingInstance){
   };
 
   print( typeof app.transition );
-  
-app.transition.on=false;
-app.transition.type=TRANSITION_TYPES.HEXAGON;
+
+// app.transition.on=false;
+// app.transition.type=TRANSITION_TYPES.EDGES;
 
   // app.levelScores[31]=1111;
 
@@ -4995,23 +5143,6 @@ print(keyCode);
 
     mouseClicked=function(){
 
-      // if(app.orientation===ORIENTATIONS.FLAT){
-        // app.orientation=ORIENTATIONS.POINTY;
-        // app.hexBoard.reset();
-        // print('pointy');
-      // }
-      // else{
-        // app.orientation=ORIENTATIONS.FLAT;
-        // app.hexBoard.reset();
-        // print('flat');
-      // }
-
-      // if(mouseButton===RIGHT){ execute=play; }
-
-      // forEach(app.controls,'clicked');
-
-      // app.mode=APPMODES.CREATE;
-
       switch(mouseButton){
 
         case LEFT:    forEach(app.controls,'clicked');  break;
@@ -5035,8 +5166,6 @@ print(keyCode);
 
       }
 
-      // forEach(app.controls,'pressed');
-
     };
     mouseReleased=function(){
 
@@ -5058,47 +5187,30 @@ print(keyCode);
 
     };
     mouseMoved=function(){
-    
+
       app.mouseX=mouseX;
       app.mouseX=mouseY;
 
       for(var c in app.controls){ app.controls[c].moved(0,0); }
 
-      // execute();
-
     };
     mouseDragged=function(){
-
-      // if(app.left){ app.dragging=true; }
-
-      // switch(mouseButton){
-
-        // case LEFT:   forEach(app.controls,'dragged'); break;
-        // case RIGHT:  for(var c in app.controls){ app.controls[c].rClicked(); } break;
-        // case CENTER: for(var c in app.controls){ app.controls[c].cClicked(); } break;
-
-        // default:     break;
-
-      // }
 
     };
     mouseOut=function(){
 
-      // app.dragging=false;
+      app.dragging=false;
 
-      // forEach(app.controls,'out');
+      forEach(app.controls,'out');
 
-      // app.focus=-1;
-
-      // execute();
+      app.focus=-1;
 
     };
     mouseOver=function(){
 
-      // forEach(app.controls,'over');
-      // app.focus=-2;
+      forEach(app.controls,'over');
 
-      // execute();
+      app.focus=-2;
 
     };
 
