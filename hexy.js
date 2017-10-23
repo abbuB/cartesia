@@ -563,7 +563,7 @@ var diagrams = function(processingInstance){
   /* Containers/Controls =================================================== */
   {
 
-    /* Control - default              */
+    /* Control - default --------------------------------------------------  */
     {
 
       var control=function(id, parent, x, y, w, h){
@@ -597,7 +597,7 @@ var diagrams = function(processingInstance){
       control.prototype.draw     = function(){};
       control.prototype.moved    = function(x,y){
 
-        if(this.visible===false){ return; }
+        if(!this.visible){ return; }
         
           if(mouseX>(this.x+x) &&
              mouseX<(this.x+x) + this.w &&
@@ -651,7 +651,7 @@ var diagrams = function(processingInstance){
       root.prototype=Object.create(control.prototype);
       root.prototype.draw=function(){
         
-        if(this.visible===false){ return; }
+        if(!this.visible){ return; }
         
           this.active=this.hit &&
                       app.focus===this;
@@ -685,7 +685,7 @@ var diagrams = function(processingInstance){
       root.prototype.moved=function(x,y){
       /* Required because root control doesn't have a parent */
         
-        if(this.visible===false){ return; }
+        if(!this.visible){ return; }
           
           if(mouseX>(this.x+x) &&
              mouseX<(this.x+x) + this.w &&
@@ -724,7 +724,7 @@ var diagrams = function(processingInstance){
       container.prototype=Object.create(control.prototype);
       container.prototype.draw=function(){
 
-        if(this.visible===false){ return; }
+        if(!this.visible){ return; }
         
           this.active=this.hit &&
                       app.focus===this;
@@ -796,7 +796,7 @@ var diagrams = function(processingInstance){
       puzzleComplete.prototype=Object.create(control.prototype);
       puzzleComplete.prototype.draw=function(){
 
-        if(this.visible===false){ return; }
+        if(!this.visible){ return; }
               
           this.active = this.hit &&
                         app.focus===this;
@@ -949,7 +949,7 @@ var diagrams = function(processingInstance){
       puzzleSelect.prototype=Object.create(control.prototype);
       puzzleSelect.prototype.draw=function(){
      
-        if(this.visible===false){ return; }
+        if(!this.visible){ return; }
 
           this.active = this.hit &&
                         app.focus===this;
@@ -1005,7 +1005,7 @@ var diagrams = function(processingInstance){
       telemetry.prototype=Object.create(control.prototype);
       telemetry.prototype.draw=function(){
 
-        if(this.visible===false ||
+        if(!this.visible ||
            app.debug===false){ return; }
 
           function border(){
@@ -1172,7 +1172,7 @@ var diagrams = function(processingInstance){
       telemetry.prototype.moved=function(x,y){
       /* Overridden because of the dynamic x-coordinate offset */
         
-        if(this.visible===false){ return; }
+        if(!this.visible){ return; }
         
         // if(app.telemetry===false &&
            // this.offset===0){ return; }
@@ -1211,8 +1211,10 @@ var diagrams = function(processingInstance){
 
         control.call(this, id, parent, x, y, w, h);
 
+        /* ------------------------------------------------- */
         this.color          = props.color;
 
+        /* ------------------------------------------------- */
         this.activeCell     = null;
 
         this.layout         = [];   //  Array of the layout of hexcells
@@ -1221,10 +1223,10 @@ var diagrams = function(processingInstance){
         this.lines          = [];   //  Array of hexCells with highlight lines activated
         this.halos          = [];   //  Array of hexCells with a halo activated
 
-        this.clrOffset      = 0;
-        this.clrIncr        = 0.5;
+        this.clrOffset      = 0;    //  Used to pulsate the halo
+        this.clrIncr        = 0.5;  //  Something, something halo
 
-        app.hexBoard=this;
+        app.hexBoard        = this; //  Set a global hexBoard reference
 
         this.reset();
 
@@ -1234,7 +1236,7 @@ var diagrams = function(processingInstance){
 
         var p=this;             //  Set a reference to the hexBoard control
 
-        this.controls=[];       //  Clear the controls array
+        this.controls   = [];   //  Clear the controls array
         this.activeCell = null; //  Clear the active hexCell
 
         this.layout=[
@@ -1261,7 +1263,7 @@ var diagrams = function(processingInstance){
                      ['.', '.', '.', '+', '+', '+', '.', '.', '.', '+', '+', '+', '.', '.', '.'],
                      ['.', '+', '+', 'x', '.', '.', '+', '+', '.', '+', '.', '+', '+', '+', '.'],
                      ['.', 'x', '+', '+', '+', '+', '+', '+', '+', '+', '.', '.', '+', '+', '.'],
-                     ['.', '.', '.', '+', '.', '+', '.', '.', '+', '.', 'o', '+', '+', '.', '.'],
+                     ['.', '.', '.', '+', '.', '+', '.', '.', '+', '.', '+', '+', '+', '.', '.'],
                      ['.', '+', '.', '.', '.', '.', '+', '+', '+', '.', '.', '.', '.', '+', '.'],
                      ['+', 'x', '+', '+', '.', '.', '+', '+', '+', '.', '.', '+', '.', '+', '.'],
                      ['.', '.', '.', 'x', '+', '.', '.', '.', '+', '.', '.', '+', '+', '+', '.'],
@@ -1277,8 +1279,8 @@ var diagrams = function(processingInstance){
         var n=0;          // Iterator
 
         function load(){
-
-          p.controls=[];
+          
+          app.controlCount=0;
 
           HEX_SIZE=width/(p.layout.length+2);
 
@@ -1343,7 +1345,7 @@ var diagrams = function(processingInstance){
       };
       hexBoard.prototype.draw         = function(){
 
-        if(this.visible===false){ return; }
+        if(!this.visible){ return; }
               
           var p=this;
 
@@ -1403,8 +1405,8 @@ var diagrams = function(processingInstance){
           };
           function calculateRemaining(){
 
-            app.remaining=0;
-            app.covered=0;
+            app.remaining = 0;
+            app.covered   = 0;
 
             var total=0;
             var covered=0;
@@ -1424,8 +1426,8 @@ var diagrams = function(processingInstance){
               }
             }
 
-            app.remaining=total;
-            app.covered=covered;
+            app.remaining = total;
+            app.covered   = covered;
 
           };
           function drawHalos(){
@@ -1507,6 +1509,7 @@ var diagrams = function(processingInstance){
 
           this.active=this.hit &&
                       app.focus===this;
+
           this.lines=[];
           this.halos=[];
 
@@ -1517,41 +1520,38 @@ var diagrams = function(processingInstance){
               noStroke();
               fill(this.color);
 
-              rect(this.x,   this.y, this.w, this.h);
+                rect(this.x, this.y, this.w, this.h);
+              
+              // update and draw
+              var ctrls=p.controls;
 
-                var ctrls=this.controls;
+              for(var r in ctrls){
+                for(var c in ctrls[r]){
 
-                for(var r in ctrls){
-                  for(var c in ctrls[r]){
-
-                    if(ctrls[r][c].line){
-                      this.lines.push(ctrls[r][c]);
-                    }
-
-                    if(ctrls[r][c].halo){
-                      this.halos.push(ctrls[r][c]);
-                    }
-
-                    ctrls[r][c].draw();
-
+                  if(ctrls[r][c].line){
+                    p.lines.push(ctrls[r][c]);
                   }
-                }
 
-                if(this.lines.length>0){
-                  drawGuideLines();
-                }
-                if(this.halos.length>0){
-                  drawHalos();
-                }
+                  if(ctrls[r][c].halo){
+                    p.halos.push(ctrls[r][c]);
+                  }
 
-                calculateRemaining();
+                  ctrls[r][c].draw();
+
+                }
+              }
+
+              if(this.lines.length>0){ drawGuideLines(); }
+              if(this.halos.length>0){ drawHalos();      }
+
+              calculateRemaining();
 
           popMatrix();
 
       };
       hexBoard.prototype.moved      = function(x,y){
 
-        if(this.visible===false){ return; }
+        if(!this.visible){ return; }
         
           if(mouseX>(this.x+x) &&
              mouseX<(this.x+x) + this.w &&
@@ -2122,104 +2122,6 @@ var diagrams = function(processingInstance){
 
     /* Controls ============================================================ */
 
-    /** Button          -------------------------------------------------- */
-    {
-
-      function button(id, parent, x, y, w, h, props){
-
-        control.call(this, id, parent, x, y, w, h);
-
-        this.execute  = props.execute;
-        this.retrieve = props.retrieve;
-        this.text     = props.text;
-        this.color    = props.color;
-        this.cursor   = props.cursor;
-        this.font     = props.font;
-        
-        this.visible  = props.visible;
-
-        this.on=false;
-
-      };
-      button.prototype=Object.create(control.prototype);
-      button.prototype.draw=function(){
-        
-        if(this.visible===false){ return; }
-
-          this.offset=0;
-          this.active=this.hit && app.focus===this;
-
-          pushMatrix();
-
-            translate(this.x, this.y);
-            scale(1,-1);
-
-              // Border
-              strokeWeight(0.75);
-              fill(getColor(CLRS.ACTIVE, 5));
-              noStroke();
-
-              // if(this.hit   ){ fill(getColor(CLRS.ACTIVE, 50)); }
-              if(this.active && this.hit){
-                if(app.left){ this.offset=1; }
-                              cursor(this.cursor);
-                              fill(getColor(CLRS.ACTIVE, 50));
-              }
-
-              rect(this.offset, -this.h-this.offset, this.w, this.h, 3);
-
-              // Caption
-              if(this.active){ fill(255,255,255); }
-              else           { fill(128,128,128); }
-
-              scale(1,-1);
-
-              textFont(this.font);
-              textAlign(CENTER,CENTER);
-              this.w=textWidth(this.text)+10;
-
-                text(this.text, this.w/2+this.offset, this.h/2+this.offset);
-
-          popMatrix();
-
-      };
-      button.prototype.moved=function(x,y){
-
-        if(this.parent.hit){
-
-          if(this.visible===false){ return; }
-        
-          if(mouseX>(this.x+x) &&
-             mouseX<(this.x+x) + this.w &&
-             mouseY>(this.y+y) &&
-             mouseY<(this.y+y) + this.h){
-
-              this.hit=true;
-              app.focus=this;
-
-          }
-          else{
-
-            this.hit=false;
-
-          }
-
-        }
-
-      };
-      button.prototype.clicked=function(){
-      /* Overridden to maintain on/off value */
-
-        if(this.active){
-
-          this.execute();
-
-        }
-
-      };
-
-    }
-
     /** Music           -------------------------------------------------- */
     {
 
@@ -2227,26 +2129,17 @@ var diagrams = function(processingInstance){
 
         control.call(this, id, parent, x, y, w, h);
 
+        this.cursor   = props.cursor;
+        
         this.execute  = props.execute;
         this.retrieve = props.retrieve;
-
-        this.text     = props.text;
-
-        this.color    = props.color;
-        this.cursor   = props.cursor;
-        this.font     = props.font;
-
-        this.visible  = props.visible;
-        
-        this.on       = false;
 
       };
       music.prototype=Object.create(control.prototype);
       music.prototype.draw=function(){
 
-        if(this.visible===false){ return; }
+        if(!this.visible){ return; }
 
-          this.offset=0;
           this.active=this.hit &&
                       app.focus===this;
 
@@ -2255,17 +2148,11 @@ var diagrams = function(processingInstance){
             translate(this.x, this.y);
             scale(1,-1);
 
-              // Border
-              strokeWeight(0.75);
-              fill(getColor(CLRS.ACTIVE, 5));
               noStroke();
 
-              if(this.active && this.hit){
-
-                if(app.left){ this.offset=1; }
+              if(this.active){
 
                 cursor(this.cursor);
-                fill(getColor(CLRS.ACTIVE, 50));
 
                 fill(getColor(CLRS.BLACK,5));
 
@@ -2274,25 +2161,11 @@ var diagrams = function(processingInstance){
               }
 
               scale(1,-1);
-
-              if(this.retrieve()){
-
-                fill(getColor(CLRS.BLACK,50));
-
-              }
-              else{
-
-                noFill();
-                stroke(color(192));
-                strokeWeight(3);
-
-                  ellipse(0, 0, this.w-5, this.w-5);
-
-                  line(-15, 15, 15,-15);
-
-                fill(color(192));
-
-              }
+              
+              this.on=this.retrieve();
+              
+              if(this.on){ fill(128); }
+              else       { fill(164); }
 
               textFont(this.font);
               textSize(36);
@@ -2300,14 +2173,26 @@ var diagrams = function(processingInstance){
 
                 text(CONSTANTS.NOTE, 0, 0);
 
+              noFill();
+              
+              if(!this.on){
+                stroke(164);
+                strokeWeight(3);
+
+                  ellipse(0, 0, this.w-5, this.w-5);
+
+                  line(-15, 15, 15,-15);
+
+              }
+
           popMatrix();
 
       };
       music.prototype.moved=function(x,y){
 
+        if(!this.visible){ return; }
+      
         if(this.parent.hit){
-          
-          if(this.visible===false){ return; }
 
           if(dist(mouseX, mouseY,
                   this.x+x,
@@ -2346,28 +2231,23 @@ var diagrams = function(processingInstance){
 
         control.call(this, id, parent, x, y, w, h);
 
+        this.cursor   = props.cursor;
+        this.color    = props.color;
+
         this.execute  = props.execute;
         this.retrieve = props.retrieve;
-
-        this.text     = props.text;
-
-        this.color    = props.color;
-        this.cursor   = props.cursor;
-        this.font     = props.font;
-        
-        this.visible  = props.visible;
-        
-        this.on       = false;
 
       };
       score.prototype=Object.create(control.prototype);
       score.prototype.draw=function(){
 
-        if(this.visible===false){ return; }
+        if(!this.visible){ return; }
+
+          this.active=this.hit &&
+                      app.focus===this;
 
           this.offset=0;
-          this.active=this.hit && app.focus===this;
-
+                      
           pushMatrix();
 
             translate(this.x, this.y);
@@ -2376,7 +2256,7 @@ var diagrams = function(processingInstance){
               textFont(this.font);
               textSize(20);
 
-              var categories='Remaining' + '\n\n' +
+              var categories='Remaining'    + '\n\n' +
                              'Mistakes';
               var values    =this.execute() + '\n\n' +
                              this.retrieve();
@@ -2402,39 +2282,6 @@ var diagrams = function(processingInstance){
                 text(values,      w-10, -76);
 
           popMatrix();
-
-      };
-      score.prototype.moved=function(x,y){
-
-        if(this.parent.hit){
-
-          if(this.visible===false){ return; }
-        
-          if(dist(mouseX, mouseY,
-                  this.x+x,
-                  this.y+y)<this.w/2){
-
-              this.hit=true;
-              app.focus=this;
-
-          }
-          else{
-
-            this.hit=false;
-
-          }
-
-        }
-
-      };
-      score.prototype.clicked=function(){
-      /* Overridden to maintain on/off value */
-
-        if(this.active){
-
-          // this.execute();
-
-        }
 
       };
 
@@ -2479,7 +2326,7 @@ var diagrams = function(processingInstance){
       puzzle_Button.prototype=Object.create(control.prototype);
       puzzle_Button.prototype.draw=function(){
         
-        if(this.visible===false){ return; }
+        if(!this.visible){ return; }
         
           var p=this;
           var offset=this.offset=0;
@@ -2622,9 +2469,9 @@ var diagrams = function(processingInstance){
 
       };
       puzzle_Button.prototype.moved=function(x,y){
-      /* Overridden because of the shap */
+      /** Overridden for shape */
 
-        if(this.visible===false){ return; }
+        if(!this.visible){ return; }
 
           if(this.parent.hit){
 
@@ -2672,9 +2519,9 @@ var diagrams = function(processingInstance){
 
           }
 
-      };
-      /** Overridden for execute */
+      };      
       puzzle_Button.prototype.clicked=function(){
+      /** Overridden for execute */
 
         if(this.active){
 
@@ -2703,17 +2550,14 @@ var diagrams = function(processingInstance){
         this.cursor   = props.cursor;
 
         this.execute  = props.execute;
-        // this.retrieve = props.retrieve;
 
         this.color    = props.color;
-        
-        // this.visible  = props.visible;
-
+           
       };
       hexy_Button.prototype=Object.create(control.prototype);
       hexy_Button.prototype.draw=function(){
 
-        if(this.visible===false){ return; }
+        if(!this.visible){ return; }
       
           var p=this;
           this.offset=0;
@@ -2836,7 +2680,6 @@ var diagrams = function(processingInstance){
                       app.focus===this;
           
           this.offset=0;
-          // this.on=this.retrieve();
 
           pushMatrix();
 
@@ -2860,40 +2703,42 @@ var diagrams = function(processingInstance){
 
           popMatrix();
 
-      };
+      };      
+      hexy_Button.prototype.clicked=function(){
       /** Overridden for execute */
-      hexy_Button.prototype.clicked=function(){ if(this.active){ this.execute(this.text); } };
+      
+        if(this.active){ this.execute(this.text); }
+        
+      };
 
     }
 
-    /** Icon Button     -------------------------------------------------- */
+    /** Reset Button    -------------------------------------------------- */
     {
 
-      function i_Button(id, parent, x, y, w, h, props){
+      function resetButton(id, parent, x, y, w, h, props){
 
         control.call(this, id, parent, x, y, w, h);
 
         this.cursor   = props.cursor;
-
-        this.execute  = props.execute;
-        this.retrieve = props.retrieve;
-
         this.color    = props.color;
 
-      };
-      i_Button.prototype=Object.create(control.prototype);
-      i_Button.prototype.draw=function(){
-        
-        if(this.visible===false){ return; }
-        
-          var p=this;
-          this.offset=0;
+        this.execute  = props.execute;
 
-          function reset(){
+      };
+      resetButton.prototype=Object.create(control.prototype);
+      resetButton.prototype.draw=function(){
+        
+        if(!this.visible){ return; }
+
+          this.active=this.hit &&
+                      app.focus===this;
+
+          this.offset=0;
 
             pushMatrix();
 
-              translate(p.w/2,p.h/2);
+              translate(this.x,this.y);
 
                 var sz=0.67;
                 var clr=color(128);
@@ -2902,33 +2747,33 @@ var diagrams = function(processingInstance){
 
                 stroke(getColor(clr, 50));
 
-                if(p.active){
+                if(this.active){
 
                   noStroke();
                   fill(getColor(CLRS.BLACK,5));
 
-                    ellipse(0, 0, p.w, p.w);
+                    ellipse(0, 0, this.w, this.w);
 
                   stroke(getColor(clr, 100));
-                  cursor(p.cursor);
+                  cursor(this.cursor);
 
                 }
 
                 strokeWeight(1.5);
                 noFill();
 
-                if(p.active &&
+                if(this.active &&
                    app.left){
 
                   rotate(radians(45));
 
                 }
 
-                  arc(0, 0, p.w*sz, p.h*sz, radians(60), 2*PI-radians(22.5));
+                  arc(0, 0, this.w*sz, this.h*sz, radians(60), 2*PI-radians(22.5));
 
                 fill(getColor(clr, 50));
 
-                if(p.active){ fill(getColor(clr, 100)); }
+                if(this.active){ fill(getColor(clr, 100)); }
 
                   pushMatrix();
 
@@ -2943,615 +2788,40 @@ var diagrams = function(processingInstance){
 
             popMatrix();
 
-          };
-
-          this.active=this.hit && app.focus===this;
-          this.offset=0;
-          // this.on=this.retrieve();
-
-          pushMatrix();
-
-            translate(this.x, this.y);
-
-              // noStroke();
-              // noFill();
-
-              // if(this.active){ cursor(this.cursor);
-                               // if(app.left){ this.offset=1; } }
-              // if(this.active ||
-                 // this.on    ){ fill(getColor(CLRS.BLACK,10)); }
-
-                //  Background
-                // rect(this.offset, this.offset, this.w, this.h, 2);
-
-              reset();
 
           popMatrix();
 
-      };
+      };      
+      resetButton.prototype.clicked=function(){
       /** Overridden for execute */
-      i_Button.prototype.clicked=function(){ if(this.active){ this.execute(); } };
-
-    }
-
-    /** Hexagon Button  -------------------------------------------------- */
-    {
-
-      function hexButton(id, parent, x, y, w, h, props){
-
-        control.call(this, id, parent, x, y, w, h);
-
-        this.outerHit=false;
-        this.offset=0;
-
-        this.path=[];
-
-        this.row      = props.row;
-        this.col      = props.col;
-
-        this.ordinal  = props.ordinal;   //  Counting #
-        this.integer  = props.integer;   //  display #
-        this.total    = props.integer;   //  path total to this point
-
-        // this.execute  = props.execute;
-        // this.retrieve = props.retrieve;
-        this.color    = props.color;
-        this.cursor   = props.cursor;
-
-        this.font     = props.font;
-
-        this.active   = false;
-        this.on       = props.on;
-        this.visible  = props.visible;
-
-        this.choose   = true;
-
-        this.textSize = 0;
-
-        /* Initialize */
-        var w2=this.w/2;
-        var xPos=cos(radians(30))*w2;
-        var yPos=(w2/cos(radians(30)));
-
-        this.p1=new pnt( xPos, sin(radians( 30))*w2);
-        this.p2=new pnt(    0,                   w2);
-        this.p3=new pnt(-xPos, sin(radians(150))*w2);
-        this.p4=new pnt(-xPos, sin(radians(210))*w2);
-        this.p5=new pnt(    0,                  -w2);
-        this.p6=new pnt( xPos, sin(radians(330))*w2);
-
-        var setTextSize=function(p){
-
-          var sz=p.w/2.5;
-
-          textSize(sz);
-
-          while(textWidth(p.integer)>(p.w-10)){
-            textSize(sz--);
-          }
-
-          // textSize(sz);
-
-          p.textSize=sz*0.9;
-
-        };
-
-        setTextSize(this);
-
-      };
-      hexButton.prototype=Object.create(control.prototype);
-      hexButton.prototype.draw=function(){
-
-        if(this.visible===false){ return; }
-
-          this.active=this.hit &&
-                      app.focus===this;
-          this.offset=0;
-
-          pushMatrix();
-
-            translate(this.x, this.y);
-            scale(1,-1);
-
-              // Border
-              strokeWeight(0.5);
-
-              stroke(getColor(this.color, 50));
-              fill  (getColor(this.color,  5));
-
-              if(this.active){
-
-                if(app.left){ this.offset=1; }
-
-                strokeWeight(1.5);
-                cursor(this.cursor);
-
-                if(app.pyramid===this.parent){
-                  app.row=this.row;
-                  app.col=this.col;
-                }
-
-              };
-
-              if(app.row===this.row &&
-                 app.col===this.col){
-                strokeWeight(2);
-              };
-
-              stroke(getColor(this.color,100));
-
-              //  Sierpinski grid
-              if(app.sierpinski &&
-                 this.integer%2!==0){ fill(getColor(this.color, 25)); }
-
-              if(this.on){ fill(getColor(this.color, 30)); }
-
-                var offset=this.offset;
-
-              /** Hexagon */
-                beginShape();
-
-                  vertex(this.p1.x+offset, this.p1.y-offset);
-                  vertex(this.p2.x+offset, this.p2.y-offset);
-                  vertex(this.p3.x+offset, this.p3.y-offset);
-                  vertex(this.p4.x+offset, this.p4.y-offset);
-                  vertex(this.p5.x+offset, this.p5.y-offset);
-                  vertex(this.p6.x+offset, this.p6.y-offset);
-
-                endShape(CLOSE);
-
-              /** Circle */
-              // var d=cos(PI/6)*this.w;
-              // ellipse(0,0,d,d);
-
-              // Caption
-              fill(getColor(CLRS.YELLOW,40));
-
-              if(this.on){ fill(getColor(CLRS.WHITE,100)); }
-
-              scale(1,-1);
-              textAlign(CENTER,CENTER);
-              textSize(this.textSize);
-
-              if(app.choose){ textLeading(this.textSize);
-                              text(this.row + "\n" + this.col, this.offset, this.offset);   }
-              else          { text(this.integer, this.offset, this.offset);                 }
-
-          popMatrix();
-
-      };
-      hexButton.prototype.moved=function(x,y){
-      /* Overridden because of the shape */
-
-        if(this.parent.hit){
-          
-          if(this.visible===false){ return; }
-
-          if(dist(mouseX, mouseY,
-                  this.x+x,
-                  this.y+y)<this.w/2){
-
-            this.outerHit=true;
-
-              var rectHit=rectangleHit(new pnt(this.x+this.p1.x+x, this.y+this.p1.y+y),
-                                       new pnt(this.x+this.p3.x+x, this.y+this.p3.y+y),
-                                       new pnt(this.x+this.p6.x+x, this.y+this.p6.y+y),
-                                       mouseX,mouseY);
-
-              var triHit0=triangleHit(new pnt(this.x+this.p1.x+x, this.y+this.p1.y+y),
-                                      new pnt(this.x+this.p2.x+x, this.y+this.p2.y+y),
-                                      new pnt(this.x+this.p3.x+x, this.y+this.p3.y+y),
-                                      mouseX,mouseY);
-
-              var triHit1=triangleHit(new pnt(this.x+this.p4.x+x, this.y+this.p4.y+y),
-                                      new pnt(this.x+this.p5.x+x, this.y+this.p5.y+y),
-                                      new pnt(this.x+this.p6.x+x, this.y+this.p6.y+y),
-                                      mouseX,mouseY);
-              if(rectHit ||
-                 triHit0 ||
-                 triHit1){
-
-                this.hit=true;
-                app.focus=this;
-
-              }
-              else{
-
-                this.hit=false;
-
-              }
-
-          }
-          else{
-
-            this.outerHit=false;
-            this.hit=false;
-
-          }
-
-        }
-
-      };
-      hexButton.prototype.clicked=function(){
-      /* Overridden to maintain on/off value */
-
-        if(this.active){
-
-          app.path=this.path;
-          app.cursor=this.ordinal;
-          app.activeCell=this;
-
-          if(app.pyramid===this.parent){
-            app.row=this.row;
-            app.col=this.col;
-          }
-
-          this.on=!this.on;
-
-        }
-
-      };
-      hexButton.prototype.calc=function(){};
-      hexButton.prototype.set=function(){ this.on=true; };
-
-    }
-
-    /** Icon Hex Button -------------------------------------------------- */
-    {
-
-      function i_hexButton(id, parent, x, y, w, h, props){
-
-        control.call(this, id, parent, x, y, w, h);
-
-        this.outerHit=false;
-        this.offset=0;
-
-        this.style    = props.style;
-        this.execute  = props.execute;
-        this.retrieve = props.retrieve;
-
-        this.color    = props.color;
-        this.cursor   = props.cursor;
-
-        this.font     = props.font;
-
-        this.active   = false;
-        this.visible  = props.visible;
-
-        this.text     = props.text;
-
-        this.rotation = 0;
-        this.running  = false;
-
-        /* Initialize */
-        var w2=this.w/2;
-        var xPos=cos(radians(30))*w2;
-        var yPos=(w2/cos(radians(30)));
-
-        this.p1=new pnt( xPos, sin(radians( 30))*w2);
-        this.p2=new pnt(    0,                   w2);
-        this.p3=new pnt(-xPos, sin(radians(150))*w2);
-        this.p4=new pnt(-xPos, sin(radians(210))*w2);
-        this.p5=new pnt(    0,                  -w2);
-        this.p6=new pnt( xPos, sin(radians(330))*w2);
-
-      };
-      i_hexButton.prototype=Object.create(control.prototype);
-      i_hexButton.prototype.draw=function(){
-
-        if(this.visible===false){ return; }
         
-          this.active=this.hit &&
-                      app.focus===this;
-          this.offset=0;
-
-
-          var p=this;
-          var offset=0;
-
-          function triforce(){
-
-            fill(getColor(CLRS.K_TEAL_1,75));
-
-            // if(p.parent.hit){ fill(getColor(CLRS.WHITE, 75)); }
-            if(p.active    ){ fill(getColor(CLRS.WHITE,75)); }
-
-              offset=p.offset;
-
-              pushMatrix();
-
-                scale(0.5,0.5);
-
-                triangle( offset,        p.h/2-offset+5,
-                          p.w/2+offset, -p.h/2-offset+5,
-                         -p.w/2+offset, -p.h/2-offset+5);
-
-              popMatrix();
-
-              noStroke();
-
-            fill(getColor(p.color,50));
-
-            // if(p.parent.hit){ fill(getColor(CLRS.K_TEAL_0, 75)); }
-            if(p.active    ){ fill(getColor(CLRS.K_TEAL_0,100)); }
-
-              pushMatrix();
-
-                scale(0.5,0.5);
-
-                  triangle( offset,           -p.h/2-offset+5,
-                            -p.w*0.25+offset, -offset+5,
-                             p.w*0.25+offset, -offset+5);
-
-              popMatrix();
-
-          };
-          function play(){
-
-            fill(getColor(CLRS.K_TEAL_1,50));
-
-            if(p.parent.hit){ fill(getColor(CLRS.WHITE, 75)); }
-            if(p.active    ){ fill(getColor(CLRS.WHITE,100)); }
-
-              offset=p.offset;
-
-              triangle( 15+offset, 10+offset,
-                         5+offset,  5+offset,
-                         5+offset, 15+offset);
-
-          };
-          function settings(){
-
-            fill(getColor(CLRS.K_TEAL_1,50));
-
-            if(p.parent.hit){ fill(getColor(CLRS.WHITE, 75)); }
-            if(p.active    ){ fill(getColor(CLRS.WHITE,100)); }
-
-            noStroke();
-
-              ellipse(p.w/2+p.offset, p.h/2-6+p.offset, 3, 3);
-              ellipse(p.w/2+p.offset, p.h/2,               3, 3);
-              ellipse(p.w/2+p.offset, p.h/2+6+p.offset, 3, 3);
-
-          };
-          function reset(){
-
-            var sz=0.5;
-
-            ellipseMode(CENTER);
-
-            stroke(getColor(CLRS.WHITE, 50));
-
-            // if(p.parent.hit){ stroke(getColor(CLRS.WHITE,  75)); }
-            if(p.active)    { stroke(getColor(CLRS.WHITE, 75));
-                                 cursor(p.cursor);               }
-
-            strokeWeight(1.5);
-            noFill();
-
-            if(p.running){
-
-              rotate(radians(p.rotation));
-
-              p.rotation-=40;
-
-              if(abs(p.rotation)>359){
-
-                p.running=false;
-                p.rotation=0;
-
-              }
-
-            }
-
-              arc(0, 0, p.w*sz, p.h*sz, radians(22.5), 2*PI-radians(45));
-
-            fill(getColor(CLRS.WHITE, 50));
-
-            // if(p.parent.hit){ fill(getColor(CLRS.WHITE,  75)); }
-            if(p.active  ){ fill(getColor(CLRS.WHITE, 75)); }
-
-            p.offset=0;
-
-              pushMatrix();
-
-                translate(6,0);
-
-                  triangle(0, 0,
-                           6, 0,
-                           6, 6);
-
-              popMatrix();
-
-          };
-          function txt(){
-
-            fill(getColor(CLRS.WHITE,50));
-
-            // if(p.parent.hit       ){ fill(getColor(p.color, 75)); }
-            if(p.active || p.on){ fill(getColor(CLRS.WHITE,75)); }
-
-            textAlign(CENTER,CENTER);
-            textFont(p.font);
-            textSize(20);
-
-            switch(p.text){
-
-              case HEXNAV.LEFT:       text(CONSTANTS.TRIANGLE_L,  -p.offset, -p.offset); break;
-              case HEXNAV.RIGHT:      text(CONSTANTS.TRIANGLE_R, 2*p.offset, -p.offset); break;
-
-              case HEXNAV.UP_LEFT:    pushMatrix();
-
-                                        rotate(-PI/4);
-                                        text(CONSTANTS.TRIANGLE_L,
-                                        -p.offset, -p.offset);
-
-                                      popMatrix();  break;
-
-              case HEXNAV.UP_RIGHT:   pushMatrix();
-
-                                        rotate(PI/4);
-                                        text(CONSTANTS.TRIANGLE_R,
-                                        p.offset, p.offset);
-
-                                      popMatrix();  break;
-
-              case HEXNAV.DOWN_LEFT:  pushMatrix();
-
-                                        rotate(PI/4);
-                                        text(CONSTANTS.TRIANGLE_L,
-                                        -p.offset, -p.offset);
-
-                                      popMatrix();  break;
-
-              case HEXNAV.DOWN_RIGHT: pushMatrix();
-
-                                        rotate(-PI/4);
-                                        text(CONSTANTS.TRIANGLE_R,
-                                        p.offset, -p.offset);
-
-                                      popMatrix();  break;
-
-              default:                text(p.text, p.offset, -p.offset); break;
-
-            }
-
-          };
-
-          pushMatrix();
-
-            translate(this.x, this.y);
-            scale(1,-1);
-
-              // Border
-              strokeWeight(0.5);
-
-              stroke(getColor(this.color, 40));
-              fill  (getColor(this.color, 15));
-
-              if(this.active){
-
-                if(app.left &&
-                   this.style!==GLYPHS.RESET){ this.offset=1; }
-
-                strokeWeight(1.5);
-                cursor(this.cursor);
-
-              };
-
-              stroke(getColor(this.color,75));
-
-              var OS=this.offset;
-
-              /** Hexagon */
-                beginshap();
-
-                  vertex(this.p1.x+OS, this.p1.y-OS);
-                  vertex(this.p2.x+OS, this.p2.y-OS);
-                  vertex(this.p3.x+OS, this.p3.y-OS);
-                  vertex(this.p4.x+OS, this.p4.y-OS);
-                  vertex(this.p5.x+OS, this.p5.y-OS);
-                  vertex(this.p6.x+OS, this.p6.y-OS);
-
-                endshap(CLOSE);
-
-              /** Circle */
-              // var d=cos(PI/6)*this.w;
-              // ellipse(0,0,d,d);
-
-              // Caption
-            // Icon
-            textFont(this.font);
-
-            switch(this.style){
-
-              case GLYPHS.PLAY:      play();      break;
-              case GLYPHS.SETTINGS:  settings();  break;
-              case GLYPHS.RESET:     reset();     break;
-              case GLYPHS.TRIFORCE:  triforce();  break;
-              case GLYPHS.TEXT:      txt();       break;
-
-              default:                            break;
-
-            };
-
-
-          popMatrix();
-
+        if(this.active){ this.execute(); }
+        
       };
-      i_hexButton.prototype.moved=function(x,y){
-      /* Overridden because of the shape */
+      resetButton.prototype.moved=function(x,y){ 
+      /** Overridden for shape */
 
-        if(this.parent.hit){
+        if(!this.visible){ return; }
+      
+          if(this.parent.hit){
 
-          if(this.visible===false){ return; }
-
-          if(dist(mouseX, mouseY,
-                  this.x+x,
-                  this.y+y)<this.w/2){
-
-            this.outerHit=true;
-
-              var rectHit=rectangleHit(new pnt(this.x+this.p1.x+x, this.y+this.p1.y+y),
-                                       new pnt(this.x+this.p3.x+x, this.y+this.p3.y+y),
-                                       new pnt(this.x+this.p6.x+x, this.y+this.p6.y+y),
-                                       mouseX,mouseY);
-
-              var triHit0=triangleHit(new pnt(this.x+this.p1.x+x, this.y+this.p1.y+y),
-                                      new pnt(this.x+this.p2.x+x, this.y+this.p2.y+y),
-                                      new pnt(this.x+this.p3.x+x, this.y+this.p3.y+y),
-                                      mouseX,mouseY);
-
-              var triHit1=triangleHit(new pnt(this.x+this.p4.x+x, this.y+this.p4.y+y),
-                                      new pnt(this.x+this.p5.x+x, this.y+this.p5.y+y),
-                                      new pnt(this.x+this.p6.x+x, this.y+this.p6.y+y),
-                                      mouseX,mouseY);
-              if(rectHit ||
-                 triHit0 ||
-                 triHit1){
+            if(dist(mouseX, mouseY,
+                    this.x+x,
+                    this.y+y)<this.w/2){
 
                 this.hit=true;
                 app.focus=this;
 
-              }
-              else{
+            }
+            else{
 
-                this.hit=false;
-
-              }
-
-          }
-          else{
-
-            this.outerHit=false;
-            this.hit=false;
-
-          }
-
-        }
-
-      };
-      /* Overridden because of shape */
-      i_hexButton.prototype.clicked=function(){
-
-        if(this.active){
-
-          if(this.style===GLYPHS.RESET){
-
-            if(this.running===false){
-
-              this.running=true;
+              this.hit=false;
 
             }
 
           }
 
-          this.execute();
-
-        }
-
       };
-      i_hexButton.prototype.set=function(){ this.on=true; };
 
     }
 
@@ -3596,7 +2866,6 @@ var diagrams = function(processingInstance){
         this.dCount       = 0;              //  # of blue cells in surrounding 2 rings
 
         this.enabled      = true;
-        this.visible      = props.visible;
 
         this.halo         = false;
         this.line         = false;
@@ -3649,7 +2918,7 @@ var diagrams = function(processingInstance){
       hexCell.prototype=Object.create(control.prototype);
       hexCell.prototype.draw=function(){
         
-        if(this.visible===false){ return; }
+        if(!this.visible){ return; }
 
           this.active=this.hit &&
                       app.focus===this &&
@@ -4117,7 +3386,7 @@ var diagrams = function(processingInstance){
 
         // if(this.parent.hit){
           
-          if(this.visible===false){ return; }
+          if(!this.visible){ return; }
 
           if(this.outerHitTest(x,y)){
 
@@ -4339,13 +3608,12 @@ var diagrams = function(processingInstance){
       transition.prototype=Object.create(control.prototype);
       transition.prototype.draw=function(){
         
-        if(this.visible===false){ return; }
+        if(!this.visible){ return; }
 
           var p=this;
 
           this.active=this.hit &&
-                      app.focus===this &&
-                      this.visible===true;
+                      app.focus===this;
 
           pushMatrix();
 
@@ -4445,7 +3713,7 @@ var diagrams = function(processingInstance){
       };
       transition.prototype.moved= function(x,y){
 print(this.id);
-        if(this.visible===false){ return; }
+        if(!this.visible){ return; }
 
           if(mouseX>(this.x+x) &&
              mouseX<(this.x+x) + this.w &&
@@ -4505,30 +3773,23 @@ print(this.id);
         {color:     color(222)}));
 
       /* reset button       */
-      // rt.controls.push(new i_Button(getGUID(), rt, 550, 550, 40, 40,
-        // {font:      'sans-serif',
-         // cursor:    HAND,
-         // visible:   true,
-         // execute:   reset,
-         // color:     CLRS.BLACK}));
+      rt.controls.push(new resetButton(getGUID(), rt, 550, 550, 40, 40,
+        {cursor:    HAND,
+         color:     CLRS.BLACK,
+         execute:   reset}));
 
       /* music            */
-      // rt.controls.push(new music(getGUID(), rt, 35, 565, 50, 50,
-        // {font:      'sans-serif',
-         // cursor:    HAND,
-         // visible:   true,
-         // execute:   setMusic,
-         // retrieve:  getMusic,
-         // color:     color(192)}));
+      rt.controls.push(new music(getGUID(), rt, 35, 565, 50, 50,
+        {cursor:    HAND,
+         execute:   setMusic,
+         retrieve:  getMusic}));
 
       /* score            */
-      // rt.controls.push(new score(getGUID(), rt, 475, 115, 50, 50,
-        // {font:      'sans-serif',
-         // visible:   true,
-         // cursor:    HAND,
-         // execute:   getRemaining,
-         // retrieve:  getMistakes,
-         // color:     CLRS.H_BLUE}));
+      rt.controls.push(new score(getGUID(), rt, 475, 115, 50, 50,
+        {color:     CLRS.H_BLUE,
+         cursor:    HAND,
+         execute:   getRemaining,
+         retrieve:  getMistakes}));
 
       /* PuzzleComplete      */
       // var pc=new puzzleComplete(getGUID(), rt, 100, 100, width-20, height-20,
