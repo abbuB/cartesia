@@ -59,6 +59,9 @@ var diagrams = function(processingInstance){
 
     TO DO:
 
+      - include 42 layouts from existing games
+      - include 42 layouts from the community
+
       - implement timer
       - background grid
       - score controls
@@ -292,9 +295,6 @@ var diagrams = function(processingInstance){
 
   }
 
-  
-
-
   function application(){
 
     /* Initialize          -------------------- */
@@ -388,17 +388,11 @@ var diagrams = function(processingInstance){
 
     /* Misc            -------------------------------------------------- */
     {
-      
+
       var controlCount=-1;
-      
-      function getGUID(){
 
-        controlCount++;
-      
-        return ('C'+controlCount);
+      function getGUID()            { controlCount++; return ('C'+controlCount);                       };
 
-      }
-  
       function getPuzzleNumber()    { return ((app.puzzle-(app.puzzle%6))/6+1)+ '-' +(app.puzzle%6+1); };
 
       function iRandom(n)           { return round(random(n));                                         };
@@ -904,16 +898,8 @@ var diagrams = function(processingInstance){
 
         control.call(this, id, parent, x, y, w, h);
 
-        this.text     = props.text;
         this.color    = props.color;
-        this.cursor   = props.cursor;
-        this.border   = props.border;
-
-        this.font     = props.font;
-
         this.retrieve = props.retrieve;
-
-        this.visible  = props.visible;
         
         //  Load Hexagon Buttons
         var txt;
@@ -945,16 +931,14 @@ var diagrams = function(processingInstance){
               txt=(row/1+1) + '-' + col/1;
 
               // puzzle button
-              this.controls.push(new puzzle_Button('H'+txt, this, x1, y1, sz, sz,
-                {font:      'sans-serif',
-                 style:     'replay',
+              this.controls.push(new puzzle_Button(getGUID(), this, x1, y1, sz, sz,
+                {style:     'replay',
                  text:      txt,
                  index:     n,
                  threshold: app.levelScores[n],
-                 retrieve:  getScore,
-                 cursor:    HAND,
+                 retrieve:  getScore,                 
                  execute:   loadPuzzle,
-                 color:     CLRS.BLACK}));
+                 cursor:    HAND}));
 
               n++;
 
@@ -966,19 +950,21 @@ var diagrams = function(processingInstance){
       puzzleSelect.prototype.draw=function(){
      
         if(this.visible===false){ return; }
-print(this.id);   
+
           this.active = this.hit &&
                         app.focus===this;
 
           var p =this;
 
           function drawScore(){
-
+            
+            //  Shadow
             textSize(48);
             fill(CLRS.GRAY);
 
               text(p.retrieve(), (p.w-200)/2+2, p.h/2+2);
 
+            // Foreground
             fill(CLRS.H_BLUE);
 
               text(p.retrieve(), (p.w-200)/2, p.h/2);
@@ -995,227 +981,11 @@ print(this.id);
 
                 rect(0, 0, this.w, this.h, 100);
 
-              // Draw Controls
               forEach(this.controls, 'draw');
 
               drawScore();
 
           popMatrix();
-
-      };
-
-    }
-
-    /** Splash Screen   -------------------------------------------------- */
-    {
-
-      function splash(id, parent, x, y, w, h, props){
-
-        control.call(this, id, parent, x, y, w, h);
-
-        this.color    = props.color;
-        this.cursor   = props.cursor;
-        this.retrieve = props.retrieve;
-        this.font     = props.font;
-
-        this.controls.push(new hexButton(520, this, this.w/2-35, 170, 75, 75,
-          {row:       3,
-           col:       1,
-           ordinal:   -1,
-           integer:    3,
-           font:      monoFont,
-           color:     CLRS.K_TEAL_1,
-           cursor:    HAND,
-           on:        true}));
-
-        this.controls.push(new hexButton(530, this, this.w/2+35, 170, 75, 75,
-          {row:       3,
-           col:       2,
-           ordinal:   -1,
-           integer:    3,
-           font:      monoFont,
-           color:     CLRS.K_TEAL_1,
-           cursor:    HAND,
-           on:        true}));
-
-        this.controls.push(new hexButton(540, this, this.w/2, 230, 75, 75,
-          {row:       4,
-           col:       2,
-           ordinal:   -1,
-           integer:    6,
-           font:      monoFont,
-           color:     CLRS.K_TEAL_1,
-           cursor:    HAND,
-           on:        true}));
-
-      };
-      splash.prototype=Object.create(control.prototype);
-      splash.prototype.draw=function(){
-
-        if(this.retrieve()){
-
-          this.active=this.hit && app.focus===this;
-
-          pushMatrix();
-
-            translate(this.x, this.y);
-
-              strokeWeight(1);
-              stroke(getColor(CLRS.K_TEAL_0, 40));
-              fill(  getColor(this.color, 85));
-
-              if(this.hit   ){ fill(getColor(this.color, 90)); }
-              if(this.active){ cursor(this.cursor);            }
-
-                rect(0, 0, this.w, this.h, 20);
-
-              // textFont(this.font);
-              textAlign(CENTER,BOTTOM);
-              fill(getColor(CLRS.YELLOW,75));
-
-                text("Pascal's Triangle", this.w/2, 30);
-
-              var txt0="In mathematics, Pascal's triangle";
-              var txt1="The first and last ";
-              var txt2='';
-              var txt3='';
-              var txt4='en.wikipedia.org/wiki/Pascal%27s_triangle';
-              var txt5='oeis.org/A007318';
-
-              textSize(11);
-              textAlign(LEFT,TOP);
-              fill(getColor(CLRS.WHITE,75));
-
-                text(txt0 + '\n\n' +
-                     txt1 + '\n\n' +
-                     txt2 + '\n\n' +
-                     txt3,
-                     20, 40,
-                     this.w-30, this.h-40);
-
-              textAlign(LEFT,CENTER);
-              fill(getColor(CLRS.K_TEAL_3,100));
-
-                text(txt4, this.w/2-textWidth(txt4)/2, 320);
-
-              fill(getColor(CLRS.K_TEAL_2,100));
-
-                text(txt5, this.w/2-textWidth(txt5)/2, 340);
-
-              var txtX=65;
-              var txtY=-30;
-
-              var centerX=this.w/2;
-
-              pushMatrix();
-
-                translate(centerX, 130);
-
-              popMatrix();
-
-              forEach(this.controls, 'draw');
-
-              stroke(getColor(CLRS.YELLOW,75));
-              strokeWeight(2);
-
-                line(this.w/2-30, this.h/2-15,
-                     this.w/2-8,  this.h/2+15);
-
-                line(this.w/2+30, this.h/2-15,
-                     this.w/2+8,  this.h/2+15);
-
-          popMatrix();
-
-        }
-
-      };
-      splash.prototype.moved=function(x,y){
-      /* Overridden to maintain on/off value */
-
-        if(this.retrieve()){
-
-          if(this.parent.hit){
-
-            if(mouseX>this.x+x &&
-               mouseX<this.x+x+this.w &&
-               mouseY>this.y+y &&
-               mouseY<this.y+y + this.h){
-
-              this.hit=true;
-              app.focus=this;
-
-              for(var c in this.controls){ this.controls[c].moved(this.x+x, this.y+y); }
-
-            }
-            else{
-
-              this.hit=false;
-
-              for(var c in this.controls){ this.controls[c].hit=false; }
-
-            }
-
-          }
-
-        }
-
-      };
-      splash.prototype.clicked=function(){
-      /* Overridden to maintain on/off value */
-
-        if(this.retrieve()){
-          if(this.hit){ forEach(this.controls, 'clicked'); }
-        }
-
-      };
-
-    }
-
-    /** Toolbar         -------------------------------------------------- */
-    {
-
-      function toolbar(id, parent, x, y, w, h, props){
-
-        control.call(this, id, parent, x, y, w, h);
-
-        this.text        = props.text;
-        this.acolor      = props.acolor;
-        this.icolor      = props.icolor;
-        this.cursor      = props.cursor;
-        this.position    = props.position;
-        this.recordCount = props.recordCount;
-        this.font        = props.font;
-
-      };
-      toolbar.prototype=Object.create(control.prototype);
-      toolbar.prototype.draw=function(){
-
-        this.active=this.hit && app.focus===this;
-
-        pushMatrix();
-
-          translate(this.x, this.y);
-
-            noStroke();
-            fill(getColor(CLRS.BLACK,30));
-
-            if(this.hit   ){ fill(this.acolor);   }
-            if(this.active){ cursor(this.cursor); }
-
-              rect(0, 0, this.w, this.h);
-
-            // Caption
-            fill(CLRS.K_TEAL_1);
-            textFont(this.font);
-            textAlign(CENTER,CENTER);
-
-            if(this.hit){ fill(CLRS.WHITE); }
-
-              text(this.text, this.w/2, this.h/2);
-
-            forEach(this.controls, 'draw');
-
-        popMatrix();
 
       };
 
@@ -1230,33 +1000,17 @@ print(this.id);
 
         this.color   = props.color;
         this.cursor  = props.cursor;
-        this.font    = props.font;
-
-        this.visible = props.visible;
-
-        /*  Dynamic x-coordinate */
-        this.offset = 0;
 
       };
       telemetry.prototype=Object.create(control.prototype);
       telemetry.prototype.draw=function(){
 
-        if(this.visible===false){ return; }
+        if(this.visible===false ||
+           app.debug===false){ return; }
 
-          if(app.telemetry===false &&
-             this.offset===0 &&
-             app.debug===false){ return; }
-
-          // Border
           function border(){
 
-            strokeWeight(1);
-            stroke(getColor(p.clr,100));
-
             noStroke();
-
-            if(p.hit){ fill(getColor(CLRS.BLACK,100)); }
-            else     { fill(getColor(CLRS.BLACK,80));  }
 
             fill(getColor(CLRS.BLACK,50));
 
@@ -1267,7 +1021,6 @@ print(this.id);
               rect(p.offset, 0, p.w, p.h, 5);
 
           };
-
           function title(){
 
             textAlign(CENTER,CENTER);
@@ -1387,7 +1140,8 @@ print(this.id);
 
           };
 
-          this.active=this.hit && app.focus===this;
+          this.active=this.hit &&
+                      app.focus===this;
 
           if     ( app.telemetry && this.offset>-200){ this.offset-=10; }
           else if(!app.telemetry && this.offset<0   ){ this.offset+=10; }
@@ -1407,30 +1161,19 @@ print(this.id);
 
               if(this.active){ cursor(this.cursor); }
 
-              textFont(this.font);
-
               border();
-
               title();
               environment();
               appSpecific();
-
-              // forEach(this.controls, 'draw');
-
-              // /* The following is outside the properties function because
-                 // it has to be done after the child controls are drawn to
-                 // maintain proper control focus                              */
-              // fill(getColor(CLRS.YELLOW,75));
-
-              // textSize(11);
-              // textAlign(RIGHT,CENTER);
 
           popMatrix();
 
       };
       telemetry.prototype.moved=function(x,y){
       /* Overridden because of the dynamic x-coordinate offset */
-
+        
+        if(this.visible===false){ return; }
+        
         // if(app.telemetry===false &&
            // this.offset===0){ return; }
 
@@ -1469,15 +1212,8 @@ print(this.id);
         control.call(this, id, parent, x, y, w, h);
 
         this.color          = props.color;
-        
-        this.visible        = props.visible;
-
-        // this.score          = 0;
-        // this.score      = 0;
 
         this.activeCell     = null;
-
-        // this.angle          = 0;
 
         this.layout         = [];   //  Array of the layout of hexcells
         this.text           = [];   //  Array of nexCell hints
@@ -1577,7 +1313,7 @@ print(this.id);
                 y-=yOffset/2;
               }
 
-              rowArray.push(new hexCell('H'+n, p, x, y, w, w,
+              rowArray.push(new hexCell(getGUID(), p, x, y, w, w,
                 {execute:   clickTest,
                  row:       row,
                  col:       col,
@@ -1598,31 +1334,9 @@ print(this.id);
 
         };
 
-        function randomizeStyle(){
-
-          var layout=p.layout;
-
-          for(var r in layout){
-            for(var c in layout[r]){
-
-              if(layout[r][c]===0 ||
-                 layout[r][c]===1){
-                layout[r][c]=round(random(0,1));
-              }
-
-            }
-          }
-
-        };
-
-        // randomizeStyle();
         load();
 
         this.update();
-
-        // link();
-        // doubleLink();
-        // columnCounts();
 
         app.gameOver=false;
 
@@ -1800,11 +1514,10 @@ print(this.id);
 
             translate(this.x, this.y);
 
-              stroke(31);
+              noStroke();
               fill(this.color);
 
-              rect(this.x,   this.y,
-                   this.w-1, this.h-1);
+              rect(this.x,   this.y, this.w, this.h);
 
                 var ctrls=this.controls;
 
@@ -1836,29 +1549,48 @@ print(this.id);
           popMatrix();
 
       };
-      hexBoard.prototype.hitTest      = function(x,y){
-        return dist(mouseX,mouseY,this.x+x,this.y+y)<this.w/2;
-      };
-      hexBoard.prototype.moved        = function(x,y){
-      /* Overridden because of the nested controls */
+      hexBoard.prototype.moved      = function(x,y){
 
-        if(this.parent.hit){
+        if(this.visible===false){ return; }
+        
+          if(mouseX>(this.x+x) &&
+             mouseX<(this.x+x) + this.w &&
+             mouseY>(this.y+y) &&
+             mouseY<(this.y+y) + this.h){
 
-          if(this.hitTest(x,y)){ this.hit=true;
-                                 app.focus=this; }
-          else                 { this.hit=false;    }
+            if(this.parent.hit){
+
+              this.hit=true;
+              app.focus=this;
+
+              var ctrls=this.controls;
+
+              for(var r in ctrls){
+                for(var c in ctrls[r]){
+
+                  ctrls[r][c].moved(this.x+x, this.y+y);
+
+                }
+              }
+
+            }
+
+          }
+          else{
+
+            this.hit=false;
 
             var ctrls=this.controls;
 
             for(var r in ctrls){
               for(var c in ctrls[r]){
 
-                ctrls[r][c].moved(this.x+x, this.y+y);
+                ctrls[r][c].hit=false;
 
               }
             }
 
-        }
+          }
 
       };
       hexBoard.prototype.clicked      = function(){
@@ -2714,22 +2446,14 @@ print(this.id);
       function puzzle_Button(id, parent, x, y, w, h, props){
 
         control.call(this, id, parent, x, y, w, h);
-        
-        this.index     = props.index;
 
         this.style     = props.style;
         this.text      = props.text;
-
-        this.cursor    = props.cursor;
-
-        this.execute   = props.execute;
-        this.retrieve  = props.retrieve;
-
-        this.color     = props.color;
-
+        this.index     = props.index;
         this.threshold = props.threshold;
-
-        this.visible   = props.visible;
+        this.retrieve  = props.retrieve;
+        this.execute   = props.execute;
+        this.cursor    = props.cursor;
 
         /* Initialize */
         var w2=this.w/2;
@@ -2958,7 +2682,7 @@ print(this.id);
 
           app.score+=5;
           
-          this.parent.visible=false;
+          // this.parent.visible=false;
 
         }
 
@@ -2970,7 +2694,7 @@ print(this.id);
     {
 
       function hexy_Button(id, parent, x, y, w, h, props){
-print(id);
+
         control.call(this, id, parent, x, y, w, h);
 
         this.style    = props.style;
@@ -3939,24 +3663,6 @@ print(id);
             cursor(this.cursor);
           }
 
-  // var HEXY_TYPES={
-
-    // Double up the \ character because it is an escape character and the first one won't be recognised
-
-    // BLANK:            '.',
-    // BLACK:            'o',
-    // BLACK_REVEALED:   'O',
-    // BLUE:             'x',
-    // BLUE_REVEALED:    'X',
-    // DOWN_RIGHT:       '\\',
-    // DOWN_CENTER:      '|',
-    // DOWN_LEFT:        '/',
-
-    // BLANK:            '.',
-    // NUMBER:           '+',
-    // CONSECUTIVE:      'c',
-    // NOT_CONSECUTIVE:  'n'
-
           function highlight(){
 
             if(p.layout===HEXY_TYPES.BLACK ||
@@ -4795,12 +4501,8 @@ print(this.id);
       app.controls.push(rt);
 
       /* hexBoard           */
-      // rt.controls.push(new hexBoard(getGUID(), rt, 0, 0, 600, 600,
-        // {font:      'sans-serif',
-         // color:     color(222),
-         // visible:   true,
-         // cursor:    ARROW,
-         // size:      0}));
+      rt.controls.push(new hexBoard(getGUID(), rt, 0, 0, 600, 600,
+        {color:     color(222)}));
 
       /* reset button       */
       // rt.controls.push(new i_Button(getGUID(), rt, 550, 550, 40, 40,
@@ -4829,22 +4531,17 @@ print(this.id);
          // color:     CLRS.H_BLUE}));
 
       /* PuzzleComplete      */
-      var pc=new puzzleComplete(getGUID(), rt, 100, 100, width-20, height-20,
-        {text:      'Puzzle Complete',
-         color:     CLRS.WHITE,
-         visible:    false});
+      // var pc=new puzzleComplete(getGUID(), rt, 100, 100, width-20, height-20,
+        // {text:      'Puzzle Complete',
+         // color:     CLRS.WHITE,
+         // visible:    false});
 
-      app.controls.push(pc);
+      // app.controls.push(pc);
 
       /* PuzzleSelect      */
-      // var ps=new puzzleSelect(getGUID(), rt, 0, 0, width, height,
-        // {text:      'Puzzle Select',
-         // retrieve:  getScore,
-         // color:     CLRS.WHITE,
-         // font:      monoFont,
-         // visible:   true,
-         // cursor:    ARROW,
-         // border:    true});
+      // var ps=new puzzleSelect(getGUID(), rt, 110, 110, width, height,
+        // {retrieve:  getScore,
+         // color:     CLRS.WHITE});
 
       // app.controls.push(ps);
 
@@ -4875,8 +4572,6 @@ print(this.id);
       /* Telemetry ---------------------------------------------------- */
       var telem=new telemetry(getGUID(), rt, width-195, 5, 190, height-10,
         {color:     color(36),
-         font:      serifFont,
-         visible:   true,
          cursor:    ARROW});
 
       rt.controls.push(telem);
@@ -4897,8 +4592,6 @@ print(this.id);
 
   function play(){
 
-    
-  
     forEach(app.controls,'draw');
 
     // textFont(sansFont,64);
