@@ -369,7 +369,7 @@ var diagrams = function(processingInstance){
 
       this.remaining    = 0;                  //  How many blue cells need to be uncovered
       this.covered      = 0;                  //  How many black cells need to be uncovered
-      this.errors       = 8;                  //  How many mistaken clicks occurred
+      this.errors       = 0;                  //  How many mistaken clicks occurred
 
       this.orientation  = ORIENTATIONS.FLAT;
 
@@ -1213,6 +1213,7 @@ var diagrams = function(processingInstance){
 
         /* ------------------------------------------------- */
         this.color          = props.color;
+        this.cursor         = props.cursor;
 
         /* ------------------------------------------------- */
         this.activeCell     = null;
@@ -1305,6 +1306,8 @@ var diagrams = function(processingInstance){
           xMargin = w/2     + (p.w-(w+w*(p.layout[0].length-1)*0.75))/2;
           yMargin = yOffset +  p.h/2 - (p.layout.length-1)*yOffset/2-w/2;
 
+          var curs=HAND;
+          
           for(row in p.layout){
             for(col in p.layout[row]){
 
@@ -1315,14 +1318,20 @@ var diagrams = function(processingInstance){
                 y-=yOffset/2;
               }
 
+              if(p.layout[row][col]===HEXY_TYPES.BLANK){
+                curs=ARROW;
+              }
+              else{
+                curs=HAND;
+              }
+
               rowArray.push(new hexCell(getGUID(), p, x, y, w, w,
                 {execute:   clickTest,
                  row:       row,
                  col:       col,
                  layout:    p.layout[row][col],
                  text:      p.text[row][col],
-                 font:      sansFont,
-                 cursor:    HAND}));
+                 cursor:    curs}));
 
                n++;
 
@@ -1510,6 +1519,8 @@ var diagrams = function(processingInstance){
           this.active=this.hit &&
                       app.focus===this;
 
+          if(this.active){ cursor(this.cursor); }
+
           this.lines=[];
           this.halos=[];
 
@@ -1549,7 +1560,7 @@ var diagrams = function(processingInstance){
           popMatrix();
 
       };
-      hexBoard.prototype.moved      = function(x,y){
+      hexBoard.prototype.moved        = function(x,y){
 
         if(!this.visible){ return; }
         
@@ -2832,9 +2843,11 @@ var diagrams = function(processingInstance){
 
         control.call(this, id, parent, x, y, w, h);
 
+        this.cursor       = props.cursor;
+        
         this.execute      = props.execute;
 
-        this.outerHit=false;
+        this.outerHit     = false;
 
         this.row          = props.row;
         this.col          = Number(props.col);
@@ -2865,7 +2878,7 @@ var diagrams = function(processingInstance){
         this.count        = 0;              //  # of blue cells in surrounding ring
         this.dCount       = 0;              //  # of blue cells in surrounding 2 rings
 
-        this.enabled      = true;
+        this.enabled      = true;           //  Text is displayed black or grayed out
 
         this.halo         = false;
         this.line         = false;
@@ -2891,24 +2904,34 @@ var diagrams = function(processingInstance){
           // }
 
           for(pt=0; pt<6; pt++){
+            
             p.bpoints.push(new pnt( cos(radians(ang+pt*60))*(d2),
                                     sin(radians(ang+pt*60))*(d2) ));
-          }
 
-          for(pt=0; pt<6; pt++){
             p.points.push(new pnt( cos(radians(ang+pt*60))*(d2-8),
                                    sin(radians(ang+pt*60))*(d2-8) ));
-          }
 
-          for(pt=0; pt<8; pt++){
             p.dpoints.push(new pnt( cos(radians(ang+pt*60))*(d2-1),
                                     sin(radians(ang+pt*60))*(d2-1) ));
-          }
 
-          for(pt=0; pt<6; pt++){
             p.hpoints.push(new pnt( cos(radians(ang+pt*60))*(d2-3),
                                     sin(radians(ang+pt*60))*(d2-3) ));
           }
+
+          // for(pt=0; pt<6; pt++){
+            // p.points.push(new pnt( cos(radians(ang+pt*60))*(d2-8),
+                                   // sin(radians(ang+pt*60))*(d2-8) ));
+          // }
+
+          // for(pt=0; pt<6; pt++){
+            // p.dpoints.push(new pnt( cos(radians(ang+pt*60))*(d2-1),
+                                    // sin(radians(ang+pt*60))*(d2-1) ));
+          // }
+
+          // for(pt=0; pt<6; pt++){
+            // p.hpoints.push(new pnt( cos(radians(ang+pt*60))*(d2-3),
+                                    // sin(radians(ang+pt*60))*(d2-3) ));
+          // }
 
         };
 
@@ -2921,15 +2944,17 @@ var diagrams = function(processingInstance){
         if(!this.visible){ return; }
 
           this.active=this.hit &&
-                      app.focus===this &&
-                      this.style!==HEXY_TYPES.BLANK;
+                      app.focus===this;
 
           var offset=0;
           var p=this;
 
           if(this.active){
-            if(app.left){ this.offset=1; }
+
             cursor(this.cursor);
+
+            if(app.left){ this.offset=1; }
+
           }
 
           function highlight(){
@@ -2955,6 +2980,8 @@ var diagrams = function(processingInstance){
 
           };
           function outerHexagon(){
+            
+            var drw=true;
 
             noStroke();
 
@@ -2973,22 +3000,23 @@ var diagrams = function(processingInstance){
                 case HEXY_TYPES.BLACK_REVEALED: fill(CLRS.H_BLACK);     break;
                 case HEXY_TYPES.BLUE_REVEALED:  fill(CLRS.H_BLUE);      break;
 
-                default:                        noFill();
-                                                stroke(CLRS.BLACK);
-                                                strokeWeight(0.125);
-                                                noStroke();
-                                                break;
+                default:                        drw=false;              break;
+
               }
 
-              beginShape();
+              if(drw){
+                
+                beginShape();
 
-                for(var pt in p.hpoints){
-                  vertex(p.hpoints[pt].x,
-                         p.hpoints[pt].y);
-                }
+                  for(var pt in p.hpoints){
+                    vertex(p.hpoints[pt].x,
+                           p.hpoints[pt].y);
+                  }
 
-              endShape(CLOSE);
+                endShape(CLOSE);
 
+              }
+              
             }
             else{
 
@@ -2999,37 +3027,39 @@ var diagrams = function(processingInstance){
                 case HEXY_TYPES.BLACK_REVEALED: fill(CLRS.H_BLACK);   break;
                 case HEXY_TYPES.BLUE_REVEALED:  fill(CLRS.H_BLUE);    break;
 
-                default:                        noFill();
-                                                stroke(CLRS.BLACK);
-                                                strokeWeight(0.125);
-                                                noStroke();
-                                                break;
+                default:                        drw=false;            break;
               }
 
-              var offset=0;
+              if(drw){
 
-              if(p.timer>0 &&
-                 p.dirty===false){
-                offset=random(0,1.5);
-                p.timer--;
-                if(p.timer<=0){ p.dirty=true; }
+                var offset=0;
 
-              }
+                if(p.timer>0 &&
+                   p.dirty===false){
+                  offset=random(0,1.5);
+                  p.timer--;
+                  if(p.timer<=0){ p.dirty=true; }
 
-              beginShape();
-
-                for(var pt in p.hpoints){
-                  vertex(p.hpoints[pt].x+offset,
-                         p.hpoints[pt].y+offset);
                 }
 
-              endShape(CLOSE);
+                beginShape();
 
+                  for(var pt in p.hpoints){
+                    vertex(p.hpoints[pt].x+offset,
+                           p.hpoints[pt].y+offset);
+                  }
+
+                endShape(CLOSE);
+                
+              }
+              
             }
 
           };
           function innerHexagon(){
-
+            
+            var drw=true;
+            
             if(app.mode===APPMODES.CREATE){
 
               noStroke();
@@ -3041,19 +3071,23 @@ var diagrams = function(processingInstance){
                 case HEXY_TYPES.BLACK_REVEALED: fill(CLRS.H_BLACK_L); break;
                 case HEXY_TYPES.BLUE_REVEALED:  fill(CLRS.H_BLUE_L);  break;
 
-                default:                          noFill();             break;
+                default:                        drw=false;            break;
 
               }
 
-              beginShape();
+              if(drw){
+                
+                beginShape();
 
-                for(var pt in p.points){
-                  vertex(p.points[pt].x,
-                         p.points[pt].y);
-                }
+                  for(var pt in p.points){
+                    vertex(p.points[pt].x,
+                           p.points[pt].y);
+                  }
 
-              endShape(CLOSE);
+                endShape(CLOSE);
 
+              }
+              
             }
             else{
 
@@ -3066,132 +3100,134 @@ var diagrams = function(processingInstance){
                 case HEXY_TYPES.BLACK_REVEALED: fill(CLRS.H_BLACK_L);   break;
                 case HEXY_TYPES.BLUE_REVEALED:  fill(CLRS.H_BLUE_L);    break;
 
-                default:                        noFill();               break;
+                default:                        drw=false;              break;
 
               }
 
-              beginShape();
+              if(drw){
 
-                for(var pt in p.points){
-                  vertex(p.points[pt].x,
-                         p.points[pt].y);
-                }
+                beginShape();
 
-              endShape(CLOSE);
+                  for(var pt in p.points){
+                    vertex(p.points[pt].x,
+                           p.points[pt].y);
+                  }
 
+                endShape(CLOSE);
+                
+              }
+              
             }
 
           };
           function caption(){
 
-            function wrapText(n){
+            if(p.layout===HEXY_TYPES.BLANK ||
+               p.layout===HEXY_TYPES.BLUE){ return; }
 
-              var retVal=n;
+              function wrapText(n){
 
-              if      (p.text===HEXY_TYPES.CONSECUTIVE    ){ retVal="{" + retVal + "}"; }
-              else if (p.text===HEXY_TYPES.NOT_CONSECUTIVE){ retVal="-" + retVal + "-"; }
+                var retVal=n;
 
-              return retVal;
+                if      (p.text===HEXY_TYPES.CONSECUTIVE    ){ retVal="{" + retVal + "}"; }
+                else if (p.text===HEXY_TYPES.NOT_CONSECUTIVE){ retVal="-" + retVal + "-"; }
 
-            };
+                return retVal;
 
-            pushMatrix();
+              };
+              
+              pushMatrix();
 
-              scale(1,-1);
+                scale(1,-1);
 
-                textFont(p.font,16);
-                textSize(14);
-                textAlign(CENTER,CENTER);
+                  // textFont(p.font,16);
+                  // textSize(14);
+                  textAlign(CENTER,CENTER);
+                  fill(CLRS.WHITE);
 
-                switch(p.layout){
+                  switch(p.layout){
 
-                  case HEXY_TYPES.BLANK:            break;  /*  Blank never has text            */
+                    case HEXY_TYPES.BLACK:            /*  Black only has text when editing        */
+                                                        if(app.mode===APPMODES.CREATE){
 
-                  case HEXY_TYPES.BLACK:            /*  Black only has text when editing        */
-                                                    if(app.mode===APPMODES.CREATE){
+                                                          if(p.text===HEXY_TYPES.BLANK){ text('?',0,0);               }
+                                                          else                         { text(wrapText(p.count),0,0); }
 
-                                                      fill(CLRS.WHITE);
+                                                        }
 
-                                                      if(p.text===HEXY_TYPES.BLANK){ text('?',0,0);               }
-                                                      else                         { text(wrapText(p.count),0,0); }
+                                                        break;
 
-                                                    }
-
-                                                    break;
-
-                  case HEXY_TYPES.BLUE:             break;  /*  Blue never has text             */
-
-                  case HEXY_TYPES.BLACK_REVEALED:   /*  Black revealed always has text  */
-                                                      fill(CLRS.WHITE);
-
-                                                      if(!p.enabled){ fill(getColor(CLRS.WHITE,25)); }
-
-                                                      if(p.text===HEXY_TYPES.BLANK){ text('?',0,0);               }
-                                                      else                         { text(wrapText(p.count),0,0); }
-
-                                                      break;
-
-                  case HEXY_TYPES.BLUE_REVEALED:    /* Blue revealed has text with number symbol */
-                                                      if(p.text===HEXY_TYPES.NUMBER){
-
-                                                        fill(CLRS.WHITE);
+                    case HEXY_TYPES.BLACK_REVEALED:   /*  Black revealed always has text  */
                                                         if(!p.enabled){ fill(getColor(CLRS.WHITE,25)); }
 
-                                                        text(wrapText(p.count),0,0);
+                                                        if(p.text===HEXY_TYPES.BLANK){ text('?',0,0);               }
+                                                        else                         { text(wrapText(p.count),0,0); }
 
-                                                      }
+                                                        break;
 
-                                                      break;
+                    case HEXY_TYPES.BLUE_REVEALED:    /* Blue revealed has text with number symbol */
+                                                        if(p.text===HEXY_TYPES.NUMBER){
 
-                  case HEXY_TYPES.DOWN_CENTER:      /* Always has text */
-                                                      if(p.text!==HEXY_TYPES.BLANK){
+                                                          if(!p.enabled){ fill(getColor(CLRS.WHITE,25)); }
 
-                                                        textAlign(CENTER,TOP);
-                                                        rotate(0);
+                                                          text(wrapText(p.count),0,0);
 
-                                                        fill(CLRS.BLACK);
-                                                        if(!p.enabled){ fill(getColor(CLRS.BLACK,25)); }
+                                                        }
 
-                                                        text(wrapText(p.count),0,0);
+                                                        break;
 
-                                                      }
+                    case HEXY_TYPES.DOWN_CENTER:      /* Always has text */
+                                                        if(p.text!==HEXY_TYPES.BLANK){
 
-                                                      break;
+                                                          textAlign(CENTER,TOP);
+                                                          rotate(0);
 
-                  case HEXY_TYPES.DOWN_LEFT:        /* Always has text */
-                                                      if(p.text!==HEXY_TYPES.BLANK){
+                                                          fill(CLRS.BLACK);
+                                                          if(!p.enabled){ fill(getColor(CLRS.BLACK,25)); }
 
-                                                        textAlign(CENTER,TOP);
-                                                        rotate(PI/3);
+                                                          text(wrapText(p.count),0,0);
 
-                                                        fill(CLRS.BLACK);
-                                                        if(!p.enabled){ fill(getColor(CLRS.BLACK,25)); }
+                                                        }
 
-                                                        text(wrapText(p.count),0,0);
-                                                      }
+                                                        break;
 
-                                                      break;
+                    case HEXY_TYPES.DOWN_LEFT:        /* Always has text */
+                                                        if(p.text!==HEXY_TYPES.BLANK){
 
-                  case HEXY_TYPES.DOWN_RIGHT:       /* Always has text */
-                                                      if(p.text!==HEXY_TYPES.BLANK){
+                                                          textAlign(CENTER,TOP);
+                                                          rotate(PI/3);
 
-                                                        textAlign(CENTER,TOP);
-                                                        rotate(-PI/3);
+                                                          fill(CLRS.BLACK);
+                                                          if(!p.enabled){ fill(getColor(CLRS.BLACK,25)); }
 
-                                                        fill(CLRS.BLACK);
-                                                        if(!p.enabled){ fill(getColor(CLRS.BLACK,25)); }
+                                                          text(wrapText(p.count),0,0);
 
-                                                        text(wrapText(p.count),0,0);
+                                                        }
 
-                                                      }
+                                                        break;
 
-                                                      break;
+                    case HEXY_TYPES.DOWN_RIGHT:       /* Always has text */
+                                                        if(p.text!==HEXY_TYPES.BLANK){
 
-                  default:                            break;
+                                                          textAlign(CENTER,TOP);
+                                                          rotate(-PI/3);
 
-                }
+                                                          fill(CLRS.BLACK);
+                                                          if(!p.enabled){ fill(getColor(CLRS.BLACK,25)); }
 
-            popMatrix();
+                                                          text(wrapText(p.count),0,0);
+
+                                                        }
+
+                                                        break;
+
+                    case HEXY_TYPES.BLANK:
+                    case HEXY_TYPES.BLUE:
+                    default:                            break;/*  Blank and Blue never has text   */
+
+                  }
+
+              popMatrix();
 
           };
           function activeCell(){
@@ -3201,7 +3237,6 @@ var diagrams = function(processingInstance){
                (p.layout===HEXY_TYPES.BLUE ||
                 p.layout===HEXY_TYPES.BLACK)){
 
-              noStroke();
               fill(getColor(CLRS.BLACK,15));
 
               /** Hexagon */
@@ -3254,14 +3289,14 @@ var diagrams = function(processingInstance){
 
           };
 
-          noStroke();
-
           pushMatrix();
 
             translate(this.x, this.y);
 
             scale(1,-1);
 
+              noStroke();
+                      
               highlight();
               outerHexagon();
               innerHexagon();
@@ -3283,8 +3318,6 @@ var diagrams = function(processingInstance){
                   }
 
                 endShape(CLOSE);
-
-                // ellipse(0,0,10,10);
 
               }
 
@@ -3311,34 +3344,6 @@ var diagrams = function(processingInstance){
 
                 this.clickRadius-=5;
 
-                // var offset=HEX_SIZE-this.clickRadius;
-
-                // triangle(0,                -offset,
-                         // this.points[0].x, this.points[0].y-offset,
-                         // this.points[1].x, this.points[1].y-offset);
-
-                // triangle(0,                +offset,
-                         // this.points[1].x, this.points[1].y+offset,
-                         // this.points[2].x, this.points[2].y+offset);
-
-                // triangle(0,                -offset,
-                         // this.points[2].x, this.points[2].y-offset,
-                         // this.points[3].x, this.points[3].y-offset);
-
-                // triangle(0,                +offset,
-                         // this.points[3].x, this.points[3].y+offset,
-                         // this.points[4].x, this.points[4].y+offset);
-
-                // triangle(0,                -offset,
-                         // this.points[4].x, this.points[4].y-offset,
-                         // this.points[5].x, this.points[5].y-offset);
-
-                // triangle(0,                +offset,
-                         // this.points[5].x, this.points[5].y+offset,
-                         // this.points[0].x, this.points[0].y+offset);
-
-                // this.clickRadius-=1;
-
               }
               else{
 
@@ -3349,7 +3354,10 @@ var diagrams = function(processingInstance){
                 // }
 
               }
-
+if(this.active){
+              fill(CLRS.BLACK);
+              text(this.layout,0,0);
+}
           popMatrix();
 
         // drawLinks();
@@ -3384,158 +3392,161 @@ var diagrams = function(processingInstance){
       hexCell.prototype.moved=function(x,y){
       /* Overridden because of the shape */
 
-        // if(this.parent.hit){
-          
-          if(!this.visible){ return; }
+        if(!this.visible){ return; }
+        
+          if(this.parent.hit){
 
-          if(this.outerHitTest(x,y)){
+            if(this.outerHitTest(x,y)){
 
-            this.outerHit=true;
+              this.outerHit=true;
 
-            if(this.hitTest(x,y)){ this.hit=true;
-                                   app.focus=this;
-                                   this.parent.activeCell=this;
-                                   if(this.layout===1 &&
-                                      this.timer===0){
-                                     this.timer=5;
+              if(this.hitTest(x,y)){ this.hit=true;
+                                     app.focus=this;
+                                     this.parent.activeCell=this;
+                                     if(this.layout===1 &&
+                                        this.timer===0){
+                                       this.timer=5;
+                                     }
+
                                    }
+              else                 { this.hit=false; }
 
-                                 }
-            else                 { this.hit=false; }
+            }
+            else{
+
+              this.dirty=false;
+              this.timer=0;
+              this.outerHit=false;
+              this.hit=false;
+
+            }
+
+            this.hover=false;
 
           }
-          else{
-
-            this.dirty=false;
-            this.timer=0;
-            this.outerHit=false;
-            this.hit=false;
-
-          }
-
-          this.hover=false;
-
-        // }
 
       };
       hexCell.prototype.clicked=function(){
 
-        if(this.active){
+        if(!this.visible){ return; }
+              
+          if(this.active){
 
-          app.updateCtrls.add(this.id);
+            app.updateCtrls.add(this.id);
 
-          if(app.mode===APPMODES.CREATE){
+            if(app.mode===APPMODES.CREATE){
 
-            this.incrementCellLayout();
-            this.recalculate();
+              this.incrementCellLayout();
+              this.recalculate();
 
-          }
-          else if(app.mode===APPMODES.GAME){
+            }
+            else if(app.mode===APPMODES.GAME){
 
-            { // Toggle Halo display
+              { // Toggle Halo display
 
-              if(this.layout===HEXY_TYPES.BLUE_REVEALED &&
-                 this.text  ===HEXY_TYPES.NUMBER){
-                this.halo=!this.halo;
+                if(this.layout===HEXY_TYPES.BLUE_REVEALED &&
+                   this.text  ===HEXY_TYPES.NUMBER){
+                  this.halo=!this.halo;
+                }
+
               }
 
-            }
+              { //  Toggle Line Display
 
-            { //  Toggle Line Display
+                if(this.layout===HEXY_TYPES.DOWN_CENTER ||
+                   this.layout===HEXY_TYPES.DOWN_LEFT ||
+                   this.layout===HEXY_TYPES.DOWN_RIGHT){
+                  this.line=!this.line;
+                }
 
-              if(this.layout===HEXY_TYPES.DOWN_CENTER ||
-                 this.layout===HEXY_TYPES.DOWN_LEFT ||
-                 this.layout===HEXY_TYPES.DOWN_RIGHT){
-                this.line=!this.line;
               }
 
+              if(this.layout===HEXY_TYPES.BLUE){
+
+                this.layout=HEXY_TYPES.BLUE_REVEALED;
+
+                this.clickRadius=HEX_SIZE-10;
+
+              }
+              else if(this.layout===HEXY_TYPES.BLACK){
+                app.errors++;
+              }
+
+              // this.execute(this.id);
+
             }
-
-            if(this.layout===HEXY_TYPES.BLUE){
-
-              this.layout=HEXY_TYPES.BLUE_REVEALED;
-
-              this.clickRadius=HEX_SIZE-10;
-
-            }
-            else if(this.layout===HEXY_TYPES.BLACK){
-              app.errors++;
-            }
-
-            // this.execute(this.id);
 
           }
-
-        }
 
       };
-
       hexCell.prototype.rclicked=function(){
+        
+        if(!this.visible){ return; }
+        
+          if(this.active){
 
-        if(this.active){
+            app.updateCtrls.add(this.id);
 
-          app.updateCtrls.add(this.id);
+            if(app.mode===APPMODES.CREATE){
 
-          if(app.mode===APPMODES.CREATE){
+              this.decrementCellLayout();
+              this.recalculate();
 
-            this.decrementCellLayout();
-            this.recalculate();
+            }
+            else if(app.mode===APPMODES.GAME){
+
+              if(this.layout!==HEXY_TYPES.BLUE &&
+                 this.layout!==HEXY_TYPES.BLACK){
+                this.enabled=!this.enabled;
+              }
+
+              if(this.layout===HEXY_TYPES.BLACK){
+
+                this.layout=HEXY_TYPES.BLACK_REVEALED;
+
+                this.clickRadius=HEX_SIZE-10;
+
+              }
+              else if(this.layout===HEXY_TYPES.BLUE){
+                app.errors++;
+              }
+
+            }
+            /* Should the line automatically be dismissed when the cell is disabled? */
+            // this.line=false;
 
           }
-          else if(app.mode===APPMODES.GAME){
-
-            if(this.layout!==HEXY_TYPES.BLUE &&
-               this.layout!==HEXY_TYPES.BLACK){
-              this.enabled=!this.enabled;
-            }
-
-            if(this.layout===HEXY_TYPES.BLACK){
-
-              this.layout=HEXY_TYPES.BLACK_REVEALED;
-
-              this.clickRadius=HEX_SIZE-10;
-
-            }
-            else if(this.layout===HEXY_TYPES.BLUE){
-              app.errors++;
-            }
-
-          }
-          /* Should the line automatically be dismissed when the cell is disabled? */
-          // this.line=false;
-
-        }
 
       };
       hexCell.prototype.incrementCellLayout=function(){
 
         switch(this.layout){
 
-          case HEXY_TYPES.BLANK:          this.layout=HEXY_TYPES.BLACK;
-                                          this.text=HEXY_TYPES.NUMBER;            break;
+          case HEXY_TYPES.BLANK:          this.layout = HEXY_TYPES.BLACK;
+                                          this.text   = HEXY_TYPES.NUMBER;          break;
 
-          case HEXY_TYPES.BLACK:          this.layout=HEXY_TYPES.BLACK_REVEALED;
-                                          this.text=HEXY_TYPES.NUMBER;            break;
+          case HEXY_TYPES.BLACK:          this.layout = HEXY_TYPES.BLACK_REVEALED;
+                                          this.text   = HEXY_TYPES.NUMBER;          break;
 
-          case HEXY_TYPES.BLACK_REVEALED: this.layout=HEXY_TYPES.BLUE;
-                                          this.text=HEXY_TYPES.BLANK;             break;
+          case HEXY_TYPES.BLACK_REVEALED: this.layout = HEXY_TYPES.BLUE;
+                                          this.text   = HEXY_TYPES.BLANK;           break;
 
-          case HEXY_TYPES.BLUE:           this.layout=HEXY_TYPES.BLUE_REVEALED;
-                                          this.text=HEXY_TYPES.BLANK;             break;
+          case HEXY_TYPES.BLUE:           this.layout = HEXY_TYPES.BLUE_REVEALED;
+                                          this.text   = HEXY_TYPES.BLANK;           break;
 
-          case HEXY_TYPES.BLUE_REVEALED:  this.layout=HEXY_TYPES.DOWN_RIGHT;
-                                          this.text=HEXY_TYPES.NUMBER;            break;
+          case HEXY_TYPES.BLUE_REVEALED:  this.layout = HEXY_TYPES.DOWN_RIGHT;
+                                          this.text   = HEXY_TYPES.NUMBER;          break;
 
-          case HEXY_TYPES.DOWN_RIGHT:     this.layout=HEXY_TYPES.DOWN_CENTER;
-                                          this.text=HEXY_TYPES.NUMBER;            break;
+          case HEXY_TYPES.DOWN_RIGHT:     this.layout = HEXY_TYPES.DOWN_CENTER;
+                                          this.text   = HEXY_TYPES.NUMBER;          break;
 
-          case HEXY_TYPES.DOWN_CENTER:    this.layout=HEXY_TYPES.DOWN_LEFT;
-                                          this.text=HEXY_TYPES.NUMBER;            break;
+          case HEXY_TYPES.DOWN_CENTER:    this.layout = HEXY_TYPES.DOWN_LEFT;
+                                          this.text   = HEXY_TYPES.NUMBER;          break;
 
-          case HEXY_TYPES.DOWN_LEFT:      this.layout=HEXY_TYPES.BLANK;
-                                          this.text=HEXY_TYPES.BLANK;             break;
+          case HEXY_TYPES.DOWN_LEFT:      this.layout = HEXY_TYPES.BLANK;
+                                          this.text   = HEXY_TYPES.BLANK;           break;
 
-          default:                                                                break;
+          default:                                                                  break;
 
         }
 
@@ -3546,31 +3557,31 @@ var diagrams = function(processingInstance){
 
         switch(this.layout){
 
-          case HEXY_TYPES.BLANK:          this.layout=HEXY_TYPES.DOWN_LEFT;
-                                          this.text=HEXY_TYPES.NUMBER;            break;
+          case HEXY_TYPES.BLANK:          this.layout = HEXY_TYPES.DOWN_LEFT;
+                                          this.text   = HEXY_TYPES.NUMBER;          break;
 
-          case HEXY_TYPES.BLACK:          this.layout=HEXY_TYPES.BLANK;
-                                          this.text=HEXY_TYPES.BLANK;             break;
+          case HEXY_TYPES.BLACK:          this.layout = HEXY_TYPES.BLANK;
+                                          this.text   = HEXY_TYPES.BLANK;           break;
 
-          case HEXY_TYPES.BLACK_REVEALED: this.layout=HEXY_TYPES.BLACK;
-                                          this.text=HEXY_TYPES.NUMBER;            break;
+          case HEXY_TYPES.BLACK_REVEALED: this.layout = HEXY_TYPES.BLACK;
+                                          this.text   = HEXY_TYPES.NUMBER;          break;
 
-          case HEXY_TYPES.BLUE:           this.layout=HEXY_TYPES.BLACK_REVEALED;
-                                          this.text=HEXY_TYPES.NUMBER;            break;
+          case HEXY_TYPES.BLUE:           this.layout = HEXY_TYPES.BLACK_REVEALED;
+                                          this.text   = HEXY_TYPES.NUMBER;          break;
 
-          case HEXY_TYPES.BLUE_REVEALED:  this.layout=HEXY_TYPES.BLUE;
-                                          this.text=HEXY_TYPES.BLANK;             break;
+          case HEXY_TYPES.BLUE_REVEALED:  this.layout = HEXY_TYPES.BLUE;
+                                          this.text   = HEXY_TYPES.BLANK;           break;
 
-          case HEXY_TYPES.DOWN_RIGHT:     this.layout=HEXY_TYPES.BLUE_REVEALED;
-                                          this.text=HEXY_TYPES.BLANK;             break;
+          case HEXY_TYPES.DOWN_RIGHT:     this.layout = HEXY_TYPES.BLUE_REVEALED;
+                                          this.text   = HEXY_TYPES.BLANK;           break;
 
-          case HEXY_TYPES.DOWN_CENTER:    this.layout=HEXY_TYPES.DOWN_RIGHT;
-                                          this.text=HEXY_TYPES.NUMBER;            break;
+          case HEXY_TYPES.DOWN_CENTER:    this.layout = HEXY_TYPES.DOWN_RIGHT;
+                                          this.text   = HEXY_TYPES.NUMBER;          break;
 
-          case HEXY_TYPES.DOWN_LEFT:      this.layout=HEXY_TYPES.DOWN_CENTER;
-                                          this.text=HEXY_TYPES.NUMBER;            break;
+          case HEXY_TYPES.DOWN_LEFT:      this.layout = HEXY_TYPES.DOWN_CENTER;
+                                          this.text   = HEXY_TYPES.NUMBER;          break;
 
-          default:                                                                break;
+          default:                                                                  break;
 
         }
 
@@ -3770,10 +3781,11 @@ print(this.id);
 
       /* hexBoard           */
       rt.controls.push(new hexBoard(getGUID(), rt, 0, 0, 600, 600,
-        {color:     color(222)}));
+        {cursor:    ARROW,
+         color:     color(222)}));
 
       /* reset button       */
-      rt.controls.push(new resetButton(getGUID(), rt, 550, 550, 40, 40,
+      rt.controls.push(new resetButton(getGUID(), rt, 565, 565, 40, 40,
         {cursor:    HAND,
          color:     CLRS.BLACK,
          execute:   reset}));
@@ -3971,8 +3983,8 @@ print(keyCode);
 
           /*  Function Keys                                                                               */
           case app.keys[KEYCODES.F1]:           toggleInfo();             break;    /* F1 - Info          */
-          case app.keys[KEYCODES.F2]:           toggleTelemetry();        break;    /* F2 - Telemetry     */
-          case app.keys[KEYCODES.F3]:           toggleCreate();           break;    /* F3 - Toggle Create */
+          case app.keys[KEYCODES.F2]:           toggleCreate();           break;    /* F2 - Toggle Create */
+          case app.keys[KEYCODES.F3]:           toggleTelemetry();        break;    /* F3 - Telemetry     */
           case app.keys[KEYCODES.F4]:           printLayout();            break;    /* F4 - Print Layout  */
 
           case app.keys[KEYCODES.CONTROL] &&
