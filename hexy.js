@@ -58,7 +58,8 @@ var diagrams = function(processingInstance){
           ...
 
     TO DO:
-
+      
+      - Test on Zach's machine
       - include 42 layouts from existing games
       - include 42 layouts from the community
 
@@ -174,7 +175,7 @@ var diagrams = function(processingInstance){
 
   const MY_FAV = 7;
   // const HEX_SIZE=60;
-  var HEX_SIZE=60;
+  var HEX_SIZE=40;
   // const pi=nf(PI,1,10);
 
   /* Constants ============================================================= */
@@ -1304,7 +1305,7 @@ var diagrams = function(processingInstance){
           yOffset = w*cos(PI/6);
 
           xMargin = w/2     + (p.w-(w+w*(p.layout[0].length-1)*0.75))/2;
-          yMargin = yOffset +  p.h/2 - (p.layout.length-1)*yOffset/2-w/2;
+          yMargin = yOffset +  p.h/2 - (p.layout.length-1)*yOffset/2-w/2-10;
 
           var curs=HAND;
           
@@ -2262,7 +2263,7 @@ var diagrams = function(processingInstance){
           pushMatrix();
 
             translate(this.x, this.y);
-            scale(1,-1);
+            stroke(CLRS.BLACK);
 
               textFont(this.font);
               textSize(20);
@@ -2280,21 +2281,22 @@ var diagrams = function(processingInstance){
 
                 rect(0, 0, w, 105, 3);
 
-              scale(1,-1);
-
               fill(getColor(CLRS.WHITE,75));
               textAlign(RIGHT,TOP);
 
-                text(categories,  w-10, -100);
+                text(categories,  w-10, 0);
 
               fill(getColor(CLRS.YELLOW,75));
               textAlign(RIGHT,TOP);
 
-                text(values,      w-10, -76);
+                text(values,      w-10, 25);
 
           popMatrix();
 
       };
+      // score.prototype.move=function(x,y){
+
+      // };
 
     }
 
@@ -2904,12 +2906,12 @@ var diagrams = function(processingInstance){
           // }
 
           for(pt=0; pt<6; pt++){
-            
-            p.bpoints.push(new pnt( cos(radians(ang+pt*60))*(d2),
-                                    sin(radians(ang+pt*60))*(d2) ));
 
             p.points.push(new pnt( cos(radians(ang+pt*60))*(d2-8),
                                    sin(radians(ang+pt*60))*(d2-8) ));
+
+            p.bpoints.push(new pnt( cos(radians(ang+pt*60))*(d2),
+                                    sin(radians(ang+pt*60))*(d2) ));
 
             p.dpoints.push(new pnt( cos(radians(ang+pt*60))*(d2-1),
                                     sin(radians(ang+pt*60))*(d2-1) ));
@@ -2918,21 +2920,6 @@ var diagrams = function(processingInstance){
                                     sin(radians(ang+pt*60))*(d2-3) ));
           }
 
-          // for(pt=0; pt<6; pt++){
-            // p.points.push(new pnt( cos(radians(ang+pt*60))*(d2-8),
-                                   // sin(radians(ang+pt*60))*(d2-8) ));
-          // }
-
-          // for(pt=0; pt<6; pt++){
-            // p.dpoints.push(new pnt( cos(radians(ang+pt*60))*(d2-1),
-                                    // sin(radians(ang+pt*60))*(d2-1) ));
-          // }
-
-          // for(pt=0; pt<6; pt++){
-            // p.hpoints.push(new pnt( cos(radians(ang+pt*60))*(d2-3),
-                                    // sin(radians(ang+pt*60))*(d2-3) ));
-          // }
-
         };
 
         reset();
@@ -2940,13 +2927,15 @@ var diagrams = function(processingInstance){
       };
       hexCell.prototype=Object.create(control.prototype);
       hexCell.prototype.draw=function(){
-        
+
         if(!this.visible){ return; }
+        if(app.mode===APPMODES.GAME && 
+           this.layout===HEXY_TYPES.BLANK){ return; }
 
           this.active=this.hit &&
                       app.focus===this;
 
-          var offset=0;
+          this.offset=0;
           var p=this;
 
           if(this.active){
@@ -2980,7 +2969,7 @@ var diagrams = function(processingInstance){
 
           };
           function outerHexagon(){
-            
+
             var drw=true;
 
             noStroke();
@@ -3005,7 +2994,7 @@ var diagrams = function(processingInstance){
               }
 
               if(drw){
-                
+
                 beginShape();
 
                   for(var pt in p.hpoints){
@@ -3062,8 +3051,6 @@ var diagrams = function(processingInstance){
             
             if(app.mode===APPMODES.CREATE){
 
-              noStroke();
-
               switch(p.layout){
 
                 case HEXY_TYPES.BLACK:          fill(CLRS.H_BLACK_L); break;
@@ -3074,24 +3061,9 @@ var diagrams = function(processingInstance){
                 default:                        drw=false;            break;
 
               }
-
-              if(drw){
-                
-                beginShape();
-
-                  for(var pt in p.points){
-                    vertex(p.points[pt].x,
-                           p.points[pt].y);
-                  }
-
-                endShape(CLOSE);
-
-              }
               
             }
             else{
-
-              noStroke();
 
               switch(p.layout){
 
@@ -3103,22 +3075,24 @@ var diagrams = function(processingInstance){
                 default:                        drw=false;              break;
 
               }
-
-              if(drw){
-
-                beginShape();
-
-                  for(var pt in p.points){
-                    vertex(p.points[pt].x,
-                           p.points[pt].y);
-                  }
-
-                endShape(CLOSE);
-                
-              }
               
             }
 
+            if(drw){
+
+              noStroke();
+            
+              beginShape();
+
+                for(var pt in p.points){
+                  vertex(p.points[pt].x,
+                  p.points[pt].y);
+                }
+
+              endShape(CLOSE);
+
+            }
+              
           };
           function caption(){
 
@@ -3232,23 +3206,24 @@ var diagrams = function(processingInstance){
           };
           function activeCell(){
 
-            if(p.active &&
-               app.mode!==APPMODES.CREATE &&
+            if(p.active){
+              if(app.mode!==APPMODES.CREATE &&
                (p.layout===HEXY_TYPES.BLUE ||
                 p.layout===HEXY_TYPES.BLACK)){
 
-              fill(getColor(CLRS.BLACK,15));
+                fill(getColor(CLRS.BLACK,15));
 
-              /** Hexagon */
-              beginShape();
+                /** Hexagon */
+                beginShape();
 
-                for(var pt in p.hpoints){
-                  vertex(p.hpoints[pt].x,
-                         p.hpoints[pt].y);
-                }
+                  for(var pt in p.hpoints){
+                    vertex(p.hpoints[pt].x,
+                           p.hpoints[pt].y);
+                  }
 
-              endShape(CLOSE);
+                endShape(CLOSE);
 
+              }
             }
 
           };
@@ -3295,9 +3270,7 @@ var diagrams = function(processingInstance){
 
             scale(1,-1);
 
-              noStroke();
-                      
-              highlight();
+              // highlight();  // Commented for Speed
               outerHexagon();
               innerHexagon();
               caption();
@@ -3354,11 +3327,11 @@ var diagrams = function(processingInstance){
                 // }
 
               }
-if(this.active){
-              fill(CLRS.BLACK);
-              text(this.layout,0,0);
-}
-          popMatrix();
+  // if(this.active){
+    // fill(CLRS.BLACK);
+    // text(this.layout,0,0);
+  // }
+  popMatrix();
 
         // drawLinks();
 
@@ -3797,7 +3770,7 @@ print(this.id);
          retrieve:  getMusic}));
 
       /* score            */
-      rt.controls.push(new score(getGUID(), rt, 475, 115, 50, 50,
+      rt.controls.push(new score(getGUID(), rt, 475, 10, 50, 50,
         {color:     CLRS.H_BLUE,
          cursor:    HAND,
          execute:   getRemaining,
