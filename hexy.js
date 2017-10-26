@@ -800,6 +800,8 @@ var diagrams = function(processingInstance){
               
           this.active = this.hit &&
                         app.focus===this;
+          
+          var p=this;
 
           pushMatrix();
 
@@ -813,76 +815,90 @@ var diagrams = function(processingInstance){
                                // stroke(getColor(this.color, 50)); }
 
               //  Background
-              noStroke();
-              fill(getColor(this.color,50));
+              function background(){
 
-                rect(0, 0, this.w, this.h);
+                noStroke();
+                fill(getColor(p.color,50));
 
-              // Title
-              stroke(CLRS.BLACK);
-              strokeWeight(0.25);
+                  rect(0, 0, p.w, p.h);
 
-              fill(getColor(CLRS.WHITE,100));
+              };
 
-                rect(100,100,400,100, 3);
+              function title(){
+                
+                stroke(CLRS.BLACK);
+                strokeWeight(0.25);
 
-              textSize(36);
-              textAlign(CENTER,CENTER);
+                fill(getColor(CLRS.WHITE,100));
 
-              fill(getColor(CLRS.BLACK,50));
+                  rect(100,100,400,100, 3);
 
-                text(this.text, 300,130);
+                textSize(36);
+                textAlign(CENTER,CENTER);
 
-              fill(CLRS.BLACK);
+                fill(getColor(CLRS.BLACK,50));
 
-                text(getPuzzleNumber(), 300,170);
+                  text(p.text, 300,130);
 
-              // Summary
-              fill(getColor(CLRS.WHITE,100));
+                fill(CLRS.BLACK);
 
-                rect(100, 210, 400, 200, 3);
+                  text(getPuzzleNumber(), 300,170);
 
-              textSize(36);
-              fill(getColor(CLRS.BLACK,25));
+              };
+              
+              function summary(){
 
-              pushMatrix();
+                fill(getColor(CLRS.WHITE,100));
 
-                translate(120, 330);
-                rotate(-PI/2);
+                  rect(100, 210, 400, 200, 3);
 
-                  text('Mistakes:', 0, 0);
+                textSize(36);
+                fill(getColor(CLRS.BLACK,25));
 
-                rotate(PI/2);
+                pushMatrix();
 
-                  text(app.errors, 5, -95);
+                  translate(120, 330);
+                  rotate(-PI/2);
 
-              popMatrix();
+                    text('Mistakes:', 0, 0);
 
+                  rotate(PI/2);
 
-              //  Hexagons
-              pushMatrix();
+                    text(app.errors, 5, -95);
 
-                translate(150,225);
+                popMatrix();
+              
+              };
 
-                  stroke(CLRS.H_BLUE);
-                  strokeWeight(2);
-                  fill(CLRS.H_BLUE_L);
+              function hexagons(){
+                
+                pushMatrix();
 
-                  var sz=35;
+                  translate(150,225);
 
-                    for(var row=0; row<5; row++){
-                      for(var col=0; col<5; col++){
+                    stroke(CLRS.H_BLUE);
+                    strokeWeight(2);
+                    fill(CLRS.H_BLUE_L);
 
-                        rect(col*sz,row*sz,sz-5,sz-5);
+                    var sz=35;
 
+                      for(var row=0; row<5; row++){
+                        for(var col=0; col<5; col++){
+
+                          rect(col*sz,row*sz,sz-5,sz-5);
+
+                        }
                       }
-                    }
 
+                popMatrix();
 
-              popMatrix();
+              };
 
+              background();
+              title();
+              summary();
+              hexagons();
 
-              // Draw Controls
               forEach(this.controls, 'draw');
 
           popMatrix();
@@ -2883,9 +2899,7 @@ var diagrams = function(processingInstance){
 
         this.clickRadius  = 0;
 
-        // this.hover        = false;
-        // this.tTime        = 0;
-        this.timer        = this.tTime;
+        this.timer        = 0;
 
         var p=this;
 
@@ -2992,7 +3006,8 @@ var diagrams = function(processingInstance){
 
             if(p.timer>0 &&
                p.dirty===false &&
-               app.mode!==APPMODES.CREATE){
+               app.mode!==APPMODES.CREATE &&
+               app.focus===p){
               offset=random(-1.5,1.5);
               p.timer--;
               if(p.timer<=0){ p.dirty=true; }
@@ -3241,9 +3256,8 @@ var diagrams = function(processingInstance){
           }
           
         };
-        
-        //  Delete for release
-        function drawLinks(){
+
+        function drawLinks(){ //  Delete for release
 
           if(p.active){
 
@@ -3373,8 +3387,6 @@ var diagrams = function(processingInstance){
               this.hit=false;
 
             }
-
-            this.hover=false;
 
           }
 
@@ -3554,22 +3566,87 @@ var diagrams = function(processingInstance){
 
         control.call(this, id, parent, x, y, w, h);
 
-        this.color    = props.color;
+        this.color      = props.color;
 
-        this.timer    = 0;
+        this.timer      = 0;
 
-        this.type     = props.type;
+        this.type       = props.type;
 
-        this.incr     = -2;
+        this.incr       = -5;
 
-        this.visible  = props.visible;
+        this.visible    = props.visible;
 
-        app.transition=this;
+        app.transition  = this;
 
       };
       transition.prototype=Object.create(control.prototype);
       transition.prototype.draw=function(){
-        
+
+        function fade(){
+
+          fill(getColor(p.color,p.timer));
+          noStroke();
+
+            rect(0, 0, p.w, p.h);
+
+        };
+        function slide(){
+
+          fill(p.color);
+          noStroke();
+
+          var w=p.timer/100*p.w;
+
+            rect(0, 0, w, p.h);
+
+        };
+        function center(){
+
+          fill(p.color);
+          noStroke();
+
+          var w=p.timer/100*p.w;
+          var h=p.timer/100*p.h;
+
+            rect((p.w-w)/2, (p.h-h)/2, w, h);
+
+        };
+        function edges(){
+
+          fill(p.color);
+          noStroke();
+
+          var left    = -p.timer/100*p.w/2;
+          var right   =  p.w/2+p.timer/100*p.w/2;
+          var top     =  -p.timer/100*p.h/2;
+          var bottom  =  p.h/2+p.timer/100*p.h/2;
+
+            rect(right, 0,      p.w/2, p.h);    // right
+            rect(left,  0,      p.w/2, p.h);    // left
+            rect(0,     bottom, p.w,   p.h);    // bottom
+            rect(0,     top,    p.w,   p.h/2);  // top
+
+        };
+        function hexagon(){
+
+          fill(p.color);
+          noStroke();
+
+          var m=p.timer*5;
+
+          beginShape();
+
+            for(var n=0; n<6; n++){
+
+              vertex(p.w/2+m*cos(n*PI/3),
+                     p.h/2+m*sin(n*PI/3));
+
+            }
+
+          endShape(CLOSE);
+
+        };
+
         if(!this.visible){ return; }
 
           var p=this;
@@ -3580,73 +3657,7 @@ var diagrams = function(processingInstance){
           pushMatrix();
 
             translate(this.x, this.y);
-            // scale(1,-1);
-
-            function fade(){
-
-              fill(getColor(p.color,p.timer));
-              noStroke();
-
-                rect(0, 0, p.w, p.h);
-
-            };
-            function slide(){
-
-              fill(p.color);
-              noStroke();
-
-              var w=p.timer/100*p.w;
-
-                rect(0, 0, w, p.h);
-
-            };
-            function center(){
-
-              fill(p.color);
-              noStroke();
-
-              var w=p.timer/100*p.w;
-              var h=p.timer/100*p.h;
-
-                rect((p.w-w)/2, (p.h-h)/2, w, h);
-
-            };
-            function edges(){
-
-              fill(p.color);
-              noStroke();
-
-              var left    = -p.timer/100*p.w/2;
-              var right   =  p.w/2+p.timer/100*p.w/2;
-              var top     =  -p.timer/100*p.h/2;
-              var bottom  =  p.h/2+p.timer/100*p.h/2;
-
-                rect(right, 0,      p.w/2, p.h);    // right
-                rect(left,  0,      p.w/2, p.h);    // left
-                rect(0,     bottom, p.w,   p.h);    // bottom
-                rect(0,     top,    p.w,   p.h/2);  // top
-
-            };
-            function hexagon(){
-
-              fill(p.color);
-              noStroke();
-
-              var m=p.timer*5;
-
-              beginShape();
-
-                for(var n=0; n<6; n++){
-
-                  vertex(p.w/2+m*cos(n*PI/3),
-                         p.h/2+m*sin(n*PI/3));
-
-                }
-
-              endShape(CLOSE);
-
-            };
-
+            
             if(this.on){
 
               switch(this.type){
@@ -3674,35 +3685,32 @@ var diagrams = function(processingInstance){
 
       };
       transition.prototype.moved= function(x,y){
-print(this.id);
+
         if(!this.visible){ return; }
 
+          if(this.parent.hit){
+          
           if(mouseX>(this.x+x) &&
              mouseX<(this.x+x) + this.w &&
              mouseY>(this.y+y) &&
              mouseY<(this.y+y) + this.h){
 
-            if(this.parent.hit){
-
               this.hit=true;
 
               if(this.on){
+print(this.id);                
                 app.focus=this;
               }
-
-              for(var c in this.controls){ this.controls[c].moved((this.x+x), (this.y+y)); }
-
-            }
 
           }
           else{
 
             this.hit=false;
 
-            for(var c in this.controls){ this.controls[c].hit=false; }
-
           }
-
+          
+        }
+          
       };
 
     }
@@ -3755,12 +3763,12 @@ print(this.id);
          retrieve:  getMistakes}));
 
       /* PuzzleComplete      */
-      // var pc=new puzzleComplete(getGUID(), rt, 100, 100, width-20, height-20,
-        // {text:      'Puzzle Complete',
-         // color:     CLRS.WHITE,
-         // visible:    false});
+      var pc=new puzzleComplete(getGUID(), rt, 10, 10, width-20, height-20,
+        {text:      'Puzzle Complete',
+         color:     CLRS.WHITE,
+         visible:    false});
 
-      // app.controls.push(pc);
+      app.controls.push(pc);
 
       /* PuzzleSelect      */
       // var ps=new puzzleSelect(getGUID(), rt, 110, 110, width, height,
@@ -3801,12 +3809,14 @@ print(this.id);
       rt.controls.push(telem);
 
       /* Transition ---------------------------------------------------- */
-      // var trans=new transition(getGUID(), rt, 0, 0, width-200, height,
-        // {color:     CLRS.H_BLUE_L,
-         // visible:   true,
-         // type:      TRANSITION_TYPES.FADE});
+      var trans=new transition(getGUID(), rt, 0, 0, width-200, height,
+        {color:     CLRS.H_BLUE_L,
+         visible:   true,
+         type:      TRANSITION_TYPES.FADE});
 
-      // rt.controls.push(trans);
+      rt.controls.push(trans);
+
+// app.transition.on=true;
 
   };
 
