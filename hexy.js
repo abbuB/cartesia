@@ -222,16 +222,34 @@ var diagrams = function(processingInstance){
 
     var puzzles=[ //  Ring #1
 
+                  // [ //  Layout 1-1
+                    // ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+                    // ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+                    // ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+                    // ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+                    // ['.', '.', '.', 'x', '.', '.', '.', '.', '.', '.', '.', 'o', '.', '.', '.'],
+                    // ['.', '.', 'x', 'O', 'x', '.', '.', '.', '.', '.', 'o', 'O', 'o', '.', '.'],
+                    // ['.', '.', 'x', 'x', 'x', '.', '.', '.', '.', '.', 'o', 'o', 'o', '.', '.'],
+                    // ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', 'o', '.', '.', '.'],
+                    // ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', 'o', '.', '.', '.'],
+                    // ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', 'x', '.', '.', '.'],
+                    // ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+                    // ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+                    // ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+                    // ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+                    // ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+                  // ],
+
                   [ //  Layout 1-1
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
-                    ['.', '.', '.', 'x', '.', '.', '.', '.', '.', '.', '.', 'o', '.', '.', '.'],
-                    ['.', '.', 'x', 'O', 'x', '.', '.', '.', '.', '.', 'o', 'O', 'o', '.', '.'],
-                    ['.', '.', 'x', 'x', 'x', '.', '.', '.', '.', '.', 'o', 'o', 'o', '.', '.'],
-                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', 'o', '.', '.', '.'],
-                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', 'o', '.', '.', '.'],
+                    ['.', '.', '.', 'X', '.', '.', '.', '.', '.', '.', '.', 'O', '.', '.', '.'],
+                    ['.', '.', 'X', 'O', 'X', '.', '.', '.', '.', '.', 'O', 'O', 'O', '.', '.'],
+                    ['.', '.', 'X', 'X', 'X', '.', '.', '.', '.', '.', 'O', 'O', 'O', '.', '.'],
+                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', 'O', '.', '.', '.'],
+                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', 'O', '.', '.', '.'],
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', 'x', '.', '.', '.'],
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
@@ -239,7 +257,7 @@ var diagrams = function(processingInstance){
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
                   ],
-
+                  
                   [ //  Text 1-1
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
@@ -596,7 +614,9 @@ var diagrams = function(processingInstance){
 
       this.hexBoard;                          //  Set in the hexBoard control initialization
       this.transition;                        //  Set in the transition control initialization
-
+      this.puzzleComplete;                    //  Set in the puzzleComplete control initialization
+      this.puzzleSelect;                      //  Set in the puzzleComplete control initialization
+      
       this.puzzle       = 0;                  //  Index of the current puzzle layout
 
       this.remaining    = 0;                  //  How many blue cells need to be uncovered
@@ -699,9 +719,24 @@ var diagrams = function(processingInstance){
     /* Puzzle Complete -------------------------------------------------- */
     {
 
-      function replay()             { print('replay');                                              };
-      function menu()               { print('menu');                                                };
-      function next()               { print('next');                                                };
+      function replay()             {
+
+        reset();
+        app.puzzleComplete.visible=false;
+
+      };
+      function menu()               {
+
+        // print('menu');
+
+      };
+      function next()               {
+
+        incrementPuzzle();
+
+        app.puzzleComplete.visible=false;
+
+      };
 
     }
     
@@ -828,6 +863,7 @@ var diagrams = function(processingInstance){
         this.offset   = 0;          /** offset distance when clicked          */
 
         this.font     = serifFont;  /** default font                          */
+        this.counter  = 0;          /** Used to count things - frames etc.    */
 
       };
       control.prototype.draw     = function(){};
@@ -1002,7 +1038,7 @@ var diagrams = function(processingInstance){
 
         this.text    = props.text;
         this.color   = props.color;
-        this.visible = true;
+        this.visible = props.visible;
 
         /* replay button       */
         this.controls.push(new hexy_Button(getGUID(), this, 100, 420, 126, 100,
@@ -1027,13 +1063,20 @@ var diagrams = function(processingInstance){
            cursor:    HAND,
            execute:   next,
            color:     CLRS.BLACK}));
-
+        
+        app.puzzleComplete=this;
+        
       };
       puzzleComplete.prototype=Object.create(control.prototype);
       puzzleComplete.prototype.draw=function(){
 
-        if(!this.visible){ return; }
-
+        if(!this.visible){
+          
+          this.counter=0;
+          return;
+          
+        }
+          
           this.active = this.hit &&
                         app.focus===this;
 
@@ -1048,7 +1091,7 @@ var diagrams = function(processingInstance){
               function border(){
 
                 noStroke();
-                fill(getColor(p.color,5));
+                fill(getColor(p.color,10));
 
                   rect(0, 0, p.w, p.h);
 
@@ -1073,7 +1116,7 @@ var diagrams = function(processingInstance){
 
                   text(getPuzzleNumber(), 300,170);
 
-              };              
+              };
               function summary(){
 
                 function drawHexagon(x,y,sz){
@@ -1170,16 +1213,38 @@ var diagrams = function(processingInstance){
                 
               };
 
+              fill(getColor(CLRS.WHITE,100-this.counter));
+
+              rect(0,0,this.w,this.h);
+
               border();
               title();
               summary();
 
               forEach(this.controls, 'draw');
 
+              if(this.counter<100){
+                fill(getColor(CLRS.WHITE,100-this.counter));
+              }
+              else{
+                fill(getColor(CLRS.WHITE,0));
+              }
+
+                rect(0,0,this.w,this.h);
+
           popMatrix();
 
-      };
+          this.counter+=5;
 
+      };
+      puzzleComplete.prototype.clicked  = function(){
+          
+        if(!this.visible){ return; }
+
+        if(this.hit){ forEach(this.controls, 'clicked');  }
+
+      };
+      
     }
 
     /** Puzzle Select   -------------------------------------------------- */
@@ -1235,6 +1300,8 @@ var diagrams = function(processingInstance){
 
             }
           }
+
+        app.puzzleSelect=this;
 
       };
       puzzleSelect.prototype=Object.create(control.prototype);
@@ -1648,7 +1715,8 @@ var diagrams = function(processingInstance){
         load();
 
         this.update();
-
+        
+        app.errors=0;
         app.gameOver=false;
 
       };
@@ -1737,7 +1805,13 @@ var diagrams = function(processingInstance){
 
             app.remaining = total;
             app.covered   = covered;
-
+            
+            if(total  ===0 &&
+               covered===0){
+              app.puzzleComplete.visible=true;
+              // app.errors=0;
+            }
+            
           };
           function drawHalos(){
 
@@ -3591,7 +3665,7 @@ var diagrams = function(processingInstance){
 
         };
 
-        if(!this.visible){ return; }
+        // if(!this.visible){ return; }
 
           this.active=this.hit &&
           app.focus===this;
@@ -3600,8 +3674,15 @@ var diagrams = function(processingInstance){
           var p=this;
 
           if(this.active){
-
-            cursor(this.cursor);
+            
+            if(this.layout===HEXY_TYPES.BLACK ||
+               this.layout===HEXY_TYPES.BLUE ||
+               app.mode===APPMODES.CREATE){
+              cursor(this.cursor);
+            }
+            else{
+              cursor(ARROW);
+            }
 
             if(app.left){ this.offset=1; }
 
@@ -4061,12 +4142,12 @@ print(this.id);
          retrieve:  getMistakes}));
 
       /* PuzzleComplete      */
-      // var pc=new puzzleComplete(getGUID(), rt, 1, 1, width-2, height-2,
-        // {text:      'Puzzle Complete',
-         // color:     CLRS.BLACK,
-         // visible:    false});
+      var pc=new puzzleComplete(getGUID(), rt, 1, 1, width-201, height-2,
+        {text:      'Puzzle Complete',
+         color:     CLRS.BLACK,
+         visible:   false});
 
-      // app.controls.push(pc);
+      app.controls.push(pc);
 
       /* PuzzleSelect      */
       // var ps=new puzzleSelect(getGUID(), rt, 10, 10, 600, 600,
