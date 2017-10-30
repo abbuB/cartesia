@@ -727,13 +727,14 @@ var diagrams = function(processingInstance){
       };
       function menu()               {
 
-        // print('menu');
+        reset();
+        app.puzzleComplete.visible=false;
+        app.puzzleSelect.visible=true;
 
       };
       function next()               {
 
         incrementPuzzle();
-
         app.puzzleComplete.visible=false;
 
       };
@@ -822,7 +823,7 @@ var diagrams = function(processingInstance){
 
       function reset()              {
 
-        app.hexBoard.reset();
+        app.hexBoard.reset(); 
         app.errors=0;
 
       };
@@ -1064,7 +1065,7 @@ var diagrams = function(processingInstance){
            execute:   next,
            color:     CLRS.BLACK}));
         
-        app.puzzleComplete=this;
+        // app.puzzleComplete=this;
         
       };
       puzzleComplete.prototype=Object.create(control.prototype);
@@ -1215,7 +1216,7 @@ var diagrams = function(processingInstance){
 
               fill(getColor(CLRS.WHITE,100-this.counter));
 
-              rect(0,0,this.w,this.h);
+                rect(0,0,this.w,this.h);
 
               border();
               title();
@@ -1256,7 +1257,8 @@ var diagrams = function(processingInstance){
 
         this.color    = props.color;
         this.retrieve = props.retrieve;
-        
+        this.visible  = props.visible;
+
         //  Load Hexagon Buttons
         var txt;
 
@@ -1301,7 +1303,7 @@ var diagrams = function(processingInstance){
             }
           }
 
-        app.puzzleSelect=this;
+        // app.puzzleSelect=this;
 
       };
       puzzleSelect.prototype=Object.create(control.prototype);
@@ -1319,9 +1321,9 @@ var diagrams = function(processingInstance){
           function border(){
 
             noStroke();
-            fill(getColor(p.color,75));
+            fill(getColor(p.color,15));
 
-            rect(0, 0, p.w, p.h, 100);
+              rect(0, 0, p.w, p.h, 100);
 
           };          
           function drawScore(){
@@ -1715,9 +1717,8 @@ var diagrams = function(processingInstance){
         load();
 
         this.update();
-        
+
         app.errors=0;
-        app.gameOver=false;
 
       };
       hexBoard.prototype.draw         = function(){
@@ -4149,13 +4150,17 @@ print(this.id);
 
       app.controls.push(pc);
 
+      app.puzzleComplete=pc;
+
       /* PuzzleSelect      */
-      // var ps=new puzzleSelect(getGUID(), rt, 10, 10, 600, 600,
-        // {retrieve:  getScore,
-         // color:     CLRS.WHITE});
+      var ps=new puzzleSelect(getGUID(), rt, 10, 10, 600, 600,
+        {retrieve:  getScore,
+         color:     CLRS.WHITE,
+         visible:   false});
 
-      // app.controls.push(ps);
-
+      app.controls.push(ps);
+      
+      app.puzzleSelect=ps;
 
 
       /* SplashScreen ------------------------------------------------- */
@@ -4185,15 +4190,15 @@ print(this.id);
         {color:     color(36),
          cursor:    ARROW});
 
-      rt.controls.push(telem);
+      app.controls.push(telem);
 
       /* Transition ---------------------------------------------------- */
-      var trans=new transition(getGUID(), rt, 0, 0, width-200, height,
-        {color:     CLRS.H_BLUE_L,
-         visible:   true,
-         type:      TRANSITION_TYPES.FADE});
+      // var trans=new transition(getGUID(), rt, 0, 0, width-200, height,
+        // {color:     CLRS.H_BLUE_L,
+         // visible:   true,
+         // type:      TRANSITION_TYPES.FADE});
 
-      rt.controls.push(trans);
+      // rt.controls.push(trans);
 
 // app.transition.on=true;
 
