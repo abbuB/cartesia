@@ -58,8 +58,15 @@ var diagrams = function(processingInstance){
           ...
 
     TO DO:
-      
-      - Menu button (top left corner)
+
+      - wrong click animation
+
+      - identify puzzle # on hexBoard
+
+      - background animation for the puzzle select screen
+      - noises for clicking and ambient music
+
+      - Tidy up each main screen
       
       - Threshold for puzzle button to be enabled
 
@@ -74,9 +81,8 @@ var diagrams = function(processingInstance){
 
       - background grid
       - score controls
-      - navigate puzzles controls
+      - navigate PUZZLES controls
       - sounds/music controls
-      - restart game controls
 
       - undo/redo
       - determine how consecutive and non-consecutive are specified
@@ -91,8 +97,6 @@ var diagrams = function(processingInstance){
       - Restart control
       - Expanding halos
 
-
-
       - Allow for optional orientation of hexagons
         * pointy top
         * flat top
@@ -105,6 +109,8 @@ var diagrams = function(processingInstance){
 
     TO DONE:
 
+      - restart game controls    
+      - Menu button (top left corner)
       - ***** Remove Dragging from all controls *****
       
     ---------------------------------------------------------------------
@@ -113,6 +119,9 @@ var diagrams = function(processingInstance){
 
       colorMode(HSB, 255);
 
+  // print( typeof app.transition );
+  // const pi=nf(PI,1,10);
+  
 */
 
   function print(s){
@@ -183,22 +192,67 @@ var diagrams = function(processingInstance){
 
   };
 
-  var serifFont   = createFont('sans-serif', 16);
-  var sansFont    = createFont('sans',       16);
-  var monoFont    = createFont('monospace',  16);
-  var cursiveFont = createFont('cursive',    16);
-  var fantasyFont = createFont('fantasy',    16);
-
-  var globalFRate=this;
-
-  const MY_FAV = 7;
-  // const HEX_SIZE=60;
-  var HEX_SIZE=40;
-  // const pi=nf(PI,1,10);
-
-  /* Constants ============================================================= */
+  /* Constants =========================================================== */
   {
 
+    var serifFont   = createFont('sans-serif', 16);
+    var sansFont    = createFont('sans',       16);
+    var monoFont    = createFont('monospace',  16);
+    var cursiveFont = createFont('cursive',    16);
+    var fantasyFont = createFont('fantasy',    16);
+
+    var HEX_SIZE=40;
+    var ORIENTATIONS={
+
+      POINTY:   0,
+      FLAT:     1,
+      CUSTOM:   2
+
+    }
+
+    var CLRS={
+
+      H_BACKGROUND: color(231,231,231,255),
+      H_SHADOW:     color(209,209,209,255),
+
+      H_BLUE:       color( 20,156,216,255), H_BLUE_L:     color(  5,164,235,255),
+      H_BLACK:      color( 44, 47, 49,255), H_BLACK_L:    color( 62, 62, 62,255),
+      H_ORANGE:     color(255,159,  0,255), H_ORANGE_L:   color(255,175, 41,255),
+
+      RED:          color(170, 29, 29,255), GREEN:        color(158,182, 58,255),
+      BLUE:         color( 29, 86,170,255), YELLOW:       color(238,214, 15,255),
+      ORANGE:       color(238,136, 15,255), GRAY:         color(128,128,128,255),
+
+      CYAN:         color( 49,204,167,255),
+      PINK:         color(255, 20,147,255),
+
+      TEAL_0:       color( 28,117,138,255), TEAL_0_LT:    color( 28,117,138,128),
+      TEAL_1:       color( 41,171,202,255), TEAL_1_LT:    color( 41,171,202,128),
+      TEAL_2:       color( 88,196,221,255), TEAL_2_LT:    color( 88,196,221,128),
+      TEAL_3:       color(156,220,235,255), TEAL_3_LT:    color(156,220,235,128),
+
+      TRANSPARENT:  color(-1,-1,-1),
+
+      WHITE:        color(255,255,255,255),
+      BLACK:        color(  0,  0,  0,255),
+
+      K_RED:        color(170, 29, 29,255), K_GREEN:      color(158,182, 58,255),
+      K_BLUE:       color( 29, 86,170,255), K_YELLOW:     color(238,214, 15,255),
+      K_ORANGE:     color(238,136, 15,255), GRAY:         color(128,128,128,255),
+
+      BROWN:        color(155,145,135,255),
+
+      RED:          color(255,  0,  0,255), REDORANGE:    color(255, 81,  0,255),
+      ORANGE:       color(255,127,  0,255), YELLOWORANGE: color(255,190,  0,255),
+      YELLOW:       color(255,255,  0,255), YELLOWGREEN:  color(192,255,  0,255),
+
+      GREEN:        color(  0,255,  0,255), BLUEGREEN:    color(  0,127,127,255),
+      BLUE:         color(  0,  0,255,255), BLUEVIOLET:   color( 92,  0,255,255),
+
+      VIOLET:       color(127,  0,255,255), REDVIOLET:    color(191,  0,127,255),
+
+    };
+    
     var HEXY_TYPES={
 
       BLANK:            '.',
@@ -217,7 +271,8 @@ var diagrams = function(processingInstance){
       NOT_CONSECUTIVE:  'n'
 
     };
-    var messages=[
+    
+    var MESSAGES=[
                   "Remove orange hexes to reveal the pattern underneath.\nThe number in an empty hex tells you how many adjacent hexes are part of the pattern.\nLeft click to mark a hex as part of the pattern.\nRight click to destroy hexes that aren't part of the pattern.",
                   "Layout \n1-2",
                   "Layout \n1-3",
@@ -227,7 +282,7 @@ var diagrams = function(processingInstance){
                   "Layout \n1-7"
                   ];
 
-    var puzzles=[ //  Ring #1
+    var PUZZLES=[ //  Ring #1
 
                   // [ //  Layout 1-1
                     // ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
@@ -501,57 +556,6 @@ var diagrams = function(processingInstance){
 
                 ];
 
-    var ORIENTATIONS={
-
-      POINTY:   0,
-      FLAT:     1,
-      CUSTOM:   2
-
-    }
-
-    var CLRS={
-
-      H_BACKGROUND: color(231,231,231,255),
-      H_SHADOW:     color(209,209,209,255),
-
-      H_BLUE:       color( 20,156,216,255), H_BLUE_L:     color(  5,164,235,255),
-      H_BLACK:      color( 44, 47, 49,255), H_BLACK_L:    color( 62, 62, 62,255),
-      H_ORANGE:     color(255,159,  0,255), H_ORANGE_L:   color(255,175, 41,255),
-
-      RED:          color(170, 29, 29,255), GREEN:        color(158,182, 58,255),
-      BLUE:         color( 29, 86,170,255), YELLOW:       color(238,214, 15,255),
-      ORANGE:       color(238,136, 15,255), GRAY:         color(128,128,128,255),
-
-      CYAN:         color( 49,204,167,255),
-      PINK:         color(255, 20,147,255),
-
-      TEAL_0:       color( 28,117,138,255), TEAL_0_LT:    color( 28,117,138,128),
-      TEAL_1:       color( 41,171,202,255), TEAL_1_LT:    color( 41,171,202,128),
-      TEAL_2:       color( 88,196,221,255), TEAL_2_LT:    color( 88,196,221,128),
-      TEAL_3:       color(156,220,235,255), TEAL_3_LT:    color(156,220,235,128),
-
-      TRANSPARENT:  color(-1,-1,-1),
-
-      WHITE:        color(255,255,255,255),
-      BLACK:        color(  0,  0,  0,255),
-
-      K_RED:        color(170, 29, 29,255), K_GREEN:      color(158,182, 58,255),
-      K_BLUE:       color( 29, 86,170,255), K_YELLOW:     color(238,214, 15,255),
-      K_ORANGE:     color(238,136, 15,255), GRAY:         color(128,128,128,255),
-
-      BROWN:        color(155,145,135,255),
-
-      RED:          color(255,  0,  0,255), REDORANGE:    color(255, 81,  0,255),
-      ORANGE:       color(255,127,  0,255), YELLOWORANGE: color(255,190,  0,255),
-      YELLOW:       color(255,255,  0,255), YELLOWGREEN:  color(192,255,  0,255),
-
-      GREEN:        color(  0,255,  0,255), BLUEGREEN:    color(  0,127,127,255),
-      BLUE:         color(  0,  0,255,255), BLUEVIOLET:   color( 92,  0,255,255),
-
-      VIOLET:       color(127,  0,255,255), REDVIOLET:    color(191,  0,127,255),
-
-    };
-
   }
 
   function application(){
@@ -561,10 +565,12 @@ var diagrams = function(processingInstance){
 
       randomSeed(millis());
 
-      frameRate(0);
+      frameRate(60);
 
       cursor(WAIT);
+
       strokeCap(SQUARE);
+      strokeJoin(MITER);
 
       angleMode='radians';
 
@@ -622,7 +628,7 @@ var diagrams = function(processingInstance){
       this.hexBoard;                          //  Set in the hexBoard control initialization
       // this.transition;                        //  Set in the transition control initialization
       this.puzzleComplete;                    //  Set in the puzzleComplete control initialization
-      this.puzzleSelect;                      //  Set in the puzzleComplete control initialization
+      this.PUZZLESelect;                      //  Set in the puzzleComplete control initialization
 
       this.puzzle       = 0;                  //  Index of the current puzzle layout
 
@@ -642,7 +648,7 @@ var diagrams = function(processingInstance){
   var app=new application();
 
 
-  /* Utility Functions ===================================================== */
+  /* Utility Functions =================================================== */
   {
 
     /** Misc            -------------------------------------------------- */
@@ -683,7 +689,7 @@ var diagrams = function(processingInstance){
 
     }
 
-    /** Puzzles         -------------------------------------------------- */
+    /** PUZZLES         -------------------------------------------------- */
     {
 
       function reset()              {
@@ -699,9 +705,9 @@ var diagrams = function(processingInstance){
 
         app.puzzle+=2;
 
-        if(app.puzzle>puzzles.length-1){  app.puzzle=0; }
+        if(app.puzzle>PUZZLES.length-1){  app.puzzle=0; }
 
-        app.puzzle=constrain(app.puzzle, 0, puzzles.length-1);
+        app.puzzle=constrain(app.puzzle, 0, PUZZLES.length-1);
 
         reset();
 // throw(23);
@@ -710,22 +716,22 @@ var diagrams = function(processingInstance){
 
         app.puzzle-=2;
 
-        if(app.puzzle<0){ app.puzzle=puzzles.length-2; }
+        if(app.puzzle<0){ app.puzzle=PUZZLES.length-2; }
 
-        app.puzzle=constrain(app.puzzle, 0, puzzles.length-2);
+        app.puzzle=constrain(app.puzzle, 0, PUZZLES.length-2);
 
         reset();
 
       };
       function loadPuzzle(n)        {
 
-        app.puzzle=constrain(n*2, 0, puzzles.length-1);
+        app.puzzle=constrain(n*2, 0, PUZZLES.length-1);
 
         print('load puzzle: ' + n);
 
         reset();
         app.puzzleComplete.x = 1000;
-        app.puzzleSelect.x   = 1000;
+        app.PUZZLESelect.x   = 1000;
         app.hexBoard.x       = 0;
 
       };
@@ -739,7 +745,7 @@ var diagrams = function(processingInstance){
 
         reset();
         app.puzzleComplete.x = 1000;
-        app.puzzleSelect.x   = 1000;
+        app.PUZZLESelect.x   = 1000;
         app.hexBoard.x       = 0;
 
       };
@@ -747,7 +753,7 @@ var diagrams = function(processingInstance){
 
         app.puzzleComplete.x = 1000;
         app.hexBoard.x       = 1000;
-        app.puzzleSelect.x   = 0;
+        app.PUZZLESelect.x   = 0;
 
       };
       function next()              {
@@ -846,10 +852,10 @@ var diagrams = function(processingInstance){
 
   }
 
-  /* Containers/Controls =================================================== */
+  /* Containers/Controls ================================================= */
   {
 
-    /** Control - default --------------------------------------------------  */
+    /** Control - default ------------------------------------------------ */
     {
 
       var control=function(id, parent, x, y, w, h){
@@ -930,7 +936,7 @@ var diagrams = function(processingInstance){
 
     }
 
-    /* Containers ========================================================== */
+    /* Containers ======================================================== */
 
     /** root            -------------------------------------------------- */
     {
@@ -1227,7 +1233,7 @@ var diagrams = function(processingInstance){
 
               };
 
-              fill(getColor(CLRS.WHITE,100-this.counter));
+              fill(getColor(CLRS.WHITE,0));
 
                 rect(0,0,this.w,this.h);
 
@@ -1237,12 +1243,12 @@ var diagrams = function(processingInstance){
 
               forEach(this.controls, 'draw');
 
-              if(this.counter<100){
-                fill(getColor(CLRS.WHITE,100-this.counter));
-              }
-              else{
+              // if(this.counter<100){
+                // fill(getColor(CLRS.WHITE,100));
+              // }
+              // else{
                 fill(getColor(CLRS.WHITE,0));
-              }
+              // }
 
                 rect(0,0,this.w,this.h);
 
@@ -1257,28 +1263,26 @@ var diagrams = function(processingInstance){
 
       };
       puzzleComplete.prototype.moved    = function(x,y){
-        
-        // if(this.x!==0){ return; }
-        
-          if(this.hitTest(x,y)){
 
-            if(this.parent.hit){
+        if(this.hitTest(x,y)){
 
-              this.hit=true;
-              app.focus=this;
+          if(this.parent.hit){
 
-              for(var c in this.controls){ this.controls[c].moved((this.x+x), (this.y+y)); }
+            this.hit=true;
+            app.focus=this;
 
-            }
+            for(var c in this.controls){ this.controls[c].moved((this.x+x), (this.y+y)); }
 
           }
-          else{
 
-            this.hit=false;
+        }
+        else{
 
-            for(var c in this.controls){ this.controls[c].hit=false; }
+          this.hit=false;
 
-          }
+          for(var c in this.controls){ this.controls[c].hit=false; }
+
+        }
       
       };
       
@@ -1287,7 +1291,7 @@ var diagrams = function(processingInstance){
     /** Puzzle Select   -------------------------------------------------- */
     {
 
-      function puzzleSelect(id, parent, x, y, w, h, props){
+      function PUZZLESelect(id, parent, x, y, w, h, props){
 
         control.call(this, id, parent, x, y, w, h);
 
@@ -1303,8 +1307,8 @@ var diagrams = function(processingInstance){
         var n     =   0;
         var x1    =   0;
         var y1    =   0;
-        var baseX = 290;
-        var baseY = 290;
+        var baseX = w/2;
+        var baseY = h/2;
 
           for(var row=0; row<6; row++){
             for(var col=0; col<7; col++){
@@ -1338,13 +1342,16 @@ var diagrams = function(processingInstance){
             }
           }
 
-        app.puzzleSelect=this;
+        app.PUZZLESelect=this;
 
       };
-      puzzleSelect.prototype=Object.create(control.prototype);
-      puzzleSelect.prototype.draw=function(){
+      PUZZLESelect.prototype=Object.create(control.prototype);
+      PUZZLESelect.prototype.draw=function(){
 
-        if(this.x!==0){ return; }
+        if(this.x!==0){
+          this.counter=0;
+          return;
+        }
 
           this.active = this.hit &&
                         app.focus===this;
@@ -1358,8 +1365,34 @@ var diagrams = function(processingInstance){
             noStroke();
             fill(getColor(p.color,95));
 
-              rect(0, 0, p.w, p.h, 10);
+              rect(p.x, p.y, p.w, p.h);
 
+          };
+          function drawHexagon(x,y,sz){
+
+            noFill();
+
+            var ang=0;
+
+            strokeWeight(12);
+            stroke(getColor(CLRS.BLACK,random(1,10)));
+
+            beginShape();
+
+              for(pt=0; pt<6; pt++){
+
+                vertex( x+cos(radians(ang+pt*60))*(sz),
+                        y+sin(radians(ang+pt*60))*(sz) );
+
+              }
+
+            endShape(CLOSE);
+
+          };
+          function animation(){
+            
+            drawHexagon(random(width), random(height), random(100));
+            
           };
           function drawScore(){
 
@@ -1396,8 +1429,8 @@ var diagrams = function(processingInstance){
               endShape(CLOSE);
 
             };
-
-            drawHexagon(290,290,50);
+          
+            drawHexagon(300,300,50);
 
             //  Shadow
             var score=p.retrieve();
@@ -1420,14 +1453,24 @@ var diagrams = function(processingInstance){
             translate(this.x, this.y);
 
               border();
+              animation();
               drawScore();
 
               forEach(this.controls, 'draw');
 
+              noStroke();
+              fill(getColor(CLRS.WHITE,100-this.counter));
+
+                rect(0,0,this.w,this.h);
+
           popMatrix();
 
+          if(this.counter<100){
+            this.counter+=3;
+          }
+
       };
-      puzzleSelect.prototype.clicked  = function(){
+      PUZZLESelect.prototype.clicked  = function(){
 
         if(this.hit){ forEach(this.controls, 'clicked');  }
 
@@ -1679,8 +1722,8 @@ var diagrams = function(processingInstance){
         this.controls   = [];   //  Clear the controls array
         this.activeCell = null; //  Clear the active hexCell
 
-        this.layout=puzzles[app.puzzle];
-        this.text=puzzles[app.puzzle+1];
+        this.layout=PUZZLES[app.puzzle];
+        this.text=PUZZLES[app.puzzle+1];
 
         var rowArray=[];  // Temporary 1-D array to hold each successive row before adding to the corresponding 2-D array
         var n=0;          // Iterator
@@ -1755,7 +1798,10 @@ var diagrams = function(processingInstance){
       };
       hexBoard.prototype.draw         = function(){
 
-        if(this.x!==0){ return; }
+        if(this.x!==0){
+          this.counter=0;
+          return;
+        }
 
           var p=this;
 
@@ -1930,7 +1976,7 @@ var diagrams = function(processingInstance){
             textLeading(20);
             fill(getColor(CLRS.BLACK,75));
 
-            text(messages[app.puzzle/2], 80, 590);
+            text(MESSAGES[app.puzzle/2], 80, 590);
 
           };
 
@@ -1976,52 +2022,58 @@ var diagrams = function(processingInstance){
               calculateRemaining();
 
               drawMessages();
+              
+              fill(getColor(CLRS.WHITE,100-this.counter));
+
+                rect(0,0,this.w,this.h);
 
           popMatrix();
+
+          if(this.counter<100){
+            this.counter+=3;
+          }
 
       };
       hexBoard.prototype.moved        = function(x,y){
 
-        // if(this.x!==0){ return; }
-      
-          if(mouseX>(this.x+x) &&
-             mouseX<(this.x+x) + this.w &&
-             mouseY>(this.y+y) &&
-             mouseY<(this.y+y) + this.h){
+        if(mouseX>(this.x+x) &&
+           mouseX<(this.x+x) + this.w &&
+           mouseY>(this.y+y) &&
+           mouseY<(this.y+y) + this.h){
 
-            if(this.parent.hit){
+          if(this.parent.hit){
 
-              this.hit=true;
-              app.focus=this;
-
-              var ctrls=this.controls;
-
-              for(var r in ctrls){
-                for(var c in ctrls[r]){
-
-                  ctrls[r][c].moved(this.x+x, this.y+y);
-
-                }
-              }
-
-            }
-
-          }
-          else{
-
-            this.hit=false;
+            this.hit=true;
+            app.focus=this;
 
             var ctrls=this.controls;
 
             for(var r in ctrls){
               for(var c in ctrls[r]){
 
-                ctrls[r][c].hit=false;
+                ctrls[r][c].moved(this.x+x, this.y+y);
 
               }
             }
 
           }
+
+        }
+        else{
+
+          this.hit=false;
+
+          var ctrls=this.controls;
+
+          for(var r in ctrls){
+            for(var c in ctrls[r]){
+
+              ctrls[r][c].hit=false;
+
+            }
+          }
+
+        }
 
       };
       hexBoard.prototype.clicked      = function(){
@@ -2551,7 +2603,7 @@ print(app.focus.id);
 
     }
 
-    /* Controls ============================================================ */
+    /* Controls ========================================================== */
 
     /** Music           -------------------------------------------------- */
     {
@@ -4252,8 +4304,8 @@ print(this.id);
 
       app.controls.push(pc);
 
-      /* PuzzleSelect     */
-      var ps=new puzzleSelect(getGUID(), rt, 1000, 10, 580, 580,
+      /* PUZZLESelect     */
+      var ps=new PUZZLESelect(getGUID(), rt, 1000, 0, width-200, height,
         {retrieve:  getScore,
          color:     CLRS.WHITE});
 
@@ -4306,76 +4358,7 @@ print(this.id);
 
     forEach(app.controls,'draw');
 
-    // textFont(sansFont,64);
-    // textSize(36);
-    // textAlign(LEFT,TOP);
-    // fill(getColor(CLRS.BLACK,15));
-
-      // pushMatrix();
-
-        // translate(10,5);
-        // rotate(-PI/6);
-
-          // text('Level ' + getPuzzleNumber(), 0, 0);
-
-      // popMatrix();
-
-    // if(app.remaining===0 &&
-       // app.covered  ===0 &&
-       // app.mode!==APPMODES.CREATE){
-
-      // pComplete();
-
-    // }
-
   };
-
-  /** Testing *.hexcell file format ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-  {
-      // var f="................................................|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.";
-
-      // var f="............................|+..............|+......|+..................................|+..........|+../+..............|+......................o...o...o...x...x...x...x...o+..o+..o+..x.......................x...x...o+..x+..x...o+..x...on..oc..oc..o+..x...................o+..o+..on..o...x...o+..x...o...x...x...x...x...o...............|+..o...o+..x...x+..x...o...o+..oc..x...x...x...x+..|+..............o+..o...x...x+..o...o+..o+..o+..x...x...o+..x...x...............x...x...x...oc..x...on..o+..x...x...x+..o+..on..o+..o+..........o...o+..o...o...o.......x+..o+..o+......x...x...x...o+..o.......\\+..x...on..on..o+..........o+..o+..........x...o...o...o+..........o...x...oc..x...o.......x...o+..x...|n..o+..x...x...x...x...........x+..x...o+..x...x...x+..x...o+..x+..o...x...o+..o+..o...........x...o+..x...oc..o...o+..x...x...x...x...o...o...o+..on..o+..........o+..x...o...o+..on..o+..o...o+..o...x+..o...o+..x...o+..........o...o...o...o+..oc..x...o+..On..o+..x...o+..x+..on..o...x...........o+..x...x...x...o+..x...o...x...o...o...o...x...o+..o+..........x+..x...x.......x...oc..x.......x...o...o.......o...x...x...........on..o+..........o...oc../+..|+..x+..x...........o...o+..........o...x...on......x...o...o+..|n..x...x...x.......x...o...o+..........o...x...o+..x...o...oc..x...x...x...o+..o...o...o...x...........x...x+..o+..x...o+..x...o+..On..oc..o+..x...o...o+..oc..o...........x...o+..o...x+..o+..x...x...o+..o+..o...o+..oc..o...x...........o...x+..x...oc..o+..x...x...o+..o+..o...x...oc..x...o+..x...........o...o...o+..o...o+..o...o...o...x...x...o+..x...o+..o+..........x...x...o+..o+..o+......o+..on..x.......o+..x...o...o...x...........o+..on..o+..x...|+......x...x.......|n..on..x...x...oc..........o...on..oc..x+..x...|n..o+..o+..x.......o+..o+..x+..o+..x...........o+..x...o...oc..on..x...o+..x...x...x...x...x...o...x...............o+..x...x+..o...x...o...x...x...o+..o+..x...o+..o+..................o...x...oc..x+..oc..x...o+..o+..o+..on..on..x+..................o+..x...x...o...oc..o...oc..o...o...o+..o+..x+..o+..................o+..x...o+..x+..o...x...o...o+..x...x...o+..x.......................o...o...x...x...x...x...o...o...o...x...o+............";
-
-      // var first='';
-      // var secnd='';
-
-      // for(var n=0; n<f.length; n+=2){
-
-        // first+=f.substring(  n, n+1);
-        // secnd+=f.substring(n+1, n+2);
-
-      // }
-
-// print(f.length);
-
-// print(first);
-// print(first.length);
-
-// print(secnd);
-// print(secnd.length);
-
-      // var arrFirst=[];
-      // var arrSecond=[];
-
-      // for(var n=0; n<first.length; n+=13){
-
-        // arrFirst.push( split(first.substring(n, n+13),''));
-        // arrSecond.push(split(secnd.substring(n, n+13),''));
-
-      // }
-
-  // for(var row=0; row<arrFirst.length; row++){
-    // print(arrFirst[row]);
-  // }
-
-// print(arrFirst.length);
-
-// print(arrSecond);
-// print(arrSecond.length);
-// print(arrSecond.length);
-
-  }
-  /** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
   var execute;
 
@@ -4383,10 +4366,7 @@ print(this.id);
 
   execute=play;
 
-  app.focus=app.hexBoard;
-
-  strokeJoin(MITER);
-  strokeCap(SQUARE);
+  app.focus=app.hexBoard.id;  //  Required for telemetry to identify control with focus.
 
   draw=function(){
 
@@ -4396,31 +4376,7 @@ print(this.id);
 
     execute();
 
-    // fill(CLRS.BLACK);
-    // textSize(16);
-    // textAlign(LEFT,TOP);
-
-      // text(app.puzzle ,10, 10);
-
-    // if(frameCount%100===0){
-      // print('HexBoard.x: '       + app.hexBoard.x);
-      // print('puzzleSelect.x: '   + app.puzzleSelect.x);
-      // print('puzzleComplete.x: ' + app.puzzleComplete.x);
-      // print(frameCount + ' --------------------------------------------------');
-    // }
-    
   };
-
-  print( typeof app.transition );
-
-// app.transition.on=false;
-// app.transition.type=TRANSITION_TYPES.EDGES;
-
-  // app.levelScores[31]=1111;
-
-  for (var n in app.levelScores){
-    print(app.levelScores[n]);
-  }
 
   /* Keyboard Events =========================================================== */
   {
@@ -4563,7 +4519,67 @@ print(keyCode);
 
   }
 
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  // for (var n in app.levelScores){
+    // print(app.levelScores[n]);
+  // }
+  /** Testing *.hexcell file format ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+  {
+      // var f="................................................|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.";
 
+      // var f="............................|+..............|+......|+..................................|+..........|+../+..............|+......................o...o...o...x...x...x...x...o+..o+..o+..x.......................x...x...o+..x+..x...o+..x...on..oc..oc..o+..x...................o+..o+..on..o...x...o+..x...o...x...x...x...x...o...............|+..o...o+..x...x+..x...o...o+..oc..x...x...x...x+..|+..............o+..o...x...x+..o...o+..o+..o+..x...x...o+..x...x...............x...x...x...oc..x...on..o+..x...x...x+..o+..on..o+..o+..........o...o+..o...o...o.......x+..o+..o+......x...x...x...o+..o.......\\+..x...on..on..o+..........o+..o+..........x...o...o...o+..........o...x...oc..x...o.......x...o+..x...|n..o+..x...x...x...x...........x+..x...o+..x...x...x+..x...o+..x+..o...x...o+..o+..o...........x...o+..x...oc..o...o+..x...x...x...x...o...o...o+..on..o+..........o+..x...o...o+..on..o+..o...o+..o...x+..o...o+..x...o+..........o...o...o...o+..oc..x...o+..On..o+..x...o+..x+..on..o...x...........o+..x...x...x...o+..x...o...x...o...o...o...x...o+..o+..........x+..x...x.......x...oc..x.......x...o...o.......o...x...x...........on..o+..........o...oc../+..|+..x+..x...........o...o+..........o...x...on......x...o...o+..|n..x...x...x.......x...o...o+..........o...x...o+..x...o...oc..x...x...x...o+..o...o...o...x...........x...x+..o+..x...o+..x...o+..On..oc..o+..x...o...o+..oc..o...........x...o+..o...x+..o+..x...x...o+..o+..o...o+..oc..o...x...........o...x+..x...oc..o+..x...x...o+..o+..o...x...oc..x...o+..x...........o...o...o+..o...o+..o...o...o...x...x...o+..x...o+..o+..........x...x...o+..o+..o+......o+..on..x.......o+..x...o...o...x...........o+..on..o+..x...|+......x...x.......|n..on..x...x...oc..........o...on..oc..x+..x...|n..o+..o+..x.......o+..o+..x+..o+..x...........o+..x...o...oc..on..x...o+..x...x...x...x...x...o...x...............o+..x...x+..o...x...o...x...x...o+..o+..x...o+..o+..................o...x...oc..x+..oc..x...o+..o+..o+..on..on..x+..................o+..x...x...o...oc..o...oc..o...o...o+..o+..x+..o+..................o+..x...o+..x+..o...x...o...o+..x...x...o+..x.......................o...o...x...x...x...x...o...o...o...x...o+............";
+
+      // var first='';
+      // var secnd='';
+
+      // for(var n=0; n<f.length; n+=2){
+
+        // first+=f.substring(  n, n+1);
+        // secnd+=f.substring(n+1, n+2);
+
+      // }
+
+// print(f.length);
+
+// print(first);
+// print(first.length);
+
+// print(secnd);
+// print(secnd.length);
+
+      // var arrFirst=[];
+      // var arrSecond=[];
+
+      // for(var n=0; n<first.length; n+=13){
+
+        // arrFirst.push( split(first.substring(n, n+13),''));
+        // arrSecond.push(split(secnd.substring(n, n+13),''));
+
+      // }
+
+  // for(var row=0; row<arrFirst.length; row++){
+    // print(arrFirst[row]);
+  // }
+
+// print(arrFirst.length);
+
+// print(arrSecond);
+// print(arrSecond.length);
+// print(arrSecond.length);
+
+  }
+  /** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+  
 /*
 
 Hexcells level v1
