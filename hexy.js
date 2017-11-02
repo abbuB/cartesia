@@ -57,7 +57,7 @@ var diagrams = function(processingInstance){
           Choose Life - Sliding Triangle Game
           ...
 
-    TO DO:
+  TO DO:
 
       - wrong click animation
 
@@ -202,13 +202,6 @@ var diagrams = function(processingInstance){
     var fantasyFont = createFont('fantasy',    16);
 
     var HEX_SIZE=40;
-    var ORIENTATIONS={
-
-      POINTY:   0,
-      FLAT:     1,
-      CUSTOM:   2
-
-    }
 
     var CLRS={
 
@@ -611,7 +604,7 @@ var diagrams = function(processingInstance){
     /* Hexy Specific       ------------------ */
     {
 
-      this.mode         = APPMODES.GAME;      //ddd
+      this.mode         = APPMODES.GAME;      //
 
       this.score        = 0;                  //  The number of total hexes acquired
 
@@ -625,18 +618,16 @@ var diagrams = function(processingInstance){
                             6: 0,  13: 35,  20: 70,  27: 105,  34: 140,  41: 175
                           };
 
-      this.hexBoard;                          //  Set in the hexBoard control initialization
-      // this.transition;                        //  Set in the transition control initialization
+      this.hexBoard;                          //  Set in the hexBoard control initialization      
       this.puzzleComplete;                    //  Set in the puzzleComplete control initialization
-      this.PUZZLESelect;                      //  Set in the puzzleComplete control initialization
+      this.puzzleSelect;                      //  Set in the puzzleComplete control initialization
+// this.transition;                        //  Set in the transition control initialization
 
       this.puzzle       = 0;                  //  Index of the current puzzle layout
 
       this.remaining    = 0;                  //  How many blue cells need to be uncovered
       this.covered      = 0;                  //  How many black cells need to be uncovered
       this.errors       = 0;                  //  How many mistaken clicks occurred
-
-      this.orientation  = ORIENTATIONS.FLAT;
 
       this.music        = true;
       this.level        = 0;                  //  Levels 0 - 42 ( 7 groups of 6 = 42 total)
@@ -731,7 +722,7 @@ var diagrams = function(processingInstance){
 
         reset();
         app.puzzleComplete.x = 1000;
-        app.PUZZLESelect.x   = 1000;
+        app.puzzleSelect.x   = 1000;
         app.hexBoard.x       = 0;
 
       };
@@ -745,7 +736,7 @@ var diagrams = function(processingInstance){
 
         reset();
         app.puzzleComplete.x = 1000;
-        app.PUZZLESelect.x   = 1000;
+        app.puzzleSelect.x   = 1000;
         app.hexBoard.x       = 0;
 
       };
@@ -753,7 +744,7 @@ var diagrams = function(processingInstance){
 
         app.puzzleComplete.x = 1000;
         app.hexBoard.x       = 1000;
-        app.PUZZLESelect.x   = 0;
+        app.puzzleSelect.x   = 0;
 
       };
       function next()              {
@@ -1291,7 +1282,7 @@ var diagrams = function(processingInstance){
     /** Puzzle Select   -------------------------------------------------- */
     {
 
-      function PUZZLESelect(id, parent, x, y, w, h, props){
+      function puzzleSelect(id, parent, x, y, w, h, props){
 
         control.call(this, id, parent, x, y, w, h);
 
@@ -1342,11 +1333,11 @@ var diagrams = function(processingInstance){
             }
           }
 
-        app.PUZZLESelect=this;
+        app.puzzleSelect=this;
 
       };
-      PUZZLESelect.prototype=Object.create(control.prototype);
-      PUZZLESelect.prototype.draw=function(){
+      puzzleSelect.prototype=Object.create(control.prototype);
+      puzzleSelect.prototype.draw=function(){
 
         if(this.x!==0){
           this.counter=0;
@@ -1470,7 +1461,7 @@ var diagrams = function(processingInstance){
           }
 
       };
-      PUZZLESelect.prototype.clicked  = function(){
+      puzzleSelect.prototype.clicked  = function(){
 
         if(this.hit){ forEach(this.controls, 'clicked');  }
 
@@ -3444,10 +3435,6 @@ print(app.focus.id);
           var pt=0;
           var ang=0;
 
-          // if(app.orientation===ORIENTATIONS.POINTY){
-            // ang=30;
-          // }
-
           for(pt=0; pt<6; pt++){
 
             p.points.push(new pnt( cos(radians(ang+pt*60))*(d2),
@@ -4304,8 +4291,8 @@ print(this.id);
 
       app.controls.push(pc);
 
-      /* PUZZLESelect     */
-      var ps=new PUZZLESelect(getGUID(), rt, 1000, 0, width-200, height,
+      /* puzzleSelect     */
+      var ps=new puzzleSelect(getGUID(), rt, 1000, 0, width-200, height,
         {retrieve:  getScore,
          color:     CLRS.WHITE});
 
