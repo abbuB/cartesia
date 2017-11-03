@@ -738,6 +738,7 @@ var diagrams = function(processingInstance){
         app.puzzleComplete.x = 1000;
         app.puzzleSelect.x   = 1000;
         app.hexBoard.x       = 0;
+        app.hexBoard.counter = 0;
 
       };
       function menu()              {
@@ -752,6 +753,7 @@ var diagrams = function(processingInstance){
         incrementPuzzle();
         app.puzzleComplete.x = 1000;
         app.hexBoard.x       = 0;
+        app.hexBoard.counter = 0;
 
       };
 
@@ -1102,7 +1104,7 @@ var diagrams = function(processingInstance){
               function border(){
 
                 noStroke();
-                fill(getColor(p.color,10));
+                fill(getColor(p.color,20));
 
                   rect(0, 0, p.w, p.h);
 
@@ -1224,24 +1226,28 @@ var diagrams = function(processingInstance){
 
               };
 
-              fill(getColor(CLRS.WHITE,0));
+              if(this.counter>75){
+                
+                fill(getColor(CLRS.WHITE,10));
 
-                rect(0,0,this.w,this.h);
+                  rect(0,0,this.w,this.h);
 
-              border();
-              title();
-              summary();
+                border();
+                title();
+                summary();
 
-              forEach(this.controls, 'draw');
+                forEach(this.controls, 'draw');
 
-              // if(this.counter<100){
-                // fill(getColor(CLRS.WHITE,100));
-              // }
-              // else{
-                fill(getColor(CLRS.WHITE,0));
-              // }
+                // if(this.counter<100){
+                  // fill(getColor(CLRS.WHITE,100));
+                // }
+                // else{
+                  fill(getColor(CLRS.WHITE,0));
+                // }
 
-                rect(0,0,this.w,this.h);
+                  rect(0,0,this.w,this.h);
+
+              }
 
           popMatrix();
 
@@ -3458,6 +3464,17 @@ print(app.focus.id);
       };
       hexCell.prototype=Object.create(control.prototype);
       hexCell.prototype.draw=function(){
+        
+        function getOffset(){
+          
+          var rand=random(-1,1);
+        
+          if(rand>0){ rand= 1.5; }
+          else      { rand=-1.5; }
+
+          return rand;
+
+        };
 
         function highlight(){
 
@@ -3530,7 +3547,7 @@ print(app.focus.id);
                p.dirty===false &&
                app.mode!==APPMODES.CREATE &&
                app.focus===p){
-              offset=random(-1.5,1.5);
+              offset=getOffset();
               p.timer--;
               if(p.timer<=0){ p.dirty=true; }
 
@@ -3955,6 +3972,8 @@ print(app.focus.id);
               } // Black Hexagon
               else if(this.layout===HEXY_TYPES.BLACK){
                 app.errors++;
+                this.timer=5;
+                this.dirty=false;
               }
 
               if(app.debug){
@@ -3992,6 +4011,8 @@ print(app.focus.id);
               } // Blue Hexagon
               else if(this.layout===HEXY_TYPES.BLUE){
                 app.errors++;
+                this.timer=5;
+                this.dirty=false;                
               }
 
             }
