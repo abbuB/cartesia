@@ -621,7 +621,7 @@ var diagrams = function(processingInstance){
       this.hexBoard;                          //  Set in the hexBoard control initialization      
       this.puzzleComplete;                    //  Set in the puzzleComplete control initialization
       this.puzzleSelect;                      //  Set in the puzzleComplete control initialization
-// this.transition;                        //  Set in the transition control initialization
+      this.transition;                        //  Set in the transition control initialization
 
       this.puzzle       = 0;                  //  Index of the current puzzle layout
 
@@ -727,6 +727,15 @@ var diagrams = function(processingInstance){
 
       };
 
+      function showPuzzleComplete(){ app.puzzleComplete.x=0;    };
+      function hidePuzzleComplete(){ app.puzzleComplete.x=1000; };
+
+      function showPuzzleSelect()  { app.puzzleSelect.x=0;      };
+      function hidePuzzleSelect()  { app.puzzleSelect.x=1000;   };
+
+      function showHexBoard()      { app.hexBoard.x=0;          };
+      function hideHexBoard()      { app.hexBoard.x=1000;       };
+
     }
 
     /** Puzzle Complete -------------------------------------------------- */
@@ -739,7 +748,6 @@ var diagrams = function(processingInstance){
         app.puzzleComplete.x = 1000;
         app.puzzleSelect.x   = 1000;
         app.hexBoard.x       = 0;
-        app.hexBoard.timer = 0;
 
       };
       function menu()              {
@@ -751,11 +759,12 @@ var diagrams = function(processingInstance){
       };
       function next()              {
 
-        incrementPuzzle();
-        app.puzzleComplete.x = 1000;
-        app.hexBoard.x       = 0;
-        app.hexBoard.timer = 0;
+        app.transition.execute0=hidePuzzleComplete;
+        // app.transition.execute1=showHexBoard;
 
+        app.transition.activate();
+        incrementPuzzle();
+        
       };
 
     }
@@ -1057,7 +1066,7 @@ var diagrams = function(processingInstance){
         this.color     = props.color;
         this.visible   = props.visible;
 
-        this.increment = 1;
+        this.increment = 5;
 
         /* replay button       */
         this.controls.push(new hexyButton(getGUID(), this, 100, 420, 126, 100,
@@ -1229,25 +1238,33 @@ var diagrams = function(processingInstance){
             text('x 125',left+325,375);
 
         };
+        function buttons(){
+          
+          p.controls[0].y= 720 - factor * 300; // Replay Puzzle
+          p.controls[1].y= 920 - factor * 500; // Select Puzzle
+          p.controls[2].y=1120 - factor * 700; // Next Puzzle
 
+          forEach(p.controls, 'draw');
+
+        };
+        
         pushMatrix();
 
           translate(this.x, this.y);
 
             background();
             title();
-            summary();
-
-            this.controls[0].y= 720 - factor * 300; // Replay Puzzle
-            this.controls[1].y= 920 - factor * 500; // Select Puzzle
-            this.controls[2].y=1120 - factor * 700; // Next Puzzle
-
-            forEach(this.controls, 'draw');
+            summary();            
+            buttons();
 
         popMatrix();
 
-        if(this.timer<=95){
-          this.timer+=5;
+        if(this.timer<100){
+          this.timer+=this.increment;
+          print(this.timer);
+        }
+        else{          
+          this.timer=100;
         }
 
       };
@@ -2005,7 +2022,6 @@ var diagrams = function(processingInstance){
             if(total  ===0 &&
                covered===0){
               app.puzzleComplete.x=0;
-              // app.errors=0;
             }
 
           };
@@ -4117,15 +4133,28 @@ print(app.focus.id);
 
         this.type       = props.type;
 
-        this.incr       = -5;
+        this.incr       = 1;
 
         this.visible    = props.visible;
+
+        this.execute0   = props.execute0;
+        this.execute1   = props.exectue1;
 
         app.transition  = this;
 
       };
       transition.prototype=Object.create(control.prototype);
       transition.prototype.draw=function(){
+
+        if(this.x!==0){
+          this.timer=0;
+          return;        
+        }
+
+        var p=this;
+
+        this.active=this.hit &&
+                    app.focus===this;
 
         function fade(){
 
@@ -4192,56 +4221,68 @@ print(app.focus.id);
 
         };
 
-          var p=this;
+        pushMatrix();
 
-          this.active=this.hit &&
-                      app.focus===this;
+          translate(this.x, this.y);
 
-          pushMatrix();
+          // if(this.on){
 
-            translate(this.x, this.y);
+            switch(this.type){
 
-            if(this.on){
+              case TRANSITION_TYPES.FADE:     fade();     break;
+              case TRANSITION_TYPES.SLIDE:    slide();    break;
+              case TRANSITION_TYPES.CENTER:   center();   break;
+              case TRANSITION_TYPES.EDGES:    edges();    break;
+              case TRANSITION_TYPES.HEXAGON:  hexagon();  break;
 
-              switch(this.type){
-
-                case TRANSITION_TYPES.FADE:     fade();     break;
-                case TRANSITION_TYPES.SLIDE:    slide();    break;
-                case TRANSITION_TYPES.CENTER:   center();   break;
-                case TRANSITION_TYPES.EDGES:    edges();    break;
-                case TRANSITION_TYPES.HEXAGON:  hexagon();  break;
-
-                default:                                    break;
-
-              }
-
-              if(this.timer>=100 ||
-                 this.timer<=0){
-                this.incr*=-1;
-              }
-
-              this.timer+=this.incr;
+              default:                                    break;
 
             }
 
-          popMatrix();
+            if(this.timer>=100){
+              if(this.execute0!==null){ this.execute0(); }
+              if(this.execute1!==null){ this.execute0(); }
+              this.incr*=-1;
+            }
+
+            this.timer+=this.incr;
+
+print(this.x + " : " + this.timer);
+            
+            if(this.timer<=0){
+              this.deactivate();
+            };
+
+          // }
+
+        popMatrix();
+
+      };
+      transition.prototype.activate=function(){
+
+        this.x=0;
+        this.timer=1;
+
+      };
+      transition.prototype.deactivate=function(){
+
+        this.x=1000;
+        this.timer=0;  
+        this.incr*=-1;
 
       };
       transition.prototype.moved= function(x,y){
 
           if(this.parent.hit){
 
-          if(mouseX>(this.x+x) &&
-             mouseX<(this.x+x) + this.w &&
-             mouseY>(this.y+y) &&
-             mouseY<(this.y+y) + this.h){
+          if(this.hitTest(x,y)){
 
               this.hit=true;
 
-              if(this.on){
+              // if(this.on){
 print(this.id);
                 app.focus=this;
-              }
+              // }
 
           }
           else{
@@ -4353,12 +4394,12 @@ print(this.id);
       app.controls.push(telem);
 
       /* Transition ---------------------------------------------------- */
-      // var trans=new transition(getGUID(), rt, 0, 0, width-200, height,
-        // {color:     CLRS.H_BLUE_L,
-         // visible:   true,
-         // type:      TRANSITION_TYPES.FADE});
+      var trans=new transition(getGUID(), rt, 1000, 0, width-200, height,
+        {color:     CLRS.WHITE,
+         visible:   true,
+         type:      TRANSITION_TYPES.CENTER});
 
-      // rt.controls.push(trans);
+      app.controls.push(trans);
 
   };
 
