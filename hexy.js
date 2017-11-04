@@ -267,13 +267,13 @@ var diagrams = function(processingInstance){
     
     var MESSAGES=[
                   "Remove orange hexes to reveal the pattern underneath.\nThe number in an empty hex tells you how many adjacent hexes are part of the pattern.\nLeft click to mark a hex as part of the pattern.\nRight click to destroy hexes that aren't part of the pattern.",
-                  "Layout \n1-2",
-                  "Layout \n1-3",
-                  "Layout \n1-4",
-                  "Layout \n1-5",
-                  "Layout \n1-6",
-                  "Layout \n1-7"
-                  ];
+                  "Layout \n1-2 Message",
+                  "Layout \n1-3 Message",
+                  "Layout \n1-4 Message",
+                  "Layout \n1-5 Message",
+                  "Layout \n1-6 Message",
+                  "Layout \n1-7 Message"
+                 ];
 
     var PUZZLES=[ //  Ring #1
 
@@ -1104,7 +1104,7 @@ var diagrams = function(processingInstance){
         function background(){
 
           noStroke();
-          fill(getColor(p.color, factor*20 + 1));
+          fill(getColor(p.color, factor*5 + 1));
 
             rect(600-p.timer/100*600, 0, p.w*factor, p.h);
 
@@ -1113,21 +1113,21 @@ var diagrams = function(processingInstance){
           
           var top=-200+2*p.timer+100;
           
-          stroke(CLRS.BLACK);
+          stroke(CLRS.WHITE);
           strokeWeight(0.25);
 
-          fill(getColor(CLRS.WHITE,100));
+          fill(getColor(CLRS.H_BLUE,p.timer));
 
             rect(100, top, 400, 100, 3);
 
           textSize(36);
           textAlign(CENTER,CENTER);
 
-          fill(getColor(CLRS.BLACK,50));
+          fill(getColor(CLRS.WHITE,p.timer*0.8));
 
             text(p.text, 300, top+30);
 
-          fill(CLRS.BLACK);
+          fill(getColor(CLRS.WHITE,p.timer*0.6));
 
             text(getPuzzleNumber(), 300, top+70);
 
@@ -1197,7 +1197,7 @@ var diagrams = function(processingInstance){
 
           };
 
-          fill(getColor(CLRS.WHITE,100));
+          fill(getColor(CLRS.WHITE,p.timer));
 
             rect(left, 210, 400, 200, 3);
 
@@ -1796,9 +1796,6 @@ var diagrams = function(processingInstance){
           this.timer=0;
           return;
         }
-        else{
-          
-        }
 
           var p=this;
           
@@ -1838,131 +1835,135 @@ var diagrams = function(processingInstance){
           };
           function guideLines(){
 
-            this.lines=[];
-          
-            var offset=(HEX_SIZE-2)/2;
+            if(p.lines.length===0){
+              return;
+            }
+            
+              var offset=(HEX_SIZE-2)/2;
 
-            strokeWeight(6);
-            stroke(getColor(CLRS.WHITE,25));
+              strokeWeight(6);
+              stroke(getColor(CLRS.WHITE,25));
 
-            for(var l in p.lines){
+              for(var l in p.lines){
 
-              switch(p.lines[l].layout){
+                switch(p.lines[l].layout){
 
-                case HEXY_TYPES.DOWN_CENTER:
+                  case HEXY_TYPES.DOWN_CENTER:
 
-                  line(p.lines[l].x, p.lines[l].y + offset,
-                       p.lines[l].x, height);
+                    line(p.lines[l].x, p.lines[l].y + offset,
+                         p.lines[l].x, height);
 
-                  break;
+                    break;
 
-                case HEXY_TYPES.DOWN_LEFT:
+                  case HEXY_TYPES.DOWN_LEFT:
 
-                  var x=p.lines[l].x;
-                  var y=p.lines[l].y;
-                  var offsetX=cos(PI-PI/6)*offset;
-                  var offsetY=sin(PI-PI/6)*offset;
+                    var x=p.lines[l].x;
+                    var y=p.lines[l].y;
+                    var offsetX=cos(PI-PI/6)*offset;
+                    var offsetY=sin(PI-PI/6)*offset;
 
-                  line(x+offsetX,
-                       y+offsetY,
-                       x+offsetX+600*tan(PI-PI/3),
-                       y+offsetY+600);
+                    line(x+offsetX,
+                         y+offsetY,
+                         x+offsetX+600*tan(PI-PI/3),
+                         y+offsetY+600);
 
 
-                  break;
+                    break;
 
-                case HEXY_TYPES.DOWN_RIGHT:
+                  case HEXY_TYPES.DOWN_RIGHT:
 
-                  var x=p.lines[l].x;
-                  var y=p.lines[l].y;
-                  var offsetX=cos(PI/6)*offset;
-                  var offsetY=sin(PI/6)*offset;
+                    var x=p.lines[l].x;
+                    var y=p.lines[l].y;
+                    var offsetX=cos(PI/6)*offset;
+                    var offsetY=sin(PI/6)*offset;
 
-                  line(x+offsetX,
-                       y+offsetY,
-                       x+offsetX+600*tan(PI/3),
-                       y+offsetY+600);
+                    line(x+offsetX,
+                         y+offsetY,
+                         x+offsetX+600*tan(PI/3),
+                         y+offsetY+600);
 
-                  break;
+                    break;
 
-                default:  break;
+                  default:  break;
 
-              }
+                }
 
-            };
+              };
 
           };
           function halos(){
 
-            this.halos=[];
-          
-            stroke(CLRS.RED);
-            strokeWeight(1);
-            noStroke();
-
-            fill(getColor(CLRS.WHITE,40+p.clrOffset));
-
-            p.clrOffset+=p.clrIncr;
-
-            if(p.clrOffset===15 ||
-               p.clrOffset===0){ p.clrIncr*=-1; }
-
-            var w=HEX_SIZE;
-
-            var x=0;
-            var y=0;
-
-            var yOffset=0;
-            var xOffset=0.25*w;
-            var sinP3=w*sin(PI/3);
-            var cosP3=w/2*cos(PI/3);
-
-            for(var h in p.halos){
-
-              x=p.halos[h].x;
-              y=p.halos[h].y;
-
-              beginShape();
-
-                vertex(x-cosP3,  y-sinP3*2.5);
-                vertex(x-w/2,    y-sinP3*2  );
-                vertex(x-w,      y-sinP3*2  );
-                vertex(x-w*1.25, y-sinP3*1.5);
-                vertex(x-w*1.75, y-sinP3*1.5);
-                vertex(x-w*2,    y-sinP3*1  );
-                vertex(x-w*1.75, y-sinP3*0.5);
-
-                vertex(x-w*2,    y);
-
-                vertex(x-w*1.75, y+sinP3*0.5);
-                vertex(x-w*2,    y+sinP3*1  );
-                vertex(x-w*1.75, y+sinP3*1.5);
-                vertex(x-w*1.25, y+sinP3*1.5);
-                vertex(x-w,      y+sinP3*2  );
-                vertex(x-w/2,    y+sinP3*2  );
-                vertex(x-cosP3,  y+sinP3*2.5);
-
-                vertex(x+cosP3,  y+sinP3*2.5);
-                vertex(x+w/2,    y+sinP3*2  );
-                vertex(x+w,      y+sinP3*2  );
-                vertex(x+w*1.25, y+sinP3*1.5);
-                vertex(x+w*1.75, y+sinP3*1.5);
-                vertex(x+w*2,    y+sinP3*1  );
-                vertex(x+w*1.75, y+sinP3*0.5);
-
-                vertex(x+w*2,    y);
-
-                vertex(x+w*1.75, y-sinP3*0.5);
-                vertex(x+w*2,    y-sinP3*1  );
-                vertex(x+w*1.75, y-sinP3*1.5);
-                vertex(x+w*1.25, y-sinP3*1.5);
-                vertex(x+w,      y-sinP3*2  );
-                vertex(x+w/2,    y-sinP3*2  );
-                vertex(x+cosP3,  y-sinP3*2.5);
-
-              endShape(CLOSE);
-
+            if(p.halos.length===0){
+              return;
             }
+
+              stroke(CLRS.RED);
+              strokeWeight(1);
+              noStroke();
+
+              fill(getColor(CLRS.WHITE,40+p.clrOffset));
+
+              p.clrOffset+=p.clrIncr;
+
+              if(p.clrOffset===15 ||
+                 p.clrOffset===0){ p.clrIncr*=-1; }
+
+              var w=HEX_SIZE;
+
+              var x=0;
+              var y=0;
+
+              var yOffset=0;
+              var xOffset=0.25*w;
+              var sinP3=w*sin(PI/3);
+              var cosP3=w/2*cos(PI/3);
+
+              for(var h in p.halos){
+
+                x=p.halos[h].x;
+                y=p.halos[h].y;
+
+                beginShape();
+
+                  vertex(x-cosP3,  y-sinP3*2.5);
+                  vertex(x-w/2,    y-sinP3*2  );
+                  vertex(x-w,      y-sinP3*2  );
+                  vertex(x-w*1.25, y-sinP3*1.5);
+                  vertex(x-w*1.75, y-sinP3*1.5);
+                  vertex(x-w*2,    y-sinP3*1  );
+                  vertex(x-w*1.75, y-sinP3*0.5);
+
+                  vertex(x-w*2,    y);
+
+                  vertex(x-w*1.75, y+sinP3*0.5);
+                  vertex(x-w*2,    y+sinP3*1  );
+                  vertex(x-w*1.75, y+sinP3*1.5);
+                  vertex(x-w*1.25, y+sinP3*1.5);
+                  vertex(x-w,      y+sinP3*2  );
+                  vertex(x-w/2,    y+sinP3*2  );
+                  vertex(x-cosP3,  y+sinP3*2.5);
+
+                  vertex(x+cosP3,  y+sinP3*2.5);
+                  vertex(x+w/2,    y+sinP3*2  );
+                  vertex(x+w,      y+sinP3*2  );
+                  vertex(x+w*1.25, y+sinP3*1.5);
+                  vertex(x+w*1.75, y+sinP3*1.5);
+                  vertex(x+w*2,    y+sinP3*1  );
+                  vertex(x+w*1.75, y+sinP3*0.5);
+
+                  vertex(x+w*2,    y);
+
+                  vertex(x+w*1.75, y-sinP3*0.5);
+                  vertex(x+w*2,    y-sinP3*1  );
+                  vertex(x+w*1.75, y-sinP3*1.5);
+                  vertex(x+w*1.25, y-sinP3*1.5);
+                  vertex(x+w,      y-sinP3*2  );
+                  vertex(x+w/2,    y-sinP3*2  );
+                  vertex(x+cosP3,  y-sinP3*2.5);
+
+                endShape(CLOSE);
+
+              }
 
           };
           function messages(){
@@ -2013,13 +2014,16 @@ var diagrams = function(processingInstance){
 
             translate(this.x, this.y);
 
-              background();
+              this.lines=[]; // This must stay here
+              this.halos=[]; // ***** DO NOT MOVE *****
+                            
+              background();              
               controls();
-              if(this.lines.length>0){ guideLines(); }
-              if(this.halos.length>0){ halos();      }
+              guideLines();
+              halos();
               calculateRemaining();
               messages();
-              
+
               fill(getColor(CLRS.WHITE,100-this.timer));
 
                 rect(0,0,this.w,this.h);
@@ -3121,6 +3125,19 @@ print(app.focus.id);
       hexyButton.prototype=Object.create(control.prototype);
       hexyButton.prototype.draw=function(){
 
+        if(this.parent.x!==0){
+          return;
+        }
+        
+          var p=this;
+          this.offset=0;
+
+          this.active=this.hit &&
+                      app.focus===this;
+
+          if(this.active){ cursor(this.cursor);
+                           if(app.left){ this.offset=1; } }
+                               
           function replay(){
 
             // Arrows ----------
@@ -3151,9 +3168,9 @@ print(app.focus.id);
             popMatrix();
 
             // Caption ----------
-            fill(getColor(CLRS.BLACK, 15));
+            fill(getColor(CLRS.H_BLUE, 25));
 
-            if(p.active){ fill(getColor(CLRS.BLACK, 30)); }
+            if(p.active){ fill(getColor(CLRS.H_BLUE, 50)); }
 
             textAlign(LEFT,TOP);
             textSize(16);
@@ -3193,9 +3210,9 @@ print(app.focus.id);
               }
 
             // Caption ----------
-            fill(getColor(CLRS.BLACK, 15));
+            fill(getColor(CLRS.H_BLUE, 25));
 
-            if(p.active){ fill(getColor(CLRS.BLACK, 30)); }
+            if(p.active){ fill(getColor(CLRS.H_BLUE, 50)); }
 
             textAlign(LEFT,TOP);
             textSize(16);
@@ -3217,9 +3234,9 @@ print(app.focus.id);
               text(CONSTANTS.TRIANGLE_R, p.w/2+p.offset, p.h/2+p.offset);
 
             // Caption ----------
-            fill(getColor(CLRS.BLACK, 15));
+            fill(getColor(CLRS.H_BLUE, 25));
 
-            if(p.active){ fill(getColor(CLRS.BLACK, 30)); }
+            if(p.active){ fill(getColor(CLRS.H_BLUE, 50)); }
 
             textAlign(LEFT,TOP);
             textSize(16);
@@ -3229,18 +3246,9 @@ print(app.focus.id);
 
           };
 
-          var p=this;
-          this.offset=0;
-
-          this.active=this.hit &&
-                      app.focus===this;
-
           pushMatrix();
 
             translate(this.x, this.y);
-
-              if(this.active){ cursor(this.cursor);
-                               if(app.left){ this.offset=1; } }
 
               // Border
               stroke(getColor(CLRS.BLACK,50));
@@ -3462,7 +3470,28 @@ print(app.focus.id);
       };
       hexCell.prototype=Object.create(control.prototype);
       hexCell.prototype.draw=function(){
-        
+
+        this.active=this.hit &&
+                    app.focus===this;
+
+        this.offset=0;
+        var p=this;
+
+        if(this.active){
+
+          if(this.layout===HEXY_TYPES.BLACK ||
+             this.layout===HEXY_TYPES.BLUE ||
+             app.mode===APPMODES.CREATE){
+            cursor(this.cursor);
+          }
+          else{
+            cursor(ARROW);
+          }
+
+          if(app.left){ this.offset=1; }
+
+        }
+
         function getOffset(){
           
           var rand=random(-1,1);
@@ -3830,43 +3859,22 @@ print(app.focus.id);
 
         };
 
-          this.active=this.hit &&
-          app.focus===this;
+        pushMatrix();
 
-          this.offset=0;
-          var p=this;
+          translate(this.x, this.y);
 
-          if(this.active){
+          scale(1,-1);
 
-            if(this.layout===HEXY_TYPES.BLACK ||
-               this.layout===HEXY_TYPES.BLUE ||
-               app.mode===APPMODES.CREATE){
-              cursor(this.cursor);
-            }
-            else{
-              cursor(ARROW);
-            }
+            highlight();  // Commented for Speed
+            outerHexagon();
+            innerHexagon();
+            caption();
+            activeCell();
 
-            if(app.left){ this.offset=1; }
+            highlightActive();
+            revealAnimation();
 
-          }
-
-          pushMatrix();
-
-            translate(this.x, this.y);
-
-            scale(1,-1);
-
-              highlight();  // Commented for Speed
-              outerHexagon();
-              innerHexagon();
-              caption();
-              activeCell();
-
-              highlightActive();
-              revealAnimation();
-
-          popMatrix();
+        popMatrix();
 
         // drawLinks(); //  Delete for release
 
@@ -4304,7 +4312,7 @@ print(this.id);
       /* PuzzleComplete   */
       var pc=new puzzleComplete(getGUID(), rt, 1000, 1, width-201, height-2,
         {text:      'Puzzle Complete',
-         color:     CLRS.BLACK});
+         color:     CLRS.H_BLUE});
 
       app.controls.push(pc);
 
