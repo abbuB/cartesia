@@ -272,7 +272,7 @@ var diagrams = function(processingInstance){
                   "Layout \n1-4 Message",
                   "Layout \n1-5 Message",
                   "Layout \n1-6 Message",
-                  "Layout \n1-7 Message"
+                  "Numbers outside the grid show the number of blue hexes in that column.\nYou can left click on outside numbers to activate a guide line and right click to mark them as complete."
                  ];
 
     var PUZZLES=[ //  Ring #1
