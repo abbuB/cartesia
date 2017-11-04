@@ -714,6 +714,13 @@ var diagrams = function(processingInstance){
         reset();
 
       };
+      function executeLoadPuzzle(){
+
+        hidePuzzleComplete();
+        hidePuzzleSelect();
+        showHexBoard();
+
+      };
       function loadPuzzle(n)        {
 
         app.puzzle=constrain(n*2, 0, PUZZLES.length-1);
@@ -721,9 +728,10 @@ var diagrams = function(processingInstance){
         print('load puzzle: ' + n);
 
         reset();
-        app.puzzleComplete.x = 1000;
-        app.puzzleSelect.x   = 1000;
-        app.hexBoard.x       = 0;
+        
+        app.transition.type=TRANSITION_TYPES.FADE;
+        app.transition.execute=executeLoadPuzzle;
+        app.transition.activate();
 
       };
 
@@ -741,30 +749,47 @@ var diagrams = function(processingInstance){
     /** Puzzle Complete -------------------------------------------------- */
     {
 
-      function replay()            {
+      function executeNext(){
+        hidePuzzleComplete();        
+        incrementPuzzle();
+        showHexBoard();
+      };
+      function executeMenu(){
 
+        hidePuzzleComplete();
+        hideHexBoard();
+        showPuzzleSelect();
+
+      };
+      function executeReplay(){
+        
         reset();
         
-        app.puzzleComplete.x = 1000;
-        app.puzzleSelect.x   = 1000;
-        app.hexBoard.x       = 0;
+        hidePuzzleComplete();
+        hidePuzzleSelect();
+        showHexBoard();
+
+      };
+      function replay()            {
+
+        app.transition.type=TRANSITION_TYPES.FADE;
+        app.transition.execute=executeReplay;
+        app.transition.activate();
 
       };
       function menu()              {
 
-        app.puzzleComplete.x = 1000;
-        app.hexBoard.x       = 1000;
-        app.puzzleSelect.x   = 0;
+        app.transition.type=TRANSITION_TYPES.FADE;
+        app.transition.execute=executeMenu;
+        app.transition.activate();
 
       };
       function next()              {
 
-        app.transition.execute0=hidePuzzleComplete;
-        // app.transition.execute1=showHexBoard;
-
+        app.transition.type=TRANSITION_TYPES.FADE;
+        app.transition.execute=executeNext;
         app.transition.activate();
-        incrementPuzzle();
-        
+
       };
 
     }
@@ -1472,7 +1497,7 @@ var diagrams = function(processingInstance){
               noStroke();
               fill(getColor(CLRS.WHITE,100-this.timer));
 
-                rect(0,0,this.w,this.h);
+                // rect(0,0,this.w,this.h);
 
           popMatrix();
 
@@ -2021,7 +2046,7 @@ var diagrams = function(processingInstance){
 
             if(total  ===0 &&
                covered===0){
-              app.puzzleComplete.x=0;
+              showPuzzleComplete();
             }
 
           };
@@ -2040,15 +2065,7 @@ var diagrams = function(processingInstance){
               calculateRemaining();
               messages();
 
-              fill(getColor(CLRS.WHITE,100-this.timer));
-
-                rect(0,0,this.w,this.h);
-
           popMatrix();
-
-          if(this.timer<100){
-            this.timer+=3;
-          }
 
       };
       hexBoard.prototype.moved        = function(x,y){
@@ -4133,7 +4150,7 @@ print(app.focus.id);
 
         this.type       = props.type;
 
-        this.incr       = 1;
+        this.incr       = 5;
 
         this.visible    = props.visible;
 
@@ -4240,14 +4257,13 @@ print(app.focus.id);
             }
 
             if(this.timer>=100){
-              if(this.execute0!==null){ this.execute0(); }
-              if(this.execute1!==null){ this.execute0(); }
+              if(this.execute!==null){ this.execute(); }
               this.incr*=-1;
             }
 
             this.timer+=this.incr;
 
-print(this.x + " : " + this.timer);
+// print(this.x + " : " + this.timer);
             
             if(this.timer<=0){
               this.deactivate();
@@ -4397,7 +4413,7 @@ print(this.id);
       var trans=new transition(getGUID(), rt, 1000, 0, width-200, height,
         {color:     CLRS.WHITE,
          visible:   true,
-         type:      TRANSITION_TYPES.CENTER});
+         type:      round(random(0,4))});
 
       app.controls.push(trans);
 
