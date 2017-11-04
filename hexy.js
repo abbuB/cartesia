@@ -735,10 +735,11 @@ var diagrams = function(processingInstance){
       function replay()            {
 
         reset();
+        
         app.puzzleComplete.x = 1000;
         app.puzzleSelect.x   = 1000;
         app.hexBoard.x       = 0;
-        app.hexBoard.counter = 0;
+        app.hexBoard.timer = 0;
 
       };
       function menu()              {
@@ -753,7 +754,7 @@ var diagrams = function(processingInstance){
         incrementPuzzle();
         app.puzzleComplete.x = 1000;
         app.hexBoard.x       = 0;
-        app.hexBoard.counter = 0;
+        app.hexBoard.timer = 0;
 
       };
 
@@ -877,7 +878,7 @@ var diagrams = function(processingInstance){
         this.offset   = 0;          /** offset distance when clicked          */
 
         this.font     = serifFont;  /** default font                          */
-        this.counter  = 0;          /** Used to count things - frames etc.    */
+        this.timer    = 0;          /** Used to count things - frames etc.    */
 
       };
       control.prototype.draw     = function(){};
@@ -1052,9 +1053,11 @@ var diagrams = function(processingInstance){
 
         control.call(this, id, parent, x, y, w, h);
 
-        this.text    = props.text;
-        this.color   = props.color;
-        this.visible = props.visible;
+        this.text      = props.text;
+        this.color     = props.color;
+        this.visible   = props.visible;
+
+        this.increment = 1;
 
         /* replay button       */
         this.controls.push(new hexyButton(getGUID(), this, 100, 420, 126, 100,
@@ -1085,173 +1088,167 @@ var diagrams = function(processingInstance){
 
         if(this.x!==0){
 
-          this.counter=0;
+          this.timer=0;
           return;
 
         }
 
-          this.active = this.hit &&
-                        app.focus===this;
+        this.active = this.hit &&
+                      app.focus===this;
 
-          var p=this;
+        if(this.active){ cursor(this.cursor); }
+                      
+        var p=this;
+        var factor=p.timer/100;
 
-          pushMatrix();
+        function background(){
 
-            translate(this.x, this.y);
+          noStroke();
+          fill(getColor(p.color, factor*20 + 1));
 
-              if(this.active){ cursor(this.cursor); }
+            rect(600-p.timer/100*600, 0, p.w*factor, p.h);
 
-              function border(){
+        };
+        function title(){
+          
+          var top=-200+2*p.timer+100;
+          
+          stroke(CLRS.BLACK);
+          strokeWeight(0.25);
 
-                noStroke();
-                fill(getColor(p.color,20));
+          fill(getColor(CLRS.WHITE,100));
 
-                  rect(0, 0, p.w, p.h);
+            rect(100, top, 400, 100, 3);
 
-              };
-              function title(){
+          textSize(36);
+          textAlign(CENTER,CENTER);
 
-                stroke(CLRS.BLACK);
-                strokeWeight(0.25);
+          fill(getColor(CLRS.BLACK,50));
 
-                fill(getColor(CLRS.WHITE,100));
+            text(p.text, 300, top+30);
 
-                  rect(100,100,400,100, 3);
+          fill(CLRS.BLACK);
 
-                textSize(36);
-                textAlign(CENTER,CENTER);
+            text(getPuzzleNumber(), 300, top+70);
 
-                fill(getColor(CLRS.BLACK,50));
+        };
+        function summary(){
 
-                  text(p.text, 300,130);
+          var left=-600 + factor * 600 + 100;
+          
+          function drawHexagon(x,y,sz){
 
-                fill(CLRS.BLACK);
+            colorMode(HSB, 255);
 
-                  text(getPuzzleNumber(), 300,170);
+            noStroke();
 
-              };
-              function summary(){
+            var ang=0;
 
-                function drawHexagon(x,y,sz){
+            fill(CLRS.H_BLUE);
 
-                  colorMode(HSB, 255);
+            beginShape();
 
-                  noStroke();
+              for(pt=0; pt<6; pt++){
 
-                  var ang=0;
-
-                  fill(CLRS.H_BLUE);
-
-                  beginShape();
-
-                    for(pt=0; pt<6; pt++){
-
-                      vertex( x+cos(radians(ang+pt*60))*(sz)+p.offset,
-                              y+sin(radians(ang+pt*60))*(sz)+p.offset );
-
-                    }
-
-                  endShape(CLOSE);
-
-                  fill(CLRS.H_BLUE_L);
-
-                  beginShape();
-
-                    for(pt=0; pt<6; pt++){
-
-                      vertex( x+cos(radians(ang+pt*60))*(sz-sz*0.25)+p.offset,
-                              y+sin(radians(ang+pt*60))*(sz-sz*0.25)+p.offset );
-
-                    }
-
-                  endShape(CLOSE);
-
-                  colorMode(RGB, 255);
-
-                };
-                function hexagons(){
-
-                  pushMatrix();
-
-                    translate(150,225);
-
-                      stroke(CLRS.H_BLUE);
-                      strokeWeight(2);
-                      fill(CLRS.H_BLUE_L);
-
-                      var sz=21;
-
-                        for(var row=0; row<5; row++){
-                          for(var col=0; col<5; col++){
-
-                            drawHexagon(20+1.75*col*sz, 15+1.65*row*sz, sz-5);
-
-                          }
-                        }
-
-                  popMatrix();
-
-                };
-
-                fill(getColor(CLRS.WHITE,100));
-
-                  rect(100, 210, 400, 200, 3);
-
-                textSize(36);
-                fill(getColor(CLRS.BLACK,25));
-
-                pushMatrix();
-
-                  translate(120, 330);
-                  rotate(-PI/2);
-
-                    text('Mistakes:', 0, 0);
-
-                  rotate(PI/2);
-
-                    text(app.errors, 5, -95);
-
-                popMatrix();
-
-                hexagons();
-
-                //  Game Totals
-                drawHexagon(425, 300, 50);
-
-                textSize(40);
-                textAlign(CENTER,CENTER);
-                fill(getColor(CLRS.BLACK,75));
-
-                  text('x 125',425,375);
-
-              };
-
-              if(this.counter>75){
-                
-                fill(getColor(CLRS.WHITE,10));
-
-                  rect(0,0,this.w,this.h);
-
-                border();
-                title();
-                summary();
-
-                forEach(this.controls, 'draw');
-
-                // if(this.counter<100){
-                  // fill(getColor(CLRS.WHITE,100));
-                // }
-                // else{
-                  fill(getColor(CLRS.WHITE,0));
-                // }
-
-                  rect(0,0,this.w,this.h);
+                vertex( x+cos(radians(ang+pt*60))*(sz)+p.offset,
+                        y+sin(radians(ang+pt*60))*(sz)+p.offset );
 
               }
 
+            endShape(CLOSE);
+
+            fill(CLRS.H_BLUE_L);
+
+            beginShape();
+
+              for(pt=0; pt<6; pt++){
+
+                vertex( x+cos(radians(ang+pt*60))*(sz-sz*0.25)+p.offset,
+                        y+sin(radians(ang+pt*60))*(sz-sz*0.25)+p.offset );
+
+              }
+
+            endShape(CLOSE);
+
+            colorMode(RGB, 255);
+
+          };
+          function hexagons(){
+
+            pushMatrix();
+
+              translate(150,225);
+
+                stroke(CLRS.H_BLUE);
+                strokeWeight(2);
+                fill(CLRS.H_BLUE_L);
+
+                var sz=21;
+
+                  for(var row=0; row<5; row++){
+                    for(var col=0; col<5; col++){
+
+                      drawHexagon(left-100+20+1.75*col*sz, 15+1.65*row*sz, sz-5);
+
+                    }
+                  }
+
+            popMatrix();
+
+          };
+
+          fill(getColor(CLRS.WHITE,100));
+
+            rect(left, 210, 400, 200, 3);
+
+          textSize(36);
+          fill(getColor(CLRS.BLACK,25));
+
+          pushMatrix();
+
+            translate(left+20, 330);
+            rotate(-PI/2);
+
+              text('Mistakes:', 0, 0);
+
+            rotate(PI/2);
+
+              text(app.errors, 5, -95);
+
           popMatrix();
 
-          this.counter+=5;
+          hexagons();
+
+          //  Game Totals
+          drawHexagon(left+325, 300, 50);
+
+          textSize(40);
+          textAlign(CENTER,CENTER);
+          fill(getColor(CLRS.BLACK,75));
+
+            text('x 125',left+325,375);
+
+        };
+
+        pushMatrix();
+
+          translate(this.x, this.y);
+
+            background();
+            title();
+            summary();
+
+            this.controls[0].y= 720 - factor * 300; // Replay Puzzle
+            this.controls[1].y= 920 - factor * 500; // Select Puzzle
+            this.controls[2].y=1120 - factor * 700; // Next Puzzle
+
+            forEach(this.controls, 'draw');
+
+        popMatrix();
+
+        if(this.timer<=95){
+          this.timer+=5;
+        }
 
       };
       puzzleComplete.prototype.clicked  = function(){
@@ -1282,7 +1279,7 @@ var diagrams = function(processingInstance){
         }
       
       };
-      
+
     }
 
     /** Puzzle Select   -------------------------------------------------- */
@@ -1346,16 +1343,16 @@ var diagrams = function(processingInstance){
       puzzleSelect.prototype.draw=function(){
 
         if(this.x!==0){
-          this.counter=0;
+          this.timer=0;
           return;
         }
 
+          var p =this;
+          
           this.active = this.hit &&
                         app.focus===this;
 
           if(this.active){ cursor(this.cursor); }
-
-          var p =this;
 
           function border(){
 
@@ -1456,14 +1453,14 @@ var diagrams = function(processingInstance){
               forEach(this.controls, 'draw');
 
               noStroke();
-              fill(getColor(CLRS.WHITE,100-this.counter));
+              fill(getColor(CLRS.WHITE,100-this.timer));
 
                 rect(0,0,this.w,this.h);
 
           popMatrix();
 
-          if(this.counter<100){
-            this.counter+=3;
+          if(this.timer<100){
+            this.timer+=3;
           }
 
       };
@@ -1491,6 +1488,13 @@ var diagrams = function(processingInstance){
 
         if(app.debug===false){ return; }
 
+          var p=this;
+
+          this.active=this.hit &&
+                      app.focus===this;
+
+          if(this.active){ cursor(this.cursor); }
+          
           function border(){
 
             noStroke();
@@ -1620,14 +1624,9 @@ var diagrams = function(processingInstance){
                    col2, top);
 
           };
-
-          this.active=this.hit &&
-                      app.focus===this;
-
+                      
           if     ( app.telemetry && this.offset>-200){ this.offset-=10; }
           else if(!app.telemetry && this.offset<0   ){ this.offset+=10; }
-
-          var p=this;
 
           var row0 = 30;
           var row1 = 90;
@@ -1639,8 +1638,6 @@ var diagrams = function(processingInstance){
           pushMatrix();
 
             translate(this.x, this.y);
-
-              if(this.active){ cursor(this.cursor); }
 
               border();
               title();
@@ -1796,14 +1793,53 @@ var diagrams = function(processingInstance){
       hexBoard.prototype.draw         = function(){
 
         if(this.x!==0){
-          this.counter=0;
+          this.timer=0;
           return;
+        }
+        else{
+          
         }
 
           var p=this;
+          
+          this.active=this.hit &&
+                      app.focus===this;
 
-          function drawGuideLines(){
+          if(this.active){ cursor(this.cursor); }
+          
+          function background(){
+            
+            noStroke();
+            fill(p.color);
 
+              rect(p.x, p.y, p.w, p.h);
+
+          };
+          function controls(){
+
+            var ctrls=p.controls;
+
+            for(var r in ctrls){
+              for(var c in ctrls[r]){
+
+                if(ctrls[r][c].line){
+                  p.lines.push(ctrls[r][c]);
+                }
+
+                if(ctrls[r][c].halo){
+                  p.halos.push(ctrls[r][c]);
+                }
+
+                ctrls[r][c].draw();
+
+              }
+            }
+
+          };
+          function guideLines(){
+
+            this.lines=[];
+          
             var offset=(HEX_SIZE-2)/2;
 
             strokeWeight(6);
@@ -1856,41 +1892,10 @@ var diagrams = function(processingInstance){
             };
 
           };
-          function calculateRemaining(){
+          function halos(){
 
-            app.remaining = 0;
-            app.covered   = 0;
-
-            var total=0;
-            var covered=0;
-            var ctrls=p.controls;
-
-            for(var r in ctrls){
-              for(var c in ctrls[r]){
-
-                if(ctrls[r][c].layout==='x'){
-                  total++;
-                }
-
-                if(ctrls[r][c].layout==='o'){
-                  covered++;
-                }
-
-              }
-            }
-
-            app.remaining = total;
-            app.covered   = covered;
-
-            if(total  ===0 &&
-               covered===0){
-              app.puzzleComplete.x=0;
-              // app.errors=0;
-            }
-
-          };
-          function drawHalos(){
-
+            this.halos=[];
+          
             stroke(CLRS.RED);
             strokeWeight(1);
             noStroke();
@@ -1960,13 +1965,7 @@ var diagrams = function(processingInstance){
             }
 
           };
-          function drawClicked(){
-
-
-
-          };
-
-          function drawMessages(){
+          function messages(){
 
             textAlign(LEFT,BOTTOM);
             textSize(12);
@@ -1976,58 +1975,59 @@ var diagrams = function(processingInstance){
             text(MESSAGES[app.puzzle/2], 80, 590);
 
           };
+          function calculateRemaining(){
 
-          this.active=this.hit &&
-                      app.focus===this;
+            app.remaining = 0;
+            app.covered   = 0;
 
-          if(this.active){ cursor(this.cursor); }
+            var total=0;
+            var covered=0;
+            var ctrls=p.controls;
 
-          this.lines=[];
-          this.halos=[];
+            for(var r in ctrls){
+              for(var c in ctrls[r]){
+
+                if(ctrls[r][c].layout==='x'){
+                  total++;
+                }
+
+                if(ctrls[r][c].layout==='o'){
+                  covered++;
+                }
+
+              }
+            }
+
+            app.remaining = total;
+            app.covered   = covered;
+
+            if(total  ===0 &&
+               covered===0){
+              app.puzzleComplete.x=0;
+              // app.errors=0;
+            }
+
+          };
 
           pushMatrix();
 
             translate(this.x, this.y);
 
-              noStroke();
-              fill(this.color);
-
-                rect(this.x, this.y, this.w, this.h);
-
-              // update and draw
-              var ctrls=p.controls;
-
-              for(var r in ctrls){
-                for(var c in ctrls[r]){
-
-                  if(ctrls[r][c].line){
-                    p.lines.push(ctrls[r][c]);
-                  }
-
-                  if(ctrls[r][c].halo){
-                    p.halos.push(ctrls[r][c]);
-                  }
-
-                  ctrls[r][c].draw();
-
-                }
-              }
-
-              if(this.lines.length>0){ drawGuideLines(); }
-              if(this.halos.length>0){ drawHalos();      }
-
+              background();
+              controls();
+              if(this.lines.length>0){ guideLines(); }
+              if(this.halos.length>0){ halos();      }
               calculateRemaining();
-
-              drawMessages();
+              messages();
               
-              fill(getColor(CLRS.WHITE,100-this.counter));
+              fill(getColor(CLRS.WHITE,100-this.timer));
 
                 rect(0,0,this.w,this.h);
 
           popMatrix();
 
-          if(this.counter<100){
-            this.counter+=3;
+          if(this.timer<100){
+            this.timer+=3;
           }
 
       };
@@ -3429,8 +3429,6 @@ print(app.focus.id);
 
         this.clickRadius  = 0;
 
-        this.timer        = 0;
-
         var p=this;
 
         /* Initialize */
@@ -4108,8 +4106,6 @@ print(app.focus.id);
         control.call(this, id, parent, x, y, w, h);
 
         this.color      = props.color;
-
-        this.timer      = 0;
 
         this.type       = props.type;
 
