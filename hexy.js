@@ -2639,6 +2639,138 @@ print(app.focus.id);
 
     /* Controls ========================================================== */
 
+        /** Clock           -------------------------------------------------- */
+    {
+
+      function clock(id, parent, x, y, w, h, props){
+
+        control.call(this, id, parent, x, y, w, h);
+
+        this.cursor    = props.cursor;
+
+        this.millisecs = 0;
+        this.seconds   = 0;
+        this.minutes   = 0;
+
+        this.start     = true;
+        this.starter;
+        
+        this.time      = 0;
+        
+      };
+      clock.prototype=Object.create(control.prototype);
+      clock.prototype.draw            =function(){
+
+          this.active=this.hit &&
+                      app.focus===this;
+
+          pushMatrix();
+
+            translate(this.x, this.y);
+            scale(1,-1);
+
+              noStroke();
+
+              if(this.start){
+                
+                if(round(millis()/100)%10!==this.millisecs){
+                  this.millisecs++;
+                }
+                if(this.millisecs>=10){
+                  this.millisecs-=10;
+                  this.seconds++;       
+                }
+                if(this.seconds>=60){
+                  this.seconds-=60;
+                  this.minutes++;
+                }
+
+              }
+
+              if(this.active){
+
+                cursor(this.cursor);
+
+                fill(getColor(CLRS.BLACK,5));
+
+                  ellipse(0,0,this.w,this.w);
+
+              }
+
+              scale(1,-1);
+
+              if(this.on){ fill(128); }
+              else       { fill(164); }
+
+              textFont(this.font);
+              textSize(36);
+              textAlign(CENTER,CENTER);
+
+              this.time=nf(this.minutes,  2) + ":" +
+                        nf(this.seconds,  2) + "." +
+                        nf(this.millisecs,1);
+
+                text(this.time, 0, 0);
+
+          popMatrix();
+
+      };
+      clock.prototype.reset=function(){
+
+        this.minutes  =0;
+        this.seconds  =0;
+        this.millisecs=0;
+
+        this.start=false;
+
+      };
+      clock.prototype.hitTest=function(x,y){
+
+        return dist(mouseX, mouseY,
+                    this.x+x,
+                    this.y+y)<this.w/2;
+
+      };
+      clock.prototype.moved           =function(x,y){
+
+        if(this.parent.hit){
+
+          if(this.hitTest(x,y)){ this.hit=true;
+                                 app.focus=this;   }
+          else                 { this.hit=false;   }
+
+        }
+
+      };
+      clock.prototype.clicked         =function(){
+      /* Overridden to maintain on/off value */
+
+        if(this.active){
+          
+          if(app.keys[KEYCODES.CONTROL]){
+
+            this.reset();
+          
+          }          
+          else{
+
+            if(this.start === false){
+              this.starter = true;
+            }
+            if(this.start=== true){
+              this.starter = false;
+            }
+            
+            this.start=this.starter;
+            
+          }
+
+        }
+
+      };
+
+    }
+
     /** Music           -------------------------------------------------- */
     {
 
@@ -4150,7 +4282,7 @@ print(app.focus.id);
 
         this.type       = props.type;
 
-        this.incr       = 5;
+        this.incr       = 10;
 
         this.visible    = props.visible;
 
@@ -4360,6 +4492,10 @@ print(this.id);
          execute:   getRemaining,
          retrieve:  getMistakes}));
 
+      /* clock            */
+      rt.controls.push(new clock(getGUID(), rt, 300, 50, 50, 50,
+        {cursor:    HAND}));
+         
       /* Menu Button      */
       rt.controls.push(new menuButton(getGUID(), rt, 15, 15, 57, 60,
         {text:      'Yippee',
