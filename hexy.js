@@ -545,9 +545,45 @@ var diagrams = function(processingInstance){
                     ['.', '.', '.', '.', '+', '+', '.', '+', '.', '+', '+', '.', '.', '.', '.'],
                     ['.', '.', '.', '.', '.', '.', '+', '.', '.', '.', '.', '.', '.', '.', '.'],
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+                  ],
+                  
+                  [ //  Layout 1-8
+                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', 'o', '.', '.', '.', '.', '.'],
+                    ['.', '.', '.', '.', '.', '.', '.', 'o', 'o', '.', 'o', 'o', '.', '.', '.'],
+                    ['.', '.', '.', '.', '.', '.', '.', 'o', '.', '.', 'o', 'o', '.', '.', '.'],
+                    ['.', '.', '.', '.', '.', 'o', '.', 'o', '.', 'o', '.', '.', '.', '.', '.'],
+                    ['.', '.', '.', 'o', 'o', '.', 'o', '.', 'o', '.', 'o', 'o', '.', '.', '.'],
+                    ['.', '.', '.', 'o', '.', 'o', '.', '.', '.', 'o', '.', 'o', '.', '.', '.'],
+                    ['.', '.', '.', 'o', '.', '.', '.', '.', '.', '.', '.', 'o', '.', '.', '.'],
+                    ['.', '.', '.', '.', 'o', 'o', 'o', 'o', 'o', 'o', 'o', '.', '.', '.', '.'],
+                    ['.', '.', '.', '.', '.', 'o', 'o', '.', 'o', 'o', '.', '.', '.', '.', '.'],
+                    ['.', '.', '.', '.', 'o', '.', 'o', '.', 'o', '.', 'o', '.', '.', '.', '.'],
+                    ['.', '.', '.', '.', 'o', '.', 'o', '.', 'o', '.', 'o', '.', '.', '.', '.'],
+                    ['.', '.', '.', '.', 'o', 'o', 'o', '.', 'o', 'o', 'o', '.', '.', '.', '.'],
+                    ['.', '.', '.', '.', '.', '.', 'o', '.', 'o', '.', '.', '.', '.', '.', '.'],
+                    ['.', '.', '.', '.', '.', 'o', 'o', 'o', 'o', 'o', '.', '.', '.', '.', '.'],
+                    ['.', '.', '.', '.', 'o', '.', 'o', '.', 'o', '.', 'o', '.', '.', '.', '.'],
+                  ],
+                  
+                  [ //  Text 1-8
+                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '+', '.', '.', '.', '.', '.'],
+                    ['.', '.', '.', '.', '.', '.', '.', '+', '+', '.', '+', '+', '.', '.', '.'],
+                    ['.', '.', '.', '.', '.', '.', '.', '+', '.', '.', '+', '+', '.', '.', '.'],
+                    ['.', '.', '.', '.', '.', '+', '.', '+', '.', '+', '.', '.', '.', '.', '.'],
+                    ['.', '.', '.', '+', '+', '.', '+', '.', '+', '.', '+', '+', '.', '.', '.'],
+                    ['.', '.', '.', '+', '.', '+', '.', '.', '.', '+', '.', '+', '.', '.', '.'],
+                    ['.', '.', '.', '+', '.', '.', '.', '.', '.', '.', '.', '+', '.', '.', '.'],
+                    ['.', '.', '.', '.', '+', '+', '+', '+', '+', '+', '+', '.', '.', '.', '.'],
+                    ['.', '.', '.', '.', '.', '+', '+', '.', '+', '+', '.', '.', '.', '.', '.'],
+                    ['.', '.', '.', '.', '+', '.', '+', '.', '+', '.', '+', '.', '.', '.', '.'],
+                    ['.', '.', '.', '.', '+', '.', '+', '.', '+', '.', '+', '.', '.', '.', '.'],
+                    ['.', '.', '.', '.', '+', '+', '+', '.', '+', '+', '+', '.', '.', '.', '.'],
+                    ['.', '.', '.', '.', '.', '.', '+', '.', '+', '.', '.', '.', '.', '.', '.'],
+                    ['.', '.', '.', '.', '.', '+', '+', '+', '+', '+', '.', '.', '.', '.', '.'],
+                    ['.', '.', '.', '.', '+', '.', '+', '.', '+', '.', '+', '.', '.', '.', '.'],
                   ]
 
-                ];
+                ]
 
   }
 
@@ -622,6 +658,7 @@ var diagrams = function(processingInstance){
       this.puzzleComplete;                    //  Set in the puzzleComplete control initialization
       this.puzzleSelect;                      //  Set in the puzzleComplete control initialization
       this.transition;                        //  Set in the transition control initialization
+      this.clock;
 
       this.puzzle       = 0;                  //  Index of the current puzzle layout
 
@@ -683,16 +720,26 @@ var diagrams = function(processingInstance){
     /** PUZZLES         -------------------------------------------------- */
     {
 
-      function reset()              {
+      function executeLoadPuzzle() {
+
+        hidePuzzleComplete();
+        hidePuzzleSelect();
+        showHexBoard();
+
+      };
+
+      function reset()             {
 
         app.controlCount=8;
         app.hexBoard.reset();
         app.errors=0;
 
+        app.clock.reset();
+
         // app.focus=null;
         
       };
-      function incrementPuzzle()    {
+      function incrementPuzzle()   {
 
         app.puzzle+=2;
 
@@ -703,7 +750,7 @@ var diagrams = function(processingInstance){
         reset();
 // throw(23);
       };
-      function decrementPuzzle()    {
+      function decrementPuzzle()   {
 
         app.puzzle-=2;
 
@@ -714,14 +761,7 @@ var diagrams = function(processingInstance){
         reset();
 
       };
-      function executeLoadPuzzle(){
-
-        hidePuzzleComplete();
-        hidePuzzleSelect();
-        showHexBoard();
-
-      };
-      function loadPuzzle(n)        {
+      function loadPuzzle(n)       {
 
         app.puzzle=constrain(n*2, 0, PUZZLES.length-1);
 
@@ -749,19 +789,21 @@ var diagrams = function(processingInstance){
     /** Puzzle Complete -------------------------------------------------- */
     {
 
-      function executeNext(){
+      function executeNext()       {
+        
         hidePuzzleComplete();        
         incrementPuzzle();
         showHexBoard();
+        
       };
-      function executeMenu(){
+      function executeMenu()       {
 
         hidePuzzleComplete();
         hideHexBoard();
         showPuzzleSelect();
 
       };
-      function executeReplay(){
+      function executeReplay()     {
         
         reset();
         
@@ -775,13 +817,17 @@ var diagrams = function(processingInstance){
         app.transition.type=TRANSITION_TYPES.FADE;
         app.transition.execute=executeReplay;
         app.transition.activate();
-
+        
+        app.clock.reset();
+        
       };
       function menu()              {
 
         app.transition.type=TRANSITION_TYPES.FADE;
         app.transition.execute=executeMenu;
         app.transition.activate();
+        
+        app.clock.reset();
 
       };
       function next()              {
@@ -789,6 +835,8 @@ var diagrams = function(processingInstance){
         app.transition.type=TRANSITION_TYPES.FADE;
         app.transition.execute=executeNext;
         app.transition.activate();
+        
+        app.clock.reset();
 
       };
 
@@ -924,9 +972,9 @@ var diagrams = function(processingInstance){
              mouseX<(this.x+x) + this.w &&
              mouseY>(this.y+y) &&
              mouseY<(this.y+y) + this.h){
-             retVal=true;
+          retVal=true;
         }
-             
+
         return retVal;
         
       };
@@ -1012,10 +1060,7 @@ var diagrams = function(processingInstance){
       root.prototype.moved=function(x,y){
       /* Required because root control doesn't have a parent */
 
-          if(mouseX>(this.x+x) &&
-             mouseX<(this.x+x) + this.w &&
-             mouseY>(this.y+y) &&
-             mouseY<(this.y+y) + this.h){
+          if(this.hitTest(x,y)){
 
             this.hit=true;
             app.focus=this;
@@ -1079,7 +1124,84 @@ var diagrams = function(processingInstance){
       };
 
     }
+          
+          
+    /** Zen Animation   -------------------------------------------------- */
+    {
 
+      function zen(id, parent, x, y, w, h, props){
+
+        control.call(this, id, parent, x, y, w, h);
+
+        this.color   = props.color;
+        this.border  = props.border;
+
+      };
+      zen.prototype=Object.create(control.prototype);
+      zen.prototype.draw=function(){
+
+          this.active=this.hit &&
+                      app.focus===this;
+
+          if(this.active){ cursor(this.cursor); }
+          
+          var p=this;
+          
+          function drawHexagon(x,y,sz){
+
+            noFill();
+
+            var ang=0;
+
+            strokeWeight(12);
+            stroke(getColor(CLRS.BLACK,random(1,10)));
+
+            beginShape();
+
+              for(pt=0; pt<6; pt++){
+
+                vertex( x+cos(radians(ang+pt*60))*(sz),
+                        y+sin(radians(ang+pt*60))*(sz) );
+
+              }
+
+            endShape(CLOSE);
+
+          };
+          function animation(){
+            
+            drawHexagon(random(width), random(height), random(100));
+            
+          };
+          
+          pushMatrix();
+
+            translate(this.x, this.y);
+
+              fill(this.color);
+
+              strokeWeight(0);
+              noStroke();
+
+              if(this.border){
+
+                stroke(CLRS.H_BLUE);
+                strokeWeight(11);
+
+              }
+
+                rect(1, 1, this.w-2, this.h-2);
+
+              animation();
+
+              // forEach(this.controls, 'draw');
+
+          popMatrix();
+
+      };
+
+    }
+          
     /** Puzzle Complete -------------------------------------------------- */
     {
 
@@ -1286,7 +1408,7 @@ var diagrams = function(processingInstance){
 
         if(this.timer<100){
           this.timer+=this.increment;
-          print(this.timer);
+// print(this.timer);
         }
         else{          
           this.timer=100;
@@ -1365,7 +1487,7 @@ var diagrams = function(processingInstance){
               txt=(row/1+1) + '-' + col/1;
 
               // puzzle button
-              this.controls.push(new puzzle_Button(getGUID(), this, x1, y1, sz, sz,
+              this.controls.push(new puzzleButton(getGUID(), this, x1, y1, sz, sz,
                 {text:      txt,
                  index:     n,
                  threshold: app.levelScores[n],
@@ -1404,32 +1526,7 @@ var diagrams = function(processingInstance){
               rect(p.x, p.y, p.w, p.h);
 
           };
-          function drawHexagon(x,y,sz){
 
-            noFill();
-
-            var ang=0;
-
-            strokeWeight(12);
-            stroke(getColor(CLRS.BLACK,random(1,10)));
-
-            beginShape();
-
-              for(pt=0; pt<6; pt++){
-
-                vertex( x+cos(radians(ang+pt*60))*(sz),
-                        y+sin(radians(ang+pt*60))*(sz) );
-
-              }
-
-            endShape(CLOSE);
-
-          };
-          function animation(){
-            
-            drawHexagon(random(width), random(height), random(100));
-            
-          };
           function drawScore(){
 
             function drawHexagon(x,y,sz){
@@ -1489,7 +1586,6 @@ var diagrams = function(processingInstance){
             translate(this.x, this.y);
 
               border();
-              animation();
               drawScore();
 
               forEach(this.controls, 'draw');
@@ -1697,10 +1793,7 @@ var diagrams = function(processingInstance){
 
           if(this.parent.hit){
 
-            if(mouseX>this.x+x+this.offset &&
-               mouseX<this.x+x+this.offset + this.w &&
-               mouseY>this.y+y &&
-               mouseY<this.y+y + this.h){
+            if(this.hitTest(x,y)){
 
               this.hit=true;
               app.focus=this;
@@ -1712,7 +1805,7 @@ var diagrams = function(processingInstance){
 
               this.hit=false;
 
-              for(var c in this.controls){ this.controls[c].hit=false; }
+              // for(var c in this.controls){ this.controls[c].hit=false; }
 
             }
 
@@ -2047,6 +2140,7 @@ var diagrams = function(processingInstance){
             if(total  ===0 &&
                covered===0){
               showPuzzleComplete();
+              app.clock.stop();
             }
 
           };
@@ -2070,10 +2164,7 @@ var diagrams = function(processingInstance){
       };
       hexBoard.prototype.moved        = function(x,y){
 
-        if(mouseX>(this.x+x) &&
-           mouseX<(this.x+x) + this.w &&
-           mouseY>(this.y+y) &&
-           mouseY<(this.y+y) + this.h){
+        if(this.hitTest(x,y)){
 
           if(this.parent.hit){
 
@@ -2165,7 +2256,7 @@ print(app.focus.id);
         }
 
       };
-      hexBoard.prototype.update=function(){
+      hexBoard.prototype.update       = function(){
 
         var p=this;           //  Set a reference to the hexBoard control
 
@@ -2639,7 +2730,7 @@ print(app.focus.id);
 
     /* Controls ========================================================== */
 
-        /** Clock           -------------------------------------------------- */
+    /** Clock           -------------------------------------------------- */
     {
 
       function clock(id, parent, x, y, w, h, props){
@@ -2656,10 +2747,12 @@ print(app.focus.id);
         this.starter;
         
         this.time      = 0;
-        
+
+        app.clock=this;
+
       };
       clock.prototype=Object.create(control.prototype);
-      clock.prototype.draw            =function(){
+      clock.prototype.draw            =function()   {
 
           this.active=this.hit &&
                       app.focus===this;
@@ -2715,7 +2808,7 @@ print(app.focus.id);
           popMatrix();
 
       };
-      clock.prototype.reset=function(){
+      clock.prototype.reset           =function()   {
 
         this.minutes  =0;
         this.seconds  =0;
@@ -2724,7 +2817,31 @@ print(app.focus.id);
         this.start=false;
 
       };
-      clock.prototype.hitTest=function(x,y){
+      clock.prototype.stop            =function()   {
+
+        this.starter=false;
+        this.start=false;
+
+print('stop');
+
+      };
+      clock.prototype.start           =function()   {
+
+        this.starter=true;
+        this.start=true;
+
+print('start');
+
+      };
+      clock.prototype.toggle          =function()   {
+
+        this.starter=!this.start;
+        this.start=this.starter;
+
+print('toggle');
+
+      };
+      clock.prototype.hitTest         =function(x,y){
 
         return dist(mouseX, mouseY,
                     this.x+x,
@@ -2742,27 +2859,20 @@ print(app.focus.id);
         }
 
       };
-      clock.prototype.clicked         =function(){
+      clock.prototype.clicked         =function()   {
       /* Overridden to maintain on/off value */
 
         if(this.active){
-          
+
           if(app.keys[KEYCODES.CONTROL]){
 
             this.reset();
-          
+
           }          
           else{
 
-            if(this.start === false){
-              this.starter = true;
-            }
-            if(this.start=== true){
-              this.starter = false;
-            }
-            
-            this.start=this.starter;
-            
+            this.toggle();
+
           }
 
         }
@@ -2939,7 +3049,7 @@ print(app.focus.id);
     /** Puzzle Button   -------------------------------------------------- */
     {
 
-      function puzzle_Button(id, parent, x, y, w, h, props){
+      function puzzleButton(id, parent, x, y, w, h, props){
 
         control.call(this, id, parent, x, y, w, h);
 
@@ -2972,8 +3082,8 @@ print(app.focus.id);
         }
 
       };
-      puzzle_Button.prototype=Object.create(control.prototype);
-      puzzle_Button.prototype.draw=function(){
+      puzzleButton.prototype=Object.create(control.prototype);
+      puzzleButton.prototype.draw=function(){
 
           var p=this;
           var offset=this.offset=0;
@@ -3115,34 +3225,42 @@ print(app.focus.id);
           popMatrix();
 
       };
-      puzzle_Button.prototype.moved=function(x,y){
+      puzzleButton.prototype.hitTest=function(x,y){
+
+        var rectHit=rectangleHit(new pnt(this.x+this.points[1].x+x, this.y+this.points[1].y+y),
+                                 new pnt(this.x+this.points[2].x+x, this.y+this.points[2].y+y),
+                                 new pnt(this.x+this.points[4].x+x, this.y+this.points[4].y+y),
+                                 mouseX, mouseY);
+
+        var triHit0=triangleHit( new pnt(this.x+this.points[0].x+x, this.y+this.points[0].y+y),
+                                 new pnt(this.x+this.points[1].x+x, this.y+this.points[1].y+y),
+                                 new pnt(this.x+this.points[5].x+x, this.y+this.points[5].y+y),
+                                 mouseX, mouseY);
+
+        var triHit1=triangleHit( new pnt(this.x+this.points[2].x+x, this.y+this.points[2].y+y),
+                                 new pnt(this.x+this.points[3].x+x, this.y+this.points[3].y+y),
+                                 new pnt(this.x+this.points[4].x+x, this.y+this.points[4].y+y),
+                                 mouseX, mouseY);
+        return (rectHit ||
+                triHit0 ||
+                triHit1);
+
+      };
+      puzzleButton.prototype.outerHitTest=function(x,y){
+
+        return dist(mouseX, mouseY, this.x+x, this.y+y)<this.w/2;
+
+      };      
+      puzzleButton.prototype.moved=function(x,y){
       /** Overridden for shape */
 
           if(this.parent.hit){
 
-            if(dist(mouseX, mouseY,
-                    this.x+x,
-                    this.y+y)<this.w/2){
+            if(this.outerHitTest(x,y)){
 
               this.outerHit=true;
 
-                var rectHit=rectangleHit(new pnt(this.x+this.points[1].x+x, this.y+this.points[1].y+y),
-                                         new pnt(this.x+this.points[2].x+x, this.y+this.points[2].y+y),
-                                         new pnt(this.x+this.points[4].x+x, this.y+this.points[4].y+y),
-                                         mouseX,mouseY);
-
-                var triHit0=triangleHit(new pnt(this.x+this.points[0].x+x, this.y+this.points[0].y+y),
-                                        new pnt(this.x+this.points[1].x+x, this.y+this.points[1].y+y),
-                                        new pnt(this.x+this.points[5].x+x, this.y+this.points[5].y+y),
-                                        mouseX,mouseY);
-
-                var triHit1=triangleHit(new pnt(this.x+this.points[2].x+x, this.y+this.points[2].y+y),
-                                        new pnt(this.x+this.points[3].x+x, this.y+this.points[3].y+y),
-                                        new pnt(this.x+this.points[4].x+x, this.y+this.points[4].y+y),
-                                        mouseX,mouseY);
-                if(rectHit ||
-                   triHit0 ||
-                   triHit1){
+                if(this.hitTest(x,y)){
 
                   this.hit=true;
                   app.focus=this;
@@ -3165,7 +3283,7 @@ print(app.focus.id);
           }
 
       };
-      puzzle_Button.prototype.clicked=function(){
+      puzzleButton.prototype.clicked=function(){
       /** Overridden for execute */
 
           if(this.active){
@@ -4419,29 +4537,6 @@ print(app.focus.id);
         this.incr*=-1;
 
       };
-      transition.prototype.moved= function(x,y){
-
-          if(this.parent.hit){
-
-          if(this.hitTest(x,y)){
-
-              this.hit=true;
-
-              // if(this.on){
-print(this.id);
-                app.focus=this;
-              // }
-
-          }
-          else{
-
-            this.hit=false;
-
-          }
-
-        }
-
-      };
 
     }
 
@@ -4472,6 +4567,12 @@ print(this.id);
       rt.controls.push(new hexBoard(getGUID(), rt, 0, 0, 600, 600,
         {cursor:    ARROW,
          color:     color(222)}));
+
+// print(app.hexBoard.id);
+
+      // /* Zen Animation    */
+      // app.hexBoard.controls.push(new zen(getGUID(), rt, 0, 0, 600, 600,
+        // {color:     color(222)}));
 
       /* reset button     */
       rt.controls.push(new resetButton(getGUID(), rt, 565, 565, 40, 40,
