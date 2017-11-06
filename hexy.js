@@ -1125,7 +1125,61 @@ var diagrams = function(processingInstance){
 
     }
           
-          
+    /** hex graphic -------------------------------------------------- */
+    {
+
+      function heXX(id, parent, x, y, w, h, props){
+
+        // Named thusly because of a processing name conflict
+
+        control.call(this, id, parent, x, y, w, h);
+
+        this.color        = props.color;
+
+        this.size         = w;
+        this.strokeWeight = random(1,15);
+
+        this.deltaX       = random(-0.25,0.25);
+        this.deltaY       = random(-0.25,0.25);
+
+        this.points       = [];
+
+        for(var n=0; n<8; n++){
+
+          this.points.push(  new pnt( cos(radians(n*60))*(this.size),
+                                      sin(radians(n*60))*(this.size) ));
+
+        }
+
+      };
+      heXX.prototype=Object.create(control.prototype);
+      heXX.prototype.draw=function(){
+
+          this.x+=this.deltaX;
+          this.y+=this.deltaY;
+
+          pushMatrix();
+
+            translate(this.x, this.y);
+
+              noFill();
+              stroke(this.color);
+              strokeWeight(this.strokeWeight);
+
+              beginShape();
+
+                for(var n in this.points){
+                  vertex(this.points[n].x, this.points[n].y);
+                }
+
+              endShape(CLOSE);
+
+          popMatrix();
+
+      };
+
+    }
+
     /** Zen Animation   -------------------------------------------------- */
     {
 
@@ -1134,72 +1188,48 @@ var diagrams = function(processingInstance){
         control.call(this, id, parent, x, y, w, h);
 
         this.color   = props.color;
-        this.border  = props.border;
+
+        for(var n=0; n<10; n++){
+
+          this.controls.push(new heXX(getGUID(), this, random(50,500), random(50,500), random(30,100), 0,
+                              {color: getColor(CLRS.H_BLUE, random(1,3))}));               
+        }
 
       };
       zen.prototype=Object.create(control.prototype);
       zen.prototype.draw=function(){
-
-          this.active=this.hit &&
-                      app.focus===this;
-
-          if(this.active){ cursor(this.cursor); }
           
-          var p=this;
-          
-          function drawHexagon(x,y,sz){
+        pushMatrix();
 
-            noFill();
+          translate(this.x, this.y);
 
-            var ang=0;
+            fill(this.color);
 
-            strokeWeight(12);
-            stroke(getColor(CLRS.BLACK,random(1,10)));
+            stroke(CLRS.GREEN);
+            strokeWeight(0.25);
 
-            beginShape();
-
-              for(pt=0; pt<6; pt++){
-
-                vertex( x+cos(radians(ang+pt*60))*(sz),
-                        y+sin(radians(ang+pt*60))*(sz) );
-
-              }
-
-            endShape(CLOSE);
-
-          };
-          function animation(){
+              // rect(1, 1, this.w-2, this.h-2);
             
-            drawHexagon(random(width), random(height), random(100));
-            
-          };
+            forEach(this.controls, 'draw');
+
+        popMatrix();
+        
+        this.timer++;
+
+        if(this.timer%50===0){
           
-          pushMatrix();
+          this.controls=shorten(this.controls);
 
-            translate(this.x, this.y);
-
-              fill(this.color);
-
-              strokeWeight(0);
-              noStroke();
-
-              if(this.border){
-
-                stroke(CLRS.H_BLUE);
-                strokeWeight(11);
-
-              }
-
-                rect(1, 1, this.w-2, this.h-2);
-
-              animation();
-
-              // forEach(this.controls, 'draw');
-
-          popMatrix();
+          this.controls.push(new heXX(getGUID(), this, random(50,500), random(50,500), random(30,100), 0,
+                              {color: getColor(CLRS.H_BLUE, random(1,3))}));   
+print(this.controls.length);
+        }
 
       };
-
+      zen.prototype.moved=function(){};
+      zen.prototype.over=function(){};
+      zen.prototype.out=function(){};
+      
     }
           
     /** Puzzle Complete -------------------------------------------------- */
@@ -2139,8 +2169,10 @@ var diagrams = function(processingInstance){
 
             if(total  ===0 &&
                covered===0){
-              showPuzzleComplete();
+              
               app.clock.stop();
+              showPuzzleComplete();
+              
             }
 
           };
@@ -2743,7 +2775,7 @@ print(app.focus.id);
         this.seconds   = 0;
         this.minutes   = 0;
 
-        this.start     = true;
+        this.start     = false;
         this.starter;
         
         this.time      = 0;
@@ -4570,9 +4602,9 @@ print('toggle');
 
 // print(app.hexBoard.id);
 
-      // /* Zen Animation    */
-      // app.hexBoard.controls.push(new zen(getGUID(), rt, 0, 0, 600, 600,
-        // {color:     color(222)}));
+      /* Zen Animation    */
+      rt.controls.push(new zen(getGUID(), rt, 100, 100, 400, 400,
+        {color:     CLRS.ORANGE}));
 
       /* reset button     */
       rt.controls.push(new resetButton(getGUID(), rt, 565, 565, 40, 40,
@@ -4617,6 +4649,22 @@ print('toggle');
 
       app.controls.push(ps);
 
+
+      /* Telemetry ---------------------------------------------------- */
+      var telem=new telemetry(getGUID(), rt, width-195, 5, 190, height-10,
+        {color:     color(36),
+         cursor:    ARROW});
+
+      app.controls.push(telem);
+
+      /* Transition ---------------------------------------------------- */
+      var trans=new transition(getGUID(), rt, 1000, 0, width-200, height,
+        {color:     CLRS.WHITE,
+         visible:   true,
+         type:      round(random(0,4))});
+
+      app.controls.push(trans);
+
       /* SplashScreen ------------------------------------------------- */
       {
 
@@ -4638,21 +4686,6 @@ print('toggle');
         // rt.controls.push(splashScreen);
 
       }
-
-      /* Telemetry ---------------------------------------------------- */
-      var telem=new telemetry(getGUID(), rt, width-195, 5, 190, height-10,
-        {color:     color(36),
-         cursor:    ARROW});
-
-      app.controls.push(telem);
-
-      /* Transition ---------------------------------------------------- */
-      var trans=new transition(getGUID(), rt, 1000, 0, width-200, height,
-        {color:     CLRS.WHITE,
-         visible:   true,
-         type:      round(random(0,4))});
-
-      app.controls.push(trans);
 
   };
 
