@@ -55,9 +55,12 @@ var diagrams = function(processingInstance){
 
           Hex grid least/greatest path moving right or down
           Choose Life - Sliding Triangle Game
+          Multiplication hexagon tunnel left/right
           ...
 
   TO DO:
+      
+      - relocate the clock
 
       - wrong click animation
 
@@ -645,20 +648,35 @@ var diagrams = function(processingInstance){
       this.score        = 0;                  //  The number of total hexes acquired
 
       this.levelScores  = {
-                            0: 0,   7: 35,  14: 70,  21: 105,  28: 140,  35: 175,
-                            1: 0,   8: 35,  15: 70,  22: 105,  29: 140,  36: 175,
-                            2: 0,   9: 35,  16: 70,  23: 105,  30: 140,  37: 175,
-                            3: 0,  10: 35,  17: 70,  24: 105,  31: 140,  38: 175,
-                            4: 0,  11: 35,  18: 70,  25: 105,  32: 140,  39: 175,
-                            5: 0,  12: 35,  19: 70,  26: 105,  33: 140,  40: 175,
-                            6: 0,  13: 35,  20: 70,  27: 105,  34: 140,  41: 175
+                            0:  3,   7:  6,  14: 14,  21: 110,  28: 200,  35: 328,
+                            1:  4,   8:  8,  15: 17,  22: 110,  29: 200,  36: 328,
+                            2:  5,   9:  8,  16: 44,  23: 110,  30: 200,  37: 328,
+                            3:  5,  10:  9,  17: 44,  24: 110,  31: 200,  38: 328,
+                            4:  5,  11: 10,  18: 44,  25: 110,  32: 200,  39: 328,
+                            5:  6,  12: 10,  19: 44,  26: 110,  33: 200,  40: 328,
+                            6:  6,  13: 18,  20: 44,  27: 110,  34: 200,  41: 328
                           };
 
-      this.hexBoard;                          //  Set in the hexBoard control initialization      
+      this.levelEntry  = {
+                            0:  0,   7: 22,  14:  48,  21: 120,  28: 220,  35: 328,
+                            1:  0,   8: 22,  15:  48,  22: 120,  29: 220,  36: 328,
+                            2:  0,   9: 22,  16:  48,  23: 120,  30: 220,  37: 328,
+                            3:  0,  10: 22,  17:  48,  24: 120,  31: 220,  38: 328,
+                            4:  0,  11: 22,  18:  48,  25: 120,  32: 220,  39: 328,
+                            5:  0,  12: 22,  19:  48,  26: 120,  33: 220,  40: 328,
+                            6: 18,  13: 44,  20: 110,  27: 200,  34: 240,  41: 328
+                          };
+
+      this.hexBoard;                          //  Set in the hexBoard control initialization
       this.puzzleComplete;                    //  Set in the puzzleComplete control initialization
       this.puzzleSelect;                      //  Set in the puzzleComplete control initialization
       this.transition;                        //  Set in the transition control initialization
+
+      this.menu;
       this.clock;
+      this.music;
+      this.reset;
+      this.scoreboard;
 
       this.puzzle       = 0;                  //  Index of the current puzzle layout
 
@@ -666,7 +684,7 @@ var diagrams = function(processingInstance){
       this.covered      = 0;                  //  How many black cells need to be uncovered
       this.errors       = 0;                  //  How many mistaken clicks occurred
 
-      this.music        = true;
+      this.musicOn      = true;
       this.level        = 0;                  //  Levels 0 - 42 ( 7 groups of 6 = 42 total)
 
     }
@@ -778,8 +796,30 @@ var diagrams = function(processingInstance){
       function showPuzzleComplete(){ app.puzzleComplete.x=0;    };
       function hidePuzzleComplete(){ app.puzzleComplete.x=1000; };
 
-      function showPuzzleSelect()  { app.puzzleSelect.x=0;      };
-      function hidePuzzleSelect()  { app.puzzleSelect.x=1000;   };
+      function showPuzzleSelect()  {
+        
+        app.puzzleSelect.x=0;     
+        
+        var left=3*width;
+        
+        app.puzzleComplete.x = left;
+        app.menu.x           = left;
+        app.clock.x          = left;
+        app.scoreBoard.x     = left;
+        app.music.x          = left;
+        app.reset.x          = left;
+
+      };
+      function hidePuzzleSelect()  {
+
+        app.puzzleSelect.x = 1000;
+        app.menu.x         =   15;
+        app.clock.x        =  300;
+        app.scoreBoard.x   =  475;
+        app.music.x        =   35;
+        app.reset.x        =  565;
+
+      };
 
       function showHexBoard()      { app.hexBoard.x=0;          };
       function hideHexBoard()      { app.hexBoard.x=1000;       };
@@ -1218,7 +1258,7 @@ var diagrams = function(processingInstance){
           this.controls=subset(this.controls, 1, this.controls.length);
 
           append(this.controls, new heXX(getGUID(), this, random(0,600), random(0,600), random(20,150), 0,{}));
-print('append');
+// print('append');
         }
 
       };
@@ -1514,7 +1554,7 @@ print('append');
               this.controls.push(new puzzleButton(getGUID(), this, x1, y1, sz, sz,
                 {text:      txt,
                  index:     n,
-                 threshold: app.levelScores[n],
+                 threshold: app.levelEntry[n],
                  retrieve:  getScore,
                  execute:   loadPuzzle,
                  cursor:    HAND}));
@@ -2228,7 +2268,7 @@ print('append');
 
       };
       hexBoard.prototype.clicked      = function(){
-print(app.focus.id);
+// print(app.focus.id);
         var ctrls=this.controls;
 
         for(var r in ctrls){
@@ -2848,7 +2888,7 @@ print(app.focus.id);
         this.starter=false;
         this.start=false;
 
-print('stop');
+// print('stop');
 
       };
       clock.prototype.start           =function()   {
@@ -2856,7 +2896,7 @@ print('stop');
         this.starter=true;
         this.start=true;
 
-print('start');
+// print('start');
 
       };
       clock.prototype.toggle          =function()   {
@@ -2864,7 +2904,7 @@ print('start');
         this.starter=!this.start;
         this.start=this.starter;
 
-print('toggle');
+// print('toggle');
 
       };
       clock.prototype.hitTest         =function(x,y){
@@ -2918,6 +2958,8 @@ print('toggle');
 
         this.execute  = props.execute;
         this.retrieve = props.retrieve;
+
+        app.music=this;
 
       };
       music.prototype=Object.create(control.prototype);
@@ -3005,10 +3047,10 @@ print('toggle');
 
     }
 
-    /** Score           -------------------------------------------------- */
+    /** Score Board     --------------------------------------------------- */
     {
 
-      function score(id, parent, x, y, w, h, props){
+      function scoreBoard(id, parent, x, y, w, h, props){
 
         control.call(this, id, parent, x, y, w, h);
 
@@ -3017,10 +3059,12 @@ print('toggle');
 
         this.execute  = props.execute;
         this.retrieve = props.retrieve;
-
+        
+        app.scoreBoard=this;
+        
       };
-      score.prototype=Object.create(control.prototype);
-      score.prototype.draw=function(){
+      scoreBoard.prototype=Object.create(control.prototype);
+      scoreBoard.prototype.draw=function(){
 
           this.active=this.hit &&
                       app.focus===this;
@@ -3066,9 +3110,6 @@ print('toggle');
           popMatrix();
 
       };
-      // score.prototype.move=function(x,y){
-
-      // };
 
     }
 
@@ -3122,8 +3163,12 @@ print('toggle');
             translate(this.x, this.y);
 
               if(this.active){
-                cursor(this.cursor);
-                if(app.left){ offset=1; }
+
+                if(this.retrieve()>=this.threshold){
+                  cursor(this.cursor);
+                  if(app.left){ offset=1; }
+                }
+
               }
 
               function exterior(){
@@ -3313,11 +3358,15 @@ print('toggle');
       /** Overridden for execute */
 
           if(this.active){
+            
+            if(this.retrieve()>=this.threshold){
+            
+              this.execute(this.index);
 
-            this.execute(this.index);
+              app.score+=5;
 
-            app.score+=5;
-
+            }
+            
             // this.parent.visible=false;
 
           }
@@ -3340,6 +3389,8 @@ print('toggle');
         this.execute  = props.execute;
 
         this.color    = props.color;
+
+        app.menu=this;
 
       };
       menuButton.prototype=Object.create(control.prototype);
@@ -3601,7 +3652,9 @@ print('toggle');
         this.color    = props.color;
 
         this.execute  = props.execute;
-
+        
+        app.reset=this;
+        
       };
       resetButton.prototype=Object.create(control.prototype);
       resetButton.prototype.draw=function(){
@@ -4592,33 +4645,32 @@ print('toggle');
       /* Zen Animation    */
       rt.controls.push(new zen(getGUID(), rt, 100, 100, 400, 400, null));
       
-      /* hexBoard         */
+      /* Hex Board         */
       rt.controls.push(new hexBoard(getGUID(), rt, 0, 0, 600, 600,
-        {cursor:    ARROW,
-         color:     color(222)}));
+        {cursor:    ARROW}));
 
       /* Accessories ---------------------------------------------------- */
 
-      /** reset button     */
+      /** Reset Button     */
       rt.controls.push(new resetButton(getGUID(), rt, 565, 565, 40, 40,
         {cursor:    HAND,
          color:     CLRS.BLACK,
          execute:   reset}));
 
-      /** music            */
+      /** Music            */
       rt.controls.push(new music(getGUID(), rt, 35, 565, 50, 50,
         {cursor:    HAND,
          execute:   setMusic,
          retrieve:  getMusic}));
 
-      /** score            */
-      rt.controls.push(new score(getGUID(), rt, 475, 10, 50, 50,
+      /** Score Board      */
+      rt.controls.push(new scoreBoard(getGUID(), rt, 475, 10, 50, 50,
         {color:     CLRS.H_BLUE,
          cursor:    HAND,
          execute:   getRemaining,
          retrieve:  getMistakes}));
 
-      /** clock            */
+      /** Clock            */
       rt.controls.push(new clock(getGUID(), rt, 300, 50, 50, 50,
         {cursor:    HAND}));
          
@@ -4628,14 +4680,14 @@ print('toggle');
          cursor:    HAND,
          execute:   menu}));
 
-      /* PuzzleComplete   */
+      /* Puzzle Complete   */
       var pc=new puzzleComplete(getGUID(), rt, 1000, 1, width-201, height-2,
         {text:      'Puzzle Complete',
          color:     CLRS.H_BLUE});
 
       app.controls.push(pc);
 
-      /* puzzleSelect     */
+      /* Puzzle Select     */
       var ps=new puzzleSelect(getGUID(), rt, 1000, 0, width-200, height,
         {retrieve:  getScore,
          color:     getColor(CLRS.H_BLUE,2)});
@@ -4657,8 +4709,6 @@ print('toggle');
          type:      round(random(0,4))});
 
       app.controls.push(trans);
-
-
 
       /* SplashScreen ------------------------------------------------- */
       {
@@ -4717,7 +4767,7 @@ print('toggle');
 
     keyPressed=function(){
 
-print(keyCode);
+// print(keyCode);
 
       app.keys[keyCode]=true;
 
