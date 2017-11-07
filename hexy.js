@@ -1134,7 +1134,7 @@ var diagrams = function(processingInstance){
 
         control.call(this, id, parent, x, y, w, h);
 
-        this.color        = props.color;
+        this.color        = getColor(CLRS.H_BLUE, random(1,3));
 
         this.size         = w;
         this.strokeWeight = random(1,15);
@@ -1157,7 +1157,7 @@ var diagrams = function(processingInstance){
 
           this.x+=this.deltaX;
           this.y+=this.deltaY;
-
+          
           pushMatrix();
 
             translate(this.x, this.y);
@@ -1177,7 +1177,8 @@ var diagrams = function(processingInstance){
           popMatrix();
 
       };
-
+      heXX.prototype.move=function(){};
+ 
     }
 
     /** Zen Animation   -------------------------------------------------- */
@@ -1187,12 +1188,8 @@ var diagrams = function(processingInstance){
 
         control.call(this, id, parent, x, y, w, h);
 
-        this.color   = props.color;
-
-        for(var n=0; n<10; n++){
-
-          this.controls.push(new heXX(getGUID(), this, random(50,500), random(50,500), random(30,100), 0,
-                              {color: getColor(CLRS.H_BLUE, random(1,3))}));               
+        for(var n=0; n<20; n++){
+          this.controls.push(new heXX(getGUID(), this, random(0,600), random(0,600), random(20,150), 0,{}));
         }
 
       };
@@ -1216,19 +1213,16 @@ var diagrams = function(processingInstance){
         
         this.timer++;
 
-        if(this.timer%50===0){
-          
-          this.controls=shorten(this.controls);
+        if(this.timer%(floor(app.frameRate)*5)===0){
 
-          this.controls.push(new heXX(getGUID(), this, random(50,500), random(50,500), random(30,100), 0,
-                              {color: getColor(CLRS.H_BLUE, random(1,3))}));   
-print(this.controls.length);
+          this.controls=subset(this.controls, 1, this.controls.length);
+
+          append(this.controls, new heXX(getGUID(), this, random(0,600), random(0,600), random(20,150), 0,{}));
+print('append');
         }
 
       };
-      zen.prototype.moved=function(){};
-      zen.prototype.over=function(){};
-      zen.prototype.out=function(){};
+      zen.prototype.move=function(){};
       
     }
           
@@ -1551,7 +1545,7 @@ print(this.controls.length);
           function border(){
 
             noStroke();
-            fill(getColor(p.color,95));
+            fill(p.color);
 
               rect(p.x, p.y, p.w, p.h);
 
@@ -1974,7 +1968,7 @@ print(this.controls.length);
             noStroke();
             fill(p.color);
 
-              rect(p.x, p.y, p.w, p.h);
+              // rect(p.x, p.y, p.w, p.h);
 
           };
           function controls(){
@@ -4590,46 +4584,45 @@ print('toggle');
 
       /* root control     */
       var rt=new root(getGUID(), 0, 0, width, height,
-        {color:     color(192),
+        {color:     color(222),
          border:    true});
 
       app.controls.push(rt);
 
+      /* Zen Animation    */
+      rt.controls.push(new zen(getGUID(), rt, 100, 100, 400, 400, null));
+      
       /* hexBoard         */
       rt.controls.push(new hexBoard(getGUID(), rt, 0, 0, 600, 600,
         {cursor:    ARROW,
          color:     color(222)}));
 
-// print(app.hexBoard.id);
+      /* Accessories ---------------------------------------------------- */
 
-      /* Zen Animation    */
-      rt.controls.push(new zen(getGUID(), rt, 100, 100, 400, 400,
-        {color:     CLRS.ORANGE}));
-
-      /* reset button     */
+      /** reset button     */
       rt.controls.push(new resetButton(getGUID(), rt, 565, 565, 40, 40,
         {cursor:    HAND,
          color:     CLRS.BLACK,
          execute:   reset}));
 
-      /* music            */
+      /** music            */
       rt.controls.push(new music(getGUID(), rt, 35, 565, 50, 50,
         {cursor:    HAND,
          execute:   setMusic,
          retrieve:  getMusic}));
 
-      /* score            */
+      /** score            */
       rt.controls.push(new score(getGUID(), rt, 475, 10, 50, 50,
         {color:     CLRS.H_BLUE,
          cursor:    HAND,
          execute:   getRemaining,
          retrieve:  getMistakes}));
 
-      /* clock            */
+      /** clock            */
       rt.controls.push(new clock(getGUID(), rt, 300, 50, 50, 50,
         {cursor:    HAND}));
          
-      /* Menu Button      */
+      /** Menu Button      */
       rt.controls.push(new menuButton(getGUID(), rt, 15, 15, 57, 60,
         {text:      'Yippee',
          cursor:    HAND,
@@ -4645,7 +4638,7 @@ print('toggle');
       /* puzzleSelect     */
       var ps=new puzzleSelect(getGUID(), rt, 1000, 0, width-200, height,
         {retrieve:  getScore,
-         color:     CLRS.WHITE});
+         color:     getColor(CLRS.H_BLUE,2)});
 
       app.controls.push(ps);
 
@@ -4664,6 +4657,8 @@ print('toggle');
          type:      round(random(0,4))});
 
       app.controls.push(trans);
+
+
 
       /* SplashScreen ------------------------------------------------- */
       {
