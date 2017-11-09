@@ -44,15 +44,18 @@ var diagrams = function(processingInstance){
   with (processingInstance){
 /*
 
-  Names:  Hexy
-          Hexstasy
+  Names:  
+          
+          Hexy
+          Hexstacy
           Hexstatic
           You hexy thing
           geekred
           ...
 
   GAMES:
-
+          
+          rubic's cube hexagons - Rotating sliding hexagons not unlike 
           Hex grid least/greatest path moving right or down
           Choose Life - Sliding Triangle Game
           Multiplication hexagon tunnel left/right
@@ -61,14 +64,13 @@ var diagrams = function(processingInstance){
   TO DO:
       
       - relocate the clock
+      - Level indicator - identify puzzle # on hexBoard
 
-      - wrong click animation
-
-      - identify puzzle # on hexBoard
-
-      - background animation for the puzzle select screen
-      - noises for clicking and ambient music
-
+      SOUND
+      
+        - noises for clicking and ambient music
+        - click sounds for blue and black hexCells
+      
       - Tidy up each main screen
       
       - Threshold for puzzle button to be enabled
@@ -82,8 +84,8 @@ var diagrams = function(processingInstance){
 
       - implement timer
 
-      - background grid
-      - score controls
+      - background grid static image generated while grid is loaded?
+
       - navigate PUZZLES controls
       - sounds/music controls
 
@@ -91,13 +93,9 @@ var diagrams = function(processingInstance){
       - determine how consecutive and non-consecutive are specified
 
       - refresh screen on mouse movement
-      - click sounds for blue and black hexCells
+
       - uncover animations triangles
-      - dynamically add text to cells with linking
-      - Level indicator
-      - Menu navigation
-      - Score display controls
-      - Restart control
+
       - Expanding halos
 
       - Allow for optional orientation of hexagons
@@ -111,7 +109,17 @@ var diagrams = function(processingInstance){
 
 
     TO DONE:
-
+      
+      
+      - Restart control
+      - Score display controls
+      - Menu navigation
+      
+      - dynamically add text to cells with linking
+    
+      - score controls
+      - background animation for the puzzle select screen
+      - wrong click animation
       - restart game controls    
       - Menu button (top left corner)
       - ***** Remove Dragging from all controls *****
@@ -126,7 +134,7 @@ var diagrams = function(processingInstance){
   // const pi=nf(PI,1,10);
   
 */
-
+  
   function print(s){
 
     console.log(s);
@@ -647,15 +655,13 @@ var diagrams = function(processingInstance){
 
       this.score        = 0;                  //  The number of total hexes acquired
 
-      this.levelScores  = {
-                            0:  3,   7:  6,  14: 14,  21: 110,  28: 200,  35: 328,
-                            1:  4,   8:  8,  15: 17,  22: 110,  29: 200,  36: 328,
-                            2:  5,   9:  8,  16: 44,  23: 110,  30: 200,  37: 328,
-                            3:  5,  10:  9,  17: 44,  24: 110,  31: 200,  38: 328,
-                            4:  5,  11: 10,  18: 44,  25: 110,  32: 200,  39: 328,
-                            5:  6,  12: 10,  19: 44,  26: 110,  33: 200,  40: 328,
-                            6:  6,  13: 18,  20: 44,  27: 110,  34: 200,  41: 328
-                          };
+      this.levelScores  = [   3,  4,  5,  5,  5,  6,  6,
+                              6,  8,  8,  9, 10, 10, 10,
+                             14, 17, 44, 44, 44, 44, 44,
+                            110,110,110,110,110,110,110,
+                            200,200,200,200,200,200,220,
+                            328,328,328,328,328,328,328
+                          ];
 
       this.levelEntry  = {
                             0:  0,   7: 22,  14:  48,  21: 120,  28: 220,  35: 328,
@@ -666,6 +672,14 @@ var diagrams = function(processingInstance){
                             5:  0,  12: 22,  19:  48,  26: 120,  33: 220,  40: 328,
                             6: 18,  13: 44,  20: 110,  27: 200,  34: 240,  41: 328
                           };
+
+      this.levelText   =['1-1', '1-2', '1-3', '1-4', '1-5', '1-6', '1-7',
+                         '2-1', '2-2', '2-3', '2-4', '2-5', '2-6', '2-7',
+                         '3-1', '3-2', '3-3', '3-4', '3-5', '3-6', '3-7',
+                         '4-1', '4-2', '4-3', '4-4', '4-5', '4-6', '4-7',
+                         '5-1', '5-2', '5-3', '5-4', '5-5', '5-6', '5-7',
+                         '6-1', '6-2', '6-3', '6-4', '6-5', '6-6', '6-7'
+                        ];
 
       this.hexBoard;                          //  Set in the hexBoard control initialization
       this.puzzleComplete;                    //  Set in the puzzleComplete control initialization
@@ -687,6 +701,8 @@ var diagrams = function(processingInstance){
       this.musicOn      = true;
       this.level        = 0;                  //  Levels 0 - 42 ( 7 groups of 6 = 42 total)
 
+      this.finished     = false;
+      
     }
 
   };
@@ -713,8 +729,8 @@ var diagrams = function(processingInstance){
       function getInfo()            { return app.info;                                                 };
       function toggleInfo()         { app.info=!app.info;                                              };
 
-      function getMusic()           { return app.music;                                                };
-      function setMusic(b)          { return app.music=b;                                              };
+      function getMusic()           { return app.musicOn;                                              };
+      function setMusic(b)          { return app.musicOn=b;                                            };
 
       function getScore()           { return app.score;                                                };
       function setScore(b)          { return app.score=b;                                              };
@@ -735,7 +751,7 @@ var diagrams = function(processingInstance){
 
     }
 
-    /** PUZZLES         -------------------------------------------------- */
+    /** Puzzles         -------------------------------------------------- */
     {
 
       function executeLoadPuzzle() {
@@ -1821,7 +1837,7 @@ var diagrams = function(processingInstance){
                    '\n'     + id               +
                    '\n\n\n' + app.remaining    +
                    '\n'     + app.errors       +
-                   '\n\n\n' + app.music        +
+                   '\n\n\n' + app.musicOn      +
                    '\n'     + app.level,
                    col2, top);
 
@@ -1915,10 +1931,12 @@ var diagrams = function(processingInstance){
         this.controls   = [];   //  Clear the controls array
         this.activeCell = null; //  Clear the active hexCell
 
-        this.layout=PUZZLES[app.puzzle];
-        this.text=PUZZLES[app.puzzle+1];
-
-        var rowArray=[];  // Temporary 1-D array to hold each successive row before adding to the corresponding 2-D array
+        this.layout     = PUZZLES[app.puzzle];
+        this.text       = PUZZLES[app.puzzle+1];
+        
+        this.level      = app.levelText[app.level];
+        
+        var rowArray    = [];  // Temporary 1-D array to hold each successive row before adding to the corresponding 2-D array
         var n=0;          // Iterator
 
         function load(){
@@ -1987,7 +2005,9 @@ var diagrams = function(processingInstance){
         load();
 
         this.update();
-
+        
+        app.finished=false;
+        
       };
       hexBoard.prototype.draw         = function(){
 
@@ -1997,18 +2017,27 @@ var diagrams = function(processingInstance){
         }
 
           var p=this;
-          
+
           this.active=this.hit &&
                       app.focus===this;
 
           if(this.active){ cursor(this.cursor); }
-          
-          function background(){
-            
-            noStroke();
-            fill(p.color);
 
-              // rect(p.x, p.y, p.w, p.h);
+          function background(){
+
+            noStroke();
+            fill(getColor(CLRS.BLACK),10);
+            textAlign(CENTER,CENTER);
+            textSize(72);
+
+            pushMatrix();
+
+              translate(32,300);
+              rotate(PI/2);
+
+                text('Level ' + app.levelText[app.puzzle/2], 0, 0);
+
+            popMatrix();
 
           };
           function controls(){
@@ -2176,6 +2205,8 @@ var diagrams = function(processingInstance){
 
           };
           function calculateRemaining(){
+            
+            if(app.finished){ return; }
 
             app.remaining = 0;
             app.covered   = 0;
@@ -2204,9 +2235,12 @@ var diagrams = function(processingInstance){
             if(total  ===0 &&
                covered===0){
               
+              app.finished=true;
+
+              app.score+=app.levelScores[app.puzzle];
               app.clock.stop();
               showPuzzleComplete();
-              
+
             }
 
           };
@@ -3362,8 +3396,6 @@ var diagrams = function(processingInstance){
             if(this.retrieve()>=this.threshold){
             
               this.execute(this.index);
-
-              app.score+=5;
 
             }
             
