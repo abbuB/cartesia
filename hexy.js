@@ -63,26 +63,28 @@ var diagrams = function(processingInstance){
 
   TO DO:
       
+      - determine width and height before sizing grid
+      
       - relocate the clock
-      - Level indicator - identify puzzle # on hexBoard
+      
+      - Expanding halos
+      
+      - uncover animations triangles      
+      
+      - include 42 layouts from existing games
+      - include 42 layouts from the community
 
+      
       SOUND
       
         - noises for clicking and ambient music
         - click sounds for blue and black hexCells
       
-      - Tidy up each main screen
-      
-      - Threshold for puzzle button to be enabled
-
       - automated background music
-
+      
+      - Tidy up each main screen
+      - Threshold for puzzle button to be enabled
       - Test on Zach's machine
-
-      - include 42 layouts from existing games
-      - include 42 layouts from the community
-
-      - implement timer
 
       - background grid static image generated while grid is loaded?
 
@@ -92,25 +94,22 @@ var diagrams = function(processingInstance){
       - undo/redo
       - determine how consecutive and non-consecutive are specified
 
-      - refresh screen on mouse movement
 
-      - uncover animations triangles
-
-      - Expanding halos
-
-      - Allow for optional orientation of hexagons
-        * pointy top
-        * flat top
 
       - Keyboard controls for navigation and all functions
       - Touchscreen controls
 
     Research:
 
-
+      - refresh screen on mouse movement
+      - Allow for optional orientation of hexagons
+        * pointy top
+        * flat top
+        
     TO DONE:
-      
-      
+
+      - implement timer
+      - Level indicator - identify puzzle # on hexBoard
       - Restart control
       - Score display controls
       - Menu navigation
@@ -654,7 +653,7 @@ var diagrams = function(processingInstance){
 
       angleMode='radians';
 
-      size(800, 600); // set size of canvas
+      size(floor(random(800,1600)), floor(random(600,1000))); // set size of canvas
 
     }
 
@@ -868,12 +867,12 @@ var diagrams = function(processingInstance){
       };
       function hidePuzzleSelect()  {
 
-        app.puzzleSelect.x = 1000;
-        app.menu.x         =   15;
-        app.clock.x        =  300;
-        app.scoreBoard.x   =  475;
-        app.music.x        =   35;
-        app.reset.x        =  565;
+        app.puzzleSelect.x =         1000;
+        app.menu.x         =           15;
+        app.clock.x        =(width-200)/2;
+        app.scoreBoard.x   =    width-325;
+        app.music.x        =           35;
+        app.reset.x        =    width-235;
 
       };
 
@@ -1382,7 +1381,7 @@ var diagrams = function(processingInstance){
           noStroke();
           fill(getColor(p.color, factor*5 + 1));
 
-            rect(600-p.timer/100*600, 0, p.w*factor, p.h);
+            rect( (width-200)-p.timer/100*(width-200), 0, p.w*factor, p.h);
 
         };
         function title(){
@@ -1394,23 +1393,24 @@ var diagrams = function(processingInstance){
 
           fill(getColor(CLRS.H_BLUE,p.timer));
 
-            rect(100, top, 400, 100, 3);
+            rect( (width-200)/2-200, top, 400, 100, 3);
 
           textSize(36);
           textAlign(CENTER,CENTER);
 
           fill(getColor(CLRS.WHITE,p.timer*0.8));
 
-            text(p.text, 300, top+30);
+            text(p.text, (width-200)/2, top+30);
 
           fill(getColor(CLRS.WHITE,p.timer*0.6));
 
-            text(getPuzzleNumber(), 300, top+70);
+            text(getPuzzleNumber(), (width-200)/2, top+70);
 
         };
         function summary(){
 
-          var left=-600 + factor * 600 + 100;
+          var left =-width + factor * width + (width-600)/2;
+          var top  = height/2-100;
           
           function drawHexagon(x,y,sz){
 
@@ -1453,7 +1453,7 @@ var diagrams = function(processingInstance){
 
             pushMatrix();
 
-              translate(150,225);
+              translate(150,top+20);
 
                 stroke(CLRS.H_BLUE);
                 strokeWeight(2);
@@ -1475,14 +1475,14 @@ var diagrams = function(processingInstance){
 
           fill(getColor(CLRS.WHITE,p.timer));
 
-            rect(left, 210, 400, 200, 3);
+            rect(left, top , 400, 200, 3);
 
           textSize(36);
           fill(getColor(CLRS.BLACK,25));
 
           pushMatrix();
 
-            translate(left+20, 330);
+            translate(left+20, top+120);
             rotate(-PI/2);
 
               text('Mistakes:', 0, 0);
@@ -1496,13 +1496,13 @@ var diagrams = function(processingInstance){
           hexagons();
 
           //  Game Totals
-          drawHexagon(left+325, 300, 50);
+          drawHexagon(left+325, top+80, 50);
 
           textSize(40);
-          textAlign(CENTER,CENTER);
+          textAlign(CENTER,BOTTOM);
           fill(getColor(CLRS.BLACK,75));
 
-            text('x 125',left+325,375);
+            text('x 125',left+325,top+180);
 
         };
         function buttons(){
@@ -1511,7 +1511,7 @@ var diagrams = function(processingInstance){
           p.controls[1].y= 920 - factor * 500; // Select Puzzle
           p.controls[2].y=1120 - factor * 700; // Next Puzzle
 
-          forEach(p.controls, 'draw');
+          // forEach(p.controls, 'draw');
 
         };
         
@@ -1699,7 +1699,9 @@ var diagrams = function(processingInstance){
 
             };
           
-            drawHexagon(300,300,50);
+            drawHexagon( (width-200)/2,
+                         (height/2),
+                         50 );
 
             //  Shadow
             var score=p.retrieve();
@@ -1929,7 +1931,7 @@ var diagrams = function(processingInstance){
 
           if(this.parent.hit){
 
-            if(this.hitTest(x,y)){
+            if(this.hitTest(x+this.offset,y)){
 
               this.hit=true;
               app.focus=this;
@@ -2086,7 +2088,7 @@ var diagrams = function(processingInstance){
 
             pushMatrix();
 
-              translate(32,300);
+              translate(32,height/2);
               rotate(PI/2);
 
               noStroke();
@@ -2262,7 +2264,7 @@ var diagrams = function(processingInstance){
             textLeading(20);
             fill(getColor(CLRS.BLACK,75));
 
-            text(MESSAGES[app.puzzle/2], 80, 590);
+            text(MESSAGES[app.puzzle/2], 80, height-10);
 
           };
           function calculateRemaining(){
@@ -3990,15 +3992,9 @@ var diagrams = function(processingInstance){
                 }
 
               endShape(CLOSE);
-
-            // ellipse(0,0,
-                    // p.h/2,
-                    // p.w/2);
-                    
+       
             }
-
-
-
+                    
         };
         function outerHexagon(){
 
@@ -4351,7 +4347,7 @@ var diagrams = function(processingInstance){
 
             highlightActive();
             revealAnimation();
-// ellipse(this.x,this.y,20,20);
+
         popMatrix();
 
         // drawLinks(); //  Delete for release
@@ -4762,32 +4758,32 @@ var diagrams = function(processingInstance){
       rt.controls.push(new zen(getGUID(), rt, 100, 100, 400, 400, null));
       
       /* Hex Board         */
-      rt.controls.push(new hexBoard(getGUID(), rt, 0, 0, 600, 600,
+      rt.controls.push(new hexBoard(getGUID(), rt, 0, 0, width-200, height,
         {cursor:    ARROW}));
 
       /* Accessories ---------------------------------------------------- */
 
       /** Reset Button     */
-      rt.controls.push(new resetButton(getGUID(), rt, 565, 565, 28, 28,
+      rt.controls.push(new resetButton(getGUID(), rt, width-235, height-35, 28, 28,
         {cursor:    HAND,
          color:     CLRS.BLACK,
          execute:   reset}));
 
       /** Music            */
-      rt.controls.push(new music(getGUID(), rt, 35, 565, 50, 50,
+      rt.controls.push(new music(getGUID(), rt, 35, height-35, 50, 50,
         {cursor:    HAND,
          execute:   setMusic,
          retrieve:  getMusic}));
 
       /** Score Board      */
-      rt.controls.push(new scoreBoard(getGUID(), rt, 475, 10, 50, 50,
+      rt.controls.push(new scoreBoard(getGUID(), rt, width-325, 10, 50, 50,
         {color:     CLRS.H_BLUE,
          cursor:    HAND,
          execute:   getRemaining,
          retrieve:  getMistakes}));
 
       /** Clock            */
-      rt.controls.push(new clock(getGUID(), rt, 300, 50, 50, 50,
+      rt.controls.push(new clock(getGUID(), rt, (width-200)/2, 50, 50, 50,
         {cursor:    HAND}));
          
       /** Menu Button      */
