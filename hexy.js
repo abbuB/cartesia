@@ -278,11 +278,11 @@ var diagrams = function(processingInstance){
     
     var MESSAGES=[
                   "Remove orange hexes to reveal the pattern underneath.\nThe number in an empty hex tells you how many adjacent hexes are part of the pattern.\nLeft click to mark a hex as part of the pattern.\nRight click to destroy hexes that aren't part of the pattern.",
-                  "Layout \n1-2 Message",
-                  "Layout \n1-3 Message",
-                  "Layout \n1-4 Message",
-                  "Layout \n1-5 Message",
-                  "Layout \n1-6 Message",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
                   "Numbers outside the grid show the number of blue hexes in that column.\nYou can left click on outside numbers to activate a guide line and right click to mark them as complete."
                  ];
 
@@ -303,7 +303,7 @@ var diagrams = function(processingInstance){
                     // ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
                     // ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
                     // ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
-                    // ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+                    // ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.']
                   // ],
 
                   [ //  Layout 1-1
@@ -321,7 +321,7 @@ var diagrams = function(processingInstance){
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
-                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.']
                   ],
 
                   [ //  Text 1-1
@@ -339,7 +339,7 @@ var diagrams = function(processingInstance){
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
-                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.']
                   ],
 
                   [ //  Layout 1-2
@@ -357,7 +357,7 @@ var diagrams = function(processingInstance){
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
-                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.']
                   ],
 
                   [ //  Text 1-2
@@ -375,43 +375,43 @@ var diagrams = function(processingInstance){
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
-                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.']
                   ],
 
                   [ //  Layout 1-3
-                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
-                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
-                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
-                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', 'x', '.', '.', '.', '.', '.'],
-                    ['.', '.', '.', 'x', 'O', 'x', 'O', '.', '.', 'o', 'o', '.', '.', '.', '.'],
-                    ['.', '.', '.', 'O', 'o', 'O', '.', '.', '.', '.', 'O', '.', '.', '.', '.'],
-                    ['.', '.', '.', '.', '.', '.', '.', 'x', '.', '.', '.', '.', '.', '.', '.'],
-                    ['.', '.', '.', 'O', '.', '.', 'o', 'O', 'O', 'x', '.', '.', '.', '.', '.'],
-                    ['.', 'x', 'o', 'x', 'O', 'x', 'o', 'x', '.', '.', 'o', '.', '.', '.', '.'],
-                    ['.', 'o', 'O', 'o', '.', 'o', 'o', 'O', 'o', 'o', 'o', '.', '.', '.', '.'],
-                    ['.', '.', '.', '.', '.', '.', '.', '.', 'O', '.', '.', '.', '.', '.', '.'],
-                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
-                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
-                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
-                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.',],
+                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.',],
+                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.',],
+                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', 'x', '.', '.', '.',],
+                    ['.', '.', '.', '.', '.', 'x', 'O', 'x', 'O', '.', '.', 'o', 'o', '.', '.',],
+                    ['.', '.', '.', '.', '.', 'O', 'o', 'O', '.', '.', '.', '.', 'O', '.', '.',],
+                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', 'x', '.', '.', '.', '.', '.',],
+                    ['.', '.', '.', '.', '.', 'O', '.', '.', 'o', 'O', 'O', 'x', '.', '.', '.',],
+                    ['.', '.', '.', 'x', 'o', 'x', 'O', 'x', 'o', 'x', '.', '.', 'o', '.', '.',],
+                    ['.', '.', '.', 'o', 'O', 'o', '.', 'o', 'o', 'O', 'o', 'o', 'o', '.', '.',],
+                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', 'O', '.', '.', '.', '.',],
+                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.',],
+                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.',],
+                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.',],
+                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.',]
                   ],
 
                   [ //  Text 1-3
-                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
-                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
-                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
-                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
-                    ['.', '.', '.', '.', '+', '.', '+', '.', '.', '+', '+', '.', '.', '.', '.'],
-                    ['.', '.', '.', '+', '+', '+', '.', '.', '.', '.', '+', '.', '.', '.', '.'],
-                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
-                    ['.', '+', '.', '+', '.', '+', '+', '+', '+', '.', '.', '.', '.', '.', '.'],
-                    ['.', '.', '+', '.', '+', '.', '+', '.', '.', '.', '+', '+', '.', '.', '.'],
-                    ['.', '+', '+', '+', '.', '+', '+', '+', '+', '+', '+', '.', '+', '+', '.'],
-                    ['.', '.', '.', '+', '.', '.', '.', '.', '+', '.', '+', '+', '+', '.', '.'],
-                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
-                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
-                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
-                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.',],
+                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.',],
+                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.',],
+                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.',],
+                    ['.', '.', '.', '.', '.', '.', '+', '.', '+', '.', '.', '+', '+', '.', '.',],
+                    ['.', '.', '.', '.', '.', '+', '+', '+', '.', '.', '.', '.', '+', '.', '.',],
+                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.',],
+                    ['.', '.', '.', '+', '.', '+', '.', '+', '+', '+', '+', '.', '.', '.', '.',],
+                    ['.', '.', '.', '.', '+', '.', '+', '.', '+', '.', '.', '.', '+', '+', '.',],
+                    ['.', '.', '.', '+', '+', '+', '.', '+', '+', '+', '+', '+', '+', '.', '+',],
+                    ['.', '.', '.', '.', '.', '+', '.', '.', '.', '.', '+', '.', '+', '+', '+',],
+                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.',],
+                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.',],
+                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.',],
+                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.',]
                   ],
 
                   [ //  Layout 1-4
@@ -429,7 +429,7 @@ var diagrams = function(processingInstance){
                     ['.', '.', '.', '.', 'x', '.', 'O', '.', 'x', '.', '.', '.', '.', '.', '.'],
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
-                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.']
                   ],
 
                   [ //  Text 1-4
@@ -447,7 +447,7 @@ var diagrams = function(processingInstance){
                     ['.', '.', '.', '.', '.', '.', '+', '.', '.', '.', '.', '.', '.', '.', '.'],
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
-                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.']
                   ],
 
                   [ //  Layout 1-5
@@ -465,7 +465,7 @@ var diagrams = function(processingInstance){
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
-                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.']
                   ],
 
                   [ //  Text 1-5
@@ -483,7 +483,7 @@ var diagrams = function(processingInstance){
                     ['.', '.', '.', '.', '.', '.', '+', '.', '.', '.', '.', '.', '.', '.', '.'],
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
-                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.']
                   ],
 
                   [ //  Layout 1-6
@@ -501,7 +501,7 @@ var diagrams = function(processingInstance){
                     ['x', 'o', '.', '.', 'o', 'x', 'O', '.', '.', '.', 'o', 'o', 'x', 'O', 'x'],
                     ['x', 'O', 'O', 'x', 'O', 'x', 'o', '.', '.', '.', '.', '.', 'O', '.', '.'],
                     ['.', '.', '.', '.', 'o', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
-                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.']
                   ],
 
                   [ //  Text 1-6
@@ -519,7 +519,7 @@ var diagrams = function(processingInstance){
                     ['.', '+', '.', '+', '+', '.', '+', '+', '+', '+', '+', '+', '.', '+', '.'],
                     ['.', '+', '+', '.', '+', '.', '+', '+', '+', '+', '+', '+', '+', '+', '.'],
                     ['+', '+', '+', '+', '+', '+', '+', '+', '.', '.', '+', '+', '+', '+', '+'],
-                    ['.', '.', '.', '.', '+', '+', '+', '.', '.', '.', '.', '.', '.', '.', '.'],
+                    ['.', '.', '.', '.', '+', '+', '+', '.', '.', '.', '.', '.', '.', '.', '.']
                   ],
 
                   [ //  Layout 1-7
@@ -537,7 +537,7 @@ var diagrams = function(processingInstance){
                     ['.', '.', 'o', 'o', 'o', 'x', 'o', 'x', 'o', 'o', 'o', 'o', 'o', '.', '.'],
                     ['.', '.', '.', '.', 'o', 'o', 'x', 'O', 'x', 'o', 'o', '.', '.', '.', '.'],
                     ['.', '.', '.', '.', '.', '.', 'o', 'x', 'x', '.', '.', '.', '.', '.', '.'],
-                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.']
                   ],
 
                   [ //  Text 1-7
@@ -555,10 +555,10 @@ var diagrams = function(processingInstance){
                     ['.', '.', '+', '.', '.', '.', 'c', '.', '+', '+', '.', '.', '+', '.', '.'],
                     ['.', '.', '.', '.', '+', '+', '.', '+', '.', '+', '+', '.', '.', '.', '.'],
                     ['.', '.', '.', '.', '.', '.', '+', '.', '.', '.', '.', '.', '.', '.', '.'],
-                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+                    ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.']
                   ],
                   
-                  [ //  Layout 1-8
+                  [ //  Layout 2-0
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', 'o', '.', '.', '.', '.', '.'],
                     ['.', '.', '.', '.', '.', '.', '.', 'o', 'o', '.', 'o', 'o', '.', '.', '.'],
                     ['.', '.', '.', '.', '.', '.', '.', 'o', '.', '.', 'o', 'o', '.', '.', '.'],
@@ -573,10 +573,10 @@ var diagrams = function(processingInstance){
                     ['.', '.', '.', '.', 'o', 'o', 'o', '.', 'o', 'o', 'o', '.', '.', '.', '.'],
                     ['.', '.', '.', '.', '.', '.', 'o', '.', 'o', '.', '.', '.', '.', '.', '.'],
                     ['.', '.', '.', '.', '.', 'o', 'o', 'o', 'o', 'o', '.', '.', '.', '.', '.'],
-                    ['.', '.', '.', '.', 'o', '.', 'o', '.', 'o', '.', 'o', '.', '.', '.', '.'],
+                    ['.', '.', '.', '.', 'o', '.', 'o', '.', 'o', '.', 'o', '.', '.', '.', '.']
                   ],
                   
-                  [ //  Text 1-8
+                  [ //  Text 2-0
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '+', '.', '.', '.', '.', '.'],
                     ['.', '.', '.', '.', '.', '.', '.', '+', '+', '.', '+', '+', '.', '.', '.'],
                     ['.', '.', '.', '.', '.', '.', '.', '+', '.', '.', '+', '+', '.', '.', '.'],
@@ -591,9 +591,49 @@ var diagrams = function(processingInstance){
                     ['.', '.', '.', '.', '+', '+', '+', '.', '+', '+', '+', '.', '.', '.', '.'],
                     ['.', '.', '.', '.', '.', '.', '+', '.', '+', '.', '.', '.', '.', '.', '.'],
                     ['.', '.', '.', '.', '.', '+', '+', '+', '+', '+', '.', '.', '.', '.', '.'],
-                    ['.', '.', '.', '.', '+', '.', '+', '.', '+', '.', '+', '.', '.', '.', '.'],
-                  ]
+                    ['.', '.', '.', '.', '+', '.', '+', '.', '+', '.', '+', '.', '.', '.', '.']
+                  ],
 
+                  [ //  Layout 2-1
+                    ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'],
+                    ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'],
+                    ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'],
+                    ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'],
+                    ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'],
+                    ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'],
+                    ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'],
+                    ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'],
+                    ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'],
+                    ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'],
+                    ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'],
+                    ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'],
+                    ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'],
+                    ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'],
+                    ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'],
+                    ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'],
+                    ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x']
+                  ],
+                  
+                  [ //  Text 2-1
+                    ['c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c'],
+                    ['c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c'],
+                    ['c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c'],
+                    ['c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c'],
+                    ['c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c'],
+                    ['c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c'],
+                    ['c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c'],
+                    ['c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c'],
+                    ['c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c'],
+                    ['c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c'],
+                    ['c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c'],
+                    ['c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c'],
+                    ['c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c'],
+                    ['c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c'],
+                    ['c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c'],
+                    ['c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c'],
+                    ['c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'c']
+                  ]
+                  
                 ]
 
   }
@@ -653,7 +693,7 @@ var diagrams = function(processingInstance){
 
       this.mode         = APPMODES.GAME;      //
 
-      this.score        = 0;                  //  The number of total hexes acquired
+      this.score        = 100;                  //  The number of total hexes acquired
 
       this.levelScores  = [   3,  4,  5,  5,  5,  6,  6,
                               6,  8,  8,  9, 10, 10, 10,
@@ -1615,6 +1655,21 @@ var diagrams = function(processingInstance){
 
               var ang=0;
 
+              // Shadow
+              fill(212);
+
+              beginShape();
+
+                for(pt=0; pt<6; pt++){
+
+                  vertex( x+cos(radians(ang+pt*60))*(sz)+5,
+                          y+sin(radians(ang+pt*60))*(sz)+5 );
+
+                }
+
+              endShape(CLOSE);
+              
+              // Exterior
               fill(CLRS.H_BLUE);
 
               beginShape();
@@ -1628,6 +1683,7 @@ var diagrams = function(processingInstance){
 
               endShape(CLOSE);
 
+              // Interior
               fill(CLRS.H_BLUE_L);
 
               beginShape();
@@ -1945,8 +2001,8 @@ var diagrams = function(processingInstance){
 
           var w=HEX_SIZE;
 
-          var x=0;
-          var y=0;
+          var X=0;
+          var Y=0;
 
           var xMargin;
           var yMargin;
@@ -1969,11 +2025,11 @@ var diagrams = function(processingInstance){
           for(row in p.layout){
             for(col in p.layout[row]){
 
-              x = xMargin + col*w*0.75;
-              y = yMargin + row*yOffset;
+              X = xMargin + col*w*0.75;
+              Y = yMargin + row*yOffset;
 
               if(col%2===0){
-                y-=yOffset/2;
+                Y-=yOffset/2;
               }
 
               if(p.layout[row][col]===HEXY_TYPES.BLANK){
@@ -1983,7 +2039,7 @@ var diagrams = function(processingInstance){
                 curs=HAND;
               }
 
-              rowArray.push(new hexCell(getGUID(), p, x, y, w, w,
+              rowArray.push(new hexCell(getGUID(), p, X, Y, w, w,
                 {row:       row,
                  col:       col,
                  layout:    p.layout[row][col],
@@ -2025,8 +2081,6 @@ var diagrams = function(processingInstance){
 
           function background(){
 
-            noStroke();
-            fill(getColor(CLRS.BLACK),10);
             textAlign(CENTER,CENTER);
             textSize(72);
 
@@ -2034,6 +2088,13 @@ var diagrams = function(processingInstance){
 
               translate(32,300);
               rotate(PI/2);
+
+              noStroke();
+              fill(212);
+
+                text('Level ' + app.levelText[app.puzzle/2], 3,-3);
+
+              fill(202);
 
                 text('Level ' + app.levelText[app.puzzle/2], 0, 0);
 
@@ -2248,7 +2309,8 @@ var diagrams = function(processingInstance){
           pushMatrix();
 
             translate(this.x, this.y);
-
+            
+            
               this.lines=[]; // This must stay here
               this.halos=[]; // ***** DO NOT MOVE *****
                             
@@ -2999,52 +3061,65 @@ var diagrams = function(processingInstance){
       music.prototype=Object.create(control.prototype);
       music.prototype.draw            =function(){
 
-          this.active=this.hit &&
-                      app.focus===this;
+        var p=this;
 
-          pushMatrix();
+        this.active=this.hit &&
+                    app.focus===this;
+        
+        this.on=this.retrieve();
+        this.offset=0;
+        
+        function symbol(){
 
-            translate(this.x, this.y);
-            scale(1,-1);
+          if(p.on){ fill(164); }
 
-              noStroke();
+          textFont(p.font);
+          textSize(36);
+          textAlign(CENTER,CENTER);
 
-              if(this.active){
+          //  Shadow
+          fill(212);
 
-                cursor(this.cursor);
+            text(CONSTANTS.NOTE, 3+p.offset, +p.offset);
 
-                fill(getColor(CLRS.BLACK,5));
+          // Text
+          fill(192);
 
-                  ellipse(0,0,this.w,this.w);
+          if(p.active){ fill(164); }
 
-              }
+            text(CONSTANTS.NOTE, p.offset, p.offset);
 
-              scale(1,-1);
+        };
+        function strikeThrough(){
 
-              this.on=this.retrieve();
+          noFill();
 
-              if(this.on){ fill(128); }
-              else       { fill(164); }
+          if(!p.on){
 
-              textFont(this.font);
-              textSize(36);
-              textAlign(CENTER,CENTER);
+            stroke(192);
+            strokeWeight(3);
 
-                text(CONSTANTS.NOTE, 0, 0);
+            if(p.active){ stroke(164); }
+          
+              ellipse(p.offset, p.offset, p.w-5, p.w-5);
 
-              noFill();
+              line(-15+p.offset,-15+p.offset, 15, 15);
 
-              if(!this.on){
-                stroke(164);
-                strokeWeight(3);
+          }
+            
+        };
 
-                  ellipse(0, 0, this.w-5, this.w-5);
+        if(this.active){ cursor(p.cursor);
+                         if(app.left){ this.offset=1; } }
 
-                  line(-15, 15, 15,-15);
+        pushMatrix();
 
-              }
+          translate(this.x, this.y);
 
-          popMatrix();
+            symbol();
+            strikeThrough();
+
+        popMatrix();
 
       };
       music.prototype.moved           =function(x,y){
@@ -3127,7 +3202,7 @@ var diagrams = function(processingInstance){
 
               stroke(this.color);
               strokeWeight(1);
-              fill(getColor(this.color, 65));
+              fill(getColor(this.color, 100));
 
                 rect(0, 0, w, 105, 3);
 
@@ -3144,6 +3219,7 @@ var diagrams = function(processingInstance){
           popMatrix();
 
       };
+      scoreBoard.prototype.moved=function(){};
 
     }
 
@@ -3177,8 +3253,8 @@ var diagrams = function(processingInstance){
           this.interior.push(new pnt( cos(radians(pt*60))*(w2-5),
                                       sin(radians(pt*60))*(w2-5) ));
 
-          this.shadow.push(  new pnt( cos(radians(pt*60))*(w2+5),
-                                      sin(radians(pt*60))*(w2+5) ));
+          // this.shadow.push(  new pnt( cos(radians(pt*60))*(w2),
+                                      // sin(radians(pt*60))*(w2) ));
 
         }
 
@@ -3249,7 +3325,7 @@ var diagrams = function(processingInstance){
                 beginShape();
 
                   for(var n in p.points){
-                    vertex(p.shadow[n].x+offset, p.shadow[n].y+offset);
+                    vertex(p.points[n].x+6, p.points[n].y+4);
                   }
 
                 endShape(CLOSE);
@@ -3428,65 +3504,57 @@ var diagrams = function(processingInstance){
       menuButton.prototype=Object.create(control.prototype);
       menuButton.prototype.draw=function(){
 
-          function drawHexes(){
+        var p=this;
+        this.offset=0;
 
-            function drawHexagon(x,y,sz){
+        this.active=this.hit &&
+                    app.focus===this;
 
-              var ang=0;
+        if(this.active){ cursor(this.cursor);
+                         if(app.left){ this.offset=1; } }
+                         
+        function drawHexagon(x,y,sz,offset){
 
-              beginShape();
+          var ang=0;
 
-                for(pt=0; pt<6; pt++){
-                  vertex( x+cos(radians(ang+pt*60))*(sz)+p.offset,
-                          y+sin(radians(ang+pt*60))*(sz)+p.offset );
-                }
+          beginShape();
 
-              endShape(CLOSE);
+            for(pt=0; pt<6; pt++){
+              vertex( x+cos(radians(ang+pt*60))*(sz)+offset,
+                      y+sin(radians(ang+pt*60))*(sz)+offset );
+            }
 
-            };
+          endShape(CLOSE);
+
+        };
+                             
+        pushMatrix();
+
+          translate(this.x, this.y);
+
+            // Shadow
+            fill(212);
+            noStroke();
+
+              for(var ang=0; ang<6; ang++){
+                drawHexagon(p.w/2+cos(radians(ang*60+30))*20+4,
+                            p.h/2+sin(radians(ang*60+30))*20+4,
+                            10,0);
+              }
 
             // Hexagons
-            noFill();
-            stroke(getColor(CLRS.BLACK, 25));
-            strokeWeight(1.5);
+            fill(192);
+            noStroke();
 
-            if(p.active){ stroke(getColor(CLRS.BLACK, 50)); }
+            if(p.active){ fill(180); }
 
               for(var ang=0; ang<6; ang++){
                 drawHexagon(p.w/2+cos(radians(ang*60+30))*20,
                             p.h/2+sin(radians(ang*60+30))*20,
-                            10);
+                            10,p.offset);
               }
 
-          };
-
-          var p=this;
-          this.offset=0;
-
-          this.active=this.hit &&
-                      app.focus===this;
-
-          pushMatrix();
-
-            translate(this.x, this.y);
-
-              if(this.active){ cursor(this.cursor);
-                               if(app.left){ this.offset=1; } }
-
-              // Border
-              noStroke();
-              noFill();
-
-              if(p.active){ fill(getColor(CLRS.BLACK,5)); }
-
-                ellipse(this.w/2+this.offset,
-                        this.h/2+this.offset,
-                        this.w+10,
-                        this.h+10);
-
-              drawHexes()
-
-          popMatrix();
+        popMatrix();
 
       };
       menuButton.prototype.clicked=function(){
@@ -3691,65 +3759,70 @@ var diagrams = function(processingInstance){
       resetButton.prototype=Object.create(control.prototype);
       resetButton.prototype.draw=function(){
 
-          this.active=this.hit &&
-                      app.focus===this;
+        this.active=this.hit &&
+                    app.focus===this;
 
-          this.offset=0;
+        this.offset=0;
+
+        pushMatrix();
+
+          translate(this.x,this.y);
+
+            noFill();
+            stroke(192);
+            strokeWeight(1.5);
+
+            if(this.active &&
+               app.left){
+
+              rotate(radians(45));
+
+            }
+
+            // Arc Shadow                  
+            stroke(212);
+
+              arc(3, 3, this.w, this.h, radians(60), 2*PI-radians(22.5));
+
+            // Arc
+            stroke(192);
+                            
+            if(this.active){
+
+              stroke(164);
+              cursor(this.cursor);
+
+            }
+
+              arc(0, 0, this.w, this.h, radians(60), 2*PI-radians(22.5));
 
             pushMatrix();
 
-              translate(this.x,this.y);
+              translate(4,-5);
+              rotate(PI/6);
 
-                var sz=0.67;
-                var clr=color(128);
+              // Triangle Shadow
+              fill(212);
+              stroke(212);
 
-                ellipseMode(CENTER);
+                triangle( 3,  3,
+                         13,  3,
+                         13, -7);
 
-                stroke(getColor(clr, 50));
+              // Triangle
+              fill(192);
+              stroke(192);
+                
+              if(this.active){ fill(164);
+                               stroke(164); }
 
-                if(this.active){
-
-                  noStroke();
-                  fill(getColor(CLRS.BLACK,5));
-
-                    ellipse(0, 0, this.w, this.w);
-
-                  stroke(getColor(clr, 100));
-                  cursor(this.cursor);
-
-                }
-
-                strokeWeight(1.5);
-                noFill();
-
-                if(this.active &&
-                   app.left){
-
-                  rotate(radians(45));
-
-                }
-
-                  arc(0, 0, this.w*sz, this.h*sz, radians(60), 2*PI-radians(22.5));
-
-                fill(getColor(clr, 50));
-
-                if(this.active){ fill(getColor(clr, 100)); }
-
-                  pushMatrix();
-
-                    translate(4,-5);
-                    rotate(PI/6);
-
-                      triangle( 0,   0,
-                               10,   0,
-                               10, -10);
-
-                  popMatrix();
+                  triangle( 0,   0,
+                           10,   0,
+                           10, -10);
 
             popMatrix();
 
-
-          popMatrix();
+        popMatrix();
 
       };
       resetButton.prototype.clicked=function(){
@@ -3852,8 +3925,8 @@ var diagrams = function(processingInstance){
             p.ipoints.push(new pnt( cos(radians(ang+pt*60))*(d2-8),
                                     sin(radians(ang+pt*60))*(d2-8) ));
 
-            p.hpoints.push(new pnt( cos(radians(ang+pt*60))*(d2-1),
-                                    sin(radians(ang+pt*60))*(d2-1) ));
+            p.hpoints.push(new pnt( cos(radians(ang+pt*60))*(d2-3)+4,
+                                    sin(radians(ang+pt*60))*(d2-3)-3 ));
 
           }
 
@@ -3907,18 +3980,24 @@ var diagrams = function(processingInstance){
                p.layout===HEXY_TYPES.BLUE_REVEALED){
 
               noStroke();
-              fill(CLRS.WHITE);
+              fill(212);
 
               beginShape();
 
                 for(var pt in p.hpoints){
-                  vertex(p.hpoints[pt].x-0.5,
-                         p.hpoints[pt].y-0.5);
+                  vertex(p.hpoints[pt].x,
+                         p.hpoints[pt].y);
                 }
 
               endShape(CLOSE);
 
+            // ellipse(0,0,
+                    // p.h/2,
+                    // p.w/2);
+                    
             }
+
+
 
         };
         function outerHexagon(){
@@ -3983,8 +4062,13 @@ var diagrams = function(processingInstance){
 
             endShape(CLOSE);
 
+            // ellipse(offset,offset,
+                    // p.w*0.85,
+                    // p.w*0.85);
+                    
           }
 
+          
         };
         function innerHexagon(){
 
@@ -4267,7 +4351,7 @@ var diagrams = function(processingInstance){
 
             highlightActive();
             revealAnimation();
-
+// ellipse(this.x,this.y,20,20);
         popMatrix();
 
         // drawLinks(); //  Delete for release
@@ -4684,7 +4768,7 @@ var diagrams = function(processingInstance){
       /* Accessories ---------------------------------------------------- */
 
       /** Reset Button     */
-      rt.controls.push(new resetButton(getGUID(), rt, 565, 565, 40, 40,
+      rt.controls.push(new resetButton(getGUID(), rt, 565, 565, 28, 28,
         {cursor:    HAND,
          color:     CLRS.BLACK,
          execute:   reset}));
