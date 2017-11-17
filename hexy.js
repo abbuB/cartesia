@@ -62,9 +62,9 @@ var diagrams = function(processingInstance){
           ...
 
   TO DO:
-      
-      - hesitation in moving controls
-      
+
+      - delay timer in moving controls
+
       - complete stopwatch
 
       - Expanding halos
@@ -280,21 +280,20 @@ var diagrams = function(processingInstance){
 
     var MESSAGES=[
                   "Remove orange hexes to reveal the pattern underneath.\nThe number in an empty hex tells you how many adjacent hexes are part of the pattern.\nLeft click to mark a hex as part of the pattern.\nRight click to destroy hexes that aren't part of the pattern.",
-                  "1-1",
                   "1-2",
                   "1-3",
-                  "1-3",
+                  "1-4",
                   "1-5",
                   "1-6",
                   "1-7\nNumbers outside the grid show the number of blue hexes in that column.\nYou can left click on outside numbers to activate a guide line and right click to mark them as complete.",
-                  "2-0",
                   "2-1",
                   "2-2",
                   "2-3",
                   "2-4",
                   "2-5",
                   "2-6",
-                  "2-7"                  
+                  "2-7",
+                  "2-8"                  
                  ];
 
     var PUZZLES=[ //  Ring #1
@@ -2952,11 +2951,45 @@ var diagrams = function(processingInstance){
           this.active=this.hit &&
                       app.focus===this;
 
-          pushMatrix();
+          var p=this;
 
+          function dial(){
+
+            pushMatrix();
+
+              translate(0,50);
+              scale(1,-1);
+              
+                strokeWeight(5);
+                stroke(192);
+                
+                if(p.active){ stroke(164); }
+
+                noFill();
+
+                  ellipse(0, 0, 25, 25);
+
+                line(0, 12.5, 0, 20);
+
+                strokeWeight(10);
+
+                  line( 0, 18, 0, 21);
+
+                strokeWeight(1);
+
+                  line( 0, 0, 8*cos(PI/4), 8*sin(PI/4));
+
+                ellipse(0, 0, 3, 3);
+                
+            popMatrix();
+
+          };
+          
+          pushMatrix();
+          
             translate(this.x, this.y);
             scale(1,-1);
-
+            
               noStroke();
 
               if(this.start){
@@ -2999,6 +3032,8 @@ var diagrams = function(processingInstance){
                         nf(this.millisecs,1);
 
                 text(this.time, 0, 0);
+
+            dial();
 
           popMatrix();
 
@@ -3059,21 +3094,21 @@ var diagrams = function(processingInstance){
 
         if(this.active){
 
-          if(app.keys[KEYCODES.CONTROL]){
-
-            this.reset();
-
-          }
-          else{
-
-            this.toggle();
-
-          }
+          this.toggle();
 
         }
 
       };
+      clock.prototype.rclicked         =function()   {
 
+        if(this.active){
+
+            this.reset();
+
+        }
+
+      };
+      
     }
 
     /** Music           -------------------------------------------------- */
