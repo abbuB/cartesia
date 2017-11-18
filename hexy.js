@@ -3005,55 +3005,60 @@ var diagrams = function(processingInstance){
 
             popMatrix();
 
-          };
-          
-          pushMatrix();
-          
-            translate(this.x, this.y);
+          };         
+          function caption(){
+            
+            if(p.start){ fill(164); }
+            else       { fill(192); }
 
-              if(this.start){
-
-                if(round(millis()/100)%10!==this.millisecs){
-                  this.millisecs++;
-                }
-                if(this.millisecs>=10){
-                  this.millisecs-=10;
-                  this.seconds++;
-                }
-                if(this.seconds>=60){
-                  this.seconds-=60;
-                  this.minutes++;
-                }
-
-              }
-
-              if(this.active){
-
-                cursor(this.cursor);
-
-              }
-
-              if(this.start){ fill(164); }
-              else          { fill(192); }
-
-              textFont(this.font);
+              textFont(p.font);
               textSize(36);
               textAlign(CENTER,CENTER);
 
-              this.time=nf(this.seconds,  1) + "." +
-                           this.millisecs;
+              p.time=nf(p.seconds,  1) + "." +
+                        p.millisecs;
 
-              if(this.minutes>0){
+              if(p.minutes>0){
 
-                this.time=nf(this.minutes,   1) + ":" +
-                          nf(this.seconds,   2) + "." +
-                          nf(this.millisecs, 1);
-
+                p.time=nf(p.minutes,   1) + ":" +
+                       nf(p.seconds,   2) + "." +
+                       nf(p.millisecs, 1);
               }
 
-                text(this.time, 0, 0);
+                text(p.time, 0, 0);
 
-            dial();
+          };
+          function calc(){
+
+            if(p.start){
+
+              if(round(millis()/100)%10!==p.millisecs){
+                p.millisecs++;
+              }
+              if(p.millisecs>=10){
+                p.millisecs-=10;
+                p.seconds++;
+              }
+              if(p.seconds>=60){
+                p.seconds-=60;
+                p.minutes++;
+              }
+
+            }
+
+          };
+          
+          pushMatrix();
+
+            translate(this.x, this.y);
+
+              if(this.active){
+                cursor(this.cursor);
+              }
+
+              calc();
+              caption();
+              dial();
 
           popMatrix();
 
@@ -3076,7 +3081,7 @@ var diagrams = function(processingInstance){
       clock.prototype.start           =function()   {
 
         this.starter=true;
-        this.start=true;
+        this.start  =true;
 
       };
       clock.prototype.toggle          =function()   {
