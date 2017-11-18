@@ -2934,7 +2934,7 @@ var diagrams = function(processingInstance){
         this.cursor    = props.cursor;
 
         this.millisecs = 0;
-        this.seconds   = 0;
+        this.seconds   = 57;
         this.minutes   = 0;
 
         this.start     = false;
@@ -2954,33 +2954,55 @@ var diagrams = function(processingInstance){
           var p=this;
 
           function dial(){
-
+            
             pushMatrix();
 
               translate(0,50);
               scale(1,-1);
-              
+                
+                var COS=-8*cos(PI*2-p.seconds/60*2*PI-PI/2);
+                var SIN=-8*sin(PI*2-p.seconds/60*2*PI-PI/2);
+                
+                // Shadow
                 strokeWeight(5);
+                stroke(212);
+                noFill();
+
+                  ellipse(3, -3, p.w/2, p.w/2);
+
+                  line(3, 9.5, 3, 17);
+                
+                strokeWeight(10);
+                
+                  line( 3, 15, 3, 18);
+
+                strokeWeight(1);
+
+                  line( 3,-3, COS+3, SIN-3);
+
+                  ellipse(3, -3, 3, 3);
+                
+                // StopWatch
+                strokeWeight(5);
+                noFill();
                 stroke(192);
                 
                 if(p.active){ stroke(164); }
 
-                noFill();
+                  ellipse(0, 0, p.w/2, p.w/2);
 
-                  ellipse(0, 0, 25, 25);
-
-                line(0, 12.5, 0, 20);
-
+                  line(0, 12.5, 0, 20);
+                
                 strokeWeight(10);
 
                   line( 0, 18, 0, 21);
 
                 strokeWeight(1);
 
-                  line( 0, 0, 8*cos(PI/4), 8*sin(PI/4));
+                  line( 0, 0, COS, SIN);
 
-                ellipse(0, 0, 3, 3);
-                
+                  ellipse(0, 0, 3, 3);
+
             popMatrix();
 
           };
@@ -2988,9 +3010,6 @@ var diagrams = function(processingInstance){
           pushMatrix();
           
             translate(this.x, this.y);
-            scale(1,-1);
-            
-              noStroke();
 
               if(this.start){
 
@@ -3012,24 +3031,25 @@ var diagrams = function(processingInstance){
 
                 cursor(this.cursor);
 
-                fill(getColor(CLRS.BLACK,5));
-
-                  ellipse(0,0,this.w,this.w);
-
               }
 
-              scale(1,-1);
-
-              if(this.on){ fill(128); }
-              else       { fill(164); }
+              if(this.start){ fill(164); }
+              else          { fill(192); }
 
               textFont(this.font);
               textSize(36);
               textAlign(CENTER,CENTER);
 
-              this.time=nf(this.minutes,  2) + ":" +
-                        nf(this.seconds,  2) + "." +
-                        nf(this.millisecs,1);
+              this.time=nf(this.seconds,  1) + "." +
+                           this.millisecs;
+
+              if(this.minutes>0){
+
+                this.time=nf(this.minutes,   1) + ":" +
+                          nf(this.seconds,   2) + "." +
+                          nf(this.millisecs, 1);
+
+              }
 
                 text(this.time, 0, 0);
 
@@ -3045,14 +3065,12 @@ var diagrams = function(processingInstance){
         this.millisecs=0;
 
         this.start=false;
-
+        
       };
       clock.prototype.stop            =function()   {
 
         this.starter=false;
         this.start=false;
-
-// print('stop');
 
       };
       clock.prototype.start           =function()   {
@@ -3060,22 +3078,18 @@ var diagrams = function(processingInstance){
         this.starter=true;
         this.start=true;
 
-// print('start');
-
       };
       clock.prototype.toggle          =function()   {
 
         this.starter=!this.start;
         this.start=this.starter;
 
-// print('toggle');
-
       };
       clock.prototype.hitTest         =function(x,y){
 
         return dist(mouseX, mouseY,
                     this.x+x,
-                    this.y+y)<this.w/2;
+                    this.y+y+50)<this.w/4;
 
       };
       clock.prototype.moved           =function(x,y){
