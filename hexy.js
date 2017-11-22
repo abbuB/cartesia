@@ -268,7 +268,8 @@ var diagrams = function(processingInstance){
       BLUE:             'x',
       BLUE_REVEALED:    'X',
 
-      DOWN_RIGHT:       '>', // Double up the \ character because it is an escape character and the first one won't be recognised
+      DOWN_RIGHT:       '>', // Double up the \ character because it is an escape character
+                              //  and the first one won't be recognised
       DOWN_CENTER:      '|',
       DOWN_LEFT:        '/',
 
@@ -278,14 +279,21 @@ var diagrams = function(processingInstance){
 
     };
 
+    // 1-1 Remove orange hexes to reveal the pattern underneath.
+    // \nThe number in an empty hex tells you how many adjacent hexes are part of the pattern.
+    // \nLeft click to mark a hex as part of the pattern.
+    // \nRight click to destroy hexes that aren't part of the pattern.
+    // 1-7 \nNumbers outside the grid show the number of blue hexes in that column.
+    //  \nYou can left click on outside numbers to activate a guide line and right click to mark them as complete.
+
     var MESSAGES=[
-                  "Remove orange hexes to reveal the pattern underneath.\nThe number in an empty hex tells you how many adjacent hexes are part of the pattern.\nLeft click to mark a hex as part of the pattern.\nRight click to destroy hexes that aren't part of the pattern.",
+                  "1-1",
                   "1-2",
                   "1-3",
                   "1-4",
                   "1-5",
                   "1-6",
-                  "1-7\nNumbers outside the grid show the number of blue hexes in that column.\nYou can left click on outside numbers to activate a guide line and right click to mark them as complete.",
+                  "1-7",
                   "2-1",
                   "2-2",
                   "2-3",
@@ -293,7 +301,7 @@ var diagrams = function(processingInstance){
                   "2-5",
                   "2-6",
                   "2-7",
-                  "2-8"                  
+                  "2-8"
                  ];
 
     var PUZZLES=[ //  Ring #1
@@ -309,7 +317,7 @@ var diagrams = function(processingInstance){
                     [ '.', '.', '.', '.', '.', '.', 'O', '.', '.'],  //  6
                     [ '.', '.', '.', '.', '.', '.', 'x', '.', '.'],  //  7
                     [ '.', '.', '.', '.', '.', '.', '.', '.', '.']   //  8
-                  ],                                              
+                  ],
                   [ //  Text 1-1
 //                     1    2    3    4    5    6    7    8    9
                     [ '.', '.', '.', '.', '.', '.', '.', '.', '.'],  //  1
@@ -323,7 +331,7 @@ var diagrams = function(processingInstance){
                   ],
 
                   [ //  Layout 1-2
-//                    1    2    3    4    5    6    7    8    9    10   11   13   14                    
+//                    1    2    3    4    5    6    7    8    9    10   11   13   14
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],  //   9
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],  //   1
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],  //   2
@@ -337,7 +345,7 @@ var diagrams = function(processingInstance){
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.']   //  11
                   ],
                   [ //  Text 1-2
-//                    1    2    3    4    5    6    7    8    9    10   11   13   14                    
+//                    1    2    3    4    5    6    7    8    9    10   11   13   14
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],  //   9
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],  //   1
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],  //   2
@@ -494,7 +502,7 @@ var diagrams = function(processingInstance){
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.']   // 15
                   ],
                   [ //  Text 1-7
-//                    1    2    3    4    5    6    7    8    9    10   11   12   13   14   15            
+//                    1    2    3    4    5    6    7    8    9    10   11   12   13   14   15
                     ['.', '.', '.', '.', '.', '.', '.', '+', '.', '.', '.', '.', '.', '.', '.'],  //  1
                     ['.', '.', '.', '.', '.', '+', '.', '.', '.', '+', '.', '.', '.', '.', '.'],  //  2
                     ['.', '.', '.', '+', '+', '+', '.', '.', '.', '+', '+', '+', '.', '.', '.'],  //  3
@@ -515,7 +523,7 @@ var diagrams = function(processingInstance){
 
 
                   [ //  Layout 2-0
-//                    1    2    3    4    5    6    7    8    9    10   11   12   13   14   15            
+//                    1    2    3    4    5    6    7    8    9    10   11   12   13   14   15
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', 'o', '.', '.', '.', '.', '.'],  //  1
                     ['.', '.', '.', '.', '.', '.', '.', 'o', 'o', '.', 'o', 'o', '.', '.', '.'],  //  2
                     ['.', '.', '.', '.', '.', '.', '.', 'o', '.', '.', 'o', 'o', '.', '.', '.'],  //  3
@@ -552,7 +560,7 @@ var diagrams = function(processingInstance){
                   ],
 
                   [ //  Layout 2-1
-//                    1    2    3    4    5    6    7    8    9    10   11   12   13   14   15   16   17               
+//                    1    2    3    4    5    6    7    8    9    10   11   12   13   14   15   16   17
                     ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'],  //  1
                     ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'],  //  2
                     ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'],  //  3
@@ -591,7 +599,7 @@ var diagrams = function(processingInstance){
                     ['+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+'],  // 16
                     ['+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+']   // 17
                   ],
-                  
+
                   [ //  Layout 2-2
 //                    1    2    3    4    5    6    7    8    9    10   11
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],  //  1
@@ -606,7 +614,7 @@ var diagrams = function(processingInstance){
                     ['.', '.', '.', '.', 'O', '.', '.', '.', '.', '.', '.'],  // 10
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],  // 11
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],  // 12
-                  ],                  
+                  ],
                   [ //  Text 2-2
 //                    1    2    3    4    5    6    7    8    9    10   11
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],  //  1
@@ -622,7 +630,7 @@ var diagrams = function(processingInstance){
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],  // 11
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],  // 12
                   ],
-                  
+
                   [ // Layout 2-3
 //                    1    2    3    4    5    6    7    8    9    10   11
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],  //  1
@@ -638,9 +646,9 @@ var diagrams = function(processingInstance){
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],  // 11
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],  // 12
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],  // 13
-                  ],                  
+                  ],
                   [ // Text 2-3
-//                    1    2    3    4    5    6    7    8    9    10   11   12   13   14   15   16   17                  
+//                    1    2    3    4    5    6    7    8    9    10   11   12   13   14   15   16   17
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],  //  1
                     ['.', '.', '.', '.', 'o', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],  //  2
                     ['.', '.', '.', 'O', '.', 'x', 'o', '.', '.', '.', '.', '.', 'o', 'o', 'x', '.', '.'],  //  3
@@ -756,7 +764,7 @@ var diagrams = function(processingInstance){
       this.reset;
       this.scoreboard;
 
-      this.puzzle       = 0;                  //  Index of the current puzzle layout
+      this.puzzle       = 14;                  //  Index of the current puzzle layout
 
       this.remaining    = 0;                  //  How many blue cells need to be uncovered
       this.covered      = 0;                  //  How many black cells need to be uncovered
@@ -766,6 +774,8 @@ var diagrams = function(processingInstance){
       this.level        = 0;                  //  Levels 0 - 42 ( 7 groups of 6 = 42 total)
 
       this.finished     = false;
+
+      this.animations   = [];
 
     }
 
@@ -2013,6 +2023,8 @@ var diagrams = function(processingInstance){
         this.clrOffset      = 0;    //  Used to pulsate the halo
         this.clrIncr        = 0.5;  //  Something, something halo
 
+        this.dirty          = false;  //  Has the hexBoard been clicked yet?
+
         app.hexBoard        = this; //  Set a global hexBoard reference
 
         this.reset();
@@ -2031,7 +2043,8 @@ var diagrams = function(processingInstance){
 
         this.level      = app.levelText[app.level];
 
-        var rowArray    = [];  // Temporary 1-D array to hold each successive row before adding to the corresponding 2-D array
+        var rowArray    = [];  // Temporary 1-D array to hold each successive row before adding
+                               // to the corresponding 2-D array
         var n=0;          // Iterator
 
         function load(){
@@ -2106,6 +2119,7 @@ var diagrams = function(processingInstance){
         this.update();
 
         app.finished=false;
+        this.dirty=false;
 
       };
       hexBoard.prototype.draw         = function(){
@@ -2311,6 +2325,11 @@ var diagrams = function(processingInstance){
           function calculateRemaining(){
 
             if(app.finished){ return; }
+            if(p.dirty && !app.clock.start){
+
+              app.clock.begin();
+
+            }
 
             app.remaining = 0;
             app.covered   = 0;
@@ -2353,7 +2372,6 @@ var diagrams = function(processingInstance){
           pushMatrix();
 
             translate(this.x, this.y);
-
 
               this.lines=[]; // This must stay here
               this.halos=[]; // ***** DO NOT MOVE *****
@@ -2931,38 +2949,40 @@ var diagrams = function(processingInstance){
 
         control.call(this, id, parent, x, y, w, h);
 
-        this.cursor    = props.cursor;
+        this.cursor     = props.cursor;
 
-        this.millisecs = 0;
-        this.seconds   = 57;
-        this.minutes   = 0;
+        this.millisecs  = 0;
+        this.seconds    = 57;
+        this.minutes    = 0;
 
-        this.start     = false;
+        this.start      = false;
         this.starter;
 
-        this.time      = 0;
+        this.time       = 0;
+
+        this.dialOffset = 50;
 
         app.clock=this;
 
       };
       clock.prototype=Object.create(control.prototype);
       clock.prototype.draw            =function()   {
-
+this.start=false;
           this.active=this.hit &&
                       app.focus===this;
 
           var p=this;
 
           function dial(){
-            
+
             pushMatrix();
 
               translate(0,50);
               scale(1,-1);
-                
+
                 var COS=-8*cos(PI*2-p.seconds/60*2*PI-PI/2);
                 var SIN=-8*sin(PI*2-p.seconds/60*2*PI-PI/2);
-                
+
                 // Shadow
                 strokeWeight(5);
                 stroke(212);
@@ -2971,9 +2991,9 @@ var diagrams = function(processingInstance){
                   ellipse(3, -3, p.w/2, p.w/2);
 
                   line(3, 9.5, 3, 17);
-                
+
                 strokeWeight(10);
-                
+
                   line( 3, 15, 3, 18);
 
                 strokeWeight(1);
@@ -2981,18 +3001,18 @@ var diagrams = function(processingInstance){
                   line( 3,-3, COS+3, SIN-3);
 
                   ellipse(3, -3, 3, 3);
-                
+
                 // StopWatch
                 strokeWeight(5);
                 noFill();
                 stroke(192);
-                
+
                 if(p.active){ stroke(164); }
 
                   ellipse(0, 0, p.w/2, p.w/2);
 
                   line(0, 12.5, 0, 20);
-                
+
                 strokeWeight(10);
 
                   line( 0, 18, 0, 21);
@@ -3005,9 +3025,9 @@ var diagrams = function(processingInstance){
 
             popMatrix();
 
-          };         
+          };
           function caption(){
-            
+
             if(p.start){ fill(164); }
             else       { fill(192); }
 
@@ -3047,7 +3067,7 @@ var diagrams = function(processingInstance){
             }
 
           };
-          
+
           pushMatrix();
 
             translate(this.x, this.y);
@@ -3070,7 +3090,7 @@ var diagrams = function(processingInstance){
         this.millisecs=0;
 
         this.start=false;
-        
+
       };
       clock.prototype.stop            =function()   {
 
@@ -3078,11 +3098,11 @@ var diagrams = function(processingInstance){
         this.start=false;
 
       };
-      clock.prototype.start           =function()   {
+      clock.prototype.begin           =function()   {
 
         this.starter=true;
         this.start  =true;
-
+        app.hexBoard.dirty=false;
       };
       clock.prototype.toggle          =function()   {
 
@@ -3094,7 +3114,7 @@ var diagrams = function(processingInstance){
 
         return dist(mouseX, mouseY,
                     this.x+x,
-                    this.y+y+50)<this.w/4;
+                    this.y+y+this.dialOffset)<this.w/4;
 
       };
       clock.prototype.moved           =function(x,y){
@@ -3127,7 +3147,7 @@ var diagrams = function(processingInstance){
         }
 
       };
-      
+
     }
 
     /** Music           -------------------------------------------------- */
@@ -3243,7 +3263,7 @@ var diagrams = function(processingInstance){
 
     }
 
-    /** Score Board     --------------------------------------------------- */
+    /** Score Board     -------------------------------------------------- */
     {
 
       function scoreBoard(id, parent, x, y, w, h, props){
@@ -3959,6 +3979,155 @@ var diagrams = function(processingInstance){
 
     }
 
+    function tri(id, parent, x, y, w, h, props){
+
+      control.call(this, id, parent, x, y, w, h);
+      
+      this.color    = props.color;
+
+      this.midX     = (x+x+props.p1x)/2;
+      
+      this.p0x      = x;
+      this.p0y      = y;
+      
+      this.p1x      = x+props.p1x;
+      this.p1y      = y+props.p1y;
+
+      this.p2x      = x+props.p2x;
+      this.p2y      = y+props.p2y;
+
+      this.rotation = 0;
+      
+      this.velocityX = random(-5,5);
+      this.velocityY = random(-10,10);
+
+      this.deltaR   = 1;
+
+      this.deltaX   = random(-10,10);
+      this.deltaY   = 1.1;
+
+// console.log(this.deltaX);
+
+// print(this.p1x + ", "+this.p1y);
+
+    };
+    tri.prototype=Object.create(control.prototype);
+    tri.prototype.draw=function(){
+
+      var p=this;
+
+      function update(){
+
+        p.p0x+=p.velocityX;
+        p.p0y+=p.velocityY;
+        p.p1x+=p.velocityX;
+        p.p1y+=p.velocityY;
+        p.p2x+=p.velocityX;
+        p.p2y+=p.velocityY;
+
+        p.deltaY*=1+p.timer/app.frameRate;
+
+        // this.velocityX += this.deltaX;
+        p.velocityY += p.deltaY;
+
+        p.timer++;  
+        
+      };
+      
+      pushMatrix();
+
+        // translate(this.x,this.y);
+        // rotate(radians(5));
+
+          noStroke();
+          fill(getColor(this.color,100-this.timer*5));
+          
+          triangle(this.p0x, this.p0y,
+                   this.p1x, this.p1y,
+                   this.p2x, this.p2y);
+
+      popMatrix();
+
+      update();
+
+    };
+    
+    /** Hexagonal Reveal Animation ---------------------------------------- */
+    {
+
+      function hexReveal(id, parent, x, y, w, h, props){
+
+        control.call(this, id, parent, x, y, w, h);
+
+        this.rotation  = 0;
+
+        this.color     = props.color;
+
+        this.deltaR    = random(0,10);
+
+        this.triangles = [];
+
+        this.triangles.push(new tri(getGUID(), this, this.x, this.y, this.w/2, this.h/2,
+                                      {color:   this.color,
+                                       p1x:     cos(radians( 0))*w,
+                                       p1y:     sin(radians( 0))*w,
+                                       p2x:     cos(radians(60))*w,
+                                       p2y:     sin(radians(60))*w}));
+
+        this.triangles.push(new tri(getGUID(), this, this.x, this.y, this.w/2, this.h/2,
+                                      {color:   this.color,
+                                       p1x:     cos(radians( 60))*w,
+                                       p1y:     sin(radians( 60))*w,
+                                       p2x:     cos(radians(120))*w,
+                                       p2y:     sin(radians(120))*w}));
+
+        this.triangles.push(new tri(getGUID(), this, this.x, this.y, this.w/2, this.h/2,
+                                      {color:   this.color,
+                                       p1x:     cos(radians(120))*w,
+                                       p1y:     sin(radians(120))*w,
+                                       p2x:     cos(radians(180))*w,
+                                       p2y:     sin(radians(180))*w}));
+
+        this.triangles.push(new tri(getGUID(), this, this.x, this.y, this.w/2, this.h/2,
+                                      {color:   this.color,
+                                       p1x:     cos(radians(180))*w,
+                                       p1y:     sin(radians(180))*w,
+                                       p2x:     cos(radians(240))*w,
+                                       p2y:     sin(radians(240))*w}));
+
+        this.triangles.push(new tri(getGUID(), this, this.x, this.y, this.w/2, this.h/2,
+                                      {color:   this.color,
+                                       p1x:     cos(radians(240))*w,
+                                       p1y:     sin(radians(240))*w,
+                                       p2x:     cos(radians(300))*w,
+                                       p2y:     sin(radians(300))*w}));
+
+        this.triangles.push(new tri(getGUID(), this, this.x, this.y, this.w/2, this.h/2,
+                                      {color:   this.color,
+                                       p1x:     cos(radians(300))*w,
+                                       p1y:     sin(radians(300))*w,
+                                       p2x:     cos(radians(  0))*w,
+                                       p2y:     sin(radians(  0))*w}));                                       
+      };
+      hexReveal.prototype=Object.create(control.prototype);
+      hexReveal.prototype.draw=function(){
+          
+// print(this.triangles.length);          
+        for(var t in this.triangles){
+
+          this.triangles[t].draw();
+
+        }
+          this.timer++;
+          if(this.timer>100){
+            app.animations=subset(app.animations, 1, app.animations.length);
+print(app.animations.length);
+          }
+
+      };
+
+    }
+
     /** Hexagonal Cell  -------------------------------------------------- */
     {
 
@@ -4378,29 +4547,37 @@ var diagrams = function(processingInstance){
         }
         function revealAnimation(){
 
-          if(p.clickRadius>0){
+          if(p.layout===HEXY_TYPES.BLACK_REVEALED){
 
-            noStroke();
-
-            fill(CLRS.H_ORANGE_L);
-
-            var w=p.clickRadius/2;
-
-            rotate(radians(p.clickRadius)*3);
-
-            beginShape();
-
-              for(var pt=0; pt<6; pt++){
-                vertex(cos(radians(pt*60))*w,
-                sin(radians(pt*60))*w );
-              }
-
-            endShape();
-
-            p.clickRadius-=5;
 
           }
+          else{
 
+            if(p.clickRadius>0){
+
+              noStroke();
+
+              fill(CLRS.H_ORANGE_L);
+
+              var w=p.clickRadius/2;
+
+              rotate(radians(p.clickRadius)*3);
+
+              beginShape();
+
+                for(var pt=0; pt<6; pt++){
+                  vertex(cos(radians(pt*60))*w,
+                         sin(radians(pt*60))*w );
+                }
+
+              endShape();
+
+              p.clickRadius-=5;
+
+            }
+
+          }
+          
         };
 
         function drawLinks(){ //  Delete for release
@@ -4522,6 +4699,8 @@ var diagrams = function(processingInstance){
 
           if(this.active){
 
+            this.parent.dirty=true;
+
             if(app.mode===APPMODES.CREATE){
 
               this.incrementCellLayout();
@@ -4575,6 +4754,8 @@ var diagrams = function(processingInstance){
 
           if(this.active){
 
+            this.parent.dirty=true;
+
             if(app.mode===APPMODES.CREATE){
 
               this.decrementCellLayout();
@@ -4593,6 +4774,11 @@ var diagrams = function(processingInstance){
 
                 this.layout=HEXY_TYPES.BLACK_REVEALED;
                 this.clickRadius=HEX_SIZE-10;
+
+                app.animations.push(new hexReveal(getGUID(), this, this.x, this.y, this.w/2, this.h/2,
+                    {color:   CLRS.H_ORANGE_L}));
+
+// print(app.animations.length);
 
               } // Blue Hexagon
               else if(this.layout===HEXY_TYPES.BLUE){
@@ -4960,6 +5146,8 @@ var diagrams = function(processingInstance){
 
     forEach(app.controls,'draw');
 
+    forEach(app.animations,'draw');
+    
   };
 
   var execute;
@@ -5136,10 +5324,6 @@ var diagrams = function(processingInstance){
   // }
   /** Testing *.hexcell file format ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
   {
-      // var f="................................................|+..............o...o...o...x...........x...x...o+..x+..........o+..o+..on..o...x.......|+..o...o+..x...x+..........o+..o...x...x+..o.......x...x...x...oc..x.......o...o+..o...o...o.......\\+..x...on..on..o+.........o...x...oc..x...o...........x+..x...o+..x...x.......x...o+..x...oc..o...o+.";
-
-      // var f="............................|+..............|+......|+..................................|+..........|+../+..............|+......................o...o...o...x...x...x...x...o+..o+..o+..x.......................x...x...o+..x+..x...o+..x...on..oc..oc..o+..x...................o+..o+..on..o...x...o+..x...o...x...x...x...x...o...............|+..o...o+..x...x+..x...o...o+..oc..x...x...x...x+..|+..............o+..o...x...x+..o...o+..o+..o+..x...x...o+..x...x...............x...x...x...oc..x...on..o+..x...x...x+..o+..on..o+..o+..........o...o+..o...o...o.......x+..o+..o+......x...x...x...o+..o.......\\+..x...on..on..o+..........o+..o+..........x...o...o...o+..........o...x...oc..x...o.......x...o+..x...|n..o+..x...x...x...x...........x+..x...o+..x...x...x+..x...o+..x+..o...x...o+..o+..o...........x...o+..x...oc..o...o+..x...x...x...x...o...o...o+..on..o+..........o+..x...o...o+..on..o+..o...o+..o...x+..o...o+..x...o+..........o...o...o...o+..oc..x...o+..On..o+..x...o+..x+..on..o...x...........o+..x...x...x...o+..x...o...x...o...o...o...x...o+..o+..........x+..x...x.......x...oc..x.......x...o...o.......o...x...x...........on..o+..........o...oc../+..|+..x+..x...........o...o+..........o...x...on......x...o...o+..|n..x...x...x.......x...o...o+..........o...x...o+..x...o...oc..x...x...x...o+..o...o...o...x...........x...x+..o+..x...o+..x...o+..On..oc..o+..x...o...o+..oc..o...........x...o+..o...x+..o+..x...x...o+..o+..o...o+..oc..o...x...........o...x+..x...oc..o+..x...x...o+..o+..o...x...oc..x...o+..x...........o...o...o+..o...o+..o...o...o...x...x...o+..x...o+..o+..........x...x...o+..o+..o+......o+..on..x.......o+..x...o...o...x...........o+..on..o+..x...|+......x...x.......|n..on..x...x...oc..........o...on..oc..x+..x...|n..o+..o+..x.......o+..o+..x+..o+..x...........o+..x...o...oc..on..x...o+..x...x...x...x...x...o...x...............o+..x...x+..o...x...o...x...x...o+..o+..x...o+..o+..................o...x...oc..x+..oc..x...o+..o+..o+..on..on..x+..................o+..x...x...o...oc..o...oc..o...o...o+..o+..x+..o+..................o+..x...o+..x+..o...x...o...o+..x...x...o+..x.......................o...o...x...x...x...x...o...o...o...x...o+............";
-
       // var first='';
       // var secnd='';
 
