@@ -37,6 +37,7 @@
 +mynoise.net
 +developer.mozilla.org
 +docs.oracle.com
++www.mathopenref.com
 
 */
 
@@ -310,7 +311,7 @@ var diagrams = function(processingInstance){
                   [ //  Layout 1-1
 //                     1    2    3    4    5    6    7    8    9
                     [ '.', '.', '.', '.', '.', '.', '.', '.', '.'],  //  1
-                    [ '.', 'X', 'X', 'X', '.', 'O', 'O', 'O', '.'],  //  2
+                    [ '.', 'X', 'X', 'X', '.', 'O', 'o', 'o', '.'],  //  2
                     [ '.', 'X', 'O', 'X', '.', 'O', 'O', 'O', '.'],  //  3
                     [ '.', '.', 'X', '.', '.', '.', 'O', '.', '.'],  //  4
                     [ '.', '.', '.', '.', '.', '.', 'O', '.', '.'],  //  5
@@ -3986,29 +3987,19 @@ this.start=false;
       this.color    = props.color;
 
       this.midX     = (x+x+props.p1x)/2;
-      
-      this.p0x      = x;
-      this.p0y      = y;
-      
-      this.p1x      = x+props.p1x;
-      this.p1y      = y+props.p1y;
 
-      this.p2x      = x+props.p2x;
-      this.p2y      = y+props.p2y;
+      this.cX       = props.cX;      
+      this.cY       = props.cY;
 
       this.rotation = 0;
       
       this.velocityX = random(-5,5);
       this.velocityY = random(-10,10);
 
-      this.deltaR   = 1;
+      this.deltaR   = random(-0.5,0.5);
 
       this.deltaX   = random(-10,10);
       this.deltaY   = 1.1;
-
-// console.log(this.deltaX);
-
-// print(this.p1x + ", "+this.p1y);
 
     };
     tri.prototype=Object.create(control.prototype);
@@ -4018,37 +4009,40 @@ this.start=false;
 
       function update(){
 
-        p.p0x+=p.velocityX;
-        p.p0y+=p.velocityY;
-        p.p1x+=p.velocityX;
-        p.p1y+=p.velocityY;
-        p.p2x+=p.velocityX;
-        p.p2y+=p.velocityY;
+        p.cX+=p.velocityX;
+        p.cY+=p.velocityY;
 
         p.deltaY*=1+p.timer/app.frameRate;
 
         // this.velocityX += this.deltaX;
         p.velocityY += p.deltaY;
 
-        p.timer++;  
-        
+        p.rotation  += p.deltaR;
+
+        p.timer++;
+
       };
-      
+
       pushMatrix();
 
-        // translate(this.x,this.y);
-        // rotate(radians(5));
+        translate(this.cX,this.cY);
+        rotate(this.rotation);
 
           noStroke();
           fill(getColor(this.color,100-this.timer*5));
-          
-          triangle(this.p0x, this.p0y,
-                   this.p1x, this.p1y,
-                   this.p2x, this.p2y);
 
+          triangle(-this.w,      -this.w,
+                    this.w,      -0.8*this.w,
+                    -0.1*this.w, this.w);
+
+        fill(CLRS.RED);
+        
+        // ellipse(0,0,5,5);
+        
       popMatrix();
 
       update();
+
 
     };
     
@@ -4059,55 +4053,52 @@ this.start=false;
 
         control.call(this, id, parent, x, y, w, h);
 
-        this.rotation  = 0;
-
         this.color     = props.color;
 
-        this.deltaR    = random(0,10);
-
         this.triangles = [];
+        
+        var w2=random(w);
+        
+        for(var n=0; n<6; n++){
+          
+          w2=random(w/4,w/2);
 
-        this.triangles.push(new tri(getGUID(), this, this.x, this.y, this.w/2, this.h/2,
-                                      {color:   this.color,
-                                       p1x:     cos(radians( 0))*w,
-                                       p1y:     sin(radians( 0))*w,
-                                       p2x:     cos(radians(60))*w,
-                                       p2y:     sin(radians(60))*w}));
+          this.triangles.push(new tri(getGUID(), this, this.x, this.y, w2, this.h/2,
+                                        {color:   this.color,
+                                         cX:     (this.x +
+                                                 (this.x+cos(radians(random(0,360)))*w2) +
+                                                 (this.x+cos(radians(random(0,360)))*w2))/3,
+                                         cY:     (this.y +
+                                                 (this.y+sin(radians(random(0,360)))*w2) +
+                                                 (this.y+sin(radians(random(0,360)))*w2))/3}));
 
-        this.triangles.push(new tri(getGUID(), this, this.x, this.y, this.w/2, this.h/2,
-                                      {color:   this.color,
-                                       p1x:     cos(radians( 60))*w,
-                                       p1y:     sin(radians( 60))*w,
-                                       p2x:     cos(radians(120))*w,
-                                       p2y:     sin(radians(120))*w}));
+        }
+        
+        // this.triangles.push(new tri(getGUID(), this, this.x, this.y, this.w/2, this.h/2,
+                                      // {color:   this.color,
+                                       // cX:     (this.x + (this.x+cos(radians(60))*w) + (this.x+cos(radians(120))*w))/3,
+                                       // cY:     (this.y + (this.y+sin(radians(60))*w) + (this.y+sin(radians(120))*w))/3}));
 
-        this.triangles.push(new tri(getGUID(), this, this.x, this.y, this.w/2, this.h/2,
-                                      {color:   this.color,
-                                       p1x:     cos(radians(120))*w,
-                                       p1y:     sin(radians(120))*w,
-                                       p2x:     cos(radians(180))*w,
-                                       p2y:     sin(radians(180))*w}));
+        // this.triangles.push(new tri(getGUID(), this, this.x, this.y, this.w/2, this.h/2,
+                                      // {color:   this.color,
+                                       // cX:     (this.x + (this.x+cos(radians(120))*w) + (this.x+cos(radians(180))*w))/3,
+                                       // cY:     (this.y + (this.y+sin(radians(120))*w) + (this.y+sin(radians(180))*w))/3}));
 
-        this.triangles.push(new tri(getGUID(), this, this.x, this.y, this.w/2, this.h/2,
-                                      {color:   this.color,
-                                       p1x:     cos(radians(180))*w,
-                                       p1y:     sin(radians(180))*w,
-                                       p2x:     cos(radians(240))*w,
-                                       p2y:     sin(radians(240))*w}));
+        // this.triangles.push(new tri(getGUID(), this, this.x, this.y, this.w/2, this.h/2,
+                                      // {color:   this.color,
+                                       // cX:     (this.x + (this.x+cos(radians(180))*w) + (this.x+cos(radians(240))*w))/3,
+                                       // cY:     (this.y + (this.y+sin(radians(180))*w) + (this.y+sin(radians(240))*w))/3}));
 
-        this.triangles.push(new tri(getGUID(), this, this.x, this.y, this.w/2, this.h/2,
-                                      {color:   this.color,
-                                       p1x:     cos(radians(240))*w,
-                                       p1y:     sin(radians(240))*w,
-                                       p2x:     cos(radians(300))*w,
-                                       p2y:     sin(radians(300))*w}));
+        // this.triangles.push(new tri(getGUID(), this, this.x, this.y, this.w/2, this.h/2,
+                                      // {color:   this.color,
+                                       // cX:     (this.x + (this.x+cos(radians(240))*w) + (this.x+cos(radians(300))*w))/3,
+                                       // cY:     (this.y + (this.y+sin(radians(240))*w) + (this.y+sin(radians(300))*w))/3}));
 
-        this.triangles.push(new tri(getGUID(), this, this.x, this.y, this.w/2, this.h/2,
-                                      {color:   this.color,
-                                       p1x:     cos(radians(300))*w,
-                                       p1y:     sin(radians(300))*w,
-                                       p2x:     cos(radians(  0))*w,
-                                       p2y:     sin(radians(  0))*w}));                                       
+        // this.triangles.push(new tri(getGUID(), this, this.x, this.y, this.w/2, this.h/2,
+                                      // {color:   this.color,
+                                       // cX:     (this.x + (this.x+cos(radians(300))*w) + (this.x+cos(radians(0))*w))/3,
+                                       // cY:     (this.y + (this.y+sin(radians(300))*w) + (this.y+sin(radians(0))*w))/3}));
+
       };
       hexReveal.prototype=Object.create(control.prototype);
       hexReveal.prototype.draw=function(){
@@ -4118,11 +4109,13 @@ this.start=false;
           this.triangles[t].draw();
 
         }
-          this.timer++;
-          if(this.timer>100){
-            app.animations=subset(app.animations, 1, app.animations.length);
+        
+        this.timer++;
+        
+        if(this.timer>100){
+          app.animations=subset(app.animations, 1, app.animations.length);
 print(app.animations.length);
-          }
+        }
 
       };
 
