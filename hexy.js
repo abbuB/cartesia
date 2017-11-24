@@ -70,8 +70,6 @@ var diagrams = function(processingInstance){
 
       - Expanding halos
 
-      - uncover animations triangles
-
       - include 42 layouts from existing games
       - include 42 layouts from the community
 
@@ -106,6 +104,8 @@ var diagrams = function(processingInstance){
 
     TO DONE:
 
+      - uncover animations triangles
+    
       - relocate the clock
 
       - determine width and height before sizing grid
@@ -663,11 +663,48 @@ var diagrams = function(processingInstance){
                     ['.', 'x', 'O', 'O', 'x', 'O', 'x', 'o', '.', '.', '.', '.', '.', 'O', '.', '.', '.'],  // 11
                     ['.', '.', '.', '.', '.', 'o', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],  // 12
                     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],  // 13
+                  ],
+                  [ // Layout 2-4
+//                    1    2    3    4    5    6    7    8    9    10   11   12   13   14   15   16   17
+                    ['.', '.', '.', '.', '.', '.', '.', 'x', 'x', 'o', 'o', 'o', 'o', 'o', 'x', 'x', 'x'],  //  1
+                    ['.', '.', '.', '.', '.', 'x', 'x', 'x', 'o', 'x', 'x', 'x', 'x', 'x', 'o', 'o', 'x'],  //  2
+                    ['.', '.', '.', 'x', 'x', 'o', 'o', 'o', 'o', 'o', 'o', 'o', 'x', 'x', 'o', 'o', 'x'],  //  3
+                    ['.', '.', '.', 'x', 'o', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'o', 'x', 'x', 'x', 'x'],  //  4
+                    ['.', '.', '.', 'x', 'o', 'x', 'x', 'o', 'x', 'o', 'x', 'x', 'o', 'x', '.', '.', '.'],  //  5
+                    ['.', '.', '.', 'x', 'o', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'o', 'x', '.', '.', '.'],  //  6
+                    ['.', 'x', 'x', 'x', 'o', 'o', 'o', 'o', 'x', 'o', 'o', 'o', 'o', 'x', '.', '.', '.'],  //  7
+                    ['x', 'o', 'o', 'x', 'x', 'x', 'x', 'o', 'o', 'o', 'x', 'x', 'x', 'o', 'x', 'x', '.'],  //  8
+                    ['x', 'o', 'o', 'o', 'x', 'o', 'o', 'x', 'x', 'x', 'o', 'o', 'x', 'o', 'o', 'x', '.'],  //  9
+                    ['x', 'x', 'x', 'x', 'o', 'o', 'x', '.', '.', '.', 'x', 'o', 'o', 'x', 'o', 'x', '.'],  // 10
+                    ['.', '.', '.', '.', 'x', 'o', 'x', 'X', 'X', 'X', 'x', 'o', 'x', '.', 'x', '.', '.'],  // 11
+                    ['.', '.', '.', '.', 'x', 'o', 'x', 'X', 'O', 'X', 'x', 'o', 'x', '.', '.', '.', '.'],  // 12
+                    ['.', '.', '.', '.', 'x', 'o', 'x', 'x', 'X', 'x', 'x', 'o', 'x', '.', '.', '.', '.'],  // 13
+                    ['.', '.', '.', '.', 'x', 'x', 'o', 'o', 'o', 'o', 'o', 'x', 'x', '.', '.', '.', '.'],  // 14
+                    ['.', '.', '.', '.', '.', '.', 'x', 'o', 'x', 'o', 'x', '.', '.', '.', '.', '.', '.'],  // 15
+                    ['.', '.', '.', '.', '.', 'x', 'x', 'o', 'x', 'o', 'x', 'x', '.', '.', '.', '.', '.'],  // 16
+                    ['.', '.', '.', 'x', 'x', 'o', 'o', 'o', 'o', 'o', 'o', 'o', 'x', 'x', '.', '.', '.'],  // 17
+                  ],                                                                                      
+                  [ // Text 2-4
+//                    1    2    3    4    5    6    7    8    9    10   11   12   13   14   15   16   17                    
+                    ['.', '.', '.', '.', '.', '.', '.', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+'],  //  1
+                    ['.', '.', '.', '.', '.', '+', '+', '+', '+', '.', '.', '.', '.', '.', '+', '+', '+'],  //  2
+                    ['.', '.', '.', '+', '+', '+', '+', '+', '+', '+', '+', '+', '.', '.', '+', '+', '+'],  //  3
+                    ['.', '.', '.', '+', '+', '.', '.', '+', '.', '+', '.', '.', '+', '+', '+', '+', '+'],  //  4
+                    ['.', '.', '.', '+', '+', '+', '+', '+', '.', '+', '+', '+', '+', '+', '.', '.', '.'],  //  5
+                    ['.', '.', '.', '+', '+', '+', '+', '+', '.', '.', '+', '+', '+', '+', '.', '.', '.'],  //  6
+                    ['.', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '.', '.', '.'],  //  7
+                    ['+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '.'],  //  8
+                    ['+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '.'],  //  9
+                    ['+', '+', '+', '+', '+', '+', '+', '.', '.', '.', '+', '+', '+', '+', '+', '+', '.'],  // 10
+                    ['.', '.', '.', '.', '+', '+', '+', '.', '+', '+', '+', '+', '+', '.', '+', '.', '.'],  // 11
+                    ['.', '.', '.', '.', '+', '+', '+', '+', '+', '+', '+', '+', '+', '.', '.', '.', '.'],  // 12
+                    ['.', '.', '.', '.', '+', '+', '.', '.', '+', '.', '.', '+', '+', '.', '.', '.', '.'],  // 13
+                    ['.', '.', '.', '.', '+', '+', '+', '+', '+', '+', '+', '+', '+', '.', '.', '.', '.'],  // 14
+                    ['.', '.', '.', '.', '.', '.', '+', '+', '+', '+', '+', '.', '.', '.', '.', '.', '.'],  // 15
+                    ['.', '.', '.', '.', '.', '+', '+', '+', '+', '+', '.', '+', '.', '.', '.', '.', '.'],  // 16
+                    ['.', '.', '.', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '.', '.', '.'],  // 17
                   ]
-
-
-                ]
-
+              ]
   }
 
   function application(){
@@ -977,47 +1014,65 @@ var diagrams = function(processingInstance){
     {
 
       function up(){
+        
+        if(app.mode!==APPMODES.CREATE ||
+           app.hexBoard.activeCell===null){ return; }
 
-        if(app.hexBoard.activeCell.top!==null){
-          app.hexBoard.activeCell=app.hexBoard.activeCell.top;
-        }
+          if(app.hexBoard.activeCell.top!==null){
+            app.hexBoard.activeCell=app.hexBoard.activeCell.top;
+          }
 
       };
       function down(){
 
-        if(app.hexBoard.activeCell.bottom!==null){
-          app.hexBoard.activeCell=app.hexBoard.activeCell.bottom;
-        }
+        if(app.mode!==APPMODES.CREATE ||
+           app.hexBoard.activeCell===null){ return; }
+        
+          if(app.hexBoard.activeCell.bottom!==null){
+            app.hexBoard.activeCell=app.hexBoard.activeCell.bottom;
+          }
 
       };
 
       function upRight(){
 
-        if(app.hexBoard.activeCell.topRight!==null){
-          app.hexBoard.activeCell=app.hexBoard.activeCell.topRight;
-        }
+        if(app.mode!==APPMODES.CREATE ||
+           app.hexBoard.activeCell===null){ return; }
+        
+          if(app.hexBoard.activeCell.topRight!==null){
+            app.hexBoard.activeCell=app.hexBoard.activeCell.topRight;
+          }
 
       };
       function downRight(){
 
-        if(app.hexBoard.activeCell.bottomRight!==null){
-          app.hexBoard.activeCell=app.hexBoard.activeCell.bottomRight;
-        }
+        if(app.mode!==APPMODES.CREATE ||
+           app.hexBoard.activeCell===null){ return; }
+        
+          if(app.hexBoard.activeCell.bottomRight!==null){
+            app.hexBoard.activeCell=app.hexBoard.activeCell.bottomRight;
+          }
 
       };
 
       function upLeft(){
 
-        if(app.hexBoard.activeCell.topLeft!==null){
-          app.hexBoard.activeCell=app.hexBoard.activeCell.topLeft;
-        }
+        if(app.mode!==APPMODES.CREATE ||
+           app.hexBoard.activeCell===null){ return; }
+        
+          if(app.hexBoard.activeCell.topLeft!==null){
+            app.hexBoard.activeCell=app.hexBoard.activeCell.topLeft;
+          }
 
       };
       function downLeft(){
 
-        if(app.hexBoard.activeCell.bottomLeft!==null){
-          app.hexBoard.activeCell=app.hexBoard.activeCell.bottomLeft;
-        }
+        if(app.mode!==APPMODES.CREATE ||
+           app.hexBoard.activeCell===null){ return; }
+
+          if(app.hexBoard.activeCell.bottomLeft!==null){
+            app.hexBoard.activeCell=app.hexBoard.activeCell.bottomLeft;
+          }
 
       };
 
@@ -1026,25 +1081,134 @@ var diagrams = function(processingInstance){
     /** Edit            -------------------------------------------------- */
     {
 
-      function incrementCellLayout(){ app.hexBoard.activeCell.incrementCellLayout();                };
-      function decrementCellLayout(){ app.hexBoard.activeCell.decrementCellLayout();                };
+      function incrementCellLayout(){
 
-      function setBlackRevealed()   { app.hexBoard.activeCell.layout=HEXY_TYPES.BLACK_REVEALED;     };
-      function setBlack()           { app.hexBoard.activeCell.layout=HEXY_TYPES.BLACK;              };
+        if(app.mode!==APPMODES.CREATE ||
+           app.hexBoard.activeCell===null){ return; }
 
-      function setBlueRevealed()    { app.hexBoard.activeCell.layout=HEXY_TYPES.BLUE_REVEALED;      };
-      function setBlue()            { app.hexBoard.activeCell.layout=HEXY_TYPES.BLUE;               };
+          app.hexBoard.activeCell.incrementCellLayout();
 
-      function setDownCenter()      { app.hexBoard.activeCell.layout=HEXY_TYPES.DOWN_CENTER;        };
-      function setDownLeft()        { app.hexBoard.activeCell.layout=HEXY_TYPES.DOWN_LEFT;          };
-      function setDownRight()       { app.hexBoard.activeCell.layout=HEXY_TYPES.DOWN_RIGHT;         };
+      };
+      function decrementCellLayout(){
 
-      function setBlank()           { app.hexBoard.activeCell.text=HEXY_TYPES.BLANK;                };
-      function setNumber()          { app.hexBoard.activeCell.text=HEXY_TYPES.NUMBER;               };
-      function setConsecutive()     { app.hexBoard.activeCell.text=HEXY_TYPES.CONSECUTIVE;          };
-      function setNonConsecutive()  { app.hexBoard.activeCell.text=HEXY_TYPES.NOT_CONSECUTIVE;      };
+        if(app.mode!==APPMODES.CREATE ||
+           app.hexBoard.activeCell===null){ return; }
 
-      function clearLayout()        { app.hexBoard.clearLayout();                                   };
+          app.hexBoard.activeCell.decrementCellLayout();
+
+      };
+
+      function setCellType(cellType){
+      
+        if(app.mode!==APPMODES.CREATE ||
+           app.hexBoard.activeCell===null){ return; }
+
+          app.hexBoard.activeCell.layout=cellType;
+
+      };
+      
+      // function setBlackRevealed()   {
+
+        // if(app.mode!==APPMODES.CREATE ||
+           // app.hexBoard.activeCell===null){ return; }
+
+           // app.hexBoard.activeCell.layout=HEXY_TYPES.BLACK_REVEALED;
+
+      // };
+      // function setBlack()           {
+
+        // if(app.mode!==APPMODES.CREATE ||
+           // app.hexBoard.activeCell===null){ return; }
+
+          // app.hexBoard.activeCell.layout=HEXY_TYPES.BLACK;
+
+      // };
+      // function setBlueRevealed()    {
+        
+        // if(app.mode!==APPMODES.CREATE ||
+           // app.hexBoard.activeCell===null){ return; }
+           
+          // app.hexBoard.activeCell.layout=HEXY_TYPES.BLUE_REVEALED;
+          
+      // };
+      // function setBlue()            {
+
+        // if(app.mode!==APPMODES.CREATE ||
+           // app.hexBoard.activeCell===null){ return; }
+           
+          // app.hexBoard.activeCell.layout=HEXY_TYPES.BLUE;
+          
+      // };
+      // function setDownCenter()      {
+
+        // if(app.mode!==APPMODES.CREATE ||
+           // app.hexBoard.activeCell===null){ return; }
+           
+// print('down center');
+          // app.hexBoard.activeCell.layout=HEXY_TYPES.DOWN_CENTER;
+
+      // };
+      // function setDownLeft()        {
+
+        // if(app.mode!==APPMODES.CREATE ||
+           // app.hexBoard.activeCell===null){ return; }
+           
+// print('down left');
+
+        // app.hexBoard.activeCell.layout=HEXY_TYPES.DOWN_LEFT;
+
+      // };
+      // function setDownRight()       {
+
+        // if(app.mode!==APPMODES.CREATE ||
+           // app.hexBoard.activeCell===null){ return; }
+
+          // app.hexBoard.activeCell.layout=HEXY_TYPES.DOWN_RIGHT;
+
+      // };
+
+      // function setBlank()           {
+
+        // if(app.mode!==APPMODES.CREATE ||
+           // app.hexBoard.activeCell===null){ return; }
+           
+        // app.hexBoard.activeCell.text=HEXY_TYPES.BLANK;
+        
+      // };        
+      // function setNumber()          {
+        
+        // if(app.mode!==APPMODES.CREATE ||
+           // app.hexBoard.activeCell===null){ return; }
+           
+          // app.hexBoard.activeCell.text=HEXY_TYPES.NUMBER;
+          
+      // };
+          
+      // function setConsecutive()     {
+        
+        // if(app.mode!==APPMODES.CREATE ||
+           // app.hexBoard.activeCell===null){ return; }
+           
+          // app.hexBoard.activeCell.text=HEXY_TYPES.CONSECUTIVE;
+          
+      // };
+      // function setNonConsecutive()  {
+
+        // if(app.mode!==APPMODES.CREATE ||
+           // app.hexBoard.activeCell===null){ return; }
+           
+          // app.hexBoard.activeCell.text=HEXY_TYPES.NOT_CONSECUTIVE;
+          
+      // };
+      
+      function clearLayout()        {
+        
+        if(app.mode!==APPMODES.CREATE ||
+           app.hexBoard.activeCell===null){ return; }
+           
+          app.hexBoard.clearLayout();
+          
+      };
 
       function toggleCreate()       {
 
@@ -4014,9 +4178,7 @@ this.start=false;
 
         p.deltaY*=1+p.timer/app.frameRate;
 
-        // this.velocityX += this.deltaX;
         p.velocityY += p.deltaY;
-
         p.rotation  += p.deltaR;
 
         p.timer++;
@@ -4029,97 +4191,53 @@ this.start=false;
         rotate(this.rotation);
 
           noStroke();
-          fill(getColor(this.color,100-this.timer*5));
+          fill(getColor(this.color, 100-this.timer*5));
 
           triangle(-this.w,      -this.w,
                     this.w,      -0.8*this.w,
                     -0.1*this.w, this.w);
 
-        fill(CLRS.RED);
-        
-        // ellipse(0,0,5,5);
-        
       popMatrix();
 
       update();
 
+      if(this.timer>100){
+
+        app.animations=subset(app.animations, 1, app.animations.length);
+
+print(app.animations.length);
+
+      }
 
     };
-    
+
     /** Hexagonal Reveal Animation ---------------------------------------- */
     {
 
-      function hexReveal(id, parent, x, y, w, h, props){
-
-        control.call(this, id, parent, x, y, w, h);
-
-        this.color     = props.color;
-
-        this.triangles = [];
+      function addAnimation(x, y, w, h, clr){
         
-        var w2=random(w);
-        
+        var w2;
+
         for(var n=0; n<6; n++){
-          
-          w2=random(w/4,w/2);
 
-          this.triangles.push(new tri(getGUID(), this, this.x, this.y, w2, this.h/2,
-                                        {color:   this.color,
-                                         cX:     (this.x +
-                                                 (this.x+cos(radians(random(0,360)))*w2) +
-                                                 (this.x+cos(radians(random(0,360)))*w2))/3,
-                                         cY:     (this.y +
-                                                 (this.y+sin(radians(random(0,360)))*w2) +
-                                                 (this.y+sin(radians(random(0,360)))*w2))/3}));
+          w2=w/2;
 
-        }
-        
-        // this.triangles.push(new tri(getGUID(), this, this.x, this.y, this.w/2, this.h/2,
-                                      // {color:   this.color,
-                                       // cX:     (this.x + (this.x+cos(radians(60))*w) + (this.x+cos(radians(120))*w))/3,
-                                       // cY:     (this.y + (this.y+sin(radians(60))*w) + (this.y+sin(radians(120))*w))/3}));
+          app.animations.push(new tri(getGUID(), null, x, y, w2, h/2,
+                                        {color:   clr,
+                                         cX:     (x +
+                                                 (x+cos(radians(n*60))*w2) +
+                                                 (x+cos(radians(n*60))*w2))/3,
+                                         cY:     (y +
+                                                 (y+sin(radians((n+1)*60))*w2) +
+                                                 (y+sin(radians((n+1)*60))*w2))/3}));
 
-        // this.triangles.push(new tri(getGUID(), this, this.x, this.y, this.w/2, this.h/2,
-                                      // {color:   this.color,
-                                       // cX:     (this.x + (this.x+cos(radians(120))*w) + (this.x+cos(radians(180))*w))/3,
-                                       // cY:     (this.y + (this.y+sin(radians(120))*w) + (this.y+sin(radians(180))*w))/3}));
-
-        // this.triangles.push(new tri(getGUID(), this, this.x, this.y, this.w/2, this.h/2,
-                                      // {color:   this.color,
-                                       // cX:     (this.x + (this.x+cos(radians(180))*w) + (this.x+cos(radians(240))*w))/3,
-                                       // cY:     (this.y + (this.y+sin(radians(180))*w) + (this.y+sin(radians(240))*w))/3}));
-
-        // this.triangles.push(new tri(getGUID(), this, this.x, this.y, this.w/2, this.h/2,
-                                      // {color:   this.color,
-                                       // cX:     (this.x + (this.x+cos(radians(240))*w) + (this.x+cos(radians(300))*w))/3,
-                                       // cY:     (this.y + (this.y+sin(radians(240))*w) + (this.y+sin(radians(300))*w))/3}));
-
-        // this.triangles.push(new tri(getGUID(), this, this.x, this.y, this.w/2, this.h/2,
-                                      // {color:   this.color,
-                                       // cX:     (this.x + (this.x+cos(radians(300))*w) + (this.x+cos(radians(0))*w))/3,
-                                       // cY:     (this.y + (this.y+sin(radians(300))*w) + (this.y+sin(radians(0))*w))/3}));
-
-      };
-      hexReveal.prototype=Object.create(control.prototype);
-      hexReveal.prototype.draw=function(){
-          
-// print(this.triangles.length);          
-        for(var t in this.triangles){
-
-          this.triangles[t].draw();
-
-        }
-        
-        this.timer++;
-        
-        if(this.timer>100){
-          app.animations=subset(app.animations, 1, app.animations.length);
-print(app.animations.length);
         }
 
       };
 
     }
+
+
 
     /** Hexagonal Cell  -------------------------------------------------- */
     {
@@ -4768,10 +4886,9 @@ print(app.animations.length);
                 this.layout=HEXY_TYPES.BLACK_REVEALED;
                 this.clickRadius=HEX_SIZE-10;
 
-                app.animations.push(new hexReveal(getGUID(), this, this.x, this.y, this.w/2, this.h/2,
-                    {color:   CLRS.H_ORANGE_L}));
+                addAnimation(this.x, this.y, this.w/2, this.h/2, CLRS.H_ORANGE_L);
 
-// print(app.animations.length);
+print(app.animations.length);
 
               } // Blue Hexagon
               else if(this.layout===HEXY_TYPES.BLUE){
@@ -5135,11 +5252,20 @@ print(app.animations.length);
   function extro(){ };
   function instructions(){ };
 
-  function play(){
+  function drawAnimations(){
+
+    forEach(app.animations,'draw');
+
+  };
+  function drawControls(){
 
     forEach(app.controls,'draw');
 
-    forEach(app.animations,'draw');
+  };  
+  function play(){
+
+    drawControls();
+    drawAnimations();
     
   };
 
@@ -5166,7 +5292,7 @@ print(app.animations.length);
 
     keyPressed=function(){
 
-// print(keyCode);
+print(keyCode);
 
       app.keys[keyCode]=true;
 
@@ -5197,31 +5323,47 @@ print(app.animations.length);
                app.keys[KEYCODES.CONTROL]:      downLeft();               break;    /* Down Left          */
           case app.keys[KEYCODES.LEFT]:         upLeft();                 break;    /* Up Left            */
 
-          /*  Cell Options                                                                                */
+      // BLANK:            '.',
+
+      // BLACK:            'o',
+      // BLACK_REVEALED:   'O',
+      // BLUE:             'x',
+      // BLUE_REVEALED:    'X',
+
+      // DOWN_RIGHT:       '>', // Double up the \ character because it is an escape character
+                               // and the first one won't be recognised
+      // DOWN_CENTER:      '|',
+      // DOWN_LEFT:        '/',
+
+      // NUMBER:           '+',
+      // CONSECUTIVE:      'c',
+      // NOT_CONSECUTIVE:  'n'
+      
+          /*  Cell Options                                                                                              */
           case app.keys[KEYCODES.O] &&
-               app.keys[KEYCODES.SHIFT]:        setBlackRevealed();       break;    /* Black Revealed     */
-          case app.keys[KEYCODES.O]:            setBlack();               break;    /* Black              */
+               app.keys[KEYCODES.SHIFT]:        setCellType(HEXY_TYPES.BLACK_REVEALED);   break;    /* Black Revealed   */
+          case app.keys[KEYCODES.O]:            setCellType(HEXY_TYPES.BLACK);            break;    /* Black            */
           case app.keys[KEYCODES.X] &&
-               app.keys[KEYCODES.SHIFT]:        setBlueRevealed();        break;    /* Blue Revealed      */
-          case app.keys[KEYCODES.X]:            setBlue();                break;    /* BLUE               */
+               app.keys[KEYCODES.SHIFT]:        setCellType(HEXY_TYPES.BLUE_REVEALED);    break;    /* Blue Revealed    */
+          case app.keys[KEYCODES.X]:            setCellType(HEXY_TYPES.BLUE);             break;    /* Blue             */
 
-          case app.keys[KEYCODES.DOWN_CENTER]:  setDownCenter;            break;    /* Down Center        */
-          case app.keys[KEYCODES.DOWN_LEFT]:    setDownLeft;              break;    /* Down Left          */
-          case app.keys[KEYCODES.DOWN_RIGHT]:   setDownRight();           break;    /* Down Right         */
+          case app.keys[KEYCODES.DOWN_CENTER]:  setCellType(HEXY_TYPES.DOWN_CENTER);      break;    /* Down Center      */
+          case app.keys[KEYCODES.DOWN_LEFT]:    setCellType(HEXY_TYPES.DOWN_LEFT);        break;    /* Down Left        */
+          case app.keys[KEYCODES.DOWN_RIGHT]:   setCellType(HEXY_TYPES.DOWN_RIGHT);       break;    /* Down Right       */
 
-          case app.keys[KEYCODES.B]:            setBlank();               break;    /* Blank              */
+          case app.keys[KEYCODES.B]:            setCellType(HEXY_TYPES.BLANK);            break;    /* Blank            */
           case app.keys[KEYCODES.PLUS] ||
                app.keys[KEYCODES.T] ||
-               app.keys[KEYCODES.t]:            setNumber();              break;    /* Number             */
+               app.keys[KEYCODES.t]:            setCellType(HEXY_TYPES.NUMBER);           break;    /* Number           */
 
-          case app.keys[KEYCODES.C]:            setConsecutive();         break;    /* Consecutive        */
-          case app.keys[KEYCODES.N]:            setNonConsecutive();      break;    /* Non-Consecutive    */
+          case app.keys[KEYCODES.C]:            setCellType(HEXY_TYPES.CONSECUTIVE);      break;    /* Consecutive      */
+          case app.keys[KEYCODES.N]:            setCellType(HEXY_TYPES.NOT_CONSECUTIVE);  break;    /* Non-Consecutive  */
 
           case app.keys[KEYCODES.SPACE] &&
-               app.keys[KEYCODES.CONTROL]:      decrementCellLayout();    break;    /* Decrement Layout   */
-          case app.keys[KEYCODES.SPACE]:        incrementCellLayout();    break;    /* Increment Layout   */
+               app.keys[KEYCODES.CONTROL]:      decrementCellLayout();                    break;    /* Decrement Layout */
+          case app.keys[KEYCODES.SPACE]:        incrementCellLayout();                    break;    /* Increment Layout */
 
-          default:                                                        break;
+          default:                                                                        break;
 
         }
 
