@@ -839,7 +839,10 @@ var diagrams = function(processingInstance){
       function getColor(clr, alpha) { return color(red(clr), green(clr), blue(clr), alpha/100*255);    };
 
       function getInfo()            { return app.info;                                                 };
-      function toggleInfo()         { app.info=!app.info;                                              };
+      function toggleInfo()         { app.info=!app.info;
+
+print('info');      
+      };
 
       function getMusic()           { return app.musicOn;                                              };
       function setMusic(b)          { return app.musicOn=b;                                            };
@@ -881,6 +884,8 @@ var diagrams = function(processingInstance){
         app.errors=0;
 
         app.clock.reset();
+        
+        app.hexBoard.activeCell=app.hexBoard.controls[0][0];  // Required to maintain an activeCell
 
         // app.focus=null;
 
@@ -1099,107 +1104,29 @@ var diagrams = function(processingInstance){
       };
 
       function setCellType(cellType){
+
+print(cellType);
       
         if(app.mode!==APPMODES.CREATE ||
            app.hexBoard.activeCell===null){ return; }
 
-          app.hexBoard.activeCell.layout=cellType;
+
+          if(cellType===HEXY_TYPES.NUMBER ||
+             cellType===HEXY_TYPES.CONSECUTIVE ||
+             cellType===HEXY_TYPES.NOT_CONSECUTIVE){
+
+            app.hexBoard.activeCell.text=cellType;
+
+          }
+          else{
+
+            app.hexBoard.activeCell.layout=cellType;
+
+          }
+
+          app.hexBoard.update();
 
       };
-      
-      // function setBlackRevealed()   {
-
-        // if(app.mode!==APPMODES.CREATE ||
-           // app.hexBoard.activeCell===null){ return; }
-
-           // app.hexBoard.activeCell.layout=HEXY_TYPES.BLACK_REVEALED;
-
-      // };
-      // function setBlack()           {
-
-        // if(app.mode!==APPMODES.CREATE ||
-           // app.hexBoard.activeCell===null){ return; }
-
-          // app.hexBoard.activeCell.layout=HEXY_TYPES.BLACK;
-
-      // };
-      // function setBlueRevealed()    {
-        
-        // if(app.mode!==APPMODES.CREATE ||
-           // app.hexBoard.activeCell===null){ return; }
-           
-          // app.hexBoard.activeCell.layout=HEXY_TYPES.BLUE_REVEALED;
-          
-      // };
-      // function setBlue()            {
-
-        // if(app.mode!==APPMODES.CREATE ||
-           // app.hexBoard.activeCell===null){ return; }
-           
-          // app.hexBoard.activeCell.layout=HEXY_TYPES.BLUE;
-          
-      // };
-      // function setDownCenter()      {
-
-        // if(app.mode!==APPMODES.CREATE ||
-           // app.hexBoard.activeCell===null){ return; }
-           
-// print('down center');
-          // app.hexBoard.activeCell.layout=HEXY_TYPES.DOWN_CENTER;
-
-      // };
-      // function setDownLeft()        {
-
-        // if(app.mode!==APPMODES.CREATE ||
-           // app.hexBoard.activeCell===null){ return; }
-           
-// print('down left');
-
-        // app.hexBoard.activeCell.layout=HEXY_TYPES.DOWN_LEFT;
-
-      // };
-      // function setDownRight()       {
-
-        // if(app.mode!==APPMODES.CREATE ||
-           // app.hexBoard.activeCell===null){ return; }
-
-          // app.hexBoard.activeCell.layout=HEXY_TYPES.DOWN_RIGHT;
-
-      // };
-
-      // function setBlank()           {
-
-        // if(app.mode!==APPMODES.CREATE ||
-           // app.hexBoard.activeCell===null){ return; }
-           
-        // app.hexBoard.activeCell.text=HEXY_TYPES.BLANK;
-        
-      // };        
-      // function setNumber()          {
-        
-        // if(app.mode!==APPMODES.CREATE ||
-           // app.hexBoard.activeCell===null){ return; }
-           
-          // app.hexBoard.activeCell.text=HEXY_TYPES.NUMBER;
-          
-      // };
-          
-      // function setConsecutive()     {
-        
-        // if(app.mode!==APPMODES.CREATE ||
-           // app.hexBoard.activeCell===null){ return; }
-           
-          // app.hexBoard.activeCell.text=HEXY_TYPES.CONSECUTIVE;
-          
-      // };
-      // function setNonConsecutive()  {
-
-        // if(app.mode!==APPMODES.CREATE ||
-           // app.hexBoard.activeCell===null){ return; }
-           
-          // app.hexBoard.activeCell.text=HEXY_TYPES.NOT_CONSECUTIVE;
-          
-      // };
       
       function clearLayout()        {
         
@@ -2640,6 +2567,7 @@ var diagrams = function(processingInstance){
           for(var c in ctrls[r]){
 
             ctrls[r][c].layout=HEXY_TYPES.BLANK;
+            ctrls[r][c].text  =HEXY_TYPES.BLANK;
 
           }
         }
@@ -4815,7 +4743,6 @@ print(app.animations.length);
             if(app.mode===APPMODES.CREATE){
 
               this.incrementCellLayout();
-              this.recalculate();
 
             }
             else if(app.mode===APPMODES.GAME){
@@ -4870,7 +4797,6 @@ print(app.animations.length);
             if(app.mode===APPMODES.CREATE){
 
               this.decrementCellLayout();
-              this.recalculate();
 
             }
             else if(app.mode===APPMODES.GAME){
@@ -4936,7 +4862,7 @@ print(app.animations.length);
 
         }
 
-        // this.parent.update();
+        this.recalculate();
 
       };
       hexCell.prototype.decrementCellLayout=function(){
@@ -4971,7 +4897,7 @@ print(app.animations.length);
 
         }
 
-        // this.parent.update();
+        this.recalculate();
 
       };
       hexCell.prototype.recalculate=function(){
@@ -5292,8 +5218,8 @@ print(app.animations.length);
 
     keyPressed=function(){
 
-print(keyCode);
-
+// print(keyCode);
+        
       app.keys[keyCode]=true;
 
         switch(true){
@@ -5308,9 +5234,6 @@ print(keyCode);
                app.keys[KEYCODES.F5]:           clearLayout();            break;    /* CTRL + F5          */
           case app.keys[KEYCODES.F6]:           reset();                  break;    /* F6 - reset layout  */
 
-          case app.keys[KEYCODES.A]:            decrementPuzzle();        break;    /* A                  */
-          case app.keys[KEYCODES.D]:            incrementPuzzle();        break;    /* D                  */
-
           /*  Navigation                                                                                  */
           case app.keys[KEYCODES.UP]:           up();                     break;    /* Up                 */
           case app.keys[KEYCODES.DOWN]:         down();                   break;    /* Down               */
@@ -5323,37 +5246,38 @@ print(keyCode);
                app.keys[KEYCODES.CONTROL]:      downLeft();               break;    /* Down Left          */
           case app.keys[KEYCODES.LEFT]:         upLeft();                 break;    /* Up Left            */
 
-      // BLANK:            '.',
+        }
 
-      // BLACK:            'o',
-      // BLACK_REVEALED:   'O',
-      // BLUE:             'x',
-      // BLUE_REVEALED:    'X',
+    };
+    keyTyped=function()   {
 
-      // DOWN_RIGHT:       '>', // Double up the \ character because it is an escape character
-                               // and the first one won't be recognised
-      // DOWN_CENTER:      '|',
-      // DOWN_LEFT:        '/',
+      app.keys[key]=true;
 
-      // NUMBER:           '+',
-      // CONSECUTIVE:      'c',
-      // NOT_CONSECUTIVE:  'n'
-      
+        switch(true){
+
+          case app.keys[KEYCODES.E]:         setCellType(HEXY_TYPES.NUMBER);           break;    /* Number           */          
+
+          case app.keys[KEYCODES.A]:            decrementPuzzle();        break;    /* A                  */
+          case app.keys[KEYCODES.D]:            incrementPuzzle();        break;    /* D                  */
+
           /*  Cell Options                                                                                              */
           case app.keys[KEYCODES.O] &&
                app.keys[KEYCODES.SHIFT]:        setCellType(HEXY_TYPES.BLACK_REVEALED);   break;    /* Black Revealed   */
+
           case app.keys[KEYCODES.O]:            setCellType(HEXY_TYPES.BLACK);            break;    /* Black            */
+
           case app.keys[KEYCODES.X] &&
                app.keys[KEYCODES.SHIFT]:        setCellType(HEXY_TYPES.BLUE_REVEALED);    break;    /* Blue Revealed    */
+
           case app.keys[KEYCODES.X]:            setCellType(HEXY_TYPES.BLUE);             break;    /* Blue             */
 
-          case app.keys[KEYCODES.DOWN_CENTER]:  setCellType(HEXY_TYPES.DOWN_CENTER);      break;    /* Down Center      */
-          case app.keys[KEYCODES.DOWN_LEFT]:    setCellType(HEXY_TYPES.DOWN_LEFT);        break;    /* Down Left        */
+          case app.keys[KEYCODES.DOWN_CENTER]:  setCellType(HEXY_TYPES.DOWN_CENTER);      break;    /* Down Center      */                
+          case app.keys[KEYCODES.DOWN_LEFT]:    setCellType(HEXY_TYPES.DOWN_LEFT);        break;    /* Down Left        */                
           case app.keys[KEYCODES.DOWN_RIGHT]:   setCellType(HEXY_TYPES.DOWN_RIGHT);       break;    /* Down Right       */
 
           case app.keys[KEYCODES.B]:            setCellType(HEXY_TYPES.BLANK);            break;    /* Blank            */
-          case app.keys[KEYCODES.PLUS] ||
-               app.keys[KEYCODES.T] ||
+          
+          case app.keys[KEYCODES.T] ||
                app.keys[KEYCODES.t]:            setCellType(HEXY_TYPES.NUMBER);           break;    /* Number           */
 
           case app.keys[KEYCODES.C]:            setCellType(HEXY_TYPES.CONSECUTIVE);      break;    /* Consecutive      */
@@ -5366,9 +5290,11 @@ print(keyCode);
           default:                                                                        break;
 
         }
+// print(app.keys[KEYCODES.T]);
+
+      print('typed ' + (key) + ' ' + keyCode);
 
     };
-    keyTyped=function()   { /* print('typed ' + (key) + ' ' + keyCode); */    };
     keyReleased=function(){ app.keys[keyCode]=false;                          };
 
   }
