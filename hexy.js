@@ -1121,6 +1121,14 @@ print('info');
 
             app.hexBoard.activeCell.layout=cellType;
 
+            if(cellType===HEXY_TYPES.DOWN_LEFT ||
+               cellType===HEXY_TYPES.DOWN_RIGHT ||
+               cellType===HEXY_TYPES.DOWN_CENTER){
+
+               print(cellType);
+
+            }
+
           }
 
           app.hexBoard.update();
@@ -4226,8 +4234,8 @@ print(app.animations.length);
 
           for(pt=0; pt<6; pt++){
 
-            p.points.push(new pnt( cos(radians(ang+pt*60))*(d2),
-                                   sin(radians(ang+pt*60))*(d2) ));
+            p.points.push( new pnt( cos(radians(ang+pt*60))*(d2),
+                                    sin(radians(ang+pt*60))*(d2) ));
 
             p.opoints.push(new pnt( cos(radians(ang+pt*60))*(d2-3),
                                     sin(radians(ang+pt*60))*(d2-3) ));
@@ -4439,7 +4447,7 @@ print(app.animations.length);
 
               if      (p.text===HEXY_TYPES.CONSECUTIVE    ){ retVal="{" + retVal + "}"; }
               else if (p.text===HEXY_TYPES.NOT_CONSECUTIVE){ retVal="-" + retVal + "-"; }
-              else if (p.text===HEXY_TYPES.NUMBER         ){ retVal="|" + retVal + "|"; }
+              // else if (p.text===HEXY_TYPES.NUMBER         ){ retVal="|" + retVal + "|"; }cntntnn
 
               return retVal;
 
@@ -4486,50 +4494,40 @@ print(app.animations.length);
                                                       break;
 
                   case HEXY_TYPES.DOWN_CENTER:      /* Always has text */
-                                                      if(p.text!==HEXY_TYPES.BLANK){
 
-                                                        textAlign(CENTER,TOP);
-                                                        rotate(0);
+                                                      textAlign(CENTER,TOP);
+                                                      rotate(0);
 
-                                                        fill(CLRS.BLACK);
-                                                        if(!p.enabled){ fill(getColor(CLRS.BLACK,25)); }
+                                                      fill(CLRS.BLACK);
+                                                      if(!p.enabled){ fill(getColor(CLRS.BLACK,25)); }
 
-                                                        text(wrapText(p.count),0,0);
-
-                                                      }
+                                                      text(wrapText(p.count),0,0);
 
                                                       break;
 
                   case HEXY_TYPES.DOWN_LEFT:        /* Always has text */
-                                                      if(p.text!==HEXY_TYPES.BLANK){
 
-                                                        textAlign(CENTER,TOP);
-                                                        rotate(PI/3);
+                                                      textAlign(CENTER,TOP);
+                                                      rotate(PI/3);
 
-                                                        fill(CLRS.BLACK);
-                                                        if(!p.enabled){ fill(getColor(CLRS.BLACK,25)); }
+                                                      fill(CLRS.BLACK);
+                                                      if(!p.enabled){ fill(getColor(CLRS.BLACK,25)); }
 
-                                                        text(wrapText(p.count),0,0);
-
-                                                      }
+                                                      text(wrapText(p.count),0,0);
 
                                                       break;
 
                   case HEXY_TYPES.DOWN_RIGHT:       /* Always has text */
-                                                      if(p.text!==HEXY_TYPES.BLANK){
 
-                                                        textAlign(CENTER,TOP);
-                                                        rotate(-PI/3);
+                                                      textAlign(CENTER,TOP);
+                                                      rotate(-PI/3);
 
-                                                        fill(CLRS.BLACK);
-                                                        if(!p.enabled){ fill(getColor(CLRS.BLACK,25)); }
+                                                      fill(CLRS.BLACK);
+                                                      if(!p.enabled){ fill(getColor(CLRS.BLACK,25)); }
 
-                                                        text(wrapText(p.count),0,0);
-
-                                                      }
+                                                      text(wrapText(p.count),0,0);
 
                                                       break;
-
                   case HEXY_TYPES.BLANK:
                   case HEXY_TYPES.BLUE:
                   default:                            break;/*  Blank and Blue never has text   */
@@ -5208,114 +5206,68 @@ print(app.animations.length);
 
         switch(true){
 
-          /*  Function Keys                                                                               */
-          case app.keys[KEYCODES.F1]:           toggleInfo();             break;    /* F1 - Info          */
-          case app.keys[KEYCODES.F2]:           toggleCreate();           break;    /* F2 - Toggle Create */
-          case app.keys[KEYCODES.F3]:           toggleTelemetry();        break;    /* F3 - Telemetry     */
-          case app.keys[KEYCODES.F4]:           printLayout();            break;    /* F4 - Print Layout  */
+          /*  Function Keys                                                                                           */
+          case app.keys[KEYCODES.F1]:         toggleInfo();                             break;  /* F1 - Info          */
+          case app.keys[KEYCODES.F2]:         toggleCreate();                           break;  /* F2 - Toggle Create */
+          case app.keys[KEYCODES.F3]:         toggleTelemetry();                        break;  /* F3 - Telemetry     */
+          case app.keys[KEYCODES.F4]:         printLayout();                            break;  /* F4 - Print Layout  */
 
           case app.keys[KEYCODES.CONTROL] &&
-               app.keys[KEYCODES.F5]:           clearLayout();            break;    /* CTRL + F5          */
-          case app.keys[KEYCODES.F6]:           reset();                  break;    /* F6 - reset layout  */
+               app.keys[KEYCODES.F5]:         clearLayout();                            break;  /* CTRL + F5          */
+          case app.keys[KEYCODES.F6]:         reset();                                  break;  /* F6 - reset layout  */
 
-          case app.keys[KEYCODES.A]:            decrementPuzzle();        break;    /* A                  */
-          case app.keys[KEYCODES.D]:            incrementPuzzle();        break;    /* D                  */
+          /* Edit                                                                                                     */
+          case app.keys[KEYCODES.SPACE] &&
+               app.keys[KEYCODES.CONTROL]:    decrementCellLayout();                    break;  /* Decrement Layout   */
+          case app.keys[KEYCODES.SPACE]:      incrementCellLayout();                    break;  /* Increment Layout   */
 
           case app.keys[KEYCODES.O] &&
-               app.keys[KEYCODES.SHIFT]:        setCellType(HEXY_TYPES.BLACK_REVEALED);   break;    /* Black Revealed   */
+               app.keys[KEYCODES.SHIFT]:      setCellType(HEXY_TYPES.BLACK_REVEALED);   break;  /* Black Revealed   */
 
-          case app.keys[KEYCODES.O]:            setCellType(HEXY_TYPES.BLACK);            break;    /* Black            */
+          case app.keys[KEYCODES.O]:          setCellType(HEXY_TYPES.BLACK);            break;  /* Black            */
 
           case app.keys[KEYCODES.X] &&
-               app.keys[KEYCODES.SHIFT]:        setCellType(HEXY_TYPES.BLUE_REVEALED);    break;    /* Blue Revealed    */
+               app.keys[KEYCODES.SHIFT]:      setCellType(HEXY_TYPES.BLUE_REVEALED);    break;  /* Blue Revealed    */
 
-          case app.keys[KEYCODES.X]:            setCellType(HEXY_TYPES.BLUE);             break;    /* Blue             */
+          case app.keys[KEYCODES.X]:          setCellType(HEXY_TYPES.BLUE);             break;  /* Blue             */
 
-          case app.keys[KEYCODES.DOWN_CENTER]:  setCellType(HEXY_TYPES.DOWN_CENTER);      break;    /* Down Center      */
-          case app.keys[KEYCODES.DOWN_LEFT]:    setCellType(HEXY_TYPES.DOWN_LEFT);        break;    /* Down Left        */
-          case app.keys[KEYCODES.DOWN_RIGHT]:   setCellType(HEXY_TYPES.DOWN_RIGHT);       break;    /* Down Right       */
+          case app.keys[KEYCODES.S] ||
+               app.keys[KEYCODES.s]:          setCellType(HEXY_TYPES.DOWN_CENTER);      break;  /* Down Center      */
+          case app.keys[KEYCODES.L] ||
+               app.keys[KEYCODES.l]:          setCellType(HEXY_TYPES.DOWN_LEFT);        break;  /* Down Left        */
+          case app.keys[KEYCODES.R] ||
+               app.keys[KEYCODES.r]:          setCellType(HEXY_TYPES.DOWN_RIGHT);       break;  /* Down Right       */
 
-          case app.keys[KEYCODES.B]:            setCellType(HEXY_TYPES.BLANK);            break;    /* Blank            */
+          case app.keys[KEYCODES.B]:          setCellType(HEXY_TYPES.BLANK);            break;  /* Blank            */
 
           case app.keys[KEYCODES.T] ||
-               app.keys[KEYCODES.t]:            setCellType(HEXY_TYPES.NUMBER);           break;    /* Number           */
+               app.keys[KEYCODES.t]:          setCellType(HEXY_TYPES.NUMBER);           break;  /* Number           */
 
-          case app.keys[KEYCODES.C]:            setCellType(HEXY_TYPES.CONSECUTIVE);      break;    /* Consecutive      */
-          case app.keys[KEYCODES.N]:            setCellType(HEXY_TYPES.NOT_CONSECUTIVE);  break;    /* Non-Consecutive  */
+          case app.keys[KEYCODES.C]:          setCellType(HEXY_TYPES.CONSECUTIVE);      break;  /* Consecutive      */
+          case app.keys[KEYCODES.N]:          setCellType(HEXY_TYPES.NOT_CONSECUTIVE);  break;  /* Non-Consecutive  */
 
-
-
-          /*  Navigation                                                                                  */
-          case app.keys[KEYCODES.UP]:           up();                     break;    /* Up                 */
-          case app.keys[KEYCODES.DOWN]:         down();                   break;    /* Down               */
+          /*  Navigation                                                                                            */
+          case app.keys[KEYCODES.A]:          decrementPuzzle();                        break;  /* A                */
+          case app.keys[KEYCODES.D]:          incrementPuzzle();                        break;  /* D                */
+          
+          case app.keys[KEYCODES.UP]:         up();                                     break;  /* Up               */
+          case app.keys[KEYCODES.DOWN]:       down();                                   break;  /* Down             */
 
           case app.keys[KEYCODES.RIGHT] &&
-               app.keys[KEYCODES.CONTROL]:      downRight();              break;    /* Down Right         */
-          case app.keys[KEYCODES.RIGHT]:        upRight();                break;    /* Up Right           */
+               app.keys[KEYCODES.CONTROL]:    downRight();                              break;  /* Down Right       */
+          case app.keys[KEYCODES.RIGHT]:      upRight();                                break;  /* Up Right         */
           case app.keys[KEYCODES.LEFT] &&
-               app.keys[KEYCODES.CONTROL]:      downLeft();               break;    /* Down Left          */
-          case app.keys[KEYCODES.LEFT]:         upLeft();                 break;    /* Up Left            */
+               app.keys[KEYCODES.CONTROL]:    downLeft();                               break;  /* Down Left        */
+          case app.keys[KEYCODES.LEFT]:       upLeft();                                 break;  /* Up Left          */
 
-          /* Edit                                                                                         */
-          case app.keys[KEYCODES.SPACE] &&
-               app.keys[KEYCODES.CONTROL]:      decrementCellLayout();    break;    /* Decrement Layout   */
-          case app.keys[KEYCODES.SPACE]:        incrementCellLayout();    break;    /* Increment Layout   */
-
+          /* Figure out how to use this                                                                             */
           case app.keys[KEYCODES.CODED]:
-
-            print(key);
-            switch(true){
-
-
-            };
-
 
         }
 
-print("pressed " + round(key) + " " + keyCode);
+print("pressed " + key + " " + keyCode);
 
     };
-    // keyTyped=function()   {
-
-        // switch(true){
-
-          // case app.keys[KEYCODES.MINUS]:        setCellType(HEXY_TYPES.NOT_CONSECUTIVE);           break;    /* Number           */
-
-
-          // /*  Cell Options                                                                                              */
-          // case app.keys[KEYCODES.O] &&
-               // app.keys[KEYCODES.SHIFT]:        setCellType(HEXY_TYPES.BLACK_REVEALED);   break;    /* Black Revealed   */
-
-          // case app.keys[KEYCODES.O]:            setCellType(HEXY_TYPES.BLACK);            break;    /* Black            */
-
-          // case app.keys[KEYCODES.X] &&
-               // app.keys[KEYCODES.SHIFT]:        setCellType(HEXY_TYPES.BLUE_REVEALED);    break;    /* Blue Revealed    */
-
-          // case app.keys[KEYCODES.X]:            setCellType(HEXY_TYPES.BLUE);             break;    /* Blue             */
-
-          // case app.keys[KEYCODES.DOWN_CENTER]:  setCellType(HEXY_TYPES.DOWN_CENTER);      break;    /* Down Center      */
-          // case app.keys[KEYCODES.DOWN_LEFT]:    setCellType(HEXY_TYPES.DOWN_LEFT);        break;    /* Down Left        */
-          // case app.keys[KEYCODES.DOWN_RIGHT]:   setCellType(HEXY_TYPES.DOWN_RIGHT);       break;    /* Down Right       */
-
-          // case app.keys[KEYCODES.B]:            setCellType(HEXY_TYPES.BLANK);            break;    /* Blank            */
-
-          // case app.keys[KEYCODES.T] ||
-               // app.keys[KEYCODES.t]:            setCellType(HEXY_TYPES.NUMBER);           break;    /* Number           */
-
-          // case app.keys[KEYCODES.C]:            setCellType(HEXY_TYPES.CONSECUTIVE);      break;    /* Consecutive      */
-          // case app.keys[KEYCODES.N]:            setCellType(HEXY_TYPES.NOT_CONSECUTIVE);  break;    /* Non-Consecutive  */
-
-          // case app.keys[KEYCODES.SPACE] &&
-               // app.keys[KEYCODES.CONTROL]:      decrementCellLayout();                    break;    /* Decrement Layout */
-          // case app.keys[KEYCODES.SPACE]:        incrementCellLayout();                    break;    /* Increment Layout */
-
-          // default:                                                                        break;
-
-        // }
-
-// println("typed " + round(key) + " " + keyCode);
-
-    // };
     keyReleased=function(){ app.keys[keyCode]=false;                          };
 
   }
