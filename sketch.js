@@ -67,7 +67,7 @@ function preload(){
 
 function setup(){
 
-  createCanvas(windowWidth-5, windowHeight-5);
+  createCanvas(windowWidth-10, windowHeight-10);
   
   setFrameRate(80);
 
@@ -257,9 +257,9 @@ function setup(){
         var retVal=false;
 
         if(mouseX>(this.x+x) &&
-             mouseX<(this.x+x) + this.w &&
-             mouseY>(this.y+y) &&
-             mouseY<(this.y+y) + this.h){
+           mouseX<(this.x+x) + this.w &&
+           mouseY>(this.y+y) &&
+           mouseY<(this.y+y) + this.h){
           retVal=true;
         }
 
@@ -308,10 +308,9 @@ function setup(){
       /* Identical to a container control except is doesn't have a parent */
       function root(id, x, y, w, h, props){
 
-      print(props.clr)
         control.call(this, id, null, x, y, w, h);
 
-        this.clr   = props.clr;
+        this.color   = props.color;
         this.border  = props.border;
 
       };
@@ -330,17 +329,17 @@ function setup(){
               }
 
               noStroke();
-              fill(this.clr);
+              fill(this.color);
 
               if(this.border &&
                  this.active){
 
-                strokeWeight(1);
+                strokeWeight(0.25);
                 stroke(0);
 
               }
 
-                rect(0, 0, this.w, this.h);
+                rect(0, 0, this.w, this.h, 5);
 
               forEach(this.controls, 'draw');
 
@@ -369,8 +368,8 @@ function setup(){
       };
       root.prototype.resized=function(){
 
-        this.w = windowWidth -15;
-        this.h = windowHeight-15;
+        this.w = windowWidth -20;
+        this.h = windowHeight-20;
 
       };
 
@@ -403,10 +402,10 @@ function setup(){
 
             noStroke();
 
-            fill(getColor(BLACK,50));
+            fill(getColor(p.color,50));
 
               if(p.hit){
-                fill(getColor(BLACK,70));
+                fill(getColor(p.color,70));
               }
 
               rect(p.offset, 0, p.w, p.h, 5);
@@ -424,9 +423,9 @@ function setup(){
           };
           function environment(){
 
-            fill(getColor(BLACK,50));
+            fill(getColor(p.color,50));
 
-              rect(p.offset+10,  35, p.w-20, 365, 3);
+              rect(p.offset+10,  35, p.w-20, 375, 3);
 
             textAlign(LEFT,TOP);
             textSize(10);
@@ -451,13 +450,15 @@ function setup(){
                    '\n\n\n' + 'Alt:'           +
                    '\n'     + 'Control:'       +
                    '\n'     + 'Shift:'         +
-                   '\n\n\n' + 'Width:'         +
-                   '\n'     + 'Height:'        +
-                   '\n\n'   + 'Screen Width:'  +
-                   '\n'     + 'Screen Height:' +
+                   '\n\n\n' + 'Canvas Width:'  +
+                   '\n'     + 'Canvas Height:' +
+                   '\n\n'   + 'Window Width:'  +
+                   '\n'     + 'Window Height:' +
+                   '\n\n'   + 'Display Width:'  +
+                   '\n'     + 'Display Height:' +                   
                    '\n\n'   + 'Focused:'       +
                    '\n\n'   + 'Frame Count:'   +
-                   '\n'     + 'FrameRate:',
+                   '\n'     + 'Frame Rate:',
                    col1, row0);
 
             fill(getColor(YELLOW,75));
@@ -474,8 +475,10 @@ function setup(){
                    '\n'     + app.keys[KEYCODES.SHIFT]   +
                    '\n\n\n' + width                      +
                    '\n'     + height                     +
-                   '\n\n'   + screen.width               +
-                   '\n'     + screen.height              +
+                   '\n\n'   + windowWidth                +
+                   '\n'     + windowHeight               +                   
+                   '\n\n'   + displayWidth               +
+                   '\n'     + displayHeight              +
                    '\n\n'   + focused                    +
                    '\n\n'   + frameCount                 +
                    '\n'     + nf(app.frameRate,1,1),
@@ -484,9 +487,9 @@ function setup(){
           };
           function appSpecific(){
 
-            var top=410;
+            var top=430;
 
-            fill(getColor(BLACK,50));
+            fill(getColor(p.color,50));
 
               rect(p.offset+10,  top, p.w-20, 170, 3);
 
@@ -579,9 +582,10 @@ function setup(){
 
       };
       telemetry.prototype.resized=function(){
-        
+
         this.x=this.parent.w-this.w;
-        
+        this.h=this.parent.h-10;
+
       };
       
     }
@@ -604,11 +608,11 @@ function setup(){
     app.keys[KEYCODES.SHIFT]   = false;
 
     /* LOAD CONTROLS */
-print(RED);
+
       /* root control     */
-      var rt=new root(getGUID(), 5, 5, windowWidth-15, windowHeight-15,
+      var rt=new root(getGUID(), 5, 5, windowWidth-20, windowHeight-20,
         {border:    true,
-         clr:       RED});
+         color:     RT});
 
       app.controls.push(rt);
 
@@ -667,8 +671,8 @@ print(RED);
 
       /* Telemetry ---------------------------------------------------- */
       var telem=new telemetry(getGUID(), rt, rt.w-195, 10, 190, rt.h-10,
-        {color:     GRAY,
-         cursor:    0});
+        {color:     BLACK,
+         cursor:    ARROW});
 
       app.controls.push(telem);
 
@@ -705,16 +709,30 @@ print(RED);
   };
 
   initialize();
+  print(getURLParams());
+  function update(){
+    
+    //  Frame Rate
+    if(frameCount%30===0){ app.frameRate=getFrameRate(); }
 
+  };
+  
   function draw(){
 
     background(128);
 
     forEach(app.controls,'draw');
 
-    fill(BLACK);
-    text(RED,100,100);
+    update();
 
+  }
+  function mouseMoved() {
+  
+    app.mouseX=mouseX;
+    app.mouseY=mouseY;
+
+    for(var c in app.controls){ app.controls[c].moved(0,0); }
+  
   }
   function mousePressed() {
 
@@ -725,8 +743,14 @@ print(RED);
   }
   function windowResized(){
 
-    resizeCanvas(windowWidth-5, windowHeight-5);
+    resizeCanvas(windowWidth-10, windowHeight-10);
 
     forEach(app.controls,'resized');
     
   }
+
+/**
+
+9^3 + 10^3 = 12^3 + 1^3 = 1729
+
+*/
