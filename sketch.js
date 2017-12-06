@@ -1,22 +1,68 @@
-/**
+/**  Whitelist
+
+*
++stackoverflow.com
++khanacademy.org
++whatbadgenext.appspot.com
++codecogs.com/latex/eqneditor.php
++youtube.com
++mail.google.com
++tube.geogebra.org/student/m762
++bradsiemens.com
++processingjs.org
++processing.org
++wikipedia.org
++google.com
++brm.io/matter-js-demo
++w3schools.com
++touchmathematics.org
++desmos.com
++github.com
++emptyblack.com
++redblobgames.com
++dailymotion.com
++pistolslut.com
++latin-phrases.co.uk/quotes/beginning-end
++code.org
++natureofcode.com
++alssndro.github.io/trianglify-background-generator
++p5js.org
++google.ca
++projecteuler.net
++www.numberempire.com
++oeis.org
++math.stackexchange.com
++jasondavies.com
++hex.frvr.com
++mynoise.net
++developer.mozilla.org
++docs.oracle.com
++www.mathopenref.com
++p5js.org
++alpha.editor.p5js.org
++piratefsh.github.io/2017/06/02/recursive-hexagon-patterns.html
+
+*/
+
+/*
 
   TO DO:
-  
-    
-    
+
+
+
 
   To Done:
-  
+
     - determine how to pass a color as a parameter
 
   Research:
-  
+
     print(getURLParams()); - test when this goes live
-    
+
   Cursors:
-  
+
     ARROW, CROSS, HAND, MOVE, TEXT, or WAIT
-  
+
 **/
 
 
@@ -58,7 +104,7 @@
 
   var K_RED         = [170, 29, 29,255];  var K_GREEN     = [158,182, 58,255];
   var K_BLUE        = [ 29, 86,170,255];  var K_YELLOW    = [238,214, 15,255];
-  var K_ORANGE      = [238,136, 15,255]; 
+  var K_ORANGE      = [238,136, 15,255];
 
   var BROWN         = [155,145,135,255];
 
@@ -94,7 +140,7 @@
     textFont('sans-serif',12);
 
     cursor(WAIT);
-    
+
     randomSeed(millis());
 
     strokeCap(SQUARE);
@@ -137,7 +183,7 @@
       this.keys         = [];                 //  Array holding the value of all keycodes
 
       this.fullscreen   = false;              //  Is the display set to take up the entire screen ie. No Chrome
-      
+
       this.info         = 0;                  //  Is the info frame displayed
       this.telemetry    = false;              //  Is telemetry visible
 
@@ -397,9 +443,9 @@
         forEach(this.controls,'resized');
 
       };
-      
+
     }
-    
+
     /** Telemetry       -------------------------------------------------- */
     {
 
@@ -479,7 +525,7 @@
                    '\n\n'   + 'Window Width:'  +
                    '\n'     + 'Window Height:' +
                    '\n\n'   + 'Display Width:'  +
-                   '\n'     + 'Display Height:' +                   
+                   '\n'     + 'Display Height:' +
                    '\n\n'   + 'Focused:'       +
                    '\n\n'   + 'Frame Count:'   +
                    '\n'     + 'Frame Rate:',
@@ -500,7 +546,7 @@
                    '\n\n\n' + width                      +
                    '\n'     + height                     +
                    '\n\n'   + windowWidth                +
-                   '\n'     + windowHeight               +                   
+                   '\n'     + windowHeight               +
                    '\n\n'   + displayWidth               +
                    '\n'     + displayHeight              +
                    '\n\n'   + focused                    +
@@ -612,7 +658,7 @@
       };
 
     }
-    
+
     /** Hexboard        -------------------------------------------------- */
     {
 
@@ -624,20 +670,24 @@
         this.color          = props.color;
 
         /* ------------------------------------------------- */
+        this.radius         = 0;
+
         this.activeCell     = null;
 
-        this.layout         = [];   //  Array of the layout of hexcells
-        this.text           = [];   //  Array of nexCell hints
+        this.layout         = [];     //  Array of the layout of hexcells
+        this.text           = [];     //  Array of nexCell hints
 
-        this.lines          = [];   //  Array of hexCells with highlight lines activated
-        this.halos          = [];   //  Array of hexCells with a halo activated
+        this.lines          = [];     //  Array of hexCells with highlight lines activated
+        this.halos          = [];     //  Array of hexCells with a halo activated
 
-        this.clrOffset      = 0;    //  Used to pulsate the halo
-        this.clrIncr        = 0.5;  //  Something, something halo
+        this.clrOffset      = 0;      //  Used to pulsate the halo
+        this.clrIncr        = 0.5;    //  Something, something halo
 
         this.dirty          = false;  //  Has the hexBoard been clicked yet?
 
-        app.hexBoard        = this; //  Set a global hexBoard reference
+        app.hexBoard        = this;   //  Set a global hexBoard reference
+
+        this.calcRadius();
 
         // this.reset();
 
@@ -748,44 +798,100 @@ print(this.controls.length);
 
           if(this.active){ cursor(this.cursor); }
 
-          function background(){
+          function drawHexagon(r, x, y){
+            
+            beginShape();
+
+              for(var n=0; n<6; n++){
+
+                vertex(x + r * cos(PI/3 * n),
+                       y + r * sin(PI/3 * n));
+
+              };
+
+            endShape(CLOSE);
+            
+          };          
+          function border(){
 
             fill(p.color);
             stroke(getColor(H_BLUE,25));
 
               rect( 0, 0, p.w, p.h, 5);
 
-            textAlign(CENTER,CENTER);
-            textSize(height/20);
+            // textAlign(CENTER,CENTER);
+            // textSize(height/20);
+
+            // push();
+
+              // translate(32,height/2);
+              // rotate(PI/2);
+
+              // noStroke();
+              // fill(212);
+
+                // text('Level ' + app.levelText[app.puzzle/2], 3,-3);
+
+              // fill(202);
+
+                // text('Level ' + app.levelText[app.puzzle/2], 0, 0);
+
+            pop();
+
+          };
+          function board(){
+
+            var r = p.radius;
 
             push();
 
-              translate(32,height/2);
-              rotate(PI/2);
+              translate(p.w/2,p.h/2);
 
-              noStroke();
-              fill(212);
+                fill(getColor(164,20));
+                noStroke();
 
-                text('Level ' + app.levelText[app.puzzle/2], 3,-3);
+                  ellipse(0, 0, r, r);
 
-              fill(202);
+                fill(128);
 
-                text('Level ' + app.levelText[app.puzzle/2], 0, 0);
+                  drawHexagon(r/2,0,0);
 
             pop();
 
           };
           function controls(){
 
-            var ctrls=p.controls;
+            // var ctrls=p.controls;
 
-            for(var r in ctrls){
-              for(var c in ctrls[r]){
+            // for(var r in ctrls){
+              // for(var c in ctrls[r]){
 
-                ctrls[r][c].draw();
+                // ctrls[r][c].draw();
 
-              }
-            }
+              // }
+            // }
+
+            push();
+
+              translate(p.w/2, p.h/2);
+
+                stroke(32);
+                noFill();
+
+                var rad=p.radius/18;
+
+                  drawHexagon(rad, 0, 0);
+
+                  for(var r=1; r<5; r++){
+                    for(var n=0; n<6; n++){
+
+                      drawHexagon(rad, 2 * r * rad * sin(PI/3) * cos(n*PI/3+PI/6),
+                                       2 * r * rad * sin(PI/3) * sin(n*PI/3+PI/6));
+
+                    }
+                  }
+
+            pop();
 
           };
 
@@ -793,7 +899,8 @@ print(this.controls.length);
 
             translate(this.x, this.y);
 
-              background();
+              border();
+              board();
               controls();
 
           pop();
@@ -1351,22 +1458,33 @@ print(this.controls.length);
         columnCounts();
 
       };
-      hexBoard.prototype.resized=function(){
-        
-        this.x=10;
-        this.y=10;
-        this.w=this.parent.w-215;
-        this.h=this.parent.h-20;
+      hexBoard.prototype.calcRadius   = function(){
+
+        var rw = (this.h-20)/sin(PI/3);
+        var rh =  this.w-20;
+
+        if(rw > rh){ this.radius = rh; }
+        else       { this.radius = rw; }
+
+      };
+      hexBoard.prototype.resized      = function(){
+
+        this.x = 5;
+        this.y = 5;
+        this.w = this.parent.w-205;
+        this.h = this.parent.h-10;
+
+        this.calcRadius();
 
       };
 
     }
-    
+
   }
-  
+
   /* Controls   ======================================================== */
   {
-  
+
     /** Hexagonal Cell  -------------------------------------------------- */
     {
 
@@ -2088,7 +2206,7 @@ print(this.controls.length);
     }
 
   }
-  
+
   /********************************************************************************
   *
   * Initialize
@@ -2115,7 +2233,7 @@ print(this.controls.length);
       // rt.controls.push(new zen(getGUID(), rt, 100, 100, 400, 400, null));
 
       /* Hex Board         */
-      rt.controls.push(new hexBoard('hexBoard'+getGUID(), rt, 5, 5, rt.w-205, rt.h-10,
+      rt.controls.push(new hexBoard('hexBoard', rt, 5, 5, rt.w-205, rt.h-10,
         {color:    220}));
 
       /* Accessories ---------------------------------------------------- */
@@ -2204,15 +2322,15 @@ print(this.controls.length);
 
   initialize();
 
-  
+
 
   function update(){
-    
+
     //  Frame Rate
     if(frameCount%30===0){ app.frameRate=getFrameRate(); }
 
   };
-  
+
   function draw(){
 
     background(128);
@@ -2222,7 +2340,7 @@ print(this.controls.length);
     update();
 
   }
-  
+
   /* Mouse Events ============================================================== */
   {
 
@@ -2245,14 +2363,14 @@ print(this.controls.length);
 
       fullscreen(app.fullscreen);
 
-    };    
+    };
     function mouseMoved() {
-    
+
       app.mouseX=mouseX;
       app.mouseY=mouseY;
 
       for(var c in app.controls){ app.controls[c].moved(0,0); }
-    
+
     };
     mousePressed=function(){
 
@@ -2300,7 +2418,7 @@ print(this.controls.length);
     };
 
   }
-  
+
   /* Keyboard Events =========================================================== */
   {
 
@@ -2366,7 +2484,7 @@ print(this.controls.length);
 
           // /* Figure out how to use this                                                                             */
           // case app.keys[KEYCODES.CODED]:                                                break;
-          
+
           default:                                                                      break;
         }
 
@@ -2376,7 +2494,7 @@ print(this.controls.length);
     keyReleased=function(){ app.keys[keyCode]=false;                          };
 
   }
-  
+
   function windowResized(){
 
     resizeCanvas(windowWidth-10, windowHeight-10);
@@ -2385,36 +2503,36 @@ print(this.controls.length);
 print('resized');
   }
 
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   /**
-  
+
   1729 = 9^3 + 10^3 = 12^3 + 1^3
-  
+
   sketch.js
-  
+
   */
