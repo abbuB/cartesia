@@ -214,20 +214,18 @@
               ],
 
               [ //  Layout 1-6
-  //                    1    2    3    4    5    6    7    8    9    10   11   12   13   14   15   16   17
-                ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],  //  1
-                ['.', '.', '.', '.', 'o', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],  //  2
-                ['.', '.', '.', 'O', '.', 'x', 'o', '.', '.', '.', '.', '.', 'o', 'o', 'x', '.', '.'],  //  3
-                ['.', '.', '.', 'x', '.', '.', 'O', '.', '.', '.', '.', '.', 'O', 'x', 'O', 'x', '.'],  //  4
-                ['.', '.', '.', 'O', 'x', 'O', 'x', '.', '.', '.', '.', '.', 'o', 'O', '.', '.', '.'],  //  5
-                ['.', '.', '.', '.', 'o', 'o', 'o', '.', 'O', 'x', 'O', 'o', 'o', '.', '.', '.', '.'],  //  6
-                ['.', '.', '.', '.', 'O', '.', '.', 'x', '.', '.', '.', 'x', '.', '.', '.', '.', '.'],  //  7
-                ['.', '.', 'O', 'o', 'o', '.', '.', 'o', 'x', 'o', 'x', 'o', '.', '.', '.', '.', '.'],  //  8
-                ['.', 'o', 'o', 'x', 'O', '.', '.', 'O', 'o', '.', 'o', 'O', 'o', 'x', '.', '.', '.'],  //  9
-                ['.', 'x', 'o', '.', '.', 'o', 'x', 'O', '.', '.', '.', 'o', 'o', 'x', 'O', 'x', '.'],  // 10
-                ['.', 'x', 'O', 'O', 'x', 'O', 'x', 'o', '.', '.', '.', '.', '.', 'O', '.', '.', '.'],  // 11
-                ['.', '.', '.', '.', '.', 'o', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],  // 12
-                ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.']   // 13
+  //             1  2  3  4  5  6  7  8  9 10 11
+                [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],  //  1
+                [0, 0, 0, 6, 6, 1, 1, 1, 0, 0, 0],  //  2
+                [0, 6, 6, 6, 6, 1, 1, 1, 1, 1, 0],  //  3
+                [6, 6, 6, 6, 6, 1, 1, 1, 1, 2, 2],  //  4
+                [5, 5, 6, 6, 6, 1, 1, 2, 2, 2, 2],  //  5
+                [5, 5, 5, 5, 6, 7, 2, 2, 2, 2, 2],  //  6
+                [5, 5, 5, 5, 5, 4, 3, 3, 2, 2, 2],  //  7
+                [5, 5, 5, 4, 4, 4, 3, 3, 3, 3, 2],  //  8
+                [5, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3],  //  9
+                [0, 0, 4, 4, 4, 4, 3, 3, 3, 0, 0],  // 10
+                [0, 0, 0, 0, 4, 4, 3, 0, 0, 0, 0],  // 11
               ],
               [ //  Text 1-6
   //                    1    2    3    4    5    6    7    8    9    10   11   12   13   14   15   16   17
@@ -248,21 +246,21 @@
 
               [ //  Layout 1-7
   //             1  2  3  4  5  6  7  8  9 10 11 12 13 14 15
-                // [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  //  1
-                [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],  //  2
-                [0, 0, 0, 0, 0, 6, 6, 1, 1, 1, 0, 0, 0, 0, 0],  //  3
-                [0, 0, 0, 6, 6, 6, 6, 1, 1, 1, 1, 1, 0, 0, 0],  //  4
-                [0, 6, 6, 6, 6, 6, 6, 1, 1, 1, 1, 1, 1, 2, 0],  //  5
-                [0, 5, 6, 6, 6, 6, 6, 1, 1, 1, 1, 2, 2, 2, 0],  //  6
-                [0, 5, 5, 5, 6, 6, 6, 1, 1, 2, 2, 2, 2, 2, 0],  //  7
-                [0, 5, 5, 5, 5, 5, 6, 7, 2, 2, 2, 2, 2, 2, 0],  //  8
-                [0, 5, 5, 5, 5, 5, 5, 4, 3, 3, 2, 2, 2, 2, 0],  //  9
-                [0, 5, 5, 5, 5, 4, 4, 4, 3, 3, 3, 3, 2, 2, 0],  // 10
-                [0, 5, 5, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 0],  // 11
-                [0, 0, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 0, 0],  // 12
-                [0, 0, 0, 0, 4, 4, 4, 4, 3, 3, 3, 0, 0, 0, 0],  // 13
-                [0, 0, 0, 0, 0, 0, 4, 4, 3, 0, 0, 0, 0, 0, 0],  // 14
-                // [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]   // 15
+                // [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  //  1
+                [0, 0, 0, 0, 0, 6, 1, 1, 0, 0, 0, 0, 0],  //  2
+                [0, 0, 0, 6, 6, 6, 1, 1, 1, 1, 0, 0, 0],  //  3
+                [0, 6, 6, 6, 6, 6, 1, 1, 1, 1, 1, 1, 0],  //  4
+                [6, 6, 6, 6, 6, 6, 1, 1, 1, 1, 1, 2, 2],  //  5
+                [5, 5, 6, 6, 6, 6, 1, 1, 1, 2, 2, 2, 2],  //  6
+                [5, 5, 5, 5, 6, 6, 1, 2, 2, 2, 2, 2, 2],  //  7
+                [5, 5, 5, 5, 5, 5, 7, 3, 2, 2, 2, 2, 2],  //  8
+                [5, 5, 5, 5, 5, 4, 4, 3, 3, 3, 2, 2, 2],  //  9
+                [5, 5, 5, 4, 4, 4, 4, 3, 3, 3, 3, 3, 2],  // 10
+                [5, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3],  // 11
+                [0, 0, 4, 4, 4, 4, 4, 3, 3, 3, 3, 0, 0],  // 12
+                [0, 0, 0, 0, 4, 4, 4, 3, 3, 0, 0, 0, 0],  // 13
+                [0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0],  // 14
+                // [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]   // 15
               ],
               [ //  Text 1-7
   //                    1    2    3    4    5    6    7    8    9    10   11   12   13   14   15
@@ -651,7 +649,7 @@
       this.reset;
       this.scoreboard;
 
-      this.puzzle       = 12;                  //  Index of the current puzzle layout
+      this.puzzle       = 10;                  //  Index of the current puzzle layout
 
       this.remaining    = 0;                  //  How many blue cells need to be uncovered
       this.covered      = 0;                  //  How many black cells need to be uncovered
@@ -670,10 +668,10 @@
 
   var app=new application();
 
-  /* Utility Functions =================================================== */
+  /* Utility Functions ===================================================== */
   {
 
-    /** Misc            -------------------------------------------------- */
+    /** Misc            ---------------------------------------------------- */
     {
 
       var controlCount=-1;
@@ -704,6 +702,62 @@
 
   }
 
+  /* Navigation  =========================================================== */
+  {
+
+    function incrementPuzzle()   {
+
+        app.puzzle+=2;
+
+        if(app.puzzle>PUZZLES.length-1){  app.puzzle=0; }
+
+        app.puzzle=constrain(app.puzzle, 0, PUZZLES.length-1);
+
+        // reset();
+// throw(23);
+      };
+      function decrementPuzzle()   {
+
+        app.puzzle-=2;
+
+        if(app.puzzle<0){ app.puzzle=PUZZLES.length-2; }
+
+        app.puzzle=constrain(app.puzzle, 0, PUZZLES.length-2);
+
+        // reset();
+
+      };
+      function up(){
+
+        var ac=app.hexBoard.activeCell;
+        
+        if(ac.top!==null){
+
+          var temp=ac.top.layout;
+
+          ac.top.layout=ac.layout;
+          ac.layout=temp;
+
+        }
+        
+      };
+      function down(){
+
+        var ac=app.hexBoard.activeCell;
+        
+        if(ac.bottom!==null){
+
+          var temp=ac.bottom.layout;
+
+          ac.bottom.layout=ac.layout;
+          ac.layout=temp;
+
+        }
+        
+      };      
+      
+  }
+  
     /** Control - default ------------------------------------------------ */
     {
 
@@ -1134,23 +1188,27 @@
 
           var sz=p.radius/p.layout.length;
 
-          var n=0;
+          var n = 0;
 
-          var x=0;
-          var y=0;
+          var x = 0;
+          var y = 0;
 
-          var xMargin=0;
-          var yMargin=0;
+          var xMargin = p.w/2-sz*(p.layout[0].length/2-0.5)*0.75;
+          var yMargin = p.h/2-sz*(p.layout.length/2-0.5)*cos(PI/6);
 
-          var xOffset=0;
-          var yOffset=0;
+          if(p.layout.length%2===0){
+            yMargin = p.h/2-sz*(p.layout.length/2-0.5)*cos(PI/6);            
+          }
+          
+          var xOffset = 0;
+          var yOffset = 0;
 
           yOffset = sz*cos(PI/6);
 
           for(var row in p.layout){
             for(var col in p.layout[row]){
 
-              var curs=HAND;
+              var curs = HAND;
 
               x = xMargin + col*sz*0.75;
               y = yMargin + row*yOffset;
@@ -1309,7 +1367,8 @@
               border();
               board();
               controls();
-
+fill(WHITE);        
+ellipse(this.w/2,this.h/2,10,10);
           pop();
 
       };
@@ -1754,6 +1813,8 @@
         doubleLink();
         // columnCounts();
         this.calcRadius();
+
+
         
       };
       hexBoard.prototype.calcRadius   = function(){
@@ -1790,7 +1851,7 @@
 
         this.calcRadius();
         this.reset();
-print(this.count);
+// print(this.count);
       };
 
     }
@@ -2159,28 +2220,28 @@ print(this.count);
             noStroke();
             strokeWeight(5);
 
-            if(p.top!==null){
-              stroke(CLRS.BLACK);
+            if(p.top!==null && p.top.layout!==0){
+              stroke(BLACK);
               line(p.top.x, p.top.y, p.x, p.y);
             }
-            if(p.bottom!==null){
-              stroke(CLRS.RED);
+            if(p.bottom!==null && p.bottom.layout!==0){
+              stroke(RED);
               line(p.bottom.x, p.bottom.y, p.x, p.y);
             }
-            if(p.topLeft!==null){
-              stroke(CLRS.ORANGE);
+            if(p.topLeft!==null && p.topLeft.layout!==0){
+              stroke(ORANGE);
               line(p.topLeft.x, p.topLeft.y, p.x, p.y);
             }
-            if(p.bottomLeft!==null){
-              stroke(CLRS.YELLOW);
+            if(p.bottomLeft!==null && p.bottomLeft.layout!==0){
+              stroke(YELLOW);
               line(p.bottomLeft.x, p.bottomLeft.y, p.x, p.y);
             }
-            if(p.topRight!==null){
-              stroke(CLRS.GREEN);
+            if(p.topRight!==null && p.topRight.layout!==0){
+              stroke(GREEN);
               line(p.topRight.x, p.topRight.y, p.x, p.y);
             }
-            if(p.bottomRight!==null){
-              stroke(CLRS.BLUE);
+            if(p.bottomRight!==null && p.bottomRight.layout!==0){
+              stroke(BLUE);
               line(p.bottomRight.x, p.bottomRight.y, p.x, p.y);
             }
 
@@ -2205,7 +2266,7 @@ print(this.count);
 
         pop();
 
-        // drawLinks(); //  Delete for release
+        drawLinks(); //  Delete for release
 
       };
       hexCell.prototype.hitTest=function(x,y){
@@ -2690,19 +2751,19 @@ print(this.count);
           // case app.keys[KEYCODES.C]:          setCellType(HEXY_TYPES.CONSECUTIVE);      break;  /* Consecutive      */
           // case app.keys[KEYCODES.N]:          setCellType(HEXY_TYPES.NOT_CONSECUTIVE);  break;  /* Non-Consecutive  */
 
-          // /*  Navigation                                                                                            */
-          // case app.keys[KEYCODES.A]:          decrementPuzzle();                        break;  /* A                */
-          // case app.keys[KEYCODES.D]:          incrementPuzzle();                        break;  /* D                */
+          /*  Navigation                                                                                            */
+          case app.keys[KEYCODES.A]:          decrementPuzzle();                        break;  /* A                */
+          case app.keys[KEYCODES.D]:          incrementPuzzle();                        break;  /* D                */
 
-          // case app.keys[KEYCODES.UP]:         up();                                     break;  /* Up               */
-          // case app.keys[KEYCODES.DOWN]:       down();                                   break;  /* Down             */
+          case app.keys[KEYCODES.UP]:         up();                                     break;  /* Up               */
+          case app.keys[KEYCODES.DOWN]:       down();                                   break;  /* Down             */
 
-          // case app.keys[KEYCODES.RIGHT] &&
-               // app.keys[KEYCODES.CONTROL]:    downRight();                              break;  /* Down Right       */
-          // case app.keys[KEYCODES.RIGHT]:      upRight();                                break;  /* Up Right         */
-          // case app.keys[KEYCODES.LEFT] &&
-               // app.keys[KEYCODES.CONTROL]:    downLeft();                               break;  /* Down Left        */
-          // case app.keys[KEYCODES.LEFT]:       upLeft();                                 break;  /* Up Left          */
+          case app.keys[KEYCODES.RIGHT] &&
+               app.keys[KEYCODES.CONTROL]:    downRight();                              break;  /* Down Right       */
+          case app.keys[KEYCODES.RIGHT]:      upRight();                                break;  /* Up Right         */
+          case app.keys[KEYCODES.LEFT] &&
+               app.keys[KEYCODES.CONTROL]:    downLeft();                               break;  /* Down Left        */
+          case app.keys[KEYCODES.LEFT]:       upLeft();                                 break;  /* Up Left          */
 
           // /* Figure out how to use this                                                                             */
           // case app.keys[KEYCODES.CODED]:                                                break;
