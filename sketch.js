@@ -1107,8 +1107,9 @@
 
         app.hexBoard        = this;   //  Set a global hexBoard reference
 
-        this.calcRadius();
+        this.count          = 0;
 
+        this.calcRadius();
         this.reset();
 
       };
@@ -1131,55 +1132,36 @@
 
         function load(){
 
-          var WIDTH  = width-800;
-          var HEIGHT = height;
+          var sz=p.radius/p.layout.length;
 
-          if     (WIDTH  >= HEIGHT){ HEX_SIZE = HEIGHT / (p.layout.length);    }
-          else if(HEIGHT >  WIDTH ){ HEX_SIZE = WIDTH  / (p.layout[0].length); }
-
-          var w=HEX_SIZE;
-
-          w=p.radius/p.layout.length;
+          var n=0;
 
           var x=0;
           var y=0;
 
-          var xMargin;
-          var yMargin;
+          var xMargin=0;
+          var yMargin=0;
 
-          var xOffset;
-          var yOffset;
+          var xOffset=0;
+          var yOffset=0;
 
-          var row;
-          var col;
+          yOffset = sz*cos(PI/6);
 
-          n=0;
+          for(var row in p.layout){
+            for(var col in p.layout[row]){
 
-          yOffset = w*cos(PI/6);
+              var curs=HAND;
 
-          xMargin = w/2     + (p.w-(w+w*(p.layout[0].length-1)*0.75))/2;
-          yMargin = yOffset +  p.h/2 - (p.layout.length-1)*yOffset/2-w/2-10;
-
-          var curs=HAND;
-
-          for(row in p.layout){
-            for(col in p.layout[row]){
-
-              x = xMargin + col*w*0.75;
+              x = xMargin + col*sz*0.75;
               y = yMargin + row*yOffset;
 
               if(col%2===0){
                 y-=yOffset/2;
               }
 
-              if(p.layout[row][col]==='.'){
-                curs=ARROW;
-              }
-              else{
-                curs=HAND;
-              }
+              if(p.layout[row][col]===0){ curs=ARROW; }
 
-              rowArray.push(new hexCell('hexcell'+getGUID(), p, x, y, w, w,
+              rowArray.push(new hexCell('hexcell'+getGUID(), p, x, y, sz, sz,
                 {row:       row,
                  col:       col,
                  layout:    p.layout[row][col],
@@ -1195,6 +1177,9 @@
             rowArray=[];
 
           }
+
+          p.count=n;
+          app.controlCount=n+3;
 
         };
 
@@ -1293,34 +1278,34 @@
               }
             }
 
-            push();
+            // push();
 
-              translate(p.w/2, p.h/2);
+              // translate(p.w/2, p.h/2);
 
-                stroke(32);
-                noFill();
+                // stroke(32);
+                // noFill();
 
-                var rad=p.radius/27;
+                // var rad=p.radius/13;
 
-                  drawHexagon(rad, 0, 0);
+                  // drawHexagon(rad, 0, 0);
 
-                  for(var r=1; r<7; r++){
-                    for(var n=0; n<6; n++){
+                  // for(var r=1; r<7; r++){
+                    // for(var n=0; n<6; n++){
 
-                      drawHexagon(rad, 2 * r * rad * sin(PI/3) * cos(n*PI/3+PI/6),
-                                       2 * r * rad * sin(PI/3) * sin(n*PI/3+PI/6));
+                      // drawHexagon(rad, 2 * r * rad * sin(PI/3) * cos(n*PI/3+PI/6),
+                                       // 2 * r * rad * sin(PI/3) * sin(n*PI/3+PI/6));
 
-                    }
-                  }
+                    // }
+                  // }
 
-            pop();
+            // pop();
 
           };
 
           push();
 
             translate(this.x, this.y);
-            
+
               border();
               board();
               controls();
@@ -1779,6 +1764,22 @@
         if(rw > rh){ this.radius = rh; }
         else       { this.radius = rw; }
 
+        // var ctrls=this.controls;
+        // var sz=this.layout.length;
+        
+        // this.reset();
+        
+        // for(var r in ctrls){
+          // for(var c in ctrls[r]){
+
+            // ctrls[r][c].w=this.radius/sz;
+            // ctrls[r][c].h=this.radius/sz;
+
+            // ctrls[r][c].reset();
+
+          // }
+        // }
+
       };
       hexBoard.prototype.resized      = function(){
 
@@ -1788,7 +1789,8 @@
         this.h = this.parent.h-10;
 
         this.calcRadius();
-
+        this.reset();
+print(this.count);
       };
 
     }
@@ -1849,13 +1851,20 @@
         var p=this;
 
         /* Initialize */
-        function reset(){
+        function load(){
 
+          p.points=[];
+          p.opoints=[];
+          p.ipoints=[];
+          p.hpoints=[];
+          
           var d2=p.w/2;  // Half diameter
 
           var pt=0;
           var ang=0;
-
+          
+          var w=d2*0.15;
+          
           for(pt=0; pt<6; pt++){
 
             p.points.push( new pnt( cos(radians(ang+pt*60))*(d2),
@@ -1864,8 +1873,8 @@
             p.opoints.push(new pnt( cos(radians(ang+pt*60))*(d2-3),
                                     sin(radians(ang+pt*60))*(d2-3) ));
 
-            p.ipoints.push(new pnt( cos(radians(ang+pt*60))*(d2-8),
-                                    sin(radians(ang+pt*60))*(d2-8) ));
+            p.ipoints.push(new pnt( cos(radians(ang+pt*60))*(d2-w),
+                                    sin(radians(ang+pt*60))*(d2-w) ));
 
             p.hpoints.push(new pnt( cos(radians(ang+pt*60))*(d2-3)+4,
                                     sin(radians(ang+pt*60))*(d2-3)-3 ));
@@ -1874,10 +1883,41 @@
 
         };
 
-        reset();
+        this.reset();
 
       };
       hexCell.prototype=Object.create(control.prototype);
+      hexCell.prototype.reset=function(){
+        
+        this.points=[];
+        this.opoints=[];
+        this.ipoints=[];
+        this.hpoints=[];
+        
+        var d2=this.w/2;  // Half diameter
+
+        var pt=0;
+        var ang=0;
+
+        var w=d2*0.15;
+          
+        for(pt=0; pt<6; pt++){
+
+          this.points.push( new pnt( cos(radians(ang+pt*60))*(d2),
+                                     sin(radians(ang+pt*60))*(d2) ));
+
+          this.opoints.push(new pnt( cos(radians(ang+pt*60))*(d2-3),
+                                     sin(radians(ang+pt*60))*(d2-3) ));
+
+          this.ipoints.push(new pnt( cos(radians(ang+pt*60))*(d2-w),
+                                     sin(radians(ang+pt*60))*(d2-w) ));
+
+          this.hpoints.push(new pnt( cos(radians(ang+pt*60))*(d2-w)+5,
+                                     sin(radians(ang+pt*60))*(d2-w)-3 ));
+
+        }
+          
+      };      
       hexCell.prototype.draw=function(){
 
         this.active=this.hit &&
@@ -1921,8 +1961,22 @@
                // p.layout===HEXY_TYPES.BLUE ||
                // p.layout===HEXY_TYPES.BLUE_REVEALED){
 
-              noStroke();
-              fill(212);
+              stroke(GRAY);
+              strokeWeight(0.25);
+
+              switch(p.layout){
+
+                case RED0:      fill(getColor(RED,    20)); break;
+                case ORANGE0:   fill(getColor(ORANGE, 20)); break;
+                case YELLOW0:   fill(getColor(YELLOW, 20)); break;
+                case GREEN0:    fill(getColor(GREEN,  20)); break;
+                case BLUE0:     fill(getColor(BLUE,   20)); break;
+                case PURPLE0:   fill(getColor(PURPLE, 20)); break;
+                case BLACK0:    fill(getColor(BLACK,  30)); break;
+
+                default:        noFill();                   break;
+
+              }
 
               beginShape();
 
@@ -1993,7 +2047,7 @@
               case GREEN0:    fill(GREEN);  break;
               case BLUE0:     fill(BLUE);   break;
               case PURPLE0:   fill(PURPLE); break;
-              case BLACK0:    fill(getColor(BLACK,30));  break;
+              case BLACK0:    fill(BLACK);  break;
               
               default:        noFill();     break;
 
@@ -2140,13 +2194,13 @@
 
           scale(1,-1);
 
-            // highlight();  // Commented for Speed
-            outerHexagon();
+            highlight();  // Commented for Speed
+            // outerHexagon();
             innerHexagon();
             // caption();
             activeCell();
 
-            // highlightActive();
+            highlightActive();
             // revealAnimation();
 
         pop();
@@ -2668,7 +2722,9 @@
     resizeCanvas(windowWidth-10, windowHeight-10);
 
     forEach(app.controls,'resized');
+
 print('resized');
+
   }
 
 
