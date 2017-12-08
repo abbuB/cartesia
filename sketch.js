@@ -702,20 +702,20 @@
 
   }
 
-  /* Navigation  =========================================================== */
-  {
+    /* Navigation  =========================================================== */
+    {
 
-    function incrementPuzzle()   {
+      function incrementPuzzle()   {
 
-        app.puzzle+=2;
+          app.puzzle+=2;
 
-        if(app.puzzle>PUZZLES.length-1){  app.puzzle=0; }
+          if(app.puzzle>PUZZLES.length-1){  app.puzzle=0; }
 
-        app.puzzle=constrain(app.puzzle, 0, PUZZLES.length-1);
+          app.puzzle=constrain(app.puzzle, 0, PUZZLES.length-1);
 
-        // reset();
-// throw(23);
-      };
+          // reset();
+  // throw(23);
+        };
       function decrementPuzzle()   {
 
         app.puzzle-=2;
@@ -727,10 +727,25 @@
         // reset();
 
       };
-      function up(){
+      function getBottomCell(cell){
+
+        while(cell.bottom!==undefined &&
+              cell.layout!==0){
+
+          cell=cell.bottom;
+
+        }
+
+        return cell;
+
+      };
+      function colUp(){
 
         var ac=app.hexBoard.activeCell;
-        
+
+  // print(ac.col);
+  print(getBottomCell(ac).row);
+
         if(ac.top!==null){
 
           var temp=ac.top.layout;
@@ -741,7 +756,7 @@
         }
         
       };
-      function down(){
+      function colDown(){
 
         var ac=app.hexBoard.activeCell;
         
@@ -755,9 +770,68 @@
         }
         
       };      
-      
-  }
-  
+      function up(){
+
+        if(app.hexBoard.activeCell.top!==null &&
+           app.hexBoard.activeCell.top.layout!==0){
+          
+          app.hexBoard.activeCell = app.hexBoard.activeCell.top;
+          
+        }
+        
+      };
+      function down(){
+        
+        if(app.hexBoard.activeCell.bottom!==null &&
+           app.hexBoard.activeCell.bottom.layout!==0){
+          
+          app.hexBoard.activeCell = app.hexBoard.activeCell.bottom;
+
+        }
+
+      };
+      function upRight(){
+
+        if(app.hexBoard.activeCell.topRight!==null &&
+           app.hexBoard.activeCell.topRight.layout!==0){
+
+          app.hexBoard.activeCell = app.hexBoard.activeCell.topRight;
+
+        }
+
+      };
+      function upLeft(){
+
+        if(app.hexBoard.activeCell.topLeft!==null &&
+           app.hexBoard.activeCell.topLeft.layout!==0){
+
+          app.hexBoard.activeCell = app.hexBoard.activeCell.topLeft;
+
+        }
+        
+      };
+      function downRight(){
+
+        if(app.hexBoard.activeCell.bottomRight!==null &&
+           app.hexBoard.activeCell.bottomRight.layout!==0){
+
+          app.hexBoard.activeCell = app.hexBoard.activeCell.bottomRight;
+
+        }
+        
+      };
+      function downLeft(){
+
+        if(app.hexBoard.activeCell.bottomLeft!==null &&
+           app.hexBoard.activeCell.bottomLeft.layout!==0){
+
+          app.hexBoard.activeCell = app.hexBoard.activeCell.bottomLeft;
+
+        }
+        
+      };      
+    }
+
     /** Control - default ------------------------------------------------ */
     {
 
@@ -1311,13 +1385,14 @@
             push();
 
               translate(p.w/2,p.h/2);
-
+              // rotate(PI/6);
+              
                 fill(getColor(164,20));
                 noStroke();
 
-                  ellipse(0, 0, r, r);
+                  // ellipse(0, 0, r, r);
 
-                fill(128);
+                fill(getColor(BLACK,10));
 
                   drawHexagon(r/2,0,0);
 
@@ -1336,28 +1411,6 @@
               }
             }
 
-            // push();
-
-              // translate(p.w/2, p.h/2);
-
-                // stroke(32);
-                // noFill();
-
-                // var rad=p.radius/13;
-
-                  // drawHexagon(rad, 0, 0);
-
-                  // for(var r=1; r<7; r++){
-                    // for(var n=0; n<6; n++){
-
-                      // drawHexagon(rad, 2 * r * rad * sin(PI/3) * cos(n*PI/3+PI/6),
-                                       // 2 * r * rad * sin(PI/3) * sin(n*PI/3+PI/6));
-
-                    // }
-                  // }
-
-            // pop();
-
           };
 
           push();
@@ -1367,6 +1420,7 @@
               border();
               board();
               controls();
+noStroke();              
 fill(WHITE);        
 ellipse(this.w/2,this.h/2,10,10);
           pop();
@@ -1923,19 +1977,20 @@ ellipse(this.w/2,this.h/2,10,10);
 
           var pt=0;
           var ang=0;
-          
-          var w=d2*0.15;
-          
+
+          var w15 = d2*0.5;
+          var w5  = d2*0.05;
+print(w15);
           for(pt=0; pt<6; pt++){
 
             p.points.push( new pnt( cos(radians(ang+pt*60))*(d2),
                                     sin(radians(ang+pt*60))*(d2) ));
 
-            p.opoints.push(new pnt( cos(radians(ang+pt*60))*(d2-3),
-                                    sin(radians(ang+pt*60))*(d2-3) ));
+            p.opoints.push(new pnt( cos(radians(ang+pt*60))*(d2-w5),
+                                    sin(radians(ang+pt*60))*(d2-w5) ));
 
-            p.ipoints.push(new pnt( cos(radians(ang+pt*60))*(d2-w),
-                                    sin(radians(ang+pt*60))*(d2-w) ));
+            p.ipoints.push(new pnt( cos(radians(ang+pt*60))*(d2-w15),
+                                    sin(radians(ang+pt*60))*(d2-w15) ));
 
             p.hpoints.push(new pnt( cos(radians(ang+pt*60))*(d2-3)+4,
                                     sin(radians(ang+pt*60))*(d2-3)-3 ));
@@ -1959,19 +2014,21 @@ ellipse(this.w/2,this.h/2,10,10);
 
         var pt=0;
         var ang=0;
+        
+        var w=0;
+        var w15 = d2*0.2;
+        var w5  = d2*0.10;
 
-        var w=d2*0.15;
-          
         for(pt=0; pt<6; pt++){
 
           this.points.push( new pnt( cos(radians(ang+pt*60))*(d2),
                                      sin(radians(ang+pt*60))*(d2) ));
 
-          this.opoints.push(new pnt( cos(radians(ang+pt*60))*(d2-3),
-                                     sin(radians(ang+pt*60))*(d2-3) ));
+          this.opoints.push(new pnt( cos(radians(ang+pt*60))*(d2-w5),
+                                     sin(radians(ang+pt*60))*(d2-w5) ));
 
-          this.ipoints.push(new pnt( cos(radians(ang+pt*60))*(d2-w),
-                                     sin(radians(ang+pt*60))*(d2-w) ));
+          this.ipoints.push(new pnt( cos(radians(ang+pt*60))*(d2-w15),
+                                     sin(radians(ang+pt*60))*(d2-w15) ));
 
           this.hpoints.push(new pnt( cos(radians(ang+pt*60))*(d2-w)+5,
                                      sin(radians(ang+pt*60))*(d2-w)-3 ));
@@ -1989,29 +2046,11 @@ ellipse(this.w/2,this.h/2,10,10);
 
         if(this.active){
 
-          // if(this.layout===HEXY_TYPES.BLACK ||
-             // this.layout===HEXY_TYPES.BLUE ||
-             // app.mode===APPMODES.CREATE){
-            cursor(this.cursor);
-          // }
-          // else{
-            // cursor(ARROW);
-          // }
+          cursor(this.cursor);
 
           if(app.left){ this.offset=1; }
 
         }
-
-        function getOffset(){
-
-          var rand=random(-1,1);
-
-          if(rand>0){ rand= 1.5; }
-          else      { rand=-1.5; }
-
-          return rand;
-
-        };
 
         function highlight(){
 
@@ -2054,115 +2093,72 @@ ellipse(this.w/2,this.h/2,10,10);
         function outerHexagon(){
 
           var offset=0;
+          
+          switch(p.layout){
 
-          noStroke();
+            case RED0:      stroke(getColor(K_RED,40));     break;
+            case ORANGE0:   stroke(getColor(K_ORANGE,40));  break;
+            case YELLOW0:   stroke(getColor(K_YELLOW,40));  break;
+            case GREEN0:    stroke(getColor(K_GREEN,40));   break;
+            case BLUE0:     stroke(getColor(K_BLUE,40));    break;
+            case PURPLE0:   stroke(getColor(K_PURPLE,40));  break;
+            case BLACK0:    stroke(getColor(BLACK,40));     break;
 
-          // if(app.mode===APPMODES.CREATE){
+            default:        noStroke();                     break;
+            
+          }
 
-          // }
-          // else{
+          noFill();
+          strokeWeight(2);
+          stroke(getColor(BLACK,15));
+          
+          beginShape();
 
-            switch(p.layout){
-
-              case RED0:      fill(K_RED);    break;
-              case ORANGE0:   fill(K_ORANGE); break;
-              case YELLOW0:   fill(K_YELLOW); break;
-              case GREEN0:    fill(K_GREEN);  break;
-              case BLUE0:     fill(K_BLUE);   break;
-              case PURPLE0:   fill(K_PURPLE); break;
-              case BLACK0:    fill(BLACK);  break;
-
-              default:        noFill();     break;
-              
+            for(var pt in p.opoints){
+              vertex(p.opoints[pt].x+offset,
+                     p.opoints[pt].y+offset);
             }
 
-          // }
-
-            beginShape();
-
-              for(var pt in p.opoints){
-                vertex(p.opoints[pt].x+offset,
-                       p.opoints[pt].y+offset);
-              }
-
-            endShape(CLOSE);
-
-          // }
+          endShape(CLOSE);
 
         };
         function innerHexagon(){
 
           var drw=true;
+          
+          switch(p.layout){
 
-          // if(app.mode===APPMODES.CREATE){
+            case RED0:      fill(RED);    break;
+            case ORANGE0:   fill(ORANGE); break;
+            case YELLOW0:   fill(YELLOW); break;
+            case GREEN0:    fill(GREEN);  break;
+            case BLUE0:     fill(BLUE);   break;
+            case PURPLE0:   fill(PURPLE); break;
+            case BLACK0:    fill(BLACK);  break;
+            
+            default:        noFill();     break;
 
+          }
 
-          // }
-          // else{
+          noStroke();
 
-            switch(p.layout){
+          beginShape();
 
-              case RED0:      fill(RED);    break;
-              case ORANGE0:   fill(ORANGE); break;
-              case YELLOW0:   fill(YELLOW); break;
-              case GREEN0:    fill(GREEN);  break;
-              case BLUE0:     fill(BLUE);   break;
-              case PURPLE0:   fill(PURPLE); break;
-              case BLACK0:    fill(BLACK);  break;
-              
-              default:        noFill();     break;
-
+            for(var pt in p.ipoints){
+              vertex(p.ipoints[pt].x,
+                     p.ipoints[pt].y);
             }
 
-          // }
-
-          // if(drw){
-
-            noStroke();
-
-            beginShape();
-
-              for(var pt in p.ipoints){
-                vertex(p.ipoints[pt].x,
-                       p.ipoints[pt].y);
-              }
-
-            endShape(CLOSE);
-
-          // }
-
-        };
-        function caption(){
+          endShape(CLOSE);
 
         };
         function activeCell(){
 
-          if(p.active){
+          if(app.hexBoard.activeCell===p){
 
             fill(getColor(BLACK,15));
-
-            beginShape();
-
-              for(var pt in p.opoints){
-                vertex(p.opoints[pt].x,
-                       p.opoints[pt].y);
-              }
-
-            endShape(CLOSE);
-
-          }
-
-        };
-
-        function highlightActive(){
-
-          //  Highlight Active cell when editing
-          if(app.hexBoard.activeCell===p &&
-             app.mode===APPMODES.CREATE){
-
-            noFill();
             strokeWeight(1.5);
-            stroke(CLRS.GRAY);
+            stroke(getColor(BLACK,25));
 
             beginShape();
 
@@ -2174,42 +2170,6 @@ ellipse(this.w/2,this.h/2,10,10);
             endShape(CLOSE);
 
           }
-
-        }
-        function revealAnimation(){
-
-          // if(p.layout===HEXY_TYPES.BLACK_REVEALED){
-
-            // This must done outside the hexCell object because it has
-            // to be drawn over hexCells that are drawn after this one
-
-          // }
-          // else{
-
-            if(p.clickRadius>0){
-
-              noStroke();
-
-              fill(H_ORANGE_L);
-
-              var w=p.clickRadius/2;
-
-              rotate(radians(p.clickRadius)*3);
-
-              beginShape();
-
-                for(var pt=0; pt<6; pt++){
-                  vertex(cos(radians(pt*60))*w,
-                         sin(radians(pt*60))*w );
-                }
-
-              endShape();
-
-              p.clickRadius-=5;
-
-            }
-
-          // }
 
         };
 
@@ -2255,19 +2215,15 @@ ellipse(this.w/2,this.h/2,10,10);
 
           scale(1,-1);
 
-            highlight();  // Commented for Speed
+            // highlight();
             // outerHexagon();
             innerHexagon();
-            // caption();
             activeCell();
-
-            highlightActive();
-            // revealAnimation();
 
         pop();
 
         drawLinks(); //  Delete for release
-
+// if(this.parent.activeCell===this){ print(this.id); }
       };
       hexCell.prototype.hitTest=function(x,y){
 
@@ -2306,12 +2262,6 @@ ellipse(this.w/2,this.h/2,10,10);
 
               if(this.hitTest(x,y)){ this.hit=true;
                                      app.focus=this;
-                                     this.parent.activeCell=this;
-                                     // if((this.layout===HEXY_TYPES.BLUE ||
-                                         // this.layout===HEXY_TYPES.BLACK) &&
-                                        // this.timer===0){
-                                       // this.timer=5;
-                                     // }
                                    }
               else                 { this.hit=false; }
 
@@ -2330,54 +2280,12 @@ ellipse(this.w/2,this.h/2,10,10);
       };
       hexCell.prototype.clicked=function(){
 
+        if(this.hit){
+          this.parent.activeCell=this;
+          app.focus=this;
+        }
+
           if(this.active){
-
-            // this.parent.dirty=true;
-
-            // if(app.mode===APPMODES.CREATE){
-
-              // this.incrementCellLayout();
-
-            // }
-            // else if(app.mode===APPMODES.GAME){
-
-              // { // Toggle Halo display
-
-                // if(this.layout===HEXY_TYPES.BLUE_REVEALED &&
-                   // this.text  ===HEXY_TYPES.NUMBER){
-                  // this.halo=!this.halo;
-                // }
-
-              // }
-
-              // { //  Toggle Line Display
-
-                // if(this.layout===HEXY_TYPES.DOWN_CENTER ||
-                   // this.layout===HEXY_TYPES.DOWN_LEFT ||
-                   // this.layout===HEXY_TYPES.DOWN_RIGHT){
-                  // this.line=!this.line;
-                // }
-
-              // }
-
-               // Blue Hexagon
-              // if(this.layout===HEXY_TYPES.BLUE){
-
-                // this.layout=HEXY_TYPES.BLUE_REVEALED;
-                // this.clickRadius=HEX_SIZE-10;
-
-              // } // Black Hexagon
-              // else if(this.layout===HEXY_TYPES.BLACK){
-                // app.errors++;
-                // this.timer=5;
-                // this.dirty=false;
-              // }
-
-              // if(app.debug){
-                // this.execute(this.id);
-              // }
-
-            // }
 
           }
 
@@ -2765,10 +2673,16 @@ ellipse(this.w/2,this.h/2,10,10);
                app.keys[KEYCODES.CONTROL]:    downLeft();                               break;  /* Down Left        */
           case app.keys[KEYCODES.LEFT]:       upLeft();                                 break;  /* Up Left          */
 
+          // case app.keys[KEYCODES.UP] &&
+               // app.keys[KEYCODES.CONTROL]:    colUp();                                  break;  /* Shift col up     */
+          // case app.keys[KEYCODES.DOWN] &&
+               // app.keys[KEYCODES.CONTROL]:    colDown();                                break;  /* Shift Col down   */
+
           // /* Figure out how to use this                                                                             */
           // case app.keys[KEYCODES.CODED]:                                                break;
 
           default:                                                                      break;
+
         }
 
 // print("pressed " + key + " " + keyCode);
