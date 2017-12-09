@@ -727,49 +727,156 @@
         // reset();
 
       };
-      function getBottomCell(cell){
 
-        while(cell.bottom!==undefined &&
-              cell.layout!==0){
+      // Move Columns ----------
+      function colUp()             {
+      
+        var cell=app.hexBoard.activeCell;        
+        
+        while(cell.top!==null &&
+              cell.top.layout!==BLANK){
+
+          cell=cell.top;
+
+        }
+        
+        var topLayout=cell.layout;
+
+        while(cell.bottom!==null &&
+              cell.bottom.layout!==BLANK){
+
+          cell.layout=cell.bottom.layout;
+          cell=cell.bottom;
+
+        }
+        
+        cell.layout=topLayout;
+
+      };
+      function colDown()           {
+
+        var cell=app.hexBoard.activeCell;        
+
+        while(cell.bottom!==null &&
+              cell.bottom.layout!==BLANK){
 
           cell=cell.bottom;
 
         }
+        
+        var bottomLayout=cell.layout;
 
-        return cell;
+        while(cell.top!==null &&
+              cell.top.layout!==BLANK){
 
-      };
-      function colUp(){
-
-        var ac=app.hexBoard.activeCell;
-
-  // print(ac.col);
-  print(getBottomCell(ac).row);
-
-        if(ac.top!==null){
-
-          var temp=ac.top.layout;
-
-          ac.top.layout=ac.layout;
-          ac.layout=temp;
+          cell.layout=cell.top.layout;
+          cell=cell.top;
 
         }
         
-      };
-      function colDown(){
-
-        var ac=app.hexBoard.activeCell;
-        
-        if(ac.bottom!==null){
-
-          var temp=ac.bottom.layout;
-
-          ac.bottom.layout=ac.layout;
-          ac.layout=temp;
-
-        }
+        cell.layout=bottomLayout;
         
       };      
+      function colUpRight()        {
+
+        var cell=app.hexBoard.activeCell;        
+
+        while(cell.topRight!==null &&
+              cell.topRight.layout!==BLANK){
+
+          cell=cell.topRight;
+
+        }
+        
+        var topLayout=cell.layout;
+
+        while(cell.bottomLeft!==null &&
+              cell.bottomLeft.layout!==BLANK){
+
+          cell.layout=cell.bottomLeft.layout;
+          cell=cell.bottomLeft;
+
+        }
+        
+        cell.layout=topLayout;
+        
+      };
+      function colUpLeft()        {
+
+        var cell=app.hexBoard.activeCell;        
+
+        while(cell.topLeft!==null &&
+              cell.topLeft.layout!==BLANK){
+
+          cell=cell.topLeft;
+
+        }
+        
+        var topLayout=cell.layout;
+
+        while(cell.bottomRight!==null &&
+              cell.bottomRight.layout!==BLANK){
+
+          cell.layout=cell.bottomRight.layout;
+          cell=cell.bottomRight;
+
+        }
+
+        cell.layout=topLayout;
+
+      };      
+      
+      function colDownRight()        {
+
+        var cell=app.hexBoard.activeCell;        
+
+        while(cell.bottomRight!==null &&
+              cell.bottomRight.layout!==BLANK){
+
+          cell=cell.bottomRight;
+
+        }
+        
+        var bottomLayout=cell.layout;
+
+        while(cell.topLeft!==null &&
+              cell.topLeft.layout!==BLANK){
+
+          cell.layout=cell.topLeft.layout;
+          cell=cell.topLeft;
+
+        }
+
+        cell.layout=bottomLayout;
+
+      };
+      function colDownLeft()        {
+
+        var cell=app.hexBoard.activeCell;        
+
+        while(cell.bottomLeft!==null &&
+              cell.bottomLeft.layout!==BLANK){
+
+          cell=cell.bottomLeft;
+
+        }
+        
+        var bottomLayout=cell.layout;
+
+        while(cell.topRight!==null &&
+              cell.topRight.layout!==BLANK){
+
+          cell.layout=cell.topRight.layout;
+          cell=cell.topRight;
+
+        }
+
+        cell.layout=bottomLayout;
+
+      };
+         
+      
+      // Move Active Cell ----------
       function up(){
 
         if(app.hexBoard.activeCell.top!==null &&
@@ -790,6 +897,7 @@
         }
 
       };
+      
       function upRight(){
 
         if(app.hexBoard.activeCell.topRight!==null &&
@@ -1135,8 +1243,10 @@
 
               var id=-1;
 
-              if(app.focus!==null){ id=app.focus.id; }
+              // if(app.focus!==null){ id=app.focus.id; }
 
+              if(app.hexBoard.activeCell!==null){ id=app.hexBoard.activeCell.id; }
+              
               text('\n\n'   + app.controlCount +
                    '\n'     + id               +
                    '\n\n\n' + app.remaining    +
@@ -1293,7 +1403,7 @@
 
               if(p.layout[row][col]===0){ curs=ARROW; }
 
-              rowArray.push(new hexCell('hexcell'+getGUID(), p, x, y, sz, sz,
+              rowArray.push(new hexCell('hexcell-'+getGUID(), p, x, y, sz, sz,
                 {row:       row,
                  col:       col,
                  layout:    p.layout[row][col],
@@ -2222,7 +2332,7 @@ print(w15);
 
         pop();
 
-        drawLinks(); //  Delete for release
+        // drawLinks(); //  Delete for release
 // if(this.parent.activeCell===this){ print(this.id); }
       };
       hexCell.prototype.hitTest=function(x,y){
@@ -2280,14 +2390,15 @@ print(w15);
       };
       hexCell.prototype.clicked=function(){
 
-        if(this.hit){
+        if(this.hit &&
+           this.layout!==BLANK){
           this.parent.activeCell=this;
           app.focus=this;
         }
 
-          if(this.active){
+        if(this.active){
 
-          }
+        }
 
       };
       hexCell.prototype.rclicked=function(){
@@ -2595,9 +2706,9 @@ print(w15);
     };
     function out(){
 
-      forEach(app.controls,'out');
+      // forEach(app.controls,'out');
 
-      app.focus=-1;
+      // app.focus=-1;
 
     };
     function over(){
@@ -2663,6 +2774,24 @@ print(w15);
           case app.keys[KEYCODES.A]:          decrementPuzzle();                        break;  /* A                */
           case app.keys[KEYCODES.D]:          incrementPuzzle();                        break;  /* D                */
 
+
+          case app.keys[KEYCODES.RIGHT] &&
+               app.keys[KEYCODES.CONTROL] &&
+               app.keys[KEYCODES.SHIFT]:      colDownRight();                           break;  /* Shift col up     */
+          case app.keys[KEYCODES.LEFT] &&
+               app.keys[KEYCODES.CONTROL] &&
+               app.keys[KEYCODES.SHIFT]:      colDownLeft();                            break;  /* Shift Col down   */
+               
+          case app.keys[KEYCODES.RIGHT] &&
+               app.keys[KEYCODES.SHIFT]:      colUpRight();                             break;  /* Shift col up     */
+          case app.keys[KEYCODES.LEFT] &&
+               app.keys[KEYCODES.SHIFT]:      colUpLeft();                              break;  /* Shift Col down   */
+
+          case app.keys[KEYCODES.UP] &&
+               app.keys[KEYCODES.SHIFT]:      colUp();                                  break;  /* Shift col up     */
+          case app.keys[KEYCODES.DOWN] &&
+               app.keys[KEYCODES.SHIFT]:      colDown();                                break;  /* Shift Col down   */
+               
           case app.keys[KEYCODES.UP]:         up();                                     break;  /* Up               */
           case app.keys[KEYCODES.DOWN]:       down();                                   break;  /* Down             */
 
@@ -2673,10 +2802,6 @@ print(w15);
                app.keys[KEYCODES.CONTROL]:    downLeft();                               break;  /* Down Left        */
           case app.keys[KEYCODES.LEFT]:       upLeft();                                 break;  /* Up Left          */
 
-          // case app.keys[KEYCODES.UP] &&
-               // app.keys[KEYCODES.CONTROL]:    colUp();                                  break;  /* Shift col up     */
-          // case app.keys[KEYCODES.DOWN] &&
-               // app.keys[KEYCODES.CONTROL]:    colDown();                                break;  /* Shift Col down   */
 
           // /* Figure out how to use this                                                                             */
           // case app.keys[KEYCODES.CODED]:                                                break;
