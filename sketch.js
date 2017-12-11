@@ -732,6 +732,7 @@
       control.prototype.clicked  = function(){ if(this.hit){ forEach(this.controls, 'clicked');  } };
       control.prototype.rclicked = function(){ if(this.hit){ forEach(this.controls, 'rclicked'); } };
       control.prototype.pressed  = function(){ };
+      control.prototype.dragged  = function(){ };      
       control.prototype.released = function(){ };
       control.prototype.over     = function(){ };
       control.prototype.out      = function(){ this.hit=false; forEach(this.controls, 'out');      };
@@ -2420,7 +2421,19 @@ print(w15);
 
       switch(mouseButton){
 
-        case LEFT:   forEach(app.controls,'released'); break;
+        case LEFT:    forEach(app.controls,'released');
+                      
+                      // Tidy up dragging
+                      {
+                        app.dragging = false;
+
+                        x=cx;
+                        y=cy;
+
+                      }
+
+                      break;
+
         // case RIGHT:  for(var c in app.controls){ app.controls[c].rClicked(); } break;
         // case CENTER: for(var c in app.controls){ app.controls[c].cClicked(); } break;
 
@@ -2434,46 +2447,64 @@ print(w15);
 
     };
     mouseDragged=function(){
+      
+      function calcDragAngle(){
+        
+        // var a = atan2(mouseY-height/2, (mouseX-(width-200)/2));
+        var a = atan2(mouseY-pmouseY, mouseX-pmouseX);
 
-      var a = atan2(mouseY-height/2, (mouseX-(width-200)/2));
+        print(round(a*180/PI));
 
-      print(round(a*180/PI));
+        a=a*180/PI;
 
-      a=a*180/PI;
+        x=cx;
+        y=cy;
 
-      x=cx;
-      y=cy;
+        switch(true){
 
-      switch(true){
+          case a >= 67.5 &&
+               a <= 122.5:    x = cx;
+                              y = cy + 150;   break;
+          case a <=-67.5 &&
+               a >=-122.5:    x = cx;
+                              y = cy + 150;   break;
 
-        case a < 180 &&
-             a > 122.5:     x=cx -100;
-                            y=cy + 50;      break;
+          case a >= 0 &&
+               a <= 67.5:     x = cx + 100;
+                              y = cy +  50;   break;
+          case a >=-180 &&
+               a <=-122.5:    x = cx + 100;
+                              y = cy +  50;   break;
 
-        case a >-180 &&
-             a <-122.5:     x=cx -100;
-                            y=cy - 50;      break;
+          case a <= 180 &&
+               a >= 122.5:    x = cx - 100;
+                              y = cy +  50;   break;
+          case a <= 0 &&
+               a >=-67.5:     x = cx - 100;
+                              y = cy +  50;   break;
 
-        case a > 67.5 &&
-             a < 122.5:     x=cx;
-                            y=cy + 50;      break;
+          default:                            break;
 
-        case a <-67.5 &&
-             a >-122.5:     x=cx;
-                            y=cy - 150;     break;
+        }
 
-        case a < 0 &&
-             a >-67.5:      x=cx + 100;
-                            y=cy -  50;     break;
+      };
 
-        case a > 0 &&
-             a < 67.5:      x=cx + 100;
-                            y=cy +  50;     break;
-                            
-        default:                            break;
+      switch(mouseButton){
+
+        case LEFT:    
+                      if(app.dragging===false){ calcDragAngle(); }
+                      app.dragging=true;
+
+                      forEach(app.controls,'dragged');
+
+      
+        // case RIGHT:  for(var c in app.controls){ app.controls[c].rClicked(); } break;
+        // case CENTER: for(var c in app.controls){ app.controls[c].cClicked(); } break;
+
+        default:     break;
 
       }
-
+      
     };
     function out(){
 
