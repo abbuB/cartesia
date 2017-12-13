@@ -48,8 +48,11 @@
 
   TO DO:
 
+    command object
 
-
+    Undo/Redo stack
+    ctrl+z
+    ctrl+y
 
   To Done:
 
@@ -205,6 +208,15 @@
 
   // --------------------------------------------------------------------------
 
+  var DRAG_DIRECTIONS={
+    
+    NONE:         0,
+    UPDOWN:       1,
+    BACKWARD:     2,
+    FORWARD:      3
+
+  }; 
+
 }
 
   function preload(){
@@ -248,43 +260,45 @@
     /* Platform Constants  -------------------- */
     {
 
-      this.dirty        = false;              //  Has a reset occurred
+      this.dirty          = false;              //  Has a reset occurred
 
-      this.debug        = true;               //  Mode that displays enhanced debugging tools
+      this.debug          = true;               //  Mode that displays enhanced debugging tools
 
-      this.frameRate    = 0;                  //  Refresh speed
+      this.frameRate      = 0;                  //  Refresh speed
 
-      this.mouseX       = 0;                  //  Current mouseX location
-      this.mouseY       = 0;                  //  Current mouseY location
+      this.mouseX         = 0;                  //  Current mouseX location
+      this.mouseY         = 0;                  //  Current mouseY location
 
-      this.left         = false;              //  Is the left   mouse button pressed
-      this.right        = false;              //  Is the right  mouse button pressed
-      this.center       = false;              //  Is the center mouse button pressed
+      this.left           = false;              //  Is the left   mouse button pressed
+      this.right          = false;              //  Is the right  mouse button pressed
+      this.center         = false;              //  Is the center mouse button pressed
 
-      this.dragging     = false;              //  Is the mouse cursor moving and the left button pressed?
+      this.dragging       = false;              //  Is the mouse cursor moving and the left button pressed?
+      
+      this.dragDirection  = DRAG_DIRECTIONS.NONE;
+      
+      this.focus          = null;               //  The control with focus
 
-      this.focus        = null;               //  The control with focus
+      this.controls       = [];                 //  Collection of controls in the app
+      this.controlCount   = 0;
 
-      this.controls     = [];                 //  Collection of controls in the app
-      this.controlCount = 0;
+      this.keys           = [];                 //  Array holding the value of all keycodes
 
-      this.keys         = [];                 //  Array holding the value of all keycodes
+      this.fullscreen     = false;              //  Is the display set to take up the entire screen ie. No Chrome
 
-      this.fullscreen   = false;              //  Is the display set to take up the entire screen ie. No Chrome
-
-      this.info         = 0;                  //  Is the info frame displayed
-      this.telemetry    = false;              //  Is telemetry visible
+      this.info           = 0;                  //  Is the info frame displayed
+      this.telemetry      = false;              //  Is telemetry visible
 
     }
 
     /* Hexy Specific       ------------------ */
     {
 
-      this.mode         = APPMODES.GAME;      //
+      this.mode           = APPMODES.GAME;      //
 
-      this.score        = 100;                  //  The number of total hexes acquired
+      this.score          = 100;                  //  The number of total hexes acquired
 
-      this.levelScores  = [   3,  4,  5,  5,  5,  6,  6,
+      this.levelScores    = [   3,  4,  5,  5,  5,  6,  6,
                               6,  8,  8,  9, 10, 10, 10,
                              14, 17, 44, 44, 44, 44, 44,
                             110,110,110,110,110,110,110,
@@ -292,7 +306,7 @@
                             328,328,328,328,328,328,328
                           ];
 
-      this.levelEntry  = {
+      this.levelEntry     = {
                             0:  0,   7: 22,  14:  48,  21: 120,  28: 220,  35: 328,
                             1:  0,   8: 22,  15:  48,  22: 120,  29: 220,  36: 328,
                             2:  0,   9: 22,  16:  48,  23: 120,  30: 220,  37: 328,
@@ -302,7 +316,7 @@
                             6: 18,  13: 44,  20: 110,  27: 200,  34: 240,  41: 328
                           };
 
-      this.levelText   =['1-1', '1-2', '1-3', '1-4', '1-5', '1-6', '1-7',
+      this.levelText      = ['1-1', '1-2', '1-3', '1-4', '1-5', '1-6', '1-7',
                          '2-1', '2-2', '2-3', '2-4', '2-5', '2-6', '2-7',
                          '3-1', '3-2', '3-3', '3-4', '3-5', '3-6', '3-7',
                          '4-1', '4-2', '4-3', '4-4', '4-5', '4-6', '4-7',
@@ -321,18 +335,18 @@
       this.reset;
       this.scoreboard;
 
-      this.puzzle       = 4;                  //  Index of the current puzzle layout
+      this.puzzle         = 4;                  //  Index of the current puzzle layout
 
-      this.remaining    = 0;                  //  How many blue cells need to be uncovered
-      this.covered      = 0;                  //  How many black cells need to be uncovered
-      this.errors       = 0;                  //  How many mistaken clicks occurred
+      this.remaining      = 0;                  //  How many blue cells need to be uncovered
+      this.covered        = 0;                  //  How many black cells need to be uncovered
+      this.errors         = 0;                  //  How many mistaken clicks occurred
 
-      this.musicOn      = true;
-      this.level        = 0;                  //  Levels 0 - 42 ( 7 groups of 6 = 42 total)
+      this.musicOn        = true;
+      this.level          = 0;                  //  Levels 0 - 42 ( 7 groups of 6 = 42 total)
 
-      this.finished     = false;
+      this.finished       = false;
 
-      this.animations   = [];
+      this.animations     = [];
 
     }
 
@@ -869,7 +883,7 @@
 
             fill(getColor(p.color,50));
 
-              rect(p.offset+10,  10, p.w-20, 375, 3);
+              rect(p.offset+10,  10, p.w-20, 385, 3);
 
             textAlign(LEFT,TOP);
             textSize(10);
@@ -877,31 +891,32 @@
 
             fill(getColor(TEAL_2,75));
 
-              text('\n'             + 'Cursor Coordinates' +
-                   '\n\n\n\n'       + 'Mouse Buttons'      +
-                   '\n\n\n\n\n\n\n' + 'Keys'               +
-                   '\n\n\n\n\n'     + 'Environment',
+              text('\n'               + 'Cursor Coordinates' +
+                   '\n\n\n\n'         + 'Mouse Buttons'      +
+                   '\n\n\n\n\n\n\n\n' + 'Keys'               +
+                   '\n\n\n\n\n'       + 'Environment',
                    col0, row0);
 
             fill(getColor(WHITE,75));
 
-              text('\n\n'   + 'x:'             +
-                   '\n'     + 'y:'             +
-                   '\n\n\n' + 'Left:'          +
-                   '\n'     + 'Right:'         +
-                   '\n'     + 'Center:'        +
-                   '\n\n'   + 'Dragging:'      +
-                   '\n\n\n' + 'Alt:'           +
-                   '\n'     + 'Control:'       +
-                   '\n'     + 'Shift:'         +
-                   '\n\n\n' + 'Canvas Width:'  +
-                   '\n'     + 'Canvas Height:' +
-                   '\n\n'   + 'Window Width:'  +
-                   '\n'     + 'Window Height:' +
+              text('\n\n'   + 'x:'              +
+                   '\n'     + 'y:'              +
+                   '\n\n\n' + 'Left:'           +
+                   '\n'     + 'Right:'          +
+                   '\n'     + 'Center:'         +
+                   '\n\n'   + 'Dragging:'       +
+                   '\n'     + 'Drag Direction:' +
+                   '\n\n\n' + 'Alt:'            +
+                   '\n'     + 'Control:'        +
+                   '\n'     + 'Shift:'          +
+                   '\n\n\n' + 'Canvas Width:'   +
+                   '\n'     + 'Canvas Height:'  +
+                   '\n\n'   + 'Window Width:'   +
+                   '\n'     + 'Window Height:'  + 
                    '\n\n'   + 'Display Width:'  +
                    '\n'     + 'Display Height:' +
-                   '\n\n'   + 'Focused:'       +
-                   '\n\n'   + 'Frame Count:'   +
+                   '\n\n'   + 'Focused:'        +
+                   '\n\n'   + 'Frame Count:'    +
                    '\n'     + 'Frame Rate:',
                    col1, row0);
 
@@ -914,6 +929,7 @@
                    '\n'     + app.right                  +
                    '\n'     + app.center                 +
                    '\n\n'   + app.dragging               +
+                   '\n'     + app.dragDirection          +
                    '\n\n\n' + app.keys[KEYCODES.ALT]     +
                    '\n'     + app.keys[KEYCODES.CONTROL] +
                    '\n'     + app.keys[KEYCODES.SHIFT]   +
@@ -931,11 +947,11 @@
           };
           function appSpecific(){
 
-            var top=395;
+            var top=405;
 
             fill(getColor(p.color,50));
 
-              rect(p.offset+10,  top, p.w-20, p.h-405, 3);
+              rect(p.offset+10,  top, p.w-20, p.h-415, 3);
 
             textAlign(LEFT,TOP);
             textSize(10);
@@ -1185,6 +1201,7 @@
 
             fill(p.color);
             stroke(getColor(H_BLUE,25));
+            strokeWeight(0.5);
 
               rect( 0, 0, p.w, p.h, 5);
 
@@ -2425,7 +2442,9 @@ print(w15);
                       
                       // Tidy up dragging
                       {
+
                         app.dragging = false;
+                        app.dragDirection=DRAG_DIRECTIONS.NONE;
 
                         x=cx;
                         y=cy;
@@ -2446,6 +2465,7 @@ print(w15);
       app.center = false;
 
     };
+   
     mouseDragged=function(){
       
       function calcDragAngle(){
@@ -2453,7 +2473,7 @@ print(w15);
         // var a = atan2(mouseY-height/2, (mouseX-(width-200)/2));
         var a = atan2(mouseY-pmouseY, mouseX-pmouseX);
 
-        print(round(a*180/PI));
+        // print(round(a*180/PI));
 
         a=a*180/PI;
 
@@ -2463,25 +2483,38 @@ print(w15);
         switch(true){
 
           case a >= 67.5 &&
-               a <= 122.5:    x = cx;
-                              y = cy + 150;   break;
+               a <= 122.5:
+
           case a <=-67.5 &&
                a >=-122.5:    x = cx;
-                              y = cy + 150;   break;
+                              y = cy + 150;
+
+                              app.dragDirection=DRAG_DIRECTIONS.UPDOWN;
+
+                              break;
 
           case a >= 0 &&
                a <= 67.5:     x = cx + 100;
-                              y = cy +  50;   break;
+                              y = cy +  50;
           case a >=-180 &&
                a <=-122.5:    x = cx + 100;
-                              y = cy +  50;   break;
+                              y = cy +  50;
+
+                              app.dragDirection=DRAG_DIRECTIONS.FORWARD;
+
+                              break;
 
           case a <= 180 &&
                a >= 122.5:    x = cx - 100;
-                              y = cy +  50;   break;
+                              y = cy +  50;
+
           case a <= 0 &&
                a >=-67.5:     x = cx - 100;
-                              y = cy +  50;   break;
+                              y = cy +  50;
+                              
+                              app.dragDirection=DRAG_DIRECTIONS.BACKWARD;
+                              
+                              break;
 
           default:                            break;
 
