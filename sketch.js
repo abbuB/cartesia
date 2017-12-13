@@ -233,7 +233,7 @@
     cnv=createCanvas(windowWidth-10, windowHeight-10);
 
     //  Settings
-    frameRate(100);
+    frameRate(70);
 
     noCursor();
 
@@ -348,6 +348,8 @@
 
       this.animations     = [];
 
+      this.dragCells      = [];                 // Group of hexCells currently being dragged
+
     }
 
   };
@@ -459,6 +461,30 @@
 
       };
 
+      // Dragging
+      function setDragColumn()      {
+
+        var cell=app.hexBoard.activeCell;
+
+        while(cell.top!==null &&
+              cell.top.layout!==BLANK){
+
+          cell=cell.top;
+
+        }
+
+        while(cell.bottom!==null &&
+              cell.bottom.layout!==BLANK){
+
+          cell.dragging=true;
+          cell=cell.bottom;
+
+        }
+        
+        cell.dragging=true;
+
+      };
+      
       // Move Columns ----------
       function colUp()              {
 
@@ -772,7 +798,7 @@
 
       };
       root.prototype=Object.create(control.prototype);
-      root.prototype.draw=function(){
+      root.prototype.draw        =function(){
 
           this.active=this.hit &&
                       app.focus===this;
@@ -803,7 +829,7 @@
           pop();
 
       };
-      root.prototype.moved=function(x,y){
+      root.prototype.moved       =function(x,y){
       /* Required because root control doesn't have a parent */
 
           if(this.hitTest(x,y)){
@@ -823,7 +849,7 @@
           }
 
       };
-      root.prototype.resized=function(){
+      root.prototype.resized     =function(){
 
         this.w = windowWidth -20;
         this.h = windowHeight-20;
@@ -831,7 +857,12 @@
         forEach(this.controls,'resized');
 
       };
+      root.prototype.dragged     = function(){
 
+        forEach(this.controls,'dragged');
+
+      };
+      
     }
 
     /** Telemetry       -------------------------------------------------- */
@@ -1082,7 +1113,7 @@
         app.hexBoard        = this;   //  Set a global hexBoard reference
 
         this.count          = 0;
-
+        
         this.calcRadius();
         this.reset();
 
@@ -1090,10 +1121,10 @@
       hexBoard.prototype=Object.create(control.prototype);
       hexBoard.prototype.reset        = function(){
 
-        var p=this;             //  Set a reference to the hexBoard control
+        var p=this;                   //  Set a reference to the hexBoard control
 
-        this.controls   = [];   //  Clear the controls array
-        this.activeCell = null; //  Clear the active hexCell
+        this.controls   = [];         //  Clear the controls array
+        this.activeCell = null;       //  Clear the active hexCell
 
         this.layout     = PUZZLES[app.puzzle];
         // this.text       = PUZZLES[app.puzzle+1];
@@ -1754,7 +1785,33 @@ ellipse(this.w/2,this.h/2,10,10);
         this.reset();
 // print(this.count);
       };
+      hexBoard.prototype.dragged      = function(){
+// print(app.focus.id);
+        var ctrls=this.controls;
 
+        for(var r in ctrls){
+          for(var c in ctrls[r]){
+
+            ctrls[r][c].dragged();
+print(ctrls[r][c].id);
+          }
+        }
+
+      };      
+      hexBoard.prototype.clearDragging= function(){
+
+        var ctrls=this.controls;
+
+        for(var r in ctrls){
+          for(var c in ctrls[r]){
+
+            ctrls[r][c].dragging=false;
+
+          }
+        }
+
+      };
+      
     }
 
   }
@@ -1810,6 +1867,8 @@ ellipse(this.w/2,this.h/2,10,10);
 
         this.clickRadius  = 0;
 
+        this.dragging     = false;          // Is the HexCell being dragged?
+
         var p=this;
 
         /* Initialize */
@@ -1850,7 +1909,7 @@ print(w15);
 
       };
       hexCell.prototype=Object.create(control.prototype);
-      hexCell.prototype.reset=function(){
+      hexCell.prototype.reset         = function(){
 
         this.points=[];
         this.opoints=[];
@@ -1883,7 +1942,7 @@ print(w15);
         }
 
       };
-      hexCell.prototype.draw=function(){
+      hexCell.prototype.draw          = function(){
 
         this.active=this.hit &&
                     app.focus===this;
@@ -1956,8 +2015,10 @@ print(w15);
           }
 
           noFill();
-          strokeWeight(2);
-          stroke(getColor(BLACK,15));
+          // strokeWeight(2);
+          // stroke(getColor(BLACK,15));
+          strokeWeight(5);
+          stroke(getColor(BLACK,50));
 
           beginShape();
 
@@ -2063,7 +2124,8 @@ print(w15);
           scale(1,-1);
 
             // highlight();
-            // outerHexagon();
+            if(this.dragging){ outerHexagon(); }
+            
             innerHexagon();
             activeCell();
 
@@ -2072,7 +2134,7 @@ print(w15);
         // drawLinks(); //  Delete for release
 // if(this.parent.activeCell===this){ print(this.id); }
       };
-      hexCell.prototype.hitTest=function(x,y){
+      hexCell.prototype.hitTest       = function(x,y){
 
         var rectHit=rectangleHit(new pnt(this.x+this.points[1].x+x, this.y+this.points[1].y+y),
                                  new pnt(this.x+this.points[2].x+x, this.y+this.points[2].y+y),
@@ -2093,12 +2155,12 @@ print(w15);
                 triHit1);
 
       };
-      hexCell.prototype.outerHitTest=function(x,y){
+      hexCell.prototype.outerHitTest  = function(x,y){
 
         return dist(mouseX, mouseY, this.x+x, this.y+y)<this.w/2;
 
       };
-      hexCell.prototype.moved=function(x,y){
+      hexCell.prototype.moved         = function(x,y){
       /* Overridden because of the shape */
 
           if(this.parent.hit){
@@ -2125,7 +2187,7 @@ print(w15);
           }
 
       };
-      hexCell.prototype.clicked=function(){
+      hexCell.prototype.clicked       = function(){
 
         if(this.hit &&
            this.layout!==BLANK){
@@ -2138,7 +2200,7 @@ print(w15);
         }
 
       };
-      hexCell.prototype.rclicked=function(){
+      hexCell.prototype.rclicked      = function(){
 
           if(this.active){
 
@@ -2146,7 +2208,7 @@ print(w15);
 
             if(app.mode===APPMODES.CREATE){
 
-              this.decrementCellLayout();
+              // this.decrCellLayout();
 
             }
             else if(app.mode===APPMODES.GAME){
@@ -2180,7 +2242,7 @@ print(w15);
           }
 
       };
-      hexCell.prototype.incrementCellLayout=function(){
+      hexCell.prototype.incrCellLayout= function(){
 
         switch(this.layout){
 
@@ -2208,7 +2270,7 @@ print(w15);
         this.recalculate();
 
       };
-      hexCell.prototype.decrementCellLayout=function(){
+      hexCell.prototype.decrCellLayout= function(){
 
         switch(this.layout){
 
@@ -2236,12 +2298,21 @@ print(w15);
         this.recalculate();
 
       };
-      hexCell.prototype.recalculate=function(){
+      hexCell.prototype.recalculate   = function(){
 
         this.parent.update();
 
       };
+      hexCell.prototype.dragged       = function(){
+        
+        if(this.hit &&
+           this.layout!==BLANK){
+             print(this.id);
+          this.parent.activeCell=this;
+          app.focus=this;
+        }
 
+      };
     }
 
   }
@@ -2434,6 +2505,7 @@ print(w15);
       }
 
     };
+    
     mouseReleased=function(){
 
       switch(mouseButton){
@@ -2443,12 +2515,14 @@ print(w15);
                       // Tidy up dragging
                       {
 
+                        app.hexBoard.clearDragging();
+                        
                         app.dragging = false;
                         app.dragDirection=DRAG_DIRECTIONS.NONE;
 
                         x=cx;
                         y=cy;
-
+                        
                       }
 
                       break;
@@ -2522,12 +2596,42 @@ print(w15);
 
       };
 
+      function drawHighlight(){
+
+        switch(app.dragDirection){
+
+          case DRAG_DIRECTIONS.UPDOWN:          app.hexBoard.activeCell.dragging=true;
+                                                
+                                                break;
+
+          case DRAG_DIRECTIONS.FORWARD:         app.hexBoard.activeCell.dragging=true;
+          
+                                                break;
+
+          case DRAG_DIRECTIONS.BACKWARD:        app.hexBoard.activeCell.dragging=true;
+          
+                                                break;
+          
+          default:                              break;
+
+        }
+        
+      };
+
       switch(mouseButton){
 
         case LEFT:    
-                      if(app.dragging===false){ calcDragAngle(); }
+                      if(app.dragging===false){
+                        
+                        calcDragAngle();                      
+                        setDragColumn();
+                        
+                      }
+                      
                       app.dragging=true;
-
+                      
+                      // drawHighlight();
+                      
                       forEach(app.controls,'dragged');
 
       
@@ -2578,8 +2682,8 @@ print(w15);
 
           // /* Edit                                                                                                     */
           // case app.keys[KEYCODES.SPACE] &&
-               // app.keys[KEYCODES.CONTROL]:    decrementCellLayout();                    break;  /* Decrement Layout   */
-          // case app.keys[KEYCODES.SPACE]:      incrementCellLayout();                    break;  /* Increment Layout   */
+               // app.keys[KEYCODES.CONTROL]:    decrCellLayout();                         break;  /* Decrement Layout   */
+          // case app.keys[KEYCODES.SPACE]:      incrCellLayout();                         break;  /* Increment Layout   */
 
           // case app.keys[KEYCODES.O] &&
                // app.keys[KEYCODES.SHIFT]:      setCellType(HEXY_TYPES.BLACK_REVEALED);   break;  /* Black Revealed   */
