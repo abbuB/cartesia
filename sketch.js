@@ -48,17 +48,20 @@
 /*
 
   TO DO:
-  
-    rotation of each hexcell
-    rotation of each ring
-    
-    command object
 
-    Undo/Redo stack
-    ctrl+z
-    ctrl+y
+    - start drag x/y
 
-  To Done:
+    - rotation of each hexcell
+    - rotation of each ring
+
+    - command object
+
+    - Undo/Redo stack
+
+        - ctrl+z
+        - ctrl+y
+
+  TO DONE:
 
     - determine how to pass a color as a parameter
 
@@ -277,6 +280,9 @@
       this.right          = false;              //  Is the right  mouse button pressed
       this.center         = false;              //  Is the center mouse button pressed
 
+      this.dragStartX     = 0;
+      this.dragStartY     = 0;
+
       this.dragging       = false;              //  Is the mouse cursor moving and the left button pressed?
       
       this.dragDirection  = DRAG_DIRECTIONS.NONE;
@@ -292,7 +298,7 @@
 
       this.info           = 0;                  //  Is the info frame displayed
       this.telemetry      = false;              //  Is telemetry visible
-
+      
     }
 
     /* Hexy Specific       ------------------ */
@@ -465,7 +471,7 @@
 
       };
 
-      // Dragging
+      // Dragging ----------
       function setDragColumn()      {
 
         var cell=app.hexBoard.activeCell;
@@ -1346,9 +1352,7 @@
               border();
               board();
               controls();
-noStroke();
-fill(WHITE);
-ellipse(this.w/2,this.h/2,10,10);
+
           pop();
 
       };
@@ -1392,7 +1396,7 @@ ellipse(this.w/2,this.h/2,10,10);
 
       };
       hexBoard.prototype.clicked      = function(){
-// print(app.focus.id);
+
         var ctrls=this.controls;
 
         for(var r in ctrls){
@@ -1834,15 +1838,19 @@ ellipse(this.w/2,this.h/2,10,10);
 // print(this.count);
       };
       hexBoard.prototype.dragged      = function(){
-// print(app.focus.id);
-        var ctrls=this.controls;
+        
+        if(this.hit){
+          
+          var ctrls=this.controls;
 
-        for(var r in ctrls){
-          for(var c in ctrls[r]){
+          for(var r in ctrls){
+            for(var c in ctrls[r]){
 
-            ctrls[r][c].dragged();
-// print(ctrls[r][c].id);
+              ctrls[r][c].dragged();
+
+            }
           }
+
         }
 
       };      
@@ -1920,38 +1928,38 @@ ellipse(this.w/2,this.h/2,10,10);
         var p=this;
 
         /* Initialize */
-        function load(){
+        // function load(){
 
-          p.points=[];
-          p.opoints=[];
-          p.ipoints=[];
-          p.hpoints=[];
+          // p.points=[];
+          // p.opoints=[];
+          // p.ipoints=[];
+          // p.hpoints=[];
 
-          var d2=p.w/2;  // Half diameter
+          // var d2=p.w/2;  // Half diameter
 
-          var pt=0;
-          var ang=0;
+          // var pt=0;
+          // var ang=0;
 
-          var w15 = d2*0.5;
-          var w5  = d2*0.05;
-print(w15);
-          for(pt=0; pt<6; pt++){
+          // var w15 = d2*0.5;
+          // var w5  = d2*0.05;
+// print(w15);
+          // for(pt=0; pt<6; pt++){
 
-            p.points.push( new pnt( cos(radians(ang+pt*60))*(d2),
-                                    sin(radians(ang+pt*60))*(d2) ));
+            // p.points.push( new pnt( cos(radians(ang+pt*60))*(d2),
+                                    // sin(radians(ang+pt*60))*(d2) ));
 
-            p.opoints.push(new pnt( cos(radians(ang+pt*60))*(d2-w5),
-                                    sin(radians(ang+pt*60))*(d2-w5) ));
+            // p.opoints.push(new pnt( cos(radians(ang+pt*60))*(d2-w5),
+                                    // sin(radians(ang+pt*60))*(d2-w5) ));
 
-            p.ipoints.push(new pnt( cos(radians(ang+pt*60))*(d2-w15),
-                                    sin(radians(ang+pt*60))*(d2-w15) ));
+            // p.ipoints.push(new pnt( cos(radians(ang+pt*60))*(d2-w15),
+                                    // sin(radians(ang+pt*60))*(d2-w15) ));
 
-            p.hpoints.push(new pnt( cos(radians(ang+pt*60))*(d2-3)+4,
-                                    sin(radians(ang+pt*60))*(d2-3)-3 ));
+            // p.hpoints.push(new pnt( cos(radians(ang+pt*60))*(d2-3)+4,
+                                    // sin(radians(ang+pt*60))*(d2-3)-3 ));
 
-          }
+          // }
 
-        };
+        // };
 
         this.reset();
 
@@ -2031,7 +2039,7 @@ print(w15);
                 default:        noFill();                   break;
 
               }
-
+                
               beginShape();
 
                 for(var pt in p.hpoints){
@@ -2040,7 +2048,7 @@ print(w15);
                 }
 
               endShape(CLOSE);
-
+              
             // }
 
         };
@@ -2098,14 +2106,39 @@ print(w15);
 
           noStroke();
 
-          beginShape();
+          if(p.layout!==BLACK0){
 
-            for(var pt in p.ipoints){
-              vertex(p.ipoints[pt].x,
-                     p.ipoints[pt].y);
-            }
+            beginShape();
 
-          endShape(CLOSE);
+              for(var pt in p.ipoints){
+                vertex(p.ipoints[pt].x,
+                       p.ipoints[pt].y);
+              }
+
+            endShape(CLOSE);
+
+          }
+          else{
+            
+            fill(ORANGE);            
+            triangle(0, 0, p.ipoints[0].x, p.ipoints[0].y, p.ipoints[1].x, p.ipoints[1].y,);
+
+            fill(RED);
+            triangle(0, 0, p.ipoints[1].x, p.ipoints[1].y, p.ipoints[2].x, p.ipoints[2].y,);
+
+            fill(PURPLE);            
+            triangle(0, 0, p.ipoints[2].x, p.ipoints[2].y, p.ipoints[3].x, p.ipoints[3].y,);
+
+            fill(BLUE);            
+            triangle(0, 0, p.ipoints[3].x, p.ipoints[3].y, p.ipoints[4].x, p.ipoints[4].y,);
+
+            fill(GREEN);            
+            triangle(0, 0, p.ipoints[4].x, p.ipoints[4].y, p.ipoints[5].x, p.ipoints[5].y,);
+
+            fill(YELLOW);            
+            triangle(0, 0, p.ipoints[5].x, p.ipoints[5].y, p.ipoints[0].x, p.ipoints[0].y,);
+
+          }
 
         };
         function activeCell(){
@@ -2502,10 +2535,10 @@ print(w15);
 
     update();
 
-    stroke(BLACK);
-    strokeWeight(5);
+    // stroke(BLACK);
+    // strokeWeight(5);
 
-      line(cx, cy, x, y);
+      // line(cx, cy, x, y);
 
   }
 
@@ -2565,7 +2598,11 @@ print(w15);
 
                         app.hexBoard.clearDragging();
                         
+                        app.dragStartX=0;
+                        app.dragStartY=0;
+                        
                         app.dragging = false;
+                        
                         app.dragDirection=DRAG_DIRECTIONS.NONE;
 
                         x=cx;
@@ -2603,97 +2640,78 @@ print(w15);
 
         switch(true){
 
-          case a >= 67.5 &&
-               a <= 122.5:
+          case a >= 67.5 && a <= 122.5:
+          case a <=-67.5 && a >=-122.5:   x = cx;
+                                          y = cy + 150;
 
-          case a <=-67.5 &&
-               a >=-122.5:    x = cx;
-                              y = cy + 150;
+                                          app.dragDirection=DRAG_DIRECTIONS.UPDOWN;
 
-                              app.dragDirection=DRAG_DIRECTIONS.UPDOWN;
-                              
-                              setDragColumn();
+                                          setDragColumn();
 
-                              break;
+                                          break;
 
-          case a >= 0 &&
-               a <= 67.5:     x = cx + 100;
-                              y = cy +  50;
-          case a >=-180 &&
-               a <=-122.5:    x = cx + 100;
-                              y = cy +  50;
+          case a >= 0 && a <= 67.5:
+          case a >=-180 && a <=-122.5:    x = cx + 100;
+                                          y = cy +  50;
 
-                              app.dragDirection=DRAG_DIRECTIONS.FORWARD;
-                              
-                              setDragForward();
+                                          app.dragDirection=DRAG_DIRECTIONS.FORWARD;
+                                          
+                                          setDragForward();
 
-                              break;
+                                          break;
 
-          case a <= 180 &&
-               a >= 122.5:    x = cx - 100;
-                              y = cy +  50;
+          case a <= 180 && a >= 122.5:
+          case a <= 0 && a >=-67.5:       x = cx - 100;
+                                          y = cy +  50;
+                                          
+                                          app.dragDirection=DRAG_DIRECTIONS.BACKWARD;
+                                          
+                                          setDragBackward();
+                                          
+                                          break;
 
-          case a <= 0 &&
-               a >=-67.5:     x = cx - 100;
-                              y = cy +  50;
-                              
-                              app.dragDirection=DRAG_DIRECTIONS.BACKWARD;
-                              
-                              setDragBackward();
-                              
-                              break;
-
-          default:            break;
+          default:                        break;
 
         }
 
-      };
-
-      function drawHighlight(){
-
-        switch(app.dragDirection){
-
-          case DRAG_DIRECTIONS.UPDOWN:          app.hexBoard.activeCell.dragging=true;
-                                                
-                                                break;
-
-          case DRAG_DIRECTIONS.FORWARD:         app.hexBoard.activeCell.dragging=true;
-          
-                                                break;
-
-          case DRAG_DIRECTIONS.BACKWARD:        app.hexBoard.activeCell.dragging=true;
-          
-                                                break;
-          
-          default:                              break;
-
-        }
-        
       };
 
       switch(mouseButton){
 
-        case LEFT:    
-        
-                      forEach(app.controls,'dragged');  //  Necessary to register drag event first to set the active cell
-        
-                      if(app.dragging===false){
-                        
-                        calcDragAngle();
+        case LEFT:
 
-                        
-                        // setDragColumn();
+                      forEach(app.controls,'dragged');  //  Necessary to register drag event first to set the active cell
+
+                      if(app.dragging===false){
+
+                        app.dragStartX=mouseX;
+                        app.dragStartY=mouseY;
+
+                        app.dragging=true;
                         
                       }
-                      
-                      app.dragging=true;
-                      
-                      // drawHighlight();
+                      else{
 
-        // case RIGHT:  for(var c in app.controls){ app.controls[c].rClicked(); } break;
-        // case CENTER: for(var c in app.controls){ app.controls[c].cClicked(); } break;
+                        if(dist(app.dragStartX,app.dragStartY,mouseX,mouseY)>30){
 
-        default:     break;
+                          if(x===cx &&
+                             y===cy){ calcDragAngle(); }
+  
+                        }
+
+                      }
+                      
+                      break;
+                      
+        // case RIGHT:   forEach(app.controls,'rDragged');
+          
+                      // break;
+          
+        // case CENTER:  forEach(app.controls,'cDragged');
+        
+                      // break;
+
+        default:      break;
 
       }
 
