@@ -41,13 +41,17 @@
 +p5js.org
 +alpha.editor.p5js.org
 +piratefsh.github.io/2017/06/02/recursive-hexagon-patterns.html
++forum.processing.org
 
 */
 
 /*
 
   TO DO:
-
+  
+    rotation of each hexcell
+    rotation of each ring
+    
     command object
 
     Undo/Redo stack
@@ -481,6 +485,50 @@
 
         }
         
+        cell.dragging=true;
+
+      };
+      function setDragBackward()    {
+
+        var cell=app.hexBoard.activeCell;
+
+        while(cell.topRight!==null &&
+              cell.topRight.layout!==BLANK){
+
+          cell=cell.topRight;
+
+        }
+
+        while(cell.bottomLeft!==null &&
+              cell.bottomLeft.layout!==BLANK){
+
+          cell.dragging=true;
+          cell=cell.bottomLeft;
+
+        }
+
+        cell.dragging=true;
+
+      };
+      function setDragForward()     {
+
+        var cell=app.hexBoard.activeCell;
+
+        while(cell.topLeft!==null &&
+              cell.topLeft.layout!==BLANK){
+
+          cell=cell.topLeft;
+
+        }
+
+        while(cell.bottomRight!==null &&
+              cell.bottomRight.layout!==BLANK){
+
+          cell.dragging=true;
+          cell=cell.bottomRight;
+
+        }
+
         cell.dragging=true;
 
       };
@@ -1793,7 +1841,7 @@ ellipse(this.w/2,this.h/2,10,10);
           for(var c in ctrls[r]){
 
             ctrls[r][c].dragged();
-print(ctrls[r][c].id);
+// print(ctrls[r][c].id);
           }
         }
 
@@ -2464,7 +2512,7 @@ print(w15);
   /* Mouse Events ============================================================== */
   {
 
-    function mouseClicked(){
+    function mouseClicked() {
 
       switch(mouseButton){
 
@@ -2477,14 +2525,14 @@ print(w15);
       }
 
     };
-    function dClicked(){
+    function dClicked()     {
 
       app.fullscreen=!app.fullscreen;
 
       fullscreen(app.fullscreen);
 
     };
-    function mouseMoved() {
+    function mouseMoved()   {
 
       app.mouseX=mouseX;
       app.mouseY=mouseY;
@@ -2492,7 +2540,7 @@ print(w15);
       for(var c in app.controls){ app.controls[c].moved(0,0); }
 
     };
-    mousePressed=function(){
+    function mousePressed() {
 
       switch(mouseButton){
 
@@ -2506,7 +2554,7 @@ print(w15);
 
     };
     
-    mouseReleased=function(){
+    function mouseReleased(){
 
       switch(mouseButton){
 
@@ -2538,9 +2586,8 @@ print(w15);
       app.right  = false;
       app.center = false;
 
-    };
-   
-    mouseDragged=function(){
+    };   
+    function mouseDragged() {
       
       function calcDragAngle(){
         
@@ -2564,6 +2611,8 @@ print(w15);
                               y = cy + 150;
 
                               app.dragDirection=DRAG_DIRECTIONS.UPDOWN;
+                              
+                              setDragColumn();
 
                               break;
 
@@ -2575,6 +2624,8 @@ print(w15);
                               y = cy +  50;
 
                               app.dragDirection=DRAG_DIRECTIONS.FORWARD;
+                              
+                              setDragForward();
 
                               break;
 
@@ -2588,9 +2639,11 @@ print(w15);
                               
                               app.dragDirection=DRAG_DIRECTIONS.BACKWARD;
                               
+                              setDragBackward();
+                              
                               break;
 
-          default:                            break;
+          default:            break;
 
         }
 
@@ -2621,37 +2674,38 @@ print(w15);
       switch(mouseButton){
 
         case LEFT:    
+        
+                      forEach(app.controls,'dragged');  //  Necessary to register drag event first to set the active cell
+        
                       if(app.dragging===false){
                         
-                        calcDragAngle();                      
-                        setDragColumn();
+                        calcDragAngle();
+
+                        
+                        // setDragColumn();
                         
                       }
                       
                       app.dragging=true;
                       
                       // drawHighlight();
-                      
-                      forEach(app.controls,'dragged');
 
-      
         // case RIGHT:  for(var c in app.controls){ app.controls[c].rClicked(); } break;
         // case CENTER: for(var c in app.controls){ app.controls[c].cClicked(); } break;
 
         default:     break;
 
       }
-      
+
     };
-    function out(){
+    function out()          {
 
       // forEach(app.controls,'out');
 
       // app.focus=-1;
 
     };
-
-    function over(){
+    function over()         {
 
       forEach(app.controls,'over');
 
