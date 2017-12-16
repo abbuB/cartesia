@@ -49,7 +49,9 @@
 
   TO DO:
 
-    - start drag x/y
+    - puzzle completion animations
+
+    - implement timer
 
     - rotation of each hexcell
     - rotation of each ring
@@ -63,7 +65,11 @@
 
   TO DONE:
 
+    - start drag x/y
+
     - determine how to pass a color as a parameter
+
+
 
   Research:
 
@@ -166,11 +172,7 @@
   var H_BLACK       = [ 44, 47, 49,255];  var H_BLACK_L   = [ 62, 62, 62,255];
   var H_ORANGE      = [255,159,  0,255];  var H_ORANGE_L  = [255,175, 41,255];
 
-  var RED           = [170, 29, 29,255];
-  var GREEN         = [158,182, 58,255];
-
-  var BLUE          = [ 29, 86,170,255];  var YELLOW      = [238,214, 15,255];
-  var ORANGE        = [238,136, 15,255];  var GRAY        = [128,128,128,255];
+  var GRAY          = [128,128,128,255];
 
   var CYAN          = [ 49,204,167,255];
   var PINK          = [255, 20,147,255];
@@ -195,7 +197,9 @@
 
   var BROWN         = [155,145,135,255];
 
-  var PURPLE        = [127,  0,255,255];
+  var RED           = [170, 29, 29,255];  var ORANGE      = [238,136, 15,255];
+  var YELLOW        = [238,214, 15,255];  var GREEN       = [158,182, 58,255];
+  var BLUE          = [ 29, 86,170,255];  var PURPLE      = [127,  0,255,255];
 
   var BLANK   = 0;
   var RED0    = 1;
@@ -216,13 +220,13 @@
   // --------------------------------------------------------------------------
 
   var DRAG_DIRECTIONS={
-    
+
     NONE:         0,
     UPDOWN:       1,
     BACKWARD:     2,
     FORWARD:      3
 
-  }; 
+  };
 
 }
 
@@ -284,9 +288,9 @@
       this.dragStartY     = 0;
 
       this.dragging       = false;              //  Is the mouse cursor moving and the left button pressed?
-      
+
       this.dragDirection  = DRAG_DIRECTIONS.NONE;
-      
+
       this.focus          = null;               //  The control with focus
 
       this.controls       = [];                 //  Collection of controls in the app
@@ -298,7 +302,7 @@
 
       this.info           = 0;                  //  Is the info frame displayed
       this.telemetry      = false;              //  Is telemetry visible
-      
+
     }
 
     /* Hexy Specific       ------------------ */
@@ -306,7 +310,7 @@
 
       this.mode           = APPMODES.GAME;      //
 
-      this.score          = 100;                  //  The number of total hexes acquired
+      this.score          = 0;                  //  The number of total hexes acquired
 
       this.levelScores    = [   3,  4,  5,  5,  5,  6,  6,
                               6,  8,  8,  9, 10, 10, 10,
@@ -345,7 +349,7 @@
       this.reset;
       this.scoreboard;
 
-      this.puzzle         = 4;                  //  Index of the current puzzle layout
+      this.puzzle         = 2;                  //  Index of the current puzzle layout
 
       this.remaining      = 0;                  //  How many blue cells need to be uncovered
       this.covered        = 0;                  //  How many black cells need to be uncovered
@@ -400,16 +404,14 @@
 
     }
 
-    function move(){
+    function setActiveCell(){
 
       do{
 
-        var row = round(random(app.hexBoard.controls.length-1));
+        var row = round(random(app.hexBoard.controls.length-1   ));
         var col = round(random(app.hexBoard.controls[0].length-1));
 
         app.hexBoard.activeCell=app.hexBoard.controls[row][col];
-
-        // print(app.hexBoard.activeCell.id);
 
       } while(app.hexBoard.activeCell.layout===BLANK);
 
@@ -420,11 +422,9 @@
 
       for(var n=0; n<25; n++){
 
-// print(n);
-
         rnum=round(random(0,5));
 
-        move();
+        setActiveCell();
 
         switch(rnum){
 
@@ -490,7 +490,7 @@
           cell=cell.bottom;
 
         }
-        
+
         cell.dragging=true;
 
       };
@@ -538,7 +538,7 @@
         cell.dragging=true;
 
       };
-      
+
       // Move Columns ----------
       function colUp()              {
 
@@ -826,7 +826,7 @@
       control.prototype.clicked  = function(){ if(this.hit){ forEach(this.controls, 'clicked');  } };
       control.prototype.rclicked = function(){ if(this.hit){ forEach(this.controls, 'rclicked'); } };
       control.prototype.pressed  = function(){ };
-      control.prototype.dragged  = function(){ };      
+      control.prototype.dragged  = function(){ };
       control.prototype.released = function(){ };
       control.prototype.over     = function(){ };
       control.prototype.out      = function(){ this.hit=false; forEach(this.controls, 'out');      };
@@ -916,7 +916,7 @@
         forEach(this.controls,'dragged');
 
       };
-      
+
     }
 
     /** Telemetry       -------------------------------------------------- */
@@ -997,7 +997,7 @@
                    '\n\n\n' + 'Canvas Width:'   +
                    '\n'     + 'Canvas Height:'  +
                    '\n\n'   + 'Window Width:'   +
-                   '\n'     + 'Window Height:'  + 
+                   '\n'     + 'Window Height:'  +
                    '\n\n'   + 'Display Width:'  +
                    '\n'     + 'Display Height:' +
                    '\n\n'   + 'Focused:'        +
@@ -1167,7 +1167,7 @@
         app.hexBoard        = this;   //  Set a global hexBoard reference
 
         this.count          = 0;
-        
+
         this.calcRadius();
         this.reset();
 
@@ -1835,12 +1835,12 @@
 
         this.calcRadius();
         this.reset();
-// print(this.count);
+
       };
       hexBoard.prototype.dragged      = function(){
-        
+
         if(this.hit){
-          
+
           var ctrls=this.controls;
 
           for(var r in ctrls){
@@ -1853,7 +1853,7 @@
 
         }
 
-      };      
+      };
       hexBoard.prototype.clearDragging= function(){
 
         var ctrls=this.controls;
@@ -1867,7 +1867,7 @@
         }
 
       };
-      
+
     }
 
   }
@@ -1942,7 +1942,7 @@
 
           // var w15 = d2*0.5;
           // var w5  = d2*0.05;
-// print(w15);
+
           // for(pt=0; pt<6; pt++){
 
             // p.points.push( new pnt( cos(radians(ang+pt*60))*(d2),
@@ -2039,7 +2039,7 @@
                 default:        noFill();                   break;
 
               }
-                
+
               beginShape();
 
                 for(var pt in p.hpoints){
@@ -2048,7 +2048,7 @@
                 }
 
               endShape(CLOSE);
-              
+
             // }
 
         };
@@ -2058,13 +2058,13 @@
 
           switch(p.layout){
 
-            case RED0:      stroke(getColor(K_RED,40));     break;
-            case ORANGE0:   stroke(getColor(K_ORANGE,40));  break;
-            case YELLOW0:   stroke(getColor(K_YELLOW,40));  break;
-            case GREEN0:    stroke(getColor(K_GREEN,40));   break;
-            case BLUE0:     stroke(getColor(K_BLUE,40));    break;
-            case PURPLE0:   stroke(getColor(K_PURPLE,40));  break;
-            case BLACK0:    stroke(getColor(BLACK,40));     break;
+            case RED0:      stroke(getColor(K_RED,    40)); break;
+            case ORANGE0:   stroke(getColor(K_ORANGE, 40)); break;
+            case YELLOW0:   stroke(getColor(K_YELLOW, 40)); break;
+            case GREEN0:    stroke(getColor(K_GREEN,  40)); break;
+            case BLUE0:     stroke(getColor(K_BLUE,   40)); break;
+            case PURPLE0:   stroke(getColor(K_PURPLE, 40)); break;
+            case BLACK0:    stroke(getColor(BLACK,    40)); break;
 
             default:        noStroke();                     break;
 
@@ -2073,8 +2073,8 @@
           noFill();
           // strokeWeight(2);
           // stroke(getColor(BLACK,15));
-          strokeWeight(5);
-          stroke(getColor(BLACK,50));
+          strokeWeight(0);
+          fill(getColor(BLACK,50));
 
           beginShape();
 
@@ -2119,23 +2119,23 @@
 
           }
           else{
-            
-            fill(ORANGE);            
+
+            fill(ORANGE);
             triangle(0, 0, p.ipoints[0].x, p.ipoints[0].y, p.ipoints[1].x, p.ipoints[1].y,);
 
             fill(RED);
             triangle(0, 0, p.ipoints[1].x, p.ipoints[1].y, p.ipoints[2].x, p.ipoints[2].y,);
 
-            fill(PURPLE);            
+            fill(PURPLE);
             triangle(0, 0, p.ipoints[2].x, p.ipoints[2].y, p.ipoints[3].x, p.ipoints[3].y,);
 
-            fill(BLUE);            
+            fill(BLUE);
             triangle(0, 0, p.ipoints[3].x, p.ipoints[3].y, p.ipoints[4].x, p.ipoints[4].y,);
 
-            fill(GREEN);            
+            fill(GREEN);
             triangle(0, 0, p.ipoints[4].x, p.ipoints[4].y, p.ipoints[5].x, p.ipoints[5].y,);
 
-            fill(YELLOW);            
+            fill(YELLOW);
             triangle(0, 0, p.ipoints[5].x, p.ipoints[5].y, p.ipoints[0].x, p.ipoints[0].y,);
 
           }
@@ -2151,9 +2151,9 @@
 
             beginShape();
 
-              for(var pt in p.points){
-                vertex(p.points[pt].x,
-                p.points[pt].y);
+              for(var pt in p.opoints){
+                vertex(p.opoints[pt].x,
+                p.opoints[pt].y);
               }
 
             endShape(CLOSE);
@@ -2204,16 +2204,15 @@
 
           scale(1,-1);
 
-            // highlight();
-            if(this.dragging){ outerHexagon(); }
-            
-            innerHexagon();
-            activeCell();
+            if(this.dragging){ outerHexagon();    }
+            else             {  //highlight();
+                                innerHexagon();
+                                activeCell();     }
 
         pop();
 
         // drawLinks(); //  Delete for release
-// if(this.parent.activeCell===this){ print(this.id); }
+
       };
       hexCell.prototype.hitTest       = function(x,y){
 
@@ -2307,8 +2306,6 @@
 
                 addAnimation(this.x, this.y, this.w/2, this.h/2, CLRS.H_ORANGE_L);
 
-// print(app.animations.length);
-
               } // Blue Hexagon
               else if(this.layout===HEXY_TYPES.BLUE){
                 app.errors++;
@@ -2385,12 +2382,12 @@
 
       };
       hexCell.prototype.dragged       = function(){
-        
+
         if(this.hit &&
            this.layout!==BLANK){
-             print(this.id);
+             // print(this.id);
           this.parent.activeCell=this;
-          app.focus=this;
+
         }
 
       };
@@ -2512,8 +2509,7 @@
   };
 
   initialize();
-
-
+  setActiveCell();
 
   function update(){
 
@@ -2586,28 +2582,28 @@
       }
 
     };
-    
+
     function mouseReleased(){
 
       switch(mouseButton){
 
         case LEFT:    forEach(app.controls,'released');
-                      
+
                       // Tidy up dragging
                       {
 
                         app.hexBoard.clearDragging();
-                        
+
                         app.dragStartX=0;
                         app.dragStartY=0;
-                        
+
                         app.dragging = false;
-                        
+
                         app.dragDirection=DRAG_DIRECTIONS.NONE;
 
                         x=cx;
                         y=cy;
-                        
+
                       }
 
                       break;
@@ -2623,15 +2619,13 @@
       app.right  = false;
       app.center = false;
 
-    };   
+    };
     function mouseDragged() {
-      
+
       function calcDragAngle(){
-        
+
         // var a = atan2(mouseY-height/2, (mouseX-(width-200)/2));
         var a = atan2(mouseY-pmouseY, mouseX-pmouseX);
-
-        // print(round(a*180/PI));
 
         a=a*180/PI;
 
@@ -2655,7 +2649,7 @@
                                           y = cy +  50;
 
                                           app.dragDirection=DRAG_DIRECTIONS.FORWARD;
-                                          
+
                                           setDragForward();
 
                                           break;
@@ -2663,11 +2657,11 @@
           case a <= 180 && a >= 122.5:
           case a <= 0 && a >=-67.5:       x = cx - 100;
                                           y = cy +  50;
-                                          
+
                                           app.dragDirection=DRAG_DIRECTIONS.BACKWARD;
-                                          
+
                                           setDragBackward();
-                                          
+
                                           break;
 
           default:                        break;
@@ -2688,27 +2682,30 @@
                         app.dragStartY=mouseY;
 
                         app.dragging=true;
-                        
+
                       }
                       else{
 
-                        if(dist(app.dragStartX,app.dragStartY,mouseX,mouseY)>30){
+                        if(dist(app.dragStartX,
+                                app.dragStartY,
+                                mouseX,
+                                mouseY)>30){
 
                           if(x===cx &&
                              y===cy){ calcDragAngle(); }
-  
+
                         }
 
                       }
-                      
+
                       break;
-                      
+
         // case RIGHT:   forEach(app.controls,'rDragged');
-          
+
                       // break;
-          
+
         // case CENTER:  forEach(app.controls,'cDragged');
-        
+
                       // break;
 
         default:      break;
@@ -2743,10 +2740,10 @@
         switch(true){
 
           /*  Function Keys                                                                                           */
-          case app.keys[KEYCODES.F1]:         toggleInfo();                             break;  /* F1 - Info          */
+          // case app.keys[KEYCODES.F1]:         toggleInfo();                             break;  /* F1 - Info          */
           case app.keys[KEYCODES.F2]:         toggleCreate();                           break;  /* F2 - Toggle Create */
-          // case app.keys[KEYCODES.F3]:         toggleTelemetry();                        break;  /* F3 - Telemetry     */
-          case app.keys[KEYCODES.F4]:         toggleTelemetry();                            break;  /* F4 - Print Layout  */
+          // case app.keys[KEYCODES.F3]:         toggleTelemetry();                      break;  /* F3 - Telemetry     */
+          case app.keys[KEYCODES.F4]:         toggleTelemetry();                        break;  /* F4 - Telemetry  */
 
           // case app.keys[KEYCODES.CONTROL] &&
                // app.keys[KEYCODES.F5]:         clearLayout();                            break;  /* CTRL + F5          */
@@ -2821,8 +2818,6 @@
           default:                                                                      break;
 
         }
-
-// print("pressed " + key + " " + keyCode);
 
     };
     keyReleased=function(){ app.keys[keyCode]=false;                          };
