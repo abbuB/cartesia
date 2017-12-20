@@ -87,74 +87,74 @@
 
     var PUZZLES=[
 
-                [ //  Layout 1-1
-    //             1  2  3
-                  [0, 1, 0],  //  1
-                  [6, 7, 2],  //  2
-                  [5, 4, 3],  //  3
-                ],
-                [ //  Layout 1-2
-    //             1  2  3  4  5
-                  [0, 6, 1, 1, 0],  //  1
-                  [6, 6, 1, 2, 2],  //  2
-                  [5, 5, 7, 3, 2],  //  3
-                  [5, 4, 4, 3, 3],  //  4
-                  [0, 0, 4, 0, 0]   //  5
-                ],
-                [ //  Layout 1-3
-    //             1  2  3  4  5  6  7
-                  [0, 0, 0, 1, 0, 0, 0],  //  1
-                  [0, 6, 6, 1, 1, 1, 0],  //  2
-                  [6, 6, 6, 1, 1, 2, 2],  //  3
-                  [5, 5, 6, 7, 2, 2, 2],  //  4
-                  [5, 5, 5, 4, 3, 3, 2],  //  5
-                  [5, 4, 4, 4, 3, 3, 3],  //  6
-                  [0, 0, 4, 4, 3, 0, 0]   //  7
-                ],
-                [ //  Layout 1-4
-    //             1  2  3  4  5  6  7  8  9
-                  [0, 0, 0, 6, 1, 1, 0, 0, 0],  //  1
-                  [0, 6, 6, 6, 1, 1, 1, 1, 0],  //  2
-                  [6, 6, 6, 6, 1, 1, 1, 2, 2],  //  3
-                  [5, 5, 6, 6, 1, 2, 2, 2, 2],  //  4
-                  [5, 5, 5, 5, 7, 3, 2, 2, 2],  //  5
-                  [5, 5, 5, 4, 4, 3, 3, 3, 2],  //  6
-                  [5, 4, 4, 4, 4, 3, 3, 3, 3],  //  7
-                  [0, 0, 4, 4, 4, 3, 3, 0, 0],  //  8
-                  [0, 0, 0, 0, 4, 0, 0, 0, 0]   //  9
-                ],
-                [ //  Layout 1-5
-    //             1  2  3  4  5  6  7  8  9 10 11
-                  [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],  //  1
-                  [0, 0, 0, 6, 6, 1, 1, 1, 0, 0, 0],  //  2
-                  [0, 6, 6, 6, 6, 1, 1, 1, 1, 1, 0],  //  3
-                  [6, 6, 6, 6, 6, 1, 1, 1, 1, 2, 2],  //  4
-                  [5, 5, 6, 6, 6, 1, 1, 2, 2, 2, 2],  //  5
-                  [5, 5, 5, 5, 6, 7, 2, 2, 2, 2, 2],  //  6
-                  [5, 5, 5, 5, 5, 4, 3, 3, 2, 2, 2],  //  7
-                  [5, 5, 5, 4, 4, 4, 3, 3, 3, 3, 2],  //  8
-                  [5, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3],  //  9
-                  [0, 0, 4, 4, 4, 4, 3, 3, 3, 0, 0],  // 10
-                  [0, 0, 0, 0, 4, 4, 3, 0, 0, 0, 0]   // 11
-                ],
-                [ //  Layout 1-6
-    //             1  2  3  4  5  6  7  8  9 10 11 12 13
-                  [0, 0, 0, 0, 0, 6, 1, 1, 0, 0, 0, 0, 0],  //  1
-                  [0, 0, 0, 6, 6, 6, 1, 1, 1, 1, 0, 0, 0],  //  2
-                  [0, 6, 6, 6, 6, 6, 1, 1, 1, 1, 1, 1, 0],  //  3
-                  [6, 6, 6, 6, 6, 6, 1, 1, 1, 1, 1, 2, 2],  //  4
-                  [5, 5, 6, 6, 6, 6, 1, 1, 1, 2, 2, 2, 2],  //  5
-                  [5, 5, 5, 5, 6, 6, 1, 2, 2, 2, 2, 2, 2],  //  6
-                  [5, 5, 5, 5, 5, 5, 7, 3, 2, 2, 2, 2, 2],  //  7
-                  [5, 5, 5, 5, 5, 4, 4, 3, 3, 3, 2, 2, 2],  //  8
-                  [5, 5, 5, 4, 4, 4, 4, 3, 3, 3, 3, 3, 2],  //  9
-                  [5, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3],  // 10
-                  [0, 0, 4, 4, 4, 4, 4, 3, 3, 3, 3, 0, 0],  // 11
-                  [0, 0, 0, 0, 4, 4, 4, 3, 3, 0, 0, 0, 0],  // 12
-                  [0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0]   // 13
-                ]
+                  [ //  Layout 1-1
+      //             1  2  3
+                    [0, 1, 0],  //  1
+                    [6, 7, 2],  //  2
+                    [5, 4, 3],  //  3
+                  ],
+                  [ //  Layout 1-2
+      //             1  2  3  4  5
+                    [0, 6, 1, 1, 0],  //  1
+                    [6, 6, 1, 2, 2],  //  2
+                    [5, 5, 7, 3, 2],  //  3
+                    [5, 4, 4, 3, 3],  //  4
+                    [0, 0, 4, 0, 0]   //  5
+                  ],
+                  [ //  Layout 1-3
+      //             1  2  3  4  5  6  7
+                    [0, 0, 0, 1, 0, 0, 0],  //  1
+                    [0, 6, 6, 1, 1, 1, 0],  //  2
+                    [6, 6, 6, 1, 1, 2, 2],  //  3
+                    [5, 5, 6, 7, 2, 2, 2],  //  4
+                    [5, 5, 5, 4, 3, 3, 2],  //  5
+                    [5, 4, 4, 4, 3, 3, 3],  //  6
+                    [0, 0, 4, 4, 3, 0, 0]   //  7
+                  ],
+                  [ //  Layout 1-4
+      //             1  2  3  4  5  6  7  8  9
+                    [0, 0, 0, 6, 1, 1, 0, 0, 0],  //  1
+                    [0, 6, 6, 6, 1, 1, 1, 1, 0],  //  2
+                    [6, 6, 6, 6, 1, 1, 1, 2, 2],  //  3
+                    [5, 5, 6, 6, 1, 2, 2, 2, 2],  //  4
+                    [5, 5, 5, 5, 7, 3, 2, 2, 2],  //  5
+                    [5, 5, 5, 4, 4, 3, 3, 3, 2],  //  6
+                    [5, 4, 4, 4, 4, 3, 3, 3, 3],  //  7
+                    [0, 0, 4, 4, 4, 3, 3, 0, 0],  //  8
+                    [0, 0, 0, 0, 4, 0, 0, 0, 0]   //  9
+                  ],
+                  [ //  Layout 1-5
+      //             1  2  3  4  5  6  7  8  9 10 11
+                    [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],  //  1
+                    [0, 0, 0, 6, 6, 1, 1, 1, 0, 0, 0],  //  2
+                    [0, 6, 6, 6, 6, 1, 1, 1, 1, 1, 0],  //  3
+                    [6, 6, 6, 6, 6, 1, 1, 1, 1, 2, 2],  //  4
+                    [5, 5, 6, 6, 6, 1, 1, 2, 2, 2, 2],  //  5
+                    [5, 5, 5, 5, 6, 7, 2, 2, 2, 2, 2],  //  6
+                    [5, 5, 5, 5, 5, 4, 3, 3, 2, 2, 2],  //  7
+                    [5, 5, 5, 4, 4, 4, 3, 3, 3, 3, 2],  //  8
+                    [5, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3],  //  9
+                    [0, 0, 4, 4, 4, 4, 3, 3, 3, 0, 0],  // 10
+                    [0, 0, 0, 0, 4, 4, 3, 0, 0, 0, 0]   // 11
+                  ],
+                  [ //  Layout 1-6
+      //             1  2  3  4  5  6  7  8  9 10 11 12 13
+                    [0, 0, 0, 0, 0, 6, 1, 1, 0, 0, 0, 0, 0],  //  1
+                    [0, 0, 0, 6, 6, 6, 1, 1, 1, 1, 0, 0, 0],  //  2
+                    [0, 6, 6, 6, 6, 6, 1, 1, 1, 1, 1, 1, 0],  //  3
+                    [6, 6, 6, 6, 6, 6, 1, 1, 1, 1, 1, 2, 2],  //  4
+                    [5, 5, 6, 6, 6, 6, 1, 1, 1, 2, 2, 2, 2],  //  5
+                    [5, 5, 5, 5, 6, 6, 1, 2, 2, 2, 2, 2, 2],  //  6
+                    [5, 5, 5, 5, 5, 5, 7, 3, 2, 2, 2, 2, 2],  //  7
+                    [5, 5, 5, 5, 5, 4, 4, 3, 3, 3, 2, 2, 2],  //  8
+                    [5, 5, 5, 4, 4, 4, 4, 3, 3, 3, 3, 3, 2],  //  9
+                    [5, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3],  // 10
+                    [0, 0, 4, 4, 4, 4, 4, 3, 3, 3, 3, 0, 0],  // 11
+                    [0, 0, 0, 0, 4, 4, 4, 3, 3, 0, 0, 0, 0],  // 12
+                    [0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0]   // 13
+                  ]
 
-            ]
+                ]
 
   }
 
@@ -221,6 +221,78 @@
 
     // --------------------------------------------------------------------------
 
+    var KeyCodes={
+
+      //  Upper Case
+      A:              65,
+      B:              66,
+      C:              67,
+      D:              68,
+      E:              69,
+      L:              76,
+      N:              78,
+      O:              79,
+      Q:              81,
+      R:              82,
+      S:              83,
+      T:              84,
+      W:              87,
+      X:              88,
+      Z:              90,
+      
+      // Lower Case
+      a:              97,
+      b:              98,
+      c:              99,
+      d:             100,
+      e:             101,
+      l:             108,
+      n:             110,
+      o:             111,
+      q:             113,
+      r:             114,
+      s:             115,
+      t:             116,
+      w:             119,
+      x:             120,
+      y:             121,
+      z:             122,
+      
+      // Function Keys
+      
+      
+      // Special Keys
+      DELETE:        127,
+      BACKSPACE:       8,
+      TAB:             9,
+      ENTER:          10,
+      RETURN:         13,
+      ESC:            27,
+      CODED:      0xffff,
+      SHIFT:          16,
+      CONTROL:        17,
+      ALT:            18,
+      CAPSLK:         20,
+      SPACE:          32,
+      PGUP:           33,
+      PGDN:           34,
+      END:            35,
+      HOME:           36,
+      LEFT:           37,
+      UP:             38,
+      RIGHT:          39,
+      DOWN:           40,
+      PLUS:           43,
+      MINUS:          45,
+      PERIOD:         46,
+      EQUALS:         61,
+
+      NUMLK:         144,
+      META:          157,
+      INSERT:        155
+
+    };
+    
     var DRAG_DIRECTIONS={
 
       NONE:         0,
@@ -303,7 +375,7 @@
       this.controls       = [];                 //  Collection of controls in the app
       this.controlCount   = 0;
 
-      this.keys           = [];                 //  Array holding the value of all keycodes
+      this.keys           = [];                 //  Array holding the value of all KeyCodes
 
       this.fullscreen     = false;              //  Is the display set to take up the entire screen ie. No Chrome
 
@@ -399,7 +471,7 @@
       function getTelemetry()       { return app.telemetry;                                           };
       function toggleTelemetry()    { app.telemetry=!app.telemetry;                                   };
 
-      function toggleCreate()       { radomize();                                                     };
+      function toggleCreate()       { randomize();                                                     };
 
       function getMusic()           { return app.musicOn;                                             };
       function setMusic(b)          { return app.musicOn=b;                                           };
@@ -423,7 +495,7 @@
       } while(app.hexBoard.activeCell.layout===BLANK);
 
     };
-    function radomize()             {
+    function randomize()             {
 
       var rnum=0;
 
@@ -449,32 +521,39 @@
       }
 
     };
-
+    
+    function reset(){
+      
+      app.hexBoard.reset();
+      
+      
+    };
+    
   }
 
     /* Navigation  =========================================================== */
     {
 
       function incrementPuzzle()    {
-
-          app.puzzle+=2;
+print('increment puzzle');
+          app.puzzle++;
 
           if(app.puzzle>PUZZLES.length-1){  app.puzzle=0; }
 
           app.puzzle=constrain(app.puzzle, 0, PUZZLES.length-1);
-
-          // reset();
+print(app.puzzle);
+          reset();
   // throw(23);
         };
       function decrementPuzzle()    {
+print('decrement puzzle');
+        app.puzzle--;
 
-        app.puzzle-=2;
+        if(app.puzzle<0){ app.puzzle=PUZZLES.length-1; }
 
-        if(app.puzzle<0){ app.puzzle=PUZZLES.length-2; }
-
-        app.puzzle=constrain(app.puzzle, 0, PUZZLES.length-2);
-
-        // reset();
+        app.puzzle=constrain(app.puzzle, 0, PUZZLES.length-1);
+print(app.puzzle);
+        reset();
 
       };
 
@@ -492,12 +571,14 @@
 
         while(cell.bottom!==null &&
               cell.bottom.layout!==BLANK){
-
+          
+          app.hexBoard.selected.push(cell);
           cell.dragging=true;
           cell=cell.bottom;
 
         }
 
+        app.hexBoard.selected.push(cell);
         cell.dragging=true;
 
       };
@@ -998,8 +1079,8 @@
                    '\n'     + 'Center:'         +
                    '\n\n'   + 'Dragging:'       +
                    '\n'     + 'Drag Direction:' +
-                   '\n\n\n' + 'Alt:'            +
-                   '\n'     + 'Control:'        +
+                   '\n\n\n' + 'Control:'        +
+                   '\n'     + 'Alt:'            +
                    '\n'     + 'Shift:'          +
                    '\n\n\n' + 'Canvas Width:'   +
                    '\n'     + 'Canvas Height:'  +
@@ -1022,9 +1103,9 @@
                    '\n'     + app.center                 +
                    '\n\n'   + app.dragging               +
                    '\n'     + app.dragDirection          +
-                   '\n\n\n' + app.keys[KEYCODES.ALT]     +
-                   '\n'     + app.keys[KEYCODES.CONTROL] +
-                   '\n'     + app.keys[KEYCODES.SHIFT]   +
+                   '\n\n\n' + app.keys[KeyCodes.CONTROL] +
+                   '\n'     + app.keys[KeyCodes.ALT]     +
+                   '\n'     + app.keys[KeyCodes.SHIFT]   +
                    '\n\n\n' + width                      +
                    '\n'     + height                     +
                    '\n\n'   + windowWidth                +
@@ -1156,18 +1237,14 @@
         this.color          = props.color;
 
         /* ------------------------------------------------- */
-        this.radius         = 0;
+        // this.radius         = 0;
 
         this.activeCell     = null;
 
         this.layout         = [];     //  Array of the layout of hexcells
-        this.text           = [];     //  Array of nexCell hints
+        // this.text           = [];     //  Array of nexCell hints
 
-        this.lines          = [];     //  Array of hexCells with highlight lines activated
-        this.halos          = [];     //  Array of hexCells with a halo activated
-
-        this.clrOffset      = 0;      //  Used to pulsate the halo
-        this.clrIncr        = 0.5;    //  Something, something halo
+        this.selected       = [];     //  Array of currently selected hexcells
 
         this.dirty          = false;  //  Has the hexBoard been clicked yet?
 
@@ -2407,9 +2484,9 @@
   function initialize(){
 
     /*  Initialize the app.keys array and the values of the special keys */
-    app.keys[KEYCODES.CONTROL] = false;
-    app.keys[KEYCODES.ALT]     = false;
-    app.keys[KEYCODES.SHIFT]   = false;
+    app.keys[KeyCodes.CONTROL] = false;
+    app.keys[KeyCodes.ALT]     = false;
+    app.keys[KeyCodes.SHIFT]   = false;
 
     /* LOAD CONTROLS */
 
@@ -2678,7 +2755,7 @@ print('dclicked');
 
         case LEFT:
 
-                      forEach(app.controls,'dragged');  //  Necessary to register drag event first to set the active cell
+                      forEach(app.controls,'dragged');  //  Necessary to put this first to set the active cell
 
                       if(app.dragging===false){
 
@@ -2736,93 +2813,76 @@ print('dclicked');
 
   /* Keyboard Events =========================================================== */
   {
-
+    
     keyPressed=function(){
-
+    
       app.keys[keyCode]=true;
+
+  print(keyCode + ' | ' + key + ' | ' + key.toString());
+  
+      switch(true){
+        
+        /*  Function Keys                                                   */
+        case keyCode===KEYCODES.F1:         toggleInfo();         break;
+        case keyCode===KEYCODES.F2:         randomize();          break;
+        case keyCode===KEYCODES.F3:         toggleTelemetry();    break;
+        case keyCode===KEYCODES.F4:         toggleTelemetry();    break;
+
+        /*  Shift Columns                                                   */
+        case keyCode===KEYCODES.RIGHT &&
+             app.keys[KEYCODES.CONTROL]:    colDownRight();       break;
+
+        case keyCode===KEYCODES.LEFT &&
+             app.keys[KEYCODES.CONTROL]:    colDownLeft();        break;
+
+        /*  Increment/Decrement Puzzles                                     */
+        case keyCode===KEYCODES.RIGHT &&
+             app.keys[KEYCODES.SHIFT]:      incrementPuzzle();    break;
+
+        case keyCode===KEYCODES.LEFT &&
+             app.keys[KEYCODES.SHIFT]:      decrementPuzzle();    break;
+
+        case keyCode===KEYCODES.RIGHT:      colUpRight();         break;
+        case keyCode===KEYCODES.LEFT:       colUpLeft();          break;
+
+        case keyCode===KEYCODES.UP:         colUp();              break;
+        case keyCode===KEYCODES.DOWN:       colDown();            break;
+
+        // case app.keys[KeyCodes.CONTROL] &&
+             // app.keys[KeyCodes.F5]:         clearLayout();         break;  // CTRL + F5          
+        // case app.keys[KeyCodes.F6]:         reset();               break;  // F6 - reset layout  
+
+        // /* Edit                                                                                                */
+        // case app.keys[KeyCodes.SPACE] &&
+             // app.keys[KeyCodes.CONTROL]:    decrCellLayout();      break;  // Decrement Layout   
+        // case app.keys[KeyCodes.SPACE]:      incrCellLayout();      break;  // Increment Layout   
+
+        // /* Figure out how to use this                                                                          */
+        // case app.keys[KeyCodes.CODED]:                             break;
+          
+        default:                                  break;
+
+      }
+
+    };
+    keyTyped=function(){
+
+  print(keyCode + ' | ' + ' | ' + key + ' | ' + key.toString());
 
         switch(true){
 
-          /*  Function Keys                                                                                           */
-          // case app.keys[KEYCODES.F1]:         toggleInfo();                             break;  /* F1 - Info          */
-          case app.keys[KEYCODES.F2]:         toggleCreate();                           break;  /* F2 - Toggle Create */
-          // case app.keys[KEYCODES.F3]:         toggleTelemetry();                      break;  /* F3 - Telemetry     */
-          case app.keys[KEYCODES.F4]:         toggleTelemetry();                        break;  /* F4 - Telemetry  */
+          /*  Move active cell                                              */
+          case key==='Q' || key==='q':    upLeft();       break;
+          case key==='E' || key==='e':    upRight();      break;
+          case key==='W' || key==='w':    up();           break;
+          case key==='S' || key==='s':    down();         break;
+          case key==='A' || key==='a':    downLeft();     break;
+          case key==='D' || key==='d':    downRight();    break;
 
-          // case app.keys[KEYCODES.CONTROL] &&
-               // app.keys[KEYCODES.F5]:         clearLayout();                            break;  /* CTRL + F5          */
-          // case app.keys[KEYCODES.F6]:         reset();                                  break;  /* F6 - reset layout  */
-
-          // /* Edit                                                                                                     */
-          // case app.keys[KEYCODES.SPACE] &&
-               // app.keys[KEYCODES.CONTROL]:    decrCellLayout();                         break;  /* Decrement Layout   */
-          // case app.keys[KEYCODES.SPACE]:      incrCellLayout();                         break;  /* Increment Layout   */
-
-          // case app.keys[KEYCODES.O] &&
-               // app.keys[KEYCODES.SHIFT]:      setCellType(HEXY_TYPES.BLACK_REVEALED);   break;  /* Black Revealed   */
-
-          // case app.keys[KEYCODES.O]:          setCellType(HEXY_TYPES.BLACK);            break;  /* Black            */
-
-          // case app.keys[KEYCODES.X] &&
-               // app.keys[KEYCODES.SHIFT]:      setCellType(HEXY_TYPES.BLUE_REVEALED);    break;  /* Blue Revealed    */
-
-          // case app.keys[KEYCODES.X]:          setCellType(HEXY_TYPES.BLUE);             break;  /* Blue             */
-
-          // case app.keys[KEYCODES.S] ||
-               // app.keys[KEYCODES.s]:          setCellType(HEXY_TYPES.DOWN_CENTER);      break;  /* Down Center      */
-          // case app.keys[KEYCODES.L] ||
-               // app.keys[KEYCODES.l]:          setCellType(HEXY_TYPES.DOWN_LEFT);        break;  /* Down Left        */
-          // case app.keys[KEYCODES.R] ||
-               // app.keys[KEYCODES.r]:          setCellType(HEXY_TYPES.DOWN_RIGHT);       break;  /* Down Right       */
-
-          // case app.keys[KEYCODES.B]:          setCellType(HEXY_TYPES.BLANK);            break;  /* Blank            */
-
-          // case app.keys[KEYCODES.T] ||
-               // app.keys[KEYCODES.t]:          setCellType(HEXY_TYPES.NUMBER);           break;  /* Number           */
-
-          // case app.keys[KEYCODES.C]:          setCellType(HEXY_TYPES.CONSECUTIVE);      break;  /* Consecutive      */
-          // case app.keys[KEYCODES.N]:          setCellType(HEXY_TYPES.NOT_CONSECUTIVE);  break;  /* Non-Consecutive  */
-
-          /*  Navigation                                                                                            */
-          case app.keys[KEYCODES.A]:          decrementPuzzle();                        break;  /* A                */
-          case app.keys[KEYCODES.D]:          incrementPuzzle();                        break;  /* D                */
-
-
-          case app.keys[KEYCODES.RIGHT] &&
-               app.keys[KEYCODES.CONTROL] &&
-               app.keys[KEYCODES.SHIFT]:      colDownRight();                           break;  /* Shift col up     */
-          case app.keys[KEYCODES.LEFT] &&
-               app.keys[KEYCODES.CONTROL] &&
-               app.keys[KEYCODES.SHIFT]:      colDownLeft();                            break;  /* Shift Col down   */
-
-          case app.keys[KEYCODES.RIGHT] &&
-               app.keys[KEYCODES.SHIFT]:      colUpRight();                             break;  /* Shift col up     */
-          case app.keys[KEYCODES.LEFT] &&
-               app.keys[KEYCODES.SHIFT]:      colUpLeft();                              break;  /* Shift Col down   */
-
-          case app.keys[KEYCODES.UP] &&
-               app.keys[KEYCODES.SHIFT]:      colUp();                                  break;  /* Shift col up     */
-          case app.keys[KEYCODES.DOWN] &&
-               app.keys[KEYCODES.SHIFT]:      colDown();                                break;  /* Shift Col down   */
-
-          case app.keys[KEYCODES.UP]:         up();                                     break;  /* Up               */
-          case app.keys[KEYCODES.DOWN]:       down();                                   break;  /* Down             */
-
-          case app.keys[KEYCODES.RIGHT] &&
-               app.keys[KEYCODES.CONTROL]:    downRight();                              break;  /* Down Right       */
-          case app.keys[KEYCODES.RIGHT]:      upRight();                                break;  /* Up Right         */
-          case app.keys[KEYCODES.LEFT] &&
-               app.keys[KEYCODES.CONTROL]:    downLeft();                               break;  /* Down Left        */
-          case app.keys[KEYCODES.LEFT]:       upLeft();                                 break;  /* Up Left          */
-
-
-          // /* Figure out how to use this                                                                             */
-          // case app.keys[KEYCODES.CODED]:                                                break;
-
-          default:                                                                      break;
+          default:                                        break;
 
         }
-
+        
     };
     keyReleased=function(){ app.keys[keyCode]=false;                          };
 
