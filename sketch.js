@@ -49,6 +49,10 @@
 
   TO DO:
 
+    - active cell rollover edge of grid (top/bottom - right/left, etc)
+
+    - AI puzzle solving
+    
     - puzzle completion animations
 
     - implement timer
@@ -535,24 +539,24 @@
     {
 
       function incrementPuzzle()    {
-print('increment puzzle');
+
           app.puzzle++;
 
           if(app.puzzle>PUZZLES.length-1){  app.puzzle=0; }
 
           app.puzzle=constrain(app.puzzle, 0, PUZZLES.length-1);
-print(app.puzzle);
+
           reset();
   // throw(23);
         };
       function decrementPuzzle()    {
-print('decrement puzzle');
+
         app.puzzle--;
 
         if(app.puzzle<0){ app.puzzle=PUZZLES.length-1; }
 
         app.puzzle=constrain(app.puzzle, 0, PUZZLES.length-1);
-print(app.puzzle);
+
         reset();
 
       };
@@ -2813,15 +2817,15 @@ print('dclicked');
 
   /* Keyboard Events =========================================================== */
   {
-    
+
     keyPressed=function(){
-    
+
       app.keys[keyCode]=true;
 
   print(keyCode + ' | ' + key + ' | ' + key.toString());
-  
+
       switch(true){
-        
+
         /*  Function Keys                                                   */
         case keyCode===KEYCODES.F1:         toggleInfo();         break;
         case keyCode===KEYCODES.F2:         randomize();          break;
@@ -2836,11 +2840,11 @@ print('dclicked');
              app.keys[KEYCODES.CONTROL]:    colDownLeft();        break;
 
         /*  Increment/Decrement Puzzles                                     */
-        case keyCode===KEYCODES.RIGHT &&
-             app.keys[KEYCODES.SHIFT]:      incrementPuzzle();    break;
+        // case keyCode===KEYCODES.RIGHT &&
+             // app.keys[KEYCODES.SHIFT]:      incrementPuzzle();    break;
 
-        case keyCode===KEYCODES.LEFT &&
-             app.keys[KEYCODES.SHIFT]:      decrementPuzzle();    break;
+        // case keyCode===KEYCODES.LEFT &&
+             // app.keys[KEYCODES.SHIFT]:      decrementPuzzle();    break;
 
         case keyCode===KEYCODES.RIGHT:      colUpRight();         break;
         case keyCode===KEYCODES.LEFT:       colUpLeft();          break;
