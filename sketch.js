@@ -49,22 +49,16 @@
 
   TO DO:
 
-    - reference to the center hexcell
+    - rotation of each hexcell
+    - rotation of each ring
 
-    - initial color and current color
-    
     - color coded outer hexagon to indicate patterns
 
-    - active cell rollover edge of grid (top/bottom - right/left, etc)
-
     - AI puzzle solving
-    
+
     - puzzle completion animations
 
     - implement timer
-
-    - rotation of each hexcell
-    - rotation of each ring
 
     - command object
 
@@ -75,6 +69,12 @@
 
   TO DONE:
 
+    - initial color and current color
+      
+    - active cell rollover edge of grid (top/bottom - right/left, etc)
+
+    - reference to the center hexcell
+  
     - start drag x/y
 
     - determine how to pass a color as a parameter
@@ -507,9 +507,10 @@
     };
     function randomize()             {
 
+    print(pow(app.hexBoard.layout.length,2));
       var rnum=0;
 
-      for(var n=0; n<25; n++){
+      for(var n=0; n<pow(app.hexBoard.layout.length,2); n++){
 
         rnum=round(random(0,5));
 
@@ -642,23 +643,23 @@
         var cell=app.hexBoard.activeCell;
 
         while(cell.top!==null &&
-              cell.top.layout!==BLANK){
+              cell.top.color!==BLANK){
 
           cell=cell.top;
 
         }
 
-        var topLayout=cell.layout;
+        var topColor=cell.color;
 
         while(cell.bottom!==null &&
-              cell.bottom.layout!==BLANK){
+              cell.bottom.color!==BLANK){
 
-          cell.layout=cell.bottom.layout;
+          cell.color=cell.bottom.color;
           cell=cell.bottom;
 
         }
 
-        cell.layout=topLayout;
+        cell.color=topColor;
 
       };
       function colDown()            {
@@ -666,23 +667,23 @@
         var cell=app.hexBoard.activeCell;
 
         while(cell.bottom!==null &&
-              cell.bottom.layout!==BLANK){
+              cell.bottom.color!==BLANK){
 
           cell=cell.bottom;
 
         }
 
-        var bottomLayout=cell.layout;
+        var bottomcolor=cell.color;
 
         while(cell.top!==null &&
-              cell.top.layout!==BLANK){
+              cell.top.color!==BLANK){
 
-          cell.layout=cell.top.layout;
+          cell.color=cell.top.color;
           cell=cell.top;
 
         }
 
-        cell.layout=bottomLayout;
+        cell.color=bottomcolor;
 
       };
 
@@ -691,23 +692,23 @@
         var cell=app.hexBoard.activeCell;
 
         while(cell.topRight!==null &&
-              cell.topRight.layout!==BLANK){
+              cell.topRight.color!==BLANK){
 
           cell=cell.topRight;
 
         }
 
-        var topLayout=cell.layout;
+        var topcolor=cell.color;
 
         while(cell.bottomLeft!==null &&
-              cell.bottomLeft.layout!==BLANK){
+              cell.bottomLeft.color!==BLANK){
 
-          cell.layout=cell.bottomLeft.layout;
+          cell.color=cell.bottomLeft.color;
           cell=cell.bottomLeft;
 
         }
 
-        cell.layout=topLayout;
+        cell.color=topcolor;
 
       };
       function colUpLeft()          {
@@ -715,23 +716,23 @@
         var cell=app.hexBoard.activeCell;
 
         while(cell.topLeft!==null &&
-              cell.topLeft.layout!==BLANK){
+              cell.topLeft.color!==BLANK){
 
           cell=cell.topLeft;
 
         }
 
-        var topLayout=cell.layout;
+        var topcolor=cell.color;
 
         while(cell.bottomRight!==null &&
-              cell.bottomRight.layout!==BLANK){
+              cell.bottomRight.color!==BLANK){
 
-          cell.layout=cell.bottomRight.layout;
+          cell.color=cell.bottomRight.color;
           cell=cell.bottomRight;
 
         }
 
-        cell.layout=topLayout;
+        cell.color=topcolor;
 
       };
 
@@ -740,23 +741,23 @@
         var cell=app.hexBoard.activeCell;
 
         while(cell.bottomRight!==null &&
-              cell.bottomRight.layout!==BLANK){
+              cell.bottomRight.color!==BLANK){
 
           cell=cell.bottomRight;
 
         }
 
-        var bottomLayout=cell.layout;
+        var bottomcolor=cell.color;
 
         while(cell.topLeft!==null &&
-              cell.topLeft.layout!==BLANK){
+              cell.topLeft.color!==BLANK){
 
-          cell.layout=cell.topLeft.layout;
+          cell.color=cell.topLeft.color;
           cell=cell.topLeft;
 
         }
 
-        cell.layout=bottomLayout;
+        cell.color=bottomcolor;
 
       };
       function colDownLeft()        {
@@ -764,23 +765,23 @@
         var cell=app.hexBoard.activeCell;
 
         while(cell.bottomLeft!==null &&
-              cell.bottomLeft.layout!==BLANK){
+              cell.bottomLeft.color!==BLANK){
 
           cell=cell.bottomLeft;
 
         }
 
-        var bottomLayout=cell.layout;
+        var bottomcolor=cell.color;
 
         while(cell.topRight!==null &&
-              cell.topRight.layout!==BLANK){
+              cell.topRight.color!==BLANK){
 
-          cell.layout=cell.topRight.layout;
+          cell.color=cell.topRight.color;
           cell=cell.topRight;
 
         }
 
-        cell.layout=bottomLayout;
+        cell.color=bottomcolor;
 
       };
 
@@ -2081,17 +2082,10 @@
         // ------------------------------
 
         this.layout       = props.layout;   //  Type of cell
-        this.text         = props.text;     //  Hint
 
-        this.count        = 0;              //  # of blue cells in surrounding ring
-        this.dCount       = 0;              //  # of blue cells in surrounding 2 rings
+        this.color        = props.layout;
 
         this.enabled      = true;           //  Text is displayed black or grayed out
-
-        this.halo         = false;
-        this.line         = false;
-
-        this.clickRadius  = 0;
 
         this.dragging     = false;          // Is the HexCell being dragged?
 
@@ -2196,7 +2190,7 @@
               stroke(GRAY);
               strokeWeight(0.25);
 
-              switch(p.layout){
+              switch(p.color){
 
                 case RED0:      fill(getColor(RED,    20)); break;
                 case ORANGE0:   fill(getColor(ORANGE, 20)); break;
@@ -2259,8 +2253,11 @@
         function innerHexagon(){
 
           var drw=true;
-
-          switch(p.layout){
+          var clr=p.color;
+          
+          if(app.keys[KeyCodes. SHIFT]){ clr=p.layout; }
+            
+          switch(clr){
 
             case RED0:      fill(RED);    break;
             case ORANGE0:   fill(ORANGE); break;
@@ -2276,7 +2273,7 @@
 
           noStroke();
 
-          if(p.layout!==BLACK0){
+          if(clr!==BLACK0){
 
             beginShape();
 
@@ -2948,7 +2945,7 @@ print('dclicked');
         /*  Function Keys                                                   */
         case keyCode===KEYCODES.F1:         toggleInfo();         break;
         // case keyCode===KEYCODES.F2:         randomize();          break;
-        case keyCode===KEYCODES.F3:         toggleTelemetry();    break;
+        // case keyCode===KEYCODES.F3:         toggleTelemetry();    break;
         case keyCode===KEYCODES.F4:         toggleTelemetry();    break;
 
         case keyCode===KEYCODES.PGUP:       incrementPuzzle();    break;
