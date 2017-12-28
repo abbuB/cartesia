@@ -49,6 +49,12 @@
 
   TO DO:
 
+    - reference to the center hexcell
+
+    - initial color and current color
+    
+    - color coded outer hexagon to indicate patterns
+
     - active cell rollover edge of grid (top/bottom - right/left, etc)
 
     - AI puzzle solving
@@ -432,7 +438,7 @@
       this.reset;
       this.scoreboard;
 
-      this.puzzle         = 2;                  //  Index of the current puzzle layout
+      this.puzzle         = 4;                  //  Index of the current puzzle layout
 
       this.remaining      = 0;                  //  How many blue cells need to be uncovered
       this.covered        = 0;                  //  How many black cells need to be uncovered
@@ -475,7 +481,7 @@
       function getTelemetry()       { return app.telemetry;                                           };
       function toggleTelemetry()    { app.telemetry=!app.telemetry;                                   };
 
-      function toggleCreate()       { randomize();                                                     };
+      function toggleCreate()       {};
 
       function getMusic()           { return app.musicOn;                                             };
       function setMusic(b)          { return app.musicOn=b;                                           };
@@ -530,7 +536,6 @@
       
       app.hexBoard.reset();
       
-      
     };
     
   }
@@ -548,7 +553,7 @@
 
           reset();
   // throw(23);
-        };
+      };
       function decrementPuzzle()    {
 
         app.puzzle--;
@@ -789,6 +794,16 @@
           app.hexBoard.activeCell = app.hexBoard.activeCell.top;
 
         }
+        else{
+
+          while(app.hexBoard.activeCell.bottom!==null &&
+                app.hexBoard.activeCell.bottom.layout!==0){
+             
+            app.hexBoard.activeCell = app.hexBoard.activeCell.bottom;
+          
+          }
+
+        }
 
       };
       function down()               {
@@ -797,6 +812,16 @@
            app.hexBoard.activeCell.bottom.layout!==0){
 
           app.hexBoard.activeCell = app.hexBoard.activeCell.bottom;
+
+        }
+        else{
+
+          while(app.hexBoard.activeCell.top!==null &&
+                app.hexBoard.activeCell.top.layout!==0){
+             
+            app.hexBoard.activeCell = app.hexBoard.activeCell.top;
+          
+          }
 
         }
 
@@ -810,6 +835,16 @@
           app.hexBoard.activeCell = app.hexBoard.activeCell.topRight;
 
         }
+        else{
+
+          while(app.hexBoard.activeCell.bottomLeft!==null &&
+                app.hexBoard.activeCell.bottomLeft.layout!==0){
+             
+            app.hexBoard.activeCell = app.hexBoard.activeCell.bottomLeft;
+          
+          }
+
+        }
 
       };
       function upLeft()             {
@@ -820,14 +855,35 @@
           app.hexBoard.activeCell = app.hexBoard.activeCell.topLeft;
 
         }
+        else{
 
+          while(app.hexBoard.activeCell.bottomRight!==null &&
+                app.hexBoard.activeCell.bottomRight.layout!==0){
+             
+            app.hexBoard.activeCell = app.hexBoard.activeCell.bottomRight;
+          
+          }
+
+        }
+        
       };
+
       function downRight()          {
 
         if(app.hexBoard.activeCell.bottomRight!==null &&
            app.hexBoard.activeCell.bottomRight.layout!==0){
 
           app.hexBoard.activeCell = app.hexBoard.activeCell.bottomRight;
+
+        }
+        else{
+
+          while(app.hexBoard.activeCell.topLeft!==null &&
+                app.hexBoard.activeCell.topLeft.layout!==0){
+             
+            app.hexBoard.activeCell = app.hexBoard.activeCell.topLeft;
+          
+          }
 
         }
 
@@ -838,6 +894,16 @@
            app.hexBoard.activeCell.bottomLeft.layout!==0){
 
           app.hexBoard.activeCell = app.hexBoard.activeCell.bottomLeft;
+
+        }
+        else{
+
+          while(app.hexBoard.activeCell.topRight!==null &&
+                app.hexBoard.activeCell.topRight.layout!==0){
+
+            app.hexBoard.activeCell = app.hexBoard.activeCell.topRight;
+
+          }
 
         }
 
@@ -1253,7 +1319,9 @@
         this.dirty          = false;  //  Has the hexBoard been clicked yet?
 
         app.hexBoard        = this;   //  Set a global hexBoard reference
-
+        
+        this.center         = 0;
+        
         this.count          = 0;
 
         this.calcRadius();
@@ -1276,6 +1344,17 @@
         var rowArray    = [];  // Temporary 1-D array to hold each successive row before adding
                                // to the corresponding 2-D array
         var n=0;          // Iterator
+
+        function setCenter(){
+
+          var row = floor(p.layout.length/2);
+          var col = floor(p.layout[0].length/2);
+
+          p.center=p.controls[row][col];
+
+          print(row + ", " + col);
+
+        };
 
         function load(){
 
@@ -1335,8 +1414,11 @@
         };
 
         load();
+        setCenter();
 
         this.update();
+        
+        app.hexBoard.activeCell=app.hexBoard.center;
 
         app.finished=false;
         this.dirty=false;
@@ -2234,14 +2316,14 @@
           if(app.hexBoard.activeCell===p){
 
             fill(getColor(BLACK,15));
-            strokeWeight(1.5);
-            stroke(getColor(BLACK,25));
+            strokeWeight(3);
+            stroke(getColor(WHITE,75));
 
             beginShape();
 
-              for(var pt in p.opoints){
-                vertex(p.opoints[pt].x,
-                p.opoints[pt].y);
+              for(var pt in p.points){
+                vertex(p.points[pt].x,
+                p.points[pt].y);
               }
 
             endShape(CLOSE);
@@ -2594,7 +2676,6 @@
   };
 
   initialize();
-  setActiveCell();
 
   function update(){
 
@@ -2608,6 +2689,42 @@
   var cx = (windowWidth-200)/2;
   var cy = windowHeight/2;
 
+  function handleKeys(){
+
+    if(frameCount%5===0){
+
+      switch(true){
+
+        case keyIsDown(KEYCODES.F2):    randomize();    break;
+
+        case keyIsDown(KeyCodes.Q):     upLeft();       break;
+        case keyIsDown(KeyCodes.E):     upRight();      break;
+
+        case keyIsDown(KeyCodes.A):     downLeft();     break;
+        case keyIsDown(KeyCodes.D):     downRight();    break;
+
+        case keyIsDown(KeyCodes.W):     up();           break;
+        case keyIsDown(KeyCodes.S):     down();         break;
+
+        case keyIsDown(UP_ARROW):       colUp();        break;
+        case keyIsDown(DOWN_ARROW):     colDown();      break;
+
+        case keyIsDown(LEFT_ARROW) &&
+             keyIsDown(CONTROL):        colDownLeft();  break;
+        case keyIsDown(RIGHT_ARROW) &&
+             keyIsDown(CONTROL):        colDownRight(); break;
+
+        case keyIsDown(LEFT_ARROW):     colUpLeft();    break;
+        case keyIsDown(RIGHT_ARROW):    colUpRight();   break;
+
+        default:                                        break;
+
+      }
+
+    }
+    
+  };
+
   function draw(){
 
     background(128);
@@ -2620,6 +2737,8 @@
     // strokeWeight(5);
 
       // line(cx, cy, x, y);
+
+      handleKeys();
 
   }
 
@@ -2822,22 +2941,25 @@ print('dclicked');
 
       app.keys[keyCode]=true;
 
-  print(keyCode + ' | ' + key + ' | ' + key.toString());
+  // print(keyCode + ' | ' + key + ' | ' + key.toString());
 
       switch(true){
 
         /*  Function Keys                                                   */
         case keyCode===KEYCODES.F1:         toggleInfo();         break;
-        case keyCode===KEYCODES.F2:         randomize();          break;
+        // case keyCode===KEYCODES.F2:         randomize();          break;
         case keyCode===KEYCODES.F3:         toggleTelemetry();    break;
         case keyCode===KEYCODES.F4:         toggleTelemetry();    break;
 
-        /*  Shift Columns                                                   */
-        case keyCode===KEYCODES.RIGHT &&
-             app.keys[KEYCODES.CONTROL]:    colDownRight();       break;
+        case keyCode===KEYCODES.PGUP:       incrementPuzzle();    break;
+        case keyCode===KEYCODES.PGDN:       decrementPuzzle();    break;
 
-        case keyCode===KEYCODES.LEFT &&
-             app.keys[KEYCODES.CONTROL]:    colDownLeft();        break;
+        /*  Shift Columns                                                   */
+        // case keyCode===KEYCODES.RIGHT &&
+             // app.keys[KEYCODES.CONTROL]:    colDownRight();       break;
+
+        // case keyCode===KEYCODES.LEFT &&
+             // app.keys[KEYCODES.CONTROL]:    colDownLeft();        break;
 
         /*  Increment/Decrement Puzzles                                     */
         // case keyCode===KEYCODES.RIGHT &&
@@ -2846,11 +2968,11 @@ print('dclicked');
         // case keyCode===KEYCODES.LEFT &&
              // app.keys[KEYCODES.SHIFT]:      decrementPuzzle();    break;
 
-        case keyCode===KEYCODES.RIGHT:      colUpRight();         break;
-        case keyCode===KEYCODES.LEFT:       colUpLeft();          break;
+        // case keyCode===KEYCODES.RIGHT:      colUpRight();         break;
+        // case keyCode===KEYCODES.LEFT:       colUpLeft();          break;
 
-        case keyCode===KEYCODES.UP:         colUp();              break;
-        case keyCode===KEYCODES.DOWN:       colDown();            break;
+        // case keyCode===KEYCODES.UP:         colUp();              break;
+        // case keyCode===KEYCODES.DOWN:       colDown();            break;
 
         // case app.keys[KeyCodes.CONTROL] &&
              // app.keys[KeyCodes.F5]:         clearLayout();         break;  // CTRL + F5          
@@ -2869,25 +2991,25 @@ print('dclicked');
       }
 
     };
-    keyTyped=function(){
+    // keyTyped=function(){
 
-  print(keyCode + ' | ' + ' | ' + key + ' | ' + key.toString());
+  // print(keyCode + ' | ' + ' | ' + key + ' | ' + key.toString());
 
-        switch(true){
+        // switch(true){
 
           /*  Move active cell                                              */
-          case key==='Q' || key==='q':    upLeft();       break;
-          case key==='E' || key==='e':    upRight();      break;
-          case key==='W' || key==='w':    up();           break;
-          case key==='S' || key==='s':    down();         break;
-          case key==='A' || key==='a':    downLeft();     break;
-          case key==='D' || key==='d':    downRight();    break;
+          // case key==='Q' || key==='q':    upLeft();       break;
+          // case key==='E' || key==='e':    upRight();      break;
+          // case key==='W' || key==='w':    up();           break;
+          // case key==='S' || key==='s':    down();         break;
+          // case key==='A' || key==='a':    downLeft();     break;
+          // case key==='D' || key==='d':    downRight();    break;
 
-          default:                                        break;
+          // default:                                        break;
 
-        }
+        // }
         
-    };
+    // };
     keyReleased=function(){ app.keys[keyCode]=false;                          };
 
   }
