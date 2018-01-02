@@ -48,6 +48,10 @@
 /*
 
   TO DO:
+    
+    - grid complete animation (exploding triangles?)
+    
+    - maintain percentage complete calculation
 
     - rotation of each hexcell
     - rotation of each ring
@@ -531,6 +535,8 @@
 
       }
 
+      app.hexBoard.moves=0;
+
     };
     
     function reset(){
@@ -660,7 +666,9 @@
         }
 
         cell.color=topColor;
-
+        
+        app.hexBoard.moves++;
+        
       };
       function colDown()            {
 
@@ -685,6 +693,8 @@
 
         cell.color=bottomcolor;
 
+        app.hexBoard.moves++;
+        
       };
 
       function colUpRight()         {
@@ -710,6 +720,8 @@
 
         cell.color=topcolor;
 
+        app.hexBoard.moves++;
+        
       };
       function colUpLeft()          {
 
@@ -734,6 +746,8 @@
 
         cell.color=topcolor;
 
+        app.hexBoard.moves++;
+        
       };
 
       function colDownRight()       {
@@ -759,6 +773,8 @@
 
         cell.color=bottomcolor;
 
+        app.hexBoard.moves++;
+        
       };
       function colDownLeft()        {
 
@@ -783,6 +799,8 @@
 
         cell.color=bottomcolor;
 
+        app.hexBoard.moves++;
+        
       };
 
 
@@ -1305,26 +1323,31 @@
         control.call(this, id, parent, x, y, w, h);
 
         /* ------------------------------------------------- */
-        this.color          = props.color;
+        this.color              = props.color;
 
         /* ------------------------------------------------- */
         // this.radius         = 0;
 
-        this.activeCell     = null;
+        this.activeCell         = null;
 
-        this.layout         = [];     //  Array of the layout of hexcells
-        // this.text           = [];     //  Array of nexCell hints
+        this.layout             = [];     //  Array of the layout of hexcells
+        this.rings              = [];     //  Array of centered hexCell rings
 
-        this.selected       = [];     //  Array of currently selected hexcells
+        this.selected           = [];     //  Array of currently selected hexcells
 
-        this.dirty          = false;  //  Has the hexBoard been clicked yet?
+        this.dirty              = false;  //  Has the hexBoard been clicked yet?
 
-        app.hexBoard        = this;   //  Set a global hexBoard reference
+        app.hexBoard            = this;   //  Set a global hexBoard reference
         
-        this.center         = 0;
+        this.center             = 0;
         
-        this.count          = 0;
-
+        this.count              = 0;      //  Total hexcells in grid
+           
+        this.gridCount          = 0;      //  Total hexcells in pattern
+        this.moves              = 0;
+        
+        this.percentageComplete = 0;  //  Percentage in the correct position
+        
         this.calcRadius();
         this.reset();
 
@@ -1336,7 +1359,10 @@
 
         this.controls   = [];         //  Clear the controls array
         this.activeCell = null;       //  Clear the active hexCell
-
+        this.count      = 0;
+        this.gridCount  = 0;
+        this.moves      = 0;
+        
         this.layout     = PUZZLES[app.puzzle];
         // this.text       = PUZZLES[app.puzzle+1];
 
@@ -1344,7 +1370,7 @@
 
         var rowArray    = [];  // Temporary 1-D array to hold each successive row before adding
                                // to the corresponding 2-D array
-        var n=0;          // Iterator
+        var n=0;               // Iterator
 
         function setCenter(){
 
@@ -1356,6 +1382,27 @@
           print(row + ", " + col);
 
         };
+        function setRings(){
+
+          p.rings=[];
+
+          // ring #1
+          var r=0;
+
+          var cell=p.center;
+
+          for(var n=0; n<r; n++){
+
+            ring[n].push(cell.top);
+            ring[n].push(cell.topLeft);
+            ring[n].push(cell.bottomLeft);
+            ring[n].push(cell.bottom);
+            ring[n].push(cell.bottomRight);
+            ring[n].push(cell.topRight);
+
+          }
+          
+        };
 
         function load(){
 
@@ -1366,6 +1413,8 @@
           var x = 0;
           var y = 0;
 
+          var layout = 0;
+          
           var xMargin = p.w/2-sz*(p.layout[0].length/2-0.5)*0.75;
           var yMargin = p.h/2-sz*(p.layout.length/2-0.5)*cos(PI/6);
 
@@ -1389,13 +1438,16 @@
               if(col%2===0){
                 y-=yOffset/2;
               }
-
-              if(p.layout[row][col]===0){ curs=ARROW; }
+              
+              layout=p.layout[row][col];
+              
+              if(layout===0){ curs=ARROW;    } // Blank hexcell 
+              else          { p.gridCount++; } // Colored hexcell
 
               rowArray.push(new hexCell('hexcell-'+getGUID(), p, x, y, sz, sz,
                 {row:       row,
                  col:       col,
-                 layout:    p.layout[row][col],
+                 layout:    layout,
                  text:      row + ', ' + col,
                  cursor:    curs}));
 
@@ -1416,7 +1468,8 @@
 
         load();
         setCenter();
-
+        setRings();
+        
         this.update();
         
         app.hexBoard.activeCell=app.hexBoard.center;
@@ -1524,7 +1577,29 @@
               board();
               controls();
 
+    this.calcComplete();
+
+    textSize(12);
+    textAlign(LEFT,CENTER);
+    fill(BLACK);
+    text(this.percentageComplete, 50,50);
+
+    text(this.count,     50, 70);
+    text(this.gridCount, 50, 90);
+    text(this.moves,     50, 110);
+    
+              
+          if(this.percentageComplete==1){
+            
+            textSize(128);
+            textAlign(CENTER,CENTER);
+            fill(RED);
+            text('COMPLETE', this.w/2, this.h/2);
+
+          }
+          
           pop();
+
 
       };
       hexBoard.prototype.moved        = function(x,y){
@@ -2038,6 +2113,25 @@
         }
 
       };
+      hexBoard.prototype.calcComplete = function(){
+
+        var ctrls=this.controls;
+        var count=0;
+
+        for(var r in ctrls){
+          for(var c in ctrls[r]){
+
+            if(ctrls[r][c].color==ctrls[r][c].layout &&
+               ctrls[r][c].color!==0){
+              count++;
+            }
+
+          }
+        }
+
+        this.percentageComplete=count/this.gridCount;
+
+      };
 
     }
 
@@ -2254,9 +2348,9 @@
 
           var drw=true;
           var clr=p.color;
-          
-          if(app.keys[KeyCodes. SHIFT]){ clr=p.layout; }
-            
+
+          if(app.keys[KeyCodes.ESC]){ clr=p.layout; }
+
           switch(clr){
 
             case RED0:      fill(RED);    break;
@@ -2267,13 +2361,16 @@
             case PURPLE0:   fill(PURPLE); break;
             case BLACK0:    fill(BLACK);  break;
 
-            default:        noFill();     break;
+            default:        noFill();  break;
 
           }
 
           noStroke();
 
           if(clr!==BLACK0){
+            
+            stroke(BLACK);
+            strokeWeight(0.25);
 
             beginShape();
 
