@@ -2832,7 +2832,7 @@
 
       // line(cx, cy, x, y);
 
-      handleKeys();
+      // handleKeys();
 
   }
 
@@ -3039,35 +3039,37 @@ print('dclicked');
 
       switch(true){
 
+        /* Navigation                                                       */
+        case keyIsDown(KeyCodes.Q):     upLeft();             break;
+        case keyIsDown(KeyCodes.E):     upRight();            break;
+
+        case keyIsDown(KeyCodes.A):     downLeft();           break;
+        case keyIsDown(KeyCodes.D):     downRight();          break;
+
+        case keyIsDown(KeyCodes.W):     up();                 break;
+        case keyIsDown(KeyCodes.S):     down();               break;
+        
+        /* Translate Rows/Columns                                           */
+        case keyIsDown(UP_ARROW):       colUp();              break;
+        case keyIsDown(DOWN_ARROW):     colDown();            break;
+
+        case keyIsDown(LEFT_ARROW) &&
+             keyIsDown(CONTROL):        colDownLeft();        break;
+        case keyIsDown(RIGHT_ARROW) &&
+             keyIsDown(CONTROL):        colDownRight();       break;
+
+        case keyIsDown(LEFT_ARROW):     colUpLeft();          break;
+        case keyIsDown(RIGHT_ARROW):    colUpRight();         break;
+
+        /* Puzzles                                                          */
+        case keyIsDown(KEYCODES.PGUP):  incrementPuzzle();    break;
+        case keyIsDown(KEYCODES.PGDN):  decrementPuzzle();    break;
+
         /*  Function Keys                                                   */
-        case keyCode===KEYCODES.F1:         toggleInfo();         break;
-        // case keyCode===KEYCODES.F2:         randomize();          break;
-        // case keyCode===KEYCODES.F3:         toggleTelemetry();    break;
-        case keyCode===KEYCODES.F4:         toggleTelemetry();    break;
-
-        case keyCode===KEYCODES.PGUP:       incrementPuzzle();    break;
-        case keyCode===KEYCODES.PGDN:       decrementPuzzle();    break;
-
-        /*  Shift Columns                                                   */
-        // case keyCode===KEYCODES.RIGHT &&
-             // app.keys[KEYCODES.CONTROL]:    colDownRight();       break;
-
-        // case keyCode===KEYCODES.LEFT &&
-             // app.keys[KEYCODES.CONTROL]:    colDownLeft();        break;
-
-        /*  Increment/Decrement Puzzles                                     */
-        // case keyCode===KEYCODES.RIGHT &&
-             // app.keys[KEYCODES.SHIFT]:      incrementPuzzle();    break;
-
-        // case keyCode===KEYCODES.LEFT &&
-             // app.keys[KEYCODES.SHIFT]:      decrementPuzzle();    break;
-
-        // case keyCode===KEYCODES.RIGHT:      colUpRight();         break;
-        // case keyCode===KEYCODES.LEFT:       colUpLeft();          break;
-
-        // case keyCode===KEYCODES.UP:         colUp();              break;
-        // case keyCode===KEYCODES.DOWN:       colDown();            break;
-
+        case keyIsDown(KEYCODES.F1):    toggleInfo();         break;
+        case keyIsDown(KEYCODES.F2):    randomize();          break;
+        // case keyIsDown(KEYCODES.F3):    toggleTelemetry();    break;
+        case keyIsDown(KEYCODES.F4):    toggleTelemetry();    break;
         // case app.keys[KeyCodes.CONTROL] &&
              // app.keys[KeyCodes.F5]:         clearLayout();         break;  // CTRL + F5          
         // case app.keys[KeyCodes.F6]:         reset();               break;  // F6 - reset layout  
@@ -3079,31 +3081,12 @@ print('dclicked');
 
         // /* Figure out how to use this                                                                          */
         // case app.keys[KeyCodes.CODED]:                             break;
-          
+
         default:                                  break;
 
       }
 
     };
-    // keyTyped=function(){
-
-  // print(keyCode + ' | ' + ' | ' + key + ' | ' + key.toString());
-
-        // switch(true){
-
-          /*  Move active cell                                              */
-          // case key==='Q' || key==='q':    upLeft();       break;
-          // case key==='E' || key==='e':    upRight();      break;
-          // case key==='W' || key==='w':    up();           break;
-          // case key==='S' || key==='s':    down();         break;
-          // case key==='A' || key==='a':    downLeft();     break;
-          // case key==='D' || key==='d':    downRight();    break;
-
-          // default:                                        break;
-
-        // }
-        
-    // };
     keyReleased=function(){ app.keys[keyCode]=false;                          };
 
   }
