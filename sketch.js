@@ -253,24 +253,40 @@
       W:              87,
       X:              88,
       Z:              90,
+
+      // Function Keys
+      F1:             112,
+      F2:             113,
+      F3:             114,
+      F4:             115,
+      
+      F5:             116,
+      F6:             117,
+      F7:             118,
+      F8:             119,
+      
+      F9:             120,
+      F10:            121,
+      F11:            122,
+      F12:            123,
       
       // Lower Case
-      a:              97,
-      b:              98,
-      c:              99,
-      d:             100,
-      e:             101,
-      l:             108,
-      n:             110,
-      o:             111,
-      q:             113,
-      r:             114,
-      s:             115,
-      t:             116,
-      w:             119,
-      x:             120,
-      y:             121,
-      z:             122,
+      // a:              97,
+      // b:              98,
+      // c:              99,
+      // d:             100,
+      // e:             101,
+      // l:             108,
+      // n:             110,
+      // o:             111,
+      // q:             113,
+      // r:             114,
+      // s:             115,
+      // t:             116,
+      // w:             119,
+      // x:             120,
+      // y:             121,
+      // z:             122,
       
       // Function Keys
       
@@ -313,6 +329,18 @@
       UPDOWN:       1,
       BACKWARD:     2,
       FORWARD:      3
+
+    };
+
+    var DIRECTIONS={
+
+      NONE:       0,
+      UP:         1,
+      DOWN:       2,
+      UPRIGHT:    3,
+      UPLEFT:     4,
+      DOWNRIGHT:  5,
+      DOWNLEFT:   6
 
     };
 
@@ -431,7 +459,7 @@
                          '6-1', '6-2', '6-3', '6-4', '6-5', '6-6', '6-7'
                         ];
 
-      this.hexBoard;                          //  Set in the hexBoard control initialization
+      this.hexboard;                          //  Set in the hexboard control initialization
       this.puzzleComplete;                    //  Set in the puzzleComplete control initialization
       this.puzzleSelect;                      //  Set in the puzzleComplete control initialization
       this.transition;                        //  Set in the transition control initialization
@@ -501,50 +529,77 @@
 
       do{
 
-        var row = round(random(app.hexBoard.controls.length-1   ));
-        var col = round(random(app.hexBoard.controls[0].length-1));
+        var row = round(random(app.hexboard.controls.length-1   ));
+        var col = round(random(app.hexboard.controls[0].length-1));
 
-        app.hexBoard.activeCell=app.hexBoard.controls[row][col];
+        app.hexboard.activeCell=app.hexboard.controls[row][col];
 
-      } while(app.hexBoard.activeCell.layout===BLANK);
+      } while(app.hexboard.activeCell.layout===BLANK);
 
     };
-    function randomize()             {
+    function move(row, col, direction){
 
-    print(pow(app.hexBoard.layout.length,2));
-      var rnum=0;
+      this.row       = row;
+      this.col       = col;
 
-      for(var n=0; n<pow(app.hexBoard.layout.length,2); n++){
+      this.direction = direction;
 
-        rnum=round(random(0,5));
+      var reverse = -1;
 
-        setActiveCell();
+      switch(this.direction){
 
-        switch(rnum){
+        case DIRECTIONS.UP:        reverse = DIRECTIONS.DOWN;       break;
+        case DIRECTIONS.DOWN:      reverse = DIRECTIONS.UP;         break;
+        case DIRECTIONS.DOWNRIGHT: reverse = DIRECTIONS.UPLEFT;     break;
+        case DIRECTIONS.DOWNLEFT:  reverse = DIRECTIONS.UPRIGHT;    break;
+        case DIRECTIONS.UPRIGHT:   reverse = DIRECTIONS.DOWNLEFT;   break;
+        case DIRECTIONS.UPLEFT:    reverse = DIRECTIONS.DOWNRIGHT;  break;
 
-          case 0:   colUp();        break;
-          case 1:   colDown();      break;
-          case 2:   colUpLeft();    break;
-          case 3:   colUpRight();   break;
-          case 4:   colDownLeft();  break;
-          case 5:   colDownRight(); break;
+        default:                                                    break;
 
-          default:  print(rnum);    break;
+      }
+      
+      this.reverse = reverse;
 
-        }
+    };    
+    function randomMove(){
+      
+      var rnum=round(random(0,5));
+
+      setActiveCell();
+
+      switch(rnum){
+
+        case 0:   colUp();        break;
+        case 1:   colDown();      break;
+        case 2:   colUpLeft();    break;
+        case 3:   colUpRight();   break;
+        case 4:   colDownLeft();  break;
+        case 5:   colDownRight(); break;
+
+        default:  print(rnum);    break;
 
       }
 
-      app.hexBoard.moves=0;
+    };
+    function randomize()             {
+      
+      var total=pow(app.hexboard.layout.length,2)*2;
+      
+      for(var n=0; n<total; n++){
+        randomMove();
+      }
+
+      app.hexboard.totalMoves=0;
 
     };
-    
+
     function reset(){
-      
-      app.hexBoard.reset();
-      
+print('reset');
+      app.hexboard.reset();
+
     };
-    
+
   }
 
     /* Navigation  =========================================================== */
@@ -576,7 +631,7 @@
       // Dragging ----------
       function setDragColumn()      {
 
-        var cell=app.hexBoard.activeCell;
+        var cell=app.hexboard.activeCell;
 
         while(cell.top!==null &&
               cell.top.layout!==BLANK){
@@ -588,19 +643,19 @@
         while(cell.bottom!==null &&
               cell.bottom.layout!==BLANK){
           
-          app.hexBoard.selected.push(cell);
+          app.hexboard.selected.push(cell);
           cell.dragging=true;
           cell=cell.bottom;
 
         }
 
-        app.hexBoard.selected.push(cell);
+        app.hexboard.selected.push(cell);
         cell.dragging=true;
 
       };
       function setDragBackward()    {
 
-        var cell=app.hexBoard.activeCell;
+        var cell=app.hexboard.activeCell;
 
         while(cell.topRight!==null &&
               cell.topRight.layout!==BLANK){
@@ -622,7 +677,7 @@
       };
       function setDragForward()     {
 
-        var cell=app.hexBoard.activeCell;
+        var cell=app.hexboard.activeCell;
 
         while(cell.topLeft!==null &&
               cell.topLeft.layout!==BLANK){
@@ -646,8 +701,10 @@
       // Move Columns ----------
       function colUp()              {
 
-        var cell=app.hexBoard.activeCell;
-
+        var cell=app.hexboard.activeCell;
+        
+        app.hexboard.addMove(DIRECTIONS.UP);
+        
         while(cell.top!==null &&
               cell.top.color!==BLANK){
 
@@ -667,13 +724,15 @@
 
         cell.color=topColor;
         
-        app.hexBoard.moves++;
+        app.hexboard.totalMoves++;
         
       };
       function colDown()            {
 
-        var cell=app.hexBoard.activeCell;
+        var cell=app.hexboard.activeCell;
 
+        app.hexboard.addMove(DIRECTIONS.DOWN);
+        
         while(cell.bottom!==null &&
               cell.bottom.color!==BLANK){
 
@@ -693,14 +752,16 @@
 
         cell.color=bottomcolor;
 
-        app.hexBoard.moves++;
+        app.hexboard.totalMoves++;
         
       };
 
       function colUpRight()         {
 
-        var cell=app.hexBoard.activeCell;
+        var cell=app.hexboard.activeCell;
 
+        app.hexboard.addMove(DIRECTIONS.UPRIGHT);
+        
         while(cell.topRight!==null &&
               cell.topRight.color!==BLANK){
 
@@ -720,13 +781,15 @@
 
         cell.color=topcolor;
 
-        app.hexBoard.moves++;
+        app.hexboard.totalMoves++;
         
       };
       function colUpLeft()          {
 
-        var cell=app.hexBoard.activeCell;
+        var cell=app.hexboard.activeCell;
 
+        app.hexboard.addMove(DIRECTIONS.UPLEFT);
+        
         while(cell.topLeft!==null &&
               cell.topLeft.color!==BLANK){
 
@@ -746,14 +809,16 @@
 
         cell.color=topcolor;
 
-        app.hexBoard.moves++;
+        app.hexboard.totalMoves++;
         
       };
 
       function colDownRight()       {
 
-        var cell=app.hexBoard.activeCell;
+        var cell=app.hexboard.activeCell;
 
+        app.hexboard.addMove(DIRECTIONS.DOWNRIGHT);
+        
         while(cell.bottomRight!==null &&
               cell.bottomRight.color!==BLANK){
 
@@ -773,13 +838,15 @@
 
         cell.color=bottomcolor;
 
-        app.hexBoard.moves++;
+        app.hexboard.totalMoves++;
         
       };
       function colDownLeft()        {
 
-        var cell=app.hexBoard.activeCell;
+        var cell=app.hexboard.activeCell;
 
+        app.hexboard.addMove(DIRECTIONS.DOWNLEFT);
+        
         while(cell.bottomLeft!==null &&
               cell.bottomLeft.color!==BLANK){
 
@@ -799,7 +866,7 @@
 
         cell.color=bottomcolor;
 
-        app.hexBoard.moves++;
+        app.hexboard.totalMoves++;
         
       };
 
@@ -807,18 +874,18 @@
       // Move Active Cell ----------
       function up()                 {
 
-        if(app.hexBoard.activeCell.top!==null &&
-           app.hexBoard.activeCell.top.layout!==0){
+        if(app.hexboard.activeCell.top!==null &&
+           app.hexboard.activeCell.top.layout!==0){
 
-          app.hexBoard.activeCell = app.hexBoard.activeCell.top;
+          app.hexboard.activeCell = app.hexboard.activeCell.top;
 
         }
         else{
 
-          while(app.hexBoard.activeCell.bottom!==null &&
-                app.hexBoard.activeCell.bottom.layout!==0){
+          while(app.hexboard.activeCell.bottom!==null &&
+                app.hexboard.activeCell.bottom.layout!==0){
              
-            app.hexBoard.activeCell = app.hexBoard.activeCell.bottom;
+            app.hexboard.activeCell = app.hexboard.activeCell.bottom;
           
           }
 
@@ -827,18 +894,18 @@
       };
       function down()               {
 
-        if(app.hexBoard.activeCell.bottom!==null &&
-           app.hexBoard.activeCell.bottom.layout!==0){
+        if(app.hexboard.activeCell.bottom!==null &&
+           app.hexboard.activeCell.bottom.layout!==0){
 
-          app.hexBoard.activeCell = app.hexBoard.activeCell.bottom;
+          app.hexboard.activeCell = app.hexboard.activeCell.bottom;
 
         }
         else{
 
-          while(app.hexBoard.activeCell.top!==null &&
-                app.hexBoard.activeCell.top.layout!==0){
+          while(app.hexboard.activeCell.top!==null &&
+                app.hexboard.activeCell.top.layout!==0){
              
-            app.hexBoard.activeCell = app.hexBoard.activeCell.top;
+            app.hexboard.activeCell = app.hexboard.activeCell.top;
           
           }
 
@@ -848,18 +915,18 @@
 
       function upRight()            {
 
-        if(app.hexBoard.activeCell.topRight!==null &&
-           app.hexBoard.activeCell.topRight.layout!==0){
+        if(app.hexboard.activeCell.topRight!==null &&
+           app.hexboard.activeCell.topRight.layout!==0){
 
-          app.hexBoard.activeCell = app.hexBoard.activeCell.topRight;
+          app.hexboard.activeCell = app.hexboard.activeCell.topRight;
 
         }
         else{
 
-          while(app.hexBoard.activeCell.bottomLeft!==null &&
-                app.hexBoard.activeCell.bottomLeft.layout!==0){
+          while(app.hexboard.activeCell.bottomLeft!==null &&
+                app.hexboard.activeCell.bottomLeft.layout!==0){
              
-            app.hexBoard.activeCell = app.hexBoard.activeCell.bottomLeft;
+            app.hexboard.activeCell = app.hexboard.activeCell.bottomLeft;
           
           }
 
@@ -868,18 +935,18 @@
       };
       function upLeft()             {
 
-        if(app.hexBoard.activeCell.topLeft!==null &&
-           app.hexBoard.activeCell.topLeft.layout!==0){
+        if(app.hexboard.activeCell.topLeft!==null &&
+           app.hexboard.activeCell.topLeft.layout!==0){
 
-          app.hexBoard.activeCell = app.hexBoard.activeCell.topLeft;
+          app.hexboard.activeCell = app.hexboard.activeCell.topLeft;
 
         }
         else{
 
-          while(app.hexBoard.activeCell.bottomRight!==null &&
-                app.hexBoard.activeCell.bottomRight.layout!==0){
+          while(app.hexboard.activeCell.bottomRight!==null &&
+                app.hexboard.activeCell.bottomRight.layout!==0){
              
-            app.hexBoard.activeCell = app.hexBoard.activeCell.bottomRight;
+            app.hexboard.activeCell = app.hexboard.activeCell.bottomRight;
           
           }
 
@@ -889,18 +956,18 @@
 
       function downRight()          {
 
-        if(app.hexBoard.activeCell.bottomRight!==null &&
-           app.hexBoard.activeCell.bottomRight.layout!==0){
+        if(app.hexboard.activeCell.bottomRight!==null &&
+           app.hexboard.activeCell.bottomRight.layout!==0){
 
-          app.hexBoard.activeCell = app.hexBoard.activeCell.bottomRight;
+          app.hexboard.activeCell = app.hexboard.activeCell.bottomRight;
 
         }
         else{
 
-          while(app.hexBoard.activeCell.topLeft!==null &&
-                app.hexBoard.activeCell.topLeft.layout!==0){
+          while(app.hexboard.activeCell.topLeft!==null &&
+                app.hexboard.activeCell.topLeft.layout!==0){
              
-            app.hexBoard.activeCell = app.hexBoard.activeCell.topLeft;
+            app.hexboard.activeCell = app.hexboard.activeCell.topLeft;
           
           }
 
@@ -909,18 +976,18 @@
       };
       function downLeft()           {
 
-        if(app.hexBoard.activeCell.bottomLeft!==null &&
-           app.hexBoard.activeCell.bottomLeft.layout!==0){
+        if(app.hexboard.activeCell.bottomLeft!==null &&
+           app.hexboard.activeCell.bottomLeft.layout!==0){
 
-          app.hexBoard.activeCell = app.hexBoard.activeCell.bottomLeft;
+          app.hexboard.activeCell = app.hexboard.activeCell.bottomLeft;
 
         }
         else{
 
-          while(app.hexBoard.activeCell.topRight!==null &&
-                app.hexBoard.activeCell.topRight.layout!==0){
+          while(app.hexboard.activeCell.topRight!==null &&
+                app.hexboard.activeCell.topRight.layout!==0){
 
-            app.hexBoard.activeCell = app.hexBoard.activeCell.topRight;
+            app.hexboard.activeCell = app.hexboard.activeCell.topRight;
 
           }
 
@@ -1243,7 +1310,7 @@
 
               // if(app.focus!==null){ id=app.focus.id; }
 
-              if(app.hexBoard.activeCell!==null){ id=app.hexBoard.activeCell.id; }
+              if(app.hexboard.activeCell!==null){ id=app.hexboard.activeCell.id; }
 
               text('\n\n'   + app.controlCount +
                    '\n'     + id               +
@@ -1313,12 +1380,12 @@
 
     }
 
-    /** Hexboard        -------------------------------------------------- */
+    /** hexboard        -------------------------------------------------- */
     {
 
     var HEX_SIZE=0;
 
-      function hexBoard(id, parent, x, y, w, h, props){
+      function hexboard(id, parent, x, y, w, h, props){
 
         control.call(this, id, parent, x, y, w, h);
 
@@ -1335,16 +1402,18 @@
 
         this.selected           = [];     //  Array of currently selected hexcells
 
-        this.dirty              = false;  //  Has the hexBoard been clicked yet?
+        this.moves              = [];     //  Array of moves completed
 
-        app.hexBoard            = this;   //  Set a global hexBoard reference
+        this.dirty              = false;  //  Has the hexboard been clicked yet?
+
+        app.hexboard            = this;   //  Set a global hexboard reference
         
         this.center             = 0;
         
         this.count              = 0;      //  Total hexcells in grid
-           
+        this.totalMoves         = 0;
+        
         this.gridCount          = 0;      //  Total hexcells in pattern
-        this.moves              = 0;
         
         this.percentageComplete = 0;  //  Percentage in the correct position
         
@@ -1352,16 +1421,16 @@
         this.reset();
 
       };
-      hexBoard.prototype=Object.create(control.prototype);
-      hexBoard.prototype.reset        = function(){
+      hexboard.prototype=Object.create(control.prototype);
+      hexboard.prototype.reset        = function(){
 
-        var p=this;                   //  Set a reference to the hexBoard control
+        var p=this;                   //  Set a reference to the hexboard control
 
         this.controls   = [];         //  Clear the controls array
         this.activeCell = null;       //  Clear the active hexCell
         this.count      = 0;
         this.gridCount  = 0;
-        this.moves      = 0;
+        this.totalMoves = 0;
         
         this.layout     = PUZZLES[app.puzzle];
         // this.text       = PUZZLES[app.puzzle+1];
@@ -1472,13 +1541,13 @@
         
         this.update();
         
-        app.hexBoard.activeCell=app.hexBoard.center;
+        app.hexboard.activeCell=app.hexboard.center;
 
         app.finished=false;
         this.dirty=false;
 
       };
-      hexBoard.prototype.draw         = function(){
+      hexboard.prototype.draw         = function(){
 
         // if(this.x!==0){
           // this.timer=0;
@@ -1584,10 +1653,11 @@
     fill(BLACK);
     text(this.percentageComplete, 50,50);
 
-    text(this.count,     50, 70);
-    text(this.gridCount, 50, 90);
-    text(this.moves,     50, 110);
+    text(this.count,      50,  70);
+    text(this.gridCount,  50,  90);
+    text(this.totalMoves, 50, 110);
     
+    text(this.moves.length, 50, 130);
               
           if(this.percentageComplete==1){
             
@@ -1600,9 +1670,14 @@
           
           pop();
 
+          if(frameCount%10==0){
+            
+            // randomMove();
+            
+          }
 
       };
-      hexBoard.prototype.moved        = function(x,y){
+      hexboard.prototype.moved        = function(x,y){
 
         if(this.hitTest(x,y)){
 
@@ -1641,7 +1716,7 @@
         }
 
       };
-      hexBoard.prototype.clicked      = function(){
+      hexboard.prototype.clicked      = function(){
 
         var ctrls=this.controls;
 
@@ -1654,7 +1729,7 @@
         }
 
       };
-      hexBoard.prototype.rclicked     = function(){
+      hexboard.prototype.rclicked     = function(){
 
         var ctrls=this.controls;
 
@@ -1667,7 +1742,7 @@
         }
 
       };
-      hexBoard.prototype.out          = function(){
+      hexboard.prototype.out          = function(){
 
         this.hit=false;
         this.activeCell=null;
@@ -1683,7 +1758,7 @@
         }
 
       };
-      hexBoard.prototype.clearLayout  = function(){
+      hexboard.prototype.clearLayout  = function(){
 
         var ctrls=this.controls;
 
@@ -1697,9 +1772,9 @@
         }
 
       };
-      hexBoard.prototype.update       = function(){
+      hexboard.prototype.update       = function(){
 
-        var p=this;           //  Set a reference to the hexBoard control
+        var p=this;           //  Set a reference to the hexboard control
 
         function link(){
 
@@ -2047,7 +2122,7 @@
 
 
       };
-      hexBoard.prototype.calcRadius   = function(){
+      hexboard.prototype.calcRadius   = function(){
 
         var rw = (this.h-20)/sin(PI/3);
         var rh =  this.w-20;
@@ -2072,7 +2147,7 @@
         // }
 
       };
-      hexBoard.prototype.resized      = function(){
+      hexboard.prototype.resized      = function(){
 
         this.x = 5;
         this.y = 5;
@@ -2083,7 +2158,7 @@
         this.reset();
 
       };
-      hexBoard.prototype.dragged      = function(){
+      hexboard.prototype.dragged      = function(){
 
         if(this.hit){
 
@@ -2100,7 +2175,7 @@
         }
 
       };
-      hexBoard.prototype.clearDragging= function(){
+      hexboard.prototype.clearDragging= function(){
 
         var ctrls=this.controls;
 
@@ -2113,7 +2188,7 @@
         }
 
       };
-      hexBoard.prototype.calcComplete = function(){
+      hexboard.prototype.calcComplete = function(){
 
         var ctrls=this.controls;
         var count=0;
@@ -2132,7 +2207,35 @@
         this.percentageComplete=count/this.gridCount;
 
       };
+      hexboard.prototype.addMove      = function(direction){
 
+// print(this.activeCell.row + ','+ this.activeCell.col);
+// print(direction);
+print(this.moves.length);
+print('----------');
+        this.moves.push(new move(this.activeCell.row,
+                                 this.activeCell.col,
+                                 direction));
+        
+      };
+      hexboard.prototype.undo         = function(direction){
+
+        this.activeCell=this.controls[this.moves[this.moves.length-1].row]
+                                     [this.moves[this.moves.length-1].col];
+
+        switch(this.moves[this.moves.length-1].reverse){
+          
+          case 
+          
+        }
+        
+        
+        this.moves.pop();
+        
+print(this.moves.length);
+        
+      };
+      
     }
 
   }
@@ -2407,7 +2510,7 @@
         };
         function activeCell(){
 
-          if(app.hexBoard.activeCell===p){
+          if(app.hexboard.activeCell===p){
 
             fill(getColor(BLACK,15));
             strokeWeight(3);
@@ -2658,6 +2761,8 @@
 
     }
 
+
+
   }
 
   /** Initialize --------------------------------------------------------- */
@@ -2682,7 +2787,7 @@
       // rt.controls.push(new zen(getGUID(), rt, 100, 100, 400, 400, null));
 
       /* Hex Board         */
-      rt.controls.push(new hexBoard('hexBoard', rt, 5, 5, rt.w-205, rt.h-10,
+      rt.controls.push(new hexboard('hexboard', rt, 5, 5, rt.w-205, rt.h-10,
         {color:    220}));
 
       /* Accessories ---------------------------------------------------- */
@@ -2843,13 +2948,21 @@
 
       switch(mouseButton){
 
-        case LEFT:    forEach(app.controls, 'clicked' ); break;
-        case RIGHT:   forEach(app.controls, 'rclicked'); break;
+        case LEFT:    forEach(app.controls, 'clicked' );
+
+          if(keyIsDown(CONTROL)){ app.hexboard.undo();  }
+          else                  { randomMove();         }
+
+          break;
+
+        case RIGHT:   forEach(app.controls, 'rclicked'); app.hexboard.undo(); break;
         // case CENTER:  forEach(app.controls,'cclicked'); break;
 
         default:     break;
 
       }
+      
+      
 
     };
     function doubleClicked() {
@@ -2890,7 +3003,7 @@ print('dclicked');
                       // Tidy up dragging
                       {
 
-                        app.hexBoard.clearDragging();
+                        app.hexboard.clearDragging();
 
                         app.dragStartX=0;
                         app.dragStartY=0;
@@ -3048,39 +3161,39 @@ print('dclicked');
 
         case keyIsDown(KeyCodes.W):     up();                 break;
         case keyIsDown(KeyCodes.S):     down();               break;
-        
-        /* Translate Rows/Columns                                           */
-        case keyIsDown(UP_ARROW):       colUp();              break;
-        case keyIsDown(DOWN_ARROW):     colDown();            break;
 
-        case keyIsDown(LEFT_ARROW) &&
+        /* Translate Rows/Columns                                           */
+        case keyIsDown(KeyCodes.UP):       colUp();              break;
+        case keyIsDown(KeyCodes.DOWN):     colDown();            break;
+
+        case keyIsDown(KeyCodes.LEFT) &&
              keyIsDown(CONTROL):        colDownLeft();        break;
-        case keyIsDown(RIGHT_ARROW) &&
+        case keyIsDown(KeyCodes.RIGHT) &&
              keyIsDown(CONTROL):        colDownRight();       break;
 
         case keyIsDown(LEFT_ARROW):     colUpLeft();          break;
         case keyIsDown(RIGHT_ARROW):    colUpRight();         break;
 
         /* Puzzles                                                          */
-        case keyIsDown(KEYCODES.PGUP):  incrementPuzzle();    break;
-        case keyIsDown(KEYCODES.PGDN):  decrementPuzzle();    break;
+        case keyIsDown(KeyCodes.PGUP):  incrementPuzzle();    break;
+        case keyIsDown(KeyCodes.PGDN):  decrementPuzzle();    break;
 
         /*  Function Keys                                                   */
         case keyIsDown(KEYCODES.F1):    toggleInfo();         break;
         case keyIsDown(KEYCODES.F2):    randomize();          break;
         // case keyIsDown(KEYCODES.F3):    toggleTelemetry();    break;
         case keyIsDown(KEYCODES.F4):    toggleTelemetry();    break;
-        // case app.keys[KeyCodes.CONTROL] &&
-             // app.keys[KeyCodes.F5]:         clearLayout();         break;  // CTRL + F5          
-        // case app.keys[KeyCodes.F6]:         reset();               break;  // F6 - reset layout  
+        // case app.keys[KEYCODES.CONTROL] &&
+             // app.keys[KEYCODES.F5]:         clearLayout();         break;
+        case keyIsDown(KEYCODES.F8):    reset();              break;
 
         // /* Edit                                                                                                */
-        // case app.keys[KeyCodes.SPACE] &&
-             // app.keys[KeyCodes.CONTROL]:    decrCellLayout();      break;  // Decrement Layout   
-        // case app.keys[KeyCodes.SPACE]:      incrCellLayout();      break;  // Increment Layout   
+        // case app.keys[KEYCODES.SPACE] &&
+             // app.keys[KEYCODES.CONTROL]:    decrCellLayout();      break;  // Decrement Layout   
+        // case app.keys[KEYCODES.SPACE]:      incrCellLayout();      break;  // Increment Layout   
 
         // /* Figure out how to use this                                                                          */
-        // case app.keys[KeyCodes.CODED]:                             break;
+        // case app.keys[KEYCODES.CODED]:                             break;
 
         default:                                  break;
 
