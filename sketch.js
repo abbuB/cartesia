@@ -42,6 +42,7 @@
 +alpha.editor.p5js.org
 +piratefsh.github.io/2017/06/02/recursive-hexagon-patterns.html
 +forum.processing.org
++shapesmania.com/vasarely
 
 */
 
@@ -665,6 +666,28 @@
 
       };
 
+      function drawDragColumn(){
+        
+        fill(BLUE);
+        stroke(GREEN);
+        
+        for(var h in app.hexboard.selected){
+          
+          if(app.hexboard.selected[h].dragging){
+            
+            ellipse(app.hexboard.selected[h].x,
+                    app.hexboard.selected[h].y,
+                    30,30);
+                    
+          }
+                  
+// print(app.hexboard.selected[h].y);
+// print('drawDragColumn' +" | " + app.hexboard.selected.length);
+
+        }
+
+      };
+
       // Dragging ----------
       function setDragColumn()      {
 
@@ -679,7 +702,7 @@
 
         while(cell.bottom!==null &&
               cell.bottom.layout!==BLANK){
-          
+
           app.hexboard.selected.push(cell);
           cell.dragging=true;
           cell=cell.bottom;
@@ -704,11 +727,13 @@
         while(cell.bottomLeft!==null &&
               cell.bottomLeft.layout!==BLANK){
 
+          app.hexboard.selected.push(cell);
           cell.dragging=true;
           cell=cell.bottomLeft;
 
         }
 
+        app.hexboard.selected.push(cell);
         cell.dragging=true;
 
       };
@@ -726,11 +751,13 @@
         while(cell.bottomRight!==null &&
               cell.bottomRight.layout!==BLANK){
 
+          app.hexboard.selected.push(cell);
           cell.dragging=true;
           cell=cell.bottomRight;
 
         }
 
+        app.hexboard.selected.push(cell);
         cell.dragging=true;
 
       };
@@ -1434,16 +1461,22 @@
         this.dirty              = false;  //  Has the hexboard been clicked yet?
 
         app.hexboard            = this;   //  Set a global hexboard reference
-        
+
         this.center             = 0;
-        
+
         this.count              = 0;      //  Total hexcells in grid
         this.totalMoves         = 0;
-        
+
         this.gridCount          = 0;      //  Total hexcells in pattern
-        
-        this.percentageComplete = 0;  //  Percentage in the correct position
-        
+
+        this.percentageComplete = 0;      //  Percentage in the correct position
+
+        this.startX             = 0;      //  x-coordinate of drag start
+        this.startY             = 0;      //  y-coordinate of drag start
+
+        this.deltaX             = 0;      //  x-coordinate drag offset
+        this.deltaY             = 0;      //  y-coordinate drag offset
+
         this.calcRadius();
         this.reset();
 
@@ -1605,7 +1638,7 @@
             endShape(CLOSE);
 
           };
-          function border(){
+          function border()            {
 
             fill(p.color);
             stroke(getColor(H_BLUE,25));
@@ -1633,7 +1666,7 @@
             pop();
 
           };
-          function board(){
+          function board()             {
 
             var r = p.radius;
 
@@ -1654,7 +1687,7 @@
             pop();
 
           };
-          function controls(){
+          function controls()          {
 
             var ctrls=p.controls;
 
@@ -1734,9 +1767,23 @@ print(limit);
             }
           
           }
+          
+          // drawDragColumn();
+          
           pop();
 
       };
+      hexboard.prototype.hitTest  = function (x,y){
+
+        var retVal=false;
+
+        if(dist(mouseX,mouseY,(this.x+x),(this.y+y))<this.w){
+          retVal=true;
+        }
+
+        return retVal;
+
+      };      
       hexboard.prototype.moved        = function(x,y){
 
         if(this.hitTest(x,y)){
@@ -2220,7 +2267,36 @@ print(limit);
       };
       hexboard.prototype.dragged      = function(){
 
-        if(this.hit){
+        if(this.hitTest(x,y)){
+          
+          if(this.startX===0){
+            
+            this.startX=mouseX;
+            this.startY=mouseY;
+            
+          }
+          else{
+            
+            switch(app.dragDirection){
+              
+              
+              case DRAG_DIRECTIONS.UPDOWN:    this.deltaX=0;
+                                              this.deltaY=this.startY-mouseY;
+                                              break;
+
+              case DRAG_DIRECTIONS.BACKWARD:  this.deltaX=cos(PI/6)*(mouseX-this.startX);
+                                              this.deltaY=sin(PI/6)*(mouseX-this.startX);
+                                              break;
+
+              case DRAG_DIRECTIONS.FORWARD:   this.deltaX=cos(PI/6)*(mouseX-this.startX);
+                                              this.deltaY=sin(PI/6)*(this.startX-mouseX);
+                                              break;
+
+              default:                        break;
+
+            }
+
+          }
 
           var ctrls=this.controls;
 
@@ -2247,6 +2323,12 @@ print(limit);
           }
         }
 
+        this.startX=0;
+        this.startY=0;
+        
+        this.deltaX=0;
+        this.deltaY=0;
+        
       };
       hexboard.prototype.calcComplete = function(){
 
@@ -2359,7 +2441,7 @@ print(limit);
         var pt=0;
         var ang=0;
 
-        var w=0;
+        var w   = 5;
         var w15 = d2*0.4;
         var w5  = d2*0.10;
 
@@ -2398,50 +2480,68 @@ print(limit);
 
         function highlight(){
 
-          // if(app.mode!==APPMODES.GAME){ return; }
+          var clr=p.color;
+          var pctg=20;
 
-            // if(p.layout===HEXY_TYPES.BLACK ||
-               // p.layout===HEXY_TYPES.BLACK_REVEALED ||
-               // p.layout===HEXY_TYPES.BLUE ||
-               // p.layout===HEXY_TYPES.BLUE_REVEALED){
+          stroke(GRAY);
+          strokeWeight(0.25);
+          
+          switch(clr){
 
-              stroke(GRAY);
+            case RED0:      fill(getColor(RED,    pctg)); break;
+            case ORANGE0:   fill(getColor(ORANGE, pctg)); break;
+            case YELLOW0:   fill(getColor(YELLOW, pctg)); break;
+            case GREEN0:    fill(getColor(GREEN,  pctg)); break;
+            case BLUE0:     fill(getColor(BLUE,   pctg)); break;
+            case PURPLE0:   fill(getColor(PURPLE, pctg)); break;
+            case BLACK0:    fill(getColor(BLACK,  pctg)); break;
+
+            default:        noFill();                     break;
+
+          }
+
+          if(p.layout!==BLANK){
+            
+            
+            if(clr!==BLACK0){
+              
+              stroke(BLACK);
               strokeWeight(0.25);
-
-              switch(p.color){
-
-                case RED0:      fill(getColor(RED,    20)); break;
-                case ORANGE0:   fill(getColor(ORANGE, 20)); break;
-                case YELLOW0:   fill(getColor(YELLOW, 20)); break;
-                case GREEN0:    fill(getColor(GREEN,  20)); break;
-                case BLUE0:     fill(getColor(BLUE,   20)); break;
-                case PURPLE0:   fill(getColor(PURPLE, 20)); break;
-                case BLACK0:    fill(getColor(BLACK,  30)); break;
-
-                default:        noFill();                   break;
-
-              }
 
               beginShape();
 
                 for(var pt in p.hpoints){
-                  vertex(p.hpoints[pt].x,
-                         p.hpoints[pt].y);
+                  vertex(p.hpoints[pt].x + p.parent.deltaX,
+                         p.hpoints[pt].y + p.parent.deltaY);
                 }
 
               endShape(CLOSE);
 
-            // }
+            }
+            else{
+              
+              var po=p.hpoints;
+              
+              fill( getColor(ORANGE, pctg));   triangle(0, 0, po[0].x, po[0].y, po[1].x, po[1].y);
+              fill( getColor(RED,    pctg));   triangle(0, 0, po[1].x, po[1].y, po[2].x, po[2].y);
+              fill( getColor(PURPLE, pctg));   triangle(0, 0, po[2].x, po[2].y, po[3].x, po[3].y);
+              fill( getColor(BLUE,   pctg));   triangle(0, 0, po[3].x, po[3].y, po[4].x, po[4].y);
+              fill( getColor(GREEN,  pctg));   triangle(0, 0, po[4].x, po[4].y, po[5].x, po[5].y);
+              fill( getColor(YELLOW, pctg));   triangle(0, 0, po[5].x, po[5].y, po[0].x, po[0].y);
+
+            }
+
+          }
 
         };
         function outerHexagon(){
 
+          var clr=p.outerColor;
+          var pctg=20;
+
           noFill();
           noStroke();
 
-          var clr=p.outerColor;
-          var pctg=20;
-          
           switch(clr){
 
             case RED0:      fill(getColor(K_RED,    pctg)); break;
@@ -2461,8 +2561,8 @@ print(limit);
             beginShape();
 
               for(var pt in p.opoints){
-                vertex(p.opoints[pt].x,
-                       p.opoints[pt].y);
+                vertex(p.opoints[pt].x + p.parent.deltaX,
+                       p.opoints[pt].y + p.parent.deltaY);
               }
 
             endShape(CLOSE);
@@ -2472,40 +2572,51 @@ print(limit);
         };
         function innerHexagon(){
 
-          noStroke();
-          noFill();
-        
           var drw=true;
           var clr=p.color;
+          var pctg=99;
+                    
+          noStroke();
+          noFill();
 
           if(app.keys[KeyCodes.ESC]){ clr=p.layout; }
 
           switch(clr){
 
-            case RED0:      fill(RED);    break;
-            case ORANGE0:   fill(ORANGE); break;
-            case YELLOW0:   fill(YELLOW); break;
-            case GREEN0:    fill(GREEN);  break;
-            case BLUE0:     fill(BLUE);   break;
-            case PURPLE0:   fill(PURPLE); break;
-            case BLACK0:    fill(BLACK);  break;
+            case RED0:      fill(getColor(K_RED,    pctg)); break;
+            case ORANGE0:   fill(getColor(K_ORANGE, pctg)); break;
+            case YELLOW0:   fill(getColor(K_YELLOW, pctg)); break;
+            case GREEN0:    fill(getColor(K_GREEN,  pctg)); break;
+            case BLUE0:     fill(getColor(K_BLUE,   pctg)); break;
+            case PURPLE0:   fill(getColor(K_PURPLE, pctg)); break;
+            case BLACK0:    fill(getColor(BLACK,    pctg)); break;
 
-            default:        noFill();  break;
+            default:        noFill();                       break;
 
           }
 
           if(p.layout!==BLANK){
             
-            if(clr!==BLACK0){
+            var offsetX=0;
+            var offsetY=0;
+            
+            if(p.dragging){
               
+              offsetX=p.parent.deltaX;
+              offsetY=p.parent.deltaY;
+
+            }
+
+            if(clr!==BLACK0){
+
               stroke(BLACK);
               strokeWeight(0.25);
 
               beginShape();
 
                 for(var pt in p.ipoints){
-                  vertex(p.ipoints[pt].x,
-                         p.ipoints[pt].y);
+                  vertex(p.ipoints[pt].x+offsetX,
+                         p.ipoints[pt].y+offsetY);
                 }
 
               endShape(CLOSE);
@@ -2513,23 +2624,20 @@ print(limit);
             }
             else{
 
-              fill(ORANGE);
-              triangle(0, 0, p.ipoints[0].x, p.ipoints[0].y, p.ipoints[1].x, p.ipoints[1].y,);
-
-              fill(RED);
-              triangle(0, 0, p.ipoints[1].x, p.ipoints[1].y, p.ipoints[2].x, p.ipoints[2].y,);
-
-              fill(PURPLE);
-              triangle(0, 0, p.ipoints[2].x, p.ipoints[2].y, p.ipoints[3].x, p.ipoints[3].y,);
-
-              fill(BLUE);
-              triangle(0, 0, p.ipoints[3].x, p.ipoints[3].y, p.ipoints[4].x, p.ipoints[4].y,);
-
-              fill(GREEN);
-              triangle(0, 0, p.ipoints[4].x, p.ipoints[4].y, p.ipoints[5].x, p.ipoints[5].y,);
-
-              fill(YELLOW);
-              triangle(0, 0, p.ipoints[5].x, p.ipoints[5].y, p.ipoints[0].x, p.ipoints[0].y,);
+              var po=p.ipoints;
+              
+              fill( getColor(ORANGE, pctg));   
+              triangle(offsetX, offsetY, po[0].x+offsetX, po[0].y+offsetY, po[1].x+offsetX, po[1].y+offsetY);
+              fill( getColor(RED,    pctg));   
+              triangle(offsetX, offsetY, po[1].x+offsetX, po[1].y+offsetY, po[2].x+offsetX, po[2].y+offsetY);
+              fill( getColor(PURPLE, pctg));   
+              triangle(offsetX, offsetY, po[2].x+offsetX, po[2].y+offsetY, po[3].x+offsetX, po[3].y+offsetY);
+              fill( getColor(BLUE,   pctg));   
+              triangle(offsetX, offsetY, po[3].x+offsetX, po[3].y+offsetY, po[4].x+offsetX, po[4].y+offsetY);
+              fill( getColor(GREEN,  pctg));   
+              triangle(offsetX, offsetY, po[4].x+offsetX, po[4].y+offsetY, po[5].x+offsetX, po[5].y+offsetY);
+              fill( getColor(YELLOW, pctg));   
+              triangle(offsetX, offsetY, po[5].x+offsetX, po[5].y+offsetY, po[0].x+offsetX, po[0].y+offsetY);
 
             }
 
@@ -2599,10 +2707,16 @@ print(limit);
 
           scale(1,-1);
 
-            if(this.dragging){ highlight();    }
-            else             { //outerHexagon();
-                               innerHexagon();
-                               activeCell();   }
+            // if(this.dragging){
+              //highlight();
+            // }
+            // else{ 
+            
+              //outerHexagon();
+                  innerHexagon();
+                  activeCell();
+
+                // }
 
         pop();
 
