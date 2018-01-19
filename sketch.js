@@ -1477,6 +1477,10 @@
         this.deltaX             = 0;      //  x-coordinate drag offset
         this.deltaY             = 0;      //  y-coordinate drag offset
 
+        this.deltaDrag          = 0;      //  Distance dragged from start point along the drag direction
+        
+        this.cellSize           = 0;      //  Size of each hexcell
+        
         this.calcRadius();
         this.reset();
 
@@ -1539,7 +1543,9 @@
         function load(){
 
           var sz=p.radius/p.layout.length;
-
+          
+          p.cellSize=sz;
+          
           var n = 0;
 
           var x = 0;
@@ -1776,8 +1782,9 @@ print(limit);
       hexboard.prototype.hitTest  = function (x,y){
 
         var retVal=false;
-
-        if(dist(mouseX,mouseY,(this.x+x),(this.y+y))<this.w){
+        var d=dist(mouseX,mouseY,(this.x+x+this.w/2),(this.y+y+this.h/2));
+// print(d);        
+        if(d<this.w/2){
           retVal=true;
         }
 
@@ -2267,7 +2274,7 @@ print(limit);
       };
       hexboard.prototype.dragged      = function(){
 
-        if(this.hitTest(x,y)){
+        if(this.hitTest(0,0)){
           
           if(this.startX===0){
             
@@ -2279,17 +2286,26 @@ print(limit);
             
             switch(app.dragDirection){
               
-              
               case DRAG_DIRECTIONS.UPDOWN:    this.deltaX=0;
                                               this.deltaY=this.startY-mouseY;
+                                              this.deltaDrag=this.deltaY;
+                                              
+                                              print(this.cellSize + " : " + this.deltaDrag);
+                                              if(this.deltaDrag>this.cellSize){
+                                                colUp();
+                                              }
+                                              if(this.deltaDrag<-this.cellSize){
+                                                colDown();
+                                              }
+                                              
                                               break;
 
-              case DRAG_DIRECTIONS.BACKWARD:  this.deltaX=cos(PI/6)*(mouseX-this.startX);
-                                              this.deltaY=sin(PI/6)*(mouseX-this.startX);
+              case DRAG_DIRECTIONS.BACKWARD:  this.deltaX=mouseX-this.startX;
+                                              this.deltaY=tan(PI/6)*this.deltaX;
                                               break;
 
-              case DRAG_DIRECTIONS.FORWARD:   this.deltaX=cos(PI/6)*(mouseX-this.startX);
-                                              this.deltaY=sin(PI/6)*(this.startX-mouseX);
+              case DRAG_DIRECTIONS.FORWARD:   this.deltaX=mouseX-this.startX;
+                                              this.deltaY=tan(PI/6)*-this.deltaX;
                                               break;
 
               default:                        break;
