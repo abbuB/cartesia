@@ -2284,20 +2284,25 @@ print(limit);
           }
           else{
             
+            var sz=this.cellSize*sin(PI/3);
+            
             switch(app.dragDirection){
               
-              case DRAG_DIRECTIONS.UPDOWN:    this.deltaX=0;
-                                              this.deltaY=this.startY-mouseY;
-                                              this.deltaDrag=this.deltaY;
-                                              
-                                              print(this.cellSize + " : " + this.deltaDrag);
-                                              if(this.deltaDrag>this.cellSize){
+              case DRAG_DIRECTIONS.UPDOWN:    
+                                              if(this.deltaDrag>=sz){                                               
+                                                this.deltaDrag=this.deltaY%sz;
+                                                this.startY=mouseY;
                                                 colUp();
                                               }
-                                              if(this.deltaDrag<-this.cellSize){
+                                              if(this.deltaDrag<-sz){
+                                                this.deltaDrag=this.deltaY%sz;
+                                                this.startY=mouseY;
                                                 colDown();
                                               }
-                                              
+                                              this.deltaX=0;
+                                              this.deltaY=this.startY-mouseY;
+                                              this.deltaDrag=this.deltaY;
+
                                               break;
 
               case DRAG_DIRECTIONS.BACKWARD:  this.deltaX=mouseX-this.startX;
@@ -2574,14 +2579,49 @@ print(limit);
           
           if(p.layout!==BLANK){
             
-            beginShape();
+            var offsetX=0;
+            var offsetY=0;
+            
+            if(p.dragging){
+              
+              offsetX=p.parent.deltaX;
+              offsetY=p.parent.deltaY;
 
-              for(var pt in p.opoints){
-                vertex(p.opoints[pt].x + p.parent.deltaX,
-                       p.opoints[pt].y + p.parent.deltaY);
-              }
+            }
 
-            endShape(CLOSE);
+            if(clr!==BLACK0){
+
+              stroke(BLACK);
+              strokeWeight(0.25);
+
+              beginShape();
+
+                for(var pt in p.opoints){
+                  vertex(p.opoints[pt].x+offsetX,
+                         p.opoints[pt].y+offsetY);
+                }
+
+              endShape(CLOSE);
+
+            }
+            else{
+
+              var po=p.opoints;
+              
+              fill( getColor(ORANGE, pctg));   
+              triangle(offsetX, offsetY, po[0].x+offsetX, po[0].y+offsetY, po[1].x+offsetX, po[1].y+offsetY);
+              fill( getColor(RED,    pctg));   
+              triangle(offsetX, offsetY, po[1].x+offsetX, po[1].y+offsetY, po[2].x+offsetX, po[2].y+offsetY);
+              fill( getColor(PURPLE, pctg));   
+              triangle(offsetX, offsetY, po[2].x+offsetX, po[2].y+offsetY, po[3].x+offsetX, po[3].y+offsetY);
+              fill( getColor(BLUE,   pctg));   
+              triangle(offsetX, offsetY, po[3].x+offsetX, po[3].y+offsetY, po[4].x+offsetX, po[4].y+offsetY);
+              fill( getColor(GREEN,  pctg));   
+              triangle(offsetX, offsetY, po[4].x+offsetX, po[4].y+offsetY, po[5].x+offsetX, po[5].y+offsetY);
+              fill( getColor(YELLOW, pctg));   
+              triangle(offsetX, offsetY, po[5].x+offsetX, po[5].y+offsetY, po[0].x+offsetX, po[0].y+offsetY);
+
+            }
 
           }
           
@@ -2728,7 +2768,7 @@ print(limit);
             // }
             // else{ 
             
-              //outerHexagon();
+              // outerHexagon();
                   innerHexagon();
                   activeCell();
 
