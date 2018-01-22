@@ -2294,23 +2294,62 @@ print(limit);
                                                 this.startY=mouseY;
                                                 colUp();
                                               }
+                                              
                                               if(this.deltaDrag<-sz){
                                                 this.deltaDrag=this.deltaY%sz;
                                                 this.startY=mouseY;
                                                 colDown();
                                               }
+                                              
                                               this.deltaX=0;
                                               this.deltaY=this.startY-mouseY;
                                               this.deltaDrag=this.deltaY;
 
                                               break;
 
-              case DRAG_DIRECTIONS.BACKWARD:  this.deltaX=mouseX-this.startX;
+              case DRAG_DIRECTIONS.BACKWARD:  
+                                              if(this.deltaDrag>=sz){                                               
+                                                this.deltaX=mouseX-this.startX;
+                                                this.deltaDrag=(this.deltaX*cos(PI/6))%sz;
+                                                this.startY=mouseY;
+                                                this.startX=mouseX;
+                                                colUpRight();
+                                              }
+
+                                              if(this.deltaDrag<=-sz){
+                                                this.deltaX=mouseX-this.startX;
+                                                this.deltaDrag=(this.deltaX*cos(PI/6))%sz;
+                                                this.startY=mouseY;
+                                                this.startX=mouseX;
+                                                colDownLeft();
+                                              }
+                                              
+                                              this.deltaX=mouseX-this.startX;
                                               this.deltaY=tan(PI/6)*this.deltaX;
+                                              this.deltaDrag=this.deltaX/cos(PI/6);
+// print(this.deltaDrag);
                                               break;
 
-              case DRAG_DIRECTIONS.FORWARD:   this.deltaX=mouseX-this.startX;
+              case DRAG_DIRECTIONS.FORWARD:
+                                              if(this.deltaDrag>=sz){
+                                                this.deltaX=mouseX-this.startX;
+                                                this.deltaDrag=(this.deltaX*cos(PI/6))%sz;
+                                                this.startY=mouseY;
+                                                this.startX=mouseX;
+                                                colDownRight();
+                                              }
+
+                                              if(this.deltaDrag<=-sz){
+                                                this.deltaX=mouseX-this.startX;
+                                                this.deltaDrag=(this.deltaX*cos(PI/6))%sz;
+                                                this.startY=mouseY;
+                                                this.startX=mouseX;
+                                                colUpLeft();
+                                              }
+
+                                              this.deltaX=mouseX-this.startX;
                                               this.deltaY=tan(PI/6)*-this.deltaX;
+                                              this.deltaDrag=this.deltaX/cos(PI/6);
                                               break;
 
               default:                        break;
