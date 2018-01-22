@@ -49,25 +49,26 @@
 /*
 
   TO DO:
-    
+
+    - complete mouse drag columns
+
     - compete against the genetic algorithm
     - compete against the AI
-    
-    - run button
-    - reset button
+
+
     - music button
     - menu button
     - timer/stop watch
-    
+
     - level indicator
     - current score indicator
 
       - percentage complete
       - integer value of completed
       - integer value of out of place
-    
+
     - grid complete animation (exploding triangles?)
-    
+
     - maintain percentage complete calculation
 
     - rotation of each hexcell
@@ -88,12 +89,16 @@
 
   TO DONE:
 
+    - run button
+
+    - reset button
+    
     - initial color and current color
-      
+
     - active cell rollover edge of grid (top/bottom - right/left, etc)
 
     - reference to the center hexcell
-  
+
     - start drag x/y
 
     - determine how to pass a color as a parameter
@@ -111,7 +116,7 @@
 **/
 
 {
-    
+
   { // Puzzles ------------------------------------------------------------------
 
     var PUZZLES=[
@@ -249,7 +254,7 @@
       // const BLUE          = [  0,  0,255,255]; const BLUEVIOLET   = [ 92,  0,255,255];
       // var VIOLET        = [127,  0,255,255]; var REDVIOLET    = [191,  0,127,255];
     }
-    
+
     // --------------------------------------------------------------------------
 
     var KeyCodes={
@@ -277,17 +282,17 @@
       F2:             113,
       F3:             114,
       F4:             115,
-      
+
       F5:             116,
       F6:             117,
       F7:             118,
       F8:             119,
-      
+
       F9:             120,
       F10:            121,
       F11:            122,
       F12:            123,
-      
+
       // Lower Case
       // a:              97,
       // b:              98,
@@ -305,10 +310,10 @@
       // x:             120,
       // y:             121,
       // z:             122,
-      
+
       // Function Keys
-      
-      
+
+
       // Special Keys
       DELETE:        127,
       BACKSPACE:       8,
@@ -340,7 +345,7 @@
       INSERT:        155
 
     };
-    
+
     var DRAG_DIRECTIONS={
 
       NONE:         0,
@@ -361,6 +366,21 @@
       DOWNLEFT:   6
 
     };
+
+    var CONSTANTS={
+      DEGREES:        '°',
+      PI:             'π',
+      TRIANGLE_UP:    '▲',
+      TRIANGLE_DOWN:  '▼',
+      INFINITY:       '∞',
+      THETA:          'θ',
+      RADIANS:        'ᶜ',
+      IDENTICAL:      '≡',
+      TRIANGLE_R:     '►',
+      TRIANGLE_L:     '◄',
+      SIGMA:          'Σ',
+      NOTE:           '♫'
+    }
 
   }
 
@@ -415,10 +435,10 @@
       this.debug          = true;               //  Mode that displays enhanced debugging tools
 
       this.frameRate      = 0;                  //  Refresh speed
-      
+
       this.running        = false;              //  Currently solving the puzzle
       this.progress       = 0;                  //  Puzzle is this % solved
-      
+
       this.mouseX         = 0;                  //  Current mouseX location
       this.mouseY         = 0;                  //  Current mouseY location
 
@@ -544,11 +564,14 @@
 
       function clickTest(n)         { print('click: ' + n);                                           };
 
+      function getRunning()         { return app.running;                                             };
       function toggleRunning()      { app.running=!app.running;                                       };
+
+      function menu()               {};
 
     }
 
-    function setDisplacedCell(){
+    function setDisplacedCell()     {
 
       do{
 
@@ -560,8 +583,8 @@
       } while(app.hexboard.activeCell.layout===BLANK &&
               app.hexboard.activeCell.layout!==BLACK0);
 
-    };    
-    function setActiveCell(){
+    };
+    function setActiveCell()        {
 
       do{
 
@@ -598,7 +621,7 @@
       this.reverse = reverse;
 
     };
-    function randomMove(){
+    function randomMove()           {
 
       var rnum=round(random(0,5));
 
@@ -618,11 +641,11 @@
       }
 
     };
-    function randomize()             {
+    function shuffle()              {
 
       var total=pow(app.hexboard.layout.length,2)*2;
-      
-      for(var n=0; n<total; n++){        
+
+      for(var n=0; n<total; n++){
         randomMove();
         setActiveCell();
       }
@@ -632,10 +655,11 @@
 
     };
 
-    function reset(){
+    function reset()                {
 
       app.hexboard.reset();
-
+      app.running=false;
+      
     };
 
   }
@@ -667,20 +691,20 @@
       };
 
       function drawDragColumn(){
-        
+
         fill(BLUE);
         stroke(GREEN);
-        
+
         for(var h in app.hexboard.selected){
-          
+
           if(app.hexboard.selected[h].dragging){
-            
+
             ellipse(app.hexboard.selected[h].x,
                     app.hexboard.selected[h].y,
                     30,30);
-                    
+
           }
-                  
+
 // print(app.hexboard.selected[h].y);
 // print('drawDragColumn' +" | " + app.hexboard.selected.length);
 
@@ -785,9 +809,9 @@
         }
 
         cell.color=topColor;
-        
+
         app.hexboard.totalMoves++;
-        
+
       };
       function colDown()            {
 
@@ -813,7 +837,7 @@
         cell.color=bottomcolor;
 
         app.hexboard.totalMoves++;
-        
+
       };
 
       function colUpRight()         {
@@ -840,7 +864,7 @@
         cell.color=topcolor;
 
         app.hexboard.totalMoves++;
-        
+
       };
       function colUpLeft()          {
 
@@ -866,7 +890,7 @@
         cell.color=topcolor;
 
         app.hexboard.totalMoves++;
-        
+
       };
 
       function colDownRight()       {
@@ -893,7 +917,7 @@
         cell.color=bottomcolor;
 
         app.hexboard.totalMoves++;
-        
+
       };
       function colDownLeft()        {
 
@@ -919,7 +943,7 @@
         cell.color=bottomcolor;
 
         app.hexboard.totalMoves++;
-        
+
       };
 
 
@@ -936,9 +960,9 @@
 
           while(app.hexboard.activeCell.bottom!==null &&
                 app.hexboard.activeCell.bottom.layout!==0){
-             
+
             app.hexboard.activeCell = app.hexboard.activeCell.bottom;
-          
+
           }
 
         }
@@ -956,9 +980,9 @@
 
           while(app.hexboard.activeCell.top!==null &&
                 app.hexboard.activeCell.top.layout!==0){
-             
+
             app.hexboard.activeCell = app.hexboard.activeCell.top;
-          
+
           }
 
         }
@@ -977,9 +1001,9 @@
 
           while(app.hexboard.activeCell.bottomLeft!==null &&
                 app.hexboard.activeCell.bottomLeft.layout!==0){
-             
+
             app.hexboard.activeCell = app.hexboard.activeCell.bottomLeft;
-          
+
           }
 
         }
@@ -997,13 +1021,13 @@
 
           while(app.hexboard.activeCell.bottomRight!==null &&
                 app.hexboard.activeCell.bottomRight.layout!==0){
-             
+
             app.hexboard.activeCell = app.hexboard.activeCell.bottomRight;
-          
+
           }
 
         }
-        
+
       };
 
       function downRight()          {
@@ -1018,9 +1042,9 @@
 
           while(app.hexboard.activeCell.topLeft!==null &&
                 app.hexboard.activeCell.topLeft.layout!==0){
-             
+
             app.hexboard.activeCell = app.hexboard.activeCell.topLeft;
-          
+
           }
 
         }
@@ -1478,9 +1502,9 @@
         this.deltaY             = 0;      //  y-coordinate drag offset
 
         this.deltaDrag          = 0;      //  Distance dragged from start point along the drag direction
-        
+
         this.cellSize           = 0;      //  Size of each hexcell
-        
+
         this.calcRadius();
         this.reset();
 
@@ -1498,7 +1522,7 @@
         this.count      = 0;
         this.gridCount  = 0;
         this.totalMoves = 0;
-        
+
         this.layout     = PUZZLES[app.puzzle];
         // this.text       = PUZZLES[app.puzzle+1];
 
@@ -1537,22 +1561,22 @@
             ring[n].push(cell.topRight);
 
           }
-          
+
         };
 
         function load(){
 
           var sz=p.radius/p.layout.length;
-          
+
           p.cellSize=sz;
-          
+
           var n = 0;
 
           var x = 0;
           var y = 0;
 
           var layout = 0;
-          
+
           var xMargin = p.w/2-sz*(p.layout[0].length/2-0.5)*0.75;
           var yMargin = p.h/2-sz*(p.layout.length/2-0.5)*cos(PI/6);
 
@@ -1576,10 +1600,10 @@
               if(col%2===0){
                 y-=yOffset/2;
               }
-              
+
               layout=p.layout[row][col];
-              
-              if(layout===0){ curs=ARROW;    } // Blank hexcell 
+
+              if(layout===0){ curs=ARROW;    } // Blank hexcell
               else          { p.gridCount++; } // Colored hexcell
 
               rowArray.push(new hexCell('hexcell-'+getGUID(), p, x, y, sz, sz,
@@ -1607,9 +1631,9 @@
         load();
         setCenter();
         // setRings();
-        
+
         this.update();
-        
+
         app.hexboard.activeCell=app.hexboard.center;
 
         app.finished=false;
@@ -1725,57 +1749,56 @@
     text(this.count,      50,  70);
     text(this.gridCount,  50,  90);
     text(this.totalMoves, 50, 110);
-    
+
     text(this.moves.length, 50, 130);
-          
+
           var limit=ceil(frameCount/1000);
 
           // if(limit<7){ limit=7; }
-          
+
           if(this.percentageComplete==1){
-            
-            textSize(128);
-            textAlign(CENTER,CENTER);
+
+            textSize(64);
+            textAlign(CENTER,BOTTOM);
             fill(RED);
-            text('COMPLETE', this.w/2, this.h/2);
+            text('COMPLETE', this.w/2, this.h+8);
 
           }
           else{
-            
+
             if(app.running){
 
 print(limit);
-            
+
               app.progress=this.percentageComplete;
-              
+
               for(var n=0; n<limit; n++){ randomMove(); }
-            
+
               this.calcComplete();
-              
+
               if(this.percentageComplete>app.progress){
-                
+
                 app.progress=this.percentageComplete;
-                
+
               }
               else{
-                
+
                 for(var n=0; n<limit; n++){ this.undo(); }
 
                 // if(this.percentageComplete>0.6){
                   // setDisplacedCell();
                 // }
-                // else{                
+                // else{
                   setActiveCell();
                 // }
 
               }
 
             }
-          
+
           }
-          
+
           // drawDragColumn();
-          
           pop();
 
       };
@@ -1783,14 +1806,14 @@ print(limit);
 
         var retVal=false;
         var d=dist(mouseX,mouseY,(this.x+x+this.w/2),(this.y+y+this.h/2));
-// print(d);        
+// print(d);
         if(d<this.w/2){
           retVal=true;
         }
 
         return retVal;
 
-      };      
+      };
       hexboard.prototype.moved        = function(x,y){
 
         if(this.hitTest(x,y)){
@@ -2275,76 +2298,97 @@ print(limit);
       hexboard.prototype.dragged      = function(){
 
         if(this.hitTest(0,0)){
-          
+
           if(this.startX===0){
-            
+
             this.startX=mouseX;
             this.startY=mouseY;
-            
+
           }
           else{
-            
+
             var sz=this.cellSize*sin(PI/3);
-            
+
             switch(app.dragDirection){
-              
-              case DRAG_DIRECTIONS.UPDOWN:    
-                                              if(this.deltaDrag>=sz){                                               
-                                                this.deltaDrag=this.deltaY%sz;
-                                                this.startY=mouseY;
+
+              case DRAG_DIRECTIONS.UPDOWN:
+                                              if(this.deltaDrag>=sz){
+
+                                                this.deltaDrag = this.deltaY%sz;
+                                                this.startY    = mouseY;
+
                                                 colUp();
+
                                               }
-                                              
-                                              if(this.deltaDrag<-sz){
-                                                this.deltaDrag=this.deltaY%sz;
-                                                this.startY=mouseY;
+                                              else if(this.deltaDrag<-sz){
+
+                                                this.deltaDrag = this.deltaY%sz;
+                                                this.startY    = mouseY;
+
                                                 colDown();
+
                                               }
                                               
-                                              this.deltaX=0;
-                                              this.deltaY=this.startY-mouseY;
-                                              this.deltaDrag=this.deltaY;
+                                              this.deltaX    = 0;
+                                              this.deltaY    = this.startY-mouseY;
+                                              this.deltaDrag = this.deltaY;
 
                                               break;
 
-              case DRAG_DIRECTIONS.BACKWARD:  
-                                              if(this.deltaDrag>=sz){                                               
+              case DRAG_DIRECTIONS.BACKWARD:
+                                              if(this.deltaDrag>=sz){
+
                                                 this.deltaX=mouseX-this.startX;
                                                 this.deltaDrag=(this.deltaX*cos(PI/6))%sz;
-                                                this.startY=mouseY;
+
                                                 this.startX=mouseX;
+                                                this.startY=mouseY;
+
                                                 colUpRight();
+
                                               }
 
                                               if(this.deltaDrag<=-sz){
+
                                                 this.deltaX=mouseX-this.startX;
                                                 this.deltaDrag=(this.deltaX*cos(PI/6))%sz;
-                                                this.startY=mouseY;
+
                                                 this.startX=mouseX;
+                                                this.startY=mouseY;
+
                                                 colDownLeft();
+
                                               }
-                                              
+
                                               this.deltaX=mouseX-this.startX;
                                               this.deltaY=tan(PI/6)*this.deltaX;
                                               this.deltaDrag=this.deltaX/cos(PI/6);
-// print(this.deltaDrag);
+
                                               break;
 
               case DRAG_DIRECTIONS.FORWARD:
                                               if(this.deltaDrag>=sz){
+
                                                 this.deltaX=mouseX-this.startX;
                                                 this.deltaDrag=(this.deltaX*cos(PI/6))%sz;
-                                                this.startY=mouseY;
+
                                                 this.startX=mouseX;
+                                                this.startY=mouseY;
+
                                                 colDownRight();
+
                                               }
 
                                               if(this.deltaDrag<=-sz){
+
                                                 this.deltaX=mouseX-this.startX;
                                                 this.deltaDrag=(this.deltaX*cos(PI/6))%sz;
-                                                this.startY=mouseY;
+
                                                 this.startX=mouseX;
+                                                this.startY=mouseY;
+
                                                 colUpLeft();
+
                                               }
 
                                               this.deltaX=mouseX-this.startX;
@@ -2385,10 +2429,10 @@ print(limit);
 
         this.startX=0;
         this.startY=0;
-        
+
         this.deltaX=0;
         this.deltaY=0;
-        
+
       };
       hexboard.prototype.calcComplete = function(){
 
@@ -2417,7 +2461,7 @@ print(limit);
 
       };
       hexboard.prototype.undo         = function(direction){
-        
+
         // Set Active Cell based on the last move
         this.activeCell=this.controls[this.moves[this.moves.length-1].row]
                                      [this.moves[this.moves.length-1].col];
@@ -2478,7 +2522,7 @@ print(limit);
 
         this.color        = props.layout;
         this.outerColor   = round(random(1,7));
-        
+
         this.enabled      = true;           //  Text is displayed black or grayed out
 
         this.dragging     = false;          // Is the HexCell being dragged?
@@ -2545,7 +2589,7 @@ print(limit);
 
           stroke(GRAY);
           strokeWeight(0.25);
-          
+
           switch(clr){
 
             case RED0:      fill(getColor(RED,    pctg)); break;
@@ -2561,10 +2605,10 @@ print(limit);
           }
 
           if(p.layout!==BLANK){
-            
-            
+
+
             if(clr!==BLACK0){
-              
+
               stroke(BLACK);
               strokeWeight(0.25);
 
@@ -2579,9 +2623,9 @@ print(limit);
 
             }
             else{
-              
+
               var po=p.hpoints;
-              
+
               fill( getColor(ORANGE, pctg));   triangle(0, 0, po[0].x, po[0].y, po[1].x, po[1].y);
               fill( getColor(RED,    pctg));   triangle(0, 0, po[1].x, po[1].y, po[2].x, po[2].y);
               fill( getColor(PURPLE, pctg));   triangle(0, 0, po[2].x, po[2].y, po[3].x, po[3].y);
@@ -2615,14 +2659,14 @@ print(limit);
             default:        noFill();                       break;
 
           }
-          
+
           if(p.layout!==BLANK){
-            
+
             var offsetX=0;
             var offsetY=0;
-            
+
             if(p.dragging){
-              
+
               offsetX=p.parent.deltaX;
               offsetY=p.parent.deltaY;
 
@@ -2646,31 +2690,31 @@ print(limit);
             else{
 
               var po=p.opoints;
-              
-              fill( getColor(ORANGE, pctg));   
+
+              fill( getColor(ORANGE, pctg));
               triangle(offsetX, offsetY, po[0].x+offsetX, po[0].y+offsetY, po[1].x+offsetX, po[1].y+offsetY);
-              fill( getColor(RED,    pctg));   
+              fill( getColor(RED,    pctg));
               triangle(offsetX, offsetY, po[1].x+offsetX, po[1].y+offsetY, po[2].x+offsetX, po[2].y+offsetY);
-              fill( getColor(PURPLE, pctg));   
+              fill( getColor(PURPLE, pctg));
               triangle(offsetX, offsetY, po[2].x+offsetX, po[2].y+offsetY, po[3].x+offsetX, po[3].y+offsetY);
-              fill( getColor(BLUE,   pctg));   
+              fill( getColor(BLUE,   pctg));
               triangle(offsetX, offsetY, po[3].x+offsetX, po[3].y+offsetY, po[4].x+offsetX, po[4].y+offsetY);
-              fill( getColor(GREEN,  pctg));   
+              fill( getColor(GREEN,  pctg));
               triangle(offsetX, offsetY, po[4].x+offsetX, po[4].y+offsetY, po[5].x+offsetX, po[5].y+offsetY);
-              fill( getColor(YELLOW, pctg));   
+              fill( getColor(YELLOW, pctg));
               triangle(offsetX, offsetY, po[5].x+offsetX, po[5].y+offsetY, po[0].x+offsetX, po[0].y+offsetY);
 
             }
 
           }
-          
+
         };
         function innerHexagon(){
 
           var drw=true;
           var clr=p.color;
           var pctg=99;
-                    
+
           noStroke();
           noFill();
 
@@ -2691,12 +2735,12 @@ print(limit);
           }
 
           if(p.layout!==BLANK){
-            
+
             var offsetX=0;
             var offsetY=0;
-            
+
             if(p.dragging){
-              
+
               offsetX=p.parent.deltaX;
               offsetY=p.parent.deltaY;
 
@@ -2720,24 +2764,24 @@ print(limit);
             else{
 
               var po=p.ipoints;
-              
-              fill( getColor(ORANGE, pctg));   
+
+              fill( getColor(ORANGE, pctg));
               triangle(offsetX, offsetY, po[0].x+offsetX, po[0].y+offsetY, po[1].x+offsetX, po[1].y+offsetY);
-              fill( getColor(RED,    pctg));   
+              fill( getColor(RED,    pctg));
               triangle(offsetX, offsetY, po[1].x+offsetX, po[1].y+offsetY, po[2].x+offsetX, po[2].y+offsetY);
-              fill( getColor(PURPLE, pctg));   
+              fill( getColor(PURPLE, pctg));
               triangle(offsetX, offsetY, po[2].x+offsetX, po[2].y+offsetY, po[3].x+offsetX, po[3].y+offsetY);
-              fill( getColor(BLUE,   pctg));   
+              fill( getColor(BLUE,   pctg));
               triangle(offsetX, offsetY, po[3].x+offsetX, po[3].y+offsetY, po[4].x+offsetX, po[4].y+offsetY);
-              fill( getColor(GREEN,  pctg));   
+              fill( getColor(GREEN,  pctg));
               triangle(offsetX, offsetY, po[4].x+offsetX, po[4].y+offsetY, po[5].x+offsetX, po[5].y+offsetY);
-              fill( getColor(YELLOW, pctg));   
+              fill( getColor(YELLOW, pctg));
               triangle(offsetX, offsetY, po[5].x+offsetX, po[5].y+offsetY, po[0].x+offsetX, po[0].y+offsetY);
 
             }
 
           }
-          
+
         };
         function activeCell(){
 
@@ -2805,8 +2849,8 @@ print(limit);
             // if(this.dragging){
               //highlight();
             // }
-            // else{ 
-            
+            // else{
+
               // outerHexagon();
                   innerHexagon();
                   activeCell();
@@ -2998,8 +3042,536 @@ print(limit);
 
     }
 
+    /** Reset Button    -------------------------------------------------- */
+    {
 
+      function resetButton(id, parent, x, y, w, h, props){
 
+        control.call(this, id, parent, x, y, w, h);
+
+        this.cursor   = props.cursor;
+        this.color    = props.color;
+
+        this.execute  = props.execute;
+
+        app.reset=this;
+
+      };
+      resetButton.prototype=Object.create(control.prototype);
+      resetButton.prototype.draw=function(){
+
+        this.active=this.hit &&
+                    app.focus===this;
+
+        this.offset=0;
+
+        push();
+
+          translate(this.x,this.y);
+
+            noFill();
+            stroke(192);
+            strokeWeight(1.5);
+
+            if(this.active &&
+               app.left){
+
+              rotate(radians(45));
+
+            }
+
+            // Arc Shadow
+            stroke(212);
+
+              arc(3, 3, this.w, this.h, radians(60), 2*PI-radians(22.5));
+
+            // Arc
+            stroke(192);
+
+            if(this.active){
+
+              stroke(164);
+              cursor(this.cursor);
+
+            }
+
+              arc(0, 0, this.w, this.h, radians(60), 2*PI-radians(22.5));
+
+            push();
+
+              translate(4,-5);
+              rotate(PI/6);
+
+              // Triangle Shadow
+              fill(212);
+              stroke(212);
+
+                triangle( 3,  3,
+                         13,  3,
+                         13, -7);
+
+              // Triangle
+              fill(192);
+              stroke(192);
+
+              if(this.active){ fill(164);
+                               stroke(164); }
+
+                  triangle( 0,   0,
+                           10,   0,
+                           10, -10);
+
+            pop();
+
+        pop();
+
+      };
+      resetButton.prototype.clicked=function(){
+      /** Overridden for execute */
+
+        if(this.active){ this.execute(); }
+
+      };
+      resetButton.prototype.moved=function(x,y){
+      /** Overridden for shape */
+
+          if(this.parent.hit){
+
+            if(dist(mouseX, mouseY,
+                    this.x+x,
+                    this.y+y)<this.w/2){
+
+                this.hit=true;
+                app.focus=this;
+
+            }
+            else{
+
+              this.hit=false;
+
+            }
+
+          }
+
+      };
+
+    }
+
+    /** Solve Button    -------------------------------------------------- */
+    {
+
+      function solveButton(id, parent, x, y, w, h, props){
+
+        control.call(this, id, parent, x, y, w, h);
+
+        this.cursor   = props.cursor;
+        this.color    = props.color;
+
+        this.execute  = props.execute;
+        this.retrieve = props.retrieve;
+
+        app.reset=this;
+
+      };
+      solveButton.prototype=Object.create(control.prototype);
+      solveButton.prototype.draw=function(){
+
+        this.active=this.hit &&
+                    app.focus===this;
+
+        this.offset=0;
+
+        push();
+
+          translate(this.x,this.y);
+
+            noFill();
+            stroke(192);
+            strokeWeight(1.5);
+
+            if(this.active){
+
+              stroke(164);
+              cursor(this.cursor);
+              
+              if(app.left){
+                this.offset=1;
+              }
+
+            }
+
+            var o=this.offset;
+
+            if(this.retrieve()){
+
+              // Triangle Shadow
+              fill(212);
+              stroke(212);
+              strokeWeight(5);
+
+                line(-3,-7, -3, 13);
+                line( 9,-7,  9, 13);
+
+              // Triangle
+              fill(192);
+              stroke(192);
+
+              if(this.active){ fill(164);
+                               stroke(164); }
+
+                line(-6,-10, -6, 10);
+                line( 6,-10,  6, 10);
+
+            }
+            else{
+                            
+              // Triangle Shadow
+              fill(212);
+              stroke(212);
+
+                triangle(13,  3,
+                         -7, -7,
+                         -7, 13);
+
+              // Triangle
+              fill(192);
+              stroke(192);
+
+              if(this.active){ fill(164);
+                               stroke(164); }
+
+                triangle(o+10, o,
+                         o-10, o-10,
+                         o-10, o+10);
+
+            }
+
+        pop();
+
+      };
+      solveButton.prototype.clicked=function(){
+      /** Overridden for execute */
+
+        if(this.active){ this.execute(); }
+
+      };
+      solveButton.prototype.moved=function(x,y){
+      /** Overridden for shape */
+
+          if(this.parent.hit){
+
+            if(dist(mouseX, mouseY,
+                    this.x+x,
+                    this.y+y)<this.w/2){
+
+                this.hit=true;
+                app.focus=this;
+
+            }
+            else{
+
+              this.hit=false;
+
+            }
+
+          }
+
+      };
+
+    }
+
+    /** Menu Button     -------------------------------------------------- */
+    {
+
+      function menuButton(id, parent, x, y, w, h, props){
+
+        control.call(this, id, parent, x, y, w, h);
+
+        this.text     = props.text;
+
+        this.cursor   = props.cursor;
+
+        this.execute  = props.execute;
+
+        this.color    = props.color;
+
+        app.menu=this;
+
+      };
+      menuButton.prototype=Object.create(control.prototype);
+      menuButton.prototype.draw=function(){
+
+        var p=this;
+        this.offset=0;
+
+        this.active=this.hit &&
+                    app.focus===this;
+
+        if(this.active){ cursor(this.cursor);
+                         if(app.left){ this.offset=1; } }
+
+        function drawHexagon(x,y,sz,offset){
+
+          var ang=0;
+
+          beginShape();
+
+            for(pt=0; pt<6; pt++){
+              vertex( x+cos(radians(ang+pt*60))*(sz)+offset,
+                      y+sin(radians(ang+pt*60))*(sz)+offset );
+            }
+
+          endShape(CLOSE);
+
+        };
+
+        push();
+
+          translate(this.x, this.y);
+
+            // Shadow
+            fill(212);
+            noStroke();
+
+              for(var ang=0; ang<6; ang++){
+                drawHexagon(p.w/2+cos(radians(ang*60+30))*20+4,
+                            p.h/2+sin(radians(ang*60+30))*20+4,
+                            10,0);
+              }
+
+            // Hexagons
+            fill(192);
+            noStroke();
+
+            if(p.active){ fill(180); }
+
+              for(var ang=0; ang<6; ang++){
+                drawHexagon(p.w/2+cos(radians(ang*60+30))*20,
+                            p.h/2+sin(radians(ang*60+30))*20,
+                            10,p.offset);
+              }
+
+        pop();
+
+      };
+      menuButton.prototype.clicked=function(){
+      /** Overridden for execute */
+
+        if(this.active){ this.execute(); }
+
+      };
+
+    }
+
+    /** Music Button    -------------------------------------------------- */
+    {
+
+      function music(id, parent, x, y, w, h, props){
+
+        control.call(this, id, parent, x, y, w, h);
+
+        this.cursor   = props.cursor;
+
+        this.execute  = props.execute;
+        this.retrieve = props.retrieve;
+
+        app.music=this;
+
+      };
+      music.prototype=Object.create(control.prototype);
+      music.prototype.draw            =function(){
+
+        var p=this;
+
+        this.active=this.hit &&
+                    app.focus===this;
+
+        this.on=this.retrieve();
+        this.offset=0;
+
+        function symbol(){
+
+          if(p.on){ fill(164); }
+
+          textFont(p.font);
+          textSize(36);
+          textAlign(CENTER,CENTER);
+
+          //  Shadow
+          fill(212);
+
+            text(CONSTANTS.NOTE, 3+p.offset, +p.offset);
+
+          // Text
+          fill(192);
+
+          if(p.active){ fill(164); }
+
+            text(CONSTANTS.NOTE, p.offset, p.offset);
+
+        };
+        function strikeThrough(){
+
+          noFill();
+
+          if(!p.on){
+
+            stroke(192);
+            strokeWeight(3);
+
+            if(p.active){ stroke(164); }
+
+              ellipse(p.offset, p.offset, p.w-5, p.w-5);
+
+              line(-15+p.offset,-15+p.offset, 15, 15);
+
+          }
+
+        };
+
+        if(this.active){ cursor(p.cursor);
+                         if(app.left){ this.offset=1; } }
+
+        push();
+
+          translate(this.x, this.y);
+
+            symbol();
+            strikeThrough();
+
+        pop();
+
+      };
+      music.prototype.moved           =function(x,y){
+
+        if(this.parent.hit){
+
+          if(dist(mouseX, mouseY,
+                  this.x+x,
+                  this.y+y)<this.w/2){
+
+              this.hit=true;
+              app.focus=this;
+
+          }
+          else{
+
+            this.hit=false;
+
+          }
+
+        }
+
+      };
+      music.prototype.clicked         =function(){
+      /* Overridden to maintain on/off value */
+
+        if(this.active){
+
+          this.execute(!this.retrieve());
+
+        }
+
+      };
+
+    }
+
+    /** Shuffle Button  -------------------------------------------------- */
+    {
+
+      function shuffleButton(id, parent, x, y, w, h, props){
+
+        control.call(this, id, parent, x, y, w, h);
+
+        this.cursor   = props.cursor;
+        this.color    = props.color;
+
+        this.execute  = props.execute;
+
+        app.reset=this;
+
+      };
+      shuffleButton.prototype=Object.create(control.prototype);
+      shuffleButton.prototype.draw=function(){
+
+        this.active=this.hit &&
+                    app.focus===this;
+
+        this.offset=0;
+
+        push();
+
+          translate(this.x,this.y);
+
+            noFill();
+            stroke(192);
+            strokeWeight(1.5);
+
+            if(this.active){
+
+              stroke(164);
+              cursor(this.cursor);
+              
+              if(app.left){
+                this.offset=1;
+              }
+
+            }
+
+            var o=this.offset;
+
+            // Triangle Shadow
+            fill(212);
+            stroke(212);
+            strokeWeight(5);
+
+              line(o-3,o-7, o-3, o+13);
+              line(o+9,o-7, o+9, o+13);
+
+            // Triangle
+            fill(192);
+            stroke(192);
+
+            if(this.active){ fill(164);
+                             stroke(164); }
+
+              line(o-6,o-10,o-6,o+10);
+              line(o+6,o-10,o+6,o+10);
+
+        pop();
+
+      };
+      shuffleButton.prototype.clicked=function(){
+      /** Overridden for execute */
+
+        if(this.active){ this.execute(); }
+
+      };
+      shuffleButton.prototype.moved=function(x,y){
+      /** Overridden for shape */
+
+          if(this.parent.hit){
+
+            if(dist(mouseX, mouseY,
+                    this.x+x,
+                    this.y+y)<this.w/2){
+
+                this.hit=true;
+                app.focus=this;
+
+            }
+            else{
+
+              this.hit=false;
+
+            }
+
+          }
+
+      };
+
+    }
+    
   }
 
   /** Initialize --------------------------------------------------------- */
@@ -3030,16 +3602,29 @@ print(limit);
       /* Accessories ---------------------------------------------------- */
 
       /** Reset Button     */
-      // rt.controls.push(new resetButton(getGUID(), rt, width-235, height-35, 28, 28,
-        // {cursor:    HAND,
-         // color:     BLACK,
-         // execute:   reset}));
+      rt.controls.push(new resetButton('reset', rt, rt.w-235, rt.h-35, 28, 28,
+        {cursor:    HAND,
+         color:     BLACK,
+         execute:   reset}));
 
+      /** Shuffle Button   */
+      rt.controls.push(new shuffleButton('shuffle', rt, rt.w-235, rt.h-135, 28, 28,
+        {cursor:    HAND,
+         color:     BLACK,
+         execute:   shuffle}));
+         
+      /** Solve Button     */
+      rt.controls.push(new solveButton('solve', rt, rt.w-335, rt.h-35, 28, 28,
+        {cursor:    HAND,
+         color:     BLACK,
+         retrieve:  getRunning,
+         execute:   toggleRunning}));
+         
       /** Music            */
-      // rt.controls.push(new music(getGUID(), rt, 35, height-35, 50, 50,
-        // {cursor:    HAND,
-         // execute:   setMusic,
-         // retrieve:  getMusic}));
+      rt.controls.push(new music('music', rt, 35, rt.h-35, 50, 50,
+        {cursor:    HAND,
+         execute:   setMusic,
+         retrieve:  getMusic}));
 
       /** Score Board      */
       // rt.controls.push(new scoreBoard(getGUID(), rt, width-325, 10, 50, 50,
@@ -3053,10 +3638,10 @@ print(limit);
         // {cursor:    HAND}));
 
       /** Menu Button      */
-      // rt.controls.push(new menuButton(getGUID(), rt, 15, 15, 57, 60,
-        // {text:      'Yippee',
-         // cursor:    HAND,
-         // execute:   menu}));
+      rt.controls.push(new menuButton('menu', rt, 15, 15, 57, 60,
+        {text:      'Yippee',
+         cursor:    HAND,
+         execute:   menu}));
 
       /* Puzzle Complete   */
       // var pc=new puzzleComplete(getGUID(), rt, 1000, 1, width-201, height-2,
@@ -3123,7 +3708,7 @@ print(limit);
   var x  = 0;
   var y  = 0;
   var cx = (windowWidth-200)/2;
-  var cy = windowHeight/2;
+  var cy =  windowHeight/2;
 
   function handleKeys(){
 
@@ -3158,7 +3743,7 @@ print(limit);
       }
 
     }
-    
+
   };
 
   function draw(){
@@ -3168,9 +3753,7 @@ print(limit);
     forEach(app.controls,'draw');
 
     update();
-    
-    fill(BLACK);
-    text(app.running, 50, height-20);
+
   }
 
   /* Mouse Events ============================================================== */
@@ -3197,7 +3780,7 @@ print(limit);
 print('dclicked');
     };
     function mouseMoved()         {
-  
+
       app.mouseX=mouseX;
       app.mouseY=mouseY;
 
@@ -3259,7 +3842,6 @@ print('dclicked');
 
       function calcDragAngle(){
 
-        // var a = atan2(mouseY-height/2, (mouseX-(width-200)/2));
         var a = atan2(mouseY-pmouseY, mouseX-pmouseX);
 
         a=a*180/PI;
@@ -3275,27 +3857,27 @@ print('dclicked');
 
                                           app.dragDirection=DRAG_DIRECTIONS.UPDOWN;
 
-                                          setDragColumn();
+                                          setDragColumn();    // Determine which cells are being dragged
 
                                           break;
 
-          case a >= 0 && a <= 67.5:
+          case a >=   0 && a <=  67.5:
           case a >=-180 && a <=-122.5:    x = cx + 100;
                                           y = cy +  50;
 
                                           app.dragDirection=DRAG_DIRECTIONS.FORWARD;
 
-                                          setDragForward();
+                                          setDragForward();   // Determine which cells are being dragged
 
                                           break;
 
           case a <= 180 && a >= 122.5:
-          case a <= 0 && a >=-67.5:       x = cx - 100;
+          case a <=   0 && a >= -67.5:    x = cx - 100;
                                           y = cy +  50;
 
                                           app.dragDirection=DRAG_DIRECTIONS.BACKWARD;
 
-                                          setDragBackward();
+                                          setDragBackward();  // Determine which cells are being dragged
 
                                           break;
 
@@ -3324,7 +3906,7 @@ print('dclicked');
                         if(dist(app.dragStartX,
                                 app.dragStartY,
                                 mouseX,
-                                mouseY)>30){
+                                mouseY)>10){
 
                           if(x===cx &&
                              y===cy){ calcDragAngle(); }
@@ -3379,23 +3961,23 @@ print('dclicked');
         /* Navigation                                                       */
         case keyIsDown(KeyCodes.Q):     upLeft();                                   break;
         case keyIsDown(KeyCodes.E):     upRight();                                  break;
-                      
+
         case keyIsDown(KeyCodes.A):     downLeft();                                 break;
         case keyIsDown(KeyCodes.D):     downRight();                                break;
-                      
+
         case keyIsDown(KeyCodes.W):     up();                                       break;
         case keyIsDown(KeyCodes.S):     down();                                     break;
 
         case keyIsDown(KeyCodes.P):     toggleRunning();                            break;
-            
+
         /* Translate Rows/Columns                                           */
         case keyIsDown(KeyCodes.UP):    colUp();
                                         app.hexboard.addMove(DIRECTIONS.UP);        break;
-        case keyIsDown(KeyCodes.DOWN):  colDown();            
+        case keyIsDown(KeyCodes.DOWN):  colDown();
                                         app.hexboard.addMove(DIRECTIONS.DOWN);      break;
 
         case keyIsDown(KeyCodes.LEFT) &&
-             keyIsDown(CONTROL):        colDownLeft();        
+             keyIsDown(CONTROL):        colDownLeft();
                                         app.hexboard.addMove(DIRECTIONS.DOWNLEFT);  break;
         case keyIsDown(KeyCodes.RIGHT) &&
              keyIsDown(CONTROL):        colDownRight();
@@ -3417,15 +3999,15 @@ print('dclicked');
         case keyIsDown(KEYCODES.F4):    toggleTelemetry();                          break;
         // case app.keys[KEYCODES.CONTROL] &&
              // app.keys[KEYCODES.F5]:         clearLayout();         break;
-        case keyIsDown(KEYCODES.F8):    reset();                                    break;       
-        
+        case keyIsDown(KEYCODES.F8):    reset();                                    break;
+
         /* Edit                                                             */
         case app.keys[KEYCODES.Z] &&
              app.keys[KEYCODES.CONTROL]:  app.hexboard.undo();                      break;  // reverse latest move
 
         // case app.keys[KEYCODES.SPACE] &&
-             // app.keys[KEYCODES.CONTROL]:    decrCellLayout();      break;  // Decrement Layout   
-        // case app.keys[KEYCODES.SPACE]:      incrCellLayout();      break;  // Increment Layout   
+             // app.keys[KEYCODES.CONTROL]:    decrCellLayout();      break;  // Decrement Layout
+        // case app.keys[KEYCODES.SPACE]:      incrCellLayout();      break;  // Increment Layout
 
         // /* Figure out how to use this                                                                          */
         // case app.keys[KEYCODES.CODED]:                             break;
