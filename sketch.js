@@ -55,7 +55,7 @@
     - compete against the genetic algorithm
     - compete against the AI
 
-
+    - shuffle button
     - music button
     - menu button
     - timer/stop watch
