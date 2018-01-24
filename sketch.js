@@ -412,7 +412,8 @@
     strokeJoin(MITER);
 
     angleMode='radians';
-
+    // rectMode(CORNERS);
+    
     //  Bind events to functions
     // cnv.mouseDragged(mDragged);
     // cnv.mouseMoved(moved);
@@ -1110,10 +1111,10 @@
 
         var retVal=false;
 
-        if(mouseX>(this.x+x) &&
-           mouseX<(this.x+x) + this.w &&
-           mouseY>(this.y+y) &&
-           mouseY<(this.y+y) + this.h){
+        if(mouseX>=(this.x+x) &&
+           mouseX<=(this.x+x) + this.w &&
+           mouseY>=(this.y+y) &&
+           mouseY<=(this.y+y) + this.h){
           retVal=true;
         }
 
@@ -1172,7 +1173,7 @@
 
       };
       root.prototype=Object.create(control.prototype);
-      root.prototype.draw        =function(){
+      root.prototype.draw        = function(){
 
           this.active=this.hit &&
                       app.focus===this;
@@ -1203,10 +1204,10 @@
           pop();
 
       };
-      root.prototype.moved       =function(x,y){
+      root.prototype.moved       = function(x,y){
       /* Required because root control doesn't have a parent */
 
-          if(this.hitTest(x,y)){
+          if(this.hitTest(this.x+x,this.y+y)){
 
             this.hit=true;
             app.focus=this;
@@ -1223,7 +1224,7 @@
           }
 
       };
-      root.prototype.resized     =function(){
+      root.prototype.resized     = function(){
 
         this.w = windowWidth -20;
         this.h = windowHeight-20;
@@ -1799,10 +1800,18 @@ print(limit);
           }
 
           // drawDragColumn();
+
+noFill();
+stroke(RED);              
+rect(0,0,this.w,this.h);
+          
           pop();
 
+
+        
+
       };
-      hexboard.prototype.hitTest  = function (x,y){
+      hexboard.prototype.hitTest      = function(x,y){
 
         var retVal=false;
         var d=dist(mouseX,mouseY,(this.x+x+this.w/2),(this.y+y+this.h/2));
@@ -3123,8 +3132,12 @@ print(limit);
 
             pop();
 
+noFill();
+stroke(RED);              
+ellipse(0,0,this.w,this.h);
+            
         pop();
-
+        
       };
       resetButton.prototype.clicked=function(){
       /** Overridden for execute */
@@ -3135,11 +3148,11 @@ print(limit);
       resetButton.prototype.moved=function(x,y){
       /** Overridden for shape */
 
-          if(this.parent.hit){
+          // if(this.parent.hit){
 
             if(dist(mouseX, mouseY,
                     this.x+x,
-                    this.y+y)<this.w/2){
+                    this.y+y)<=this.w/2){
 
                 this.hit=true;
                 app.focus=this;
@@ -3151,7 +3164,7 @@ print(limit);
 
             }
 
-          }
+          // }
 
       };
 
@@ -3248,6 +3261,10 @@ print(limit);
 
         pop();
 
+noFill();
+stroke(RED);              
+ellipse(this.x,this.y,this.w,this.h);
+        
       };
       solveButton.prototype.clicked=function(){
       /** Overridden for execute */
@@ -3258,11 +3275,11 @@ print(limit);
       solveButton.prototype.moved=function(x,y){
       /** Overridden for shape */
 
-          if(this.parent.hit){
+          // if(this.parent.hit){
 
             if(dist(mouseX, mouseY,
                     this.x+x,
-                    this.y+y)<this.w/2){
+                    this.y+y)<=this.w/2){
 
                 this.hit=true;
                 app.focus=this;
@@ -3274,7 +3291,7 @@ print(limit);
 
             }
 
-          }
+          // }
 
       };
 
@@ -3288,11 +3305,8 @@ print(limit);
         control.call(this, id, parent, x, y, w, h);
 
         this.text     = props.text;
-
         this.cursor   = props.cursor;
-
         this.execute  = props.execute;
-
         this.color    = props.color;
 
         app.menu=this;
@@ -3317,8 +3331,8 @@ print(limit);
           beginShape();
 
             for(pt=0; pt<6; pt++){
-              vertex( x+cos(radians(ang+pt*60))*(sz)+offset,
-                      y+sin(radians(ang+pt*60))*(sz)+offset );
+              vertex( x+cos(radians(ang+pt*60))*sz+offset,
+                      y+sin(radians(ang+pt*60))*sz+offset );
             }
 
           endShape(CLOSE);
@@ -3334,8 +3348,8 @@ print(limit);
             noStroke();
 
               for(var ang=0; ang<6; ang++){
-                drawHexagon(p.w/2+cos(radians(ang*60+30))*20+4,
-                            p.h/2+sin(radians(ang*60+30))*20+4,
+                drawHexagon(cos(radians(ang*60+30))*20+4,
+                            sin(radians(ang*60+30))*20+4,
                             10,0);
               }
 
@@ -3346,14 +3360,39 @@ print(limit);
             if(p.active){ fill(180); }
 
               for(var ang=0; ang<6; ang++){
-                drawHexagon(p.w/2+cos(radians(ang*60+30))*20,
-                            p.h/2+sin(radians(ang*60+30))*20,
+                drawHexagon(cos(radians(ang*60+30))*20,
+                            sin(radians(ang*60+30))*20,
                             10,p.offset);
               }
+noFill();
+stroke(RED);              
+ellipse(0,0,this.w,this.h);
 
+ellipse(0,0,3,3);
         pop();
 
       };
+      menuButton.prototype.moved           =function(x,y){
+
+        // if(this.parent.hit){
+
+          if(dist(mouseX, mouseY,
+                  this.x+x,
+                  this.y+y)<=this.w/2){
+
+              this.hit=true;
+              app.focus=this;
+
+          }
+          else{
+
+            this.hit=false;
+
+          }
+
+        // }
+
+      };      
       menuButton.prototype.clicked=function(){
       /** Overridden for execute */
 
@@ -3390,7 +3429,9 @@ print(limit);
         this.offset=0;
 
         function symbol(){
-
+          
+          noStroke();
+          
           if(p.on){ fill(164); }
 
           textFont(p.font);
@@ -3441,14 +3482,18 @@ print(limit);
 
         pop();
 
+noFill();
+stroke(RED);              
+ellipse(this.x,this.y,this.w,this.h);
+        
       };
       music.prototype.moved           =function(x,y){
 
-        if(this.parent.hit){
+        // if(this.parent.hit){
 
           if(dist(mouseX, mouseY,
                   this.x+x,
-                  this.y+y)<this.w/2){
+                  this.y+y)<=this.w/2){
 
               this.hit=true;
               app.focus=this;
@@ -3460,7 +3505,7 @@ print(limit);
 
           }
 
-        }
+        // }
 
       };
       music.prototype.clicked         =function(){
@@ -3503,13 +3548,8 @@ print(limit);
 
           translate(this.x,this.y);
 
-            noFill();
-            stroke(192);
-            strokeWeight(1.5);
-
             if(this.active){
 
-              stroke(164);
               cursor(this.cursor);
               
               if(app.left){
@@ -3520,25 +3560,64 @@ print(limit);
 
             var o=this.offset;
 
-            // Triangle Shadow
-            fill(212);
+            // Shadows
+            noFill();
             stroke(212);
-            strokeWeight(5);
+            strokeWeight(2);
 
-              line(o-3,o-7, o-3, o+13);
-              line(o+9,o-7, o+9, o+13);
+              var s=o+3;
+              
+              bezier(-14+s,-8+s,-5+s,-10+s, 5+s, 10+s, 14+s, 8+s);
+              bezier(-14+s, 8+s,-5+s, 10+s, 5+s,-10+s, 14+s,-8+s);
+              
+            fill(212);
 
-            // Triangle
-            fill(192);
+              triangle(13+s, 11+s, 13+s, 5+s, 17+s, 8+s);
+              triangle(13+s,-11+s, 13+s,-5+s, 17+s,-8+s);
+              
+            // Curves
+            noFill();
             stroke(192);
 
-            if(this.active){ fill(164);
-                             stroke(164); }
+            if(this.active){ stroke(164); }
 
-              line(o-6,o-10,o-6,o+10);
-              line(o+6,o-10,o+6,o+10);
+              bezier(-14+o,-8+o,-3+o,-10+o, 3+o, 10+o, 14+o, 8+o);
+              bezier(-14+o, 8+o,-3+o, 10+o, 3+o,-10+o, 14+o,-8+o);
+
+            // Triangles
+            fill(192);
+            
+            if(this.active){ fill(164);   }
+
+              triangle(13+o, 11+o, 13+o, 5+o, 17+o, 8+o);
+              triangle(13+o,-11+o, 13+o,-5+o, 17+o,-8+o);
 
         pop();
+
+noFill();
+stroke(RED);
+ellipse(this.x,this.y,this.w,this.h);
+
+      };
+      shuffleButton.prototype.moved           =function(x,y){
+
+        // if(this.parent.hit){
+
+          if(dist(mouseX, mouseY,
+                  this.x+x,
+                  this.y+y)<=this.w/2){
+
+              this.hit=true;
+              app.focus=this;
+
+          }
+          else{
+
+            this.hit=false;
+
+          }
+
+        // }
 
       };
       shuffleButton.prototype.clicked=function(){
@@ -3547,31 +3626,9 @@ print(limit);
         if(this.active){ this.execute(); }
 
       };
-      shuffleButton.prototype.moved=function(x,y){
-      /** Overridden for shape */
-
-          if(this.parent.hit){
-
-            if(dist(mouseX, mouseY,
-                    this.x+x,
-                    this.y+y)<this.w/2){
-
-                this.hit=true;
-                app.focus=this;
-
-            }
-            else{
-
-              this.hit=false;
-
-            }
-
-          }
-
-      };
 
     }
-    
+
   }
 
   /** Initialize --------------------------------------------------------- */
@@ -3608,20 +3665,20 @@ print(limit);
          execute:   reset}));
 
       /** Shuffle Button   */
-      rt.controls.push(new shuffleButton('shuffle', rt, rt.w-235, rt.h-135, 28, 28,
+      app.controls.push(new shuffleButton('shuffle', null, rt.w-235, rt.h-135, 28, 28,
         {cursor:    HAND,
          color:     BLACK,
          execute:   shuffle}));
          
       /** Solve Button     */
-      rt.controls.push(new solveButton('solve', rt, rt.w-335, rt.h-35, 28, 28,
+      app.controls.push(new solveButton('solve', null, rt.w-335, rt.h-35, 28, 28,
         {cursor:    HAND,
          color:     BLACK,
          retrieve:  getRunning,
          execute:   toggleRunning}));
          
       /** Music            */
-      rt.controls.push(new music('music', rt, 35, rt.h-35, 50, 50,
+      app.controls.push(new music('music', null, 35, rt.h-35, 50, 50,
         {cursor:    HAND,
          execute:   setMusic,
          retrieve:  getMusic}));
@@ -3638,7 +3695,7 @@ print(limit);
         // {cursor:    HAND}));
 
       /** Menu Button      */
-      rt.controls.push(new menuButton('menu', rt, 15, 15, 57, 60,
+      rt.controls.push(new menuButton('menu', rt, 45, 45, 60, 60,
         {text:      'Yippee',
          cursor:    HAND,
          execute:   menu}));
