@@ -50,6 +50,10 @@
 
   TO DO:
 
+    - update control locations on resize();
+
+    - inplement redraw() as necessary
+
     - complete mouse drag columns
 
     - compete against the genetic algorithm
@@ -1151,7 +1155,7 @@
       control.prototype.released = function(){ };
       control.prototype.over     = function(){ };
       control.prototype.out      = function(){ this.hit=false; forEach(this.controls, 'out');      };
-      control.prototype.resized  = function(){ print(this.id + ":  resized");                      };
+      control.prototype.resized  = function(){ forEach(this.controls, 'resized');                  };
       // control.prototype.typed=function(){};
       // control.prototype.cClicked=function(){};
 
@@ -1694,7 +1698,7 @@
 
                 // text('Level ' + app.levelText[app.puzzle/2], 0, 0);
 
-            pop();
+            // pop();
 
           };
           function board()             {
@@ -1787,7 +1791,7 @@ print(limit);
                 for(var n=0; n<limit; n++){ this.undo(); }
 
                 // if(this.percentageComplete>0.6){
-                  // setDisplacedCell();
+                //   setDisplacedCell();
                 // }
                 // else{
                   setActiveCell();
@@ -1825,7 +1829,7 @@ rect(0,0,this.w,this.h);
       };
       hexboard.prototype.moved        = function(x,y){
 
-        if(this.hitTest(x,y)){
+        // if(this.hitTest(x,y)){
 
           if(this.parent.hit){
 
@@ -1842,7 +1846,7 @@ rect(0,0,this.w,this.h);
               }
             }
 
-          }
+          // }
 
         }
         else{
@@ -2856,7 +2860,7 @@ rect(0,0,this.w,this.h);
           scale(1,-1);
 
             // if(this.dragging){
-              //highlight();
+              highlight();
             // }
             // else{
 
@@ -3665,20 +3669,20 @@ ellipse(this.x,this.y,this.w,this.h);
          execute:   reset}));
 
       /** Shuffle Button   */
-      app.controls.push(new shuffleButton('shuffle', null, rt.w-235, rt.h-135, 28, 28,
+      rt.controls.push(new shuffleButton('shuffle', rt, rt.w-235, rt.h-135, 28, 28,
         {cursor:    HAND,
          color:     BLACK,
          execute:   shuffle}));
          
       /** Solve Button     */
-      app.controls.push(new solveButton('solve', null, rt.w-335, rt.h-35, 28, 28,
+      rt.controls.push(new solveButton('solve', rt, rt.w-335, rt.h-35, 28, 28,
         {cursor:    HAND,
          color:     BLACK,
          retrieve:  getRunning,
          execute:   toggleRunning}));
          
       /** Music            */
-      app.controls.push(new music('music', null, 35, rt.h-35, 50, 50,
+      rt.controls.push(new music('music', rt, 35, rt.h-35, 50, 50,
         {cursor:    HAND,
          execute:   setMusic,
          retrieve:  getMusic}));
@@ -3842,7 +3846,7 @@ print('dclicked');
       app.mouseY=mouseY;
 
       for(var c in app.controls){ app.controls[c].moved(0,0); }
-
+            
     };
     function mousePressed()       {
 
@@ -3855,7 +3859,7 @@ print('dclicked');
         default:                          break;
 
       }
-
+      
     };
 
     function mouseReleased()      {
