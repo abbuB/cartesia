@@ -477,8 +477,8 @@
     /* TSP Specific       ------------------ */
     {
 
-      this.mode           = APPMODES.GAME;      //
-      
+      this.mode           = SOLVEMODES.RANDOM; //
+
       this.nodes          = 100;                //  Total # of nodes to be connected
 
       this.field;                               //  Set in the field control initialization
@@ -487,13 +487,6 @@
       this.clock;
       this.music;
       this.reset;
-      this.scoreboard;
-
-      this.puzzle         = 4;                  //  Index of the current puzzle layout
-
-      this.remaining      = 0;                  //  How many blue cells need to be uncovered
-      this.covered        = 0;                  //  How many black cells need to be uncovered
-      this.errors         = 0;                  //  How many mistaken clicks occurred
 
       this.musicOn        = true;
 
@@ -1433,7 +1426,7 @@
 
     var completePercent = 0;
 
-    /** field        -------------------------------------------------- */
+    /** Field        -------------------------------------------------- */
     {
 
     var HEX_SIZE=0;
@@ -1450,25 +1443,9 @@
 
         this.activeCell         = null;
 
-        this.layout             = [];     //  Array of the layout of nodes
-        this.rings              = [];     //  Array of centered node rings
-
-        this.selected           = [];     //  Array of currently selected nodes
-
-        this.moves              = [];     //  Array of moves completed
-
         this.dirty              = false;  //  Has the field been clicked yet?
 
         app.field               = this;   //  Set a global field reference
-
-        this.center             = 0;
-
-        this.count              = 0;      //  Total nodes in grid
-        this.totalMoves         = 0;
-
-        this.gridCount          = 0;      //  Total nodes in pattern
-
-        this.percentageComplete = 0;      //  Percentage in the correct position
 
         this.startX             = 0;      //  x-coordinate of drag start
         this.startY             = 0;      //  y-coordinate of drag start
@@ -1480,7 +1457,13 @@
 
         this.cellSize           = 0;      //  Size of each node
         
-        this.nodes              = [];     //  Array of nodes
+        this.nodesOriginal      = [];     //  Original array of nodes
+        this.nodesBest          = [];     //  Shortest path so far
+        this.nodesWorking       = [];     //  Path used to experiment
+        
+        this.originalLength     = 0;      //  Length of orinal path
+        this.bestLength         = 0;      //  Current best path length
+        this.workingLength      = 0;      //  Length of path being tested
 
         this.reset();
 
@@ -1505,13 +1488,16 @@
                                     p,
                                     floor(random(20, p.w-20)),
                                     floor(random(20, p.h-20)),
-                                    10,
-                                    10,
-                                    )
+                                    5,
+                                    5,
+                                    {cursor:    HAND})
                           );
           }
           
-          app.field.nodes=nodeArray;
+          app.field.nodesOriginal = nodeArray;
+          
+          arrayCopy(nodeArray,app.field.nodesBest);
+          arrayCopy(nodeArray,app.field.nodesWorking);          
 
         };
 
@@ -1532,33 +1518,151 @@
 
           if(this.active){ cursor(this.cursor); }
 
+          function pathLength(arr){
+
+            var len=0;
+
+              for(var n=0; n<arr.length; n++){
+
+                if(n>0){
+                  len+=dist(arr[n].x,
+                            arr[n].y,
+                            arr[n-1].x,
+                            arr[n-1].y);
+                }
+                else if(n==arr.length-1){
+                  len+=dist(arr[0].x,
+                            arr[0].y,
+                            arr[arr.length-1].x,
+                            arr[arr.length-1].y);               
+                }
+                
+              }
+
+            return len;
+
+          };
           function border()           {
 
             fill(p.color);
+
+            if(p.hit){ fill(232); };
+
             stroke(getColor(H_BLUE,25));
             strokeWeight(1.5);
 
-              rect( 0, 0, p.w, p.h, 25);
+              rect( 0, 0, p.w, p.h, 5);
 
           };
-          function nodes()            {
+          function drawNodesWorking() {
             
-            forEach(p.nodes, 'draw');
+            forEach(p.nodesWorking, 'draw');
 
           };
-          function path()             {
+          function nodesOriginal()    {
             
-            stroke(128,0,0);
+            forEach(p.nodesOriginal, 'draw');
+
+          };
+          function nodesBest()        {
+            
+            forEach(p.nodesBest, 'draw');
+
+          };          
+          function drawOriginalPath()      {
+            
+            var len=0;
+
+            stroke(255,0,0);
             strokeWeight(0.5);
             noFill();          
 
             beginShape();
 
-            for(var n=0; n<p.nodes.length; n++){
-              vertex(p.nodes[n].x, p.nodes[n].y);
-            }
+              for(var n=0; n<p.nodesOriginal.length; n++){
+                
+                vertex(p.nodesOriginal[n].x, p.nodesOriginal[n].y);
+
+                if(n>0){
+                  len+=dist(p.nodesOriginal[n].x,
+                            p.nodesOriginal[n].y,
+                            p.nodesOriginal[n-1].x,
+                            p.nodesOriginal[n-1].y);
+                }
+                else if(n==p.nodesOriginal.length-1){
+                  len+=dist(p.nodesOriginal[0].x,
+                            p.nodesOriginal[0].y,
+                            p.nodesOriginal[p.nodesOriginal.length-1].x,
+                            p.nodesOriginal[p.nodesOriginal.length-1].y);               
+                }
+                
+              }
 
             endShape(CLOSE);
+            
+            p.OriginalLength=len;
+
+          };
+          function pathBest()      {
+            
+            var len=0;
+
+            stroke(128);
+            strokeWeight(0.5);
+            noFill();          
+
+            beginShape();
+
+              for(var n=0; n<p.nodesBest.length; n++){
+                
+                vertex(p.nodesBest[n].x, p.nodesBest[n].y);
+
+                if(n>0){
+                  len+=dist(p.nodesBest[n].x,
+                            p.nodesBest[n].y,
+                            p.nodesBest[n-1].x,
+                            p.nodesBest[n-1].y);
+                }
+                else if(n==p.nodesBest.length-1){
+                  len+=dist(p.nodesBest[0].x,
+                            p.nodesBest[0].y,
+                            p.nodesBest[p.nodesBest.length-1].x,
+                            p.nodesBest[p.nodesBest.length-1].y);               
+                }
+                
+              }
+
+            endShape(CLOSE);
+            
+            p.BestLength=len;
+
+          };
+          function drawPathWorking()      {
+
+            stroke(128);
+            strokeWeight(0.5);
+            noFill();          
+
+            beginShape();
+
+              for(var n=0; n<p.nodesWorking.length; n++){
+                
+                vertex(p.nodesWorking[n].x, p.nodesWorking[n].y);
+              }
+
+            endShape(CLOSE);
+
+          };          
+          function swap(){
+
+            var tmp;
+            var rand1=floor(random(p.nodesWorking.length));
+            var rand2=floor(random(p.nodesWorking.length));
+
+            tmp=p.nodesWorking[rand1];
+
+            p.nodesWorking[rand1]=p.nodesWorking[rand2];
+            p.nodesWorking[rand2]=tmp;
 
           };
 
@@ -1567,18 +1671,32 @@
             translate(this.x, this.y);
 
               border();
-              path();
-              nodes();
+
+              pathOriginal();
+              pathBest();
+
+              drawPathWorking();
+              drawNodesWorking();
+
+              fill(0);
+              textSize(24);
+              textAlign(LEFT,TOP);
+
+                text(ceil(p.workingLength),10,5);
 
           pop();
+
+          if(frameCount%1==0){ swap(); }
 
       };
       field.prototype.hitTest      = function(x,y){
 
         var retVal=false;
-        var d=dist(mouseX,mouseY,(this.x+x+this.w/2),(this.y+y+this.h/2));
-// print(d);
-        if(d<this.w/2){
+
+        if(mouseX>x+this.x &&
+           mouseX<x+this.x+this.w &&
+           mouseY>y+this.y &&
+           mouseX<y+this.y+this.h){
           retVal=true;
         }
 
@@ -1587,38 +1705,22 @@
       };
       field.prototype.moved        = function(x,y){
 
-        // if(this.hitTest(x,y)){
+        if(this.hitTest(x,y)){
+        
+          this.hit=true;
+          app.focus=this;
 
-          if(this.parent.hit){
+          for(var n in this.nodesWorking){
+            this.nodesWorking[n].moved(this.x+x, this.y+y);
+          }
 
-            this.hit=true;
-            app.focus=this;
-
-            var ctrls=this.controls;
-
-            for(var r in ctrls){
-              for(var c in ctrls[r]){
-
-                ctrls[r][c].moved(this.x+x, this.y+y);
-
-              }
-            }
-
-          // }
-
-        }
+         }
         else{
 
           this.hit=false;
 
-          var ctrls=this.controls;
-
-          for(var r in ctrls){
-            for(var c in ctrls[r]){
-
-              ctrls[r][c].hit=false;
-
-            }
+          for(var n in this.nodesWorking){
+            this.nodesWorking[n].hit=false;
           }
 
         }
@@ -1736,9 +1838,11 @@
 
       function node(id, parent, x, y, w, h, props){
 
+        // NOTE:  w is used to denote radius for a node.
+
         control.call(this, id, parent, x, y, w, h);
 
-        // this.cursor       = props.cursor;
+        this.cursor       = props.cursor;
         // this.execute      = props.execute;
         this.outerHit     = false;
 
@@ -1765,35 +1869,7 @@
       node.prototype=Object.create(control.prototype);
       node.prototype.reset         = function(){
 
-        this.points=[];
-        this.opoints=[];
-        this.ipoints=[];
-        this.hpoints=[];
 
-        var d2=this.w/2;  // Half diameter
-
-        var pt=0;
-        var ang=0;
-
-        var w   = 5;
-        var w15 = d2*0.4;
-        var w5  = d2*0.10;
-
-        for(pt=0; pt<6; pt++){
-
-          this.points.push( new pnt( cos(radians(ang+pt*60))*(d2),
-                                     sin(radians(ang+pt*60))*(d2) ));
-
-          this.opoints.push(new pnt( cos(radians(ang+pt*60))*(d2-w5),
-                                     sin(radians(ang+pt*60))*(d2-w5) ));
-
-          this.ipoints.push(new pnt( cos(radians(ang+pt*60))*(d2-w15),
-                                     sin(radians(ang+pt*60))*(d2-w15) ));
-
-          this.hpoints.push(new pnt( cos(radians(ang+pt*60))*(d2-w),
-                                     sin(radians(ang+pt*60))*(d2-w) ));
-
-        }
 
       };
       node.prototype.draw          = function(){
@@ -1804,7 +1880,7 @@
         this.offset=0;
         var p=this;
 
-        if(this.active){
+        if(this.hit){
 
           cursor(this.cursor);
 
@@ -1812,244 +1888,20 @@
 
         }
 
-        function highlight(){
-
-          var clr=p.color;
-          var pctg=20;
-
-          stroke(GRAY);
-          strokeWeight(0.25);
-
-          switch(clr){
-
-            case RED0:      fill(getColor(RED,    pctg)); break;
-            case ORANGE0:   fill(getColor(ORANGE, pctg)); break;
-            case YELLOW0:   fill(getColor(YELLOW, pctg)); break;
-            case GREEN0:    fill(getColor(GREEN,  pctg)); break;
-            case BLUE0:     fill(getColor(BLUE,   pctg)); break;
-            case PURPLE0:   fill(getColor(PURPLE, pctg)); break;
-            case BLACK0:    fill(getColor(BLACK,  pctg)); break;
-
-            default:        noFill();                     break;
-
-          }
-
-          if(p.layout!==BLANK){
-
-
-            if(clr!==BLACK0){
-
-              stroke(BLACK);
-              strokeWeight(0.25);
-
-              beginShape();
-
-                for(var pt in p.hpoints){
-                  vertex(p.hpoints[pt].x + p.parent.deltaX,
-                         p.hpoints[pt].y + p.parent.deltaY);
-                }
-
-              endShape(CLOSE);
-
-            }
-            else{
-
-              var po=p.hpoints;
-
-              fill( getColor(ORANGE, pctg));   triangle(0, 0, po[0].x, po[0].y, po[1].x, po[1].y);
-              fill( getColor(RED,    pctg));   triangle(0, 0, po[1].x, po[1].y, po[2].x, po[2].y);
-              fill( getColor(PURPLE, pctg));   triangle(0, 0, po[2].x, po[2].y, po[3].x, po[3].y);
-              fill( getColor(BLUE,   pctg));   triangle(0, 0, po[3].x, po[3].y, po[4].x, po[4].y);
-              fill( getColor(GREEN,  pctg));   triangle(0, 0, po[4].x, po[4].y, po[5].x, po[5].y);
-              fill( getColor(YELLOW, pctg));   triangle(0, 0, po[5].x, po[5].y, po[0].x, po[0].y);
-
-            }
-
-          }
-
-        };
-        function outerHexagon(){
-
-          var clr=p.outerColor;
-          var pctg=20;
-
-          noFill();
-          noStroke();
-
-          switch(clr){
-
-            case RED0:      fill(getColor(K_RED,    pctg)); break;
-            case ORANGE0:   fill(getColor(K_ORANGE, pctg)); break;
-            case YELLOW0:   fill(getColor(K_YELLOW, pctg)); break;
-            case GREEN0:    fill(getColor(K_GREEN,  pctg)); break;
-            case BLUE0:     fill(getColor(K_BLUE,   pctg)); break;
-            case PURPLE0:   fill(getColor(K_PURPLE, pctg)); break;
-            case BLACK0:    fill(getColor(BLACK,    pctg)); break;
-
-            default:        noFill();                       break;
-
-          }
-
-          if(p.layout!==BLANK){
-
-            var offsetX=0;
-            var offsetY=0;
-
-            if(p.dragging){
-
-              offsetX=p.parent.deltaX;
-              offsetY=p.parent.deltaY;
-
-            }
-
-            if(clr!==BLACK0){
-
-              stroke(BLACK);
-              strokeWeight(0.25);
-
-              beginShape();
-
-                for(var pt in p.opoints){
-                  vertex(p.opoints[pt].x+offsetX,
-                         p.opoints[pt].y+offsetY);
-                }
-
-              endShape(CLOSE);
-
-            }
-            else{
-
-              var po=p.opoints;
-
-              fill( getColor(ORANGE, pctg));
-              triangle(offsetX, offsetY, po[0].x+offsetX, po[0].y+offsetY, po[1].x+offsetX, po[1].y+offsetY);
-              fill( getColor(RED,    pctg));
-              triangle(offsetX, offsetY, po[1].x+offsetX, po[1].y+offsetY, po[2].x+offsetX, po[2].y+offsetY);
-              fill( getColor(PURPLE, pctg));
-              triangle(offsetX, offsetY, po[2].x+offsetX, po[2].y+offsetY, po[3].x+offsetX, po[3].y+offsetY);
-              fill( getColor(BLUE,   pctg));
-              triangle(offsetX, offsetY, po[3].x+offsetX, po[3].y+offsetY, po[4].x+offsetX, po[4].y+offsetY);
-              fill( getColor(GREEN,  pctg));
-              triangle(offsetX, offsetY, po[4].x+offsetX, po[4].y+offsetY, po[5].x+offsetX, po[5].y+offsetY);
-              fill( getColor(YELLOW, pctg));
-              triangle(offsetX, offsetY, po[5].x+offsetX, po[5].y+offsetY, po[0].x+offsetX, po[0].y+offsetY);
-
-            }
-
-          }
-
-        };
-        function innerHexagon(){
-
-          var drw=true;
-          var clr=p.color;
-          var pctg=99;
-
-          noStroke();
-          noFill();
-
-          if(app.keys[KeyCodes.ESC]){ clr=p.layout; }
-
-          switch(clr){
-
-            case RED0:      fill(getColor(K_RED,    pctg)); break;
-            case ORANGE0:   fill(getColor(K_ORANGE, pctg)); break;
-            case YELLOW0:   fill(getColor(K_YELLOW, pctg)); break;
-            case GREEN0:    fill(getColor(K_GREEN,  pctg)); break;
-            case BLUE0:     fill(getColor(K_BLUE,   pctg)); break;
-            case PURPLE0:   fill(getColor(K_PURPLE, pctg)); break;
-            case BLACK0:    fill(getColor(BLACK,    pctg)); break;
-
-            default:        noFill();                       break;
-
-          }
-
-          if(p.layout!==BLANK){
-
-            var offsetX=0;
-            var offsetY=0;
-
-            if(p.dragging){
-
-              offsetX=p.parent.deltaX;
-              offsetY=p.parent.deltaY;
-
-            }
-
-            if(clr!==BLACK0){
-
-              stroke(BLACK);
-              strokeWeight(0.25);
-
-              beginShape();
-
-                for(var pt in p.ipoints){
-                  vertex(p.ipoints[pt].x+offsetX,
-                         p.ipoints[pt].y+offsetY);
-                }
-
-              endShape(CLOSE);
-
-            }
-            else{
-
-              var po=p.ipoints;
-
-              fill( getColor(ORANGE, pctg));
-              triangle(offsetX, offsetY, po[0].x+offsetX, po[0].y+offsetY, po[1].x+offsetX, po[1].y+offsetY);
-              fill( getColor(RED,    pctg));
-              triangle(offsetX, offsetY, po[1].x+offsetX, po[1].y+offsetY, po[2].x+offsetX, po[2].y+offsetY);
-              fill( getColor(PURPLE, pctg));
-              triangle(offsetX, offsetY, po[2].x+offsetX, po[2].y+offsetY, po[3].x+offsetX, po[3].y+offsetY);
-              fill( getColor(BLUE,   pctg));
-              triangle(offsetX, offsetY, po[3].x+offsetX, po[3].y+offsetY, po[4].x+offsetX, po[4].y+offsetY);
-              fill( getColor(GREEN,  pctg));
-              triangle(offsetX, offsetY, po[4].x+offsetX, po[4].y+offsetY, po[5].x+offsetX, po[5].y+offsetY);
-              fill( getColor(YELLOW, pctg));
-              triangle(offsetX, offsetY, po[5].x+offsetX, po[5].y+offsetY, po[0].x+offsetX, po[0].y+offsetY);
-
-            }
-
-          }
-
-        };
-        function activeCell(){
-
-          if(app.field.activeCell===p){
-
-            fill(getColor(BLACK,15));
-            strokeWeight(3);
-            stroke(getColor(WHITE,75));
-
-            beginShape();
-
-              for(var pt in p.points){
-                vertex(p.points[pt].x,
-                p.points[pt].y);
-              }
-
-            endShape(CLOSE);
-
-          }
-
-        };
-
         push();
+          
+          if(this.hit){
+          
+            fill(164);
+            noStroke();
 
-          translate(this.x, this.y);
+              ellipse(p.x, p.y, p.w*2, p.w*2);
 
-          scale(1,-1);
+          }
 
-            // if(this.dragging){
-              highlight();
-            // }
-            // else{
+          fill(128,0,0);
 
-              // outerHexagon();
-                  innerHexagon();
-                  activeCell();
-
-                // }
+            ellipse(p.x, p.y, p.w, p.w);
 
         pop();
 
@@ -2058,55 +1910,18 @@
       };
       node.prototype.hitTest       = function(x,y){
 
-        var rectHit=rectangleHit(new pnt(this.x+this.points[1].x+x, this.y+this.points[1].y+y),
-                                 new pnt(this.x+this.points[2].x+x, this.y+this.points[2].y+y),
-                                 new pnt(this.x+this.points[4].x+x, this.y+this.points[4].y+y),
-                                 mouseX, mouseY);
-
-        var triHit0=triangleHit( new pnt(this.x+this.points[0].x+x, this.y+this.points[0].y+y),
-                                 new pnt(this.x+this.points[1].x+x, this.y+this.points[1].y+y),
-                                 new pnt(this.x+this.points[5].x+x, this.y+this.points[5].y+y),
-                                 mouseX, mouseY);
-
-        var triHit1=triangleHit( new pnt(this.x+this.points[2].x+x, this.y+this.points[2].y+y),
-                                 new pnt(this.x+this.points[3].x+x, this.y+this.points[3].y+y),
-                                 new pnt(this.x+this.points[4].x+x, this.y+this.points[4].y+y),
-                                 mouseX, mouseY);
-        return (rectHit ||
-                triHit0 ||
-                triHit1);
-
-      };
-      node.prototype.outerHitTest  = function(x,y){
-
-        return dist(mouseX, mouseY, this.x+x, this.y+y)<this.w/2;
+        if(dist(mouseX,mouseY,x,y)<this.w){          
+          this.hit=true;
+        }
+        else{
+          this.hit=false;
+        }
 
       };
       node.prototype.moved         = function(x,y){
       /* Overridden because of the shape */
-
-          if(this.parent.hit){
-
-            if(this.outerHitTest(x,y)){
-
-              this.outerHit=true;
-
-              if(this.hitTest(x,y)){ this.hit=true;
-                                     app.focus=this;
-                                   }
-              else                 { this.hit=false; }
-
-            }
-            else{
-
-              this.dirty=false;
-              this.timer=0;
-              this.outerHit=false;
-              this.hit=false;
-
-            }
-
-          }
+      
+          this.hitTest(x+this.x, y+this.y);
 
       };
       node.prototype.clicked       = function(){
@@ -2160,62 +1975,6 @@
             // this.line=false;
 
           }
-
-      };
-      node.prototype.incrCellLayout= function(){
-
-        switch(this.layout){
-
-          case HEXY_TYPES.BLANK:          this.layout = HEXY_TYPES.BLACK;
-                                          this.text   = HEXY_TYPES.NUMBER;          break;
-          case HEXY_TYPES.BLACK:          this.layout = HEXY_TYPES.BLACK_REVEALED;
-                                          this.text   = HEXY_TYPES.NUMBER;          break;
-          case HEXY_TYPES.BLACK_REVEALED: this.layout = HEXY_TYPES.BLUE;
-                                          this.text   = HEXY_TYPES.BLANK;           break;
-          case HEXY_TYPES.BLUE:           this.layout = HEXY_TYPES.BLUE_REVEALED;
-                                          this.text   = HEXY_TYPES.BLANK;           break;
-          case HEXY_TYPES.BLUE_REVEALED:  this.layout = HEXY_TYPES.DOWN_RIGHT;
-                                          this.text   = HEXY_TYPES.NUMBER;          break;
-          case HEXY_TYPES.DOWN_RIGHT:     this.layout = HEXY_TYPES.DOWN_CENTER;
-                                          this.text   = HEXY_TYPES.NUMBER;          break;
-          case HEXY_TYPES.DOWN_CENTER:    this.layout = HEXY_TYPES.DOWN_LEFT;
-                                          this.text   = HEXY_TYPES.NUMBER;          break;
-          case HEXY_TYPES.DOWN_LEFT:      this.layout = HEXY_TYPES.BLANK;
-                                          this.text   = HEXY_TYPES.BLANK;           break;
-
-          default:                                                                  break;
-
-        }
-
-        this.recalculate();
-
-      };
-      node.prototype.decrCellLayout= function(){
-
-        switch(this.layout){
-
-          case HEXY_TYPES.BLANK:          this.layout = HEXY_TYPES.DOWN_LEFT;
-                                          this.text   = HEXY_TYPES.NUMBER;          break;
-          case HEXY_TYPES.BLACK:          this.layout = HEXY_TYPES.BLANK;
-                                          this.text   = HEXY_TYPES.BLANK;           break;
-          case HEXY_TYPES.BLACK_REVEALED: this.layout = HEXY_TYPES.BLACK;
-                                          this.text   = HEXY_TYPES.NUMBER;          break;
-          case HEXY_TYPES.BLUE:           this.layout = HEXY_TYPES.BLACK_REVEALED;
-                                          this.text   = HEXY_TYPES.NUMBER;          break;
-          case HEXY_TYPES.BLUE_REVEALED:  this.layout = HEXY_TYPES.BLUE;
-                                          this.text   = HEXY_TYPES.BLANK;           break;
-          case HEXY_TYPES.DOWN_RIGHT:     this.layout = HEXY_TYPES.BLUE_REVEALED;
-                                          this.text   = HEXY_TYPES.BLANK;           break;
-          case HEXY_TYPES.DOWN_CENTER:    this.layout = HEXY_TYPES.DOWN_RIGHT;
-                                          this.text   = HEXY_TYPES.NUMBER;          break;
-          case HEXY_TYPES.DOWN_LEFT:      this.layout = HEXY_TYPES.DOWN_CENTER;
-                                          this.text   = HEXY_TYPES.NUMBER;          break;
-
-          default:                                                                  break;
-
-        }
-
-        this.recalculate();
 
       };
       node.prototype.recalculate   = function(){
@@ -3016,10 +2775,12 @@ ellipse(this.x,this.y,this.w,this.h);
     };
     function doubleClicked() {
 
-      app.fullscreen=!app.fullscreen;
+      app.field.reset();
 
-      fullscreen(app.fullscreen);
-print('dclicked');
+//       app.fullscreen=!app.fullscreen;
+
+//       fullscreen(app.fullscreen);
+// print('dclicked');
     };
     function mouseMoved()         {
 
@@ -3052,7 +2813,7 @@ print('dclicked');
                       // Tidy up dragging
                       {
 
-                        app.field.clearDragging();
+                        // app.field.clearDragging();
 
                         app.dragStartX=0;
                         app.dragStartY=0;
@@ -3302,6 +3063,6 @@ print('resized');
 
   1729 = 9^3 + 10^3 = 12^3 + 1^3
 
-  sketch.js
+  tsp.js
 
   */
