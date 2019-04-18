@@ -123,81 +123,6 @@
 
 {
 
-  { // Puzzles ------------------------------------------------------------------
-
-    var PUZZLES=[
-
-                  [ //  Layout 1-1
-      //             1  2  3
-                    [0, 1, 0],  //  1
-                    [6, 7, 2],  //  2
-                    [5, 4, 3],  //  3
-                  ],
-                  [ //  Layout 1-2
-      //             1  2  3  4  5
-                    [0, 6, 1, 1, 0],  //  1
-                    [6, 6, 1, 2, 2],  //  2
-                    [5, 5, 7, 3, 2],  //  3
-                    [5, 4, 4, 3, 3],  //  4
-                    [0, 0, 4, 0, 0]   //  5
-                  ],
-                  [ //  Layout 1-3
-      //             1  2  3  4  5  6  7
-                    [0, 0, 0, 1, 0, 0, 0],  //  1
-                    [0, 6, 6, 1, 1, 1, 0],  //  2
-                    [6, 6, 6, 1, 1, 2, 2],  //  3
-                    [5, 5, 6, 7, 2, 2, 2],  //  4
-                    [5, 5, 5, 4, 3, 3, 2],  //  5
-                    [5, 4, 4, 4, 3, 3, 3],  //  6
-                    [0, 0, 4, 4, 3, 0, 0]   //  7
-                  ],
-                  [ //  Layout 1-4
-      //             1  2  3  4  5  6  7  8  9
-                    [0, 0, 0, 6, 1, 1, 0, 0, 0],  //  1
-                    [0, 6, 6, 6, 1, 1, 1, 1, 0],  //  2
-                    [6, 6, 6, 6, 1, 1, 1, 2, 2],  //  3
-                    [5, 5, 6, 6, 1, 2, 2, 2, 2],  //  4
-                    [5, 5, 5, 5, 7, 3, 2, 2, 2],  //  5
-                    [5, 5, 5, 4, 4, 3, 3, 3, 2],  //  6
-                    [5, 4, 4, 4, 4, 3, 3, 3, 3],  //  7
-                    [0, 0, 4, 4, 4, 3, 3, 0, 0],  //  8
-                    [0, 0, 0, 0, 4, 0, 0, 0, 0]   //  9
-                  ],
-                  [ //  Layout 1-5
-      //             1  2  3  4  5  6  7  8  9 10 11
-                    [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],  //  1
-                    [0, 0, 0, 6, 6, 1, 1, 1, 0, 0, 0],  //  2
-                    [0, 6, 6, 6, 6, 1, 1, 1, 1, 1, 0],  //  3
-                    [6, 6, 6, 6, 6, 1, 1, 1, 1, 2, 2],  //  4
-                    [5, 5, 6, 6, 6, 1, 1, 2, 2, 2, 2],  //  5
-                    [5, 5, 5, 5, 6, 7, 2, 2, 2, 2, 2],  //  6
-                    [5, 5, 5, 5, 5, 4, 3, 3, 2, 2, 2],  //  7
-                    [5, 5, 5, 4, 4, 4, 3, 3, 3, 3, 2],  //  8
-                    [5, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3],  //  9
-                    [0, 0, 4, 4, 4, 4, 3, 3, 3, 0, 0],  // 10
-                    [0, 0, 0, 0, 4, 4, 3, 0, 0, 0, 0]   // 11
-                  ],
-                  [ //  Layout 1-6
-      //             1  2  3  4  5  6  7  8  9 10 11 12 13
-                    [0, 0, 0, 0, 0, 6, 1, 1, 0, 0, 0, 0, 0],  //  1
-                    [0, 0, 0, 6, 6, 6, 1, 1, 1, 1, 0, 0, 0],  //  2
-                    [0, 6, 6, 6, 6, 6, 1, 1, 1, 1, 1, 1, 0],  //  3
-                    [6, 6, 6, 6, 6, 6, 1, 1, 1, 1, 1, 2, 2],  //  4
-                    [5, 5, 6, 6, 6, 6, 1, 1, 1, 2, 2, 2, 2],  //  5
-                    [5, 5, 5, 5, 6, 6, 1, 2, 2, 2, 2, 2, 2],  //  6
-                    [5, 5, 5, 5, 5, 5, 7, 3, 2, 2, 2, 2, 2],  //  7
-                    [5, 5, 5, 5, 5, 4, 4, 3, 3, 3, 2, 2, 2],  //  8
-                    [5, 5, 5, 4, 4, 4, 4, 3, 3, 3, 3, 3, 2],  //  9
-                    [5, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3],  // 10
-                    [0, 0, 4, 4, 4, 4, 4, 3, 3, 3, 3, 0, 0],  // 11
-                    [0, 0, 0, 0, 4, 4, 4, 3, 3, 0, 0, 0, 0],  // 12
-                    [0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0]   // 13
-                  ]
-
-                ]
-
-  }
-
   {  // CONSTANTS ================================================================================
 
     new p5();
@@ -479,7 +404,7 @@
 
       this.mode           = SOLVEMODES.RANDOM; //
 
-      this.nodes          = 100;                //  Total # of nodes to be connected
+      this.nodes          = 10;                //  Total # of nodes to be connected
 
       this.field;                               //  Set in the field control initialization
       
@@ -1426,6 +1351,33 @@
 
     var completePercent = 0;
 
+    function swap(arr, n, m){
+
+      var tmp=arr[n];
+
+      arr[n]=arr[m];
+      arr[m]=tmp;
+
+    };
+
+    function arraySort(arr){
+
+      for(var i=0; i<arr.length; i++){
+        for(var j=0; j<arr.length; j++){
+          
+          if(arr[j].x>arr[i].x){
+            swap(arr,i,j);
+          }
+
+        }
+      }
+
+      // for(var n=0; n<arr.length; n++){
+      //   print(arr[n].x);
+      // }
+
+    };
+
     /** Field        -------------------------------------------------- */
     {
 
@@ -1439,31 +1391,33 @@
         this.color              = props.color;
 
         /* ------------------------------------------------- */
-        // this.radius         = 0;
 
         this.activeCell         = null;
 
-        this.dirty              = false;  //  Has the field been clicked yet?
+        this.dirty              = false;    //  Has the field been clicked yet?
 
-        app.field               = this;   //  Set a global field reference
+        app.field               = this;     //  Set a global field reference
 
-        this.startX             = 0;      //  x-coordinate of drag start
-        this.startY             = 0;      //  y-coordinate of drag start
+        this.startX             = 0;        //  x-coordinate of drag start
+        this.startY             = 0;        //  y-coordinate of drag start
 
-        this.deltaX             = 0;      //  x-coordinate drag offset
-        this.deltaY             = 0;      //  y-coordinate drag offset
+        this.deltaX             = 0;        //  x-coordinate drag offset
+        this.deltaY             = 0;        //  y-coordinate drag offset
 
-        this.deltaDrag          = 0;      //  Distance dragged from start point along the drag direction
+        this.deltaDrag          = 0;        //  Distance dragged from start point along the drag direction
 
-        this.cellSize           = 0;      //  Size of each node
+        this.cellSize           = 0;        //  Size of each node
         
-        this.nodesOriginal      = [];     //  Original array of nodes
-        this.nodesBest          = [];     //  Shortest path so far
-        this.nodesWorking       = [];     //  Path used to experiment
+        this.nodesOriginal      = [];       //  Original array of nodes
+        this.nodesSorted        = [];       //  Sorted Original array of nodes
+        this.nodesBest          = [];       //  Shortest path so far
+        this.nodesWorking       = [];       //  Path used to experiment
         
-        this.originalLength     = 0;      //  Length of orinal path
-        this.bestLength         = 0;      //  Current best path length
-        this.workingLength      = 0;      //  Length of path being tested
+        this.originalLength     = 0;        //  Length of orinal path
+        this.bestLength         = Infinity; //  Current best path length
+        this.workingLength      = 0;        //  Length of path being tested
+
+        this.factor             = 1.1;
 
         this.reset();
 
@@ -1471,11 +1425,11 @@
       field.prototype=Object.create(control.prototype);
       field.prototype.reset        = function(){
 
-        var p=this;                   //  Set a reference to the field control
+        var p         = this;       //  Set a reference to the field control
 
-        this.controls   = [];         //  Clear the controls array
+        this.controls = [];         //  Clear the controls array
 
-        var n=0;               // Iterator
+        this.factor   = 1.1;        //  
 
         function load(){
 
@@ -1498,6 +1452,7 @@
           
           arrayCopy(nodeArray,app.field.nodesBest);
           arrayCopy(nodeArray,app.field.nodesWorking);          
+          arrayCopy(nodeArray,app.field.nodesSorted);
 
         };
 
@@ -1507,6 +1462,14 @@
 
         app.finished=false;
         this.dirty=false;
+
+        arraySort(app.field.nodesSorted);
+
+        var arr=app.field.nodesSorted;
+
+        for(var n=0; n<arr.length; n++){
+          print(arr[n].x);
+        }
 
       };
       field.prototype.draw         = function(){
@@ -1569,9 +1532,7 @@
             forEach(p.nodesBest, 'draw');
 
           };          
-          function drawOriginalPath()      {
-            
-            var len=0;
+          function drawOriginalPath() {
 
             stroke(255,0,0);
             strokeWeight(0.5);
@@ -1579,85 +1540,67 @@
 
             beginShape();
 
-              for(var n=0; n<p.nodesOriginal.length; n++){
-                
+              for(var n=0; n<p.nodesOriginal.length; n++){                
                 vertex(p.nodesOriginal[n].x, p.nodesOriginal[n].y);
-
-                if(n>0){
-                  len+=dist(p.nodesOriginal[n].x,
-                            p.nodesOriginal[n].y,
-                            p.nodesOriginal[n-1].x,
-                            p.nodesOriginal[n-1].y);
-                }
-                else if(n==p.nodesOriginal.length-1){
-                  len+=dist(p.nodesOriginal[0].x,
-                            p.nodesOriginal[0].y,
-                            p.nodesOriginal[p.nodesOriginal.length-1].x,
-                            p.nodesOriginal[p.nodesOriginal.length-1].y);               
-                }
-                
               }
 
             endShape(CLOSE);
-            
-            p.OriginalLength=len;
 
           };
-          function pathBest()      {
-            
-            var len=0;
+          function drawBestPath()     {
 
-            stroke(128);
+            stroke(0,0,128);
             strokeWeight(0.5);
             noFill();          
 
             beginShape();
-
-              for(var n=0; n<p.nodesBest.length; n++){
-                
+            
+              for(var n=0; n<p.nodesBest.length; n++){                
                 vertex(p.nodesBest[n].x, p.nodesBest[n].y);
-
-                if(n>0){
-                  len+=dist(p.nodesBest[n].x,
-                            p.nodesBest[n].y,
-                            p.nodesBest[n-1].x,
-                            p.nodesBest[n-1].y);
-                }
-                else if(n==p.nodesBest.length-1){
-                  len+=dist(p.nodesBest[0].x,
-                            p.nodesBest[0].y,
-                            p.nodesBest[p.nodesBest.length-1].x,
-                            p.nodesBest[p.nodesBest.length-1].y);               
-                }
-                
               }
 
             endShape(CLOSE);
-            
-            p.BestLength=len;
 
           };
-          function drawPathWorking()      {
+          function drawWorkingPath()  {
 
             stroke(128);
-            strokeWeight(0.5);
+            strokeWeight(0.25);
             noFill();          
 
             beginShape();
 
-              for(var n=0; n<p.nodesWorking.length; n++){
-                
+              for(var n=0; n<p.nodesWorking.length; n++){                
                 vertex(p.nodesWorking[n].x, p.nodesWorking[n].y);
               }
 
             endShape(CLOSE);
 
+          };
+          function drawSortedPath()   {
+
+            stroke(0,128,0);
+            strokeWeight(2.5);
+            noFill();          
+
+            beginShape();
+            
+              for(var n=0; n<p.nodesSorted.length; n++){                
+                vertex(p.nodesSorted[n].x, p.nodesSorted[n].y);
+              }
+
+            endShape(CLOSE);
+
           };          
-          function swap(){
+          function swapNodes(){
 
             var tmp;
-            var rand1=floor(random(p.nodesWorking.length));
-            var rand2=floor(random(p.nodesWorking.length));
+            var rand1=round(random(p.nodesWorking.length-1));
+            var rand2=rand1+1;
+
+            if(rand2>=p.nodesWorking.length){
+              rand2=0;
+            }
 
             tmp=p.nodesWorking[rand1];
 
@@ -1672,21 +1615,44 @@
 
               border();
 
-              pathOriginal();
-              pathBest();
-
-              drawPathWorking();
+              // drawOriginalPath();
+              drawBestPath();
+              
+              drawWorkingPath();
               drawNodesWorking();
+              drawSortedPath();
+
+              // if(frameCount%1==0){
+                p.factor-=0.00001;
+                p.factor=constrain(p.factor,1,1.2);
+
+                for(var n=0; n<2; n++){
+                  swapNodes();
+                }
+
+                  p.workingLength = pathLength(p.nodesWorking);                  
+    
+                  if(p.workingLength<p.bestLength*p.factor){
+                    arrayCopy(p.nodesWorking, p.nodesBest);
+                    arrayCopy(p.nodesBest, p.nodesWorking);
+                    p.bestLength    = pathLength(p.nodesBest);
+                  }
+
+                
+              
+              // }
 
               fill(0);
               textSize(24);
               textAlign(LEFT,TOP);
+              strokeWeight(0.5);
+              stroke(128,0,0);
 
-                text(ceil(p.workingLength),10,5);
+                text(round(p.workingLength),10,  5);
+                text(round(p.bestLength),   10, 25);
+                text(   nf(p.factor,1,5),   10, 65);
 
           pop();
-
-          if(frameCount%1==0){ swap(); }
 
       };
       field.prototype.hitTest      = function(x,y){
@@ -1714,7 +1680,7 @@
             this.nodesWorking[n].moved(this.x+x, this.y+y);
           }
 
-         }
+        }
         else{
 
           this.hit=false;
@@ -1785,8 +1751,6 @@
       field.prototype.update       = function(){
 
         var p=this;           //  Set a reference to the field control
-        
-
 
       };
       field.prototype.calcRadius   = function(){
@@ -1821,8 +1785,6 @@
         this.w = this.parent.w-205;
         this.h = this.parent.h-10;
 
-        this.calcRadius();
-        this.reset();
 
       };
 
@@ -2843,94 +2805,94 @@ ellipse(this.x,this.y,this.w,this.h);
     };
     function mouseDragged()       {
 
-      function calcDragAngle(){
+      // function calcDragAngle(){
 
-        var a = atan2(mouseY-pmouseY, mouseX-pmouseX);
+      //   var a = atan2(mouseY-pmouseY, mouseX-pmouseX);
 
-        a=a*180/PI;
+      //   a=a*180/PI;
 
-        x=cx;
-        y=cy;
+      //   x=cx;
+      //   y=cy;
 
-        switch(true){
+      //   switch(true){
 
-          case a >= 67.5 && a <= 122.5:
-          case a <=-67.5 && a >=-122.5:   x = cx;
-                                          y = cy + 150;
+      //     case a >= 67.5 && a <= 122.5:
+      //     case a <=-67.5 && a >=-122.5:   x = cx;
+      //                                     y = cy + 150;
 
-                                          app.dragDirection=DRAG_DIRECTIONS.UPDOWN;
+      //                                     app.dragDirection=DRAG_DIRECTIONS.UPDOWN;
 
-                                          setDragColumn();    // Determine which cells are being dragged
+      //                                     setDragColumn();    // Determine which cells are being dragged
 
-                                          break;
+      //                                     break;
 
-          case a >=   0 && a <=  67.5:
-          case a >=-180 && a <=-122.5:    x = cx + 100;
-                                          y = cy +  50;
+      //     case a >=   0 && a <=  67.5:
+      //     case a >=-180 && a <=-122.5:    x = cx + 100;
+      //                                     y = cy +  50;
 
-                                          app.dragDirection=DRAG_DIRECTIONS.FORWARD;
+      //                                     app.dragDirection=DRAG_DIRECTIONS.FORWARD;
 
-                                          setDragForward();   // Determine which cells are being dragged
+      //                                     setDragForward();   // Determine which cells are being dragged
 
-                                          break;
+      //                                     break;
 
-          case a <= 180 && a >= 122.5:
-          case a <=   0 && a >= -67.5:    x = cx - 100;
-                                          y = cy +  50;
+      //     case a <= 180 && a >= 122.5:
+      //     case a <=   0 && a >= -67.5:    x = cx - 100;
+      //                                     y = cy +  50;
 
-                                          app.dragDirection=DRAG_DIRECTIONS.BACKWARD;
+      //                                     app.dragDirection=DRAG_DIRECTIONS.BACKWARD;
 
-                                          setDragBackward();  // Determine which cells are being dragged
+      //                                     setDragBackward();  // Determine which cells are being dragged
 
-                                          break;
+      //                                     break;
 
-          default:                        break;
+      //     default:                        break;
 
-        }
+      //   }
 
-      };
+      // };
 
-      switch(mouseButton){
+      // switch(mouseButton){
 
-        case LEFT:
+      //   case LEFT:
 
-                      forEach(app.controls,'dragged');  //  Necessary to put this first to set the active cell
+      //                 forEach(app.controls,'dragged');  //  Necessary to put this first to set the active cell
 
-                      if(app.dragging===false){
+      //                 if(app.dragging===false){
 
-                        app.dragStartX=mouseX;
-                        app.dragStartY=mouseY;
+      //                   app.dragStartX=mouseX;
+      //                   app.dragStartY=mouseY;
 
-                        app.dragging=true;
+      //                   app.dragging=true;
 
-                      }
-                      else{
+      //                 }
+      //                 else{
 
-                        if(dist(app.dragStartX,
-                                app.dragStartY,
-                                mouseX,
-                                mouseY)>10){
+      //                   if(dist(app.dragStartX,
+      //                           app.dragStartY,
+      //                           mouseX,
+      //                           mouseY)>10){
 
-                          if(x===cx &&
-                             y===cy){ calcDragAngle(); }
+      //                     if(x===cx &&
+      //                        y===cy){ calcDragAngle(); }
 
-                        }
+      //                   }
 
-                      }
+      //                 }
 
-                      break;
+      //                 break;
 
-        // case RIGHT:   forEach(app.controls,'rDragged');
+      //   // case RIGHT:   forEach(app.controls,'rDragged');
 
-                      // break;
+      //                 // break;
 
-        // case CENTER:  forEach(app.controls,'cDragged');
+      //   // case CENTER:  forEach(app.controls,'cDragged');
 
-                      // break;
+      //                 // break;
 
-        default:      break;
+      //   default:      break;
 
-      }
+      // }
 
     };
     function mouseOut()           {
