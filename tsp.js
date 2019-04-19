@@ -1378,6 +1378,25 @@
 
     };
 
+    function calculateConvexHull(arr, ind){
+      
+      var m=Infinity;
+      var maxM=-Infinity;
+      var maxIndex=Infinity;
+
+      for(var n=0; n<arr.length; n++){
+
+        print(degrees(atan2(arr[n].y,arr[n].x)));
+
+      }
+
+      print("Max Slope: " + maxM);
+      print("Max Index: " + maxIndex);
+
+      return maxIndex;
+
+    };
+
     /** Field        -------------------------------------------------- */
     {
 
@@ -1447,12 +1466,12 @@
                                     {cursor:    HAND})
                           );
           }
-          
+
           app.field.nodesOriginal = nodeArray;
-          
-          arrayCopy(nodeArray,app.field.nodesBest);
-          arrayCopy(nodeArray,app.field.nodesWorking);          
-          arrayCopy(nodeArray,app.field.nodesSorted);
+
+          arrayCopy(nodeArray, app.field.nodesBest);
+          arrayCopy(nodeArray, app.field.nodesWorking);
+          arrayCopy(nodeArray, app.field.nodesSorted);
 
         };
 
@@ -1465,11 +1484,15 @@
 
         arraySort(app.field.nodesSorted);
 
-        var arr=app.field.nodesSorted;
+        var convex=[];
+        var ind=0;
 
-        for(var n=0; n<arr.length; n++){
-          print(arr[n].x);
-        }
+        // do {          
+          ind=calculateConvexHull(this.nodesSorted,ind);
+        // }
+        // while(ind!=0);
+        
+        print(ind);
 
       };
       field.prototype.draw         = function(){
@@ -1514,100 +1537,112 @@
             stroke(getColor(H_BLUE,25));
             strokeWeight(1.5);
 
-              rect( 0, 0, p.w, p.h, 5);
+              rect(0, 0, p.w, p.h, 5);
 
           };
-          function drawNodesWorking() {
-            
-            forEach(p.nodesWorking, 'draw');
 
-          };
-          function nodesOriginal()    {
-            
-            forEach(p.nodesOriginal, 'draw');
+          {  //Draw Nodes and Paths
 
-          };
-          function nodesBest()        {
-            
-            forEach(p.nodesBest, 'draw');
+            function drawWorkingNodes() {
+              
+              forEach(p.nodesWorking, 'draw');
 
-          };          
-          function drawOriginalPath() {
+            };
+            function drawOriginalNodes(){
+              
+              forEach(p.nodesOriginal, 'draw');
 
-            stroke(255,0,0);
-            strokeWeight(0.5);
-            noFill();          
+            };
+            function drawBestNodes()    {
+              
+              forEach(p.nodesBest, 'draw');
 
-            beginShape();
+            };
 
-              for(var n=0; n<p.nodesOriginal.length; n++){                
-                vertex(p.nodesOriginal[n].x, p.nodesOriginal[n].y);
-              }
+            function drawOriginalPath() {
 
-            endShape(CLOSE);
+              stroke(255,0,0);
+              strokeWeight(0.5);
+              noFill();          
 
-          };
-          function drawBestPath()     {
+              beginShape();
 
-            stroke(0,0,128);
-            strokeWeight(0.5);
-            noFill();          
+                for(var n=0; n<p.nodesOriginal.length; n++){                
+                  vertex(p.nodesOriginal[n].x, p.nodesOriginal[n].y);
+                }
 
-            beginShape();
-            
-              for(var n=0; n<p.nodesBest.length; n++){                
-                vertex(p.nodesBest[n].x, p.nodesBest[n].y);
-              }
+              endShape(CLOSE);
 
-            endShape(CLOSE);
+            };
+            function drawBestPath()     {
 
-          };
-          function drawWorkingPath()  {
+              stroke(0,0,128);
+              strokeWeight(0.5);
+              noFill();          
 
-            stroke(128);
-            strokeWeight(0.25);
-            noFill();          
+              beginShape();
+              
+                for(var n=0; n<p.nodesBest.length; n++){                
+                  vertex(p.nodesBest[n].x, p.nodesBest[n].y);
+                }
 
-            beginShape();
+              endShape(CLOSE);
 
-              for(var n=0; n<p.nodesWorking.length; n++){                
-                vertex(p.nodesWorking[n].x, p.nodesWorking[n].y);
-              }
+            };
+            function drawWorkingPath()  {
 
-            endShape(CLOSE);
+              stroke(128);
+              strokeWeight(0.25);
+              noFill();          
 
-          };
-          function drawSortedPath()   {
+              beginShape();
 
-            stroke(0,128,0);
-            strokeWeight(2.5);
-            noFill();          
+                for(var n=0; n<p.nodesWorking.length; n++){                
+                  vertex(p.nodesWorking[n].x, p.nodesWorking[n].y);
+                }
 
-            beginShape();
-            
+              endShape(CLOSE);
+
+            };
+            function drawSortedPath()   {
+
+              stroke(0,128,0);
+              strokeWeight(1);
+              noFill();          
+
+              // beginShape();
+              
+              //   for(var n=0; n<p.nodesSorted.length; n++){                
+              //     vertex(p.nodesSorted[n].x, p.nodesSorted[n].y);
+              //   }
+
+              // endShape(CLOSE);
+
               for(var n=0; n<p.nodesSorted.length; n++){                
-                vertex(p.nodesSorted[n].x, p.nodesSorted[n].y);
+                line(p.nodesSorted[0].x, p.nodesSorted[0].y,
+                     p.nodesSorted[n].x, p.nodesSorted[n].y);
               }
 
-            endShape(CLOSE);
+            };
 
-          };          
-          function swapNodes(){
+            function swapNodes(){
 
-            var tmp;
-            var rand1=round(random(p.nodesWorking.length-1));
-            var rand2=rand1+1;
+              var tmp;
+              var rand1=round(random(p.nodesWorking.length-1));
+              var rand2=rand1+1;
 
-            if(rand2>=p.nodesWorking.length){
-              rand2=0;
-            }
+              if(rand2>=p.nodesWorking.length){
+                rand2=0;
+              }
 
-            tmp=p.nodesWorking[rand1];
+              tmp=p.nodesWorking[rand1];
 
-            p.nodesWorking[rand1]=p.nodesWorking[rand2];
-            p.nodesWorking[rand2]=tmp;
+              p.nodesWorking[rand1]=p.nodesWorking[rand2];
+              p.nodesWorking[rand2]=tmp;
 
-          };
+            };
+
+          }
 
           push();
 
@@ -1616,33 +1651,34 @@
               border();
 
               // drawOriginalPath();
-              drawBestPath();
-              
+              drawBestPath();              
               drawWorkingPath();
-              drawNodesWorking();
-              drawSortedPath();
+              
+              drawWorkingNodes();
+
+              // drawSortedPath();
 
               // if(frameCount%1==0){
                 p.factor-=0.00001;
                 p.factor=constrain(p.factor,1,1.2);
 
-                for(var n=0; n<2; n++){
+                // for(var n=0; n<2; n++){
                   swapNodes();
-                }
+                // }
 
                   p.workingLength = pathLength(p.nodesWorking);                  
     
                   if(p.workingLength<p.bestLength*p.factor){
                     arrayCopy(p.nodesWorking, p.nodesBest);
                     arrayCopy(p.nodesBest, p.nodesWorking);
-                    p.bestLength    = pathLength(p.nodesBest);
+                    p.bestLength = pathLength(p.nodesBest);
                   }
 
-                
-              
               // }
+              
 
-              fill(0);
+              
+              fill(0);  
               textSize(24);
               textAlign(LEFT,TOP);
               strokeWeight(0.5);
@@ -1651,6 +1687,10 @@
                 text(round(p.workingLength),10,  5);
                 text(round(p.bestLength),   10, 25);
                 text(   nf(p.factor,1,5),   10, 65);
+            
+            translate(this.w/2,this.h/2);
+
+            ellipse(0,0,5,5);
 
           pop();
 
@@ -1736,16 +1776,7 @@
       };
       field.prototype.clearLayout  = function(){
 
-        var ctrls=this.controls;
 
-        for(var r in ctrls){
-          for(var c in ctrls[r]){
-
-            ctrls[r][c].layout=HEXY_TYPES.BLANK;
-            ctrls[r][c].text  =HEXY_TYPES.BLANK;
-
-          }
-        }
 
       };
       field.prototype.update       = function(){
