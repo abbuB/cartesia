@@ -44,6 +44,9 @@
 +piratefsh.github.io/2017/06/02/recursive-hexagon-patterns.html
 +forum.processing.org
 +shapesmania.com/vasarely
++en.wikibooks.org
++upload.wikimedia.org
++p5js.org
 
 */
 }
@@ -1382,13 +1385,13 @@
       
       var m=Infinity;
       var maxM=-Infinity;
-      var maxIndex=Infinity;
+      var maxIndex=-Infinity;
 
-      for(var n=0; n<arr.length; n++){
+        for(var n=0; n<arr.length; n++){
 
-        print(degrees(atan2(arr[n].y,arr[n].x)));
+          print(arr[n].x + "," + arr[n].y + "     -    " + degrees(atan2(arr[n].y,arr[n].x)));
 
-      }
+        }
 
       print("Max Slope: " + maxM);
       print("Max Index: " + maxIndex);
@@ -1435,8 +1438,11 @@
         this.originalLength     = 0;        //  Length of orinal path
         this.bestLength         = Infinity; //  Current best path length
         this.workingLength      = 0;        //  Length of path being tested
+        this.historicLength     = Infinity; //  Best recorded overall
 
         this.factor             = 1.1;
+
+        this.algorithm          = ALGORITHMS.SIMULATEDANNEALING;
 
         this.reset();
 
@@ -1446,9 +1452,18 @@
 
         var p         = this;       //  Set a reference to the field control
 
-        this.controls = [];         //  Clear the controls array
+        p.controls = [];         //  Clear the controls array
+        
+        p.nodesOriginal      = [];
+        p.nodesSorted        = [];
+        p.nodesBest          = [];
+        p.nodesWorking       = [];
+        
+        p.originalLength     = 0;
+        p.bestLength         = Infinity;
+        p.workingLength      = 0;
 
-        this.factor   = 1.1;        //  
+        p.factor   = 1.1;        //  
 
         function load(){
 
@@ -1467,11 +1482,11 @@
                           );
           }
 
-          app.field.nodesOriginal = nodeArray;
+          p.nodesOriginal = nodeArray;
 
-          arrayCopy(nodeArray, app.field.nodesBest);
-          arrayCopy(nodeArray, app.field.nodesWorking);
-          arrayCopy(nodeArray, app.field.nodesSorted);
+          arrayCopy(nodeArray, p.nodesBest);
+          arrayCopy(nodeArray, p.nodesWorking);
+          arrayCopy(nodeArray, p.nodesSorted);
 
         };
 
@@ -1482,17 +1497,17 @@
         app.finished=false;
         this.dirty=false;
 
-        arraySort(app.field.nodesSorted);
+        arraySort(p.nodesSorted);
 
         var convex=[];
         var ind=0;
 
-        // do {          
-          ind=calculateConvexHull(this.nodesSorted,ind);
-        // }
-        // while(ind!=0);
-        
-        print(ind);
+          // do {          
+            ind=calculateConvexHull(p.nodesSorted,ind);
+          // }
+          // while(ind!=0);
+          
+          print(ind);
 
       };
       field.prototype.draw         = function(){
@@ -1528,7 +1543,7 @@
             return len;
 
           };
-          function border()           {
+          function border()       {
 
             fill(p.color);
 
@@ -1625,7 +1640,7 @@
 
             };
 
-            function swapNodes(){
+            function swap2Nodes(){
 
               var tmp;
               var rand1=round(random(p.nodesWorking.length-1));
@@ -1641,8 +1656,70 @@
               p.nodesWorking[rand2]=tmp;
 
             };
+            function swap3Nodes(){
+
+              var tmp;
+              var rand1=round(random(p.nodesWorking.length-1));
+              var rand2=rand1+1;
+
+              if(rand2>=p.nodesWorking.length){
+                rand2=0;
+              }
+
+              var rand3=rand2+1;
+
+              if(rand3>=p.nodesWorking.length){
+                rand3=0;
+              }
+
+              tmp=p.nodesWorking[rand1];
+
+              p.nodesWorking[rand1]=p.nodesWorking[rand2];
+              p.nodesWorking[rand2]=p.nodesWorking[rand3];
+              p.nodesWorking[rand3]=tmp;
+
+            };
 
           }
+
+          function bruteForce(){
+
+
+          };
+          function genetic(){
+
+          };
+          function critters(){
+
+          };
+          function nearestNeighbor(){
+
+          };
+          function simulatedAnnealing(){
+
+            for(var n=0; n<3000; n++){
+
+              p.factor-=0.000000005;
+              p.factor=constrain(p.factor,1,1.2);
+
+                if(p.factor>1.5){ swap3Nodes(); }
+                else            { swap2Nodes(); }
+
+                p.workingLength = pathLength(p.nodesWorking);                  
+  
+                if(p.workingLength<p.bestLength*p.factor){
+                  arrayCopy(p.nodesWorking, p.nodesBest);
+                  arrayCopy(p.nodesBest, p.nodesWorking);
+                  p.bestLength = p.workingLength;
+                }
+                
+                if(p.bestLength<p.historicLength){
+                  p.historicLength=p.bestLength;
+                }
+
+            }
+
+          };
 
           push();
 
@@ -1658,36 +1735,28 @@
 
               // drawSortedPath();
 
-              // if(frameCount%1==0){
-                p.factor-=0.00001;
-                p.factor=constrain(p.factor,1,1.2);
+              switch(this.algorithm){
 
-                // for(var n=0; n<2; n++){
-                  swapNodes();
-                // }
+                case ALGORITHMS.SIMULATEDANNEALING: simulatedAnnealing();
+                case ALGORITHMS.BRUTEFORCE:         bruteForce();
+                case ALGORITHMS.GENETIC:            genetic();
+                case ALGORITHMS.CRITTERS:           critters();
 
-                  p.workingLength = pathLength(p.nodesWorking);                  
-    
-                  if(p.workingLength<p.bestLength*p.factor){
-                    arrayCopy(p.nodesWorking, p.nodesBest);
-                    arrayCopy(p.nodesBest, p.nodesWorking);
-                    p.bestLength = pathLength(p.nodesBest);
-                  }
+                default:                            simulatedAnnealing();
 
-              // }
-              
+              }
 
-              
               fill(0);  
               textSize(24);
               textAlign(LEFT,TOP);
               strokeWeight(0.5);
               stroke(128,0,0);
 
-                text(round(p.workingLength),10,  5);
-                text(round(p.bestLength),   10, 25);
-                text(   nf(p.factor,1,5),   10, 65);
-            
+                text(round(p.workingLength),     10,  5);
+                text(round(p.bestLength),        10, 25);
+                text(   nf(p.factor,1,5),        10, 65);
+                text(   round(p.historicLength), 10, 95);
+
             translate(this.w/2,this.h/2);
 
             ellipse(0,0,5,5);
