@@ -407,7 +407,7 @@
 
       this.mode           = SOLVEMODES.RANDOM; //
 
-      this.nodes          = 10;                //  Total # of nodes to be connected
+      this.nodes          = 8;                //  Total # of nodes to be connected
 
       this.field;                               //  Set in the field control initialization
       
@@ -556,6 +556,18 @@
       app.field.reset();
       app.running=false;
       
+    };
+
+    function factorial(n){
+
+      var total = 1;
+  
+      for (var i=2; i<=n; i++) {
+        total*=i;      
+      }
+  
+      return total;
+  
     };
 
   }
@@ -1442,9 +1454,12 @@
 
         this.factor             = 1.1;
 
+        // this.algorithm          = ALGORITHMS.BRUTEFORCE;
         this.algorithm          = ALGORITHMS.SIMULATEDANNEALING;
 
         this.reset();
+
+        this.brSwitch           = false;
 
       };
       field.prototype=Object.create(control.prototype);
@@ -1503,11 +1518,11 @@
         var ind=0;
 
           // do {          
-            ind=calculateConvexHull(p.nodesSorted,ind);
+            // ind=calculateConvexHull(p.nodesSorted,ind);
           // }
           // while(ind!=0);
           
-          print(ind);
+          // print(ind);
 
       };
       field.prototype.draw         = function(){
@@ -1525,19 +1540,19 @@
 
               for(var n=0; n<arr.length; n++){
 
-                if(n>0){
-                  len+=dist(arr[n].x,
-                            arr[n].y,
-                            arr[n-1].x,
-                            arr[n-1].y);
-                }
-                else if(n==arr.length-1){
+                if(n==arr.length-1){
                   len+=dist(arr[0].x,
                             arr[0].y,
                             arr[arr.length-1].x,
                             arr[arr.length-1].y);               
                 }
-                
+                else{
+                  len+=dist(arr[n].x,
+                            arr[n].y,
+                            arr[n+1].x,
+                            arr[n+1].y);
+                }
+
               }
 
             return len;
@@ -1576,7 +1591,7 @@
 
             function drawOriginalPath() {
 
-              stroke(255,0,0);
+              stroke(128);
               strokeWeight(0.5);
               noFill();          
 
@@ -1640,7 +1655,7 @@
 
             };
 
-            function swap2Nodes(){
+            function swap2Nodes()       {
 
               var tmp;
               var rand1=round(random(p.nodesWorking.length-1));
@@ -1656,7 +1671,7 @@
               p.nodesWorking[rand2]=tmp;
 
             };
-            function swap3Nodes(){
+            function swap3Nodes()       {
 
               var tmp;
               var rand1=round(random(p.nodesWorking.length-1));
@@ -1682,8 +1697,98 @@
 
           }
 
+          function nodePermutations(n, arr){
+
+            //  c is an encoding of the stack state.
+            //  c[k] encodes the for-loop counter for
+            //  when generate(k+1, A) is called.
+            var c=[];
+            var bestLength=Infinity;
+            var pLength=pathLength(p.nodesOriginal);
+            var counter=1;
+
+            for(var i=0; i<n; i++){
+              c[i]=0;
+            }
+        
+            //i acts similarly to the stack pointer
+            var i=0;
+
+            while(i<n){
+
+              pLength=pathLength(p.nodesOriginal);
+
+              if(pLength<bestLength){
+
+                bestLength=pLength;
+                arrayCopy(p.nodesOriginal, p.nodesBest);
+
+              }
+
+              if(c[i]<i){
+        
+                counter++;
+
+                if(i%2==0){ swap(arr,    0, i); }
+                else      { swap(arr, c[i], i); }
+
+                //  Swap has occurred ending the for-loop.
+                //  Simulate the increment of the for-loop counter
+                c[i]++;
+        
+                //  Simulate recursive call reaching the base case by
+                //  bringing the pointer to the base case analog in the array
+                i=0;
+        
+              }
+              else{
+                  
+                //  Calling generate(i+1, A) has ended as the for-loop terminated.
+                //  Reset the state and simulate popping the stack by incrementing the pointer.
+                c[i]=0;
+                i++;
+        
+              }
+
+            }
+            
+            p.bestLength=bestLength;
+
+          }
+
+          function resortNodes(arr){
+            // print(arr);
+            var tempArray=[];
+            
+            tempArray[p.nodesWorking.length];
+
+            arrayCopy(p.nodesWorking,tempArray);
+
+            for(var n=0; n<arr.length; n++){
+              tempArray[n]=p.nodesWorking[arr[n]];
+            }
+
+            arrayCopy(tempArray,p.nodesWorking);
+            // print(p.nodesWorking[1]);            
+          };
+          
           function bruteForce(){
 
+            if(!p.bfSwitch){
+              nodePermutations(p.nodesOriginal.length, p.nodesOriginal);
+              p.bfSwitch=true;
+            }
+
+            if(frameCount<300){
+              swap3Nodes();
+              drawWorkingNodes();
+              drawWorkingPath();
+              drawBestPath();
+            }
+            else{
+              drawBestPath();
+              drawBestNodes();
+            }
 
           };
           function genetic(){
@@ -1719,6 +1824,10 @@
 
             }
 
+            drawWorkingNodes();
+            drawWorkingPath();
+            drawBestPath();
+            
           };
 
           push();
@@ -1727,22 +1836,14 @@
 
               border();
 
-              // drawOriginalPath();
-              drawBestPath();              
-              drawWorkingPath();
-              
-              drawWorkingNodes();
-
-              // drawSortedPath();
-
               switch(this.algorithm){
 
-                case ALGORITHMS.SIMULATEDANNEALING: simulatedAnnealing();
-                case ALGORITHMS.BRUTEFORCE:         bruteForce();
-                case ALGORITHMS.GENETIC:            genetic();
-                case ALGORITHMS.CRITTERS:           critters();
+                case ALGORITHMS.SIMULATEDANNEALING: simulatedAnnealing(); break;
+                case ALGORITHMS.BRUTEFORCE:         bruteForce();         break;
+                case ALGORITHMS.GENETIC:            genetic();            break;
+                case ALGORITHMS.CRITTERS:           critters();           break;
 
-                default:                            simulatedAnnealing();
+                default:                            simulatedAnnealing(); break;
 
               }
 
@@ -1757,9 +1858,12 @@
                 text(   nf(p.factor,1,5),        10, 65);
                 text(   round(p.historicLength), 10, 95);
 
-            translate(this.w/2,this.h/2);
+                text(factorial(p.nodesOriginal.length), 10, 135);
 
-            ellipse(0,0,5,5);
+            //  Center origin
+            // translate(this.w/2,this.h/2);
+
+              // ellipse(0,0,5,5);
 
           pop();
 
@@ -3095,6 +3199,56 @@ ellipse(this.x,this.y,this.w,this.h);
 print('resized');
 
   }
+
+
+  // function generate(n, arr){
+
+  //   //c is an encoding of the stack state. c[k] encodes the for-loop counter for when generate(k+1, A) is called
+  //   c=[];
+
+  //   var i=0;
+
+  //   for(i=0; i<n; i++){
+  //     c[i]=0;
+  //   }
+
+  //   //i acts similarly to the stack pointer
+  //   i=0;
+
+  //   while(i<n){
+
+  //     if(c[i]<i){
+
+  //       if(i%2==0){ swap(arr, 0, i);    }
+  //       else      { swap(arr, c[i], i); }
+
+  //       // print(arr);
+
+  //       //  Swap has occurred ending the for-loop.
+  //       //  Simulate the increment of the for-loop counter
+  //       c[i]++;
+
+  //       //  Simulate recursive call reaching the base case by
+  //       //  bringing the pointer to the base case analog in the array
+  //       i=0;
+
+  //     }
+  //     else{
+          
+  //       //  Calling generate(i+1, A) has ended as the for-loop terminated.
+  //       //  Reset the state and simulate popping the stack by incrementing the pointer.
+  //       c[i]=0;
+  //       i++;
+
+  //     }
+
+  //   }
+
+  // }
+
+  // var arrTest=[1,2,3,4,5];
+
+  // generate(arrTest.length, arrTest);
 
 }
 
