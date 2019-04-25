@@ -4,17 +4,15 @@
 *
 +stackoverflow.com
 +khanacademy.org
-+whatbadgenext.appspot.com
 +codecogs.com/latex/eqneditor.php
 +youtube.com
 +mail.google.com
-+tube.geogebra.org/student/m762
 +bradsiemens.com
 +processingjs.org
 +processing.org
+forum.processing.org
 +wikipedia.org
 +google.com
-+brm.io/matter-js-demo
 +w3schools.com
 +touchmathematics.org
 +desmos.com
@@ -34,19 +32,12 @@
 +oeis.org
 +math.stackexchange.com
 +jasondavies.com
-+hex.frvr.com
-+mynoise.net
 +developer.mozilla.org
 +docs.oracle.com
 +www.mathopenref.com
-+p5js.org
 +alpha.editor.p5js.org
-+piratefsh.github.io/2017/06/02/recursive-hexagon-patterns.html
-+forum.processing.org
-+shapesmania.com/vasarely
 +en.wikibooks.org
 +upload.wikimedia.org
-+p5js.org
 
 */
 }
@@ -407,7 +398,7 @@
 
       this.mode           = SOLVEMODES.RANDOM; //
 
-      this.nodes          = 8;                //  Total # of nodes to be connected
+      this.nodes          = 15;                //  Total # of nodes to be connected
 
       this.field;                               //  Set in the field control initialization
       
@@ -1442,66 +1433,68 @@
 
         this.cellSize           = 0;        //  Size of each node
         
-        this.nodesOriginal      = [];       //  Original array of nodes
-        this.nodesSorted        = [];       //  Sorted Original array of nodes
-        this.nodesBest          = [];       //  Shortest path so far
-        this.nodesWorking       = [];       //  Path used to experiment
+        this.originalNodes      = [];       //  Original array of nodes
+        this.sortedNodes        = [];       //  Sorted Original array of nodes
+        this.bestNodes          = [];       //  Shortest path so far
+        this.workingNodes       = [];       //  Path used to experiment
         
-        this.originalLength     = 0;        //  Length of orinal path
+        this.originalLength     = Infinity;        //  Length of orinal path
         this.bestLength         = Infinity; //  Current best path length
-        this.workingLength      = 0;        //  Length of path being tested
+        this.workingLength      = Infinity; //  Length of path being tested
         this.historicLength     = Infinity; //  Best recorded overall
 
         this.factor             = 1.1;
 
         // this.algorithm          = ALGORITHMS.BRUTEFORCE;
         this.algorithm          = ALGORITHMS.SIMULATEDANNEALING;
+        // this.algorithm          = ALGORITHMS.NEAREST;
 
         this.reset();
 
         this.brSwitch           = false;
 
+        this.loaded             = false;
+
       };
       field.prototype=Object.create(control.prototype);
       field.prototype.reset        = function(){
 
-        var p         = this;       //  Set a reference to the field control
+        var p               = this;       //  Set a reference to the field control
 
-        p.controls = [];         //  Clear the controls array
+        p.controls          = [];         //  Clear the controls array
         
-        p.nodesOriginal      = [];
-        p.nodesSorted        = [];
-        p.nodesBest          = [];
-        p.nodesWorking       = [];
+        p.originalNodes     = [];
+        p.sortedNodes       = [];
+        p.bestNodes         = [];
+        p.workingNodes      = [];
         
-        p.originalLength     = 0;
-        p.bestLength         = Infinity;
-        p.workingLength      = 0;
+        p.originalLength    = 0;
+        p.bestLength        = Infinity;
+        p.workingLength     = 0;
 
-        p.factor   = 1.1;        //  
+        p.factor            = 1.1;
 
         function load(){
 
           var nod;
-          var nodeArray=[];
 
           for (var n=0; n<app.nodes; n++){
             
-            nodeArray.push(new node(n,
-                                    p,
-                                    floor(random(20, p.w-20)),
-                                    floor(random(20, p.h-20)),
-                                    5,
-                                    5,
-                                    {cursor:    HAND})
-                          );
+            p.originalNodes.push(new node(n,
+                                          p,
+                                          floor(random(20, p.w-20)),
+                                          floor(random(20, p.h-20)),
+                                          5,
+                                          5,
+                                          {cursor:    HAND})
+                                );
           }
 
-          p.nodesOriginal = nodeArray;
+          // p.originalNodes = nodeArray;
 
-          arrayCopy(nodeArray, p.nodesBest);
-          arrayCopy(nodeArray, p.nodesWorking);
-          arrayCopy(nodeArray, p.nodesSorted);
+          arrayCopy(p.originalNodes, p.bestNodes);
+          arrayCopy(p.originalNodes, p.workingNodes);
+          arrayCopy(p.originalNodes, p.sortedNodes);
 
         };
 
@@ -1512,13 +1505,13 @@
         app.finished=false;
         this.dirty=false;
 
-        arraySort(p.nodesSorted);
+        arraySort(p.sortedNodes);
 
         var convex=[];
         var ind=0;
 
           // do {          
-            // ind=calculateConvexHull(p.nodesSorted,ind);
+            // ind=calculateConvexHull(p.sortedNodes,ind);
           // }
           // while(ind!=0);
           
@@ -1558,6 +1551,7 @@
             return len;
 
           };
+          
           function border()       {
 
             fill(p.color);
@@ -1575,17 +1569,17 @@
 
             function drawWorkingNodes() {
               
-              forEach(p.nodesWorking, 'draw');
+              forEach(p.workingNodes, 'draw');
 
             };
             function drawOriginalNodes(){
               
-              forEach(p.nodesOriginal, 'draw');
+              forEach(p.originalNodes, 'draw');
 
             };
             function drawBestNodes()    {
               
-              forEach(p.nodesBest, 'draw');
+              forEach(p.bestNodes, 'draw');
 
             };
 
@@ -1597,8 +1591,8 @@
 
               beginShape();
 
-                for(var n=0; n<p.nodesOriginal.length; n++){                
-                  vertex(p.nodesOriginal[n].x, p.nodesOriginal[n].y);
+                for(var n=0; n<p.originalNodes.length; n++){                
+                  vertex(p.originalNodes[n].x, p.originalNodes[n].y);
                 }
 
               endShape(CLOSE);
@@ -1612,8 +1606,8 @@
 
               beginShape();
               
-                for(var n=0; n<p.nodesBest.length; n++){                
-                  vertex(p.nodesBest[n].x, p.nodesBest[n].y);
+                for(var n=0; n<p.bestNodes.length; n++){                
+                  vertex(p.bestNodes[n].x, p.bestNodes[n].y);
                 }
 
               endShape(CLOSE);
@@ -1627,8 +1621,8 @@
 
               beginShape();
 
-                for(var n=0; n<p.nodesWorking.length; n++){                
-                  vertex(p.nodesWorking[n].x, p.nodesWorking[n].y);
+                for(var n=0; n<p.workingNodes.length; n++){                
+                  vertex(p.workingNodes[n].x, p.workingNodes[n].y);
                 }
 
               endShape(CLOSE);
@@ -1642,56 +1636,117 @@
 
               // beginShape();
               
-              //   for(var n=0; n<p.nodesSorted.length; n++){                
-              //     vertex(p.nodesSorted[n].x, p.nodesSorted[n].y);
+              //   for(var n=0; n<p.sortedNodes.length; n++){                
+              //     vertex(p.sortedNodes[n].x, p.sortedNodes[n].y);
               //   }
 
               // endShape(CLOSE);
 
-              for(var n=0; n<p.nodesSorted.length; n++){                
-                line(p.nodesSorted[0].x, p.nodesSorted[0].y,
-                     p.nodesSorted[n].x, p.nodesSorted[n].y);
+              for(var n=0; n<p.sortedNodes.length; n++){                
+                line(p.sortedNodes[0].x, p.sortedNodes[0].y,
+                     p.sortedNodes[n].x, p.sortedNodes[n].y);
               }
 
             };
 
-            function swap2Nodes()       {
+            function swap2Random(arr)    {
 
               var tmp;
-              var rand1=round(random(p.nodesWorking.length-1));
+              var rand1=round(random(arr.length-1));
+              var rand2=round(random(arr.length-1));
+
+              while(rand2==rand1){
+                rand2=round(random(arr.length-1));
+              }
+
+              tmp=arr[rand1];
+
+              arr[rand1]=arr[rand2];
+              arr[rand2]=tmp;
+
+            };
+            function swap2Consecutive(arr)    {
+
+              var tmp;
+              var rand1=round(random(arr.length-1));
               var rand2=rand1+1;
 
-              if(rand2>=p.nodesWorking.length){
+              if(rand2>=arr.length){
                 rand2=0;
               }
 
-              tmp=p.nodesWorking[rand1];
+              tmp=arr[rand1];
 
-              p.nodesWorking[rand1]=p.nodesWorking[rand2];
-              p.nodesWorking[rand2]=tmp;
+              arr[rand1]=arr[rand2];
+              arr[rand2]=tmp;
 
             };
-            function swap3Nodes()       {
+            function swap3Random(arr)    {
 
               var tmp;
-              var rand1=round(random(p.nodesWorking.length-1));
+              var rand1=round(random(arr.length-1));
+              var rand2=round(random(arr.length-1));
+              var rand3=round(random(arr.length-1));
+
+              while(rand2==rand1){
+                rand2=round(random(arr.length-1));
+              }
+
+              while(rand3==rand1 || rand3==rand2){
+                rand3=round(random(arr.length-1));
+              }
+
+              tmp=arr[rand1];
+
+              arr[rand1]=arr[rand2];
+              arr[rand2]=arr[rand3];
+              arr[rand3]=tmp;
+
+            };
+            function swap3Consecutive(arr)    {
+
+              var tmp;
+              var rand1=round(random(arr.length-1));
               var rand2=rand1+1;
 
-              if(rand2>=p.nodesWorking.length){
+              if(rand2>=arr.length){
                 rand2=0;
               }
 
               var rand3=rand2+1;
 
-              if(rand3>=p.nodesWorking.length){
+              if(rand3>=arr.length){
                 rand3=0;
               }
 
-              tmp=p.nodesWorking[rand1];
+              tmp=arr[rand1];
 
-              p.nodesWorking[rand1]=p.nodesWorking[rand2];
-              p.nodesWorking[rand2]=p.nodesWorking[rand3];
-              p.nodesWorking[rand3]=tmp;
+              arr[rand1]=arr[rand2];
+              arr[rand2]=arr[rand3];
+              arr[rand3]=tmp;
+
+            };
+            function swap2Half(arr)    {
+
+              var tmp;
+              var rand1=round(random(arr.length-1));
+              var rand2=rand1+1;
+
+              if(rand2>=arr.length){
+                rand2=0;
+              }
+
+              var rand3=round(random(arr.length-1));
+
+              while(rand3==rand1 || rand3==rand2){
+                rand3=round(random(arr.length-1));
+              }
+
+              tmp=arr[rand1];
+
+              arr[rand1]=arr[rand2];
+              arr[rand2]=arr[rand3];
+              arr[rand3]=tmp;
 
             };
 
@@ -1704,7 +1759,7 @@
             //  when generate(k+1, A) is called.
             var c=[];
             var bestLength=Infinity;
-            var pLength=pathLength(p.nodesOriginal);
+            var pLength=pathLength(p.originalNodes);
             var counter=1;
 
             for(var i=0; i<n; i++){
@@ -1716,12 +1771,12 @@
 
             while(i<n){
 
-              pLength=pathLength(p.nodesOriginal);
+              pLength=pathLength(p.originalNodes);
 
               if(pLength<bestLength){
 
                 bestLength=pLength;
-                arrayCopy(p.nodesOriginal, p.nodesBest);
+                arrayCopy(p.originalNodes, p.bestNodes);
 
               }
 
@@ -1760,27 +1815,27 @@
             // print(arr);
             var tempArray=[];
             
-            tempArray[p.nodesWorking.length];
+            tempArray[p.workingNodes.length];
 
-            arrayCopy(p.nodesWorking,tempArray);
+            arrayCopy(p.workingNodes,tempArray);
 
             for(var n=0; n<arr.length; n++){
-              tempArray[n]=p.nodesWorking[arr[n]];
+              tempArray[n]=p.workingNodes[arr[n]];
             }
 
-            arrayCopy(tempArray,p.nodesWorking);
-            // print(p.nodesWorking[1]);            
+            arrayCopy(tempArray,p.workingNodes);
+            // print(p.workingNodes[1]);            
           };
           
           function bruteForce(){
 
             if(!p.bfSwitch){
-              nodePermutations(p.nodesOriginal.length, p.nodesOriginal);
+              nodePermutations(p.originalNodes.length, p.originalNodes);
               p.bfSwitch=true;
             }
 
             if(frameCount<300){
-              swap3Nodes();
+              swap3Consecutive();
               drawWorkingNodes();
               drawWorkingPath();
               drawBestPath();
@@ -1797,24 +1852,111 @@
           function critters(){
 
           };
+
+          function findClosestNode(nod, arr){
+
+            var min=Infinity;
+            var distance=Infinity;
+            var index=-1;
+
+            for(var n=0; n<arr.length; n++){
+
+              distance=dist(nod.x,nod.y,arr[n].x,arr[n].y);
+
+              if(distance<min && distance!==0 && arr[n].dirty==false){
+                min=distance;
+                index=n;
+              }
+
+            }
+
+            return arr[index];
+
+          };
+
+          function findClosest(){
+
+            var closestNodes=[];
+
+            // Start with the first node
+            var nod = p.originalNodes[0];
+            nod.dirty=true;
+
+            closestNodes.push(nod);
+
+            // // Find the node closest that isn't already taken
+            while(nod!=null){
+
+              // print(nod.id);
+              // var index=nod.id;
+
+              nod=findClosestNode(nod,p.originalNodes);
+
+              if(nod!=null){
+                nod.dirty=true;
+                closestNodes.push(nod);
+              }
+
+            }
+
+            arrayCopy(closestNodes, p.workingNodes);
+            arrayCopy(closestNodes, p.originalNodes);
+
+            p.loaded=true;
+
+          };
+
           function nearestNeighbor(){
+
+            for(var n=0; n<4950; n++){
+
+                swap3Random(p.workingNodes);
+
+                p.workingLength = pathLength(p.workingNodes);                  
+  
+                if(p.workingLength<p.bestLength){
+                  arrayCopy(p.workingNodes, p.bestNodes);
+                  p.bestLength = p.workingLength;
+                }              
+                else{
+                  arrayCopy(p.originalNodes, p.workingNodes);
+                }
+                
+            }
+
+            drawWorkingNodes();
+            drawWorkingPath();
+            drawBestPath();
 
           };
           function simulatedAnnealing(){
 
-            for(var n=0; n<3000; n++){
+            for(var n=0; n<1000; n++){
 
-              p.factor-=0.000000005;
+              p.factor-=0.00000001;
               p.factor=constrain(p.factor,1,1.2);
 
-                if(p.factor>1.5){ swap3Nodes(); }
-                else            { swap2Nodes(); }
+                switch(true){
+                
+                  case p.factor>1.075:  swap3Random(p.workingNodes);
+                                        break;
 
-                p.workingLength = pathLength(p.nodesWorking);                  
+                  case p.factor>1.05:   swap3Consecutive(p.workingNodes);
+                                        break;                                      
+
+                  case p.factor>1:      swap2Half(p.workingNodes); 
+                                        break;
+
+                  default:              swap2Consecutive(p.workingNodes);
+                                        swap2Random(p.workingNodes);
+                                        break;
+
+                }
+
+                p.workingLength = pathLength(p.workingNodes);                  
   
                 if(p.workingLength<p.bestLength*p.factor){
-                  arrayCopy(p.nodesWorking, p.nodesBest);
-                  arrayCopy(p.nodesBest, p.nodesWorking);
+                  arrayCopy(p.workingNodes, p.bestNodes);
                   p.bestLength = p.workingLength;
                 }
                 
@@ -1836,8 +1978,15 @@
 
               border();
 
+              if(!p.loaded){
+                findClosest();
+                // p.bestLength=pathLength(p.workingNodes);
+                // print("loaded");
+              }
+
               switch(this.algorithm){
 
+                case ALGORITHMS.NEAREST:            nearestNeighbor();    break;
                 case ALGORITHMS.SIMULATEDANNEALING: simulatedAnnealing(); break;
                 case ALGORITHMS.BRUTEFORCE:         bruteForce();         break;
                 case ALGORITHMS.GENETIC:            genetic();            break;
@@ -1848,17 +1997,19 @@
               }
 
               fill(0);  
-              textSize(24);
+              textSize(14);
               textAlign(LEFT,TOP);
               strokeWeight(0.5);
               stroke(128,0,0);
 
                 text(round(p.workingLength),     10,  5);
                 text(round(p.bestLength),        10, 25);
-                text(   nf(p.factor,1,5),        10, 65);
-                text(   round(p.historicLength), 10, 95);
+                text(   nf(p.factor,1,5),        10, 45);
+                text(   round(p.historicLength), 10, 65);
 
-                text(factorial(p.nodesOriginal.length), 10, 135);
+              textSize(12);
+
+                text(factorial(p.originalNodes.length).toLocaleString(), 10, p.h-20);
 
             //  Center origin
             // translate(this.w/2,this.h/2);
@@ -1889,8 +2040,8 @@
           this.hit=true;
           app.focus=this;
 
-          for(var n in this.nodesWorking){
-            this.nodesWorking[n].moved(this.x+x, this.y+y);
+          for(var n in this.workingNodes){
+            this.workingNodes[n].moved(this.x+x, this.y+y);
           }
 
         }
@@ -1898,8 +2049,8 @@
 
           this.hit=false;
 
-          for(var n in this.nodesWorking){
-            this.nodesWorking[n].hit=false;
+          for(var n in this.workingNodes){
+            this.workingNodes[n].hit=false;
           }
 
         }
@@ -2068,6 +2219,10 @@
           fill(128,0,0);
 
             ellipse(p.x, p.y, p.w, p.w);
+
+          textSize(12);
+
+            // text(this.id,p.x+10,p.y+10);
 
         pop();
 
