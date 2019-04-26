@@ -1367,10 +1367,11 @@ forum.processing.org
     };
 
     function arraySort(arr){
+    // Sorts left to right base on x coordinate
 
       for(var i=0; i<arr.length; i++){
         for(var j=0; j<arr.length; j++){
-          
+
           if(arr[j].x>arr[i].x){
             swap(arr,i,j);
           }
@@ -1437,10 +1438,11 @@ forum.processing.org
         this.sortedNodes        = [];       //  Sorted Original array of nodes
         this.bestNodes          = [];       //  Shortest path so far
         this.workingNodes       = [];       //  Path used to experiment
-        
-        this.originalLength     = Infinity;        //  Length of orinal path
-        this.bestLength         = Infinity; //  Current best path length
+        this.historicNodes      = [];       //  Overall best path
+
+        this.originalLength     = Infinity; //  Length of orinal path
         this.workingLength      = Infinity; //  Length of path being tested
+        this.bestLength         = Infinity; //  Current best path length        
         this.historicLength     = Infinity; //  Best recorded overall
 
         this.factor             = 1.1;
@@ -1468,11 +1470,13 @@ forum.processing.org
         p.bestNodes         = [];
         p.workingNodes      = [];
         
-        p.originalLength    = 0;
-        p.bestLength        = Infinity;
-        p.workingLength     = 0;
+        p.originalLength    = Infinity;
+        p.workingLength     = Infinity;
+        p.bestLength        = Infinity;        
+        p.historicLength    = Infinity;
 
         p.factor            = 1.1;
+        p.loaded            = false;
 
         function load(){
 
@@ -1490,8 +1494,6 @@ forum.processing.org
                                 );
           }
 
-          // p.originalNodes = nodeArray;
-
           arrayCopy(p.originalNodes, p.bestNodes);
           arrayCopy(p.originalNodes, p.workingNodes);
           arrayCopy(p.originalNodes, p.sortedNodes);
@@ -1500,9 +1502,6 @@ forum.processing.org
 
         load();
 
-        this.update();
-
-        app.finished=false;
         this.dirty=false;
 
         arraySort(p.sortedNodes);
@@ -1884,12 +1883,9 @@ forum.processing.org
 
             closestNodes.push(nod);
 
-            // // Find the node closest that isn't already taken
             while(nod!=null){
 
-              // print(nod.id);
-              // var index=nod.id;
-
+              // Find the node closest that isn't already taken
               nod=findClosestNode(nod,p.originalNodes);
 
               if(nod!=null){
@@ -1900,8 +1896,8 @@ forum.processing.org
             }
 
             arrayCopy(closestNodes, p.workingNodes);
-            arrayCopy(closestNodes, p.originalNodes);
 
+            //  Indicate that Find Closest was used initially
             p.loaded=true;
 
           };
@@ -1929,6 +1925,7 @@ forum.processing.org
             drawBestPath();
 
           };
+          
           function simulatedAnnealing(){
 
             for(var n=0; n<1000; n++){
@@ -1947,21 +1944,28 @@ forum.processing.org
                   case p.factor>1:      swap2Half(p.workingNodes); 
                                         break;
 
-                  default:              swap2Consecutive(p.workingNodes);
-                                        swap2Random(p.workingNodes);
-                                        break;
+                  default:              
+
+                    if     (frameCount%2==0) { swap2Consecutive(p.workingNodes); }
+                    else if(frameCount%7==0) { swap3Consecutive(p.workingNodes); }
+                    else if(frameCount%11==0){ swap3Random(p.workingNodes);      }
+                    else                     { swap2Random(p.workingNodes);      }
+
+                    break;
 
                 }
 
-                p.workingLength = pathLength(p.workingNodes);                  
+                p.workingLength = pathLength(p.workingNodes);                
   
                 if(p.workingLength<p.bestLength*p.factor){
-                  arrayCopy(p.workingNodes, p.bestNodes);
+
                   p.bestLength = p.workingLength;
-                }
-                
-                if(p.bestLength<p.historicLength){
-                  p.historicLength=p.bestLength;
+
+                    if(p.workingLength<p.historicLength){
+                      p.historicLength=p.workingLength;
+                      arrayCopy(p.workingNodes, p.bestNodes);
+                    }
+
                 }
 
             }
@@ -1972,6 +1976,40 @@ forum.processing.org
             
           };
 
+          function drawProperties(){
+
+            textSize(11);
+            textAlign(LEFT,TOP);
+            strokeWeight(0.5);
+            stroke(128);
+            fill(128);  
+
+              text(         p.workingNodes.length + ' nodes'  +
+                   '\n\n' + 'Working Length:'  +
+                   '\n' +   'Best Length' +
+                   '\n' +   'Factor:'     +
+                   '\n' +   'Historic Length:', 10, 10);
+
+            stroke(64);  
+            fill(64);  
+
+              text(         '' +
+                   '\n\n' + round(p.workingLength)  +
+                   '\n'   + round(p.bestLength) +
+                   '\n'   + nf(p.factor,1,5)     +
+                   '\n'   + round(p.historicLength), 110, 10);
+
+            textSize(11);
+
+              text(factorial(p.originalNodes.length).toLocaleString(), 10, p.h-20);
+
+            //  Center origin
+            // translate(this.w/2,this.h/2);
+
+              // ellipse(0,0,5,5);
+
+          };
+
           push();
 
             translate(this.x, this.y);
@@ -1980,7 +2018,6 @@ forum.processing.org
 
               if(!p.loaded){
                 findClosest();
-                // p.bestLength=pathLength(p.workingNodes);
                 // print("loaded");
               }
 
@@ -1996,25 +2033,7 @@ forum.processing.org
 
               }
 
-              fill(0);  
-              textSize(14);
-              textAlign(LEFT,TOP);
-              strokeWeight(0.5);
-              stroke(128,0,0);
-
-                text(round(p.workingLength),     10,  5);
-                text(round(p.bestLength),        10, 25);
-                text(   nf(p.factor,1,5),        10, 45);
-                text(   round(p.historicLength), 10, 65);
-
-              textSize(12);
-
-                text(factorial(p.originalNodes.length).toLocaleString(), 10, p.h-20);
-
-            //  Center origin
-            // translate(this.w/2,this.h/2);
-
-              // ellipse(0,0,5,5);
+              drawProperties();
 
           pop();
 
@@ -2104,8 +2123,6 @@ forum.processing.org
 
       };
       field.prototype.update       = function(){
-
-        var p=this;           //  Set a reference to the field control
 
       };
       field.prototype.calcRadius   = function(){
@@ -2222,7 +2239,7 @@ forum.processing.org
 
           textSize(12);
 
-            // text(this.id,p.x+10,p.y+10);
+            text(this.id,p.x+10,p.y+10);
 
         pop();
 
