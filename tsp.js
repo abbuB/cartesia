@@ -1502,19 +1502,74 @@ forum.processing.org
 
         load();
 
+        function contains(i,arr){
+
+          var retVal=false;
+
+          for(var n=0; n<arr.length; n++){
+
+            if(arr[n].id=i){              
+               retVal=true;
+               break;
+            }
+
+          }
+
+          return retVal;
+
+        };
+        function sortByDistance(nod, arr){
+
+          var min=Infinity;
+          var distance=Infinity;
+          var index=-1;
+          var sorted=[];
+
+          arrayCopy(arr,sorted);
+
+          for(var i=0; i<sorted.length; i++){
+            
+            distance=dist(nod.x, nod.y, sorted[i].x, sorted[i].y);
+
+            for(var j=0; j<sorted.length-1; j++){
+    
+              if(distance< dist(nod.x, nod.y, sorted[j+1].x, sorted[j+1].y)){
+                swap(sorted,i,j);
+              }
+    
+            }
+
+          }
+
+          var limit=ceil(pow(arr.length,1/2));  // Limit to the square root of the # of nodes
+
+          for(var m=0; m<limit; m++){
+
+            nod.closest.push(sorted[m]);  
+
+          }
+
+        };
+
+        function loadClosestNodes(){
+
+          var nod=p.originalNodes[0]; // Set to the first node
+
+          for(var n=0; n<p.originalNodes.length; n++){
+
+            sortByDistance(p.originalNodes[n], p.originalNodes);
+
+            print(p.originalNodes[n].closest);
+
+          }
+
+        };
+
+        loadClosestNodes();
+
         this.dirty=false;
 
         arraySort(p.sortedNodes);
-
-        var convex=[];
-        var ind=0;
-
-          // do {          
-            // ind=calculateConvexHull(p.sortedNodes,ind);
-          // }
-          // while(ind!=0);
-          
-          // print(ind);
 
       };
       field.prototype.draw         = function(){
@@ -2010,16 +2065,22 @@ forum.processing.org
 
           };
 
+          function initialCondition(){
+
+            if(!p.loaded){
+              findClosest();
+              // print("loaded");
+            }
+
+          };
+
           push();
 
             translate(this.x, this.y);
 
               border();
 
-              if(!p.loaded){
-                findClosest();
-                // print("loaded");
-              }
+              initialCondition();
 
               switch(this.algorithm){
 
@@ -2181,6 +2242,11 @@ forum.processing.org
         this.outerHit     = false;
 
         this.dirty        = false;
+        this.distance     = Infinity;     //  Used to determine the distance to the
+                                          //  selected node on load
+
+        //  Closest Nodes  ---------------
+        this.closest      = [];
 
         //  Adjacent nodes ---------------
         this.previous     = null;
@@ -2203,7 +2269,7 @@ forum.processing.org
       node.prototype=Object.create(control.prototype);
       node.prototype.reset         = function(){
 
-
+        this.closest=[];
 
       };
       node.prototype.draw          = function(){
