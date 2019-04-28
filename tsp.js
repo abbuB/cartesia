@@ -1485,7 +1485,7 @@ forum.processing.org
           for (var n=0; n<app.nodes; n++){
             
             p.originalNodes.push(new node(n,
-                                          p,
+                                          this,
                                           floor(random(20, p.w-20)),
                                           floor(random(20, p.h-20)),
                                           5,
@@ -1520,47 +1520,41 @@ forum.processing.org
         };
         function sortByDistance(nod, arr){
 
-          var min=Infinity;
           var distance=Infinity;
-          var index=-1;
           var sorted=[];
 
           arrayCopy(arr,sorted);
 
           for(var i=0; i<sorted.length; i++){
-            
-            distance=dist(nod.x, nod.y, sorted[i].x, sorted[i].y);
 
-            for(var j=0; j<sorted.length-1; j++){
-    
-              if(distance< dist(nod.x, nod.y, sorted[j+1].x, sorted[j+1].y)){
-                swap(sorted,i,j);
-              }
-    
-            }
+            sorted[i].distance=dist(nod.x, nod.y, sorted[i].x, sorted[i].y);
 
           }
 
+          for(var i=0; i<sorted.length; i++){
+            for(var j=0; j<sorted.length-1; j++){
+
+              if(sorted[i].distance < sorted[j].distance){
+                swap(sorted,i,j);
+              }
+
+            }
+          }
+
+// print(nod.id);
+// print(sorted);
           var limit=ceil(pow(arr.length,1/2));  // Limit to the square root of the # of nodes
 
-          for(var m=0; m<limit; m++){
-
+          for(var m=1; m<limit+1; m++){
             nod.closest.push(sorted[m]);  
-
           }
 
         };
 
         function loadClosestNodes(){
 
-          var nod=p.originalNodes[0]; // Set to the first node
-
           for(var n=0; n<p.originalNodes.length; n++){
-
             sortByDistance(p.originalNodes[n], p.originalNodes);
-
-            print(p.originalNodes[n].closest);
-
           }
 
         };
@@ -1700,6 +1694,31 @@ forum.processing.org
                 line(p.sortedNodes[0].x, p.sortedNodes[0].y,
                      p.sortedNodes[n].x, p.sortedNodes[n].y);
               }
+
+            };
+
+            function swap2Closest(arr)    {
+
+              var tmp;
+
+              var rand0=round(random(arr.length-1));
+              
+              var nod=arr[rand0];
+
+              var rand1=round(random(nod.closest.length-1));
+              var rand2=round(random(nod.closest.length-1));
+
+              while(rand2==rand1){
+                rand2=round(random(arr[rand0].closest.length-1));
+              }
+              
+              rand1=nod.closest[rand1].id;
+              rand2=nod.closest[rand2].id;
+
+              tmp=arr[rand1];
+
+              arr[rand1]=arr[rand2];
+              arr[rand2]=tmp;
 
             };
 
@@ -2001,7 +2020,9 @@ forum.processing.org
 
                   default:              
 
-                    if     (frameCount%2==0) { swap2Consecutive(p.workingNodes); }
+                    if     (frameCount%2==0) { swap2Closest(p.workingNodes);
+                                              //  swap2Consecutive(p.workingNodes); 
+                                                                                 }
                     else if(frameCount%7==0) { swap3Consecutive(p.workingNodes); }
                     else if(frameCount%11==0){ swap3Random(p.workingNodes);      }
                     else                     { swap2Random(p.workingNodes);      }
@@ -2138,13 +2159,9 @@ forum.processing.org
       };
       field.prototype.clicked      = function(){
 
-        var ctrls=this.controls;
-
-        for(var r in ctrls){
-          for(var c in ctrls[r]){
-
-            ctrls[r][c].clicked();
-
+        if(this.hit){
+          for(var n in this.workingNodes){
+            this.workingNodes[n].clicked(this.x+x, this.y+y);
           }
         }
 
@@ -2247,6 +2264,7 @@ forum.processing.org
 
         //  Closest Nodes  ---------------
         this.closest      = [];
+        this.distance     = Infinity;
 
         //  Adjacent nodes ---------------
         this.previous     = null;
@@ -2286,23 +2304,33 @@ forum.processing.org
 
           if(app.left){ this.offset=1; }
 
+          stroke(128,0,0);
+          strokeWeight(1.5);
+          noFill();
+
+          for(var n=0; n<p.closest.length; n++){
+            line(p.x, p.y,
+                 p.closest[n].x, p.closest[n].y);
+          }
+
         }
 
         push();
-          
+
+        fill(164);
+        noStroke();
+
           if(this.hit){
-          
-            fill(164);
-            noStroke();
 
-              ellipse(p.x, p.y, p.w*2, p.w*2);
+            fill(128,0,0);
 
+              ellipse(p.x, p.y, p.w, p.w);
+              
           }
 
-          fill(128,0,0);
+          ellipse(p.x, p.y, p.w, p.w);
 
-            ellipse(p.x, p.y, p.w, p.w);
-
+          fill(96);          
           textSize(12);
 
             text(this.id,p.x+10,p.y+10);
@@ -2330,14 +2358,14 @@ forum.processing.org
       };
       node.prototype.clicked       = function(){
 
-        if(this.hit &&
-           this.layout!==BLANK){
+        if(this.hit){
           this.parent.activeCell=this;
           app.focus=this;
+          print(this.closest);  
         }
 
         if(this.active){
-
+          
         }
 
       };
