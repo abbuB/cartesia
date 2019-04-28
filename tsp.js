@@ -398,7 +398,7 @@ forum.processing.org
 
       this.mode           = SOLVEMODES.RANDOM; //
 
-      this.nodes          = 15;                //  Total # of nodes to be connected
+      this.nodes          = 25;                //  Total # of nodes to be connected
 
       this.field;                               //  Set in the field control initialization
       
@@ -2007,18 +2007,22 @@ forum.processing.org
               p.factor-=0.00000001;
               p.factor=constrain(p.factor,1,1.2);
 
+              // swap2Closest(p.workingNodes);
+
                 switch(true){
                 
-                  case p.factor>1.075:  swap3Random(p.workingNodes);
+                  case p.factor>1.075:  swap3Consecutive(p.workingNodes);
                                         break;
 
-                  case p.factor>1.05:   swap3Consecutive(p.workingNodes);
+                  case p.factor>1.05:   swap3Random(p.workingNodes);
                                         break;                                      
 
                   case p.factor>1:      swap2Half(p.workingNodes); 
                                         break;
 
                   default:              
+
+                    arrayCopy(p.workingNodes, p.bestNodes);
 
                     if     (frameCount%2==0) { swap2Closest(p.workingNodes);
                                               //  swap2Consecutive(p.workingNodes); 
@@ -2032,7 +2036,7 @@ forum.processing.org
                 }
 
                 p.workingLength = pathLength(p.workingNodes);                
-  
+
                 if(p.workingLength<p.bestLength*p.factor){
 
                   p.bestLength = p.workingLength;
@@ -2040,10 +2044,11 @@ forum.processing.org
                     if(p.workingLength<p.historicLength){
                       p.historicLength=p.workingLength;
                       arrayCopy(p.workingNodes, p.bestNodes);
+                      print(int(p.workingLength));
                     }
 
                 }
-
+                
             }
 
             drawWorkingNodes();
@@ -2101,7 +2106,7 @@ forum.processing.org
 
               border();
 
-              initialCondition();
+              // initialCondition();
 
               switch(this.algorithm){
 
