@@ -315,7 +315,30 @@ forum.processing.org
 
   }
 
-  var cnv;
+  var data=[
+            [204,568],[545,333],[229,425],[289,379],[275,275],
+            [442,503],[169,401],[456, 82],[528,433],[607,460],
+            [182,212],[319,502],[552,164],[362,393],[625,215],
+            [195,472],[551,538],[255,392],[248,345],[605,416],
+            [484,128],[470,382],[491, 58],[466,522],[666,489],
+            [159,387],[599,233],[153,207],[354,327],[432, 77],
+            [422,467],[554,325],[377,550],[210,110],[699,463],
+            [536,241],[408, 98],[656,102],[469 ,38],[516,213],
+            [653,128],[642, 45],[428,240],[672,235],[162,420],
+            [448,490],[267, 46],[692,293],[504,132],[303,534],
+            [458,327],[664,550],[341,481],[462, 33],[193,574],
+            [404,504],[382,208],[433,354],[673,146],[635,317],
+            [338, 42],[704,447],[503,560],[294,503],[228,325],
+            [309,159],[480,546],[564, 85],[175,380],[264,509],
+            [183,553],[204,392],[479,512],[536,440],[409,119],
+            [603,260],[422,129],[344,408],[653,335],[463,308],
+            [495,427],[578,121],[397,336],[432,324],[635,259],
+            [351,465],[481,541],[268,447],[612,390],[698,162],
+            [163,270],[655,328],[513,249],[316,198],[568,436],
+            [673,198],[454,154],[185, 53],[441,240],[262,462]
+           ];
+
+var cnv;
 
   function setup(){
 
@@ -398,7 +421,7 @@ forum.processing.org
 
       this.mode           = SOLVEMODES.RANDOM; //
 
-      this.nodes          = 25;                //  Total # of nodes to be connected
+      this.nodes          = 100;                //  Total # of nodes to be connected
 
       this.field;                               //  Set in the field control initialization
       
@@ -458,89 +481,7 @@ forum.processing.org
 
     }
 
-    function setDisplacedCell()     {
-
-      do{
-
-        var row = round(random(app.field.controls.length-1   ));
-        var col = round(random(app.field.controls[0].length-1));
-
-        app.field.activeCell=app.field.controls[row][col];
-
-      } while(app.field.activeCell.layout===BLANK &&
-              app.field.activeCell.layout!==BLACK0);
-
-    };
-    function setActiveCell()        {
-
-      do{
-
-        var row = round(random(app.field.controls.length-1   ));
-        var col = round(random(app.field.controls[0].length-1));
-
-        app.field.activeCell=app.field.controls[row][col];
-
-      } while(app.field.activeCell.layout===BLANK);
-
-    };
-    function move(row, col, direction){
-
-      this.row       = row;
-      this.col       = col;
-
-      this.direction = direction;
-
-      var reverse = -1;
-
-      switch(this.direction){
-
-        case DIRECTIONS.UP:        reverse = colDown;       break;
-        case DIRECTIONS.DOWN:      reverse = colUp;         break;
-        case DIRECTIONS.DOWNRIGHT: reverse = colUpLeft;     break;
-        case DIRECTIONS.DOWNLEFT:  reverse = colUpRight;    break;
-        case DIRECTIONS.UPRIGHT:   reverse = colDownLeft;   break;
-        case DIRECTIONS.UPLEFT:    reverse = colDownRight;  break;
-
-        default:                                            break;
-
-      }
-
-      this.reverse = reverse;
-
-    };
-    function randomMove()           {
-
-      var rnum=round(random(0,5));
-
-      // setActiveCell();
-
-      switch(rnum){
-
-        case 0:   colUp();        app.field.addMove(DIRECTIONS.UP);        break;
-        case 1:   colDown();      app.field.addMove(DIRECTIONS.DOWN);      break;
-        case 2:   colUpLeft();    app.field.addMove(DIRECTIONS.UPLEFT);    break;
-        case 3:   colUpRight();   app.field.addMove(DIRECTIONS.UPRIGHT);   break;
-        case 4:   colDownLeft();  app.field.addMove(DIRECTIONS.DOWNLEFT);  break;
-        case 5:   colDownRight(); app.field.addMove(DIRECTIONS.DOWNRIGHT); break;
-
-        default:  print(rnum);    break;
-
-      }
-
-    };
-    function shuffle()              {
-
-      var total=pow(app.field.layout.length,2)*2;
-
-      for(var n=0; n<total; n++){
-        randomMove();
-        setActiveCell();
-      }
-
-      app.field.totalMoves=0;
-      app.field.moves=[];
-
-    };
+    
 
     function reset()                {
 
@@ -1403,6 +1344,107 @@ forum.processing.org
       return maxIndex;
 
     };
+    function sortByLength(arr){
+
+      var sorted=[];
+
+      arrayCopy(arr,sorted);
+
+      for(var i=0; i<sorted.length-1; i++){
+
+        sorted[i].distance=dist(sorted[i].x, sorted[i].y,
+                                sorted[i+1].x, sorted[i+1].y);
+
+      }
+
+      for(var i=0; i<sorted.length; i++){
+        for(var j=0; j<sorted.length-1; j++){
+
+          if(sorted[i].distance > sorted[j].distance){
+            swap(sorted,i,j);
+          }
+
+        }
+      }
+
+      return sorted[0].id;
+
+// print(sorted[0].distance + ", " + sorted[sorted.length-1].distance);
+      // var limit=ceil(pow(arr.length,1/2));  // Limit to the square root of the # of nodes
+
+      // for(var m=1; m<limit+1; m++){
+      //   nod.closest.push(sorted[m]);  
+      // }
+
+    };  
+    function getLongest(arr){
+
+      var distance=-1;
+      var max=-1;
+      var id=-1;
+
+      for(var i=0; i<arr.length-1; i++){
+
+        distance=dist(arr[i].x, arr[i].y,
+                      arr[i+1].x, arr[i+1].y);
+
+        if(distance>max){
+          max=distance;
+          id=i;
+        }
+
+      }
+    
+      return  id;
+
+    };  
+
+    function sortByX(arr){
+
+      for(var i=0; i<arr.length; i++){
+        for(var j=0; j<arr.length-1; j++){
+
+          if(arr[i].x > arr[j].x){
+            swap(arr,i,j);
+          }
+
+        }
+      }
+
+    };
+    function sortByY(arr){
+
+      for(var i=0; i<arr.length; i++){
+        for(var j=0; j<arr.length-1; j++){
+
+          if(arr[i].y > arr[j].y){
+            swap(arr,i,j);
+          }
+
+        }
+      }
+
+    };
+    function sortByLongest(arr){
+
+      for(var i=0; i<arr.length-1; i++){
+
+        arr[i].distance=dist(arr[i].x,   arr[i].y,
+                             arr[i+1].x, arr[i+1].y);
+
+      }
+
+      for(var i=0; i<arr.length; i++){
+        for(var j=0; j<arr.length-1; j++){
+
+          if(arr[i].distance > arr[j].distance){
+            swap(arr,i,j);
+          }
+
+        }
+      }
+
+    };  
 
     /** Field        -------------------------------------------------- */
     {
@@ -1481,17 +1523,23 @@ forum.processing.org
         function load(){
 
           var nod;
+          var x0=0;
+          var y0=0;
 
           for (var n=0; n<app.nodes; n++){
             
+            x0=data[n][0];  //floor(random(150, p.w-20));
+            y0=data[n][1];  //floor(random( 20, p.h-20));
+
             p.originalNodes.push(new node(n,
                                           this,
-                                          floor(random(20, p.w-20)),
-                                          floor(random(20, p.h-20)),
+                                          x0,
+                                          y0,
                                           5,
                                           5,
                                           {cursor:    HAND})
                                 );
+
           }
 
           arrayCopy(p.originalNodes, p.bestNodes);
@@ -1518,6 +1566,7 @@ forum.processing.org
           return retVal;
 
         };
+      
         function sortByDistance(nod, arr){
 
           var distance=Infinity;
@@ -1697,6 +1746,19 @@ forum.processing.org
 
             };
 
+            function swap2Length(id,arr)    {
+
+              var rand1=id;
+              var rand2=id;
+
+              //  First Point
+              while(rand2==rand1){
+                rand2=round(random(arr.length-1));
+              }
+
+              swap(arr,id,arr[rand2].id);
+
+            };
             function swap2Closest(arr)    {
 
               var tmp;
@@ -1715,10 +1777,7 @@ forum.processing.org
               rand1=nod.closest[rand1].id;
               rand2=nod.closest[rand2].id;
 
-              tmp=arr[rand1];
-
-              arr[rand1]=arr[rand2];
-              arr[rand2]=tmp;
+              swap(arr, rand2, rand1);
 
             };
 
@@ -1732,10 +1791,7 @@ forum.processing.org
                 rand2=round(random(arr.length-1));
               }
 
-              tmp=arr[rand1];
-
-              arr[rand1]=arr[rand2];
-              arr[rand2]=tmp;
+              swap(arr,rand1, rand2);
 
             };
             function swap2Consecutive(arr)    {
@@ -2002,38 +2058,53 @@ forum.processing.org
           
           function simulatedAnnealing(){
 
+            fill(64);
+            noStroke();
+            textSize(20);
+
+              // text(id,25,250);
+// frameRate(2);
             for(var n=0; n<1000; n++){
 
-              p.factor-=0.00000001;
+              p.factor-=0.0000001;
               p.factor=constrain(p.factor,1,1.2);
 
-              // swap2Closest(p.workingNodes);
-
-                switch(true){
+                // switch(true){
                 
-                  case p.factor>1.075:  swap3Consecutive(p.workingNodes);
-                                        break;
+                //   case p.factor>1.075:  
+    
+                //   // print(id);
+                //   // arrayCopy(p.bestNodes, p.workingNodes);
 
-                  case p.factor>1.05:   swap3Random(p.workingNodes);
-                                        break;                                      
+                //   var id=getLongest(p.workingNodes);
+                  
+                //                       swap2Length(id,p.workingNodes);
+                //                       //   swap2Closest(p.workingNodes);
+                //                       //   swap3Consecutive(p.workingNodes);
+                //                         break;
 
-                  case p.factor>1:      swap2Half(p.workingNodes); 
-                                        break;
+                //   case p.factor>1.05:   swap3Random(p.workingNodes);
+                //                         break;                                      
 
-                  default:              
+                //   case p.factor>1:      swap2Half(p.workingNodes); 
+                //                         break;
 
-                    arrayCopy(p.workingNodes, p.bestNodes);
+                //   default:              
 
-                    if     (frameCount%2==0) { swap2Closest(p.workingNodes);
-                                              //  swap2Consecutive(p.workingNodes); 
+                    arrayCopy(p.bestNodes, p.workingNodes);
+
+                    if     (frameCount%2==0) { 
+                                               swap2Length(getLongest(p.workingNodes),p.workingNodes);
+                                               swap2Closest(p.workingNodes);
+                                               swap2Consecutive(p.workingNodes); 
                                                                                  }
                     else if(frameCount%7==0) { swap3Consecutive(p.workingNodes); }
                     else if(frameCount%11==0){ swap3Random(p.workingNodes);      }
                     else                     { swap2Random(p.workingNodes);      }
 
-                    break;
+                //     break;
 
-                }
+                // }
 
                 p.workingLength = pathLength(p.workingNodes);                
 
@@ -2044,7 +2115,7 @@ forum.processing.org
                     if(p.workingLength<p.historicLength){
                       p.historicLength=p.workingLength;
                       arrayCopy(p.workingNodes, p.bestNodes);
-                      print(int(p.workingLength));
+                      print(round(p.workingLength));
                     }
 
                 }
@@ -2082,7 +2153,8 @@ forum.processing.org
 
             textSize(11);
 
-              text(factorial(p.originalNodes.length).toLocaleString(), 10, p.h-20);
+              text(factorial(p.originalNodes.length), 10, p.h-20);
+              // text(factorial(p.originalNodes.length).toLocaleString(), 10, p.h-20);
 
             //  Center origin
             // translate(this.w/2,this.h/2);
@@ -2094,9 +2166,14 @@ forum.processing.org
           function initialCondition(){
 
             if(!p.loaded){
-              findClosest();
+              // findClosest();
+              sortByLongest(p.workingNodes);
               // print("loaded");
             }
+// Find Closest    - 
+// Sort by X       - 7404
+// Sort by Y       - 7490
+// Sort by Longest - 7299
 
           };
 
@@ -2106,7 +2183,7 @@ forum.processing.org
 
               border();
 
-              // initialCondition();
+              initialCondition();
 
               switch(this.algorithm){
 
@@ -2336,7 +2413,7 @@ forum.processing.org
           ellipse(p.x, p.y, p.w, p.w);
 
           fill(96);          
-          textSize(12);
+          textSize(10);
 
             text(this.id,p.x+10,p.y+10);
 
