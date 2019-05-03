@@ -1,6 +1,6 @@
 {
   /**  Whitelist
-
+   * 
 *
 +stackoverflow.com
 +khanacademy.org
@@ -38,6 +38,7 @@ forum.processing.org
 +alpha.editor.p5js.org
 +en.wikibooks.org
 +upload.wikimedia.org
++viterbipk12.usc.edu
 
 */
 }
@@ -1445,6 +1446,16 @@ var cnv;
       }
 
     };  
+    
+
+
+    function renumberNodes(arr){
+
+      for(var n=0; n<arr.length; n++){
+        arr[n].id=n;
+      }
+
+    };
 
     /** Field        -------------------------------------------------- */
     {
@@ -1569,7 +1580,7 @@ var cnv;
       
         function sortByDistance(nod, arr){
 
-          var distance=Infinity;
+          // var distance=Infinity;
           var sorted=[];
 
           arrayCopy(arr,sorted);
@@ -1592,7 +1603,7 @@ var cnv;
 
 // print(nod.id);
 // print(sorted);
-          var limit=ceil(pow(arr.length,1/2));  // Limit to the square root of the # of nodes
+          var limit=ceil(pow(arr.length,1/2))+2;  // Limit to the square root of the # of nodes
 
           for(var m=1; m<limit+1; m++){
             nod.closest.push(sorted[m]);  
@@ -1746,10 +1757,19 @@ var cnv;
 
             };
 
-            function swap2Length(id,arr)    {
+            function swapByIndex(arr,n,m)    {
+
+              swap(arr,n,m);
+
+            }
+            function swap2Length(id,arr){
 
               var rand1=id;
-              var rand2=id;
+              var rand2=id+2;
+
+              if(rand2>arr.length-1){
+                rand2=0;
+              }
 
               //  First Point
               while(rand2==rand1){
@@ -1762,13 +1782,14 @@ var cnv;
             function swap2Closest(arr)    {
 
               var tmp;
+              var max=arr[0].closest.length-1;
 
-              var rand0=round(random(arr.length-1));
+              var rand0=round(random(max));
               
               var nod=arr[rand0];
 
-              var rand1=round(random(nod.closest.length-1));
-              var rand2=round(random(nod.closest.length-1));
+              var rand1=round(random(max));
+              var rand2=round(random(max));
 
               while(rand2==rand1){
                 rand2=round(random(arr[rand0].closest.length-1));
@@ -1821,7 +1842,8 @@ var cnv;
                 rand2=round(random(arr.length-1));
               }
 
-              while(rand3==rand1 || rand3==rand2){
+              while(rand3==rand1 ||
+                    rand3==rand2){
                 rand3=round(random(arr.length-1));
               }
 
@@ -1992,9 +2014,13 @@ var cnv;
 
               distance=dist(nod.x,nod.y,arr[n].x,arr[n].y);
 
-              if(distance<min && distance!==0 && arr[n].dirty==false){
+              if(distance<min &&
+                 distance!==0 &&
+                 arr[n].dirty==false){
+
                 min=distance;
                 index=n;
+
               }
 
             }
@@ -2032,6 +2058,25 @@ var cnv;
 
           };
 
+          function reverseNodes(arr){
+
+            var newArray=[];
+            var id=0;
+
+            for(var n=0; n<arr.length; n++){
+              
+              newArray.push(arr[arr.length-1-n]);
+              // newArray[n].id=id;
+              id++;
+
+            }
+            
+            arrayCopy(newArray, arr);
+
+            // return arr;
+
+          };
+
           function nearestNeighbor(){
 
             for(var n=0; n<4950; n++){
@@ -2066,45 +2111,54 @@ var cnv;
 // frameRate(2);
             for(var n=0; n<1000; n++){
 
-              p.factor-=0.0000001;
+              p.factor-=0.000001;
               p.factor=constrain(p.factor,1,1.2);
 
-                // switch(true){
+                switch(true){
                 
-                //   case p.factor>1.075:  
+                  case p.factor>1.075:  
     
-                //   // print(id);
-                //   // arrayCopy(p.bestNodes, p.workingNodes);
+                  // print(id);
+                  // arrayCopy(p.bestNodes, p.workingNodes);
 
-                //   var id=getLongest(p.workingNodes);
+                    var id=getLongest(p.workingNodes);
+
+                    swap2Length(id,p.workingNodes);
+                    // swap2Closest(p.workingNodes);
+                    swap3Consecutive(p.workingNodes);
                   
-                //                       swap2Length(id,p.workingNodes);
-                //                       //   swap2Closest(p.workingNodes);
-                //                       //   swap3Consecutive(p.workingNodes);
-                //                         break;
+                    // swap2Length(0,p.workingNodes);
+                    // swap2Closest(p.workingNodes);
+                    // swap2Consecutive(p.workingNodes);                  
+                    // swap3Consecutive(p.workingNodes);
+                    // swap3Random(p.workingNodes);
+                    // swap2Random(p.workingNodes);
+                    break;
 
-                //   case p.factor>1.05:   swap3Random(p.workingNodes);
-                //                         break;                                      
+                  // case p.factor>1.05:   swap3Random(p.workingNodes);
+                  //                       break;                                      
 
-                //   case p.factor>1:      swap2Half(p.workingNodes); 
-                //                         break;
+                  // case p.factor>1:      swap2Half(p.workingNodes); 
+                  //                       break;
 
-                //   default:              
+                  default:              
 
                     arrayCopy(p.bestNodes, p.workingNodes);
 
-                    if     (frameCount%2==0) { 
-                                               swap2Length(getLongest(p.workingNodes),p.workingNodes);
-                                               swap2Closest(p.workingNodes);
-                                               swap2Consecutive(p.workingNodes); 
-                                                                                 }
+                    if     (frameCount%2==0) { swap2Closest(p.workingNodes);     }
+                    else if(frameCount%3==0) { swap2Length(getLongest(p.workingNodes),p.workingNodes); }
+                    else if(frameCount%5==0) { swap2Consecutive(p.workingNodes); }
                     else if(frameCount%7==0) { swap3Consecutive(p.workingNodes); }
                     else if(frameCount%11==0){ swap3Random(p.workingNodes);      }
                     else                     { swap2Random(p.workingNodes);      }
 
-                //     break;
+                    break;
 
-                // }
+                }
+
+                // swapByIndex(p.bestNodes,0,p.bestNodes.length-1);
+                renumberNodes(p.bestNodes);
+                // reverseNodes(p.bestNodes);
 
                 p.workingLength = pathLength(p.workingNodes);                
 
@@ -2121,7 +2175,7 @@ var cnv;
                 }
                 
             }
-
+            // text(p.workingNodes[0].id,25,500);
             drawWorkingNodes();
             drawWorkingPath();
             drawBestPath();
@@ -2166,14 +2220,15 @@ var cnv;
           function initialCondition(){
 
             if(!p.loaded){
-              // findClosest();
-              sortByLongest(p.workingNodes);
+              findClosest();
+              // sortByX(p.workingNodes);
               // print("loaded");
             }
-// Find Closest    - 
-// Sort by X       - 7404
+
+// Find Closest    - 5103
+// Sort by X       - 6463
 // Sort by Y       - 7490
-// Sort by Longest - 7299
+// Sort by Longest - 6956
 
           };
 
