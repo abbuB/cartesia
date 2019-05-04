@@ -3684,4 +3684,4 @@ print('resized');
 
   tsp.js
 
-  */
+  *
