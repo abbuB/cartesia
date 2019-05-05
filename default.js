@@ -1,11 +1,28 @@
   /* Constants ================================================================= */
   {
 
+    var ALGORITHMS={
+      SIMULATEDANNEALING:     0,
+      GENETIC:                1,
+      BRUTEFORCE:             2,
+      CRITTERS:               3,
+      NEAREST:                4,
+      ITERATE
+    }
+
     var APPMODES={
       INTRO:        0,
       GAME:         1,
       EXTRO:        2,
       INSTRUCTIONS: 3
+    };
+
+    var SOLVEMODES={
+      RANDOM:     0,    //  Randomly swaps points
+      GENETIC:    1,    //  Grafts exisint sections together
+      ANNEALING:  2,    //  Accepts longer paths initially but less so over time
+      MAGNETIC:   3,    //  Creates a magnetic field and a filament 
+      BESTFIT:    4     //  Machine learning best fit algo
     };
 
     var SCORESTYLES={
