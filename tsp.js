@@ -316,28 +316,28 @@ forum.processing.org
 
   }
 
-  var data=[
-            [204,568],[545,333],[229,425],[289,379],[275,275],
-            [442,503],[169,401],[456, 82],[528,433],[607,460],
-            [182,212],[319,502],[552,164],[362,393],[625,215],
-            [195,472],[551,538],[255,392],[248,345],[605,416],
-            [484,128],[470,382],[491, 58],[466,522],[666,489],
-            [159,387],[599,233],[153,207],[354,327],[432, 77],
-            [422,467],[554,325],[377,550],[210,110],[699,463],
-            [536,241],[408, 98],[656,102],[469 ,38],[516,213],
-            [653,128],[642, 45],[428,240],[672,235],[162,420],
-            [448,490],[267, 46],[692,293],[504,132],[303,534],
-            [458,327],[664,550],[341,481],[462, 33],[193,574],
-            [404,504],[382,208],[433,354],[673,146],[635,317],
-            [338, 42],[704,447],[503,560],[294,503],[228,325],
-            [309,159],[480,546],[564, 85],[175,380],[264,509],
-            [183,553],[204,392],[479,512],[536,440],[409,119],
-            [603,260],[422,129],[344,408],[653,335],[463,308],
-            [495,427],[578,121],[397,336],[432,324],[635,259],
-            [351,465],[481,541],[268,447],[612,390],[698,162],
-            [163,270],[655,328],[513,249],[316,198],[568,436],
-            [673,198],[454,154],[185, 53],[441,240],[262,462]
-           ];
+    var data=[
+              [204,568],[545,333],[229,425],[289,379],[275,275],
+              [442,503],[169,401],[456, 82],[528,433],[607,460],
+              [182,212],[319,502],[552,164],[362,393],[625,215],
+              [195,472],[551,538],[255,392],[248,345],[605,416],
+              [484,128],[470,382],[491, 58],[466,522],[666,489],
+              [159,387],[599,233],[153,207],[354,327],[432, 77],
+              [422,467],[554,325],[377,550],[210,110],[699,463],
+              [536,241],[408, 98],[656,102],[469 ,38],[516,213],
+              [653,128],[642, 45],[428,240],[672,235],[162,420],
+              [448,490],[267, 46],[692,293],[504,132],[303,534],
+              [458,327],[664,550],[341,481],[462, 33],[193,574],
+              [404,504],[382,208],[433,354],[673,146],[635,317],
+              [338, 42],[704,447],[503,560],[294,503],[228,325],
+              [309,159],[480,546],[564, 85],[175,380],[264,509],
+              [183,553],[204,392],[479,512],[536,440],[409,119],
+              [603,260],[422,129],[344,408],[653,335],[463,308],
+              [495,427],[578,121],[397,336],[432,324],[635,259],
+              [351,465],[481,541],[268,447],[612,390],[698,162],
+              [163,270],[655,328],[513,249],[316,198],[568,436],
+              [673,198],[454,154],[185, 53],[441,240],[262,462]
+            ];
 
 var cnv;
 
@@ -354,8 +354,6 @@ var cnv;
     textFont('sans-serif',12);
 
     cursor(WAIT);
-
-    randomSeed(millis());
 
     strokeCap(SQUARE);
     strokeJoin(MITER);
@@ -1510,6 +1508,8 @@ var cnv;
 
         this.loaded             = false;
 
+        this.index              =0;
+
       };
       field.prototype=Object.create(control.prototype);
       field.prototype.reset        = function(){
@@ -1538,9 +1538,12 @@ var cnv;
           var y0=0;
 
           for (var n=0; n<app.nodes; n++){
+
+            x0=data[n][0];
+            y0=data[n][1];
             
-            x0=data[n][0];  //floor(random(150, p.w-20));
-            y0=data[n][1];  //floor(random( 20, p.h-20));
+            // x0=floor(random(150, p.w-20));
+            // y0=floor(random( 20, p.h-20));
 
             p.originalNodes.push(new node(n,
                                           this,
@@ -1765,7 +1768,7 @@ var cnv;
             function swap2Length(id,arr){
 
               var rand1=id;
-              var rand2=id+2;
+              var rand2=id;
 
               if(rand2>arr.length-1){
                 rand2=0;
@@ -1901,6 +1904,30 @@ var cnv;
 
             };
 
+            function swap2Segments(arr, n)    {
+
+              var tmp;
+              var index1=n;
+              var index2=index1+1;
+              var index3=index2+1;
+
+              if     (index2==arr.length  ){ index2=0; }
+              else if(index2==arr.length+1){ index2=1; }
+
+              var index3=index2+1;
+
+              if     (index3==arr.length  ){ index3=0; }
+              else if(index3==arr.length+1){ index3=1; }
+
+              tmp=arr[index1];
+
+              arr[index1]=arr[index2];
+              arr[index2]=arr[index3];
+              arr[index3]=tmp;
+
+              // print(index1 + ","+index2+","+index3);
+            };
+frameRate(10);
           }
 
           function nodePermutations(n, arr){
@@ -2029,15 +2056,13 @@ var cnv;
 
           };
 
-          function findClosest(){
+          function findClosest(startNode){
 
             var closestNodes=[];
 
             // Start with the first node
-            var nod = p.originalNodes[0];
-            nod.dirty=true;
-
-            closestNodes.push(nod);
+            var nod = p.originalNodes[startNode];
+// nod.dirty=false;
 
             while(nod!=null){
 
@@ -2100,82 +2125,98 @@ var cnv;
             drawBestPath();
 
           };
-          
+
+          function updateTour(){
+
+            p.workingLength = pathLength(p.workingNodes);                
+
+            if(p.workingLength<p.bestLength*p.factor){
+
+              p.bestLength = p.workingLength;
+
+                if(p.workingLength<p.historicLength){
+                  p.historicLength=p.workingLength;
+                  arrayCopy(p.workingNodes, p.bestNodes);
+                  // print(round(p.workingLength));
+                }
+
+            }
+
+          };
+
+          function iterate(){
+
+            // arrayCopy(p.bestNodes, p.workingNodes);
+            // renumberNodes(p.bestNodes);
+
+            swap2Segments(p.bestNodes,p.index);
+// print(p.index);
+            p.index++;
+
+            if(p.index>p.bestNodes.length-1){
+              p.index=0;
+            }
+
+          };
+
           function simulatedAnnealing(){
 
             fill(64);
             noStroke();
             textSize(20);
 
-              // text(id,25,250);
-// frameRate(2);
-            for(var n=0; n<1000; n++){
+            // for(var n=0; n<1000; n++){
 
-              p.factor-=0.000001;
+              p.factor-=0.001;
               p.factor=constrain(p.factor,1,1.2);
 
                 switch(true){
                 
                   case p.factor>1.075:  
-    
-                  // print(id);
-                  // arrayCopy(p.bestNodes, p.workingNodes);
 
-                    var id=getLongest(p.workingNodes);
+                    // var id=getLongest(p.workingNodes);
 
-                    swap2Length(id,p.workingNodes);
+                    // swap2Length(id,p.workingNodes);
                     // swap2Closest(p.workingNodes);
-                    swap3Consecutive(p.workingNodes);
-                  
-                    // swap2Length(0,p.workingNodes);
-                    // swap2Closest(p.workingNodes);
-                    // swap2Consecutive(p.workingNodes);                  
                     // swap3Consecutive(p.workingNodes);
-                    // swap3Random(p.workingNodes);
-                    // swap2Random(p.workingNodes);
+                    // swap3Segments(p.workingNodes);
+
                     break;
 
-                  // case p.factor>1.05:   swap3Random(p.workingNodes);
-                  //                       break;                                      
+                  case p.factor>1.05:   swap3Random(p.workingNodes);
+                                        break;                                      
 
-                  // case p.factor>1:      swap2Half(p.workingNodes); 
-                  //                       break;
+                  case p.factor>1:      swap2Half(p.workingNodes); 
+                                        break;
 
-                  default:              
+                  default:
 
                     arrayCopy(p.bestNodes, p.workingNodes);
+                    // renumberNodes(p.bestNodes);
 
-                    if     (frameCount%2==0) { swap2Closest(p.workingNodes);     }
-                    else if(frameCount%3==0) { swap2Length(getLongest(p.workingNodes),p.workingNodes); }
-                    else if(frameCount%5==0) { swap2Consecutive(p.workingNodes); }
-                    else if(frameCount%7==0) { swap3Consecutive(p.workingNodes); }
-                    else if(frameCount%11==0){ swap3Random(p.workingNodes);      }
-                    else                     { swap2Random(p.workingNodes);      }
+                    swap2Segments(p.bestNodes,p.index);
+// print(p.index);
+                    p.index++;
 
-                    break;
-
-                }
-
-                // swapByIndex(p.bestNodes,0,p.bestNodes.length-1);
-                renumberNodes(p.bestNodes);
-                // reverseNodes(p.bestNodes);
-
-                p.workingLength = pathLength(p.workingNodes);                
-
-                if(p.workingLength<p.bestLength*p.factor){
-
-                  p.bestLength = p.workingLength;
-
-                    if(p.workingLength<p.historicLength){
-                      p.historicLength=p.workingLength;
-                      arrayCopy(p.workingNodes, p.bestNodes);
-                      print(round(p.workingLength));
+                    if(p.index>p.bestNodes.length-1){
+                      p.index=0;
                     }
 
+                    // if     (frameCount%2==0) { swap2Closest(p.workingNodes);     }
+                    // else if(frameCount%3==0) { swap2Length(getLongest(p.workingNodes),p.workingNodes); }
+                    // else if(frameCount%5==0) { swap2Consecutive(p.workingNodes); }
+                    // else if(frameCount%7==0) { swap3Consecutive(p.workingNodes); }
+                    // else if(frameCount%11==0){ swap3Random(p.workingNodes);      }
+                    // else                     { swap2Random(p.workingNodes);      }
+
+                    // break;
+
                 }
-                
-            }
-            // text(p.workingNodes[0].id,25,500);
+
+                updateTour();
+
+            // }
+
             drawWorkingNodes();
             drawWorkingPath();
             drawBestPath();
@@ -2217,19 +2258,39 @@ var cnv;
 
           };
 
-          function initialCondition(){
+          function toggleDirty(){
 
-            if(!p.loaded){
-              findClosest();
-              // sortByX(p.workingNodes);
-              // print("loaded");
+            for(var n=0; n<p.workingNodes.length; n++){
+              p.workingNodes[n].dirty=!p.workingNodes[n].dirty;
             }
 
-// Find Closest    - 5103
-// Sort by X       - 6463
-// Sort by Y       - 7490
-// Sort by Longest - 6956
+          }
+          function initialCondition(){
 
+            var minLength=Infinity;
+            var length=Infinity;
+            var minID=round(random(p.workingNodes.length-1));
+
+            for(var n=0; n<p.workingNodes.length; n++){
+
+              findClosest(n);
+
+              length = pathLength(p.workingNodes);   
+
+              if(length<minLength){ 
+                minLength=length;
+                minID=n;
+              }
+
+              print(n + " : " + length);
+              toggleDirty();
+
+            }
+            
+            print(minID + " : " + minLength);
+
+            findClosest(minID);
+              
           };
 
           push();
@@ -2238,10 +2299,11 @@ var cnv;
 
               border();
 
-              initialCondition();
+              if(!p.loaded){ initialCondition(); }
 
               switch(this.algorithm){
 
+                case ALGORITHMS.ITERATE:            interate();           break;
                 case ALGORITHMS.NEAREST:            nearestNeighbor();    break;
                 case ALGORITHMS.SIMULATEDANNEALING: simulatedAnnealing(); break;
                 case ALGORITHMS.BRUTEFORCE:         bruteForce();         break;
@@ -2469,7 +2531,7 @@ var cnv;
 
           fill(96);          
           textSize(10);
-
+if(this.id==0){textSize(30); }
             text(this.id,p.x+10,p.y+10);
 
         pop();
@@ -3684,4 +3746,4 @@ print('resized');
 
   tsp.js
 
-  *
+  */
