@@ -435,6 +435,8 @@ var cnv;
 
       this.animations     = [];
 
+      this.currentNode    = null;
+
     }
 
   };
@@ -1660,7 +1662,7 @@ var cnv;
                 }
 
               }
-
+// print(len);
             return len;
 
           };
@@ -1726,6 +1728,11 @@ var cnv;
               endShape(CLOSE);
 
             };
+            function drawGreedyNodes()   {
+
+              forEach(p.greedyNodes, 'draw');
+
+            };            
             function drawGreedyPath()   {
 
               stroke(128,0,0);
@@ -2230,76 +2237,80 @@ p.factor=1;
             function placeNode(nod){
 
               var arr=[];
-              
+
+              p.greedyNodes.unshift(nod);
+
               arrayCopy(p.greedyNodes,arr);
 
-              var bestPosition=arr.length-1;
+              var bestPosition=0;
               
-              var minDist=Infinity;
-              var dist=Infinity;
+              var dist=tourLength(arr);
+              var minDist=dist;
 
-              dist=tourLength(arr);
-              minDist=dist;
+              for(var n=0; n<arr.length-1; n++){
 
-              for(var n=0; n<arr.length; n++){
-
-                swap(arr,arr.length-1,n);
+                swap(arr,n,n+1);
 
                 dist=tourLength(arr);
 
                 if(dist<minDist){
+                  // print(dist + " , " + minDist);
+                  // print(n);
                   minDist=dist;
-                  bestPosition=n;
+                  bestPosition=n+1;    
+                  // print(arr[n].id);
                 }
-
-                arrayCopy(p.greedyNodes,arr);
 
               }
 
-              swap(arr,arr.length-1,bestPosition);
+print("Best: " + bestPosition);
 
-              arrayCopy(arr, p.greedyNodes);
+              swap(p.greedyNodes, bestPosition, 0);
 
+              // print(p.greedyNodes.length); 
+              // print(p.greedyNodes);
+              // renumberNodes(p.greedyNodes);
             };
 
             var nod;
 
             //  Randomly add the 1st node
             if(p.greedyNodes.length==0){
+// nod=p.workingNodes[round(random(p.workingNodes.length-1))];
+              nod=p.workingNodes[0];
 
-              var nod=p.workingNodes[round(random(p.workingNodes.length-1))];
-
-              p.greedyNodes.push(nod);
+              // p.greedyNodes.push(nod);
 
             }
+            else{
+              nod=p.greedyNodes[p.greedyNodes.length-1];
             
-            nod=p.greedyNodes[p.greedyNodes.length-1];
+            }
 
-            if(p.greedyNodes.length<p.workingNodes.length){
+            // if(p.greedyNodes.length<p.workingNodes.length){
+            if(p.greedyNodes.length<5){
 
               nod=getFurthestNode(nod);
 
               if(nod!=null){
-
-                p.greedyNodes.push(nod);
 
                 placeNode(nod);
 
               }
 
             }
-
-            arrayCopy(p.bestNodes, p.workingNodes);
-            renumberNodes(p.bestNodes);
+// print(p.greedyNodes.length);
+            // arrayCopy(p.bestNodes, p.workingNodes);
+            // renumberNodes(p.bestNodes);
 
             updateTour();
 
-            drawWorkingNodes();
+            drawGreedyNodes();
             // drawBestPath();
 
             drawGreedyPath();
 
-            frameRate(10);
+            // frameRate(1);
 
           };
 
@@ -2426,7 +2437,7 @@ p.factor=1;
                 minID=n;
               }
 
-              print(n + " : " + length);
+              // print(n + " : " + length);
               toggleDirty();
 
             }
@@ -2464,6 +2475,9 @@ p.factor=1;
               }
 
               drawProperties();
+              if(app.currentNode!=null){
+text(app.currentNode.id,50,500);
+            }
 
           pop();
 
@@ -2704,6 +2718,10 @@ if(this.id==0){textSize(20); }
       /* Overridden because of the shape */
       
           this.hitTest(x+this.x, y+this.y);
+
+          if(this.hit){
+            app.currentNode=this;
+          }
 
       };
       node.prototype.clicked       = function(){
