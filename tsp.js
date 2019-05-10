@@ -1459,6 +1459,8 @@ var cnv;
 
     /** Field        -------------------------------------------------- */
     {
+var increment=0;
+var cNode=0;
 
     var HEX_SIZE=0;
 
@@ -1741,7 +1743,7 @@ var cnv;
 
               beginShape();
 
-                for(var n=0; n<p.greedyNodes.length; n++){ 
+                for(var n=p.greedyNodes.length-1; n>-1; n--){ 
                   vertex(p.greedyNodes[n].x, p.greedyNodes[n].y);
                 }
 
@@ -2236,79 +2238,93 @@ p.factor=1;
 
             function placeNode(nod){
 
-              var arr=[];
+              // p.greedyNodes.push(nod);
 
-              p.greedyNodes.unshift(nod);
-
-              arrayCopy(p.greedyNodes,arr);
+              var arr=p.greedyNodes;
 
               var bestPosition=0;
               
               var dist=tourLength(arr);
               var minDist=dist;
 
-              for(var n=0; n<arr.length-1; n++){
+              for(var n=0; n<arr.length; n++){
 
-                swap(arr,n,n+1);
+                if(n<arr.length-1){
+                  swap(arr,n,n+1);
+                }
 
                 dist=tourLength(arr);
 
                 if(dist<minDist){
-                  // print(dist + " , " + minDist);
-                  // print(n);
                   minDist=dist;
-                  bestPosition=n+1;    
-                  // print(arr[n].id);
+                  bestPosition=n+1;
                 }
 
               }
 
-print("Best: " + bestPosition);
+// print("Best: " + bestPosition);
 
-              swap(p.greedyNodes, bestPosition, 0);
+              var nod=arr[arr.length-1];
+              arr.pop();
 
-              // print(p.greedyNodes.length); 
-              // print(p.greedyNodes);
-              // renumberNodes(p.greedyNodes);
+              arr.splice(bestPosition, 0, nod);
+
+              // print(arr);
+
+              cNode=arr[bestPosition];
+
             };
 
-            var nod;
+            // if(p.greedyNodes.length<increment){
 
-            //  Randomly add the 1st node
-            if(p.greedyNodes.length==0){
-// nod=p.workingNodes[round(random(p.workingNodes.length-1))];
-              nod=p.workingNodes[0];
+              var nod;
 
-              // p.greedyNodes.push(nod);
+              //  Randomly add the 1st node
+              if(p.greedyNodes.length==0){
+                var r=round(random(p.workingNodes.length-1));
+                print(r);
+  nod=p.workingNodes[r];
+  // print(nod.id);
+  p.greedyNodes.push(nod);
+cNode=p.greedyNodes[0];
 
-            }
-            else{
-              nod=p.greedyNodes[p.greedyNodes.length-1];
-            
-            }
+                // nod=p.workingNodes[0];
+              }
+              else{
+                
+                // if(p.greedyNodes.length-1<increment){
+                if(p.greedyNodes.length<p.workingNodes.length){
+// print(cNode.id);
+                  nod=cNode;
 
-            // if(p.greedyNodes.length<p.workingNodes.length){
-            if(p.greedyNodes.length<5){
+                  nod=getFurthestNode(nod);
 
-              nod=getFurthestNode(nod);
+                  if(nod!=null){
 
-              if(nod!=null){
+                    p.greedyNodes.unshift(nod);
+                    placeNode(nod);
 
-                placeNode(nod);
+                  }
+
+                }
 
               }
 
-            }
-// print(p.greedyNodes.length);
-            // arrayCopy(p.bestNodes, p.workingNodes);
-            // renumberNodes(p.bestNodes);
+            // }
+
+            // if(p.greedyNodes.length<p.workingNodes.length){
+            // while(p.greedyNodes.length<increment){
+
+
+
+            // }
 
             updateTour();
 
             drawGreedyNodes();
-            // drawBestPath();
-
             drawGreedyPath();
+
+            drawBestPath();
 
             // frameRate(1);
 
@@ -2390,7 +2406,8 @@ print("Best: " + bestPosition);
                    '\n\n' + 'Working Length:'  +
                    '\n' +   'Best Length' +
                    '\n' +   'Factor:'     +
-                   '\n' +   'Historic Length:', 10, 10);
+                   '\n' +   'Historic Length:' +
+                   '\n\n' + 'Greedy Length:', 10, 10);
 
             stroke(64);  
             fill(64);  
@@ -2399,7 +2416,8 @@ print("Best: " + bestPosition);
                    '\n\n' + round(p.workingLength)  +
                    '\n'   + round(p.bestLength) +
                    '\n'   + nf(p.factor,1,5)     +
-                   '\n'   + round(p.historicLength), 110, 10);
+                   '\n'   + round(p.historicLength) +
+                   '\n\n' + round(p.greedyNodes.length),  +110, 10);
 
             textSize(11);
 
@@ -3569,6 +3587,26 @@ ellipse(this.x,this.y,this.w,this.h);
         // case CENTER:  forEach(app.controls,'cclicked'); break;
 
         default:     break;
+
+      }
+
+      switch(true){
+        
+        case mouseButton==LEFT:
+
+          if(app.keys[KEYCODES.CONTROL]){
+            increment--;
+          }
+          else{
+            increment++;
+          }
+
+          break;
+
+        case mouseButton==RIGHT:           break;
+
+        
+        default: break;
 
       }
 
