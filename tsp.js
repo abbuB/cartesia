@@ -420,7 +420,7 @@ var cnv;
 
       this.mode           = SOLVEMODES.RANDOM; //
 
-      this.nodes          = 100;                //  Total # of nodes to be connected
+      this.nodes          = 200;                //  Total # of nodes to be connected
 
       this.field;                               //  Set in the field control initialization
       
@@ -1502,9 +1502,9 @@ var cNode=0;
         this.historicLength     = Infinity; //  Best recorded overall
         this.greedyLength       = Infinity; //  Length of Greedy Path
 
-        this.greedyMethod       = GREEDYMETHODS.FURTHEST;
+        // this.greedyMethod       = GREEDYMETHODS.FURTHEST;
         // this.greedyMethod       = GREEDYMETHODS.CLOSEST;
-        // this.greedyMethod       = GREEDYMETHODS.RANDOM;
+        this.greedyMethod       = GREEDYMETHODS.RANDOM;
 
         this.factor             = 1.1;
 
@@ -1520,7 +1520,7 @@ var cNode=0;
 
         this.loaded             = false;
 
-        this.index              =0;
+        this.index              = 0;
 
       };
       field.prototype=Object.create(control.prototype);
@@ -1552,13 +1552,13 @@ var cNode=0;
           var y0=0;
 
           // for (var n=0; n<app.nodes; n++){
-          for (var n=0; n<100; n++){
+          for (var n=0; n<app.nodes; n++){
 
-            x0=data[n][0];
-            y0=data[n][1];
+            // x0=data[n][0];
+            // y0=data[n][1];
             
-            // x0=floor(random(150, p.w-20));
-            // y0=floor(random( 20, p.h-20));
+            x0=floor(random(150, p.w-20));
+            y0=floor(random( 20, p.h-20));
 
             p.originalNodes.push(new node(n,
                                           this,
@@ -2237,12 +2237,10 @@ p.factor=1;
                 if(nod.closest[n].loaded==false){
                   nod.closest[n].loaded=true;
                   retNode=nod.closest[n];
-                  break;
+                  return retNode;
                 }
 
               }
-              
-              return retNode;
 
             };
 
@@ -2255,12 +2253,10 @@ p.factor=1;
                 if(nod.closest[n].loaded==false){
                   nod.closest[n].loaded=true;
                   retNode=nod.closest[n];
-                  break;
+                  return retNode;
                 }
 
               }
-              
-              return retNode;
 
             };
 
@@ -2273,12 +2269,10 @@ p.factor=1;
                 if(nod.closest[n].loaded==false){
                   nod.closest[n].loaded=true;
                   retNode=nod.closest[n];
-                  break;
+                  return retNode;
                 }
 
               }
-              
-              return retNode;
 
             };
 
@@ -2305,9 +2299,9 @@ p.factor=1;
               }
 
               var nod=arr[arr.length-1];
-              
+
               arr.splice(bestPosition, 0, nod); //  Insert the node into the correct position
-              arr.splice(arr.length-1,1);         //  Remove the node from the last position
+              arr.splice(arr.length-1,1);       //  Remove the node from the last position
 
               cNode=arr[bestPosition];          //  Set the currently selected node
 
@@ -2327,10 +2321,10 @@ p.factor=1;
                 nod.loaded=true;
 
                 cNode=nod;
-  
+  // print(nod.id + " : 0");
               }
-              else if(p.greedyNodes.length<p.workingNodes.length){
-              // else if(p.greedyNodes.length<increment){
+              // else if(p.greedyNodes.length<p.workingNodes.length){
+              else if(p.greedyNodes.length<app.nodes){
                 
                 switch(p.greedyMethod){
                 
@@ -2364,9 +2358,9 @@ p.factor=1;
 
               }
               else{
-                arrayCopy(p.greedyNodes, p.workingNodes);
-                swap2Closest(p.workingNodes);
-                updateTour();
+                // arrayCopy(p.greedyNodes, p.workingNodes);
+                // swap2Closest(p.workingNodes);
+                // updateTour();
               }
             // }
 
@@ -2383,7 +2377,7 @@ noStroke();
 
             // drawBestPath();
 
-            frameRate(1);
+            // frameRate(20);
 
           };
 
@@ -2772,7 +2766,7 @@ text(app.currentNode.id,50,500);
           fill(96);          
           textSize(10);
 // if(this.id==0){textSize(20); }
-            text(this.id,p.x+5,p.y+5);
+            // text(this.id,p.x+5,p.y+5);
 
         pop();
 
@@ -2804,7 +2798,7 @@ text(app.currentNode.id,50,500);
         if(this.hit){
           this.parent.activeCell=this;
           app.focus=this;
-          print(this.closest);  
+          // print(this.closest);  
         }
 
         if(this.active){
