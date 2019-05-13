@@ -420,7 +420,7 @@ var cnv;
 
       this.mode           = SOLVEMODES.RANDOM; //
 
-      this.nodes          = 200;                //  Total # of nodes to be connected
+      this.nodes          = 100;                //  Total # of nodes to be connected
 
       this.field;                               //  Set in the field control initialization
       
@@ -436,6 +436,8 @@ var cnv;
       this.animations     = [];
 
       this.currentNode    = null;
+
+      this.field          = null;
 
     }
 
@@ -1513,6 +1515,8 @@ var cNode=0;
         // this.algorithm          = ALGORITHMS.NEAREST;
         // this.algorithm          = ALGORITHMS.ITERATE;
         this.algorithm          = ALGORITHMS.GREEDY;
+        // this.algorithm          = ALGORITHMS.ANTCOLONY;
+        // this.algorithm          = ALGORITHMS.GENETIC;
 
         this.reset();
 
@@ -1521,6 +1525,8 @@ var cNode=0;
         this.loaded             = false;
 
         this.index              = 0;
+
+        app.field               = this;
 
       };
       field.prototype=Object.create(control.prototype);
@@ -1554,11 +1560,11 @@ var cNode=0;
           // for (var n=0; n<app.nodes; n++){
           for (var n=0; n<app.nodes; n++){
 
-            // x0=data[n][0];
-            // y0=data[n][1];
+            x0=data[n][0];
+            y0=data[n][1];
             
-            x0=floor(random(150, p.w-20));
-            y0=floor(random( 20, p.h-20));
+            // x0=floor(random(150, p.w-20));
+            // y0=floor(random( 20, p.h-20));
 
             p.originalNodes.push(new node(n,
                                           this,
@@ -2138,7 +2144,7 @@ var cNode=0;
 
           function nearestNeighbor(){
 
-            for(var n=0; n<4950; n++){
+            for(var n=0; n<1; n++){
 
                 swap3Random(p.workingNodes);
 
@@ -2177,50 +2183,108 @@ var cNode=0;
 
           };
 
+//           function iterate(){
+// p.factor=1;
+//             arrayCopy(p.bestNodes,p.workingNodes);
+//             renumberNodes(p.bestNodes);
+
+//             var index1=p.index;
+//             var index2=index1+1;
+//             var index3=index2+1;
+//             var index4=index3+1;
+
+//             if     (index2>p.workingNodes.length-1){ index2=0; }
+
+//             if     (index3>p.workingNodes.length-1){ index3=0; }
+//             else if(index3>p.workingNodes.length  ){ index3=1; }
+
+//             if     (index4>p.workingNodes.length-1){ index4=0; }
+//             else if(index4>p.workingNodes.length  ){ index4=1; }
+//             else if(index4>p.workingNodes.length+1){ index4=2; }
+
+//             swap(p.workingNodes,index1,index2);
+//             updateTour();
+
+//             swap(p.workingNodes,index1,index3);
+//             updateTour();
+
+//             swap(p.workingNodes,index1,index4);
+//             updateTour();
+
+//             swap(p.workingNodes,index2,index3);
+//             updateTour();
+
+//             swap(p.workingNodes,index2,index4);
+//             updateTour();
+
+//             swap(p.workingNodes,index3,index4);
+//             updateTour();
+
+//             p.index++;
+
+//             if(p.index>p.bestNodes.length-1){ p.index=0; }
+
+//             drawWorkingNodes();
+//             drawWorkingPath();
+//             drawBestPath();
+
+//           };
+
           function iterate(){
-p.factor=1;
-            arrayCopy(p.bestNodes,p.workingNodes);
-            renumberNodes(p.bestNodes);
+
+            function updateTour(){
+            
+              p.greedyLength = tourLength(p.greedyNodes);
+
+              if(p.greedyLength<p.bestLength){
+                arrayCopy(p.greedyNodes, p.bestNodes);
+                p.bestLength=p.greedyLength;
+              }
+              else{
+                arrayCopy(p.bestNodes, p.greedyNodes);
+              }
+
+            };
 
             var index1=p.index;
             var index2=index1+1;
             var index3=index2+1;
             var index4=index3+1;
 
-            if     (index2>p.workingNodes.length-1){ index2=0; }
+            if     (index2>p.greedyNodes.length-1){ index2=0; }
 
-            if     (index3>p.workingNodes.length-1){ index3=0; }
-            else if(index3>p.workingNodes.length  ){ index3=1; }
+            if     (index3>p.greedyNodes.length-1){ index3=0; }
+            else if(index3>p.greedyNodes.length  ){ index3=1; }
 
-            if     (index4>p.workingNodes.length-1){ index4=0; }
-            else if(index4>p.workingNodes.length  ){ index4=1; }
-            else if(index4>p.workingNodes.length+1){ index4=2; }
+            if     (index4>p.greedyNodes.length-1){ index4=0; }
+            else if(index4>p.greedyNodes.length  ){ index4=1; }
+            else if(index4>p.greedyNodes.length+1){ index4=2; }
 
-            swap(p.workingNodes,index1,index2);
+            swap(p.greedyNodes,index1,index2);
             updateTour();
 
-            swap(p.workingNodes,index1,index3);
+            swap(p.greedyNodes,index1,index3);
             updateTour();
 
-            swap(p.workingNodes,index1,index4);
+            swap(p.greedyNodes,index1,index4);
             updateTour();
 
-            swap(p.workingNodes,index2,index3);
+            swap(p.greedyNodes,index2,index3);
             updateTour();
 
-            swap(p.workingNodes,index2,index4);
+            swap(p.greedyNodes,index2,index4);
             updateTour();
 
-            swap(p.workingNodes,index3,index4);
+            swap(p.greedyNodes,index3,index4);
             updateTour();
 
             p.index++;
 
-            if(p.index>p.bestNodes.length-1){ p.index=0; }
+            if(p.index>p.greedyNodes.length-1){ p.index=0; }
 
-            drawWorkingNodes();
-            drawWorkingPath();
-            drawBestPath();
+            // drawWorkingNodes();
+            // drawWorkingPath();
+            // drawBestPath();
 
           };
 
@@ -2307,8 +2371,6 @@ p.factor=1;
 
             };
 
-            // if(p.greedyNodes.length<increment){
-
               var nod;
 
               //  Randomly add the 1st node
@@ -2321,16 +2383,16 @@ p.factor=1;
                 nod.loaded=true;
 
                 cNode=nod;
-  // print(nod.id + " : 0");
+  
               }
               // else if(p.greedyNodes.length<p.workingNodes.length){
               else if(p.greedyNodes.length<app.nodes){
                 
                 switch(p.greedyMethod){
                 
-                  case GREEDYMETHODS.CLOSEST:  nod=getClosestNode(cNode);  break;
+                  case GREEDYMETHODS.CLOSEST:  nod=getClosestNode( cNode); break;
                   case GREEDYMETHODS.FURTHEST: nod=getFurthestNode(cNode); break;
-                  case GREEDYMETHODS.RANDOM:   nod=getRandomNode(cNode);   break;
+                  case GREEDYMETHODS.RANDOM:   nod=getRandomNode(  cNode); break;
 
                   default:                                                 break;
                 
@@ -2344,40 +2406,30 @@ p.factor=1;
                                               //  that minimizes the tour length
                 }
 
-                // }
-
-                // renumberNodes(p.greedyNodes);
-
-                // var s='';
-
-                // for(var n=0; n<p.greedyNodes.length; n++){
-                //   s=s+p.greedyNodes[n].id + ", ";
-                // }
-
                 // print(s);
-
+                arrayCopy(p.greedyNodes,p.bestNodes);
+                p.greedyLength = tourLength(p.greedyNodes);
+                p.bestLength=p.greedyLength;
               }
               else{
-                // arrayCopy(p.greedyNodes, p.workingNodes);
-                // swap2Closest(p.workingNodes);
-                // updateTour();
+                iterate();
+                
+                if(frameCount%50==0){
+                  print(p.greedyLength);
+                  this.reset();
+                }
+
               }
             // }
-
-            p.greedyLength=round(tourLength(p.greedyNodes));
 
 textSize(20);
 fill(128);
 noStroke();
 
-            text(p.greedyLength, 50,400);
+            text(round(p.greedyLength), 50,400);
 
             drawWorkingNodes();
             drawGreedyPath();
-
-            // drawBestPath();
-
-            // frameRate(20);
 
           };
 
@@ -2414,7 +2466,7 @@ noStroke();
                   default:
 
                     arrayCopy(p.bestNodes, p.workingNodes);
-                    renumberNodes(p.bestNodes);
+                    // renumberNodes(p.bestNodes);
 
                     // iterate();
 // print(p.index);
@@ -2523,7 +2575,7 @@ noStroke();
 
             translate(this.x, this.y);
 
-            // frameRate(10);
+            // frameRate(1);
 
               border();
 
@@ -2736,8 +2788,8 @@ text(app.currentNode.id,50,500);
 
           if(app.left){ this.offset=1; }
 
-          stroke(128,0,0);
-          strokeWeight(1.5);
+          stroke(128);
+          strokeWeight(0.5);
           noFill();
 
           // for(var n=0; n<p.closest.length; n++){
@@ -2764,9 +2816,9 @@ text(app.currentNode.id,50,500);
           ellipse(p.x, p.y, p.w, p.w);
 
           fill(96);          
-          textSize(10);
+          textSize(8);
 // if(this.id==0){textSize(20); }
-            // text(this.id,p.x+5,p.y+5);
+            text(this.id,p.x+5,p.y+5);
 
         pop();
 
