@@ -1,13 +1,21 @@
   /* Constants ================================================================= */
   {
 
+    var GREEDYMETHODS={
+      RANDOM:                 0,
+      CLOSEST:                1,
+      FARTHEST:               2
+    }
+
     var ALGORITHMS={
       SIMULATEDANNEALING:     0,
       GENETIC:                1,
       BRUTEFORCE:             2,
       CRITTERS:               3,
       NEAREST:                4,
-      ITERATE
+      ITERATE:                5,
+      GREEDY:                 6,
+      GROW:                   7
     }
 
     var APPMODES={
