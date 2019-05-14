@@ -1498,6 +1498,7 @@ var completed=false;
         this.workingNodes       = [];       //  Path used to experiment
         this.historicNodes      = [];       //  Overall best path
         this.greedyNodes        = [];       //  Build path by adding nodes
+        this.crossOvers         = [];       //  node couples that intersect
 
         this.originalLength     = Infinity; //  Length of orinal path
         this.workingLength      = Infinity; //  Length of path being tested
@@ -1544,6 +1545,8 @@ var completed=false;
         p.workingNodes      = [];
         p.greedyNodes       = [];
 
+        p.crossOvers        = [];
+
         p.originalLength    = Infinity;
         p.workingLength     = Infinity;
         p.bestLength        = Infinity;        
@@ -1564,11 +1567,11 @@ var completed=false;
           // for (var n=0; n<app.nodes; n++){
           for (var n=0; n<app.nodes; n++){
 
-            // x0=data[n][0];
-            // y0=data[n][1];
+            x0=data[n][0];
+            y0=data[n][1];
             
-            x0=floor(random(150, p.w-20));
-            y0=floor(random( 20, p.h-20));
+            // x0=floor(random(150, p.w-20));
+            // y0=floor(random( 20, p.h-20));
 
             p.originalNodes.push(new node(n,
                                           this,
@@ -1717,23 +1720,34 @@ var completed=false;
               arrayCopy(tempArray,p.workingNodes);
               // print(p.workingNodes[1]);            
             };
-            function reverseNodes(arr){
+            // function reverseNodes(arr){
 
-              var newArray=[];
-              var id=0;
+            //   var newArray=[];
+            //   var id=0;
   
-              for(var n=0; n<arr.length; n++){
+            //   for(var n=0; n<arr.length; n++){
                 
-                newArray.push(arr[arr.length-1-n]);
-                // newArray[n].id=id;
-                id++;
+            //     newArray.push(arr[arr.length-1-n]);
+            //     // newArray[n].id=id;
+            //     id++;
   
-              }
+            //   }
               
-              arrayCopy(newArray, arr);
+            //   arrayCopy(newArray, arr);
   
-              // return arr;
+            //   // return arr;
   
+            // };
+
+            function reverseNodes(arr,index1,index2){
+
+              while(index1!=index2){
+                print(index1 + ","+index2);
+                swap(arr,index1,index2);
+                index1++;
+                index2--;
+              }
+
             };
 
             function drawWorkingNodes() {
@@ -2227,9 +2241,9 @@ p.factor=1;
 
             if(p.index>p.bestNodes.length-1){ p.index=0; }
 
-            drawWorkingNodes();
-            drawWorkingPath();
-            drawBestPath();
+            // drawWorkingNodes();
+            // drawWorkingPath();
+            // drawBestPath();
 
           };
 
@@ -2579,11 +2593,16 @@ text(round(p.greedyLength), 50, 400);
                      node2.id!=node4.id){
 
                     if(DoLineSegmentsIntersect(node1,node2,node3,node4)){
+                      
+                      p.crossOvers.push(node1);
+                      p.crossOvers.push(node2);
+                      p.crossOvers.push(node3);
+                      p.crossOvers.push(node4);
 
-                      print(node1.id + ", " +
-                            node2.id + ", " +
-                            node3.id + ", " +
-                            node4.id);
+                      // print(node1.id + ", " +
+                      //       node2.id + ", " +
+                      //       node3.id + ", " +
+                      //       node4.id);
 
                     }
 
@@ -2612,7 +2631,7 @@ text(round(p.greedyLength), 50, 400);
                                   p.workingNodes[n].x,
                                   p.workingNodes[n].y);
                 
-                distance =abs(distance);
+                distance=abs(distance);
 
                 if(nod.id!==p.workingNodes[n].id){
                   
@@ -2636,24 +2655,62 @@ text(round(p.greedyLength), 50, 400);
               nod=p.workingNodes[n];
 
               if(canGrow(nod)){                
-                nod.radius++;
+                // nod.radius++;
               }
 
             }
 
+            if(!completed){
+              
+              p.crossOvers=[];
 
+              calculateCrossovers(); 
+            
+              print(p.crossOvers);
 
-            if(!completed){ calculateCrossovers(); }
-
-            if(frameCount==500){
-              print("=====");
-              calculateCrossovers();
             }
 
-            iterate();
+            if(frameCount==100){
+              
+              print("=====");
+              
+              p.crossOvers=[];
+              
+              calculateCrossovers();
+              
+              print(p.crossOvers);
 
-            // drawWorkingPath();
-            // drawWorkingNodes();
+              reverseNodes(p.workingNodes,75,77);
+
+              reverseNodes(p.workingNodes,27,79);
+
+              reverseNodes(p.workingNodes,0,8);
+
+              reverseNodes(p.workingNodes,18,20);
+              
+              reverseNodes(p.workingNodes,81,83);
+
+            }
+
+            if(frameCount>300){
+
+              // p.crossOvers=[];
+
+              // calculateCrossovers();
+
+              // print(p.crossOvers);
+
+              // updateTour();
+
+              iterate();
+
+            }
+
+            drawWorkingPath();
+            drawWorkingNodes();
+            // drawBestPath();
+            
+            updateTour();
 
           };
 
@@ -2981,7 +3038,7 @@ text(round(p.greedyLength), 50, 400);
           ellipse(p.x, p.y, p.radius, p.radius);
 
           fill(96);          
-          textSize(8);
+          textSize(9);
 // if(this.id==0){textSize(20); }
             text(p.id,p.x+5,p.y+5);
 
