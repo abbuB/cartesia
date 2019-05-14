@@ -1463,6 +1463,7 @@ var cnv;
     {
 var increment=0;
 var cNode=0;
+var completed=false;
 
     var HEX_SIZE=0;
 
@@ -1551,6 +1552,8 @@ var cNode=0;
 
         p.factor            = 1.1;
         p.loaded            = false;
+
+        completed           = false;
 
         function load(){
 
@@ -2512,7 +2515,91 @@ text(round(p.greedyLength), 50, 400);
             
           };
 
+          function IsOnSegment(xi, yi, xj, yj, xk, yk) {
+            
+            return (xi <= xk || xj <= xk) && (xk <= xi || xk <= xj) &&
+                   (yi <= yk || yj <= yk) && (yk <= yi || yk <= yj);
+
+          };
+
+          function ComputeDirection(xi, yi, xj, yj, xk, yk) {
+            
+            var a = (xk - xi) * (yj - yi);
+            var b = (xj - xi) * (yk - yi);
+
+            return a < b ? -1 : a > b ? 1 : 0;
+
+          };
+
+          /** Do line segments (x1, y1)--(x2, y2) and (x3, y3)--(x4, y4) intersect? */
+          function DoLineSegmentsIntersect(node1,node2,node3,node4){
+
+            var d1 = ComputeDirection(node3.x, node3.y, node4.x, node4.y, node1.x, node1.y);
+            var d2 = ComputeDirection(node3.x, node3.y, node4.x, node4.y, node2.x, node2.y);
+            var d3 = ComputeDirection(node1.x, node1.y, node2.x, node2.y, node3.x, node3.y);
+            var d4 = ComputeDirection(node1.x, node1.y, node2.x, node2.y, node4.x, node4.y);
+
+            return (((d1 > 0 && d2 < 0) || (d1 < 0 && d2 > 0)) &&
+                    ((d3 > 0 && d4 < 0) || (d3 < 0 && d4 > 0))) ||
+                     (d1 == 0 && IsOnSegment(node3.x, node3.y, node4.x, node4.y, node1.x, node1.y)) ||
+                     (d2 == 0 && IsOnSegment(node3.x, node3.y, node4.x, node4.y, node2.x, node2.y)) ||
+                     (d3 == 0 && IsOnSegment(node1.x, node1.y, node2.x, node2.y, node3.x, node3.y)) ||
+                     (d4 == 0 && IsOnSegment(node1.x, node1.y, node2.x, node2.y, node4.x, node4.y));
+
+          };
+
+          function uncross(){
+
+          };
+
+          function calculateCrossovers(){
+
+              var node1;
+              var node2;
+              var node3;
+              var node4;
+
+              for(var a=0; a<p.workingNodes.length; a++){
+
+                node1=p.workingNodes[a];
+
+                if(a==p.workingNodes.length-1){ node2=p.workingNodes[0];   }
+                else                          { node2=p.workingNodes[a+1]; }
+
+                for(var b=0; b<p.workingNodes.length; b++){
+                  
+                  node3=p.workingNodes[b];
+
+                  if(b==p.workingNodes.length-1){ node4=p.workingNodes[0];   }
+                  else                          { node4=p.workingNodes[b+1]; }
+
+                  if(node1.id!=node3.id &&
+                     node1.id!=node4.id &&
+                     node2.id!=node3.id &&
+                     node2.id!=node4.id){
+
+                    if(DoLineSegmentsIntersect(node1,node2,node3,node4)){
+
+                      print(node1.id + ", " +
+                            node2.id + ", " +
+                            node3.id + ", " +
+                            node4.id);
+
+                    }
+
+                  }
+
+                }
+
+              }
+
+              completed=true;
+
+          };
+
           function grow(){
+
+            renumberNodes(p.workingNodes);
 
             function canGrow(nod){
 
@@ -2554,8 +2641,19 @@ text(round(p.greedyLength), 50, 400);
 
             }
 
-            drawWorkingNodes();
-            drawWorkingPath();
+
+
+            if(!completed){ calculateCrossovers(); }
+
+            if(frameCount==500){
+              print("=====");
+              calculateCrossovers();
+            }
+
+            iterate();
+
+            // drawWorkingPath();
+            // drawWorkingNodes();
 
           };
 
@@ -2812,7 +2910,7 @@ text(round(p.greedyLength), 50, 400);
         this.closest      = [];
         this.distance     = Infinity;
         
-        this.radius       = 11;
+        this.radius       = -1;
 
         //  Adjacent nodes ---------------
         this.previous     = null;
@@ -2866,7 +2964,10 @@ text(round(p.greedyLength), 50, 400);
 
         push();
 
-        fill(0,p.radius/150*255);
+        var value=p.radius;
+// print(value);
+        fill(0,value);
+
         noStroke();
 
           if(this.hit){
@@ -2882,7 +2983,7 @@ text(round(p.greedyLength), 50, 400);
           fill(96);          
           textSize(8);
 // if(this.id==0){textSize(20); }
-            text(p.radius,p.x+5,p.y+5);
+            text(p.id,p.x+5,p.y+5);
 
         pop();
 
