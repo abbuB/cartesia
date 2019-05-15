@@ -1498,7 +1498,7 @@ var completed=false;
         this.workingNodes       = [];       //  Path used to experiment
         this.historicNodes      = [];       //  Overall best path
         this.greedyNodes        = [];       //  Build path by adding nodes
-        this.crossOvers         = [];       //  node couples that intersect
+        this.Intersections         = [];       //  node couples that intersect
 
         this.originalLength     = Infinity; //  Length of orinal path
         this.workingLength      = Infinity; //  Length of path being tested
@@ -1545,7 +1545,7 @@ var completed=false;
         p.workingNodes      = [];
         p.greedyNodes       = [];
 
-        p.crossOvers        = [];
+        p.Intersections        = [];
 
         p.originalLength    = Infinity;
         p.workingLength     = Infinity;
@@ -1742,6 +1742,9 @@ var completed=false;
             function reverseNodes(arr,index1,index2){
 
               while(index1!=index2){
+                
+                if(index1>index2){ break; }
+
                 print(index1 + ","+index2);
                 swap(arr,index1,index2);
                 index1++;
@@ -2036,7 +2039,7 @@ var completed=false;
               c[i]=0;
             }
         
-            //i acts similarly to the stack pointer
+            // i acts similarly to the stack pointer
             var i=0;
 
             while(i<n){
@@ -2203,7 +2206,7 @@ var completed=false;
           function iterate(){
 p.factor=1;
             arrayCopy(p.bestNodes,p.workingNodes);
-            renumberNodes(p.bestNodes);
+            // renumberNodes(p.bestNodes);
 
             var index1=p.index;
             var index2=index1+1;
@@ -2529,44 +2532,48 @@ text(round(p.greedyLength), 50, 400);
             
           };
 
-          function IsOnSegment(xi, yi, xj, yj, xk, yk) {
-            
-            return (xi <= xk || xj <= xk) && (xk <= xi || xk <= xj) &&
-                   (yi <= yk || yj <= yk) && (yk <= yi || yk <= yj);
+          { // Intersections
 
-          };
+            function IsOnSegment(xi, yi, xj, yj, xk, yk) {
+              
+              return (xi <= xk || xj <= xk) && (xk <= xi || xk <= xj) &&
+                    (yi <= yk || yj <= yk) && (yk <= yi || yk <= yj);
 
-          function ComputeDirection(xi, yi, xj, yj, xk, yk) {
-            
-            var a = (xk - xi) * (yj - yi);
-            var b = (xj - xi) * (yk - yi);
+            };
 
-            return a < b ? -1 : a > b ? 1 : 0;
+            function ComputeDirection(xi, yi, xj, yj, xk, yk) {
+              
+              var a = (xk - xi) * (yj - yi);
+              var b = (xj - xi) * (yk - yi);
 
-          };
+              return a < b ? -1 : a > b ? 1 : 0;
 
-          /** Do line segments (x1, y1)--(x2, y2) and (x3, y3)--(x4, y4) intersect? */
-          function DoLineSegmentsIntersect(node1,node2,node3,node4){
+            };
 
-            var d1 = ComputeDirection(node3.x, node3.y, node4.x, node4.y, node1.x, node1.y);
-            var d2 = ComputeDirection(node3.x, node3.y, node4.x, node4.y, node2.x, node2.y);
-            var d3 = ComputeDirection(node1.x, node1.y, node2.x, node2.y, node3.x, node3.y);
-            var d4 = ComputeDirection(node1.x, node1.y, node2.x, node2.y, node4.x, node4.y);
+            /** Do line segments (x1, y1)--(x2, y2) and (x3, y3)--(x4, y4) intersect? */
+            function DoLineSegmentsIntersect(node1,node2,node3,node4){
 
-            return (((d1 > 0 && d2 < 0) || (d1 < 0 && d2 > 0)) &&
-                    ((d3 > 0 && d4 < 0) || (d3 < 0 && d4 > 0))) ||
-                     (d1 == 0 && IsOnSegment(node3.x, node3.y, node4.x, node4.y, node1.x, node1.y)) ||
-                     (d2 == 0 && IsOnSegment(node3.x, node3.y, node4.x, node4.y, node2.x, node2.y)) ||
-                     (d3 == 0 && IsOnSegment(node1.x, node1.y, node2.x, node2.y, node3.x, node3.y)) ||
-                     (d4 == 0 && IsOnSegment(node1.x, node1.y, node2.x, node2.y, node4.x, node4.y));
+              var d1 = ComputeDirection(node3.x, node3.y, node4.x, node4.y, node1.x, node1.y);
+              var d2 = ComputeDirection(node3.x, node3.y, node4.x, node4.y, node2.x, node2.y);
+              var d3 = ComputeDirection(node1.x, node1.y, node2.x, node2.y, node3.x, node3.y);
+              var d4 = ComputeDirection(node1.x, node1.y, node2.x, node2.y, node4.x, node4.y);
 
-          };
+              return (((d1 > 0 && d2 < 0) || (d1 < 0 && d2 > 0)) &&
+                      ((d3 > 0 && d4 < 0) || (d3 < 0 && d4 > 0))) ||
+                      (d1 == 0 && IsOnSegment(node3.x, node3.y, node4.x, node4.y, node1.x, node1.y)) ||
+                      (d2 == 0 && IsOnSegment(node3.x, node3.y, node4.x, node4.y, node2.x, node2.y)) ||
+                      (d3 == 0 && IsOnSegment(node1.x, node1.y, node2.x, node2.y, node3.x, node3.y)) ||
+                      (d4 == 0 && IsOnSegment(node1.x, node1.y, node2.x, node2.y, node4.x, node4.y));
+
+            };
+
+          }
 
           function uncross(){
 
           };
 
-          function calculateCrossovers(){
+          function calculateIntersections(){
 
               var node1;
               var node2;
@@ -2594,10 +2601,10 @@ text(round(p.greedyLength), 50, 400);
 
                     if(DoLineSegmentsIntersect(node1,node2,node3,node4)){
                       
-                      p.crossOvers.push(node1);
-                      p.crossOvers.push(node2);
-                      p.crossOvers.push(node3);
-                      p.crossOvers.push(node4);
+                      p.Intersections.push(node1);
+                      p.Intersections.push(node2);
+                      p.Intersections.push(node3);
+                      p.Intersections.push(node4);
 
                       // print(node1.id + ", " +
                       //       node2.id + ", " +
@@ -2618,7 +2625,7 @@ text(round(p.greedyLength), 50, 400);
 
           function grow(){
 
-            renumberNodes(p.workingNodes);
+            // renumberNodes(p.workingNodes);
 
             function canGrow(nod){
 
@@ -2662,47 +2669,54 @@ text(round(p.greedyLength), 50, 400);
 
             if(!completed){
               
-              p.crossOvers=[];
+              p.Intersections=[];
 
-              calculateCrossovers(); 
+              calculateIntersections(); 
             
-              print(p.crossOvers);
+              print(p.Intersections);
 
             }
 
             if(frameCount==100){
               
+              
+
               print("=====");
               
-              p.crossOvers=[];
+              p.Intersections=[];
               
-              calculateCrossovers();
+              calculateIntersections();
               
-              print(p.crossOvers);
+              print(p.Intersections);
 
-              reverseNodes(p.workingNodes,75,77);
+              // reverseNodes(p.workingNodes,75,77);
+
+              renumberNodes(p.workingNodes);
 
               reverseNodes(p.workingNodes,27,79);
 
-              reverseNodes(p.workingNodes,0,8);
+              // reverseNodes(p.workingNodes,0,8);
 
-              reverseNodes(p.workingNodes,18,20);
+              // reverseNodes(p.workingNodes,18,20);
               
-              reverseNodes(p.workingNodes,81,83);
+              // reverseNodes(p.workingNodes,81,83);
+              print(p.Intersections[3].id);
+              
+              reverseNodes(p.workingNodes,p.Intersections[3].id,p.Intersections[0].id);
 
             }
 
             if(frameCount>300){
 
-              // p.crossOvers=[];
+              // p.Intersections=[];
 
-              // calculateCrossovers();
+              // calculateIntersections();
 
-              // print(p.crossOvers);
+              // print(p.Intersections);
 
               // updateTour();
 
-              iterate();
+              // iterate();
 
             }
 
