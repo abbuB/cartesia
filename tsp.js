@@ -2345,16 +2345,15 @@ p.factor=1;
 
             function getRandomNode(nod){
 
-              var retNode=null;
+              var n=null;
 
-              while(retNode==null){
+              while(n==null){
                 
-                var n=round(random(nod.closest.length-1));
+                n=random(nod.closest);
 
-                if(nod.closest[n].loaded==false){
-                  nod.closest[n].loaded=true;
-                  retNode=nod.closest[n];
-                  return retNode;
+                if(n.loaded==false){
+                  n.loaded=true;
+                  return n;
                 }
 
               }
@@ -2425,87 +2424,59 @@ p.factor=1;
 
             };
 
-              var nod;
+            var nod;
 
-              //  Randomly add the 1st node
-              if(p.greedyNodes.length==0){
+            //  Randomly add the 1st node
+            if(p.greedyNodes.length==0){
 
-                nod=p.workingNodes[round(random(p.workingNodes.length-1))];
-                // nod=p.workingNodes[0];
+              nod=random(p.workingNodes);
+              // nod=p.workingNodes[0];
 
-                p.greedyNodes.push(nod); // Both push and unshift puts it in the same spot [0]
-                nod.loaded=true;
+              p.greedyNodes.push(nod); // Both push and unshift puts it in the same spot [0]
+              nod.loaded=true;
 
-                cNode=nod;
-  
-              }
-              // else if(p.greedyNodes.length<p.workingNodes.length){
-              else if(p.greedyNodes.length<app.nodes){
-                
-                switch(app.greedyMethod){
-                
-                  case GREEDYMETHODS.CLOSEST:  nod=getClosestNode( cNode); break;
-                  case GREEDYMETHODS.FURTHEST: nod=getFurthestNode(cNode); break;
-                  case GREEDYMETHODS.RANDOM:   nod=getRandomNode(  cNode); break;
+              cNode=nod;
 
-                  default:                                                 break;
-                
-                }
-
-                if(nod!=null){
-
-                  p.greedyNodes.unshift(nod); // Adds the node to the first array position [0]
-
-                  placeNode(nod);             //  Shifts the node to the location 
-                                              //  that minimizes the tour length
-                }
-
-                arrayCopy(p.greedyNodes,p.bestNodes);
-                p.greedyLength = tourLength(p.greedyNodes);
-                p.bestLength=p.greedyLength;
-
-              }
-              else{
-
-                greedyIterate();
-
-              }
-
-textSize(20);
-fill(128);
-noStroke();
-
-text(round(p.greedyLength), 50, 450);
-
-            if(p.greedyNodes.length==100){
-
-              print(round(p.greedyLength));
-
-              // drawWorkingNodes();
-              // drawGreedyPath();
-
-              if(p.greedyLength<4650){
-
-                var s="";
-
-                // print("var data=[")
-
-                for(var n=0; n<p.greedyNodes.length; n++){
-                  // print("["+p.greedyNodes[n].x +","+p.greedyNodes[n].y +"],")
-                  s+=p.greedyNodes[n].id+", ";
-                }
-                // print("];");
-                // print(s);
-
-              }
-
-              // this.reset();
-iterate();
             }
-            renumberNodes(p.workingNodes);
+            // else if(p.greedyNodes.length<p.workingNodes.length){
+            else if(p.greedyNodes.length<app.nodes){
+              
+              switch(app.greedyMethod){
+              
+                case GREEDYMETHODS.CLOSEST:  nod=getClosestNode (cNode); break;
+                case GREEDYMETHODS.FURTHEST: nod=getFurthestNode(cNode); break;
+                case GREEDYMETHODS.RANDOM:   nod=getRandomNode  (cNode); break;
 
-            drawWorkingNodes();
+                default:                                                 break;
+              
+              }
+
+              if(nod!=null){
+
+                p.greedyNodes.unshift(nod); // Adds the node to the first array position [0]
+
+                placeNode(nod);             //  Shifts the node to the location 
+                                            //  that minimizes the tour length
+              }
+
+              arrayCopy(p.greedyNodes,p.bestNodes);
+              p.greedyLength = tourLength(p.greedyNodes);
+              p.bestLength=p.greedyLength;
+
+            }
+            else{
+
+              renumberNodes(p.workingNodes);
+
+              greedyIterate();  
+
+            }
+
+            drawWorkingPath();
+
+            drawGreedyNodes();
             drawGreedyPath();
+
           };
 
           function simulatedAnnealing(){
@@ -2796,7 +2767,7 @@ renumberNodes(p.workingNodes);
 
             var minLength=Infinity;
             var length=Infinity;
-            var minID=round(random(p.workingNodes.length-1));
+            var minID=random(p.workingNodes);
 
             for(var n=0; n<p.workingNodes.length; n++){
 
