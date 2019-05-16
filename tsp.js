@@ -1310,6 +1310,22 @@ var cnv;
 
     };
 
+    function sortNodesByIndex(arr){
+
+        for(var i=0; i<arr.length; i++){
+          for(var j=0; j<arr.length; j++){
+  
+            if(abs(arr[j].id)>abs(arr[i].id)){
+              swap(arr,i,j);
+            }
+  
+          }
+        }
+
+        // return arr;
+
+      };
+
     function arraySort(arr){
     // Sorts left to right base on x coordinate
 
@@ -1498,7 +1514,7 @@ var completed=false;
         this.workingNodes       = [];       //  Path used to experiment
         this.historicNodes      = [];       //  Overall best path
         this.greedyNodes        = [];       //  Build path by adding nodes
-        this.Intersections         = [];       //  node couples that intersect
+        this.Intersections      = [];       //  node couples that intersect
 
         this.originalLength     = Infinity; //  Length of orinal path
         this.workingLength      = Infinity; //  Length of path being tested
@@ -1567,11 +1583,11 @@ var completed=false;
           // for (var n=0; n<app.nodes; n++){
           for (var n=0; n<app.nodes; n++){
 
-            x0=data[n][0];
-            y0=data[n][1];
+            // x0=data[n][0];
+            // y0=data[n][1];
             
-            // x0=floor(random(150, p.w-20));
-            // y0=floor(random( 20, p.h-20));
+            x0=floor(random(150, p.w-20));
+            y0=floor(random( 20, p.h-20));
 
             p.originalNodes.push(new node(n,
                                           this,
@@ -1741,14 +1757,21 @@ var completed=false;
 
             function reverseNodes(arr,index1,index2){
 
+              if(index1>index2){
+                var temp=index2;
+                index2=index1;
+                index1=temp;
+              }
+
               while(index1!=index2){
                 
                 if(index1>index2){ break; }
 
-                print(index1 + ","+index2);
+                // print(index1 + ","+index2);
                 swap(arr,index1,index2);
                 index1++;
                 index2--;
+                
               }
 
             };
@@ -2444,8 +2467,8 @@ text(round(p.greedyLength), 50, 400);
 
               print(round(p.greedyLength));
 
-              drawWorkingNodes();
-              drawGreedyPath();
+              // drawWorkingNodes();
+              // drawGreedyPath();
 
               if(p.greedyLength<4650){
 
@@ -2462,10 +2485,13 @@ text(round(p.greedyLength), 50, 400);
 
               }
 
-              this.reset();
-
+              // this.reset();
+iterate();
             }
+            renumberNodes(p.workingNodes);
 
+            drawWorkingNodes();
+            drawGreedyPath();
           };
 
           function simulatedAnnealing(){
@@ -2569,49 +2595,45 @@ text(round(p.greedyLength), 50, 400);
 
           }
 
-          function uncross(){
-
-          };
-
           function calculateIntersections(){
 
-              var node1;
-              var node2;
-              var node3;
-              var node4;
+            p.Intersections=[];
 
-              for(var a=0; a<p.workingNodes.length; a++){
+            var node1;
+            var node2;
+            var node3;
+            var node4;
 
-                node1=p.workingNodes[a];
+            for(var a=0; a<p.workingNodes.length; a++){
 
-                if(a==p.workingNodes.length-1){ node2=p.workingNodes[0];   }
-                else                          { node2=p.workingNodes[a+1]; }
+              node1=p.workingNodes[a];
 
-                for(var b=0; b<p.workingNodes.length; b++){
-                  
-                  node3=p.workingNodes[b];
+              if(a==p.workingNodes.length-1){ node2=p.workingNodes[0];   }
+              else                          { node2=p.workingNodes[a+1]; }
 
-                  if(b==p.workingNodes.length-1){ node4=p.workingNodes[0];   }
-                  else                          { node4=p.workingNodes[b+1]; }
+              for(var b=0; b<p.workingNodes.length; b++){
+                
+                node3=p.workingNodes[b];
 
-                  if(node1.id!=node3.id &&
-                     node1.id!=node4.id &&
-                     node2.id!=node3.id &&
-                     node2.id!=node4.id){
+                if(b==p.workingNodes.length-1){ node4=p.workingNodes[0];   }
+                else                          { node4=p.workingNodes[b+1]; }
 
-                    if(DoLineSegmentsIntersect(node1,node2,node3,node4)){
-                      
-                      p.Intersections.push(node1);
-                      p.Intersections.push(node2);
-                      p.Intersections.push(node3);
-                      p.Intersections.push(node4);
+                if(node1.id!=node3.id &&
+                   node1.id!=node4.id &&
+                   node2.id!=node3.id &&
+                   node2.id!=node4.id){
 
-                      // print(node1.id + ", " +
-                      //       node2.id + ", " +
-                      //       node3.id + ", " +
-                      //       node4.id);
+                  if(DoLineSegmentsIntersect(node1,node2,node3,node4)){
 
-                    }
+                    if(node1.id>node2.id){ p.Intersections.push(node2);
+                                           p.Intersections.push(node1); }
+                    else                 { p.Intersections.push(node1);
+                                           p.Intersections.push(node2); }
+
+                    if(node3.id>node4.id){ p.Intersections.push(node4);
+                                           p.Intersections.push(node3); }
+                     else                { p.Intersections.push(node3);
+                                           p.Intersections.push(node4); }
 
                   }
 
@@ -2619,7 +2641,9 @@ text(round(p.greedyLength), 50, 400);
 
               }
 
-              completed=true;
+            }
+
+            completed=true;
 
           };
 
@@ -2632,7 +2656,7 @@ text(round(p.greedyLength), 50, 400);
               var retVal=true;
 
               for(var n=0; n<p.workingNodes.length; n++){
-// print(nod.id + " - " + p.workingNodes[n].id);
+
                 var distance=dist(nod.x,
                                   nod.y,
                                   p.workingNodes[n].x,
@@ -2668,63 +2692,45 @@ text(round(p.greedyLength), 50, 400);
             }
 
             if(!completed){
-              
-              p.Intersections=[];
-
-              calculateIntersections(); 
-            
-              print(p.Intersections);
-
-            }
-
-            if(frameCount==100){
-              
-              
-
-              print("=====");
-              
-              p.Intersections=[];
-              
-              calculateIntersections();
-              
-              print(p.Intersections);
-
-              // reverseNodes(p.workingNodes,75,77);
 
               renumberNodes(p.workingNodes);
 
-              reverseNodes(p.workingNodes,27,79);
+              calculateIntersections(); 
 
-              // reverseNodes(p.workingNodes,0,8);
-
-              // reverseNodes(p.workingNodes,18,20);
-              
-              // reverseNodes(p.workingNodes,81,83);
-              print(p.Intersections[3].id);
-              
-              reverseNodes(p.workingNodes,p.Intersections[3].id,p.Intersections[0].id);
+              print(p.Intersections);
 
             }
 
-            if(frameCount>300){
+p.factor=1;
 
-              // p.Intersections=[];
+renumberNodes(p.workingNodes);
 
-              // calculateIntersections();
+            if(frameCount<200){
 
-              // print(p.Intersections);
+              calculateIntersections();
 
-              // updateTour();
+              if(p.Intersections.length>0){
+  
+                if(frameCount%100==0){
+                  print(p.Intersections);
+                }
 
-              // iterate();
+                reverseNodes(p.workingNodes,
+                              p.Intersections[0].id,
+                              p.Intersections[2].id);
+
+              }
 
             }
+            else{
+              iterate();
+            }
+
+            updateTour();
 
             drawWorkingPath();
             drawWorkingNodes();
             // drawBestPath();
-            
-            updateTour();
 
           };
 
