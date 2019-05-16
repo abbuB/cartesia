@@ -413,17 +413,36 @@ var cnv;
       this.info           = 0;                  //  Is the info frame displayed
       this.telemetry      = false;              //  Is telemetry visible
 
+      this.startTime      = millis();
+
+      this.elapsedTime    = 0;
+
     }
 
     /* TSP Specific       ------------------ */
     {
 
-      this.mode           = SOLVEMODES.RANDOM; //
+      // this.greedyMethod       = GREEDYMETHODS.FURTHEST;
+      // this.greedyMethod       = GREEDYMETHODS.CLOSEST;
+      // this.greedyMethod       = GREEDYMETHODS.RANDOM;
+
+      // this.algorithm          = ALGORITHMS.GROW;
+      // this.algorithm          = ALGORITHMS.GREEDY;
+      // this.algorithm          = ALGORITHMS.BRUTEFORCE;
+      // this.algorithm          = ALGORITHMS.SIMULATEDANNEALING;
+      // this.algorithm          = ALGORITHMS.NEAREST;
+      // app.algorithm          = ALGORITHMS.ITERATE;        
+
+      // this.algorithm          = ALGORITHMS.ANTCOLONY;
+      // this.algorithm          = ALGORITHMS.GENETIC;
+
+      
+      this.algorithm      = ALGORITHMS.GREEDY;
+
+      this.greedyMethod   = GREEDYMETHODS.RANDOM;
 
       this.nodes          = 100;                //  Total # of nodes to be connected
 
-      this.field;                               //  Set in the field control initialization
-      
       this.menu;
       this.clock;
       this.music;
@@ -433,7 +452,7 @@ var cnv;
 
       this.finished       = false;
 
-      this.animations     = [];
+      // this.animations     = [];
 
       this.currentNode    = null;
 
@@ -488,7 +507,10 @@ var cnv;
 
     function reset()                {
 
+      app.controlCount=app.controls.length+1;
       app.field.reset();
+      app.startTime=millis();
+      app.elapsedTime=0;
       app.running=false;
       
     };
@@ -921,7 +943,7 @@ var cnv;
 
       var control=function(id, parent, x, y, w, h){
 
-        app.controlCount++;
+        // app.controlCount++;
 
         /* explicit properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
         this.id       = id;           /** Unique identification number --
@@ -1522,20 +1544,7 @@ var completed=false;
         this.historicLength     = Infinity; //  Best recorded overall
         this.greedyLength       = Infinity; //  Length of Greedy Path
 
-        // this.greedyMethod       = GREEDYMETHODS.FURTHEST;
-        // this.greedyMethod       = GREEDYMETHODS.CLOSEST;
-        this.greedyMethod       = GREEDYMETHODS.RANDOM;
-
         this.factor             = 1.1;
-
-        this.algorithm          = ALGORITHMS.GROW;
-        // this.algorithm          = ALGORITHMS.GREEDY;
-        // this.algorithm          = ALGORITHMS.BRUTEFORCE;
-        // this.algorithm          = ALGORITHMS.SIMULATEDANNEALING;
-        // this.algorithm          = ALGORITHMS.NEAREST;
-        // this.algorithm          = ALGORITHMS.ITERATE;        
-        // this.algorithm          = ALGORITHMS.ANTCOLONY;
-        // this.algorithm          = ALGORITHMS.GENETIC;
 
         this.reset();
 
@@ -1554,14 +1563,14 @@ var completed=false;
         var p               = this;       //  Set a reference to the field control
 
         p.controls          = [];         //  Clear the controls array
-        
+
         p.originalNodes     = [];
         p.sortedNodes       = [];
         p.bestNodes         = [];
         p.workingNodes      = [];
         p.greedyNodes       = [];
 
-        p.Intersections        = [];
+        p.Intersections     = [];
 
         p.originalLength    = Infinity;
         p.workingLength     = Infinity;
@@ -1580,7 +1589,7 @@ var completed=false;
           var x0=0;
           var y0=0;
 
-          // for (var n=0; n<app.nodes; n++){
+          // for (var n=0; n<9; n++){
           for (var n=0; n<app.nodes; n++){
 
             // x0=data[n][0];
@@ -1674,6 +1683,8 @@ var completed=false;
       };
       field.prototype.draw         = function(){
 
+        app.elapsedTime=(millis()-app.startTime)/1000;
+        
           var p=this;
 
           this.active=this.hit &&
@@ -2114,8 +2125,8 @@ var completed=false;
               p.bfSwitch=true;
             }
 
-            if(frameCount<300){
-              swap3Consecutive();
+            if(app.elapsedTime<10){
+              swap3Consecutive(p.workingNodes);
               drawWorkingNodes();
               drawWorkingPath();
               drawBestPath();
@@ -2124,6 +2135,9 @@ var completed=false;
               drawBestPath();
               drawBestNodes();
             }
+
+            drawWorkingNodes();
+            drawWorkingPath();
 
           };
           function genetic(){
@@ -2267,9 +2281,9 @@ p.factor=1;
 
             if(p.index>p.bestNodes.length-1){ p.index=0; }
 
-            // drawWorkingNodes();
-            // drawWorkingPath();
-            // drawBestPath();
+            drawWorkingNodes();
+            drawWorkingPath();
+            drawBestPath();
 
           };
 
@@ -2428,7 +2442,7 @@ p.factor=1;
               // else if(p.greedyNodes.length<p.workingNodes.length){
               else if(p.greedyNodes.length<app.nodes){
                 
-                switch(p.greedyMethod){
+                switch(app.greedyMethod){
                 
                   case GREEDYMETHODS.CLOSEST:  nod=getClosestNode( cNode); break;
                   case GREEDYMETHODS.FURTHEST: nod=getFurthestNode(cNode); break;
@@ -2461,7 +2475,7 @@ textSize(20);
 fill(128);
 noStroke();
 
-text(round(p.greedyLength), 50, 400);
+text(round(p.greedyLength), 50, 450);
 
             if(p.greedyNodes.length==100){
 
@@ -2481,7 +2495,7 @@ text(round(p.greedyLength), 50, 400);
                   s+=p.greedyNodes[n].id+", ";
                 }
                 // print("];");
-                print(s);
+                // print(s);
 
               }
 
@@ -2705,7 +2719,7 @@ p.factor=1;
 
 renumberNodes(p.workingNodes);
 
-            if(frameCount<200){
+            if(int(app.elapsedTime)%2==0){
 
               calculateIntersections();
 
@@ -2814,9 +2828,11 @@ renumberNodes(p.workingNodes);
 
               border();
 
-              if(!p.loaded){ initialCondition(); }
+              if(!p.loaded){
+                initialCondition();
+              }
 
-              switch(this.algorithm){
+              switch(app.algorithm){
 
                 case ALGORITHMS.GROW:               grow();               break;
                 case ALGORITHMS.GREEDY:             greedy();             break;
@@ -2838,6 +2854,16 @@ renumberNodes(p.workingNodes);
               }
 
           pop();
+
+          fill(128);
+          noStroke();
+          textSize(20);
+            
+            text(nf(app.elapsedTime,1,1), 50, 400);
+
+        // choose algorithm
+        // choose greedy method
+        // Initial conditions
 
       };
       field.prototype.hitTest      = function(x,y){
@@ -3218,7 +3244,7 @@ renumberNodes(p.workingNodes);
               translate(4,-5);
               rotate(PI/6);
 
-              // Triangle Shadow
+              // // Triangle Shadow
               fill(212);
               stroke(212);
 
@@ -3239,9 +3265,9 @@ renumberNodes(p.workingNodes);
 
             pop();
 
-noFill();
-stroke(RED);              
-ellipse(0,0,this.w,this.h);
+// noFill();
+// stroke(RED);              
+// ellipse(0,0,this.w,this.h);
             
         pop();
         
@@ -3249,7 +3275,9 @@ ellipse(0,0,this.w,this.h);
       resetButton.prototype.clicked=function(){
       /** Overridden for execute */
 
-        if(this.active){ this.execute(); }
+        if(this.active){          
+           this.execute();
+        }
 
       };
       resetButton.prototype.moved=function(x,y){
@@ -3368,9 +3396,9 @@ ellipse(0,0,this.w,this.h);
 
         pop();
 
-noFill();
-stroke(RED);              
-ellipse(this.x,this.y,this.w,this.h);
+// noFill();
+// stroke(RED);              
+// ellipse(this.x,this.y,this.w,this.h);
         
       };
       solveButton.prototype.clicked=function(){
@@ -3701,9 +3729,9 @@ ellipse(this.x,this.y,this.w,this.h);
 
         pop();
 
-noFill();
-stroke(RED);
-ellipse(this.x,this.y,this.w,this.h);
+// noFill();
+// stroke(RED);
+// ellipse(this.x,this.y,this.w,this.h);
 
       };
       shuffleButton.prototype.moved           =function(x,y){
@@ -3766,23 +3794,23 @@ ellipse(this.x,this.y,this.w,this.h);
       /* Accessories ---------------------------------------------------- */
 
       /** Reset Button     */
-      // rt.controls.push(new resetButton('reset', rt, rt.w-235, rt.h-35, 28, 28,
-      //   {cursor:    HAND,
-      //    color:     BLACK,
-      //    execute:   reset}));
+      rt.controls.push(new resetButton('reset', rt, 50, 200, 28, 28,
+        {cursor:    HAND,
+         color:     BLACK,
+         execute:   reset}));
 
       /** Shuffle Button   */
-      // rt.controls.push(new shuffleButton('shuffle', rt, rt.w-235, rt.h-135, 28, 28,
-      //   {cursor:    HAND,
-      //    color:     BLACK,
-      //    execute:   shuffle}));
+      rt.controls.push(new shuffleButton('shuffle', rt, 50, 250, 28, 28,
+        {cursor:    HAND,
+         color:     BLACK,
+         execute:   shuffle}));
          
       /** Solve Button     */
-      // rt.controls.push(new solveButton('solve', rt, rt.w-335, rt.h-35, 28, 28,
-      //   {cursor:    HAND,
-      //    color:     BLACK,
-      //    retrieve:  getRunning,
-      //    execute:   toggleRunning}));
+      rt.controls.push(new solveButton('solve', rt, 50, 300, 28, 28,
+        {cursor:    HAND,
+         color:     BLACK,
+         retrieve:  getRunning,
+         execute:   toggleRunning}));
          
       /** Music            */
       // rt.controls.push(new music('music', rt, 35, rt.h-35, 50, 50,
