@@ -441,7 +441,7 @@ var cnv;
 
       this.greedyMethod   = GREEDYMETHODS.RANDOM;
 
-      this.nodes          = 100;                //  Total # of nodes to be connected
+      this.nodes          = 200;                //  Total # of nodes to be connected
 
       this.menu;
       this.clock;
@@ -1486,8 +1486,6 @@ var cnv;
       }
 
     };  
-    
-
 
     function renumberNodes(arr){
 
@@ -2343,17 +2341,17 @@ p.factor=1;
 
           function greedy(){
 
-            function getRandomNode(nod){
+            function getRandomNode(node){
 
-              var n=null;
+              var newNode=null;
 
-              while(n==null){
+              while(newNode==null){
                 
-                n=random(nod.closest);
+                newNode=random(node.closest);
 
-                if(n.loaded==false){
-                  n.loaded=true;
-                  return n;
+                if(newNode.loaded==false){
+                  newNode.loaded=true;
+                  return newNode;
                 }
 
               }
@@ -2429,7 +2427,7 @@ p.factor=1;
             //  Randomly add the 1st node
             if(p.greedyNodes.length==0){
 
-              nod=random(p.workingNodes);
+              nod=random(p.workingNodes); // selects a random node from workingNodes
               // nod=p.workingNodes[0];
 
               p.greedyNodes.push(nod); // Both push and unshift puts it in the same spot [0]
@@ -2466,6 +2464,8 @@ p.factor=1;
             }
             else{
 
+              // arrayCopy(p.greedyNodes,p.workingNodes);
+
               renumberNodes(p.workingNodes);
 
               greedyIterate();  
@@ -2473,8 +2473,9 @@ p.factor=1;
             }
 
             drawWorkingPath();
+            drawWorkingNodes();
 
-            drawGreedyNodes();
+            // drawGreedyNodes();
             drawGreedyPath();
 
           };
