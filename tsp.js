@@ -423,7 +423,7 @@ var cnv;
     {
 
       // this.greedyMethod       = GREEDYMETHODS.FURTHEST;
-      // this.greedyMethod       = GREEDYMETHODS.CLOSEST;
+      this.greedyMethod       = GREEDYMETHODS.CLOSEST;
       // this.greedyMethod       = GREEDYMETHODS.RANDOM;
 
       // this.algorithm          = ALGORITHMS.GROW;
@@ -439,9 +439,9 @@ var cnv;
       
       this.algorithm      = ALGORITHMS.GREEDY;
 
-      this.greedyMethod   = GREEDYMETHODS.RANDOM;
+      // this.greedyMethod   = GREEDYMETHODS.RANDOM;
 
-      this.nodes          = 200;                //  Total # of nodes to be connected
+      this.nodes          = 300;                //  Total # of nodes to be connected
 
       this.menu;
       this.clock;
@@ -1495,6 +1495,14 @@ var cnv;
 
     };
 
+    function randomizeArray(arr){
+
+      for(var n=0; n<arr.length; n++){
+        swap(arr, n,round(random(arr.length-1)));
+      }
+
+    };
+
     /** Field        -------------------------------------------------- */
     {
 var increment=0;
@@ -1528,15 +1536,20 @@ var completed=false;
 
         this.cellSize           = 0;        //  Size of each node
         
+        // ----------
+
         this.originalNodes      = [];       //  Original array of nodes
+
         this.sortedNodes        = [];       //  Sorted Original array of nodes
         this.bestNodes          = [];       //  Shortest path so far
         this.workingNodes       = [];       //  Path used to experiment
         this.historicNodes      = [];       //  Overall best path
-        this.greedyNodes        = [];       //  Build path by adding nodes
+        
+        this.sourceNodes        = [];       //  Nodes to select from
+        
         this.Intersections      = [];       //  node couples that intersect
 
-        this.originalLength     = Infinity; //  Length of orinal path
+        this.originalLength     = Infinity; //  Length of original path
         this.workingLength      = Infinity; //  Length of path being tested
         this.bestLength         = Infinity; //  Current best path length        
         this.historicLength     = Infinity; //  Best recorded overall
@@ -1566,7 +1579,7 @@ var completed=false;
         p.sortedNodes       = [];
         p.bestNodes         = [];
         p.workingNodes      = [];
-        p.greedyNodes       = [];
+        p.sourceNodes       = [];
 
         p.Intersections     = [];
 
@@ -1604,12 +1617,13 @@ var completed=false;
                                           5,
                                           {cursor:    HAND})
                                 );
-
           }
 
           arrayCopy(p.originalNodes, p.bestNodes);
-          arrayCopy(p.originalNodes, p.workingNodes);
-          arrayCopy(p.originalNodes, p.sortedNodes);
+          // arrayCopy(p.originalNodes, p.workingNodes);
+          // arrayCopy(p.originalNodes, p.sortedNodes);
+
+          arrayCopy(p.originalNodes, p.sourceNodes);
 
         };
 
@@ -1656,7 +1670,7 @@ var completed=false;
           }
 
           // var limit=ceil(pow(arr.length,1/2))+2;  // Limit to the square root of the # of nodes
-          var limit=p.workingNodes.length;
+          var limit=app.nodes;
 
           for(var m=1; m<limit; m++){
             nod.closest.push(sorted[m]);  
@@ -1831,26 +1845,6 @@ var completed=false;
               endShape(CLOSE);
 
             };
-            function drawGreedyNodes()   {
-
-              forEach(p.greedyNodes, 'draw');
-
-            };            
-            function drawGreedyPath()   {
-
-              stroke(128,0,0);
-              strokeWeight(0.5);
-              noFill();          
-
-              beginShape();
-
-                for(var n=p.greedyNodes.length-1; n>-1; n--){ 
-                  vertex(p.greedyNodes[n].x, p.greedyNodes[n].y);
-                }
-
-              endShape(CLOSE);
-
-            };
             function drawWorkingPath()  {
 
               stroke(128);
@@ -1859,8 +1853,10 @@ var completed=false;
 
               beginShape();
 
-                for(var n=0; n<p.workingNodes.length; n++){                
+                for(var n=0; n<p.workingNodes.length; n++){  
+
                   vertex(p.workingNodes[n].x, p.workingNodes[n].y);
+
                 }
 
               endShape(CLOSE);
@@ -2279,82 +2275,21 @@ p.factor=1;
 
             if(p.index>p.bestNodes.length-1){ p.index=0; }
 
-            drawWorkingNodes();
-            drawWorkingPath();
-            drawBestPath();
-
-          };
-
-          function greedyIterate(){
-
-            function updateTour(){
-            
-              p.greedyLength = tourLength(p.greedyNodes);
-
-              if(p.greedyLength<p.bestLength){
-                arrayCopy(p.greedyNodes, p.bestNodes);
-                p.bestLength=p.greedyLength;
-              }
-              else{
-                arrayCopy(p.bestNodes, p.greedyNodes);
-              }
-
-            };
-
-            var index1=p.index;
-            var index2=index1+1;
-            var index3=index2+1;
-            var index4=index3+1;
-
-            if     (index2>p.greedyNodes.length-1){ index2=0; }
-
-            if     (index3>p.greedyNodes.length-1){ index3=0; }
-            else if(index3>p.greedyNodes.length  ){ index3=1; }
-
-            if     (index4>p.greedyNodes.length-1){ index4=0; }
-            else if(index4>p.greedyNodes.length  ){ index4=1; }
-            else if(index4>p.greedyNodes.length+1){ index4=2; }
-
-            swap(p.greedyNodes,index1,index2);
-            updateTour();
-
-            swap(p.greedyNodes,index1,index3);
-            updateTour();
-
-            swap(p.greedyNodes,index1,index4);
-            updateTour();
-
-            swap(p.greedyNodes,index2,index3);
-            updateTour();
-
-            swap(p.greedyNodes,index2,index4);
-            updateTour();
-
-            swap(p.greedyNodes,index3,index4);
-            updateTour();
-
-            p.index++;
-
-            if(p.index>p.greedyNodes.length-1){ p.index=0; }
-
           };
 
           function greedy(){
 
-            function getRandomNode(node){
+            function getRandomNode(){
 
               var newNode=null;
 
-              while(newNode==null){
-                
-                newNode=random(node.closest);
+              randomizeArray(p.sourceNodes);
 
-                if(newNode.loaded==false){
-                  newNode.loaded=true;
-                  return newNode;
-                }
+              newNode=p.sourceNodes[0];
 
-              }
+              p.sourceNodes.splice(0,1);
+
+              return newNode;
 
             };
 
@@ -2379,7 +2314,7 @@ p.factor=1;
               var retNode=null;
 
               for(var n=nod.closest.length-1; n>=0; n--){
-
+                
                 if(nod.closest[n].loaded==false){
                   nod.closest[n].loaded=true;
                   retNode=nod.closest[n];
@@ -2393,7 +2328,7 @@ p.factor=1;
             function placeNode(){
 
               // Locates the position within the array that results in the shortest tour
-              var arr=p.greedyNodes;
+              var arr=p.workingNodes;
               var bestPosition=arr.length-1;              
               var dist=tourLength(arr);
               var minDist=dist;
@@ -2420,30 +2355,40 @@ p.factor=1;
 
               cNode=arr[bestPosition];          //  Set the currently selected node
 
+              return cNode;
+
             };
 
             var nod;
 
             //  Randomly add the 1st node
-            if(p.greedyNodes.length==0){
+            if(p.workingNodes.length==0){
 
-              nod=random(p.workingNodes); // selects a random node from workingNodes
+              arrayCopy(p.originalNodes, p.sourceNodes);
+              
+              randomizeArray(p.sourceNodes);
+
+              nod=random(p.sourceNodes); // selects a random node from workingNodes
               // nod=p.workingNodes[0];
 
-              p.greedyNodes.push(nod); // Both push and unshift puts it in the same spot [0]
+              p.workingNodes.push(nod);
+
+              if(app.greedyMethod==GREEDYMETHODS.RANDOM){
+                p.sourceNodes.splice(0,1); 
+              }
+
               nod.loaded=true;
 
               cNode=nod;
 
             }
-            // else if(p.greedyNodes.length<p.workingNodes.length){
-            else if(p.greedyNodes.length<app.nodes){
-              
+            else if(p.workingNodes.length<app.nodes){
+
               switch(app.greedyMethod){
-              
+
                 case GREEDYMETHODS.CLOSEST:  nod=getClosestNode (cNode); break;
                 case GREEDYMETHODS.FURTHEST: nod=getFurthestNode(cNode); break;
-                case GREEDYMETHODS.RANDOM:   nod=getRandomNode  (cNode); break;
+                case GREEDYMETHODS.RANDOM:   nod=getRandomNode();        break;
 
                 default:                                                 break;
               
@@ -2451,32 +2396,30 @@ p.factor=1;
 
               if(nod!=null){
 
-                p.greedyNodes.unshift(nod); // Adds the node to the first array position [0]
+                p.workingNodes.unshift(nod); // Adds the node to the first array position [0]
 
                 placeNode(nod);             //  Shifts the node to the location 
                                             //  that minimizes the tour length
               }
 
-              arrayCopy(p.greedyNodes,p.bestNodes);
-              p.greedyLength = tourLength(p.greedyNodes);
-              p.bestLength=p.greedyLength;
+              arrayCopy(p.workingNodes,p.bestNodes);
+              p.workingLength = tourLength(p.workingNodes);
+              p.bestLength=p.workingLength;
 
             }
             else{
 
-              // arrayCopy(p.greedyNodes,p.workingNodes);
-
               renumberNodes(p.workingNodes);
 
-              greedyIterate();  
+              // iterate();
 
             }
-
+            
             drawWorkingPath();
             drawWorkingNodes();
-
-            // drawGreedyNodes();
-            drawGreedyPath();
+// print(p.workingNodes);
+            
+            drawBestPath();
 
           };
 
@@ -2579,47 +2522,47 @@ p.factor=1;
 
             };
 
-          }
+            function calculateIntersections(){
 
-          function calculateIntersections(){
+              p.Intersections=[];
 
-            p.Intersections=[];
+              var node1;
+              var node2;
+              var node3;
+              var node4;
 
-            var node1;
-            var node2;
-            var node3;
-            var node4;
+              for(var a=0; a<p.workingNodes.length; a++){
 
-            for(var a=0; a<p.workingNodes.length; a++){
+                node1=p.workingNodes[a];
 
-              node1=p.workingNodes[a];
+                if(a==p.workingNodes.length-1){ node2=p.workingNodes[0];   }
+                else                          { node2=p.workingNodes[a+1]; }
 
-              if(a==p.workingNodes.length-1){ node2=p.workingNodes[0];   }
-              else                          { node2=p.workingNodes[a+1]; }
+                for(var b=0; b<p.workingNodes.length; b++){
+                  
+                  node3=p.workingNodes[b];
 
-              for(var b=0; b<p.workingNodes.length; b++){
-                
-                node3=p.workingNodes[b];
+                  if(b==p.workingNodes.length-1){ node4=p.workingNodes[0];   }
+                  else                          { node4=p.workingNodes[b+1]; }
 
-                if(b==p.workingNodes.length-1){ node4=p.workingNodes[0];   }
-                else                          { node4=p.workingNodes[b+1]; }
+                  if(node1.id!=node3.id &&
+                    node1.id!=node4.id &&
+                    node2.id!=node3.id &&
+                    node2.id!=node4.id){
 
-                if(node1.id!=node3.id &&
-                   node1.id!=node4.id &&
-                   node2.id!=node3.id &&
-                   node2.id!=node4.id){
+                    if(DoLineSegmentsIntersect(node1,node2,node3,node4)){
 
-                  if(DoLineSegmentsIntersect(node1,node2,node3,node4)){
+                      if(node1.id>node2.id){ p.Intersections.push(node2);
+                                            p.Intersections.push(node1); }
+                      else                 { p.Intersections.push(node1);
+                                            p.Intersections.push(node2); }
 
-                    if(node1.id>node2.id){ p.Intersections.push(node2);
-                                           p.Intersections.push(node1); }
-                    else                 { p.Intersections.push(node1);
-                                           p.Intersections.push(node2); }
+                      if(node3.id>node4.id){ p.Intersections.push(node4);
+                                            p.Intersections.push(node3); }
+                      else                { p.Intersections.push(node3);
+                                            p.Intersections.push(node4); }
 
-                    if(node3.id>node4.id){ p.Intersections.push(node4);
-                                           p.Intersections.push(node3); }
-                     else                { p.Intersections.push(node3);
-                                           p.Intersections.push(node4); }
+                    }
 
                   }
 
@@ -2627,11 +2570,11 @@ p.factor=1;
 
               }
 
-            }
+              completed=true;
 
-            completed=true;
+            };
 
-          };
+          }
 
           function grow(){
 
@@ -2733,7 +2676,7 @@ renumberNodes(p.workingNodes);
                    '\n' +   'Best Length' +
                    '\n' +   'Factor:'     +
                    '\n' +   'Historic Length:' +
-                   '\n\n' + 'Greedy Length:', 10, 10);
+                   '\n\n' + 'Source Length:', 10, 10);
 
             stroke(64);  
             fill(64);  
@@ -2743,7 +2686,7 @@ renumberNodes(p.workingNodes);
                    '\n'   + round(p.bestLength) +
                    '\n'   + nf(p.factor,1,5)     +
                    '\n'   + round(p.historicLength) +
-                   '\n\n' + round(p.greedyNodes.length),  +110, 10);
+                   '\n\n' + round(p.sourceNodes.length),  +110, 10);
 
             textSize(11);
 
@@ -2979,7 +2922,7 @@ renumberNodes(p.workingNodes);
         this.dirty        = false;
         this.distance     = Infinity;     //  Used to determine the distance to the
                                           //  selected node on load
-        this.loaded       =false;
+        this.loaded       = false;
 
         //  Closest Nodes  ---------------
         this.closest      = [];
