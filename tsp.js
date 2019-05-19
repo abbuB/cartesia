@@ -1489,7 +1489,7 @@ var cnv;
     function randomizeArray(arr){
 
       for(var n=0; n<arr.length; n++){
-        swap(arr, n,round(random(arr.length-1)));
+        swap(arr, n, round(random(arr.length-1)));
       }
 
     };
@@ -2248,7 +2248,9 @@ p.factor=1;
 
             };
 
-            function placeNode(arr){
+            function placeNode(arr,nod){
+
+              arr.unshift(nod); // Adds the node to the first array position [0]
 
               // Locates the position within the array that results in the shortest tour
               var bestPosition=arr.length-1;              
@@ -2270,14 +2272,9 @@ p.factor=1;
 
               }
 
-              var nod=arr[arr.length-1];
-
-              arr.splice(bestPosition, 0, nod); //  Insert the node into the correct position
-              arr.splice(arr.length-1,1);       //  Remove the node from the last position
-
-              cNode=arr[bestPosition];          //  Set the currently selected node
-
-              return cNode;
+              //  Remove the node from the last position
+              //  Insert the node into the correct position                                                      
+              arr.splice(bestPosition, 0, arr.pop()); 
 
             };
 
@@ -2290,8 +2287,7 @@ p.factor=1;
               
               randomizeArray(p.sourceNodes);
 
-              nod=random(p.sourceNodes); // selects a random node from workingNodes
-              // nod=p.workingNodes[0];
+              nod=p.sourceNodes[0];
 
               p.workingNodes.push(nod);
 
@@ -2319,9 +2315,9 @@ p.factor=1;
 
               if(nod!=null){
 
-                p.workingNodes.unshift(nod); // Adds the node to the first array position [0]
+                
 
-                placeNode(p.workingNodes,nod);             //  Shifts the node to the location 
+                placeNode(p.workingNodes,nod);  //  Shifts the node to the location 
                                             //  that minimizes the tour length
               }
 
@@ -2334,7 +2330,7 @@ p.factor=1;
 
               renumberNodes(p.workingNodes);
 
-              iterate();
+              // iterate();
 
             }
             
