@@ -423,25 +423,20 @@ var cnv;
     {
 
       // this.greedyMethod       = GREEDYMETHODS.FURTHEST;
-      this.greedyMethod       = GREEDYMETHODS.CLOSEST;
-      // this.greedyMethod       = GREEDYMETHODS.RANDOM;
+      // this.greedyMethod       = GREEDYMETHODS.CLOSEST;
+      this.greedyMethod       = GREEDYMETHODS.RANDOM;
 
       // this.algorithm          = ALGORITHMS.GROW;
-      // this.algorithm          = ALGORITHMS.GREEDY;
+      this.algorithm          = ALGORITHMS.GREEDY;
       // this.algorithm          = ALGORITHMS.BRUTEFORCE;
       // this.algorithm          = ALGORITHMS.SIMULATEDANNEALING;
       // this.algorithm          = ALGORITHMS.NEAREST;
-      // app.algorithm          = ALGORITHMS.ITERATE;        
+      // app.algorithm          = ALGORITHMS.ITERATE;
 
       // this.algorithm          = ALGORITHMS.ANTCOLONY;
       // this.algorithm          = ALGORITHMS.GENETIC;
 
-      
-      this.algorithm      = ALGORITHMS.GREEDY;
-
-      // this.greedyMethod   = GREEDYMETHODS.RANDOM;
-
-      this.nodes          = 300;                //  Total # of nodes to be connected
+      this.nodes          = 100;                //  Total # of nodes to be connected
 
       this.menu;
       this.clock;
@@ -1346,7 +1341,7 @@ var cnv;
 
         // return arr;
 
-      };
+    };
 
     function arraySort(arr){
     // Sorts left to right base on x coordinate
@@ -1360,10 +1355,6 @@ var cnv;
 
         }
       }
-
-      // for(var n=0; n<arr.length; n++){
-      //   print(arr[n].x);
-      // }
 
     };
 
@@ -1535,37 +1526,40 @@ var completed=false;
         this.deltaDrag          = 0;        //  Distance dragged from start point along the drag direction
 
         this.cellSize           = 0;        //  Size of each node
-        
+
         // ----------
 
         this.originalNodes      = [];       //  Original array of nodes
 
         this.sortedNodes        = [];       //  Sorted Original array of nodes
+
         this.bestNodes          = [];       //  Shortest path so far
         this.workingNodes       = [];       //  Path used to experiment
         this.historicNodes      = [];       //  Overall best path
-        
+
         this.sourceNodes        = [];       //  Nodes to select from
-        
+
+        // ----------
+
         this.Intersections      = [];       //  node couples that intersect
 
         this.originalLength     = Infinity; //  Length of original path
         this.workingLength      = Infinity; //  Length of path being tested
-        this.bestLength         = Infinity; //  Current best path length        
+        this.minimumLength      = Infinity; //  Current minimum tour length        
         this.historicLength     = Infinity; //  Best recorded overall
         this.greedyLength       = Infinity; //  Length of Greedy Path
 
         this.factor             = 1.1;
 
-        this.reset();
-
-        this.brSwitch           = false;
+        this.bfSwitch           = false;    //  Brute Force Switch
 
         this.loaded             = false;
 
         this.index              = 0;
 
         app.field               = this;
+
+        this.reset();
 
       };
       field.prototype=Object.create(control.prototype);
@@ -1585,7 +1579,7 @@ var completed=false;
 
         p.originalLength    = Infinity;
         p.workingLength     = Infinity;
-        p.bestLength        = Infinity;        
+        p.minimumLength     = Infinity;        
         p.historicLength    = Infinity;
         p.greedyLength      = Infinity;
 
@@ -1600,14 +1594,13 @@ var completed=false;
           var x0=0;
           var y0=0;
 
-          // for (var n=0; n<9; n++){
           for (var n=0; n<app.nodes; n++){
 
-            // x0=data[n][0];
-            // y0=data[n][1];
+            x0=data[n][0];
+            y0=data[n][1];
             
-            x0=floor(random(150, p.w-20));
-            y0=floor(random( 20, p.h-20));
+            // x0=floor(random(150, p.w-20));
+            // y0=floor(random( 20, p.h-20));
 
             p.originalNodes.push(new node(n,
                                           this,
@@ -1620,7 +1613,7 @@ var completed=false;
           }
 
           arrayCopy(p.originalNodes, p.bestNodes);
-          // arrayCopy(p.originalNodes, p.workingNodes);
+          arrayCopy(p.originalNodes, p.workingNodes);
           // arrayCopy(p.originalNodes, p.sortedNodes);
 
           arrayCopy(p.originalNodes, p.sourceNodes);
@@ -1629,7 +1622,7 @@ var completed=false;
 
         load();
 
-        function contains(i,arr){
+        function contains(arr,i){
 
           var retVal=false;
 
@@ -1646,7 +1639,7 @@ var completed=false;
 
         };
       
-        function sortByDistance(nod, arr){
+        function sortByDistance(arr,nod){
 
           // var distance=Infinity;
           var sorted=[];
@@ -1681,7 +1674,7 @@ var completed=false;
         function loadClosestNodes(){
 
           for(var n=0; n<p.originalNodes.length; n++){
-            sortByDistance(p.originalNodes[n], p.originalNodes);
+            sortByDistance(p.originalNodes, p.originalNodes[n]);
           }
 
         };
@@ -1717,28 +1710,46 @@ var completed=false;
 
           };
 
+          function drawNodes(nodes){ forEach(nodes, 'draw'); };
+          function drawPath(nodes) {
+
+            stroke(128);
+            strokeWeight(0.5);
+            noFill();          
+            fill(0,5);
+
+            beginShape();
+
+              for(var n=0; n<nodes.length; n++){                
+                vertex(nodes[n].x, nodes[n].y);
+              }
+
+            endShape(CLOSE);
+
+          };
+
           {  // Misc
 
-            function tourLength(arr){
+            function getTourLength(arr){
 
               var len=0;
   
-                for(var n=0; n<arr.length; n++){
-  
-                  if(n==arr.length-1){
-                    len+=dist(arr[0].x,
-                              arr[0].y,
-                              arr[arr.length-1].x,
-                              arr[arr.length-1].y);               
-                  }
-                  else{
-                    len+=dist(arr[n].x,
-                              arr[n].y,
-                              arr[n+1].x,
-                              arr[n+1].y);
-                  }
-  
+              for(var n=0; n<arr.length; n++){
+
+                if(n==arr.length-1){
+                  len+=dist(arr[0].x,
+                            arr[0].y,
+                            arr[arr.length-1].x,
+                            arr[arr.length-1].y);               
                 }
+                else{
+                  len+=dist(arr[n].x,
+                            arr[n].y,
+                            arr[n+1].x,
+                            arr[n+1].y);
+                }
+
+              }
   
               return len;
   
@@ -1757,7 +1768,7 @@ var completed=false;
               }
   
               arrayCopy(tempArray,p.workingNodes);
-              // print(p.workingNodes[1]);            
+
             };
             // function reverseNodes(arr){
 
@@ -1795,90 +1806,6 @@ var completed=false;
                 index1++;
                 index2--;
                 
-              }
-
-            };
-
-            function drawWorkingNodes() {
-              
-              forEach(p.workingNodes, 'draw');
-
-            };
-            function drawOriginalNodes(){
-              
-              forEach(p.originalNodes, 'draw');
-
-            };
-            function drawBestNodes()    {
-              
-              forEach(p.bestNodes, 'draw');
-
-            };
-
-            function drawOriginalPath() {
-
-              stroke(128);
-              strokeWeight(0.5);
-              noFill();          
-
-              beginShape();
-
-                for(var n=0; n<p.originalNodes.length; n++){                
-                  vertex(p.originalNodes[n].x, p.originalNodes[n].y);
-                }
-
-              endShape(CLOSE);
-
-            };
-            function drawBestPath()     {
-
-              stroke(0,0,128);
-              strokeWeight(0.5);
-              noFill();          
-
-              beginShape();
-              
-                for(var n=0; n<p.bestNodes.length; n++){                
-                  vertex(p.bestNodes[n].x, p.bestNodes[n].y);
-                }
-
-              endShape(CLOSE);
-
-            };
-            function drawWorkingPath()  {
-
-              stroke(128);
-              strokeWeight(0.25);
-              noFill();          
-
-              beginShape();
-
-                for(var n=0; n<p.workingNodes.length; n++){  
-
-                  vertex(p.workingNodes[n].x, p.workingNodes[n].y);
-
-                }
-
-              endShape(CLOSE);
-
-            };
-            function drawSortedPath()   {
-
-              stroke(0,128,0);
-              strokeWeight(1);
-              noFill();          
-
-              // beginShape();
-              
-              //   for(var n=0; n<p.sortedNodes.length; n++){                
-              //     vertex(p.sortedNodes[n].x, p.sortedNodes[n].y);
-              //   }
-
-              // endShape(CLOSE);
-
-              for(var n=0; n<p.sortedNodes.length; n++){                
-                line(p.sortedNodes[0].x, p.sortedNodes[0].y,
-                     p.sortedNodes[n].x, p.sortedNodes[n].y);
               }
 
             };
@@ -2054,13 +1981,14 @@ var completed=false;
           }
 
           function nodePermutations(n, arr){
+            //  ***** NOTE: Do NOT exceed 9 nodes *****
 
             //  c is an encoding of the stack state.
             //  c[k] encodes the for-loop counter for
             //  when generate(k+1, A) is called.
             var c=[];
-            var bestLength=Infinity;
-            var pLength=tourLength(p.originalNodes);
+            var minTourLength=Infinity;
+            var tourLength=getTourLength(arr);
             var counter=1;
 
             for(var i=0; i<n; i++){
@@ -2072,12 +2000,12 @@ var completed=false;
 
             while(i<n){
 
-              pLength=tourLength(p.originalNodes);
+              tourLength=getTourLength(arr);
 
-              if(pLength<bestLength){
+              if(tourLength<minTourLength){
 
-                bestLength=pLength;
-                arrayCopy(p.originalNodes, p.bestNodes);
+                minTourLength=tourLength;
+                arrayCopy(arr, p.bestNodes);
 
               }
 
@@ -2108,7 +2036,7 @@ var completed=false;
 
             }
             
-            p.bestLength=bestLength;
+            p.minimumLength=minTourLength;
 
           }
 
@@ -2116,22 +2044,17 @@ var completed=false;
 
             if(!p.bfSwitch){
               nodePermutations(p.originalNodes.length, p.originalNodes);
-              p.bfSwitch=true;
+              p.bfSwitch=true;   
+              renumberNodes(p.bestNodes);
             }
 
             if(app.elapsedTime<10){
-              swap3Consecutive(p.workingNodes);
-              drawWorkingNodes();
-              drawWorkingPath();
-              drawBestPath();
-            }
-            else{
-              drawBestPath();
-              drawBestNodes();
+              swap3Consecutive(p.workingNodes);              
+              drawPath(p.workingNodes);
             }
 
-            drawWorkingNodes();
-            drawWorkingPath();
+            drawNodes(p.bestNodes);
+            drawPath(p.bestNodes);
 
           };
           function genetic(){
@@ -2199,11 +2122,11 @@ var completed=false;
 
                 swap3Random(p.workingNodes);
 
-                p.workingLength = tourLength(p.workingNodes);                  
+                p.workingLength = getTourLength(p.workingNodes);                  
   
-                if(p.workingLength<p.bestLength){
+                if(p.workingLength<p.minimumLength){
                   arrayCopy(p.workingNodes, p.bestNodes);
-                  p.bestLength = p.workingLength;
+                  p.minimumLength = p.workingLength;
                 }              
                 else{
                   arrayCopy(p.originalNodes, p.workingNodes);
@@ -2211,19 +2134,19 @@ var completed=false;
                 
             }
 
-            drawWorkingNodes();
-            drawWorkingPath();
-            drawBestPath();
+            drawNodes(p.workingNodes);
+            drawPath(p.workingNodes);
+            drawPath(p.bestNodes);
 
           };
 
           function updateTour(){
 
-            p.workingLength = tourLength(p.workingNodes);                
+            p.workingLength = getTourLength(p.workingNodes);                
 
-            if(p.workingLength<p.bestLength*p.factor){
+            if(p.workingLength<p.minimumLength*p.factor){
 
-              p.bestLength = p.workingLength;
+              p.minimumLength = p.workingLength;
 
                 if(p.workingLength<p.historicLength){
                   p.historicLength=p.workingLength;
@@ -2325,12 +2248,11 @@ p.factor=1;
 
             };
 
-            function placeNode(){
+            function placeNode(arr){
 
               // Locates the position within the array that results in the shortest tour
-              var arr=p.workingNodes;
               var bestPosition=arr.length-1;              
-              var dist=tourLength(arr);
+              var dist=getTourLength(arr);
               var minDist=dist;
 
               for(var n=0; n<arr.length; n++){
@@ -2339,7 +2261,7 @@ p.factor=1;
                   swap(arr,n,n+1);
                 }
 
-                dist=tourLength(arr);
+                dist=getTourLength(arr);
 
                 if(dist<minDist){
                   minDist=dist;
@@ -2373,6 +2295,7 @@ p.factor=1;
 
               p.workingNodes.push(nod);
 
+              //  Remove from the source array if greedy method is random
               if(app.greedyMethod==GREEDYMETHODS.RANDOM){
                 p.sourceNodes.splice(0,1); 
               }
@@ -2398,28 +2321,27 @@ p.factor=1;
 
                 p.workingNodes.unshift(nod); // Adds the node to the first array position [0]
 
-                placeNode(nod);             //  Shifts the node to the location 
+                placeNode(p.workingNodes,nod);             //  Shifts the node to the location 
                                             //  that minimizes the tour length
               }
 
               arrayCopy(p.workingNodes,p.bestNodes);
-              p.workingLength = tourLength(p.workingNodes);
-              p.bestLength=p.workingLength;
+              p.workingLength = getTourLength(p.workingNodes);
+              p.minimumLength=p.workingLength;
 
             }
             else{
 
               renumberNodes(p.workingNodes);
 
-              // iterate();
+              iterate();
 
             }
             
-            drawWorkingPath();
-            drawWorkingNodes();
-// print(p.workingNodes);
+            drawPath(p.workingNodes);
+            drawNodes(p.workingNodes);
             
-            drawBestPath();
+            // drawPath(p.bestNodes);
 
           };
 
@@ -2466,12 +2388,13 @@ p.factor=1;
                       p.index=0;
                     }
 
-                    if     (frameCount%2==0) { swap2Closest(p.workingNodes);     }
-                    else if(frameCount%3==0) { swap2Length(getLongest(p.workingNodes),p.workingNodes); }
-                    else if(frameCount%5==0) { swap2Consecutive(p.workingNodes); }
-                    else if(frameCount%7==0) { swap3Consecutive(p.workingNodes); }
-                    else if(frameCount%11==0){ swap3Random(p.workingNodes);      }
-                    else                     { swap2Random(p.workingNodes);      }
+                    if     (frameCount%2==0) { swap2Closest(p.workingNodes);           }
+                    else if(frameCount%3==0) { swap2Length(getLongest(p.workingNodes),
+                                                                      p.workingNodes); }
+                    else if(frameCount%5==0) { swap2Consecutive(p.workingNodes);       }
+                    else if(frameCount%7==0) { swap3Consecutive(p.workingNodes);       }
+                    else if(frameCount%11==0){ swap3Random(p.workingNodes);            }
+                    else                     { swap2Random(p.workingNodes);            }
 
                     break;
 
@@ -2481,9 +2404,9 @@ p.factor=1;
 
             }
 
-            drawWorkingNodes();
-            drawWorkingPath();
-            drawBestPath();
+            drawNodes(p.workingNodes);
+            drawPath(p.workingNodes);
+            drawPath(p.bestNodes);
             
           };
 
@@ -2615,7 +2538,7 @@ p.factor=1;
               nod=p.workingNodes[n];
 
               if(canGrow(nod)){                
-                // nod.radius++;
+                nod.radius++;
               }
 
             }
@@ -2645,8 +2568,8 @@ renumberNodes(p.workingNodes);
                 }
 
                 reverseNodes(p.workingNodes,
-                              p.Intersections[0].id,
-                              p.Intersections[2].id);
+                             p.Intersections[0].id,
+                             p.Intersections[2].id);
 
               }
 
@@ -2657,9 +2580,9 @@ renumberNodes(p.workingNodes);
 
             updateTour();
 
-            drawWorkingPath();
-            drawWorkingNodes();
-            // drawBestPath();
+            drawPath(p.workingNodes);
+            drawNodes(p.workingNodes);
+            // drawPath(p.bestNodes);
 
           };
 
@@ -2683,7 +2606,7 @@ renumberNodes(p.workingNodes);
 
               text(         '' +
                    '\n\n' + round(p.workingLength)  +
-                   '\n'   + round(p.bestLength) +
+                   '\n'   + round(p.minimumLength) +
                    '\n'   + nf(p.factor,1,5)     +
                    '\n'   + round(p.historicLength) +
                    '\n\n' + round(p.sourceNodes.length),  +110, 10);
@@ -2717,7 +2640,7 @@ renumberNodes(p.workingNodes);
 
               findClosest(n);
 
-              length = tourLength(p.workingNodes);   
+              length = getTourLength(p.workingNodes);   
 
               if(length<minLength){ 
                 minLength=length;
@@ -2745,16 +2668,19 @@ renumberNodes(p.workingNodes);
 
               if(!p.loaded){
                 initialCondition();
+                if(app.algorithm==ALGORITHMS.GREEDY){
+                  this.workingNodes=[];
+                }
               }
 
               switch(app.algorithm){
 
-                case ALGORITHMS.GROW:               grow();               break;
-                case ALGORITHMS.GREEDY:             greedy();             break;
-                case ALGORITHMS.ITERATE:            iterate();            break;
-                case ALGORITHMS.NEAREST:            nearestNeighbor();    break;
                 case ALGORITHMS.SIMULATEDANNEALING: simulatedAnnealing(); break;
+                case ALGORITHMS.GROW:               grow();               break;
+                case ALGORITHMS.GREEDY:             greedy();             break;                
+                case ALGORITHMS.NEAREST:            nearestNeighbor();    break;
                 case ALGORITHMS.BRUTEFORCE:         bruteForce();         break;
+
                 case ALGORITHMS.GENETIC:            genetic();            break;
                 case ALGORITHMS.CRITTERS:           critters();           break;
 
@@ -2856,39 +2782,6 @@ renumberNodes(p.workingNodes);
         }
 
       };
-      field.prototype.clearLayout  = function(){
-
-
-
-      };
-      field.prototype.update       = function(){
-
-      };
-      field.prototype.calcRadius   = function(){
-
-        var rw = (this.h-20)/sin(PI/3);
-        var rh =  this.w-20;
-
-        if(rw > rh){ this.radius = rh; }
-        else       { this.radius = rw; }
-
-        // var ctrls=this.controls;
-        // var sz=this.layout.length;
-
-        // this.reset();
-
-        // for(var r in ctrls){
-          // for(var c in ctrls[r]){
-
-            // ctrls[r][c].w=this.radius/sz;
-            // ctrls[r][c].h=this.radius/sz;
-
-            // ctrls[r][c].reset();
-
-          // }
-        // }
-
-      };
       field.prototype.resized      = function(){
 
         this.x = 5;
@@ -2973,7 +2866,7 @@ renumberNodes(p.workingNodes);
           noFill();
 
           // for(var n=0; n<p.closest.length; n++){
-          for(var n=0; n<10; n++){
+          for(var n=0; n<8; n++){
             line(p.x, p.y,
                  p.closest[n].x, p.closest[n].y);
           }
@@ -2994,6 +2887,10 @@ renumberNodes(p.workingNodes);
 
               ellipse(p.x, p.y, p.w, p.w);
               
+          }
+
+          if(app.algorithm!=ALGORITHMS.GROW){
+            p.radius=10;
           }
 
           ellipse(p.x, p.y, p.radius, p.radius);
