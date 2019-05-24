@@ -422,19 +422,19 @@ forum.processing.org
     /* TSP Specific       ------------------ */
     {
 
-      this.greedyMethod = GREEDYMETHODS.FURTHEST;
-      // this.greedyMethod       = GREEDYMETHODS.CLOSEST;
-      // this.greedyMethod       = GREEDYMETHODS.RANDOM;
+      // this.greedyMethod = GREEDYMETHODS.FURTHEST;
+      // this.greedyMethod = GREEDYMETHODS.CLOSEST;
+      // this.greedyMethod = GREEDYMETHODS.RANDOM;
 
-      // this.algorithm          = ALGORITHMS.GROW;
-      // this.algorithm          = ALGORITHMS.GREEDY;
-      // this.algorithm          = ALGORITHMS.BRUTEFORCE;
-      // this.algorithm          = ALGORITHMS.SIMULATEDANNEALING;
-      // this.algorithm          = ALGORITHMS.NEAREST;
-      // app.algorithm          = ALGORITHMS.ITERATE;
+      // this.algorithm    = ALGORITHMS.GROW;
+      // this.algorithm    = ALGORITHMS.GREEDY;
+      // this.algorithm    = ALGORITHMS.BRUTEFORCE;
+      // this.algorithm    = ALGORITHMS.SIMULATEDANNEALING;
+      // this.algorithm    = ALGORITHMS.NEAREST;
+      // app.algorithm     = ALGORITHMS.ITERATE;
 
-      this.algorithm = ALGORITHMS.CRITTERS;
-      // this.algorithm          = ALGORITHMS.GENETIC;
+      this.algorithm        = ALGORITHMS.CRITTERS;
+      // this.algorithm     = ALGORITHMS.GENETIC;
 
       this.nodes = 100;                //  Total # of nodes to be connected
 
@@ -1611,24 +1611,24 @@ forum.processing.org
             // y1=floor(random( 20, p.h-20));
 
             p.originalNodes.push(new node(n,
-              this,
-              x1,
-              y1,
-              5,
-              5,
-              { cursor: HAND })
-            );
+                                          this,
+                                          x1,
+                                          y1,
+                                          5,
+                                          5,
+                                          { cursor: HAND })
+                                );
           }
-
-          arrayCopy(p.originalNodes, p.bestNodes);
-          arrayCopy(p.originalNodes, p.workingNodes);
-          // arrayCopy(p.originalNodes, p.sortedNodes);
-
-          arrayCopy(p.originalNodes, p.sourceNodes);
 
         };
 
         load();
+
+        arrayCopy(p.originalNodes, p.bestNodes);
+        arrayCopy(p.originalNodes, p.workingNodes);
+        // arrayCopy(p.originalNodes, p.sortedNodes);
+
+        arrayCopy(p.originalNodes, p.sourceNodes);
 
         function contains(arr, i) {
 
@@ -1691,7 +1691,7 @@ forum.processing.org
 
         this.dirty = false;
 
-        arraySort(p.sortedNodes);
+        // arraySort(p.sortedNodes);
 
       };
       field.prototype.draw = function () {
@@ -1707,9 +1707,9 @@ forum.processing.org
 
         function border() {
 
-          fill(0);
+          fill(222);
 
-          if (p.hit) { fill(16); };
+          if (p.hit) { fill(222); };
 
           stroke(getColor(H_BLUE, 25));
           strokeWeight(1.5);
@@ -2157,26 +2157,30 @@ forum.processing.org
             if (n == app.nodes - 1) {
 
               exists = segmentExists(p.workingNodes[n],
-                p.workingNodes[0]);
+                                     p.workingNodes[0]);
               if (exists != -1) {
                 p.segments[n].weight = constrain(p.segments[n].weight + 1, 0, 100);
               }
               else {
                 p.segments.push(new segment(p.workingNodes[n],
-                  p.workingNodes[0]));
+                                            p.workingNodes[0]));
+                p.segments[p.segments.length-1].weight = 15;
+
               }
 
             }
             else {
 
               exists = segmentExists(p.workingNodes[n],
-                p.workingNodes[n + 1]);
+                                     p.workingNodes[n + 1]);
               if (exists != -1) {
                 p.segments[n].weight = constrain(p.segments[n].weight + 1, 0, 100);
               }
               else {
                 p.segments.push(new segment(p.workingNodes[n],
-                  p.workingNodes[n + 1]));
+                                            p.workingNodes[n + 1]));
+                p.segments[p.segments.length-1].weight = 15;                                            
+
               }
 
             }
@@ -2189,49 +2193,42 @@ forum.processing.org
           stroke(128);
           strokeWeight(3);
           noFill();
-          fill(192, 5);
 
           for (var n = 0; n < p.segments.length; n++) {
 
             // stroke(0,0,0,20);
-            stroke(192, 192, 192, p.segments[n].weight * 3);
+            stroke(64,64,64, p.segments[n].weight);
 
             line(p.segments[n].point1.x, p.segments[n].point1.y,
-              p.segments[n].point2.x, p.segments[n].point2.y);
+                 p.segments[n].point2.x, p.segments[n].point2.y);
 
           }
 
         };
         function critters() {
 
-          if (!p.loaded) {
-
-            // for(var n=0; n<2; n++){
-
-            loadGreedy();
-
-            updateSegments();
-
-            // }
-
-            p.loaded = true;
-
-          }
+          p.reset();
+          
+          loadGreedy();
+          
+          updateSegments();
 
           drawSegments();
           drawNodes(p.workingNodes);
-          // renumberNodes(p.workingNodes);
+          renumberNodes(p.workingNodes);
 
-          if (frameCount > 1000 && frameCount % 5 == 0) {
+          if (frameCount % 5 == 0) {
 
             for (var n = 0; n < p.segments.length; n++) {
-              p.segments[n].weight = constrain(p.segments[n].weight - 1, 0, 100);
+              
+              p.segments[n].weight = constrain(p.segments[n].weight - 2, 0, 100);
+              
+              if(p.segments[n].weight==0){
+                // p.segments.splice(n,1);
+              }
+
             }
 
-          }
-
-          if (frameCount > 100) {
-            p.reset();
           }
 
         };
@@ -2427,9 +2424,9 @@ forum.processing.org
 
                 if (nod != null) {
 
-                  placeNode(p.workingNodes, nod);  //  Shifts the node to the location 
-                  //  that minimizes the tour length
-                  //  by trying all possible locations
+                  placeNode(p.workingNodes, nod); //  Shifts the node to the location 
+                                                  //  that minimizes the tour length
+                                                  //  by trying all possible locations
                 }
 
               }
@@ -2878,54 +2875,54 @@ forum.processing.org
 
         };
 
-        push();
+          push();
 
-        translate(this.x, this.y);
+          translate(this.x, this.y);
 
-        border();
+          border();
 
-        if (!p.loaded) {
+          if (!p.loaded) {
 
-          // initialCondition();
+            // initialCondition();
 
-          if (app.algorithm == ALGORITHMS.GREEDY) {
+            if (app.algorithm == ALGORITHMS.GREEDY) {
 
-            this.workingNodes = [];
+              this.workingNodes = [];
+
+            }
 
           }
 
-        }
+          switch (app.algorithm) {
 
-        switch (app.algorithm) {
+            case ALGORITHMS.SIMULATEDANNEALING: simulatedAnnealing(); break;
+            case ALGORITHMS.GROW:               grow();               break;
+            case ALGORITHMS.GREEDY:             greedy();             break;
+            case ALGORITHMS.NEAREST:            nearestNeighbor();    break;
+            case ALGORITHMS.BRUTEFORCE:         bruteForce();         break;
 
-          case ALGORITHMS.SIMULATEDANNEALING: simulatedAnnealing(); break;
-          case ALGORITHMS.GROW: grow(); break;
-          case ALGORITHMS.GREEDY: greedy(); break;
-          case ALGORITHMS.NEAREST: nearestNeighbor(); break;
-          case ALGORITHMS.BRUTEFORCE: bruteForce(); break;
+            case ALGORITHMS.GENETIC:            genetic();            break;
+            case ALGORITHMS.CRITTERS:           critters();           break;
 
-          case ALGORITHMS.GENETIC: genetic(); break;
-          case ALGORITHMS.CRITTERS: critters(); break;
+            default:                            simulatedAnnealing(); break;
 
-          default: simulatedAnnealing(); break;
+          }
 
-        }
+          drawProperties();
 
-        drawProperties();
+          if (app.currentNode != null) {
+            text(app.currentNode.id, 50, 500);
+          }
 
-        if (app.currentNode != null) {
-          text(app.currentNode.id, 50, 500);
-        }
+          pop();
 
-        pop();
+          fill(128);
+          noStroke();
+          textSize(20);
 
-        fill(128);
-        noStroke();
-        textSize(20);
+          text(nf(app.elapsedTime, 1, 1), 50, 400);
 
-        text(nf(app.elapsedTime, 1, 1), 50, 400);
-
-        text("Segments: " + p.segments.length, 50, 450);
+          text("Segments: " + p.segments.length, 50, 450);
 
       };
       field.prototype.hitTest = function (x, y) {
