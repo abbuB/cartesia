@@ -422,7 +422,7 @@ forum.processing.org
     /* TSP Specific       ------------------ */
     {
 
-      // this.greedyMethod = GREEDYMETHODS.FURTHEST;
+      this.greedyMethod = GREEDYMETHODS.FURTHEST;
       // this.greedyMethod = GREEDYMETHODS.CLOSEST;
       // this.greedyMethod = GREEDYMETHODS.RANDOM;
 
@@ -2164,7 +2164,7 @@ forum.processing.org
               else {
                 p.segments.push(new segment(p.workingNodes[n],
                                             p.workingNodes[0]));
-                p.segments[p.segments.length-1].weight = 15;
+                p.segments[p.segments.length-1].weight = 25;
 
               }
 
@@ -2179,7 +2179,7 @@ forum.processing.org
               else {
                 p.segments.push(new segment(p.workingNodes[n],
                                             p.workingNodes[n + 1]));
-                p.segments[p.segments.length-1].weight = 15;                                            
+                p.segments[p.segments.length-1].weight = 25;                                            
 
               }
 
@@ -2214,17 +2214,17 @@ forum.processing.org
           updateSegments();
 
           drawSegments();
-          drawNodes(p.workingNodes);
-          renumberNodes(p.workingNodes);
+          drawNodes(p.originalNodes);
+          // renumberNodes(p.workingNodes);
 
           if (frameCount % 5 == 0) {
 
             for (var n = 0; n < p.segments.length; n++) {
-              
-              p.segments[n].weight = constrain(p.segments[n].weight - 2, 0, 100);
+
+              p.segments[n].weight = constrain(p.segments[n].weight - 1, 0, 100);
               
               if(p.segments[n].weight==0){
-                // p.segments.splice(n,1);
+                p.segments.splice(n,1);
               }
 
             }
@@ -2414,9 +2414,9 @@ forum.processing.org
 
                 switch (app.greedyMethod) {
 
-                  case GREEDYMETHODS.CLOSEST: nod = getClosestNode(cNode); break;
+                  case GREEDYMETHODS.CLOSEST:  nod = getClosestNode(cNode); break;
                   case GREEDYMETHODS.FURTHEST: nod = getFurthestNode(cNode); break;
-                  case GREEDYMETHODS.RANDOM: nod = getRandomNode(); break;
+                  case GREEDYMETHODS.RANDOM:   nod = getRandomNode(); break;
 
                   default: break;
 
