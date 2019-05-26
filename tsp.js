@@ -422,19 +422,19 @@ forum.processing.org
     /* TSP Specific       ------------------ */
     {
 
-      this.greedyMethod = GREEDYMETHODS.FURTHEST;
+      // this.greedyMethod = GREEDYMETHODS.FURTHEST;
       // this.greedyMethod = GREEDYMETHODS.CLOSEST;
-      // this.greedyMethod = GREEDYMETHODS.RANDOM;
+      this.greedyMethod = GREEDYMETHODS.RANDOM;
 
       // this.algorithm    = ALGORITHMS.GROW;
-      // this.algorithm    = ALGORITHMS.GREEDY;
+      this.algorithm    = ALGORITHMS.GREEDY;
       // this.algorithm    = ALGORITHMS.BRUTEFORCE;
       // this.algorithm    = ALGORITHMS.SIMULATEDANNEALING;
       // this.algorithm    = ALGORITHMS.NEAREST;
       // app.algorithm     = ALGORITHMS.ITERATE;
 
-      this.algorithm        = ALGORITHMS.CRITTERS;
-      // this.algorithm     = ALGORITHMS.GENETIC;
+      // this.algorithm    = ALGORITHMS.CRITTERS;
+      // this.algorithm    = ALGORITHMS.GENETIC;
 
       this.nodes = 100;                //  Total # of nodes to be connected
 
@@ -1513,49 +1513,49 @@ forum.processing.org
 
         /* ------------------------------------------------- */
 
-        this.activeCell = null;
+        this.activeCell     = null;
 
-        this.dirty = false;    //  Has the field been clicked yet?
+        this.dirty          = false;      //  Has the field been clicked yet?
 
-        app.field = this;     //  Set a global field reference
+        app.field           = this;       //  Set a global field reference
 
-        this.startX = 0;        //  x-coordinate of drag start
-        this.startY = 0;        //  y-coordinate of drag start
+        this.startX         = 0;          //  x-coordinate of drag start
+        this.startY         = 0;          //  y-coordinate of drag start
 
-        this.deltaX = 0;        //  x-coordinate drag offset
-        this.deltaY = 0;        //  y-coordinate drag offset
+        this.deltaX         = 0;          //  x-coordinate drag offset
+        this.deltaY         = 0;          //  y-coordinate drag offset
 
-        this.deltaDrag = 0;        //  Distance dragged from start point along the drag direction
+        this.deltaDrag      = 0;          //  Distance dragged from start point along the drag direction
 
-        this.cellSize = 0;        //  Size of each node
-
-        // ----------
-
-        this.originalNodes = [];       //  Original array of nodes
-
-        this.sortedNodes = [];       //  Sorted Original array of nodes
-
-        this.bestNodes = [];       //  Shortest path so far
-        this.workingNodes = [];       //  Path used to experiment
-        this.historicNodes = [];       //  Overall best path
-
-        this.sourceNodes = [];       //  Nodes to select from
+        this.cellSize       = 0;          //  Size of each node
 
         // ----------
 
-        this.intersections = [];       //  node couples that intersect
+        this.originalNodes  = [];         //  Original array of nodes
 
-        this.segments = [];       //  array of segments
+        // this.sortedNodes = [];         //  Sorted Original array of nodes
 
-        this.originalLength = Infinity; //  Length of original path
-        this.workingLength = Infinity; //  Length of path being tested
-        this.minimumLength = Infinity; //  Current minimum tour length        
-        this.historicLength = Infinity; //  Best recorded overall
-        this.greedyLength = Infinity; //  Length of Greedy Path
+        this.bestNodes      = [];         //  Shortest path so far
+        this.workingNodes   = [];         //  Path used to experiment
+        this.historicNodes  = [];         //  Overall best path
+
+        this.sourceNodes    = [];         //  Nodes to select from
+
+        this.intersections  = [];         //  node couples that intersect
+
+        this.segments       = [];         //  array of segments
+
+        // ----------
+
+        this.originalLength = Infinity;   //  Length of original path
+        this.workingLength  = Infinity;   //  Length of path being tested
+        this.minimumLength  = Infinity;   //  Current minimum tour length        
+        this.historicLength = Infinity;   //  Best recorded overall
+        this.greedyLength   = Infinity;   //  Length of Greedy Path
 
         this.factor = 1.1;
 
-        this.bfSwitch = false;    //  Brute Force Switch
+        this.bfSwitch = false;            //  Brute Force Switch
 
         this.loaded = false;
 
@@ -1569,24 +1569,29 @@ forum.processing.org
       field.prototype = Object.create(control.prototype);
       field.prototype.reset = function () {
 
-        var p = this;       //  Set a reference to the field control
+        var p = this;                 //  Set a reference to the field control
 
-        p.controls = [];         //  Clear the controls array
+        p.controls             = [];  //  Clear the controls array
 
-        p.originalNodes = [];
-        p.sortedNodes = [];
-        p.bestNodes = [];
-        p.workingNodes = [];
-        p.sourceNodes = [];
+        p.originalNodes        = [];        
+        p.bestNodes            = [];
+        p.workingNodes         = [];
 
-        p.intersections = [];
-        // p.segments          = [];
+        p.sourceNodes          = [];
+        
+        // p.sortedNodes          = [];
+        
+        p.intersections        = [];
+        
+        if(app.algorithm!=ALGORITHMS.CRITTERS){
+          p.segments          = [];
+        }
 
-        // p.originalLength    = Infinity;
-        // p.workingLength     = Infinity;
-        // p.minimumLength     = Infinity;        
-        // p.historicLength    = Infinity;
-        // p.greedyLength      = Infinity;
+        p.originalLength    = Infinity;
+        p.workingLength     = Infinity;
+        p.minimumLength     = Infinity;        
+        p.historicLength    = Infinity;
+        p.greedyLength      = Infinity;
 
         p.factor = 1.1;
         p.loaded = false;
@@ -1602,7 +1607,7 @@ forum.processing.org
 
           var seg = null;
 
-          for (var n = 0; n < app.nodes; n++) {
+          for (var n=0; n<app.nodes; n++){
 
             x1 = data[n][0];
             y1 = data[n][1];
@@ -1687,7 +1692,9 @@ forum.processing.org
 
         };
 
-        loadClosestNodes();
+        if(app.algorithm!=ALGORITHMS.CRITTERS){
+          loadClosestNodes();
+        }
 
         this.dirty = false;
 
@@ -1696,9 +1703,9 @@ forum.processing.org
       };
       field.prototype.draw = function () {
 
-        app.elapsedTime = (millis() - app.startTime) / 1000;
+        app.elapsedTime=(millis()-app.startTime)/1000;
 
-        var p = this;
+        var p=this;
 
         this.active = this.hit &&
           app.focus === this;
@@ -1711,26 +1718,26 @@ forum.processing.org
 
           if (p.hit) { fill(222); };
 
-          stroke(getColor(H_BLUE, 25));
-          strokeWeight(1.5);
+          stroke(127,0,0);
+          strokeWeight(0.5);
 
-          rect(0, 0, p.w, p.h, 5);
+            rect(0, 0, p.w, p.h, 5);
 
         };
 
         function drawNodes(nodes) { forEach(nodes, 'draw'); };
         function drawPath(nodes) {
 
-          stroke(128);
-          strokeWeight(0.5);
+          stroke(127);
+          strokeWeight(1);
           noFill();
-          fill(0, 5);
+          fill(0,10);
 
           beginShape();
 
-          for (var n = 0; n < nodes.length; n++) {
-            vertex(nodes[n].x, nodes[n].y);
-          }
+            for (var n=0; n<nodes.length; n++) {
+              vertex(nodes[n].x, nodes[n].y);              
+            }
 
           endShape(CLOSE);
 
@@ -2150,36 +2157,36 @@ forum.processing.org
         };
         function updateSegments() {
 
-          for (var n = 0; n < p.workingNodes.length; n++) {
+          for (var n=0; n<p.workingNodes.length; n++) {
 
-            var exists = -1;
+            var exists=-1;
 
-            if (n == app.nodes - 1) {
+            if (n==app.nodes-1) {
 
-              exists = segmentExists(p.workingNodes[n],
-                                     p.workingNodes[0]);
-              if (exists != -1) {
-                p.segments[n].weight = constrain(p.segments[n].weight + 1, 0, 100);
+              exists=segmentExists(p.workingNodes[n],
+                                   p.workingNodes[0]);
+              if (exists!=-1) {
+                p.segments[n].weight=constrain(p.segments[n].weight + 1, 0, 100);
               }
               else {
                 p.segments.push(new segment(p.workingNodes[n],
                                             p.workingNodes[0]));
-                p.segments[p.segments.length-1].weight = 25;
+                p.segments[p.segments.length-1].weight=25;
 
               }
 
             }
             else {
 
-              exists = segmentExists(p.workingNodes[n],
-                                     p.workingNodes[n + 1]);
-              if (exists != -1) {
-                p.segments[n].weight = constrain(p.segments[n].weight + 1, 0, 100);
+              exists=segmentExists(p.workingNodes[n],
+                                   p.workingNodes[n + 1]);
+              if (exists!=-1) {
+                p.segments[n].weight=constrain(p.segments[n].weight+1, 0, 100);
               }
               else {
                 p.segments.push(new segment(p.workingNodes[n],
                                             p.workingNodes[n + 1]));
-                p.segments[p.segments.length-1].weight = 25;                                            
+                p.segments[p.segments.length-1].weight=25;                                            
 
               }
 
@@ -2194,18 +2201,22 @@ forum.processing.org
           strokeWeight(3);
           noFill();
 
-          for (var n = 0; n < p.segments.length; n++) {
+          var seg=null;
+
+          for (var n=0; n<p.segments.length; n++){
+
+            seg=p.segments[n];
 
             // stroke(0,0,0,20);
-            stroke(64,64,64, p.segments[n].weight);
+            stroke(64,64,64, seg.weight);
 
-            line(p.segments[n].point1.x, p.segments[n].point1.y,
-                 p.segments[n].point2.x, p.segments[n].point2.y);
+            line(seg.point1.x, seg.point1.y,
+                 seg.point2.x, seg.point2.y);
 
           }
 
         };
-        function critters() {
+        function critters(){
 
           p.reset();
           
@@ -2217,11 +2228,11 @@ forum.processing.org
           drawNodes(p.originalNodes);
           // renumberNodes(p.workingNodes);
 
-          if (frameCount % 5 == 0) {
+          if(frameCount%5==0){
 
-            for (var n = 0; n < p.segments.length; n++) {
+            for (var n=0; n<p.segments.length; n++){
 
-              p.segments[n].weight = constrain(p.segments[n].weight - 1, 0, 100);
+              p.segments[n].weight = constrain(p.segments[n].weight-1, 0, 100);
               
               if(p.segments[n].weight==0){
                 p.segments.splice(n,1);
@@ -2385,12 +2396,12 @@ forum.processing.org
 
             p.workingNodes = [];
 
-            while (p.workingNodes.length < app.nodes) {
+            while (p.workingNodes.length<app.nodes) {
 
               var nod;
 
               //  Randomly add the 1st node
-              if (p.workingNodes.length == 0) {
+              if (p.workingNodes.length==0) {
 
                 arrayCopy(p.originalNodes, p.sourceNodes);
 
@@ -2401,7 +2412,7 @@ forum.processing.org
                 p.workingNodes.push(nod);
 
                 //  Remove from the source array if greedy method is random
-                if (app.greedyMethod == GREEDYMETHODS.RANDOM) {
+                if (app.greedyMethod==GREEDYMETHODS.RANDOM) {
                   p.sourceNodes.splice(0, 1);
                 }
 
@@ -2410,13 +2421,13 @@ forum.processing.org
                 cNode = nod;
 
               }
-              else if (p.workingNodes.length < app.nodes) {
+              else if (p.workingNodes.length<app.nodes) {
 
                 switch (app.greedyMethod) {
 
-                  case GREEDYMETHODS.CLOSEST:  nod = getClosestNode(cNode); break;
+                  case GREEDYMETHODS.CLOSEST:  nod = getClosestNode(cNode);  break;
                   case GREEDYMETHODS.FURTHEST: nod = getFurthestNode(cNode); break;
-                  case GREEDYMETHODS.RANDOM:   nod = getRandomNode(); break;
+                  case GREEDYMETHODS.RANDOM:   nod = getRandomNode();        break;
 
                   default: break;
 
@@ -2442,7 +2453,7 @@ forum.processing.org
             var nod;
 
             //  Randomly add the 1st node
-            if (p.workingNodes.length == 0) {
+            if (p.workingNodes.length==0) {
 
               arrayCopy(p.originalNodes, p.sourceNodes);
 
@@ -2453,7 +2464,7 @@ forum.processing.org
               p.workingNodes.push(nod);
 
               //  Remove from the source array if greedy method is random
-              if (app.greedyMethod == GREEDYMETHODS.RANDOM) {
+              if (app.greedyMethod==GREEDYMETHODS.RANDOM) {
                 p.sourceNodes.splice(0, 1);
               }
 
@@ -2462,49 +2473,49 @@ forum.processing.org
               cNode = nod;
 
             }
-            else if (p.workingNodes.length < app.nodes) {
+            else if (p.workingNodes.length<app.nodes) {
 
               switch (app.greedyMethod) {
 
-                case GREEDYMETHODS.CLOSEST: nod = getClosestNode(cNode); break;
-                case GREEDYMETHODS.FURTHEST: nod = getFurthestNode(cNode); break;
-                case GREEDYMETHODS.RANDOM: nod = getRandomNode(); break;
+                case GREEDYMETHODS.CLOSEST:  nod=getClosestNode(cNode); break;
+                case GREEDYMETHODS.FURTHEST: nod=getFurthestNode(cNode); break;
+                case GREEDYMETHODS.RANDOM:   nod=getRandomNode(); break;
 
                 default: break;
 
               }
 
-              if (nod != null) {
+              if (nod!=null) {
 
                 placeNode(p.workingNodes, nod);  //  Shifts the node to the location 
-                //  that minimizes the tour length
-                //  by trying all possible locations
+                                                 //  that minimizes the tour length
+                                                 //  by trying all possible locations
               }
 
               arrayCopy(p.workingNodes, p.bestNodes);
-              p.workingLength = getTourLength(p.workingNodes);
-              p.minimumLength = p.workingLength;
+              p.workingLength=getTourLength(p.workingNodes);
+              p.minimumLength=p.workingLength;
 
-              if (p.workingNodes.length == 100) {
+              if (p.workingNodes.length==100) {
                 renumberNodes(p.workingNodes);
               }
 
             }
             else {
 
-              if (frameCount % 2 == 0) {
+              if (frameCount%2==0) {
 
                 calculateIntersections();
 
                 if (p.intersections.length > 0) {
 
-                  if (frameCount % 100 == 0) {
+                  if (frameCount%100==0) {
                     print(p.intersections);
                   }
 
                   reverseNodes(p.workingNodes,
-                    p.intersections[0].id,
-                    p.intersections[2].id);
+                               p.intersections[0].id,
+                               p.intersections[2].id);
                 }
 
               }
@@ -2798,7 +2809,7 @@ forum.processing.org
 
         };
 
-        function drawProperties() {
+        function drawProperties(){
 
           textSize(11);
           textAlign(LEFT, TOP);
@@ -2806,27 +2817,48 @@ forum.processing.org
           stroke(128);
           fill(128);
 
-          text(p.workingNodes.length + ' nodes' +
-            '\n\n' + 'Working Length:' +
-            '\n' + 'Best Length' +
-            '\n' + 'Factor:' +
-            '\n' + 'Historic Length:' +
-            '\n\n' + 'Source Length:', 10, 10);
+            text(         'Nodes:'            +
+                 '\n'   + 'Source Nodes:'     +
+                 '\n\n' + 'Working Length:'   +
+                 '\n'   + 'Best Length'       +
+                 '\n'   + 'Historic Length:'  +
+                 '\n\n' + 'Algorithm:'        +          
+                 '\n\n' + 'Current Node:'     +
+                 '\n\n' + 'Factor:'           +
+                 '\n\n' + 'Intersections:'    +
+                 '\n\n' + 'Segments:'         +
+                 '\n\n' + 'Elapsed Time:'     ,                 
+                 10, 10);
 
           stroke(64);
           fill(64);
 
-          text('' +
-            '\n\n' + round(p.workingLength) +
-            '\n' + round(p.minimumLength) +
-            '\n' + nf(p.factor, 1, 5) +
-            '\n' + round(p.historicLength) +
-            '\n\n' + round(p.sourceNodes.length), +110, 10);
+          var id=app.currentNode;
+          
+          if(id==null){
+            id='null';
+          }
+          else{
+            id=app.currentNode.id;
+          }
+
+            text(         p.workingNodes.length       +
+                 '\n'   + round(p.sourceNodes.length) +
+                 '\n\n' + round(p.workingLength)      +
+                 '\n'   + round(p.minimumLength)      +
+                 '\n'   + round(p.historicLength)     +
+                 '\n\n' + app.algorithm               +
+                 '\n\n' + id          +
+                 '\n\n' + nf(p.factor, 1, 5)          +
+                 '\n\n' + p.intersections.length      +
+                 '\n\n' + p.segments.length           +
+                 '\n\n' + nf(app.elapsedTime, 1, 1)   ,
+                 110, 10);
 
           textSize(11);
 
-          text(factorial(p.originalNodes.length), 10, p.h - 20);
-          // text(factorial(p.originalNodes.length).toLocaleString(), 10, p.h-20);
+            text(factorial(app.nodes), 10, p.h - 20);
+            // text(factorial(app.nodes).toLocaleString(), 10, p.h-200);
 
           //  Center origin
           // translate(this.w/2,this.h/2);
@@ -2877,52 +2909,42 @@ forum.processing.org
 
           push();
 
-          translate(this.x, this.y);
+            translate(this.x+0.5, this.y+0.5);
 
-          border();
+            border();
 
-          if (!p.loaded) {
+            if (!p.loaded){
 
-            // initialCondition();
+              if(app.algorithm!=ALGORITHMS.CRITTERS){
+                initialCondition();
+              }
 
-            if (app.algorithm == ALGORITHMS.GREEDY) {
+              if(app.algorithm==ALGORITHMS.GREEDY){
 
-              this.workingNodes = [];
+                this.workingNodes=[];
+
+              }
 
             }
 
-          }
+            switch (app.algorithm){
 
-          switch (app.algorithm) {
+              case ALGORITHMS.SIMULATEDANNEALING: simulatedAnnealing(); break;
+              case ALGORITHMS.GROW:               grow();               break;
+              case ALGORITHMS.GREEDY:             greedy();             break;
+              case ALGORITHMS.NEAREST:            nearestNeighbor();    break;
+              case ALGORITHMS.BRUTEFORCE:         bruteForce();         break;
 
-            case ALGORITHMS.SIMULATEDANNEALING: simulatedAnnealing(); break;
-            case ALGORITHMS.GROW:               grow();               break;
-            case ALGORITHMS.GREEDY:             greedy();             break;
-            case ALGORITHMS.NEAREST:            nearestNeighbor();    break;
-            case ALGORITHMS.BRUTEFORCE:         bruteForce();         break;
+              case ALGORITHMS.GENETIC:            genetic();            break;
+              case ALGORITHMS.CRITTERS:           critters();           break;
 
-            case ALGORITHMS.GENETIC:            genetic();            break;
-            case ALGORITHMS.CRITTERS:           critters();           break;
+              default:                            simulatedAnnealing(); break;
 
-            default:                            simulatedAnnealing(); break;
+            }
 
-          }
-
-          drawProperties();
-
-          if (app.currentNode != null) {
-            text(app.currentNode.id, 50, 500);
-          }
+            drawProperties();
 
           pop();
-
-          fill(128);
-          noStroke();
-          textSize(20);
-
-          text(nf(app.elapsedTime, 1, 1), 50, 400);
-
-          text("Segments: " + p.segments.length, 50, 450);
 
       };
       field.prototype.hitTest = function (x, y) {
@@ -3077,16 +3099,18 @@ forum.processing.org
 
           cursor(this.cursor);
 
-          if (app.left) { this.offset = 1; }
+          if(app.left){ this.offset = 1; }
 
-          stroke(128);
+          stroke(128,0,0);
           strokeWeight(0.5);
           noFill();
 
           // for(var n=0; n<p.closest.length; n++){
-          for (var n = 0; n < 8; n++) {
-            line(p.x, p.y,
-              p.closest[n].x, p.closest[n].y);
+          for (var n=0; n<8; n++) {
+            line(p.x,
+                 p.y,
+                 p.closest[n].x,
+                 p.closest[n].y);
           }
 
         }
@@ -3836,7 +3860,7 @@ forum.processing.org
     /* Accessories ---------------------------------------------------- */
 
     /** Reset Button     */
-    rt.controls.push(new resetButton('reset', rt, 50, 200, 28, 28,
+    rt.controls.push(new resetButton('reset', rt, 50, 400, 28, 28,
       {
         cursor: HAND,
         color: BLACK,
@@ -3844,7 +3868,7 @@ forum.processing.org
       }));
 
     /** Shuffle Button   */
-    rt.controls.push(new shuffleButton('shuffle', rt, 50, 250, 28, 28,
+    rt.controls.push(new shuffleButton('shuffle', rt, 50, 450, 28, 28,
       {
         cursor: HAND,
         color: BLACK,
@@ -3852,7 +3876,7 @@ forum.processing.org
       }));
 
     /** Solve Button     */
-    rt.controls.push(new solveButton('solve', rt, 50, 300, 28, 28,
+    rt.controls.push(new solveButton('solve', rt, 50, 500, 28, 28,
       {
         cursor: HAND,
         color: BLACK,
