@@ -310,7 +310,7 @@ forum.processing.org
 
   }
 
-  function preload() {
+  function preload(){
 
     // myFont = loadFont('http://fonts.googleapis.com/css?family=Walter+Turncoat&.css');
 
@@ -341,7 +341,7 @@ forum.processing.org
 
   var cnv;
 
-  function setup() {
+  function setup(){
 
     //  Set a global reference to the canvas
     cnv = createCanvas(windowWidth - 10, windowHeight - 10);
@@ -373,7 +373,7 @@ forum.processing.org
 
   }
 
-  function application() {
+  function application(){
 
     /* Platform Constants  -------------------- */
     {
@@ -423,8 +423,8 @@ forum.processing.org
     {
 
       // this.greedyMethod = GREEDYMETHODS.FURTHEST;
-      // this.greedyMethod = GREEDYMETHODS.CLOSEST;
-      this.greedyMethod = GREEDYMETHODS.RANDOM;
+      this.greedyMethod = GREEDYMETHODS.CLOSEST;
+      // this.greedyMethod = GREEDYMETHODS.RANDOM;
 
       // this.algorithm    = ALGORITHMS.GROW;
       this.algorithm    = ALGORITHMS.GREEDY;
@@ -467,40 +467,40 @@ forum.processing.org
 
       var controlCount = -1;
 
-      function getGUID() { controlCount++; return controlCount; };
+      function getGUID(){ controlCount++; return controlCount; };
 
-      function getPuzzleNumber() { return app.levelText[app.puzzle / 2]; };
+      function getPuzzleNumber(){ return app.levelText[app.puzzle / 2]; };
 
       // function iRandom(n)           { return round(random(n));                                         };
 
       function getColor(clr, alpha) { return color(red(clr), green(clr), blue(clr), alpha / 100 * 255); };
 
-      function getInfo() { return app.info; };
-      function toggleInfo() { app.info = !app.info; };
+      function getInfo(){ return app.info; };
+      function toggleInfo(){ app.info = !app.info; };
 
-      function getTelemetry() { return app.telemetry; };
-      function toggleTelemetry() { app.telemetry = !app.telemetry; };
+      function getTelemetry(){ return app.telemetry; };
+      function toggleTelemetry(){ app.telemetry = !app.telemetry; };
 
-      function toggleCreate() { };
+      function toggleCreate(){ };
 
-      function getMusic() { return app.musicOn; };
+      function getMusic(){ return app.musicOn; };
       function setMusic(b) { return app.musicOn = b; };
 
-      function getScore() { return app.score; };
+      function getScore(){ return app.score; };
       function setScore(b) { return app.score = b; };
 
       function clickTest(n) { print('click: ' + n); };
 
-      function getRunning() { return app.running; };
-      function toggleRunning() { app.running = !app.running; };
+      function getRunning(){ return app.running; };
+      function toggleRunning(){ app.running = !app.running; };
 
-      function menu() { };
+      function menu(){ };
 
     }
 
 
 
-    function reset() {
+    function reset(){
 
       app.controlCount = app.controls.length + 1;
       app.field.reset();
@@ -527,7 +527,7 @@ forum.processing.org
   /* Navigation  =========================================================== */
   {
 
-    function incrementPuzzle() {
+    function incrementPuzzle(){
 
       app.puzzle++;
 
@@ -538,7 +538,7 @@ forum.processing.org
       reset();
       // throw(23);
     };
-    function decrementPuzzle() {
+    function decrementPuzzle(){
 
       app.puzzle--;
 
@@ -550,7 +550,7 @@ forum.processing.org
 
     };
 
-    function drawDragColumn() {
+    function drawDragColumn(){
 
       fill(BLUE);
       stroke(GREEN);
@@ -573,7 +573,7 @@ forum.processing.org
     };
 
     // Dragging ----------
-    function setDragColumn() {
+    function setDragColumn(){
 
       var cell = app.field.activeCell;
 
@@ -597,7 +597,7 @@ forum.processing.org
       cell.dragging = true;
 
     };
-    function setDragBackward() {
+    function setDragBackward(){
 
       var cell = app.field.activeCell;
 
@@ -621,7 +621,7 @@ forum.processing.org
       cell.dragging = true;
 
     };
-    function setDragForward() {
+    function setDragForward(){
 
       var cell = app.field.activeCell;
 
@@ -647,7 +647,7 @@ forum.processing.org
     };
 
     // Move Columns ----------
-    function colUp() {
+    function colUp(){
 
       var cell = app.field.activeCell;
 
@@ -673,7 +673,7 @@ forum.processing.org
       app.field.totalMoves++;
 
     };
-    function colDown() {
+    function colDown(){
 
       var cell = app.field.activeCell;
 
@@ -700,7 +700,7 @@ forum.processing.org
 
     };
 
-    function colUpRight() {
+    function colUpRight(){
 
       var cell = app.field.activeCell;
 
@@ -726,7 +726,7 @@ forum.processing.org
       app.field.totalMoves++;
 
     };
-    function colUpLeft() {
+    function colUpLeft(){
 
       var cell = app.field.activeCell;
 
@@ -753,7 +753,7 @@ forum.processing.org
 
     };
 
-    function colDownRight() {
+    function colDownRight(){
 
       var cell = app.field.activeCell;
 
@@ -779,7 +779,7 @@ forum.processing.org
       app.field.totalMoves++;
 
     };
-    function colDownLeft() {
+    function colDownLeft(){
 
       var cell = app.field.activeCell;
 
@@ -808,7 +808,7 @@ forum.processing.org
 
 
     // Move Active Cell ----------
-    function up() {
+    function up(){
 
       if (app.field.activeCell.top !== null &&
         app.field.activeCell.top.layout !== 0) {
@@ -828,7 +828,7 @@ forum.processing.org
       }
 
     };
-    function down() {
+    function down(){
 
       if (app.field.activeCell.bottom !== null &&
         app.field.activeCell.bottom.layout !== 0) {
@@ -849,7 +849,7 @@ forum.processing.org
 
     };
 
-    function upRight() {
+    function upRight(){
 
       if (app.field.activeCell.topRight !== null &&
         app.field.activeCell.topRight.layout !== 0) {
@@ -869,7 +869,7 @@ forum.processing.org
       }
 
     };
-    function upLeft() {
+    function upLeft(){
 
       if (app.field.activeCell.topLeft !== null &&
         app.field.activeCell.topLeft.layout !== 0) {
@@ -890,7 +890,7 @@ forum.processing.org
 
     };
 
-    function downRight() {
+    function downRight(){
 
       if (app.field.activeCell.bottomRight !== null &&
         app.field.activeCell.bottomRight.layout !== 0) {
@@ -910,7 +910,7 @@ forum.processing.org
       }
 
     };
-    function downLeft() {
+    function downLeft(){
 
       if (app.field.activeCell.bottomLeft !== null &&
         app.field.activeCell.bottomLeft.layout !== 0) {
@@ -965,7 +965,7 @@ forum.processing.org
       this.timer = 0;            /** Used to count things - frames etc.    */
 
     };
-    control.prototype.draw = function () { };
+    control.prototype.draw = function (){ };
     control.prototype.hitTest = function (x, y) {
 
       var retVal = false;
@@ -1003,14 +1003,14 @@ forum.processing.org
       }
 
     };
-    control.prototype.clicked = function () { if (this.hit) { forEach(this.controls, 'clicked'); } };
-    control.prototype.rclicked = function () { if (this.hit) { forEach(this.controls, 'rclicked'); } };
-    control.prototype.pressed = function () { };
-    control.prototype.dragged = function () { };
-    control.prototype.released = function () { };
-    control.prototype.over = function () { };
-    control.prototype.out = function () { this.hit = false; forEach(this.controls, 'out'); };
-    control.prototype.resized = function () { forEach(this.controls, 'resized'); };
+    control.prototype.clicked = function (){ if (this.hit) { forEach(this.controls, 'clicked'); } };
+    control.prototype.rclicked = function (){ if (this.hit) { forEach(this.controls, 'rclicked'); } };
+    control.prototype.pressed = function (){ };
+    control.prototype.dragged = function (){ };
+    control.prototype.released = function (){ };
+    control.prototype.over = function (){ };
+    control.prototype.out = function (){ this.hit = false; forEach(this.controls, 'out'); };
+    control.prototype.resized = function (){ forEach(this.controls, 'resized'); };
     // control.prototype.typed=function(){};
     // control.prototype.cClicked=function(){};
 
@@ -1032,7 +1032,7 @@ forum.processing.org
 
       };
       root.prototype = Object.create(control.prototype);
-      root.prototype.draw = function () {
+      root.prototype.draw = function (){
 
         this.active = this.hit &&
           app.focus === this;
@@ -1083,7 +1083,7 @@ forum.processing.org
         }
 
       };
-      root.prototype.resized = function () {
+      root.prototype.resized = function (){
 
         this.w = windowWidth - 20;
         this.h = windowHeight - 20;
@@ -1091,7 +1091,7 @@ forum.processing.org
         forEach(this.controls, 'resized');
 
       };
-      root.prototype.dragged = function () {
+      root.prototype.dragged = function (){
 
         forEach(this.controls, 'dragged');
 
@@ -1110,7 +1110,7 @@ forum.processing.org
 
       };
       telemetry.prototype = Object.create(control.prototype);
-      telemetry.prototype.draw = function () {
+      telemetry.prototype.draw = function (){
 
         if (app.debug === false) { return; }
 
@@ -1121,7 +1121,7 @@ forum.processing.org
 
         if (this.active) { cursor(this.cursor); }
 
-        function border() {
+        function border(){
 
           noStroke();
 
@@ -1134,7 +1134,7 @@ forum.processing.org
           rect(p.offset, 0, p.w, p.h, 5);
 
         };
-        function title() {
+        function title(){
 
           textAlign(CENTER, CENTER);
           textSize(14);
@@ -1144,7 +1144,7 @@ forum.processing.org
           text('Telemetry', p.w / 2 + p.offset, 20);
 
         };
-        function environment() {
+        function environment(){
 
           fill(getColor(p.color, 50));
 
@@ -1210,7 +1210,7 @@ forum.processing.org
             col2, row0);
 
         };
-        function appSpecific() {
+        function appSpecific(){
 
           var top = 405;
 
@@ -1307,7 +1307,7 @@ forum.processing.org
         }
 
       };
-      telemetry.prototype.resized = function () {
+      telemetry.prototype.resized = function (){
 
         this.x = this.parent.w - this.w;
         this.h = this.parent.h - 10;
@@ -1535,6 +1535,8 @@ forum.processing.org
 
         // this.sortedNodes = [];         //  Sorted Original array of nodes
 
+        this.tours          = [];         //  An array of tours
+
         this.bestNodes      = [];         //  Shortest path so far
         this.workingNodes   = [];         //  Path used to experiment
         this.historicNodes  = [];         //  Overall best path
@@ -1567,7 +1569,7 @@ forum.processing.org
 
       };
       field.prototype = Object.create(control.prototype);
-      field.prototype.reset = function () {
+      field.prototype.reset = function (){
 
         var p = this;                 //  Set a reference to the field control
 
@@ -1598,7 +1600,7 @@ forum.processing.org
 
         completed = false;
 
-        function load() {
+        function load(){
 
           var x1 = 0;
           var y1 = 0;
@@ -1684,7 +1686,7 @@ forum.processing.org
 
         };
 
-        function loadClosestNodes() {
+        function loadClosestNodes(){
 
           for (var n = 0; n < p.originalNodes.length; n++) {
             sortByDistance(p.originalNodes, p.originalNodes[n]);
@@ -1701,18 +1703,18 @@ forum.processing.org
         // arraySort(p.sortedNodes);
 
       };
-      field.prototype.draw = function () {
+      field.prototype.draw = function (){
 
         app.elapsedTime=(millis()-app.startTime)/1000;
 
         var p=this;
 
         this.active = this.hit &&
-          app.focus === this;
+                      app.focus === this;
 
         if (this.active) { cursor(this.cursor); }
 
-        function border() {
+        function border(){
 
           fill(222);
 
@@ -2055,7 +2057,7 @@ forum.processing.org
 
         }
 
-        function bruteForce() {
+        function bruteForce(){
 
           if (!p.bfSwitch) {
             nodePermutations(p.originalNodes.length, p.originalNodes);
@@ -2073,7 +2075,7 @@ forum.processing.org
 
         };
 
-        function genetic() {
+        function genetic(){
 
         };
 
@@ -2155,7 +2157,7 @@ forum.processing.org
           return retVal;
 
         };
-        function updateSegments() {
+        function updateSegments(){
 
           for (var n=0; n<p.workingNodes.length; n++) {
 
@@ -2195,7 +2197,7 @@ forum.processing.org
           }
 
         };
-        function drawSegments() {
+        function drawSegments(){
 
           stroke(128);
           strokeWeight(3);
@@ -2244,7 +2246,7 @@ forum.processing.org
 
         };
 
-        function nearestNeighbor() {
+        function nearestNeighbor(){
 
           for (var n = 0; n < 1000; n++) {
 
@@ -2260,7 +2262,7 @@ forum.processing.org
 
         };
 
-        function updateTour() {
+        function updateTour(){
 
           p.workingLength = getTourLength(p.workingNodes);
 
@@ -2277,7 +2279,7 @@ forum.processing.org
 
         };
 
-        function iterate() {
+        function iterate(){
           // p.factor=1;
           arrayCopy(p.bestNodes, p.workingNodes);
           // renumberNodes(p.bestNodes);
@@ -2320,28 +2322,28 @@ forum.processing.org
 
         };
 
-        {
+        { // Greedy
 
-          function getRandomNode() {
+          function getRandomNode(arr){
 
             var newNode = null;
 
-            randomizeArray(p.sourceNodes);
+            randomizeArray(arr);
 
-            newNode = p.sourceNodes[0];
+            newNode = arr[0];
 
-            p.sourceNodes.splice(0, 1);
+            arr.splice(0, 1);
 
             return newNode;
 
           };
 
-          function getClosestNode(nod) {
+          function getClosestNode(nod){
 
-            for (var n = 0; n < nod.closest.length; n++) {
+            for(var n=0; n<nod.closest.length; n++){
 
-              if (nod.closest[n].loaded == false) {
-                nod.closest[n].loaded = true;
+              if(nod.closest[n].loaded==false){
+                nod.closest[n].loaded=true;
                 return nod.closest[n];
               }
 
@@ -2349,12 +2351,12 @@ forum.processing.org
 
           };
 
-          function getFurthestNode(nod) {
+          function getFurthestNode(nod){
 
-            for (var n = nod.closest.length - 1; n >= 0; n--) {
+            for(var n=nod.closest.length-1; n>=0; n--) {
 
-              if (nod.closest[n].loaded == false) {
-                nod.closest[n].loaded = true;
+              if(nod.closest[n].loaded==false){
+                nod.closest[n].loaded=true;
                 return nod.closest[n];
               }
 
@@ -2362,26 +2364,26 @@ forum.processing.org
 
           };
 
-          function placeNode(arr, nod) {
+          function placeNode(arr, nod){
 
             arr.unshift(nod); // Adds the node to the first array position [0]
 
             // Locates the position within the array that results in the shortest tour
-            var bestPosition = arr.length - 1;
-            var dist = getTourLength(arr);
-            var minDist = dist;
+            var bestPosition=arr.length-1;
+            var dist=getTourLength(arr);
+            var minDist=dist;
 
-            for (var n = 0; n < arr.length; n++) {
+            for (var n=0; n<arr.length; n++) {
 
-              if (n < arr.length - 1) {
+              if (n<arr.length-1) {
                 swap(arr, n, n + 1);
               }
 
-              dist = getTourLength(arr);
+              dist=getTourLength(arr);
 
-              if (dist < minDist) {
-                minDist = dist;
-                bestPosition = n + 1;
+              if (dist<minDist) {
+                minDist=dist;
+                bestPosition=n+1;
               }
 
             }
@@ -2392,7 +2394,66 @@ forum.processing.org
 
           };
 
-          function loadGreedy() {
+          function getGreedy(arrNodes){
+
+            var arrSource      = [];
+            var arrDestination = [];
+
+            arrayCopy(arrNodes, arrSource);
+
+            var nod;
+
+            while (arrDestination.length<app.nodes) {
+
+              //  Randomly add the 1st node
+              if (arrDestination.length==0) {
+
+                randomizeArray(arrSource);
+
+                nod = arrSource[0];
+
+                arrDestination.push(nod);
+
+                //  Remove from the source array if greedy method is random
+                if(app.greedyMethod==GREEDYMETHODS.RANDOM){
+                  arrSource.splice(0, 1);
+                }
+
+                nod.loaded = true;
+
+                // cNode = nod;
+
+              }
+              else if(arrDestination.length<arrNodes.length){
+
+                switch(app.greedyMethod){
+
+                  case GREEDYMETHODS.CLOSEST:  nod=getClosestNode(nod);       break;
+                  case GREEDYMETHODS.FURTHEST: nod=getFurthestNode(nod);      break;
+                  case GREEDYMETHODS.RANDOM:   nod=getRandomNode(arrSource);  break;
+
+                  default:                                                    break;
+
+                }
+
+                if(nod!=null){
+
+                  placeNode(arrDestination, nod); //  Shifts the node to the location 
+                                                  //  that minimizes the tour length
+                                                  //  by trying all possible locations
+                }
+
+                // print(arrDestination.length);
+
+              }
+
+            }
+
+            return arrDestination;
+
+          };
+
+          function loadGreedy(){
 
             p.workingNodes = [];
 
@@ -2448,12 +2509,30 @@ forum.processing.org
 
           };
 
-          function greedy() {
+          function greedy(){
 
+            if(p.workingNodes.length==0){
+              
+              p.workingNodes=getGreedy(p.originalNodes);
+
+              arrayCopy(p.workingNodes, p.bestNodes);
+              p.workingLength=getTourLength(p.workingNodes);
+              p.minimumLength=p.workingLength;
+
+            }
+            else{
+              // p.workingNodes=[];
+            }
+
+            // print(getTourLength(p.workingNodes));
+            drawNodes(p.originalNodes);
+            drawPath(p.workingNodes);
+
+return;
             var nod;
 
             //  Randomly add the 1st node
-            if (p.workingNodes.length==0) {
+            if(p.workingNodes.length==0){
 
               arrayCopy(p.originalNodes, p.sourceNodes);
 
@@ -2464,7 +2543,7 @@ forum.processing.org
               p.workingNodes.push(nod);
 
               //  Remove from the source array if greedy method is random
-              if (app.greedyMethod==GREEDYMETHODS.RANDOM) {
+              if(app.greedyMethod==GREEDYMETHODS.RANDOM){
                 p.sourceNodes.splice(0, 1);
               }
 
@@ -2473,19 +2552,19 @@ forum.processing.org
               cNode = nod;
 
             }
-            else if (p.workingNodes.length<app.nodes) {
+            else if(p.workingNodes.length<app.nodes){
 
-              switch (app.greedyMethod) {
+              switch(app.greedyMethod){
 
-                case GREEDYMETHODS.CLOSEST:  nod=getClosestNode(cNode); break;
-                case GREEDYMETHODS.FURTHEST: nod=getFurthestNode(cNode); break;
-                case GREEDYMETHODS.RANDOM:   nod=getRandomNode(); break;
+                case GREEDYMETHODS.CLOSEST:  nod=getClosestNode(cNode);   break;
+                case GREEDYMETHODS.FURTHEST: nod=getFurthestNode(cNode);  break;
+                case GREEDYMETHODS.RANDOM:   nod=getRandomNode();         break;
 
-                default: break;
+                default:                                                  break;
 
               }
 
-              if (nod!=null) {
+              if(nod!=null){
 
                 placeNode(p.workingNodes, nod);  //  Shifts the node to the location 
                                                  //  that minimizes the tour length
@@ -2496,32 +2575,34 @@ forum.processing.org
               p.workingLength=getTourLength(p.workingNodes);
               p.minimumLength=p.workingLength;
 
-              if (p.workingNodes.length==100) {
-                renumberNodes(p.workingNodes);
-              }
-
             }
-            else {
+            else{
 
-              if (frameCount%2==0) {
+              if(app.running){
 
-                calculateIntersections();
+                if(frameCount%2==0){
 
-                if (p.intersections.length > 0) {
+                  calculateIntersections();
 
-                  if (frameCount%100==0) {
-                    print(p.intersections);
+                  if(p.intersections.length>0){
+
+                    if(frameCount%100==0){
+                      print(p.intersections);
+                    }
+
+                    reverseNodes(p.workingNodes,
+                                 p.intersections[0].id,
+                                 p.intersections[2].id);
+
+                    renumberNodes(p.workingNodes);
+
                   }
 
-                  reverseNodes(p.workingNodes,
-                               p.intersections[0].id,
-                               p.intersections[2].id);
+                }
+                else{
+                  iterate();
                 }
 
-              }
-              else {
-                renumberNodes(p.workingNodes);
-                iterate();
               }
 
             }
@@ -2529,13 +2610,13 @@ forum.processing.org
             drawNodes(p.originalNodes);
 
             drawPath(p.workingNodes);
-            drawNodes(p.workingNodes);
+            // drawNodes(p.workingNodes);
 
           };
 
         }
 
-        function simulatedAnnealing() {
+        function simulatedAnnealing(){
 
           fill(64);
           noStroke();
@@ -2660,7 +2741,7 @@ forum.processing.org
 
           };
 
-          function calculateIntersections() {
+          function calculateIntersections(){
 
             p.intersections = [];
 
@@ -2722,7 +2803,7 @@ forum.processing.org
 
         }
 
-        function grow() {
+        function grow(){
 
           // renumberNodes(p.workingNodes);
 
@@ -2817,7 +2898,8 @@ forum.processing.org
           stroke(128);
           fill(128);
 
-            text(         'Nodes:'            +
+            text(         'Tours:'            +
+                 '\n'   + 'Nodes:'            +
                  '\n'   + 'Source Nodes:'     +
                  '\n\n' + 'Working Length:'   +
                  '\n'   + 'Best Length'       +
@@ -2842,7 +2924,8 @@ forum.processing.org
             id=app.currentNode.id;
           }
 
-            text(         p.workingNodes.length       +
+            text(         p.tours.length       +
+                 '\n'   + p.workingNodes.length       +
                  '\n'   + round(p.sourceNodes.length) +
                  '\n\n' + round(p.workingLength)      +
                  '\n'   + round(p.minimumLength)      +
@@ -2867,14 +2950,14 @@ forum.processing.org
 
         };
 
-        function toggleDirty() {
+        function toggleDirty(){
 
           for (var n = 0; n < p.workingNodes.length; n++) {
             p.workingNodes[n].dirty = !p.workingNodes[n].dirty;
           }
 
         }
-        function initialCondition() {
+        function initialCondition(){
 
           var minLength = Infinity;
           var length = Infinity;
@@ -2984,7 +3067,7 @@ forum.processing.org
         }
 
       };
-      field.prototype.clicked = function () {
+      field.prototype.clicked = function (){
 
         if (this.hit) {
           for (var n in this.workingNodes) {
@@ -2993,7 +3076,7 @@ forum.processing.org
         }
 
       };
-      field.prototype.rclicked = function () {
+      field.prototype.rclicked = function (){
 
         var ctrls = this.controls;
 
@@ -3006,7 +3089,7 @@ forum.processing.org
         }
 
       };
-      field.prototype.out = function () {
+      field.prototype.out = function (){
 
         this.hit = false;
         this.activeCell = null;
@@ -3022,7 +3105,7 @@ forum.processing.org
         }
 
       };
-      field.prototype.resized = function () {
+      field.prototype.resized = function (){
 
         this.x = 5;
         this.y = 5;
@@ -3082,12 +3165,12 @@ forum.processing.org
 
       };
       node.prototype = Object.create(control.prototype);
-      node.prototype.reset = function () {
+      node.prototype.reset = function (){
 
         this.closest = [];
 
       };
-      node.prototype.draw = function () {
+      node.prototype.draw = function (){
 
         this.active = this.hit &&
           app.focus === this;
@@ -3167,7 +3250,7 @@ forum.processing.org
         }
 
       };
-      node.prototype.clicked = function () {
+      node.prototype.clicked = function (){
 
         if (this.hit) {
           this.parent.activeCell = this;
@@ -3180,7 +3263,7 @@ forum.processing.org
         }
 
       };
-      node.prototype.rclicked = function () {
+      node.prototype.rclicked = function (){
 
         if (this.active) {
 
@@ -3220,12 +3303,12 @@ forum.processing.org
         }
 
       };
-      node.prototype.recalculate = function () {
+      node.prototype.recalculate = function (){
 
         this.parent.update();
 
       };
-      node.prototype.dragged = function () {
+      node.prototype.dragged = function (){
 
         if (this.hit &&
           this.layout !== BLANK) {
@@ -3254,7 +3337,7 @@ forum.processing.org
 
       };
       resetButton.prototype = Object.create(control.prototype);
-      resetButton.prototype.draw = function () {
+      resetButton.prototype.draw = function (){
 
         this.active = this.hit &&
           app.focus === this;
@@ -3328,7 +3411,7 @@ forum.processing.org
         pop();
 
       };
-      resetButton.prototype.clicked = function () {
+      resetButton.prototype.clicked = function (){
         /** Overridden for execute */
 
         if (this.active) {
@@ -3378,7 +3461,7 @@ forum.processing.org
 
       };
       solveButton.prototype = Object.create(control.prototype);
-      solveButton.prototype.draw = function () {
+      solveButton.prototype.draw = function (){
 
         this.active = this.hit &&
           app.focus === this;
@@ -3461,7 +3544,7 @@ forum.processing.org
         // ellipse(this.x,this.y,this.w,this.h);
 
       };
-      solveButton.prototype.clicked = function () {
+      solveButton.prototype.clicked = function (){
         /** Overridden for execute */
 
         if (this.active) { this.execute(); }
@@ -3508,7 +3591,7 @@ forum.processing.org
 
       };
       menuButton.prototype = Object.create(control.prototype);
-      menuButton.prototype.draw = function () {
+      menuButton.prototype.draw = function (){
 
         var p = this;
         this.offset = 0;
@@ -3590,7 +3673,7 @@ forum.processing.org
         // }
 
       };
-      menuButton.prototype.clicked = function () {
+      menuButton.prototype.clicked = function (){
         /** Overridden for execute */
 
         if (this.active) { this.execute(); }
@@ -3615,7 +3698,7 @@ forum.processing.org
 
       };
       music.prototype = Object.create(control.prototype);
-      music.prototype.draw = function () {
+      music.prototype.draw = function (){
 
         var p = this;
 
@@ -3625,7 +3708,7 @@ forum.processing.org
         this.on = this.retrieve();
         this.offset = 0;
 
-        function symbol() {
+        function symbol(){
 
           noStroke();
 
@@ -3648,7 +3731,7 @@ forum.processing.org
           text(CONSTANTS.NOTE, p.offset, p.offset);
 
         };
-        function strikeThrough() {
+        function strikeThrough(){
 
           noFill();
 
@@ -3707,7 +3790,7 @@ forum.processing.org
         // }
 
       };
-      music.prototype.clicked = function () {
+      music.prototype.clicked = function (){
         /* Overridden to maintain on/off value */
 
         if (this.active) {
@@ -3736,7 +3819,7 @@ forum.processing.org
 
       };
       shuffleButton.prototype = Object.create(control.prototype);
-      shuffleButton.prototype.draw = function () {
+      shuffleButton.prototype.draw = function (){
 
         this.active = this.hit &&
           app.focus === this;
@@ -3819,7 +3902,7 @@ forum.processing.org
         // }
 
       };
-      shuffleButton.prototype.clicked = function () {
+      shuffleButton.prototype.clicked = function (){
         /** Overridden for execute */
 
         if (this.active) { this.execute(); }
@@ -3831,7 +3914,7 @@ forum.processing.org
   }
 
   /** Initialize --------------------------------------------------------- */
-  function initialize() {
+  function initialize(){
 
     /*  Initialize the app.keys array and the values of the special keys */
     app.keys[KeyCodes.CONTROL] = false;
@@ -3962,7 +4045,7 @@ forum.processing.org
 
   initialize();
 
-  function update() {
+  function update(){
 
     //  Frame Rate
     if (frameCount % 30 === 0) { app.frameRate = getFrameRate(); }
@@ -3974,7 +4057,7 @@ forum.processing.org
   var cx = (windowWidth - 200) / 2;
   var cy = windowHeight / 2;
 
-  function handleKeys() {
+  function handleKeys(){
 
     if (frameCount % 5 === 0) {
 
@@ -4010,7 +4093,7 @@ forum.processing.org
 
   };
 
-  function draw() {
+  function draw(){
 
     background(128);
 
@@ -4023,7 +4106,7 @@ forum.processing.org
   /* Mouse Events ============================================================== */
   {
 
-    function mouseClicked() {
+    function mouseClicked(){
 
       switch (mouseButton) {
 
@@ -4056,16 +4139,14 @@ forum.processing.org
       }
 
     };
-    function doubleClicked() {
-
-      app.field.reset();
+    function doubleClicked(){
 
       //       app.fullscreen=!app.fullscreen;
 
       //       fullscreen(app.fullscreen);
       // print('dclicked');
     };
-    function mouseMoved() {
+    function mouseMoved(){
 
       app.mouseX = mouseX;
       app.mouseY = mouseY;
@@ -4073,7 +4154,7 @@ forum.processing.org
       for (var c in app.controls) { app.controls[c].moved(0, 0); }
 
     };
-    function mousePressed() {
+    function mousePressed(){
 
       switch (mouseButton) {
 
@@ -4087,7 +4168,7 @@ forum.processing.org
 
     };
 
-    function mouseReleased() {
+    function mouseReleased(){
 
       switch (mouseButton) {
 
@@ -4124,7 +4205,7 @@ forum.processing.org
       app.center = false;
 
     };
-    function mouseDragged() {
+    function mouseDragged(){
 
       // function calcDragAngle(){
 
@@ -4216,14 +4297,14 @@ forum.processing.org
       // }
 
     };
-    function mouseOut() {
+    function mouseOut(){
 
       // forEach(app.controls,'out');
 
       // app.focus=-1;
 
     };
-    function mouseOver() {
+    function mouseOver(){
 
       forEach(app.controls, 'over');
 
@@ -4236,7 +4317,7 @@ forum.processing.org
   /* Keyboard Events =========================================================== */
   {
 
-    keyPressed = function () {
+    keyPressed = function (){
 
       app.keys[keyCode] = true;
 
@@ -4303,11 +4384,11 @@ forum.processing.org
       }
 
     };
-    keyReleased = function () { app.keys[keyCode] = false; };
+    keyReleased = function (){ app.keys[keyCode] = false; };
 
   }
 
-  function windowResized() {
+  function windowResized(){
 
     resizeCanvas(windowWidth - 10, windowHeight - 10);
 
