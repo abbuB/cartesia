@@ -423,8 +423,8 @@ forum.processing.org
     {
 
       // this.greedyMethod = GREEDYMETHODS.FURTHEST;
-      this.greedyMethod = GREEDYMETHODS.CLOSEST;
-      // this.greedyMethod = GREEDYMETHODS.RANDOM;
+      // this.greedyMethod = GREEDYMETHODS.CLOSEST;
+      this.greedyMethod = GREEDYMETHODS.RANDOM;
 
       // this.algorithm    = ALGORITHMS.GROW;
       this.algorithm    = ALGORITHMS.GREEDY;
@@ -1565,6 +1565,8 @@ forum.processing.org
 
         app.field = this;
 
+        this.length=0;
+
         this.reset();
 
       };
@@ -1573,20 +1575,21 @@ forum.processing.org
 
         var p = this;                 //  Set a reference to the field control
 
-        p.controls             = [];  //  Clear the controls array
+        p.controls          = [];  //  Clear the controls array
 
-        p.originalNodes        = [];        
-        p.bestNodes            = [];
-        p.workingNodes         = [];
+        p.originalNodes         = [];        
+        p.bestNodes         = [];
+        p.workingNodes      = [];
 
-        p.sourceNodes          = [];
+        p.sourceNodes       = [];
         
-        // p.sortedNodes          = [];
+        // p.sortedNodes      = [];
         
-        p.intersections        = [];
-        
+        p.intersections     = [];
+        p.tours             = [];
+
         if(app.algorithm!=ALGORITHMS.CRITTERS){
-          p.segments          = [];
+          p.segments=[];
         }
 
         p.originalLength    = Infinity;
@@ -1595,10 +1598,12 @@ forum.processing.org
         p.historicLength    = Infinity;
         p.greedyLength      = Infinity;
 
-        p.factor = 1.1;
-        p.loaded = false;
+        p.factor            = 1.1;
+        p.loaded            = false;
 
-        completed = false;
+        completed           = false;
+        
+        p.length            = 0;
 
         function load(){
 
@@ -1728,7 +1733,7 @@ forum.processing.org
         };
 
         function drawNodes(nodes) { forEach(nodes, 'draw'); };
-        function drawPath(nodes) {
+        function drawPath(nodes, length) {
 
           stroke(127);
           strokeWeight(1);
@@ -1737,7 +1742,7 @@ forum.processing.org
 
           beginShape();
 
-            for (var n=0; n<nodes.length; n++) {
+            for (var n=0; n<length; n++) {
               vertex(nodes[n].x, nodes[n].y);              
             }
 
@@ -2324,77 +2329,77 @@ forum.processing.org
 
         { // Greedy
 
-          function getRandomNode(arr){
+          function getGreedy(arrNodes, method){
 
-            var newNode = null;
+            function getRandomNode(arr){
 
-            randomizeArray(arr);
-
-            newNode = arr[0];
-
-            arr.splice(0, 1);
-
-            return newNode;
-
-          };
-
-          function getClosestNode(nod){
-
-            for(var n=0; n<nod.closest.length; n++){
-
-              if(nod.closest[n].loaded==false){
-                nod.closest[n].loaded=true;
-                return nod.closest[n];
+              var newNode = null;
+  
+              randomizeArray(arr);
+  
+              newNode = arr[0];
+  
+              arr.splice(0, 1);
+  
+              return newNode;
+  
+            };
+  
+            function getClosestNode(nod){
+  
+              for(var n=0; n<nod.closest.length; n++){
+  
+                if(nod.closest[n].loaded==false){
+                  nod.closest[n].loaded=true;
+                  return nod.closest[n];
+                }
+  
               }
-
-            }
-
-          };
-
-          function getFurthestNode(nod){
-
-            for(var n=nod.closest.length-1; n>=0; n--) {
-
-              if(nod.closest[n].loaded==false){
-                nod.closest[n].loaded=true;
-                return nod.closest[n];
+  
+            };
+  
+            function getFurthestNode(nod){
+  
+              for(var n=nod.closest.length-1; n>=0; n--) {
+  
+                if(nod.closest[n].loaded==false){
+                  nod.closest[n].loaded=true;
+                  return nod.closest[n];
+                }
+  
               }
-
-            }
-
-          };
-
-          function placeNode(arr, nod){
-
-            arr.unshift(nod); // Adds the node to the first array position [0]
-
-            // Locates the position within the array that results in the shortest tour
-            var bestPosition=arr.length-1;
-            var dist=getTourLength(arr);
-            var minDist=dist;
-
-            for (var n=0; n<arr.length; n++) {
-
-              if (n<arr.length-1) {
-                swap(arr, n, n + 1);
+  
+            };
+  
+            function placeNode(arr, nod){
+  
+              arr.unshift(nod); // Adds the node to the first array position [0]
+  
+              // Locates the position within the array that results in the shortest tour
+              var bestPosition=arr.length-1;
+              var dist=getTourLength(arr);
+              var minDist=dist;
+  
+              for (var n=0; n<arr.length; n++) {
+  
+                if (n<arr.length-1) {
+                  swap(arr, n, n + 1);
+                }
+  
+                dist=getTourLength(arr);
+  
+                if (dist<minDist) {
+                  minDist=dist;
+                  bestPosition=n+1;
+                }
+  
               }
-
-              dist=getTourLength(arr);
-
-              if (dist<minDist) {
-                minDist=dist;
-                bestPosition=n+1;
-              }
-
-            }
-
-            //  Remove the node from the last position
-            //  Insert the node into the correct position                                                      
-            arr.splice(bestPosition, 0, arr.pop());
-
-          };
-
-          function getGreedy(arrNodes){
+  
+              //  Remove the node from the last position
+              //  Insert the node into the correct position                                                      
+              arr.splice(bestPosition, 0, arr.pop());
+  
+            };
 
             var arrSource      = [];
             var arrDestination = [];
@@ -2403,7 +2408,7 @@ forum.processing.org
 
             var nod;
 
-            while (arrDestination.length<app.nodes) {
+            while(arrDestination.length<app.nodes){
 
               //  Randomly add the 1st node
               if (arrDestination.length==0) {
@@ -2426,7 +2431,7 @@ forum.processing.org
               }
               else if(arrDestination.length<arrNodes.length){
 
-                switch(app.greedyMethod){
+                switch(method){
 
                   case GREEDYMETHODS.CLOSEST:  nod=getClosestNode(nod);       break;
                   case GREEDYMETHODS.FURTHEST: nod=getFurthestNode(nod);      break;
@@ -2443,9 +2448,9 @@ forum.processing.org
                                                   //  by trying all possible locations
                 }
 
-                // print(arrDestination.length);
-
               }
+
+              // p.tours.push(arrDestination);
 
             }
 
@@ -2512,63 +2517,14 @@ forum.processing.org
           function greedy(){
 
             if(p.workingNodes.length==0){
-              
-              p.workingNodes=getGreedy(p.originalNodes);
-
-              arrayCopy(p.workingNodes, p.bestNodes);
-              p.workingLength=getTourLength(p.workingNodes);
-              p.minimumLength=p.workingLength;
-
-            }
-            else{
-              // p.workingNodes=[];
-            }
-
-            // print(getTourLength(p.workingNodes));
-            drawNodes(p.originalNodes);
-            drawPath(p.workingNodes);
-
-return;
-            var nod;
-
-            //  Randomly add the 1st node
-            if(p.workingNodes.length==0){
-
-              arrayCopy(p.originalNodes, p.sourceNodes);
-
-              randomizeArray(p.sourceNodes);
-
-              nod = p.sourceNodes[0];
-
-              p.workingNodes.push(nod);
-
-              //  Remove from the source array if greedy method is random
-              if(app.greedyMethod==GREEDYMETHODS.RANDOM){
-                p.sourceNodes.splice(0, 1);
-              }
-
-              nod.loaded = true;
-
-              cNode = nod;
-
-            }
-            else if(p.workingNodes.length<app.nodes){
-
-              switch(app.greedyMethod){
-
-                case GREEDYMETHODS.CLOSEST:  nod=getClosestNode(cNode);   break;
-                case GREEDYMETHODS.FURTHEST: nod=getFurthestNode(cNode);  break;
-                case GREEDYMETHODS.RANDOM:   nod=getRandomNode();         break;
-
-                default:                                                  break;
-
-              }
-
-              if(nod!=null){
-
-                placeNode(p.workingNodes, nod);  //  Shifts the node to the location 
-                                                 //  that minimizes the tour length
-                                                 //  by trying all possible locations
+var tLength=Infinity;
+              while(tLength>4487){
+                p.workingNodes=getGreedy(p.originalNodes, app.greedyMethod);
+                tLength=getTourLength(p.workingNodes);
+                if(tLength<4600){
+                print(tLength);
+                }
+                // print(p.tours.length);
               }
 
               arrayCopy(p.workingNodes, p.bestNodes);
@@ -2608,10 +2564,12 @@ return;
             }
 
             drawNodes(p.originalNodes);
+            drawPath(p.workingNodes, p.length);
 
-            drawPath(p.workingNodes);
-            // drawNodes(p.workingNodes);
-
+            if(p.length<p.workingNodes.length){
+              p.length++;                      
+            }      
+            
           };
 
         }
@@ -2807,23 +2765,23 @@ return;
 
           // renumberNodes(p.workingNodes);
 
-          function canGrow(nod) {
+          function canGrow(nod){
 
-            var retVal = true;
+            var retVal=true;
 
-            for (var n = 0; n < p.workingNodes.length; n++) {
+            for (var n=0; n<p.workingNodes.length; n++) {
 
-              var distance = dist(nod.x,
+              var distance=dist(nod.x,
                 nod.y,
                 p.workingNodes[n].x,
                 p.workingNodes[n].y);
 
-              distance = abs(distance);
+              distance=abs(distance);
 
-              if (nod.id !== p.workingNodes[n].id) {
+              if(nod.id!==p.workingNodes[n].id){
 
-                if (distance * 2 < (nod.radius + p.workingNodes[n].radius)) {
-                  retVal = false;
+                if(distance*2<(nod.radius+p.workingNodes[n].radius)){
+                  retVal=false;
                   break;
                 }
 
@@ -2835,19 +2793,19 @@ return;
 
           };
 
-          var nod = null;
+          var nod=null;
 
-          for (var n = 0; n < p.workingNodes.length; n++) {
+          for(var n=0; n<p.workingNodes.length; n++){
 
-            nod = p.workingNodes[n];
+            nod=p.workingNodes[n];
 
-            if (canGrow(nod)) {
+            if(canGrow(nod)){
               nod.radius++;
             }
 
           }
 
-          if (!completed) {
+          if(!completed){
 
             renumberNodes(p.workingNodes);
 
@@ -2857,35 +2815,35 @@ return;
 
           }
 
-          p.factor = 1;
+          p.factor=1;
 
           renumberNodes(p.workingNodes);
 
-          if (int(app.elapsedTime) % 2 == 0) {
+          if(int(app.elapsedTime)%2==0){
 
             calculateIntersections();
 
-            if (p.intersections.length > 0) {
+            if(p.intersections.length>0){
 
-              if (frameCount % 100 == 0) {
+              if(frameCount%100 == 0){
                 print(p.intersections);
               }
 
               reverseNodes(p.workingNodes,
-                p.intersections[0].id,
-                p.intersections[2].id);
+                           p.intersections[0].id,
+                           p.intersections[2].id);
 
             }
 
           }
-          else {
+          else{
             iterate();
           }
 
           updateTour();
 
-          drawPath(p.workingNodes);
-          drawNodes(p.workingNodes);
+          drawPath(p.workingNodes,p.workingNodes.length);
+          drawNodes(p.workingNodes,p.workingNodes.length);
           // drawPath(p.bestNodes);
 
         };
