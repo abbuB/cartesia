@@ -1322,21 +1322,21 @@ forum.processing.org
 
       var completePercent = 0;
 
-      function swap(arr, n, m) {
+      function swap(arr, n, m){
 
-        var tmp = arr[n];
+        var tmp=arr[n];
 
-        arr[n] = arr[m];
-        arr[m] = tmp;
+        arr[n]=arr[m];
+        arr[m]=tmp;
 
       };
 
-      function sortNodesByIndex(arr) {
+      function sortNodesByIndex(arr){
 
-        for (var i = 0; i < arr.length; i++) {
-          for (var j = 0; j < arr.length; j++) {
+        for(var i=0; i<arr.length; i++){
+          for (var j=0; j<arr.length; j++){
 
-            if (abs(arr[j].id) > abs(arr[i].id)) {
+            if(abs(arr[j].id)>abs(arr[i].id)){
               swap(arr, i, j);
             }
 
@@ -1347,13 +1347,13 @@ forum.processing.org
 
       };
 
-      function arraySort(arr) {
+      function arraySort(arr){
         // Sorts left to right base on x coordinate
 
-        for (var i = 0; i < arr.length; i++) {
-          for (var j = 0; j < arr.length; j++) {
+        for(var i=0; i<arr.length; i++){
+          for(var j=0; j<arr.length; j++){
 
-            if (arr[j].x > arr[i].x) {
+            if(arr[j].x>arr[i].x){
               swap(arr, i, j);
             }
 
@@ -1362,13 +1362,13 @@ forum.processing.org
 
       };
 
-      function calculateConvexHull(arr, ind) {
+      function calculateConvexHull(arr, ind){
 
-        var m = Infinity;
-        var maxM = -Infinity;
-        var maxIndex = -Infinity;
+        var m=Infinity;
+        var maxM=-Infinity;
+        var maxIndex=-Infinity;
 
-        for (var n = 0; n < arr.length; n++) {
+        for(var n=0; n<arr.length; n++){
 
           print(arr[n].x + "," + arr[n].y + "     -    " + degrees(atan2(arr[n].y, arr[n].x)));
 
@@ -1380,23 +1380,45 @@ forum.processing.org
         return maxIndex;
 
       };
-      function sortByLength(arr) {
+      function getLongest(arr){
 
-        var sorted = [];
+        var distance=-1;
+        var max=-1;
+        var id=-1;
 
-        arrayCopy(arr, sorted);
+        for(var i=0; i<arr.length-1; i++){
 
-        for (var i = 0; i < sorted.length - 1; i++) {
+          distance=dist(arr[i].x, arr[i].y,
+                        arr[i+1].x, arr[i + 1].y);
 
-          sorted[i].distance = dist(sorted[i].x, sorted[i].y,
-            sorted[i + 1].x, sorted[i + 1].y);
+          if(distance>max){
+            max=distance;
+            id=i;
+          }
 
         }
 
-        for (var i = 0; i < sorted.length; i++) {
-          for (var j = 0; j < sorted.length - 1; j++) {
+        return id;
 
-            if (sorted[i].distance > sorted[j].distance) {
+      };
+
+      function sortByLength(arr){
+
+        var sorted=[];
+
+        arrayCopy(arr, sorted);
+
+        for(var i=0; i<sorted.length-1; i++){
+
+          sorted[i].distance=dist(sorted[i].x,     sorted[i].y,
+                                  sorted[i + 1].x, sorted[i + 1].y);
+
+        }
+
+        for(var i=0; i<sorted.length; i++){
+          for(var j=0; j<sorted.length-1; j++){
+
+            if(sorted[i].distance>sorted[j].distance){
               swap(sorted, i, j);
             }
 
@@ -1413,34 +1435,12 @@ forum.processing.org
         // }
 
       };
-      function getLongest(arr) {
+      function sortByX(arr){
 
-        var distance = -1;
-        var max = -1;
-        var id = -1;
+        for(var i=0; i<arr.length; i++){
+          for(var j=0; j<arr.length-1; j++){
 
-        for (var i = 0; i < arr.length - 1; i++) {
-
-          distance = dist(arr[i].x, arr[i].y,
-            arr[i + 1].x, arr[i + 1].y);
-
-          if (distance > max) {
-            max = distance;
-            id = i;
-          }
-
-        }
-
-        return id;
-
-      };
-
-      function sortByX(arr) {
-
-        for (var i = 0; i < arr.length; i++) {
-          for (var j = 0; j < arr.length - 1; j++) {
-
-            if (arr[i].x > arr[j].x) {
+            if(arr[i].x>arr[j].x){
               swap(arr, i, j);
             }
 
@@ -1448,12 +1448,12 @@ forum.processing.org
         }
 
       };
-      function sortByY(arr) {
+      function sortByY(arr){
 
-        for (var i = 0; i < arr.length; i++) {
-          for (var j = 0; j < arr.length - 1; j++) {
+        for (var i=0; i<arr.length; i++){
+          for (var j=0; j<arr.length-1; j++){
 
-            if (arr[i].y > arr[j].y) {
+            if(arr[i].y>arr[j].y){
               swap(arr, i, j);
             }
 
@@ -1461,19 +1461,19 @@ forum.processing.org
         }
 
       };
-      function sortByLongest(arr) {
+      function sortByLongest(arr){
 
-        for (var i = 0; i < arr.length - 1; i++) {
+        for(var i=0; i<arr.length-1; i++){
 
-          arr[i].distance = dist(arr[i].x, arr[i].y,
-            arr[i + 1].x, arr[i + 1].y);
+          arr[i].distance=dist(arr[i].x, arr[i].y,
+                               arr[i + 1].x, arr[i + 1].y);
 
         }
 
-        for (var i = 0; i < arr.length; i++) {
-          for (var j = 0; j < arr.length - 1; j++) {
+        for(var i=0; i<arr.length; i++){
+          for(var j=0; j<arr.length-1; j++){
 
-            if (arr[i].distance > arr[j].distance) {
+            if(arr[i].distance>arr[j].distance){
               swap(arr, i, j);
             }
 
@@ -1482,18 +1482,18 @@ forum.processing.org
 
       };
 
-      function renumberNodes(arr) {
+      function renumberNodes(arr){
 
-        for (var n = 0; n < arr.length; n++) {
+        for(var n=0; n<arr.length; n++) {
           arr[n].id = n;
         }
 
       };
 
-      function randomizeArray(arr) {
+      function randomizeArray(arr){
 
-        for (var n = 0; n < arr.length; n++) {
-          swap(arr, n, round(random(arr.length - 1)));
+        for(var n=0; n<arr.length; n++) {
+          swap(arr, n, round(random(arr.length-1)));
         }
 
       };
@@ -1586,7 +1586,7 @@ forum.processing.org
           swap(arr, n, m);
 
         }
-        function swap2Length(id, arr){
+        function swap2Length(arr, id){
 
           var rand1=id;
           var rand2=id;
@@ -1724,7 +1724,6 @@ forum.processing.org
           arr[rand3]=tmp;
 
         };
-
         function swap2Segments(arr, n){
 
           var tmp;
@@ -1759,7 +1758,7 @@ forum.processing.org
 
       var geneticLoaded = false;
 
-      function field(id, parent, x, y, w, h, props) {
+      function field(id, parent, x, y, w, h, props){
 
         control.call(this, id, parent, x, y, w, h);
 
@@ -2013,41 +2012,41 @@ forum.processing.org
 
         { // Brute Force
 
-          function nodePermutations(n, arr) {
+          function nodePermutations(n, arr){
             //  ***** NOTE: Do NOT exceed 9 nodes *****
 
             //  c is an encoding of the stack state.
             //  c[k] encodes the for-loop counter for
             //  when generate(k+1, A) is called.
-            var c = [];
-            var minTourLength = Infinity;
-            var tourLength = getTourLength(arr);
-            var counter = 1;
+            var c=[];
+            var minTourLength=Infinity;
+            var tourLength=getTourLength(arr);
+            var counter=1;
 
-            for (var i = 0; i < n; i++) {
-              c[i] = 0;
+            for(var i=0; i<n; i++){
+              c[i]=0;
             }
 
             // i acts similarly to the stack pointer
-            var i = 0;
+            var i=0;
 
-            while (i < n) {
+            while(i<n){
 
-              tourLength = getTourLength(arr);
+              tourLength=getTourLength(arr);
 
-              if (tourLength < minTourLength) {
+              if(tourLength<minTourLength){
 
-                minTourLength = tourLength;
+                minTourLength=tourLength;
                 arrayCopy(arr, p.bestNodes);
 
               }
 
-              if (c[i] < i) {
+              if(c[i]<i){
 
                 counter++;
 
-                if (i % 2 == 0) { swap(arr, 0, i); }
-                else { swap(arr, c[i], i); }
+                if(i%2==0){ swap(arr, 0, i);    }
+                else      { swap(arr, c[i], i); }
 
                 //  Swap has occurred ending the for-loop.
                 //  Simulate the increment of the for-loop counter
@@ -2055,21 +2054,21 @@ forum.processing.org
 
                 //  Simulate recursive call reaching the base case by
                 //  bringing the pointer to the base case analog in the array
-                i = 0;
+                i=0;
 
               }
               else {
 
                 //  Calling generate(i+1, A) has ended as the for-loop terminated.
                 //  Reset the state and simulate popping the stack by incrementing the pointer.
-                c[i] = 0;
+                c[i]=0;
                 i++;
 
               }
 
             }
 
-            p.minimumLength = minTourLength;
+            p.minimumLength=minTourLength;
 
           }
 
@@ -2095,17 +2094,17 @@ forum.processing.org
 
         function findClosestNode(nod, arr){
 
-          var min      = Infinity;
-          var distance = Infinity;
-          var index    = -1;
+          var min= Infinity;
+          var distance=Infinity;
+          var index=-1;
 
           for(var n=0; n<arr.length; n++){
 
             distance=dist(nod.x, nod.y, arr[n].x, arr[n].y);
 
             if(distance<min &&
-              distance!==0 &&
-              arr[n].dirty==false){
+               distance!==0 &&
+               arr[n].dirty==false){
 
               min=distance;
               index=n;
@@ -2291,7 +2290,7 @@ forum.processing.org
 
         function nearestNeighbor(){
 
-          for (var n = 0; n < 1000; n++) {
+          for(var n=0; n<1000; n++){
 
             swap3Random(p.workingNodes);
 
@@ -2327,19 +2326,19 @@ forum.processing.org
           arrayCopy(p.bestNodes, p.workingNodes);
           // renumberNodes(p.bestNodes);
 
-          var index1 = p.index;
-          var index2 = index1 + 1;
-          var index3 = index2 + 1;
-          var index4 = index3 + 1;
+          var index1=p.index;
+          var index2=index1+1;
+          var index3=index2+1;
+          var index4=index3+1;
 
-          if (index2 > p.workingNodes.length - 1) { index2 = 0; }
+          if     (index2>p.workingNodes.length-1){ index2=0; }
 
-          if (index3 > p.workingNodes.length - 1) { index3 = 0; }
-          else if (index3 > p.workingNodes.length) { index3 = 1; }
+          if     (index3>p.workingNodes.length-1){ index3=0; }
+          else if(index3>p.workingNodes.length  ){ index3=1; }
 
-          if (index4 > p.workingNodes.length - 1) { index4 = 0; }
-          else if (index4 > p.workingNodes.length) { index4 = 1; }
-          else if (index4 > p.workingNodes.length + 1) { index4 = 2; }
+          if     (index4>p.workingNodes.length-1){ index4=0; }
+          else if(index4>p.workingNodes.length)  { index4=1; }
+          else if(index4>p.workingNodes.length+1){ index4=2; }
 
           swap(p.workingNodes, index1, index2);
           updateTour();
@@ -2361,7 +2360,7 @@ forum.processing.org
 
           p.index++;
 
-          if (p.index > p.bestNodes.length - 1) { p.index = 0; }
+          if(p.index>p.bestNodes.length-1) { p.index=0; }
 
         };
 
@@ -2371,11 +2370,11 @@ forum.processing.org
 
             function getRandomNode(arr){
 
-              var newNode = null;
+              var newNode=null;
   
               randomizeArray(arr);
   
-              newNode = arr[0];
+              newNode=arr[0];
   
               arr.splice(0, 1);
   
@@ -2418,15 +2417,15 @@ forum.processing.org
               var dist=getTourLength(arr);
               var minDist=dist;
   
-              for (var n=0; n<arr.length; n++) {
+              for(var n=0; n<arr.length; n++){
   
-                if (n<arr.length-1) {
-                  swap(arr, n, n + 1);
+                if(n<arr.length-1){
+                  swap(arr, n, n+1);
                 }
   
                 dist=getTourLength(arr);
   
-                if (dist<minDist) {
+                if(dist<minDist){
                   minDist=dist;
                   bestPosition=n+1;
                 }
@@ -2439,8 +2438,8 @@ forum.processing.org
   
             };
 
-            var arrSource      = [];
-            var arrDestination = [];
+            var arrSource=[];
+            var arrDestination=[];
 
             arrayCopy(arrNodes, arrSource);
 
@@ -2449,11 +2448,11 @@ forum.processing.org
             while(arrDestination.length<app.nodes){
 
               //  Randomly add the 1st node
-              if (arrDestination.length==0) {
+              if(arrDestination.length==0){
 
                 randomizeArray(arrSource);
 
-                nod = arrSource[0];
+                nod=arrSource[0];
 
                 arrDestination.push(nod);
 
@@ -2462,7 +2461,7 @@ forum.processing.org
                   arrSource.splice(0, 1);
                 }
 
-                nod.loaded = true;
+                nod.loaded=true;
 
                 // cNode = nod;
 
@@ -2567,18 +2566,18 @@ forum.processing.org
           noStroke();
           textSize(20);
 
-          for (var n = 0; n < 1; n++) {
+          for(var n=0; n<1; n++){
 
-            p.factor -= 0.000001;
-            p.factor = constrain(p.factor, 1, 1.2);
+            p.factor-=0.000001;
+            p.factor=constrain(p.factor, 1, 1.2);
 
-            switch (true) {
+            switch(true){
 
-              case p.factor > 1.075:
+              case p.factor>1.075:
 
-                var id = getLongest(p.workingNodes);
+                var id=getLongest(p.workingNodes);
 
-                swap2Length(id, p.workingNodes);
+                swap2Length(p.workingNodes, id);
                 swap2Closest(p.workingNodes);
                 swap3Consecutive(p.workingNodes);
                 // swap3Segments(p.workingNodes);
@@ -2593,19 +2592,19 @@ forum.processing.org
 
               default:
 
-                if (int(app.elapsedTime) % 2 == 0) {
+                if(int(app.elapsedTime)%2==0){
 
                   calculateIntersections();
 
-                  if (p.intersections.length > 0) {
+                  if(p.intersections.length>0){
 
-                    if (frameCount % 100 == 0) {
+                    if(frameCount%100==0){
                       print(p.intersections);
                     }
 
                     reverseNodes(p.workingNodes,
-                      p.intersections[0].id,
-                      p.intersections[2].id);
+                                 p.intersections[0].id,
+                                 p.intersections[2].id);
 
                   }
 
@@ -2630,8 +2629,9 @@ forum.processing.org
               // }
 
               // if     (frameCount%2==0) { swap2Closest(p.workingNodes);           }
-              // else if(frameCount%3==0) { swap2Length(getLongest(p.workingNodes),
-              //                                                   p.workingNodes); }
+              // else if(frameCount%3==0) { swap2Length(p.workingNodes,
+                                                        // getLongest(p.workingNodes),
+              //                                                   ); }
               // else if(frameCount%5==0) { swap2Consecutive(p.workingNodes);       }
               // else if(frameCount%7==0) { swap3Consecutive(p.workingNodes);       }
               // else if(frameCount%11==0){ swap3Random(p.workingNodes);            }
@@ -2655,34 +2655,34 @@ forum.processing.org
 
           function IsOnSegment(xi, yi, xj, yj, xk, yk) {
 
-            return (xi <= xk || xj <= xk) && (xk <= xi || xk <= xj) &&
-              (yi <= yk || yj <= yk) && (yk <= yi || yk <= yj);
+            return (xi<=xk || xj<=xk) && (xk<=xi || xk<=xj) &&
+                   (yi<=yk || yj<=yk) && (yk<=yi || yk<=yj);
 
           };
 
           function ComputeDirection(xi, yi, xj, yj, xk, yk) {
 
-            var a = (xk - xi) * (yj - yi);
-            var b = (xj - xi) * (yk - yi);
+            var a=(xk-xi)*(yj-yi);
+            var b=(xj-xi)*(yk-yi);
 
-            return a < b ? -1 : a > b ? 1 : 0;
+            return a<b ? -1 : a>b ? 1 : 0;
 
           };
 
           /** Do line segments (x1, y1)--(x2, y2) and (x3, y3)--(x4, y4) intersect? */
           function DoLineSegmentsIntersect(node1, node2, node3, node4) {
 
-            var d1 = ComputeDirection(node3.x, node3.y, node4.x, node4.y, node1.x, node1.y);
-            var d2 = ComputeDirection(node3.x, node3.y, node4.x, node4.y, node2.x, node2.y);
-            var d3 = ComputeDirection(node1.x, node1.y, node2.x, node2.y, node3.x, node3.y);
-            var d4 = ComputeDirection(node1.x, node1.y, node2.x, node2.y, node4.x, node4.y);
+            var d1=ComputeDirection(node3.x, node3.y, node4.x, node4.y, node1.x, node1.y);
+            var d2=ComputeDirection(node3.x, node3.y, node4.x, node4.y, node2.x, node2.y);
+            var d3=ComputeDirection(node1.x, node1.y, node2.x, node2.y, node3.x, node3.y);
+            var d4=ComputeDirection(node1.x, node1.y, node2.x, node2.y, node4.x, node4.y);
 
-            return (((d1 > 0 && d2 < 0) || (d1 < 0 && d2 > 0)) &&
-              ((d3 > 0 && d4 < 0) || (d3 < 0 && d4 > 0))) ||
-              (d1 == 0 && IsOnSegment(node3.x, node3.y, node4.x, node4.y, node1.x, node1.y)) ||
-              (d2 == 0 && IsOnSegment(node3.x, node3.y, node4.x, node4.y, node2.x, node2.y)) ||
-              (d3 == 0 && IsOnSegment(node1.x, node1.y, node2.x, node2.y, node3.x, node3.y)) ||
-              (d4 == 0 && IsOnSegment(node1.x, node1.y, node2.x, node2.y, node4.x, node4.y));
+            return (((d1>0 && d2<0) || (d1<0 && d2>0)) &&
+                    ((d3>0 && d4<0) || (d3<0 && d4>0))) ||
+                     (d1==0 && IsOnSegment(node3.x, node3.y, node4.x, node4.y, node1.x, node1.y)) ||
+                     (d2==0 && IsOnSegment(node3.x, node3.y, node4.x, node4.y, node2.x, node2.y)) ||
+                     (d3==0 && IsOnSegment(node1.x, node1.y, node2.x, node2.y, node3.x, node3.y)) ||
+                     (d4==0 && IsOnSegment(node1.x, node1.y, node2.x, node2.y, node4.x, node4.y));
 
           };
 
@@ -2695,41 +2695,41 @@ forum.processing.org
             var node3;
             var node4;
 
-            for (var a = 0; a < p.workingNodes.length; a++) {
+            for(var a=0; a<p.workingNodes.length; a++){
 
-              node1 = p.workingNodes[a];
+              node1=p.workingNodes[a];
 
-              if (a == p.workingNodes.length - 1) { node2 = p.workingNodes[0]; }
-              else { node2 = p.workingNodes[a + 1]; }
+              if(a==p.workingNodes.length-1){ node2=p.workingNodes[0];   }
+              else                          { node2=p.workingNodes[a+1]; }
 
-              for (var b = 0; b < p.workingNodes.length; b++) {
+              for(var b=0; b<p.workingNodes.length; b++){
 
-                node3 = p.workingNodes[b];
+                node3=p.workingNodes[b];
 
-                if (b == p.workingNodes.length - 1) { node4 = p.workingNodes[0]; }
-                else { node4 = p.workingNodes[b + 1]; }
+                if(b==p.workingNodes.length-1){ node4=p.workingNodes[0];   }
+                else                          { node4=p.workingNodes[b+1]; }
 
-                if (node1.id != node3.id &&
-                  node1.id != node4.id &&
-                  node2.id != node3.id &&
-                  node2.id != node4.id) {
+                if(node1.id!=node3.id &&
+                   node1.id!=node4.id &&
+                   node2.id!=node3.id &&
+                   node2.id!=node4.id) {
 
-                  if (DoLineSegmentsIntersect(node1, node2, node3, node4)) {
+                  if(DoLineSegmentsIntersect(node1, node2, node3, node4)) {
 
-                    if (node1.id > node2.id) {
+                    if(node1.id>node2.id){
                       p.intersections.push(node2);
                       p.intersections.push(node1);
                     }
-                    else {
+                    else{
                       p.intersections.push(node1);
                       p.intersections.push(node2);
                     }
 
-                    if (node3.id > node4.id) {
+                    if(node3.id>node4.id){
                       p.intersections.push(node4);
                       p.intersections.push(node3);
                     }
-                    else {
+                    else{
                       p.intersections.push(node3);
                       p.intersections.push(node4);
                     }
@@ -2742,7 +2742,7 @@ forum.processing.org
 
             }
 
-            completed = true;
+            completed=true;
 
           };
 
@@ -2756,12 +2756,12 @@ forum.processing.org
 
             var retVal=true;
 
-            for (var n=0; n<p.workingNodes.length; n++) {
+            for(var n=0; n<p.workingNodes.length; n++){
 
               var distance=dist(nod.x,
-                nod.y,
-                p.workingNodes[n].x,
-                p.workingNodes[n].y);
+                                nod.y,
+                                p.workingNodes[n].x,
+                                p.workingNodes[n].y);
 
               distance=abs(distance);
 
@@ -2885,7 +2885,7 @@ forum.processing.org
 
           textSize(11);
 
-            text(factorial(app.nodes), 10, p.h - 20);
+            text(factorial(app.nodes), 10, p.h-20);
             // text(factorial(app.nodes).toLocaleString(), 10, p.h-200);
 
           //  Center origin
@@ -2897,16 +2897,16 @@ forum.processing.org
 
         function toggleDirty(){
 
-          for (var n = 0; n < p.workingNodes.length; n++) {
-            p.workingNodes[n].dirty = !p.workingNodes[n].dirty;
+          for(var n=0; n<p.workingNodes.length; n++) {
+            p.workingNodes[n].dirty=!p.workingNodes[n].dirty;
           }
 
         }
         function initialCondition(){
 
-          var minLength = Infinity;
-          var length    = Infinity;
-          var minID     =-1;
+          var minLength=Infinity;
+          var length=Infinity;
+          var minID=-1;
 
           for(var n=0; n<p.workingNodes.length; n++){
 
@@ -2973,58 +2973,58 @@ forum.processing.org
           pop();
 
       };
-      field.prototype.hitTest = function (x, y) {
+      field.prototype.hitTest=function(x, y){
 
-        var retVal = false;
+        var retVal=false;
 
-        if (mouseX > x + this.x &&
-          mouseX < x + this.x + this.w &&
-          mouseY > y + this.y &&
-          mouseX < y + this.y + this.h) {
-          retVal = true;
+        if(mouseX>x+this.x &&
+           mouseX<x+this.x+this.w &&
+           mouseY>y+this.y &&
+           mouseX<y+this.y+this.h){
+          retVal=true;
         }
 
         return retVal;
 
       };
-      field.prototype.moved = function (x, y) {
+      field.prototype.moved=function(x, y){
 
-        if (this.hitTest(x, y)) {
+        if(this.hitTest(x, y)){
 
-          this.hit = true;
-          app.focus = this;
+          this.hit=true;
+          app.focus=this;
 
-          for (var n in this.workingNodes) {
+          for(var n in this.workingNodes){
             this.workingNodes[n].moved(this.x + x, this.y + y);
           }
 
         }
-        else {
+        else{
 
-          this.hit = false;
+          this.hit=false;
 
-          for (var n in this.workingNodes) {
-            this.workingNodes[n].hit = false;
+          for(var n in this.workingNodes){
+            this.workingNodes[n].hit=false;
           }
 
         }
 
       };
-      field.prototype.clicked = function (){
+      field.prototype.clicked=function(){
 
-        if (this.hit) {
-          for (var n in this.workingNodes) {
-            this.workingNodes[n].clicked(this.x + x, this.y + y);
+        if(this.hit){
+          for(var n in this.workingNodes){
+            this.workingNodes[n].clicked(this.x+x, this.y+y);
           }
         }
 
       };
-      field.prototype.rclicked = function (){
+      field.prototype.rclicked=function(){
 
-        var ctrls = this.controls;
+        var ctrls=this.controls;
 
-        for (var r in ctrls) {
-          for (var c in ctrls[r]) {
+        for(var r in ctrls){
+          for(var c in ctrls[r]){
 
             ctrls[r][c].rclicked();
 
@@ -3032,15 +3032,15 @@ forum.processing.org
         }
 
       };
-      field.prototype.out = function (){
+      field.prototype.out=function(){
 
-        this.hit = false;
-        this.activeCell = null;
+        this.hit=false;
+        this.activeCell=null;
 
-        var ctrls = this.controls;
+        var ctrls=this.controls;
 
-        for (var r in ctrls) {
-          for (var c in ctrls[r]) {
+        for(var r in ctrls){
+          for(var c in ctrls[r]){
 
             ctrls[r][c].out();
 
@@ -3048,12 +3048,12 @@ forum.processing.org
         }
 
       };
-      field.prototype.resized = function (){
+      field.prototype.resized=function(){
 
-        this.x = 5;
-        this.y = 5;
-        this.w = this.parent.w - 205;
-        this.h = this.parent.h - 10;
+        this.x=5;
+        this.y=5;
+        this.w=this.parent.w-205;
+        this.h=this.parent.h-10;
 
 
       };
