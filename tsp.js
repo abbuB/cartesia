@@ -426,8 +426,8 @@ forum.processing.org
       // this.greedyMethod = GREEDYMETHODS.CLOSEST;
       this.greedyMethod = GREEDYMETHODS.RANDOM;
 
-      this.algorithm    = ALGORITHMS.GROW;
-      // this.algorithm    = ALGORITHMS.GREEDY;
+      // this.algorithm    = ALGORITHMS.GROW;
+      this.algorithm    = ALGORITHMS.GREEDY;
       // this.algorithm    = ALGORITHMS.BRUTEFORCE;
       // this.algorithm    = ALGORITHMS.SIMULATEDANNEALING;
       // this.algorithm    = ALGORITHMS.NEAREST;
@@ -2010,6 +2010,278 @@ forum.processing.org
 
 
 
+
+        function findClosestNode(arr, nod){
+
+          var min=Infinity;
+          var distance=Infinity;
+          var index=-1;
+
+          for(var n=0; n<arr.length; n++){
+
+            distance=dist(nod.x, nod.y, arr[n].x, arr[n].y);
+
+            if(distance<min &&
+               distance!==0 &&
+               arr[n].dirty==false){
+
+              min=distance;
+              index=n;
+
+            }
+
+          }
+
+          return arr[index];
+
+        };
+        function getClosestArray(startNode){
+
+          var closestNodes=[];
+
+          // Start with the first node
+          var nod=p.originalNodes[startNode];
+
+          while(nod!=null){
+
+            // Find the node closest that isn't already taken
+            nod=findClosestNode(p.originalNodes, nod);
+
+            if(nod!=null){
+              nod.dirty=true;
+              closestNodes.push(nod);
+            }
+
+          }
+
+          //  Indicate that Find Closest was used initially
+          p.loaded=true;
+// print(closestNodes.length);
+          return closestNodes;
+
+        };
+
+        function genetic(){
+          
+          if(geneticLoaded==false){
+
+            // var index=round(random(app.nodes-1));
+            
+            var parent1=getClosestArray(getRandomInt(app.nodes-1));
+            var parent2=getClosestArray(getRandomInt(app.nodes-1));
+
+            print(parent1);
+            print(parent2);
+
+            // p.workingNodes=getClosestArray(index);
+            // arrayCopy(getClosestArray(index), p.workingNodes);
+
+            geneticLoaded=true;
+
+          }
+
+          drawPath(p.workingNodes,  p.workingNodes.length);
+          drawNodes(p.workingNodes, p.workingNodes.length);
+
+        };
+
+        function nearestNeighbor(){
+
+          for(var n=0; n<1000; n++){
+
+            swap3Random(p.workingNodes);
+
+            updateTour();
+
+          }
+
+          drawNodes(p.workingNodes);
+          drawPath(p.workingNodes);
+          // drawPath(p.bestNodes);
+
+        };
+
+        function updateTour(){
+
+          p.workingLength=getTourLength(p.workingNodes);
+
+          if(p.workingLength<p.minimumLength*p.factor){
+
+            p.minimumLength=p.workingLength;
+
+            if(p.workingLength<p.historicLength){
+              p.historicLength=p.workingLength;
+              arrayCopy(p.workingNodes, p.bestNodes);
+            }
+
+          }
+
+        };
+
+        function iterate(){
+          // p.factor=1;
+          arrayCopy(p.bestNodes, p.workingNodes);
+          // renumberNodes(p.bestNodes);
+
+          var index1=p.index;
+          var index2=index1+1;
+          var index3=index2+1;
+          var index4=index3+1;
+
+          if     (index2>p.workingNodes.length-1){ index2=0; }
+
+          if     (index3>p.workingNodes.length-1){ index3=0; }
+          else if(index3>p.workingNodes.length  ){ index3=1; }
+
+          if     (index4>p.workingNodes.length-1){ index4=0; }
+          else if(index4>p.workingNodes.length)  { index4=1; }
+          else if(index4>p.workingNodes.length+1){ index4=2; }
+
+          swap(p.workingNodes, index1, index2);
+          updateTour();
+
+          swap(p.workingNodes, index1, index3);
+          updateTour();
+
+          swap(p.workingNodes, index1, index4);
+          updateTour();
+
+          swap(p.workingNodes, index2, index3);
+          updateTour();
+
+          swap(p.workingNodes, index2, index4);
+          updateTour();
+
+          swap(p.workingNodes, index3, index4);
+          updateTour();
+
+          p.index++;
+
+          if(p.index>p.bestNodes.length-1) { p.index=0; }
+
+        };
+
+        { // Critters
+
+          function segmentExists(p1, p2){
+
+            var retVal=-1;
+
+            for(var e=1; e<p.segments.length; e++){
+
+              if((p1.x==p.segments[e].point1.x &&
+                  p1.y==p.segments[e].point1.y &&
+                  p2.x==p.segments[e].point2.x &&
+                  p2.y==p.segments[e].point2.y)
+
+                ||
+
+                 (p1.x==p.segments[e].point2.x &&
+                  p1.y==p.segments[e].point2.y &&
+                  p2.x==p.segments[e].point1.x &&
+                  p2.y==p.segments[e].point1.y)){
+
+                retVal=e;
+                break;
+
+              }
+
+            }
+
+            return retVal;
+
+          };
+          function updateSegments(){
+
+            for (var n=0; n<p.workingNodes.length; n++) {
+
+              var exists=-1;
+
+              if(n==app.nodes-1){
+
+                exists=segmentExists(p.workingNodes[n],
+                                    p.workingNodes[0]);
+                if(exists!=-1){
+                  p.segments[n].weight=constrain(p.segments[n].weight+1, 0, 100);
+                }
+                else{
+                  p.segments.push(new segment(p.workingNodes[n],
+                                              p.workingNodes[0]));
+                  p.segments[p.segments.length-1].weight=25;
+
+                }
+
+              }
+              else{
+
+                exists=segmentExists(p.workingNodes[n],
+                                     p.workingNodes[n+1]);
+                if(exists!=-1){
+                  p.segments[n].weight=constrain(p.segments[n].weight+1, 0, 100);
+                }
+                else{
+                  p.segments.push(new segment(p.workingNodes[n],
+                                              p.workingNodes[n + 1]));
+                  p.segments[p.segments.length-1].weight=25;                                            
+
+                }
+
+              }
+
+            }
+
+          };
+          function drawSegments(){
+
+            stroke(128);
+            strokeWeight(3);
+            noFill();
+
+            var seg=null;
+
+            for(var n=0; n<p.segments.length; n++){
+
+              seg=p.segments[n];
+
+              // stroke(0,0,0,20);
+              stroke(64,64,64, seg.weight);
+
+              line(seg.point1.x, seg.point1.y,
+                   seg.point2.x, seg.point2.y);
+
+            }
+
+          };
+          function critters(){
+
+            p.reset();
+
+            p.workingNodes=getGreedyTour(p.originalNodes, app.greedyMethod);
+
+            updateSegments();
+
+            drawSegments();
+            drawNodes(p.originalNodes);
+            // renumberNodes(p.workingNodes);
+
+            if(frameCount%5==0){
+
+              for(var n=0; n<p.segments.length; n++){
+
+                p.segments[n].weight=constrain(p.segments[n].weight-1, 0, 100);
+                
+                if(p.segments[n].weight==0){
+                  p.segments.splice(n,1);
+                }
+
+              }
+
+            }
+
+          };
+
+        }
+
         { // Brute Force
 
           function nodePermutations(n, arr){
@@ -2091,278 +2363,6 @@ forum.processing.org
           };
 
         }
-
-        function findClosestNode(nod, arr){
-
-          var min= Infinity;
-          var distance=Infinity;
-          var index=-1;
-
-          for(var n=0; n<arr.length; n++){
-
-            distance=dist(nod.x, nod.y, arr[n].x, arr[n].y);
-
-            if(distance<min &&
-               distance!==0 &&
-               arr[n].dirty==false){
-
-              min=distance;
-              index=n;
-
-            }
-
-          }
-
-          return arr[index];
-
-        };
-        function getClosestArray(startNode){
-
-          var closestNodes=[];
-
-          // Start with the first node
-          var nod=p.originalNodes[startNode];
-
-          while(nod!=null){
-
-            // Find the node closest that isn't already taken
-            nod=findClosestNode(nod, p.originalNodes);
-
-            if(nod!=null){
-              nod.dirty=true;
-              closestNodes.push(nod);
-            }
-
-          }
-
-          //  Indicate that Find Closest was used initially
-          p.loaded=true;
-// print(closestNodes.length);
-          return closestNodes;
-
-        };
-
-        function genetic(){
-          
-          if(geneticLoaded==false){
-
-            // var index=round(random(app.nodes-1));
-            
-            var parent1=getClosestArray(getRandomInt(app.nodes-1));
-            var parent2=getClosestArray(getRandomInt(app.nodes-1));
-
-            print(parent1);
-            print(parent2);
-
-            // p.workingNodes=getClosestArray(index);
-            // arrayCopy(getClosestArray(index), p.workingNodes);
-
-            geneticLoaded=true;
-
-          }
-
-          drawPath(p.workingNodes,  p.workingNodes.length);
-          drawNodes(p.workingNodes, p.workingNodes.length);
-
-        };
-
-
-        { // Critters
-
-          function segmentExists(p1, p2) {
-
-            var retVal = -1;
-
-            for (var e = 1; e < p.segments.length; e++) {
-
-              if ((p1.x == p.segments[e].point1.x &&
-                p1.y == p.segments[e].point1.y &&
-                p2.x == p.segments[e].point2.x &&
-                p2.y == p.segments[e].point2.y)
-
-                ||
-
-                (p1.x == p.segments[e].point2.x &&
-                  p1.y == p.segments[e].point2.y &&
-                  p2.x == p.segments[e].point1.x &&
-                  p2.y == p.segments[e].point1.y)) {
-
-                retVal = e;
-                break;
-
-              }
-
-            }
-
-            return retVal;
-
-          };
-          function updateSegments(){
-
-            for (var n=0; n<p.workingNodes.length; n++) {
-
-              var exists=-1;
-
-              if (n==app.nodes-1) {
-
-                exists=segmentExists(p.workingNodes[n],
-                                    p.workingNodes[0]);
-                if (exists!=-1) {
-                  p.segments[n].weight=constrain(p.segments[n].weight + 1, 0, 100);
-                }
-                else {
-                  p.segments.push(new segment(p.workingNodes[n],
-                                              p.workingNodes[0]));
-                  p.segments[p.segments.length-1].weight=25;
-
-                }
-
-              }
-              else {
-
-                exists=segmentExists(p.workingNodes[n],
-                                    p.workingNodes[n + 1]);
-                if (exists!=-1) {
-                  p.segments[n].weight=constrain(p.segments[n].weight+1, 0, 100);
-                }
-                else {
-                  p.segments.push(new segment(p.workingNodes[n],
-                                              p.workingNodes[n + 1]));
-                  p.segments[p.segments.length-1].weight=25;                                            
-
-                }
-
-              }
-
-            }
-
-          };
-          function drawSegments(){
-
-            stroke(128);
-            strokeWeight(3);
-            noFill();
-
-            var seg=null;
-
-            for (var n=0; n<p.segments.length; n++){
-
-              seg=p.segments[n];
-
-              // stroke(0,0,0,20);
-              stroke(64,64,64, seg.weight);
-
-              line(seg.point1.x, seg.point1.y,
-                  seg.point2.x, seg.point2.y);
-
-            }
-
-          };
-          function critters(){
-
-            p.reset();
-
-            p.workingNodes=getGreedyTour(p.originalNodes, app.greedyMethod);
-
-            updateSegments();
-
-            drawSegments();
-            drawNodes(p.originalNodes);
-            // renumberNodes(p.workingNodes);
-
-            if(frameCount%5==0){
-
-              for (var n=0; n<p.segments.length; n++){
-
-                p.segments[n].weight=constrain(p.segments[n].weight-1, 0, 100);
-                
-                if(p.segments[n].weight==0){
-                  p.segments.splice(n,1);
-                }
-
-              }
-
-            }
-
-          };
-
-        }
-
-        function nearestNeighbor(){
-
-          for(var n=0; n<1000; n++){
-
-            swap3Random(p.workingNodes);
-
-            updateTour();
-
-          }
-
-          drawNodes(p.workingNodes);
-          drawPath(p.workingNodes);
-          // drawPath(p.bestNodes);
-
-        };
-
-        function updateTour(){
-
-          p.workingLength=getTourLength(p.workingNodes);
-
-          if(p.workingLength<p.minimumLength*p.factor){
-
-            p.minimumLength=p.workingLength;
-
-            if(p.workingLength<p.historicLength){
-              p.historicLength=p.workingLength;
-              arrayCopy(p.workingNodes, p.bestNodes);
-            }
-
-          }
-
-        };
-
-        function iterate(){
-          // p.factor=1;
-          arrayCopy(p.bestNodes, p.workingNodes);
-          // renumberNodes(p.bestNodes);
-
-          var index1=p.index;
-          var index2=index1+1;
-          var index3=index2+1;
-          var index4=index3+1;
-
-          if     (index2>p.workingNodes.length-1){ index2=0; }
-
-          if     (index3>p.workingNodes.length-1){ index3=0; }
-          else if(index3>p.workingNodes.length  ){ index3=1; }
-
-          if     (index4>p.workingNodes.length-1){ index4=0; }
-          else if(index4>p.workingNodes.length)  { index4=1; }
-          else if(index4>p.workingNodes.length+1){ index4=2; }
-
-          swap(p.workingNodes, index1, index2);
-          updateTour();
-
-          swap(p.workingNodes, index1, index3);
-          updateTour();
-
-          swap(p.workingNodes, index1, index4);
-          updateTour();
-
-          swap(p.workingNodes, index2, index3);
-          updateTour();
-
-          swap(p.workingNodes, index2, index4);
-          updateTour();
-
-          swap(p.workingNodes, index3, index4);
-          updateTour();
-
-          p.index++;
-
-          if(p.index>p.bestNodes.length-1) { p.index=0; }
-
-        };
 
         { // Greedy
 
@@ -2501,7 +2501,7 @@ forum.processing.org
               
               var tLength=Infinity;
 
-              while(tLength>4487){
+              // while(tLength>4487){
                 
                 p.workingNodes=getGreedyTour(p.originalNodes, app.greedyMethod);
                 
@@ -2511,7 +2511,7 @@ forum.processing.org
                   print(tLength);
                 }
 
-              }
+              // }
 
               arrayCopy(p.workingNodes, p.bestNodes);
               p.workingLength=getTourLength(p.workingNodes);
@@ -2559,97 +2559,6 @@ forum.processing.org
           };
 
         }
-
-        function simulatedAnnealing(){
-
-          fill(64);
-          noStroke();
-          textSize(20);
-
-          for(var n=0; n<1; n++){
-
-            p.factor-=0.000001;
-            p.factor=constrain(p.factor, 1, 1.2);
-
-            switch(true){
-
-              case p.factor>1.075:
-
-                var id=getLongest(p.workingNodes);
-
-                swap2Length(p.workingNodes, id);
-                swap2Closest(p.workingNodes);
-                swap3Consecutive(p.workingNodes);
-                // swap3Segments(p.workingNodes);
-
-                break;
-
-              // case p.factor>1.05:   swap3Random(p.workingNodes);
-              //                       break;                                      
-
-              // case p.factor>1:      swap2Half(p.workingNodes); 
-              //                       break;
-
-              default:
-
-                if(int(app.elapsedTime)%2==0){
-
-                  calculateIntersections();
-
-                  if(p.intersections.length>0){
-
-                    if(frameCount%100==0){
-                      print(p.intersections);
-                    }
-
-                    reverseNodes(p.workingNodes,
-                                 p.intersections[0].id,
-                                 p.intersections[2].id);
-
-                  }
-
-                }
-                else {
-                  iterate();
-                }
-
-                updateTour();
-
-                renumberNodes(p.workingNodes);
-
-              // arrayCopy(p.bestNodes, p.workingNodes);
-              // renumberNodes(p.bestNodes);
-
-              // iterate();
-              // print(p.index);
-              // p.index++;
-
-              // if(p.index>p.bestNodes.length-1){
-              //   p.index=0;
-              // }
-
-              // if     (frameCount%2==0) { swap2Closest(p.workingNodes);           }
-              // else if(frameCount%3==0) { swap2Length(p.workingNodes,
-                                                        // getLongest(p.workingNodes),
-              //                                                   ); }
-              // else if(frameCount%5==0) { swap2Consecutive(p.workingNodes);       }
-              // else if(frameCount%7==0) { swap3Consecutive(p.workingNodes);       }
-              // else if(frameCount%11==0){ swap3Random(p.workingNodes);            }
-              // else                     { swap2Random(p.workingNodes);            }
-
-              // break;
-
-            }
-
-            updateTour();
-
-          }
-
-          drawNodes(p.workingNodes);
-          drawPath(p.workingNodes);
-          drawPath(p.bestNodes);
-
-        };
 
         { // intersections
 
@@ -2747,6 +2656,99 @@ forum.processing.org
           };
 
         }
+
+
+        function simulatedAnnealing(){
+
+          fill(64);
+          noStroke();
+          textSize(20);
+
+          for(var n=0; n<1; n++){
+
+            p.factor-=0.000001;
+            p.factor=constrain(p.factor, 1, 1.2);
+
+            switch(true){
+
+              case p.factor>1.075:
+
+                var id=getLongest(p.workingNodes);
+
+                swap2Length(p.workingNodes, id);
+                swap2Closest(p.workingNodes);
+                swap3Consecutive(p.workingNodes);
+                // swap3Segments(p.workingNodes);
+
+                break;
+
+              // case p.factor>1.05:   swap3Random(p.workingNodes);
+              //                       break;                                      
+
+              // case p.factor>1:      swap2Half(p.workingNodes); 
+              //                       break;
+
+              default:
+
+                if(int(app.elapsedTime)%2==0){
+
+                  calculateIntersections();
+
+                  if(p.intersections.length>0){
+
+                    if(frameCount%100==0){
+                      print(p.intersections);
+                    }
+
+                    reverseNodes(p.workingNodes,
+                                 p.intersections[0].id,
+                                 p.intersections[2].id);
+
+                  }
+
+                }
+                else {
+                  iterate();
+                }
+
+                updateTour();
+
+                renumberNodes(p.workingNodes);
+
+              // arrayCopy(p.bestNodes, p.workingNodes);
+              // renumberNodes(p.bestNodes);
+
+              // iterate();
+              // print(p.index);
+              // p.index++;
+
+              // if(p.index>p.bestNodes.length-1){
+              //   p.index=0;
+              // }
+
+              // if     (frameCount%2==0) { swap2Closest(p.workingNodes);           }
+              // else if(frameCount%3==0) { swap2Length(p.workingNodes,
+                                                        // getLongest(p.workingNodes),
+              //                                                   ); }
+              // else if(frameCount%5==0) { swap2Consecutive(p.workingNodes);       }
+              // else if(frameCount%7==0) { swap3Consecutive(p.workingNodes);       }
+              // else if(frameCount%11==0){ swap3Random(p.workingNodes);            }
+              // else                     { swap2Random(p.workingNodes);            }
+
+              // break;
+
+            }
+
+            updateTour();
+
+          }
+
+          drawNodes(p.workingNodes);
+          drawPath(p.workingNodes);
+          drawPath(p.bestNodes);
+
+        };
+
 
         function grow(){
 
@@ -2941,7 +2943,7 @@ forum.processing.org
 
             border();
 
-            if (!p.loaded){
+            if(!p.loaded){
 
               if(app.algorithm!=ALGORITHMS.CRITTERS){
                 initialCondition();
