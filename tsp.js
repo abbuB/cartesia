@@ -47,62 +47,15 @@ forum.processing.org
 
   TO DO:
 
-    - update control locations on resize();
+    - print current tour button
+    - iterate toggle checkbox
+    - crossover toggle checkbox
 
-    - inplement redraw() as necessary
-
-    - complete mouse drag columns
-
-    - compete against the genetic algorithm
-    - compete against the AI
-
-    - shuffle button
-    - music button
-    - menu button
-    - timer/stop watch
-
-    - level indicator
-    - current score indicator
-
-      - percentage complete
-      - integer value of completed
-      - integer value of out of place
-
-    - grid complete animation (exploding triangles?)
-
-    - maintain percentage complete calculation
-
-    - rotation of each node
-    - rotation of each ring
-
-    - color coded outer hexagon to indicate patterns
-
-    - AI puzzle solving
-
-    - puzzle completion animations
-
-    - move object
-
-    - Undo/Redo stack
-
-        - ctrl+z
-        - ctrl+y
+    - create a circular node pattern for 100 nodes
 
   TO DONE:
 
-    - run button
-
-    - reset button
     
-    - initial color and current color
-
-    - active cell rollover edge of grid (top/bottom - right/left, etc)
-
-    - reference to the center node
-
-    - start drag x/y
-
-    - determine how to pass a color as a parameter
 
 
 
@@ -128,6 +81,18 @@ forum.processing.org
     {
       var RT = [212, 212, 212, 255]; var RT = [212, 212, 212, 255];
       var BG = [255, 204, 0, 255];
+
+      var MAROON     = [114, 12, 21,255];
+      var MAROON_L   = [140, 15 ,26,255];
+
+      var GRAY242    = [242,242,242,255];
+      var GRAY140    = [140,140,140,255];
+      
+      var BLACK12    = [ 12, 12, 12,255];
+
+      var WHITE242   = [242,242,242,255];
+
+      var BACKGROUND = WHITE242;
 
       var H_SHADOW = [209, 209, 209, 255];
 
@@ -316,30 +281,56 @@ forum.processing.org
 
   }
 
-  var data = [
-    [204, 568], [545, 333], [229, 425], [289, 379], [275, 275],
-    [442, 503], [169, 401], [456, 82],  [528, 433], [607, 460],
-    [182, 212], [319, 502], [552, 164], [362, 393], [625, 215],
-    [195, 472], [551, 538], [255, 392], [248, 345], [605, 416],
-    [484, 128], [470, 382], [491, 58],  [466, 522], [666, 489],
-    [159, 387], [599, 233], [153, 207], [354, 327], [432, 77],
-    [422, 467], [554, 325], [377, 550], [210, 110], [699, 463],
-    [536, 241], [408, 98],  [656, 102], [469, 38],  [516, 213],
-    [653, 128], [642, 45],  [428, 240], [672, 235], [162, 420],
-    [448, 490], [267, 46],  [692, 293], [504, 132], [303, 534],
-    [458, 327], [664, 550], [341, 481], [462, 33],  [193, 574],
-    [404, 504], [382, 208], [433, 354], [673, 146], [635, 317],
-    [338, 42],  [704, 447], [503, 560], [294, 503], [228, 325],
-    [309, 159], [480, 546], [564, 85],  [175, 380], [264, 509],
-    [183, 553], [204, 392], [479, 512], [536, 440], [409, 119],
-    [603, 260], [422, 129], [344, 408], [653, 335], [463, 308],
-    [495, 427], [578, 121], [397, 336], [432, 324], [635, 259],
-    [351, 465], [481, 541], [268, 447], [612, 390], [698, 162],
-    [163, 270], [655, 328], [513, 249], [316, 198], [568, 436],
-    [673, 198], [454, 154], [185, 53],  [441, 240], [262, 462]
-  ];
+  var data=[
+            [454,154],[484,128],[504,132],[552,164],[422,129],
+            [409,119],[408,98],[432,77],[456,82],[491,58],
+            [469,38],[462,33],[338,42],[267,46],[185,53],
+            [210,110],[309,159],[316,198],[382,208],[428,240],
+            [441,240],[516,213],[536,241],[513,249],[463,308],
+            [458,327],[432,324],[433,354],[397,336],[354,327],
+            [362,393],[344,408],[289,379],[255,392],[248,345],
+            [228,325],[275,275],[182,212],[153,207],[163,270],
+            [175,380],[159,387],[169,401],[162,420],[204,392],
+            [229,425],[195,472],[183,553],[193,574],[204,568],
+            [264,509],[262,462],[268,447],[294,503],[303,534],
+            [319,502],[341,481],[351,465],[377,550],[404,504],
+            [422,467],[448,490],[442,503],[466,522],[479,512],
+            [481,541],[480,546],[503,560],[551,538],[664,550],
+            [666,489],[699,463],[704,447],[612,390],[605,416],
+            [607,460],[568,436],[536,440],[528,433],[495,427],
+            [470,382],[545,333],[554,325],[635,317],[653,335],
+            [655,328],[692,293],[635,259],[603,260],[599,233],
+            [625,215],[672,235],[673,198],[698,162],[673,146],
+            [653,128],[656,102],[642,45],[564,85],[578,121]
+          ];
 
   var cnv;
+
+  function printTour(arr){
+
+    var s=(" var data=[\n           ");
+
+      for(var n=1; n<=arr.length; n++){
+
+        s+=("[" + arr[n-1].x + ","
+                + arr[n-1].y + "]");
+
+        if(n!=arr.length){
+          s+=",";
+        }
+
+        if(n%5==0 &&
+           n!=arr.length){
+          s+="\n           ";
+        }
+
+      }
+
+    s+="\n          ];";
+
+    print(s);
+
+  };
 
   function setup(){
 
@@ -378,40 +369,40 @@ forum.processing.org
     /* Platform Constants  -------------------- */
     {
 
-      this.dirty = false;              //  Has a reset occurred
+      this.dirty = false;             //  Has a reset occurred
 
-      this.debug = true;               //  Mode that displays enhanced debugging tools
+      this.debug = true;              //  Mode that displays enhanced debugging tools
 
-      this.frameRate = 0;                  //  Refresh speed
+      this.frameRate = 0;             //  Refresh speed
 
-      this.running = false;              //  Currently solving the puzzle
-      this.progress = 0;                  //  Puzzle is this % solved
+      this.running = false;           //  Currently solving the puzzle
+      this.progress = 0;              //  Puzzle is this % solved
 
-      this.mouseX = 0;                  //  Current mouseX location
-      this.mouseY = 0;                  //  Current mouseY location
+      this.mouseX = 0;                //  Current mouseX location
+      this.mouseY = 0;                //  Current mouseY location
 
       this.left = false;              //  Is the left   mouse button pressed
-      this.right = false;              //  Is the right  mouse button pressed
-      this.center = false;              //  Is the center mouse button pressed
+      this.right = false;             //  Is the right  mouse button pressed
+      this.center = false;            //  Is the center mouse button pressed
 
       this.dragStartX = 0;
       this.dragStartY = 0;
 
-      this.dragging = false;              //  Is the mouse cursor moving and the left button pressed?
+      this.dragging = false;          //  Is the mouse cursor moving and the left button pressed?
 
       this.dragDirection = DRAG_DIRECTIONS.NONE;
 
-      this.focus = null;               //  The control with focus
+      this.focus = null;              //  The control with focus
 
-      this.controls = [];                 //  Collection of controls in the app
+      this.controls = [];             //  Collection of controls in the app
       this.controlCount = 0;
 
       this.keys = [];                 //  Array holding the value of all KeyCodes
 
-      this.fullscreen = false;              //  Is the display set to take up the entire screen ie. No Chrome
+      this.fullscreen = false;        //  Is the display set to take up the entire screen ie. No Chrome
 
       this.info = 0;                  //  Is the info frame displayed
-      this.telemetry = false;              //  Is telemetry visible
+      this.telemetry = false;         //  Is telemetry visible
 
       this.startTime = millis();
 
@@ -422,6 +413,8 @@ forum.processing.org
     /* TSP Specific       ------------------ */
     {
 
+      // ACO - Ant Colony Optimization
+
       // this.greedyMethod = GREEDYMETHODS.FURTHEST;
       // this.greedyMethod = GREEDYMETHODS.CLOSEST;
       this.greedyMethod = GREEDYMETHODS.RANDOM;
@@ -431,27 +424,31 @@ forum.processing.org
       // this.algorithm    = ALGORITHMS.BRUTEFORCE;
       // this.algorithm    = ALGORITHMS.SIMULATEDANNEALING;
       // this.algorithm    = ALGORITHMS.NEAREST;
-      // this.algorithm    = ALGORITHMS.CRITTERS;
+      // this.algorithm    = ALGORITHMS.ACO;
       // this.algorithm    = ALGORITHMS.GENETIC;
 
       // app.algorithm     = ALGORITHMS.ITERATE;
 
-      this.nodes = 100;                //  Total # of nodes to be connected
+      this.nodes        = 100;                //  Total # of nodes to be connected
 
       this.menu;
       this.clock;
       this.music;
       this.reset;
 
-      this.musicOn = true;
+      this.musicOn      = true;
 
-      this.finished = false;
+      this.finished     = false;
 
       // this.animations     = [];
 
-      this.currentNode = null;
+      this.currentNode  = null;
 
-      this.field = null;
+      this.field        = null;
+
+      this.initialize   = false;
+      this.crossover    = true;
+      this.iterate      = false;
 
     }
 
@@ -475,28 +472,38 @@ forum.processing.org
 
       function getColor(clr, alpha) { return color(red(clr), green(clr), blue(clr), alpha / 100 * 255); };
 
-      function getInfo(){ return app.info; };
-      function toggleInfo(){ app.info = !app.info; };
+      function getInfo()          { return app.info;                };
+      function toggleInfo()       { app.info = !app.info;           };
 
-      function getTelemetry(){ return app.telemetry; };
-      function toggleTelemetry(){ app.telemetry = !app.telemetry; };
+      function getTelemetry()     { return app.telemetry;           };
+      function toggleTelemetry()  { app.telemetry = !app.telemetry; };
 
-      function toggleCreate(){ };
+      function toggleCreate()     {                                 };
 
-      function getMusic(){ return app.musicOn; };
-      function setMusic(b) { return app.musicOn = b; };
+      function getMusic()         { return app.musicOn;             };
+      function setMusic(b)        { return app.musicOn = b;         };
 
-      function getScore(){ return app.score; };
-      function setScore(b) { return app.score = b; };
+      function getScore()         { return app.score;               };
+      function setScore(b)        { return app.score = b;           };
 
-      function clickTest(n) { print('click: ' + n); };
+      function clickTest(n)       { print('click: ' + n);           };
 
-      function getRunning(){ return app.running; };
-      function toggleRunning(){ app.running = !app.running; };
+      function getRunning()       { return app.running;             };
+      function toggleRunning()    { app.running=!app.running;       };
+
+      function getInitialize()    { return app.initialize;          };
+      function toggleInitialize() { app.initialize=!app.initialize; };
+
+      function getCrossover()     { return app.crossover;           };
+      function toggleCrossover()  { app.crossover=!app.crossover;   };
+
+      function getIterate()       { return app.iterate;             };
+      function toggleIterate()    { app.iterate=!app.iterate;       };
 
       function menu(){ };
 
       function getRandomInt(n){ return round(random(n)) };
+
     }
 
 
@@ -1842,7 +1849,7 @@ forum.processing.org
         p.intersections     = [];
         p.tours             = [];
 
-        if(app.algorithm!=ALGORITHMS.CRITTERS){
+        if(app.algorithm!=ALGORITHMS.ACO){
           p.segments=[];
         }
 
@@ -1953,7 +1960,7 @@ forum.processing.org
 
         };
 
-        if(app.algorithm!=ALGORITHMS.CRITTERS){
+        if(app.algorithm!=ALGORITHMS.ACO){
           loadClosestNodes();
         }
 
@@ -1977,7 +1984,7 @@ forum.processing.org
 
           fill(222);
 
-          if(p.hit){ fill(222); };
+          if(p.hit){ fill(BACKGROUND); };
 
           stroke(127,0,0);
           strokeWeight(0.5);
@@ -2007,9 +2014,6 @@ forum.processing.org
           endShape(CLOSE);
 
         };
-
-
-
 
         function findClosestNode(arr, nod){
 
@@ -2161,7 +2165,7 @@ forum.processing.org
 
         };
 
-        { // Critters
+        { // ACO
 
           function segmentExists(p1, p2){
 
@@ -2252,7 +2256,7 @@ forum.processing.org
             }
 
           };
-          function critters(){
+          function ACO(){
 
             p.reset();
 
@@ -2524,25 +2528,34 @@ forum.processing.org
 
                 if(frameCount%2==0){
 
-                  calculateIntersections();
+                  if(app.crossover){
 
-                  if(p.intersections.length>0){
+                    calculateIntersections();
 
-                    if(frameCount%100==0){
-                      print(p.intersections);
+                    if(p.intersections.length>0){
+
+                      if(frameCount%100==0){
+                        print(p.intersections);
+                      }
+
+                      reverseNodes(p.workingNodes,
+                                  p.intersections[0].id,
+                                  p.intersections[2].id);
+
+                      renumberNodes(p.workingNodes);
+
                     }
-
-                    reverseNodes(p.workingNodes,
-                                 p.intersections[0].id,
-                                 p.intersections[2].id);
-
-                    renumberNodes(p.workingNodes);
 
                   }
 
                 }
+
                 else{
-                  iterate();
+
+                  if(app.iterate){
+                    iterate();
+                  }
+
                 }
 
               }
@@ -2937,6 +2950,9 @@ forum.processing.org
 
         };
 
+          this.active = this.hit &&
+                        app.focus==this;
+          
           push();
 
             translate(this.x+0.5, this.y+0.5);
@@ -2945,12 +2961,14 @@ forum.processing.org
 
             if(!p.loaded){
 
-              if(app.algorithm!=ALGORITHMS.CRITTERS){
-                initialCondition();
+              if(app.algorithm!=ALGORITHMS.ACO){
+
+                if(app.initialize){ initialCondition(); }
+
               }
 
               if(app.algorithm==ALGORITHMS.GREEDY){
-                this.workingNodes=[];
+                // this.workingNodes=[];
               }
 
             }
@@ -2964,7 +2982,7 @@ forum.processing.org
               case ALGORITHMS.BRUTEFORCE:         bruteForce();         break;
 
               case ALGORITHMS.GENETIC:            genetic();            break;
-              case ALGORITHMS.CRITTERS:           critters();           break;
+              case ALGORITHMS.ACO:                ACO();                break;
 
               default:                            simulatedAnnealing(); break;
 
@@ -3118,7 +3136,7 @@ forum.processing.org
       node.prototype.draw = function (){
 
         this.active = this.hit &&
-          app.focus === this;
+                      app.focus==this;
 
         this.offset = 0;
         var p = this;
@@ -3190,8 +3208,8 @@ forum.processing.org
 
         this.hitTest(x + this.x, y + this.y);
 
-        if (this.hit) {
-          app.currentNode = this;
+        if(this.hit){
+          app.currentNode=this;
         }
 
       };
@@ -3767,7 +3785,7 @@ forum.processing.org
       shuffleButton.prototype.draw = function (){
 
         this.active = this.hit &&
-          app.focus === this;
+                      app.focus === this;
 
         this.offset = 0;
 
@@ -3850,8 +3868,119 @@ forum.processing.org
       shuffleButton.prototype.clicked = function (){
         /** Overridden for execute */
 
-        if (this.active) { this.execute(); }
+        if (this.active) { this.execute(app.field.workingNodes); }
 
+      };
+
+    }
+
+    /** Checkbox        -------------------------------------------------- */
+    {
+      var checkbox=function(id, parent, x, y, w, h, props){
+        
+        control.call(this, id, parent, x, y, w, h);
+
+        this.caption  = props.caption;
+        this.execute  = props.execute;
+        this.retrieve = props.retrieve;
+
+        this.color    = props.color;
+        this.value    = this.retrieve();
+
+      };
+      checkbox.prototype.draw=      function(){
+
+        this.value  = this.retrieve();
+
+        this.active = this.hit &&
+                      app.focus === this;
+
+        this.offset = 0;
+
+        push();
+
+          translate(this.w/2+0.5, this.h/2+0.5);
+          
+            if(this.hit){ fill(0,0,255,20);
+                          cursor(HAND);     }
+            else        { fill(0,0,128,0);  }
+
+            // Outer Rectangle ~~~~~~~~~~~
+            rectMode(CENTER);
+
+            stroke(128);
+            strokeWeight(0.5);
+      
+              rect(this.x, this.y,
+                   this.w, this.h,
+                   2);
+
+            // Inner Rectangle ~~~~~~~~~~~
+            if(this.value){ fill(128,0,0); }
+            else          { noFill();
+                            noStroke();    }
+
+              rect(this.x,   this.y,
+                   this.w-5, this.h-5,
+                   2);
+
+            // Caption ~~~~~~~~~~
+            if(this.hit){ fill(getColor(this.color,100)); }
+            else        { fill(getColor(this.color, 75)); }
+
+            noStroke();
+
+            textSize(12);
+            textAlign(LEFT,CENTER);
+
+              text(this.caption,
+                   this.x + this.w/2 + 3,
+                   this.y+1);
+
+        pop();
+
+      };
+      checkbox.prototype.clicked=   function(x,y){
+    
+        if(this.hit){ this.execute(); }
+    
+      };
+      checkbox.prototype.released=  function(x,y){};      
+      checkbox.prototype.moved=     function(x,y){
+    
+        if(mouseX>x+this.x &&
+           mouseX<x+this.x+this.w+textWidth(this.caption)+3 &&
+           mouseY>y+this.y &&
+           mouseY<y+this.y+this.h){
+          
+          app.focus=this.id;
+          this.hit=true;
+    
+        }
+        else{
+    
+          this.hit=false;
+    
+        }
+    
+      };
+      checkbox.prototype.dragged=   function(x,y){
+    
+        // if(this.hit){
+        //   this.x=x;
+        //   this.y=y;
+        // }
+    
+      };
+      checkbox.prototype.over=      function(x,y){
+    
+        this.visible=true;
+    
+      };
+      checkbox.prototype.out=       function(x,y){
+    
+        this.visible=false;
+    
       };
 
     }
@@ -3900,7 +4029,7 @@ forum.processing.org
       {
         cursor: HAND,
         color: BLACK,
-        execute: shuffle
+        execute: printTour
       }));
 
     /** Solve Button     */
@@ -3949,10 +4078,36 @@ forum.processing.org
 
     // app.controls.push(ps);
 
+    /* Initialize --------------------------------------------------- */
+    var initialize = new checkbox('checkbox', rt, 100, 425, 12, 12,
+        { color:    MAROON,
+          execute:  toggleInitialize,
+          retrieve: getInitialize,
+          caption:  "Initialize" });
+    
+      app.controls.push(initialize);
+
+    /* Crossover ---------------------------------------------------- */
+    var crossover = new checkbox('checkbox', rt, 100, 445, 12, 12,
+        { color:    MAROON_L,
+          execute:  toggleCrossover,
+          retrieve: getCrossover,
+          caption:  "Crossover" });
+
+    app.controls.push(crossover);
+
+    /* Iterate ------------------------------------------------------ */
+    var iterate = new checkbox('checkbox', rt, 100, 465, 12, 12,
+        { color:    BLACK,
+          execute:  toggleIterate,
+          retrieve: getIterate,
+          caption:  "Iterate" });
+  
+      app.controls.push(iterate);
 
     /* Telemetry ---------------------------------------------------- */
     var telem = new telemetry('telemetry', rt, rt.w - 195, 10, 190, rt.h - 10,
-      { color: BLACK });
+      { color: BLACK});
 
     app.controls.push(telem);
 
@@ -4055,7 +4210,7 @@ forum.processing.org
 
       switch (mouseButton) {
 
-        case LEFT: forEach(app.controls, 'clicked'); break;
+        case LEFT:  forEach(app.controls, 'clicked'); break;
         case RIGHT: forEach(app.controls, 'rclicked'); break;
         // case CENTER:  forEach(app.controls,'cclicked'); break;
 
