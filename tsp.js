@@ -47,15 +47,29 @@ forum.processing.org
 
   TO DO:
 
+        // this.greedyMethod = GREEDYMETHODS.FURTHEST;
+      // this.greedyMethod = GREEDYMETHODS.CLOSEST;
+      this.greedyMethod = GREEDYMETHODS.RANDOM;
+
+    - proximity swap (nodes that should be in a line with adjacent nodes)
+
     - print current tour button
-    - iterate toggle checkbox
-    - crossover toggle checkbox
+
 
     - create a circular node pattern for 100 nodes
 
   TO DONE:
 
-    
+    - brute force option button
+    - genetic option button
+    - simulated annelaing option button
+    - greedy option button
+    - grow option button
+    - ACO option button
+
+    - initialize toggle checkbox
+    - iterate toggle checkbox
+    - crossover toggle checkbox    
 
 
 
@@ -415,15 +429,15 @@ forum.processing.org
 
       // ACO - Ant Colony Optimization
 
-      // this.greedyMethod = GREEDYMETHODS.FURTHEST;
       // this.greedyMethod = GREEDYMETHODS.CLOSEST;
+      // this.greedyMethod = GREEDYMETHODS.FURTHEST;
       this.greedyMethod = GREEDYMETHODS.RANDOM;
 
       // this.algorithm    = ALGORITHMS.GROW;
-      this.algorithm    = ALGORITHMS.GREEDY;
+      // this.algorithm    = ALGORITHMS.GREEDY;
       // this.algorithm    = ALGORITHMS.BRUTEFORCE;
       // this.algorithm    = ALGORITHMS.SIMULATEDANNEALING;
-      // this.algorithm    = ALGORITHMS.NEAREST;
+      this.algorithm    = ALGORITHMS.NEAREST;
       // this.algorithm    = ALGORITHMS.ACO;
       // this.algorithm    = ALGORITHMS.GENETIC;
 
@@ -499,6 +513,17 @@ forum.processing.org
 
       function getIterate()       { return app.iterate;             };
       function toggleIterate()    { app.iterate=!app.iterate;       };
+
+      function getMethod()        { return app.greedyMethod;        };
+      function setMethod(m)       { app.greedyMethod=m;             };
+
+      function setAlgorithm(a)    {
+        app.algorithm=a;
+        print(a);
+      };
+
+      function getAlgorithm()     { return app.algorithm;           };
+
 
       function menu(){ };
 
@@ -1980,18 +2005,7 @@ forum.processing.org
 
         if(this.active){ cursor(this.cursor); }
 
-        function border(){
 
-          fill(222);
-
-          if(p.hit){ fill(BACKGROUND); };
-
-          stroke(127,0,0);
-          strokeWeight(0.5);
-
-            rect(0, 0, p.w, p.h, 5);
-
-        };
 
         function drawNodes(nodes){
 
@@ -2012,6 +2026,14 @@ forum.processing.org
             }
 
           endShape(CLOSE);
+
+        };
+
+        function toggleDirty(){
+
+          for(var n=0; n<p.workingNodes.length; n++) {
+            p.workingNodes[n].dirty=!p.workingNodes[n].dirty;
+          }
 
         };
 
@@ -2062,30 +2084,6 @@ forum.processing.org
           p.loaded=true;
 // print(closestNodes.length);
           return closestNodes;
-
-        };
-
-        function genetic(){
-          
-          if(geneticLoaded==false){
-
-            // var index=round(random(app.nodes-1));
-            
-            var parent1=getClosestArray(getRandomInt(app.nodes-1));
-            var parent2=getClosestArray(getRandomInt(app.nodes-1));
-
-            print(parent1);
-            print(parent2);
-
-            // p.workingNodes=getClosestArray(index);
-            // arrayCopy(getClosestArray(index), p.workingNodes);
-
-            geneticLoaded=true;
-
-          }
-
-          drawPath(p.workingNodes,  p.workingNodes.length);
-          drawNodes(p.workingNodes, p.workingNodes.length);
 
         };
 
@@ -2164,6 +2162,34 @@ forum.processing.org
           if(p.index>p.bestNodes.length-1) { p.index=0; }
 
         };
+
+        { // Genetic
+          
+          function genetic(){
+            
+            if(geneticLoaded==false){
+
+              // var index=round(random(app.nodes-1));
+              
+              var parent1=getClosestArray(getRandomInt(app.nodes-1));
+              var parent2=getClosestArray(getRandomInt(app.nodes-1));
+
+              print(parent1);
+              print(parent2);
+
+              // p.workingNodes=getClosestArray(index);
+              // arrayCopy(getClosestArray(index), p.workingNodes);
+
+              geneticLoaded=true;
+
+            }
+
+            drawPath(p.workingNodes,  p.workingNodes.length);
+            drawNodes(p.workingNodes, p.workingNodes.length);
+
+          };
+
+        }
 
         { // ACO
 
@@ -2670,253 +2696,271 @@ forum.processing.org
 
         }
 
+        { // Simulated Annealing
+          
+          function simulatedAnnealing(){
 
-        function simulatedAnnealing(){
+            fill(64);
+            noStroke();
+            textSize(20);
 
-          fill(64);
-          noStroke();
-          textSize(20);
+            for(var n=0; n<1; n++){
 
-          for(var n=0; n<1; n++){
+              p.factor-=0.000001;
+              p.factor=constrain(p.factor, 1, 1.2);
 
-            p.factor-=0.000001;
-            p.factor=constrain(p.factor, 1, 1.2);
+              switch(true){
 
-            switch(true){
+                case p.factor>1.075:
 
-              case p.factor>1.075:
+                  var id=getLongest(p.workingNodes);
 
-                var id=getLongest(p.workingNodes);
+                  swap2Length(p.workingNodes, id);
+                  swap2Closest(p.workingNodes);
+                  swap3Consecutive(p.workingNodes);
+                  // swap3Segments(p.workingNodes);
 
-                swap2Length(p.workingNodes, id);
-                swap2Closest(p.workingNodes);
-                swap3Consecutive(p.workingNodes);
-                // swap3Segments(p.workingNodes);
+                  break;
 
-                break;
+                // case p.factor>1.05:   swap3Random(p.workingNodes);
+                //                       break;                                      
 
-              // case p.factor>1.05:   swap3Random(p.workingNodes);
-              //                       break;                                      
+                // case p.factor>1:      swap2Half(p.workingNodes); 
+                //                       break;
 
-              // case p.factor>1:      swap2Half(p.workingNodes); 
-              //                       break;
+                default:
 
-              default:
+                  if(int(app.elapsedTime)%2==0){
 
-                if(int(app.elapsedTime)%2==0){
+                    calculateIntersections();
 
-                  calculateIntersections();
+                    if(p.intersections.length>0){
 
-                  if(p.intersections.length>0){
+                      if(frameCount%100==0){
+                        print(p.intersections);
+                      }
 
-                    if(frameCount%100==0){
-                      print(p.intersections);
+                      reverseNodes(p.workingNodes,
+                                  p.intersections[0].id,
+                                  p.intersections[2].id);
+
                     }
 
-                    reverseNodes(p.workingNodes,
-                                 p.intersections[0].id,
-                                 p.intersections[2].id);
+                  }
+                  else {
+                    iterate();
+                  }
 
+                  updateTour();
+
+                  renumberNodes(p.workingNodes);
+
+                // arrayCopy(p.bestNodes, p.workingNodes);
+                // renumberNodes(p.bestNodes);
+
+                // iterate();
+                // print(p.index);
+                // p.index++;
+
+                // if(p.index>p.bestNodes.length-1){
+                //   p.index=0;
+                // }
+
+                // if     (frameCount%2==0) { swap2Closest(p.workingNodes);           }
+                // else if(frameCount%3==0) { swap2Length(p.workingNodes,
+                                                          // getLongest(p.workingNodes),
+                //                                                   ); }
+                // else if(frameCount%5==0) { swap2Consecutive(p.workingNodes);       }
+                // else if(frameCount%7==0) { swap3Consecutive(p.workingNodes);       }
+                // else if(frameCount%11==0){ swap3Random(p.workingNodes);            }
+                // else                     { swap2Random(p.workingNodes);            }
+
+                // break;
+
+              }
+
+              updateTour();
+
+            }
+
+            drawNodes(p.workingNodes);
+            drawPath(p.workingNodes);
+            drawPath(p.bestNodes);
+
+          };
+
+        }
+
+        { // Grow
+
+          function grow(){
+
+            // renumberNodes(p.workingNodes);
+
+            function canGrow(nod){
+
+              var retVal=true;
+
+              for(var n=0; n<p.workingNodes.length; n++){
+
+                var distance=dist(nod.x,
+                                  nod.y,
+                                  p.workingNodes[n].x,
+                                  p.workingNodes[n].y);
+
+                distance=abs(distance);
+
+                if(nod.id!==p.workingNodes[n].id){
+
+                  if(distance*2<(nod.radius+p.workingNodes[n].radius)){
+                    retVal=false;
+                    break;
                   }
 
                 }
-                else {
-                  iterate();
+
+              }
+
+              return retVal;
+
+            };
+
+            var nod=null;
+
+            for(var n=0; n<p.workingNodes.length; n++){
+
+              nod=p.workingNodes[n];
+
+              if(canGrow(nod)){
+                nod.radius++;
+              }
+
+            }
+
+            if(!completed){
+
+              renumberNodes(p.workingNodes);
+
+              calculateIntersections();
+
+              print(p.intersections);
+
+            }
+
+            p.factor=1;
+
+            renumberNodes(p.workingNodes);
+
+            if(int(app.elapsedTime)%2==0){
+
+              calculateIntersections();
+
+              if(p.intersections.length>0){
+
+                if(frameCount%100 == 0){
+                  print(p.intersections);
                 }
 
-                updateTour();
+                reverseNodes(p.workingNodes,
+                            p.intersections[0].id,
+                            p.intersections[2].id);
 
-                renumberNodes(p.workingNodes);
+              }
 
-              // arrayCopy(p.bestNodes, p.workingNodes);
-              // renumberNodes(p.bestNodes);
-
-              // iterate();
-              // print(p.index);
-              // p.index++;
-
-              // if(p.index>p.bestNodes.length-1){
-              //   p.index=0;
-              // }
-
-              // if     (frameCount%2==0) { swap2Closest(p.workingNodes);           }
-              // else if(frameCount%3==0) { swap2Length(p.workingNodes,
-                                                        // getLongest(p.workingNodes),
-              //                                                   ); }
-              // else if(frameCount%5==0) { swap2Consecutive(p.workingNodes);       }
-              // else if(frameCount%7==0) { swap3Consecutive(p.workingNodes);       }
-              // else if(frameCount%11==0){ swap3Random(p.workingNodes);            }
-              // else                     { swap2Random(p.workingNodes);            }
-
-              // break;
-
+            }
+            else{
+              iterate();
             }
 
             updateTour();
 
-          }
-
-          drawNodes(p.workingNodes);
-          drawPath(p.workingNodes);
-          drawPath(p.bestNodes);
-
-        };
-
-
-        function grow(){
-
-          // renumberNodes(p.workingNodes);
-
-          function canGrow(nod){
-
-            var retVal=true;
-
-            for(var n=0; n<p.workingNodes.length; n++){
-
-              var distance=dist(nod.x,
-                                nod.y,
-                                p.workingNodes[n].x,
-                                p.workingNodes[n].y);
-
-              distance=abs(distance);
-
-              if(nod.id!==p.workingNodes[n].id){
-
-                if(distance*2<(nod.radius+p.workingNodes[n].radius)){
-                  retVal=false;
-                  break;
-                }
-
-              }
-
-            }
-
-            return retVal;
+            drawPath(p.workingNodes, p.workingNodes.length);
+            drawNodes(p.workingNodes, p.workingNodes.length);
+            // drawPath(p.bestNodes);
 
           };
 
-          var nod=null;
+        }
 
-          for(var n=0; n<p.workingNodes.length; n++){
+        { // GUI
 
-            nod=p.workingNodes[n];
+          function border(){
 
-            if(canGrow(nod)){
-              nod.radius++;
+            fill(222);
+
+            if(p.hit){ fill(BACKGROUND); };
+
+            stroke(127,0,0);
+            strokeWeight(0.5);
+
+              rect(0, 0, p.w, p.h, 5);
+
+          };
+
+          function drawProperties(){
+
+            textSize(11);
+            textAlign(LEFT, TOP);
+            strokeWeight(0.5);
+            stroke(128);
+            fill(128);
+
+              text(         'Tours:'           +
+                  '\n'   + 'Nodes:'            +
+                  '\n'   + 'Source Nodes:'     +
+                  '\n\n' + 'Working Length:'   +
+                  '\n'   + 'Best Length'       +
+                  '\n'   + 'Historic Length:'  +
+                  '\n\n' + 'Algorithm:'        +          
+                  '\n'   + 'Greedy Method:'    +
+                  '\n\n' + 'Current Node:'     +
+                  '\n\n' + 'Factor:'           +
+                  '\n\n' + 'Intersections:'    +
+                  '\n\n' + 'Segments:'         +
+                  '\n\n' + 'Elapsed Time:'     ,                 
+                  10, 10);
+
+            stroke(64);
+            fill(64);
+
+            var id=app.currentNode;
+            
+            if(id==null){
+              id='null';
+            }
+            else{
+              id=app.currentNode.id;
             }
 
-          }
+              text(        p.tours.length              +
+                  '\n'   + p.workingNodes.length       +
+                  '\n'   + round(p.sourceNodes.length) +
+                  '\n\n' + round(p.workingLength)      +
+                  '\n'   + round(p.minimumLength)      +
+                  '\n'   + round(p.historicLength)     +
+                  '\n\n' + app.algorithm               +
+                  '\n'   + app.greedyMethod            +
+                  '\n\n' + id                          +
+                  '\n\n' + nf(p.factor, 1, 5)          +
+                  '\n\n' + p.intersections.length      +
+                  '\n\n' + p.segments.length           +
+                  '\n\n' + nf(app.elapsedTime, 1, 1)   ,
+                  110, 10);
 
-          if(!completed){
+            textSize(11);
 
-            renumberNodes(p.workingNodes);
+              text(factorial(app.nodes), 10, p.h-20);
+              // text(factorial(app.nodes).toLocaleString(), 10, p.h-200);
 
-            calculateIntersections();
+            //  Center origin
+            // translate(this.w/2,this.h/2);
 
-            print(p.intersections);
+            // ellipse(0,0,5,5);
 
-          }
-
-          p.factor=1;
-
-          renumberNodes(p.workingNodes);
-
-          if(int(app.elapsedTime)%2==0){
-
-            calculateIntersections();
-
-            if(p.intersections.length>0){
-
-              if(frameCount%100 == 0){
-                print(p.intersections);
-              }
-
-              reverseNodes(p.workingNodes,
-                           p.intersections[0].id,
-                           p.intersections[2].id);
-
-            }
-
-          }
-          else{
-            iterate();
-          }
-
-          updateTour();
-
-          drawPath(p.workingNodes, p.workingNodes.length);
-          drawNodes(p.workingNodes, p.workingNodes.length);
-          // drawPath(p.bestNodes);
-
-        };
-
-        function drawProperties(){
-
-          textSize(11);
-          textAlign(LEFT, TOP);
-          strokeWeight(0.5);
-          stroke(128);
-          fill(128);
-
-            text(         'Tours:'            +
-                 '\n'   + 'Nodes:'            +
-                 '\n'   + 'Source Nodes:'     +
-                 '\n\n' + 'Working Length:'   +
-                 '\n'   + 'Best Length'       +
-                 '\n'   + 'Historic Length:'  +
-                 '\n\n' + 'Algorithm:'        +          
-                 '\n\n' + 'Current Node:'     +
-                 '\n\n' + 'Factor:'           +
-                 '\n\n' + 'Intersections:'    +
-                 '\n\n' + 'Segments:'         +
-                 '\n\n' + 'Elapsed Time:'     ,                 
-                 10, 10);
-
-          stroke(64);
-          fill(64);
-
-          var id=app.currentNode;
-          
-          if(id==null){
-            id='null';
-          }
-          else{
-            id=app.currentNode.id;
-          }
-
-            text(         p.tours.length       +
-                 '\n'   + p.workingNodes.length       +
-                 '\n'   + round(p.sourceNodes.length) +
-                 '\n\n' + round(p.workingLength)      +
-                 '\n'   + round(p.minimumLength)      +
-                 '\n'   + round(p.historicLength)     +
-                 '\n\n' + app.algorithm               +
-                 '\n\n' + id          +
-                 '\n\n' + nf(p.factor, 1, 5)          +
-                 '\n\n' + p.intersections.length      +
-                 '\n\n' + p.segments.length           +
-                 '\n\n' + nf(app.elapsedTime, 1, 1)   ,
-                 110, 10);
-
-          textSize(11);
-
-            text(factorial(app.nodes), 10, p.h-20);
-            // text(factorial(app.nodes).toLocaleString(), 10, p.h-200);
-
-          //  Center origin
-          // translate(this.w/2,this.h/2);
-
-          // ellipse(0,0,5,5);
-
-        };
-
-        function toggleDirty(){
-
-          for(var n=0; n<p.workingNodes.length; n++) {
-            p.workingNodes[n].dirty=!p.workingNodes[n].dirty;
-          }
+          };
 
         }
+
         function initialCondition(){
 
           var minLength=Infinity;
@@ -3985,6 +4029,122 @@ forum.processing.org
 
     }
 
+    /** option        -------------------------------------------------- */
+    {
+      var option=function(id, parent, x, y, w, h, props){
+        
+        control.call(this, id, parent, x, y, w, h);
+
+        this.caption  = props.caption;
+        this.execute  = props.execute;
+        this.retrieve = props.retrieve;
+
+        this.color    = props.color;
+        
+        this.value    = this.retrieve();
+        
+        this.algorithm = props.algorithm;
+
+      };
+      option.prototype.draw=      function(){
+
+        this.value  = this.retrieve();
+
+        this.active = this.hit &&
+                      app.focus === this;
+
+        this.offset = 0;
+
+        push();
+
+          translate(this.w/2+0.5, this.h/2+0.5);
+          
+            if(this.hit){ fill(0,0,255,20);
+                          cursor(HAND);     }
+            else        { fill(0,0,128,0);  }
+
+            // Outer Rectangle ~~~~~~~~~~~
+            rectMode(CENTER);
+
+            stroke(128);
+            strokeWeight(0.5);
+      
+              ellipse(this.x, this.y,
+                      this.w, this.h);
+
+            // Inner Rectangle ~~~~~~~~~~~
+            if(this.retrieve()==this.algorithm){
+
+              if(this.value){ fill(128,0,0); }
+              else          { noFill();
+                              noStroke();    }
+
+                ellipse(this.x,   this.y,
+                        this.w-5, this.h-5);
+
+            }
+
+            // Caption ~~~~~~~~~~
+            if(this.hit){ fill(getColor(this.color,100)); }
+            else        { fill(getColor(this.color, 75)); }
+
+            noStroke();
+
+            textSize(12);
+            textAlign(LEFT,CENTER);
+
+              text(this.caption,
+                   this.x + this.w/2 + 3,
+                   this.y+1);
+
+        pop();
+
+      };
+      option.prototype.clicked=   function(x,y){
+
+        if(this.hit){ this.execute(this.algorithm); }
+
+      };
+      option.prototype.released=  function(x,y){};      
+      option.prototype.moved=     function(x,y){
+    
+        if(mouseX>x+this.x &&
+           mouseX<x+this.x+this.w+textWidth(this.caption)+3 &&
+           mouseY>y+this.y &&
+           mouseY<y+this.y+this.h){
+          
+          app.focus=this.id;
+          this.hit=true;
+    
+        }
+        else{
+    
+          this.hit=false;
+    
+        }
+    
+      };
+      option.prototype.dragged=   function(x,y){
+    
+        // if(this.hit){
+        //   this.x=x;
+        //   this.y=y;
+        // }
+    
+      };
+      option.prototype.over=      function(x,y){
+    
+        this.visible=true;
+    
+      };
+      option.prototype.out=       function(x,y){
+    
+        this.visible=false;
+    
+      };
+
+    }
+
   }
 
   /** Initialize --------------------------------------------------------- */
@@ -4077,6 +4237,88 @@ forum.processing.org
     // color:     getColor(H_BLUE,2)});
 
     // app.controls.push(ps);
+
+    // var ALGORITHMS={
+
+    //   BRUTEFORCE:             2,
+
+    //   NEAREST:                4,
+    //   ITERATE:                5,
+
+    // }
+
+    /* Bruteforce -------------------------------------------------- */
+    var bruteforce = new option('BRUTE FORCE', rt, 100, 265, 12, 12,
+        { color:    ORANGE,
+          execute:  setAlgorithm,
+          retrieve: getAlgorithm,
+          algorithm: ALGORITHMS.BRUTEFORCE,
+          caption:  "Brute Force" });
+    
+      app.controls.push(bruteforce);
+
+    /* Genetic -------------------------------------------------- */
+    var genetic = new option('GENETIC', rt, 100, 285, 12, 12,
+        { color:    RED,
+          execute:  setAlgorithm,
+          retrieve: getAlgorithm,
+          algorithm: ALGORITHMS.GENETIC,
+          caption:  "Genetic" });
+    
+      app.controls.push(genetic);
+
+    /* Simulated Annealing --------------------------------------------------- */
+    var annealing = new option('SIMULATED ANNEALING', rt, 100, 305, 12, 12,
+        { color:    GREEN,
+          execute:  setAlgorithm,
+          retrieve: getAlgorithm,
+          algorithm: ALGORITHMS.SIMULATEDANNEALING,
+          caption:  "S. Annealing" });
+    
+      app.controls.push(annealing);
+
+    /* Greedy --------------------------------------------------- */
+    var greedy = new option('GREEDY', rt, 100, 325, 12, 12,
+        { color:    BLUE,
+          execute:  setAlgorithm,
+          retrieve: getAlgorithm,
+          algorithm: ALGORITHMS.GREEDY,
+          caption:  "Greedy" });
+    
+      app.controls.push(greedy);
+
+
+    /* Grow --------------------------------------------------- */
+    var grow = new option('GROW', rt, 100, 345, 12, 12,
+    { color:    BLUE,
+      execute:  setAlgorithm,
+      retrieve: getAlgorithm,
+      algorithm: ALGORITHMS.GROW,
+      caption:  "Grow" });
+
+    app.controls.push(grow);
+
+    /* ACO --------------------------------------------------- */
+    var aco = new option('ACO', rt, 100, 365, 12, 12,
+    { color:    BLUE,
+      execute:  setAlgorithm,
+      retrieve: getAlgorithm,
+      algorithm: ALGORITHMS.ACO,
+      caption:  "ACO" });
+
+    app.controls.push(aco);
+
+    // ***** Greedy Methods *****
+
+    /* Closest --------------------------------------------------- */
+    var closest = new option('Closest', rt, 100, 395, 12, 12,
+    { color:    BLACK,
+      execute:  getMethod,
+      retrieve: setMethod,
+      algorithm: GREEDYMETHODS.CLOSEST,
+      caption:  "Closest" });
+
+    app.controls.push(closest);
 
     /* Initialize --------------------------------------------------- */
     var initialize = new checkbox('checkbox', rt, 100, 425, 12, 12,
