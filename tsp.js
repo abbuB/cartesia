@@ -47,14 +47,7 @@ forum.processing.org
 
   TO DO:
 
-      this.greedyMethod = GREEDYMETHODS.FARTHEST;
-      this.greedyMethod = GREEDYMETHODS.CLOSEST;
-      this.greedyMethod = GREEDYMETHODS.RANDOM;
-
     - proximity swap (nodes that should be in a line with adjacent nodes)
-
-    - print current tour button
-
 
     - create a circular node pattern for 100 nodes
 
@@ -75,7 +68,7 @@ forum.processing.org
     - iterate toggle checkbox
     - crossover toggle checkbox    
 
-
+    - print current tour button
 
   Research:
 
@@ -2905,9 +2898,10 @@ forum.processing.org
 
             textSize(11);
             textAlign(LEFT, TOP);
-            strokeWeight(0.5);
+            strokeWeight(1);
             stroke(128);
-            fill(128);
+            noStroke();
+            fill(64);
 
               text(         'Tours:'           +
                   '\n'   + 'Nodes:'            +
@@ -2920,12 +2914,13 @@ forum.processing.org
                   '\n\n' + 'Current Node:'     +
                   '\n\n' + 'Factor:'           +
                   '\n\n' + 'Intersections:'    +
-                  '\n\n' + 'Segments:'         +
+                  '\n'   + 'Segments:'         +
                   '\n\n' + 'Elapsed Time:'     ,                 
                   10, 10);
 
             stroke(64);
-            fill(64);
+            noStroke();
+            fill(0);
 
             var id=app.currentNode;
             
@@ -2947,7 +2942,7 @@ forum.processing.org
                   '\n\n' + id                          +
                   '\n\n' + nf(p.factor, 1, 5)          +
                   '\n\n' + p.intersections.length      +
-                  '\n\n' + p.segments.length           +
+                  '\n'   + p.segments.length           +
                   '\n\n' + nf(app.elapsedTime, 1, 1)   ,
                   110, 10);
 
@@ -2991,8 +2986,8 @@ forum.processing.org
 
           // print(minID + " : " + minLength);
 
-          p.workingNodes=getClosestArray(minID);
-          // findClosest(round(random(app.nodes)));
+          // p.workingNodes=getClosestArray(minID);
+          findClosest(round(random(app.nodes)));
 
           updateTour();
 
@@ -4094,7 +4089,7 @@ forum.processing.org
 
             noStroke();
 
-            textSize(12);
+            textSize(11);
             textAlign(LEFT,CENTER);
 
               text(this.caption,
@@ -4185,7 +4180,7 @@ forum.processing.org
     /* Accessories ---------------------------------------------------- */
 
     /** Reset Button     */
-    rt.controls.push(new resetButton('reset', rt, 50, 400, 28, 28,
+    rt.controls.push(new resetButton('reset', rt, 120, 400, 28, 28,
       {
         cursor: HAND,
         color: BLACK,
@@ -4193,7 +4188,7 @@ forum.processing.org
       }));
 
     /** Shuffle Button   */
-    rt.controls.push(new shuffleButton('shuffle', rt, 50, 450, 28, 28,
+    rt.controls.push(new shuffleButton('shuffle', rt, 120, 450, 28, 28,
       {
         cursor: HAND,
         color: BLACK,
@@ -4201,7 +4196,7 @@ forum.processing.org
       }));
 
     /** Solve Button     */
-    rt.controls.push(new solveButton('solve', rt, 50, 500, 28, 28,
+    rt.controls.push(new solveButton('solve', rt, 120, 500, 28, 28,
       {
         cursor: HAND,
         color: BLACK,
@@ -4256,8 +4251,8 @@ forum.processing.org
     // }
 
     /* Bruteforce -------------------------------------------------- */
-    var bruteforce=new option('BRUTE FORCE', rt, 100, 265, 12, 12,
-        { color:      ORANGE,
+    var bruteforce=new option('BRUTE FORCE', rt, 20, 300, 12, 12,
+        { color:      BLACK,
           execute:    setAlgorithm,
           retrieve:   getAlgorithm,
           algorithm:  ALGORITHMS.BRUTEFORCE,
@@ -4266,8 +4261,8 @@ forum.processing.org
       app.controls.push(bruteforce);
 
     /* Genetic -------------------------------------------------- */
-    var genetic=new option('GENETIC', rt, 100, 285, 12, 12,
-        { color:      RED,
+    var genetic=new option('GENETIC', rt, 20, 320, 12, 12,
+        { color:      BLACK,
           execute:    setAlgorithm,
           retrieve:   getAlgorithm,
           algorithm:  ALGORITHMS.GENETIC,
@@ -4276,8 +4271,8 @@ forum.processing.org
       app.controls.push(genetic);
 
     /* Simulated Annealing --------------------------------------------------- */
-    var annealing=new option('SIMULATED ANNEALING', rt, 100, 305, 12, 12,
-        { color:      GREEN,
+    var annealing=new option('SIMULATED ANNEALING', rt, 20, 340, 12, 12,
+        { color:      BLACK,
           execute:    setAlgorithm,
           retrieve:   getAlgorithm,
           algorithm:  ALGORITHMS.SIMULATEDANNEALING,
@@ -4285,20 +4280,9 @@ forum.processing.org
     
       app.controls.push(annealing);
 
-    /* Greedy --------------------------------------------------- */
-    var greedy=new option('GREEDY', rt, 100, 325, 12, 12,
-        { color:      BLUE,
-          execute:    setAlgorithm,
-          retrieve:   getAlgorithm,
-          algorithm:  ALGORITHMS.GREEDY,
-          caption:    "Greedy" });
-    
-      app.controls.push(greedy);
-
-
     /* Grow --------------------------------------------------- */
-    var grow=new option('GROW', rt, 100, 345, 12, 12,
-    { color:      BLUE,
+    var grow=new option('GROW', rt, 20, 360, 12, 12,
+    { color:      BLACK,
       execute:    setAlgorithm,
       retrieve:   getAlgorithm,
       algorithm:  ALGORITHMS.GROW,
@@ -4307,8 +4291,8 @@ forum.processing.org
     app.controls.push(grow);
 
     /* ACO --------------------------------------------------- */
-    var aco=new option('ACO', rt, 100, 365, 12, 12,
-    { color:      BLUE,
+    var aco=new option('ACO', rt, 20, 380, 12, 12,
+    { color:      BLACK,
       execute:    setAlgorithm,
       retrieve:   getAlgorithm,
       algorithm:  ALGORITHMS.ACO,
@@ -4316,10 +4300,20 @@ forum.processing.org
 
     app.controls.push(aco);
 
+    /* Greedy --------------------------------------------------- */
+    var greedy=new option('GREEDY', rt, 20, 400, 12, 12,
+        { color:      BLACK,
+          execute:    setAlgorithm,
+          retrieve:   getAlgorithm,
+          algorithm:  ALGORITHMS.GREEDY,
+          caption:    "Greedy" });
+    
+      app.controls.push(greedy);
+
     // ***** Greedy Methods *****
 
         /* Closest --------------------------------------------------- */
-        var closest=new option('Closest', rt, 100, 500, 12, 12,
+        var closest=new option('Closest', rt, 30, 420, 12, 12,
           { color:      BLACK,
             execute:    setMethod,
             retrieve:   getMethod,
@@ -4329,7 +4323,7 @@ forum.processing.org
         app.controls.push(closest);
 
         /* Farthest --------------------------------------------------- */
-        var farthest=new option('Farthest', rt, 100, 520, 12, 12,
+        var farthest=new option('Farthest', rt, 30, 435, 12, 12,
           { color:      BLACK,
             execute:    setMethod,
             retrieve:   getMethod,
@@ -4339,7 +4333,7 @@ forum.processing.org
         app.controls.push(farthest);
 
         /* Random --------------------------------------------------- */
-        var random=new option('Random', rt, 100, 540, 12, 12,
+        var random=new option('Random', rt, 30, 450, 12, 12,
           { color:      BLACK,
             execute:    setMethod,
             retrieve:   getMethod,
@@ -4349,7 +4343,7 @@ forum.processing.org
         app.controls.push(random);
 
     /* Initialize --------------------------------------------------- */
-    var initialize=new checkbox('checkbox', rt, 100, 425, 12, 12,
+    var initialize=new checkbox('checkbox', rt, 20, 500, 12, 12,
         { color:    MAROON,
           execute:  toggleInitialize,
           retrieve: getInitialize,
@@ -4358,7 +4352,7 @@ forum.processing.org
       app.controls.push(initialize);
 
     /* Crossover ---------------------------------------------------- */
-    var crossover=new checkbox('checkbox', rt, 100, 445, 12, 12,
+    var crossover=new checkbox('checkbox', rt, 20, 520, 12, 12,
         { color:    MAROON_L,
           execute:  toggleCrossover,
           retrieve: getCrossover,
@@ -4367,7 +4361,7 @@ forum.processing.org
     app.controls.push(crossover);
 
     /* Iterate ------------------------------------------------------ */
-    var iterate=new checkbox('checkbox', rt, 100, 465, 12, 12,
+    var iterate=new checkbox('checkbox', rt, 20, 540, 12, 12,
         { color:    BLACK,
           execute:  toggleIterate,
           retrieve: getIterate,
