@@ -47,8 +47,8 @@ forum.processing.org
 
   TO DO:
 
-        // this.greedyMethod = GREEDYMETHODS.FURTHEST;
-      // this.greedyMethod = GREEDYMETHODS.CLOSEST;
+      this.greedyMethod = GREEDYMETHODS.FARTHEST;
+      this.greedyMethod = GREEDYMETHODS.CLOSEST;
       this.greedyMethod = GREEDYMETHODS.RANDOM;
 
     - proximity swap (nodes that should be in a line with adjacent nodes)
@@ -60,6 +60,10 @@ forum.processing.org
 
   TO DONE:
 
+    - farthest option button
+    - closest option button
+    - random option button
+    
     - brute force option button
     - genetic option button
     - simulated annelaing option button
@@ -4072,7 +4076,7 @@ forum.processing.org
               ellipse(this.x, this.y,
                       this.w, this.h);
 
-            // Inner Rectangle ~~~~~~~~~~~
+            // Inner Rectangle ~~~~~~~~~~~            
             if(this.retrieve()==this.algorithm){
 
               if(this.value){ fill(128,0,0); }
@@ -4102,7 +4106,11 @@ forum.processing.org
       };
       option.prototype.clicked=   function(x,y){
 
-        if(this.hit){ this.execute(this.algorithm); }
+        if(this.hit){
+          
+          this.execute(this.algorithm);
+          print(this.retrieve() + " : " + this.algorithm);
+        }
 
       };
       option.prototype.released=  function(x,y){};      
@@ -4158,7 +4166,7 @@ forum.processing.org
     /* LOAD CONTROLS */
 
     /* root control     */
-    var rt = new root('root', 5, 5, windowWidth - 20, windowHeight - 20,
+    var rt=new root('root', 5, 5, windowWidth - 20, windowHeight - 20,
       {
         border: true,
         cursor: CROSS,
@@ -4248,80 +4256,100 @@ forum.processing.org
     // }
 
     /* Bruteforce -------------------------------------------------- */
-    var bruteforce = new option('BRUTE FORCE', rt, 100, 265, 12, 12,
-        { color:    ORANGE,
-          execute:  setAlgorithm,
-          retrieve: getAlgorithm,
-          algorithm: ALGORITHMS.BRUTEFORCE,
-          caption:  "Brute Force" });
+    var bruteforce=new option('BRUTE FORCE', rt, 100, 265, 12, 12,
+        { color:      ORANGE,
+          execute:    setAlgorithm,
+          retrieve:   getAlgorithm,
+          algorithm:  ALGORITHMS.BRUTEFORCE,
+          caption:    "Brute Force" });
     
       app.controls.push(bruteforce);
 
     /* Genetic -------------------------------------------------- */
-    var genetic = new option('GENETIC', rt, 100, 285, 12, 12,
-        { color:    RED,
-          execute:  setAlgorithm,
-          retrieve: getAlgorithm,
-          algorithm: ALGORITHMS.GENETIC,
-          caption:  "Genetic" });
+    var genetic=new option('GENETIC', rt, 100, 285, 12, 12,
+        { color:      RED,
+          execute:    setAlgorithm,
+          retrieve:   getAlgorithm,
+          algorithm:  ALGORITHMS.GENETIC,
+          caption:    "Genetic" });
     
       app.controls.push(genetic);
 
     /* Simulated Annealing --------------------------------------------------- */
-    var annealing = new option('SIMULATED ANNEALING', rt, 100, 305, 12, 12,
-        { color:    GREEN,
-          execute:  setAlgorithm,
-          retrieve: getAlgorithm,
-          algorithm: ALGORITHMS.SIMULATEDANNEALING,
-          caption:  "S. Annealing" });
+    var annealing=new option('SIMULATED ANNEALING', rt, 100, 305, 12, 12,
+        { color:      GREEN,
+          execute:    setAlgorithm,
+          retrieve:   getAlgorithm,
+          algorithm:  ALGORITHMS.SIMULATEDANNEALING,
+          caption:    "S. Annealing" });
     
       app.controls.push(annealing);
 
     /* Greedy --------------------------------------------------- */
-    var greedy = new option('GREEDY', rt, 100, 325, 12, 12,
-        { color:    BLUE,
-          execute:  setAlgorithm,
-          retrieve: getAlgorithm,
-          algorithm: ALGORITHMS.GREEDY,
-          caption:  "Greedy" });
+    var greedy=new option('GREEDY', rt, 100, 325, 12, 12,
+        { color:      BLUE,
+          execute:    setAlgorithm,
+          retrieve:   getAlgorithm,
+          algorithm:  ALGORITHMS.GREEDY,
+          caption:    "Greedy" });
     
       app.controls.push(greedy);
 
 
     /* Grow --------------------------------------------------- */
-    var grow = new option('GROW', rt, 100, 345, 12, 12,
-    { color:    BLUE,
-      execute:  setAlgorithm,
-      retrieve: getAlgorithm,
-      algorithm: ALGORITHMS.GROW,
-      caption:  "Grow" });
+    var grow=new option('GROW', rt, 100, 345, 12, 12,
+    { color:      BLUE,
+      execute:    setAlgorithm,
+      retrieve:   getAlgorithm,
+      algorithm:  ALGORITHMS.GROW,
+      caption:    "Grow" });
 
     app.controls.push(grow);
 
     /* ACO --------------------------------------------------- */
-    var aco = new option('ACO', rt, 100, 365, 12, 12,
-    { color:    BLUE,
-      execute:  setAlgorithm,
-      retrieve: getAlgorithm,
-      algorithm: ALGORITHMS.ACO,
-      caption:  "ACO" });
+    var aco=new option('ACO', rt, 100, 365, 12, 12,
+    { color:      BLUE,
+      execute:    setAlgorithm,
+      retrieve:   getAlgorithm,
+      algorithm:  ALGORITHMS.ACO,
+      caption:    "ACO" });
 
     app.controls.push(aco);
 
     // ***** Greedy Methods *****
 
-    /* Closest --------------------------------------------------- */
-    var closest = new option('Closest', rt, 100, 395, 12, 12,
-    { color:    BLACK,
-      execute:  getMethod,
-      retrieve: setMethod,
-      algorithm: GREEDYMETHODS.CLOSEST,
-      caption:  "Closest" });
+        /* Closest --------------------------------------------------- */
+        var closest=new option('Closest', rt, 100, 500, 12, 12,
+          { color:      BLACK,
+            execute:    setMethod,
+            retrieve:   getMethod,
+            algorithm:  GREEDYMETHODS.CLOSEST,
+            caption:    "Closest" });
 
-    app.controls.push(closest);
+        app.controls.push(closest);
+
+        /* Farthest --------------------------------------------------- */
+        var farthest=new option('Farthest', rt, 100, 520, 12, 12,
+          { color:      BLACK,
+            execute:    setMethod,
+            retrieve:   getMethod,
+            algorithm:  GREEDYMETHODS.FARTHEST,
+            caption:    "Farthest" });
+
+        app.controls.push(farthest);
+
+        /* Random --------------------------------------------------- */
+        var random=new option('Random', rt, 100, 540, 12, 12,
+          { color:      BLACK,
+            execute:    setMethod,
+            retrieve:   getMethod,
+            algorithm:  GREEDYMETHODS.RANDOM,
+            caption:    "Random" });
+
+        app.controls.push(random);
 
     /* Initialize --------------------------------------------------- */
-    var initialize = new checkbox('checkbox', rt, 100, 425, 12, 12,
+    var initialize=new checkbox('checkbox', rt, 100, 425, 12, 12,
         { color:    MAROON,
           execute:  toggleInitialize,
           retrieve: getInitialize,
@@ -4330,7 +4358,7 @@ forum.processing.org
       app.controls.push(initialize);
 
     /* Crossover ---------------------------------------------------- */
-    var crossover = new checkbox('checkbox', rt, 100, 445, 12, 12,
+    var crossover=new checkbox('checkbox', rt, 100, 445, 12, 12,
         { color:    MAROON_L,
           execute:  toggleCrossover,
           retrieve: getCrossover,
@@ -4339,7 +4367,7 @@ forum.processing.org
     app.controls.push(crossover);
 
     /* Iterate ------------------------------------------------------ */
-    var iterate = new checkbox('checkbox', rt, 100, 465, 12, 12,
+    var iterate=new checkbox('checkbox', rt, 100, 465, 12, 12,
         { color:    BLACK,
           execute:  toggleIterate,
           retrieve: getIterate,
@@ -4348,7 +4376,7 @@ forum.processing.org
       app.controls.push(iterate);
 
     /* Telemetry ---------------------------------------------------- */
-    var telem = new telemetry('telemetry', rt, rt.w - 195, 10, 190, rt.h - 10,
+    var telem=new telemetry('telemetry', rt, rt.w - 195, 10, 190, rt.h - 10,
       { color: BLACK});
 
     app.controls.push(telem);
