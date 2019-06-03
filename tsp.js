@@ -433,8 +433,7 @@ forum.processing.org
       // this.algorithm    = ALGORITHMS.GROW;
       // this.algorithm    = ALGORITHMS.GREEDY;
       // this.algorithm    = ALGORITHMS.BRUTEFORCE;
-      // this.algorithm    = ALGORITHMS.SIMULATEDANNEALING;
-      this.algorithm    = ALGORITHMS.NEAREST;
+      this.algorithm    = ALGORITHMS.SIMULATEDANNEALING;
       // this.algorithm    = ALGORITHMS.ACO;
       // this.algorithm    = ALGORITHMS.GENETIC;
 
@@ -512,13 +511,32 @@ forum.processing.org
       function toggleIterate()    { app.iterate=!app.iterate;       };
 
       function getMethod()        { return app.greedyMethod;        };
-      function setMethod(m)       { app.greedyMethod=m;             };
+      function setMethod(m)       {
 
-      function setAlgorithm(a)    {
-        app.algorithm=a;
-        print(a);
+        if(app.greedyMethod!=m){
+
+          app.greedyMethod=m;
+
+          if(app.algorithm==ALGORITHMS.GREEDY){
+            app.field.reset();
+          }
+
+        }
+
       };
 
+      function setAlgorithm(a)    {
+
+        if(app.algorithm!=a){
+        
+          app.algorithm=a;
+          app.field.reset();
+
+        }
+
+        print(a);
+
+      };
       function getAlgorithm()     { return app.algorithm;           };
 
 
@@ -532,11 +550,11 @@ forum.processing.org
 
     function reset(){
 
-      app.controlCount = app.controls.length + 1;
+      app.controlCount=app.controls.length+1;
       app.field.reset();
-      app.startTime = millis();
-      app.elapsedTime = 0;
-      app.running = false;
+      app.startTime=millis();
+      app.elapsedTime=0;
+      app.running=false;
 
     };
 
@@ -1158,7 +1176,7 @@ forum.processing.org
           fill(getColor(p.color, 50));
 
           if (p.hit) {
-            fill(getColor(p.color, 70));
+            // fill(getColor(p.color, 70));
           }
 
           rect(p.offset, 0, p.w, p.h, 5);
@@ -1899,11 +1917,11 @@ forum.processing.org
 
           for(var n=0; n<app.nodes; n++){
 
-            x1=data[n][0];
-            y1=data[n][1];
+            // x1=data[n][0];
+            // y1=data[n][1];
 
-            // x1=floor(random(150, p.w-20));
-            // y1=floor(random( 20, p.h-20));
+            x1=floor(random(150, p.w-20));
+            y1=floor(random( 20, p.h-20));
 
             p.originalNodes.push(new node(n,
                                           this,
@@ -1993,16 +2011,12 @@ forum.processing.org
       };
       field.prototype.draw=function(){
 
-        app.elapsedTime=(millis()-app.startTime)/1000;
-
         var p=this;
 
-        this.active=this.hit &&
-                    app.focus==this;
+        p.active=p.hit &&
+                 app.focus==this;
 
-        if(this.active){ cursor(this.cursor); }
-
-
+        if(p.active){ cursor(p.cursor); }
 
         function drawNodes(nodes){
 
@@ -2081,22 +2095,6 @@ forum.processing.org
           p.loaded=true;
 // print(closestNodes.length);
           return closestNodes;
-
-        };
-
-        function nearestNeighbor(){
-
-          for(var n=0; n<1000; n++){
-
-            swap3Random(p.workingNodes);
-
-            updateTour();
-
-          }
-
-          drawNodes(p.workingNodes);
-          drawPath(p.workingNodes);
-          // drawPath(p.bestNodes);
 
         };
 
@@ -2373,6 +2371,10 @@ forum.processing.org
 
           function bruteForce(){
 
+            print("Disabled for safety");
+
+            return;
+
             if(!p.bfSwitch){
               nodePermutations(p.originalNodes.length, p.originalNodes);
               p.bfSwitch=true;
@@ -2525,20 +2527,8 @@ forum.processing.org
           function greedy(){
 
             if(p.workingNodes.length==0){
-              
-              var tLength=Infinity;
 
-              // while(tLength>4487){
-                
-                p.workingNodes=getGreedyTour(p.originalNodes, app.greedyMethod);
-                
-                tLength=getTourLength(p.workingNodes);
-                
-                if(tLength<4600){
-                  print(tLength);
-                }
-
-              // }
+              p.workingNodes=getGreedyTour(p.originalNodes, app.greedyMethod);
 
               arrayCopy(p.workingNodes, p.bestNodes);
               p.workingLength=getTourLength(p.workingNodes);
@@ -2549,7 +2539,7 @@ forum.processing.org
 
               if(app.running){
 
-                if(frameCount%2==0){
+                // if(frameCount%2==0){
 
                   if(app.crossover){
 
@@ -2562,8 +2552,8 @@ forum.processing.org
                       }
 
                       reverseNodes(p.workingNodes,
-                                  p.intersections[0].id,
-                                  p.intersections[2].id);
+                                   p.intersections[0].id,
+                                   p.intersections[2].id);
 
                       renumberNodes(p.workingNodes);
 
@@ -2571,15 +2561,14 @@ forum.processing.org
 
                   }
 
-                }
-
-                else{
+                // }
+                // else{
 
                   if(app.iterate){
                     iterate();
                   }
 
-                }
+                // }
 
               }
 
@@ -2696,93 +2685,99 @@ forum.processing.org
         { // Simulated Annealing
           
           function simulatedAnnealing(){
+            
+            if(app.running){
 
-            fill(64);
-            noStroke();
-            textSize(20);
+              fill(64);
+              noStroke();
+              textSize(20);
 
-            for(var n=0; n<1; n++){
+              for(var n=0; n<1; n++){
 
-              p.factor-=0.000001;
-              p.factor=constrain(p.factor, 1, 1.2);
+                p.factor-=0.000001;
+                p.factor=constrain(p.factor, 1, 1.2);
 
-              switch(true){
+                switch(true){
 
-                case p.factor>1.075:
+                  case p.factor>1.075:
 
-                  var id=getLongest(p.workingNodes);
+                    var id=getLongest(p.workingNodes);
 
-                  swap2Length(p.workingNodes, id);
-                  swap2Closest(p.workingNodes);
-                  swap3Consecutive(p.workingNodes);
-                  // swap3Segments(p.workingNodes);
+                    swap2Length(p.workingNodes, id);
+                    swap2Closest(p.workingNodes);
+                    swap3Consecutive(p.workingNodes);
+                    // swap3Segments(p.workingNodes);
 
-                  break;
+                    break;
 
-                // case p.factor>1.05:   swap3Random(p.workingNodes);
-                //                       break;                                      
+                  // case p.factor>1.05:   swap3Random(p.workingNodes);
+                  //                       break;                                      
 
-                // case p.factor>1:      swap2Half(p.workingNodes); 
-                //                       break;
+                  // case p.factor>1:      swap2Half(p.workingNodes); 
+                  //                       break;
 
-                default:
+                  default:
 
-                  if(int(app.elapsedTime)%2==0){
+                    if(int(app.elapsedTime)%2==0){
 
-                    calculateIntersections();
+                      calculateIntersections();
 
-                    if(p.intersections.length>0){
+                      if(p.intersections.length>0){
 
-                      if(frameCount%100==0){
-                        print(p.intersections);
+                        if(frameCount%100==0){
+                          print(p.intersections);
+                        }
+
+                        reverseNodes(p.workingNodes,
+                                    p.intersections[0].id,
+                                    p.intersections[2].id);
+
                       }
 
-                      reverseNodes(p.workingNodes,
-                                  p.intersections[0].id,
-                                  p.intersections[2].id);
+                    }
+                    else {
+
+                      if(app.iterate){ iterate(); }
 
                     }
 
-                  }
-                  else {
-                    iterate();
-                  }
+                    updateTour();
 
-                  updateTour();
+                    renumberNodes(p.workingNodes);
 
-                  renumberNodes(p.workingNodes);
+                  // arrayCopy(p.bestNodes, p.workingNodes);
+                  // renumberNodes(p.bestNodes);
 
-                // arrayCopy(p.bestNodes, p.workingNodes);
-                // renumberNodes(p.bestNodes);
+                  // iterate();
+                  // print(p.index);
+                  // p.index++;
 
-                // iterate();
-                // print(p.index);
-                // p.index++;
+                  // if(p.index>p.bestNodes.length-1){
+                  //   p.index=0;
+                  // }
 
-                // if(p.index>p.bestNodes.length-1){
-                //   p.index=0;
-                // }
+                  // if     (frameCount%2==0) { swap2Closest(p.workingNodes);           }
+                  // else if(frameCount%3==0) { swap2Length(p.workingNodes,
+                                                            // getLongest(p.workingNodes),
+                  //                                                   ); }
+                  // else if(frameCount%5==0) { swap2Consecutive(p.workingNodes);       }
+                  // else if(frameCount%7==0) { swap3Consecutive(p.workingNodes);       }
+                  // else if(frameCount%11==0){ swap3Random(p.workingNodes);            }
+                  // else                     { swap2Random(p.workingNodes);            }
 
-                // if     (frameCount%2==0) { swap2Closest(p.workingNodes);           }
-                // else if(frameCount%3==0) { swap2Length(p.workingNodes,
-                                                          // getLongest(p.workingNodes),
-                //                                                   ); }
-                // else if(frameCount%5==0) { swap2Consecutive(p.workingNodes);       }
-                // else if(frameCount%7==0) { swap3Consecutive(p.workingNodes);       }
-                // else if(frameCount%11==0){ swap3Random(p.workingNodes);            }
-                // else                     { swap2Random(p.workingNodes);            }
+                  // break;
 
-                // break;
+                }
+
+                updateTour();
 
               }
-
-              updateTour();
 
             }
 
             drawNodes(p.workingNodes);
-            drawPath(p.workingNodes);
-            drawPath(p.bestNodes);
+            drawPath(p.workingNodes,p.workingNodes.length);
+            // drawPath(p.bestNodes);
 
           };
 
@@ -2822,58 +2817,66 @@ forum.processing.org
 
             };
 
-            var nod=null;
+            if(app.running){
 
-            for(var n=0; n<p.workingNodes.length; n++){
+              var nod=null;
 
-              nod=p.workingNodes[n];
+              for(var n=0; n<p.workingNodes.length; n++){
 
-              if(canGrow(nod)){
-                nod.radius++;
-              }
+                nod=p.workingNodes[n];
 
-            }
-
-            if(!completed){
-
-              renumberNodes(p.workingNodes);
-
-              calculateIntersections();
-
-              print(p.intersections);
-
-            }
-
-            p.factor=1;
-
-            renumberNodes(p.workingNodes);
-
-            if(int(app.elapsedTime)%2==0){
-
-              calculateIntersections();
-
-              if(p.intersections.length>0){
-
-                if(frameCount%100 == 0){
-                  print(p.intersections);
+                if(canGrow(nod)){
+                  nod.radius++;
                 }
 
-                reverseNodes(p.workingNodes,
-                            p.intersections[0].id,
-                            p.intersections[2].id);
-
               }
 
             }
-            else{
-              iterate();
-            }
+
+            // if(!completed){
+
+            //   renumberNodes(p.workingNodes);
+
+            //   calculateIntersections();
+
+            //   print(p.intersections);
+
+            // }
+
+            // p.factor=1;
+
+            // renumberNodes(p.workingNodes);
+
+            // if(int(app.elapsedTime)%2==0){
+
+              // calculateIntersections();
+
+              // if(p.intersections.length>0){
+
+              //   if(frameCount%100 == 0){
+              //     print(p.intersections);
+              //   }
+
+              //   reverseNodes(p.workingNodes,
+              //                p.intersections[0].id,
+              //                p.intersections[2].id);
+
+              // }
+
+            // }
+            // else{
+
+            //   if(app.iterate){
+            //     iterate();
+            //   }
+
+            // }
 
             updateTour();
 
             drawPath(p.workingNodes, p.workingNodes.length);
             drawNodes(p.workingNodes, p.workingNodes.length);
-            // drawPath(p.bestNodes);
+            drawPath(p.bestNodes, p.bestNodes.length);
 
           };
 
@@ -2883,7 +2886,7 @@ forum.processing.org
 
           function border(){
 
-            fill(222);
+            fill(BACKGROUND);
 
             if(p.hit){ fill(BACKGROUND); };
 
@@ -2903,7 +2906,7 @@ forum.processing.org
             noStroke();
             fill(64);
 
-              text(         'Tours:'           +
+              text(        'Tours:'            +
                   '\n'   + 'Nodes:'            +
                   '\n'   + 'Source Nodes:'     +
                   '\n\n' + 'Working Length:'   +
@@ -2948,7 +2951,7 @@ forum.processing.org
 
             textSize(11);
 
-              text(factorial(app.nodes), 10, p.h-20);
+              text(factorial(app.nodes), 200, p.h-20);
               // text(factorial(app.nodes).toLocaleString(), 10, p.h-200);
 
             //  Center origin
@@ -2962,32 +2965,33 @@ forum.processing.org
 
         function initialCondition(){
 
-          var minLength=Infinity;
-          var length=Infinity;
-          var minID=-1;
+          // var minLength=Infinity;
+          // var length=Infinity;
+          // var minID=-1;
 
-          for(var n=0; n<p.workingNodes.length; n++){
+          // for(var n=0; n<p.workingNodes.length; n++){
 
-            p.workingNodes=getClosestArray(n);
+            // p.workingNodes=getClosestArray(n);
+            p.workingNodes=getClosestArray(getRandomInt(p.workingNodes.length-1));
 
             // updateSegments();
 
-            length=getTourLength(p.workingNodes);
+            // length=getTourLength(p.workingNodes);
 
-            if(length<minLength){
-              minLength=length;
-              minID=n;
-            }
+            // if(length<minLength){
+            //   minLength=length;
+            //   minID=n;
+            // }
 
             // print(n + " : " + length);
             toggleDirty();
 
-          }
+          // }
 
           // print(minID + " : " + minLength);
 
           // p.workingNodes=getClosestArray(minID);
-          findClosest(round(random(app.nodes)));
+          // findClosest(round(random(app.nodes)));
 
           updateTour();
 
@@ -3006,7 +3010,10 @@ forum.processing.org
 
               if(app.algorithm!=ALGORITHMS.ACO){
 
-                if(app.initialize){ initialCondition(); }
+                if(app.initialize){
+                  initialCondition(); 
+                  randomizeArray(p.workingNodes);
+                }
 
               }
 
@@ -3021,9 +3028,7 @@ forum.processing.org
               case ALGORITHMS.SIMULATEDANNEALING: simulatedAnnealing(); break;
               case ALGORITHMS.GROW:               grow();               break;
               case ALGORITHMS.GREEDY:             greedy();             break;
-              case ALGORITHMS.NEAREST:            nearestNeighbor();    break;
               case ALGORITHMS.BRUTEFORCE:         bruteForce();         break;
-
               case ALGORITHMS.GENETIC:            genetic();            break;
               case ALGORITHMS.ACO:                ACO();                break;
 
@@ -4412,7 +4417,9 @@ forum.processing.org
   function update(){
 
     //  Frame Rate
-    if (frameCount % 30 === 0) { app.frameRate = getFrameRate(); }
+    if(frameCount%30==0){ app.frameRate=getFrameRate(); }
+
+    app.elapsedTime=(millis()-app.startTime)/1000;
 
   };
 
