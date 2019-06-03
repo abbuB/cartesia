@@ -1,48 +1,3 @@
-{
-  /**  Whitelist
-   * 
-*
-+stackoverflow.com
-+khanacademy.org
-+codecogs.com/latex/eqneditor.php
-+youtube.com
-+mail.google.com
-+bradsiemens.com
-+processingjs.org
-+processing.org
-forum.processing.org
-+wikipedia.org
-+google.com
-+w3schools.com
-+touchmathematics.org
-+desmos.com
-+github.com
-+emptyblack.com
-+redblobgames.com
-+dailymotion.com
-+pistolslut.com
-+latin-phrases.co.uk/quotes/beginning-end
-+code.org
-+natureofcode.com
-+alssndro.github.io/trianglify-background-generator
-+p5js.org
-+google.ca
-+projecteuler.net
-+www.numberempire.com
-+oeis.org
-+math.stackexchange.com
-+jasondavies.com
-+developer.mozilla.org
-+docs.oracle.com
-+www.mathopenref.com
-+alpha.editor.p5js.org
-+en.wikibooks.org
-+upload.wikimedia.org
-+viterbipk12.usc.edu
-
-*/
-}
-
 {/*
 
   TO DO:
@@ -424,22 +379,24 @@ forum.processing.org
     /* TSP Specific       ------------------ */
     {
 
-      // ACO - Ant Colony Optimization
+      this.loadMethod   = LOAD_MODES.RANDOM;
 
-      // this.greedyMethod = GREEDYMETHODS.CLOSEST;
-      // this.greedyMethod = GREEDYMETHODS.FURTHEST;
-      this.greedyMethod = GREEDYMETHODS.RANDOM;
+      // this.greedy_mode = GREEDY_MODES.CLOSEST;
+      // this.greedy_mode = GREEDY_MODES.FURTHEST;
+      this.greedy_mode = GREEDY_MODES.RANDOM;
 
       // this.algorithm    = ALGORITHMS.GROW;
-      // this.algorithm    = ALGORITHMS.GREEDY;
+      this.algorithm    = ALGORITHMS.GREEDY;
       // this.algorithm    = ALGORITHMS.BRUTEFORCE;
-      this.algorithm    = ALGORITHMS.SIMULATEDANNEALING;
+      // this.algorithm    = ALGORITHMS.SIMULATEDANNEALING;
       // this.algorithm    = ALGORITHMS.ACO;
       // this.algorithm    = ALGORITHMS.GENETIC;
 
-      // app.algorithm     = ALGORITHMS.ITERATE;
+      this.initialize   = false;
+      this.crossover    = true;
+      this.iterate      = true;
 
-      this.nodes        = 100;                //  Total # of nodes to be connected
+      this.tourLength   = 100;                //  Total # of nodes to be connected
 
       this.menu;
       this.clock;
@@ -455,10 +412,6 @@ forum.processing.org
       this.currentNode  = null;
 
       this.field        = null;
-
-      this.initialize   = false;
-      this.crossover    = true;
-      this.iterate      = false;
 
     }
 
@@ -510,12 +463,12 @@ forum.processing.org
       function getIterate()       { return app.iterate;             };
       function toggleIterate()    { app.iterate=!app.iterate;       };
 
-      function getMethod()        { return app.greedyMethod;        };
+      function getMethod()        { return app.greedy_mode;        };
       function setMethod(m)       {
 
-        if(app.greedyMethod!=m){
+        if(app.greedy_mode!=m){
 
-          app.greedyMethod=m;
+          app.greedy_mode=m;
 
           if(app.algorithm==ALGORITHMS.GREEDY){
             app.field.reset();
@@ -1364,7 +1317,7 @@ forum.processing.org
 
     }
 
-    /** Field        -------------------------------------------------- */
+    /** Array Functions -------------------------------------------------- */
     {
 
       var completePercent = 0;
@@ -1513,7 +1466,7 @@ forum.processing.org
         for(var i=0; i<arr.length-1; i++){
 
           arr[i].distance=dist(arr[i].x, arr[i].y,
-                               arr[i + 1].x, arr[i + 1].y);
+                              arr[i + 1].x, arr[i + 1].y);
 
         }
 
@@ -1545,7 +1498,29 @@ forum.processing.org
 
       };
 
+    }
+
+    /** Field        -------------------------------------------------- */
+    {
+
       {  // Misc
+
+        function contains(arr, i){
+
+          var retVal=false;
+
+          for(var n=0; n<arr.length; n++){
+
+            if(arr[n].id=i){
+              retVal=true;
+              break;
+            }
+
+          }
+
+          return retVal;
+
+        };
 
         function getTourLength(arr){
 
@@ -1801,7 +1776,7 @@ forum.processing.org
       var cNode     = 0;
       var completed = false;
 
-      var HEX_SIZE  = 0;
+      // var HEX_SIZE  = 0;
 
       var geneticLoaded = false;
 
@@ -1820,23 +1795,21 @@ forum.processing.org
 
         app.field           = this;       //  Set a global field reference
 
-        this.startX         = 0;          //  x-coordinate of drag start
-        this.startY         = 0;          //  y-coordinate of drag start
+        // this.startX         = 0;          //  x-coordinate of drag start
+        // this.startY         = 0;          //  y-coordinate of drag start
 
-        this.deltaX         = 0;          //  x-coordinate drag offset
-        this.deltaY         = 0;          //  y-coordinate drag offset
+        // this.deltaX         = 0;          //  x-coordinate drag offset
+        // this.deltaY         = 0;          //  y-coordinate drag offset
 
-        this.deltaDrag      = 0;          //  Distance dragged from start point along the drag direction
+        // this.deltaDrag      = 0;          //  Distance dragged from start point along the drag direction
 
         this.cellSize       = 0;          //  Size of each node
 
         // ----------
 
-        this.originalNodes  = [];         //  Original array of nodes
-
-        // this.sortedNodes = [];         //  Sorted Original array of nodes
-
         this.tours          = [];         //  An array of tours
+
+        this.nodes          = [];         //  Original array of nodes
 
         this.bestNodes      = [];         //  Shortest path so far
         this.workingNodes   = [];         //  Path used to experiment
@@ -1852,7 +1825,7 @@ forum.processing.org
 
         this.originalLength = Infinity;   //  Length of original path
         this.workingLength  = Infinity;   //  Length of path being tested
-        this.minimumLength  = Infinity;   //  Current minimum tour length        
+        this.minimumLength  = Infinity;   //  Current minimum tour length
         this.historicLength = Infinity;   //  Best recorded overall
         this.greedyLength   = Infinity;   //  Length of Greedy Path
 
@@ -1864,8 +1837,6 @@ forum.processing.org
 
         this.index          = 0;
 
-        app.field           = this;
-
         this.length         = 0;
 
         this.reset();
@@ -1874,11 +1845,11 @@ forum.processing.org
       field.prototype=Object.create(control.prototype);
       field.prototype.reset=function(){
 
-        var p=this;               //  Set a reference to the field control
+        var p=this;                 //  Set a reference to the field control
 
-        p.controls          = [];   //  Clear the controls array
+        // p.controls          = [];   //  Clear the controls array
 
-        p.originalNodes     = [];        
+        p.nodes     = [];        
         p.bestNodes         = [];
         p.workingNodes      = [];
 
@@ -1910,59 +1881,33 @@ forum.processing.org
 
           var x1=0;
           var y1=0;
-          var x2=0;
-          var y2=0;
 
-          var seg=null;
+          for(var n=0; n<app.tourLength; n++){
 
-          for(var n=0; n<app.nodes; n++){
+            x1=data[n][0];
+            y1=data[n][1];
 
-            // x1=data[n][0];
-            // y1=data[n][1];
+            // x1=floor(random(150, p.w-20));
+            // y1=floor(random( 20, p.h-20));
 
-            x1=floor(random(150, p.w-20));
-            y1=floor(random( 20, p.h-20));
-
-            p.originalNodes.push(new node(n,
-                                          this,
-                                          x1,
-                                          y1,
-                                          5,
-                                          5,
-                                          { cursor: HAND })
-                                );
+            p.nodes.push(new node(n,
+                                  this,
+                                  x1,
+                                  y1,
+                                  5,
+                                  5,
+                                  { cursor: HAND })
+                        );
           }
 
         };
 
         load();
 
-        arrayCopy(p.originalNodes, p.bestNodes);
-        arrayCopy(p.originalNodes, p.workingNodes);
-        // arrayCopy(p.originalNodes, p.sortedNodes);
-
-        arrayCopy(p.originalNodes, p.sourceNodes);
-
-        function contains(arr, i){
-
-          var retVal=false;
-
-          for(var n=0; n<arr.length; n++){
-
-            if(arr[n].id=i){
-              retVal=true;
-              break;
-            }
-
-          }
-
-          return retVal;
-
-        };
+        arrayCopy(p.nodes, p.workingNodes);
 
         function sortByDistance(arr, nod){
 
-          // var distance=Infinity;
           var sorted=[];
 
           arrayCopy(arr, sorted);
@@ -1984,7 +1929,7 @@ forum.processing.org
           }
 
           // var limit=ceil(pow(arr.length,1/2))+2;  // Limit to the square root of the # of nodes
-          var limit=app.nodes;
+          var limit=app.tourLength;
 
           for(var m=1; m<limit; m++){
             nod.closest.push(sorted[m]);
@@ -1994,8 +1939,8 @@ forum.processing.org
 
         function loadClosestNodes(){
 
-          for(var n=0; n<p.originalNodes.length; n++){
-            sortByDistance(p.originalNodes, p.originalNodes[n]);
+          for(var n=0; n<p.nodes.length; n++){
+            sortByDistance(p.nodes, p.nodes[n]);
           }
 
         };
@@ -2040,13 +1985,13 @@ forum.processing.org
 
         };
 
-        function toggleDirty(){
+        // function toggleDirty(){
 
-          for(var n=0; n<p.workingNodes.length; n++) {
-            p.workingNodes[n].dirty=!p.workingNodes[n].dirty;
-          }
+        //   for(var n=0; n<p.workingNodes.length; n++) {
+        //     p.workingNodes[n].dirty=!p.workingNodes[n].dirty;
+        //   }
 
-        };
+        // };
 
         function findClosestNode(arr, nod){
 
@@ -2059,7 +2004,7 @@ forum.processing.org
             distance=dist(nod.x, nod.y, arr[n].x, arr[n].y);
 
             if(distance<min &&
-               distance!==0 &&
+               distance!=0 &&
                arr[n].dirty==false){
 
               min=distance;
@@ -2077,12 +2022,12 @@ forum.processing.org
           var closestNodes=[];
 
           // Start with the first node
-          var nod=p.originalNodes[startNode];
+          var nod=p.nodes[startNode];
 
           while(nod!=null){
 
             // Find the node closest that isn't already taken
-            nod=findClosestNode(p.originalNodes, nod);
+            nod=findClosestNode(p.nodes, nod);
 
             if(nod!=null){
               nod.dirty=true;
@@ -2093,7 +2038,7 @@ forum.processing.org
 
           //  Indicate that Find Closest was used initially
           p.loaded=true;
-// print(closestNodes.length);
+
           return closestNodes;
 
         };
@@ -2102,7 +2047,7 @@ forum.processing.org
 
           p.workingLength=getTourLength(p.workingNodes);
 
-          if(p.workingLength<p.minimumLength*p.factor){
+          if(p.workingLength<p.minimumLength){
 
             p.minimumLength=p.workingLength;
 
@@ -2157,433 +2102,6 @@ forum.processing.org
           if(p.index>p.bestNodes.length-1) { p.index=0; }
 
         };
-
-        { // Genetic
-          
-          function genetic(){
-            
-            if(geneticLoaded==false){
-
-              // var index=round(random(app.nodes-1));
-              
-              var parent1=getClosestArray(getRandomInt(app.nodes-1));
-              var parent2=getClosestArray(getRandomInt(app.nodes-1));
-
-              print(parent1);
-              print(parent2);
-
-              // p.workingNodes=getClosestArray(index);
-              // arrayCopy(getClosestArray(index), p.workingNodes);
-
-              geneticLoaded=true;
-
-            }
-
-            drawPath(p.workingNodes,  p.workingNodes.length);
-            drawNodes(p.workingNodes, p.workingNodes.length);
-
-          };
-
-        }
-
-        { // ACO
-
-          function segmentExists(p1, p2){
-
-            var retVal=-1;
-
-            for(var e=1; e<p.segments.length; e++){
-
-              if((p1.x==p.segments[e].point1.x &&
-                  p1.y==p.segments[e].point1.y &&
-                  p2.x==p.segments[e].point2.x &&
-                  p2.y==p.segments[e].point2.y)
-
-                ||
-
-                 (p1.x==p.segments[e].point2.x &&
-                  p1.y==p.segments[e].point2.y &&
-                  p2.x==p.segments[e].point1.x &&
-                  p2.y==p.segments[e].point1.y)){
-
-                retVal=e;
-                break;
-
-              }
-
-            }
-
-            return retVal;
-
-          };
-          function updateSegments(){
-
-            for (var n=0; n<p.workingNodes.length; n++) {
-
-              var exists=-1;
-
-              if(n==app.nodes-1){
-
-                exists=segmentExists(p.workingNodes[n],
-                                    p.workingNodes[0]);
-                if(exists!=-1){
-                  p.segments[n].weight=constrain(p.segments[n].weight+1, 0, 100);
-                }
-                else{
-                  p.segments.push(new segment(p.workingNodes[n],
-                                              p.workingNodes[0]));
-                  p.segments[p.segments.length-1].weight=25;
-
-                }
-
-              }
-              else{
-
-                exists=segmentExists(p.workingNodes[n],
-                                     p.workingNodes[n+1]);
-                if(exists!=-1){
-                  p.segments[n].weight=constrain(p.segments[n].weight+1, 0, 100);
-                }
-                else{
-                  p.segments.push(new segment(p.workingNodes[n],
-                                              p.workingNodes[n + 1]));
-                  p.segments[p.segments.length-1].weight=25;                                            
-
-                }
-
-              }
-
-            }
-
-          };
-          function drawSegments(){
-
-            stroke(128);
-            strokeWeight(3);
-            noFill();
-
-            var seg=null;
-
-            for(var n=0; n<p.segments.length; n++){
-
-              seg=p.segments[n];
-
-              // stroke(0,0,0,20);
-              stroke(64,64,64, seg.weight);
-
-              line(seg.point1.x, seg.point1.y,
-                   seg.point2.x, seg.point2.y);
-
-            }
-
-          };
-          function ACO(){
-
-            p.reset();
-
-            p.workingNodes=getGreedyTour(p.originalNodes, app.greedyMethod);
-
-            updateSegments();
-
-            drawSegments();
-            drawNodes(p.originalNodes);
-            // renumberNodes(p.workingNodes);
-
-            if(frameCount%5==0){
-
-              for(var n=0; n<p.segments.length; n++){
-
-                p.segments[n].weight=constrain(p.segments[n].weight-1, 0, 100);
-                
-                if(p.segments[n].weight==0){
-                  p.segments.splice(n,1);
-                }
-
-              }
-
-            }
-
-          };
-
-        }
-
-        { // Brute Force
-
-          function nodePermutations(n, arr){
-            //  ***** NOTE: Do NOT exceed 9 nodes *****
-
-            //  c is an encoding of the stack state.
-            //  c[k] encodes the for-loop counter for
-            //  when generate(k+1, A) is called.
-            var c=[];
-            var minTourLength=Infinity;
-            var tourLength=getTourLength(arr);
-            var counter=1;
-
-            for(var i=0; i<n; i++){
-              c[i]=0;
-            }
-
-            // i acts similarly to the stack pointer
-            var i=0;
-
-            while(i<n){
-
-              tourLength=getTourLength(arr);
-
-              if(tourLength<minTourLength){
-
-                minTourLength=tourLength;
-                arrayCopy(arr, p.bestNodes);
-
-              }
-
-              if(c[i]<i){
-
-                counter++;
-
-                if(i%2==0){ swap(arr, 0, i);    }
-                else      { swap(arr, c[i], i); }
-
-                //  Swap has occurred ending the for-loop.
-                //  Simulate the increment of the for-loop counter
-                c[i]++;
-
-                //  Simulate recursive call reaching the base case by
-                //  bringing the pointer to the base case analog in the array
-                i=0;
-
-              }
-              else {
-
-                //  Calling generate(i+1, A) has ended as the for-loop terminated.
-                //  Reset the state and simulate popping the stack by incrementing the pointer.
-                c[i]=0;
-                i++;
-
-              }
-
-            }
-
-            p.minimumLength=minTourLength;
-
-          }
-
-          function bruteForce(){
-
-            print("Disabled for safety");
-
-            return;
-
-            if(!p.bfSwitch){
-              nodePermutations(p.originalNodes.length, p.originalNodes);
-              p.bfSwitch=true;
-              renumberNodes(p.bestNodes);
-            }
-
-            if(app.elapsedTime<10){
-              swap3Consecutive(p.workingNodes);
-              drawPath(p.workingNodes);
-            }
-
-            drawNodes(p.bestNodes);
-            drawPath(p.bestNodes);
-
-          };
-
-        }
-
-        { // Greedy
-
-          function getGreedyTour(arrNodes, method){
-
-            function getRandomNode(arr){
-
-              var newNode=null;
-  
-              randomizeArray(arr);
-  
-              newNode=arr[0];
-  
-              arr.splice(0, 1);
-  
-              return newNode;
-  
-            };
-  
-            function getClosestNode(nod){
-  
-              for(var n=0; n<nod.closest.length; n++){
-  
-                if(nod.closest[n].loaded==false){
-                  nod.closest[n].loaded=true;
-                  return nod.closest[n];
-                }
-  
-              }
-  
-            };
-  
-            function getFurthestNode(nod){
-  
-              for(var n=nod.closest.length-1; n>=0; n--) {
-  
-                if(nod.closest[n].loaded==false){
-                  nod.closest[n].loaded=true;
-                  return nod.closest[n];
-                }
-  
-              }
-  
-            };
-  
-            function placeNode(arr, nod){
-  
-              arr.unshift(nod); // Adds the node to the first array position [0]
-  
-              // Locates the position within the array that results in the shortest tour
-              var bestPosition=arr.length-1;
-              var dist=getTourLength(arr);
-              var minDist=dist;
-  
-              for(var n=0; n<arr.length; n++){
-  
-                if(n<arr.length-1){
-                  swap(arr, n, n+1);
-                }
-  
-                dist=getTourLength(arr);
-  
-                if(dist<minDist){
-                  minDist=dist;
-                  bestPosition=n+1;
-                }
-  
-              }
-  
-              //  Remove the node from the last position
-              //  Insert the node into the correct position                                                      
-              arr.splice(bestPosition, 0, arr.pop());
-  
-            };
-
-            var arrSource=[];
-            var arrDestination=[];
-
-            arrayCopy(arrNodes, arrSource);
-
-            var nod;
-
-            while(arrDestination.length<app.nodes){
-
-              //  Randomly add the 1st node
-              if(arrDestination.length==0){
-
-                randomizeArray(arrSource);
-
-                nod=arrSource[0];
-
-                arrDestination.push(nod);
-
-                //  Remove from the source array if greedy method is random
-                if(app.greedyMethod==GREEDYMETHODS.RANDOM){
-                  arrSource.splice(0, 1);
-                }
-
-                nod.loaded=true;
-
-                // cNode = nod;
-
-              }
-              else if(arrDestination.length<arrNodes.length){
-
-                switch(method){
-
-                  case GREEDYMETHODS.CLOSEST:  nod=getClosestNode(nod);       break;
-                  case GREEDYMETHODS.FURTHEST: nod=getFurthestNode(nod);      break;
-                  case GREEDYMETHODS.RANDOM:   nod=getRandomNode(arrSource);  break;
-
-                  default:                                                    break;
-
-                }
-
-                if(nod!=null){
-
-                  placeNode(arrDestination, nod); //  Shifts the node to the location 
-                                                  //  that minimizes the tour length
-                                                  //  by trying all possible locations
-                }
-
-              }
-
-              // p.tours.push(arrDestination);
-
-            }
-
-            return arrDestination;
-
-          };
-
-          function greedy(){
-
-            if(p.workingNodes.length==0){
-
-              p.workingNodes=getGreedyTour(p.originalNodes, app.greedyMethod);
-
-              arrayCopy(p.workingNodes, p.bestNodes);
-              p.workingLength=getTourLength(p.workingNodes);
-              p.minimumLength=p.workingLength;
-
-            }
-            else{
-
-              if(app.running){
-
-                // if(frameCount%2==0){
-
-                  if(app.crossover){
-
-                    calculateIntersections();
-
-                    if(p.intersections.length>0){
-
-                      if(frameCount%100==0){
-                        print(p.intersections);
-                      }
-
-                      reverseNodes(p.workingNodes,
-                                   p.intersections[0].id,
-                                   p.intersections[2].id);
-
-                      renumberNodes(p.workingNodes);
-
-                    }
-
-                  }
-
-                // }
-                // else{
-
-                  if(app.iterate){
-                    iterate();
-                  }
-
-                // }
-
-              }
-
-            }
-
-            drawNodes(p.originalNodes);
-            drawPath(p.workingNodes, p.length);
-
-            if(p.length<p.workingNodes.length){
-              p.length++;                      
-            }      
-            
-          };
-
-        }
 
         { // intersections
 
@@ -2682,6 +2200,434 @@ forum.processing.org
 
         }
 
+        { // Genetic
+          
+          function genetic(){
+            
+            if(geneticLoaded==false){
+
+              // var index=round(random(app.tourLength-1));
+              
+              var parent1=getClosestArray(getRandomInt(app.tourLength-1));
+              var parent2=getClosestArray(getRandomInt(app.tourLength-1));
+
+              print(parent1);
+              print(parent2);
+
+              // p.workingNodes=getClosestArray(index);
+              // arrayCopy(getClosestArray(index), p.workingNodes);
+
+              geneticLoaded=true;
+
+            }
+
+            drawPath(p.workingNodes,  p.workingNodes.length);
+            drawNodes(p.workingNodes, p.workingNodes.length);
+
+          };
+
+        }
+
+        { // ACO
+
+          function segmentExists(p1, p2){
+
+            var retVal=-1;
+
+            for(var e=1; e<p.segments.length; e++){
+
+              if((p1.x==p.segments[e].point1.x &&
+                  p1.y==p.segments[e].point1.y &&
+                  p2.x==p.segments[e].point2.x &&
+                  p2.y==p.segments[e].point2.y)
+
+                ||
+
+                 (p1.x==p.segments[e].point2.x &&
+                  p1.y==p.segments[e].point2.y &&
+                  p2.x==p.segments[e].point1.x &&
+                  p2.y==p.segments[e].point1.y)){
+
+                retVal=e;
+                break;
+
+              }
+
+            }
+
+            return retVal;
+
+          };
+          function updateSegments(){
+
+            for (var n=0; n<p.workingNodes.length; n++) {
+
+              var exists=-1;
+
+              if(n==app.tourLength-1){
+
+                exists=segmentExists(p.workingNodes[n],
+                                    p.workingNodes[0]);
+                if(exists!=-1){
+                  p.segments[n].weight=constrain(p.segments[n].weight+1, 0, 100);
+                }
+                else{
+                  p.segments.push(new segment(p.workingNodes[n],
+                                              p.workingNodes[0]));
+                  p.segments[p.segments.length-1].weight=25;
+
+                }
+
+              }
+              else{
+
+                exists=segmentExists(p.workingNodes[n],
+                                     p.workingNodes[n+1]);
+                if(exists!=-1){
+                  p.segments[n].weight=constrain(p.segments[n].weight+1, 0, 100);
+                }
+                else{
+                  p.segments.push(new segment(p.workingNodes[n],
+                                              p.workingNodes[n + 1]));
+                  p.segments[p.segments.length-1].weight=25;                                            
+
+                }
+
+              }
+
+            }
+
+          };
+          function drawSegments(){
+
+            stroke(128);
+            strokeWeight(3);
+            noFill();
+
+            var seg=null;
+
+            for(var n=0; n<p.segments.length; n++){
+
+              seg=p.segments[n];
+
+              // stroke(0,0,0,20);
+              stroke(64,64,64, seg.weight);
+
+              line(seg.point1.x, seg.point1.y,
+                   seg.point2.x, seg.point2.y);
+
+            }
+
+          };
+          function ACO(){
+
+            p.reset();
+
+            p.workingNodes=getGreedyTour(p.nodes, app.greedy_mode);
+
+            updateSegments();
+
+            drawSegments();
+            drawNodes(p.nodes);
+            // renumberNodes(p.workingNodes);
+
+            if(frameCount%5==0){
+
+              for(var n=0; n<p.segments.length; n++){
+
+                p.segments[n].weight=constrain(p.segments[n].weight-1, 0, 100);
+                
+                if(p.segments[n].weight==0){
+                  p.segments.splice(n,1);
+                }
+
+              }
+
+            }
+
+          };
+
+        }
+
+        { // Brute Force
+
+          function nodePermutations(n, arr){
+            //  ***** NOTE: Do NOT exceed 9 nodes *****
+
+            //  c is an encoding of the stack state.
+            //  c[k] encodes the for-loop counter for
+            //  when generate(k+1, A) is called.
+            var c=[];
+            var minTourLength=Infinity;
+            var tourLength=getTourLength(arr);
+            var counter=1;
+
+            for(var i=0; i<n; i++){
+              c[i]=0;
+            }
+
+            // i acts similarly to the stack pointer
+            var i=0;
+
+            while(i<n){
+
+              tourLength=getTourLength(arr);
+
+              if(tourLength<minTourLength){
+
+                minTourLength=tourLength;
+                arrayCopy(arr, p.bestNodes);
+
+              }
+
+              if(c[i]<i){
+
+                counter++;
+
+                if(i%2==0){ swap(arr, 0, i);    }
+                else      { swap(arr, c[i], i); }
+
+                //  Swap has occurred ending the for-loop.
+                //  Simulate the increment of the for-loop counter
+                c[i]++;
+
+                //  Simulate recursive call reaching the base case by
+                //  bringing the pointer to the base case analog in the array
+                i=0;
+
+              }
+              else {
+
+                //  Calling generate(i+1, A) has ended as the for-loop terminated.
+                //  Reset the state and simulate popping the stack by incrementing the pointer.
+                c[i]=0;
+                i++;
+
+              }
+
+            }
+
+            p.minimumLength=minTourLength;
+
+          }
+
+          function bruteForce(){
+
+            print("Disabled for safety");
+
+            return;
+
+            if(!p.bfSwitch){
+              nodePermutations(p.nodes.length, p.nodes);
+              p.bfSwitch=true;
+              renumberNodes(p.bestNodes);
+            }
+
+            if(app.elapsedTime<10){
+              swap3Consecutive(p.workingNodes);
+              drawPath(p.workingNodes);
+            }
+
+            drawNodes(p.bestNodes);
+            drawPath(p.bestNodes);
+
+          };
+
+        }
+
+        { // Greedy
+
+          function getGreedyTour(arrNodes, method){
+
+            function getRandomNode(arr){
+
+              var newNode=null;
+  
+              randomizeArray(arr);
+  
+              newNode=arr[0];
+  
+              arr.splice(0, 1);
+  
+              return newNode;
+  
+            };
+  
+            function getClosestNode(nod){
+  
+              for(var n=0; n<nod.closest.length; n++){
+  
+                if(nod.closest[n].loaded==false){
+                  nod.closest[n].loaded=true;
+                  return nod.closest[n];
+                }
+  
+              }
+  
+            };
+  
+            function getFurthestNode(nod){
+  
+              for(var n=nod.closest.length-1; n>=0; n--) {
+  
+                if(nod.closest[n].loaded==false){
+                  nod.closest[n].loaded=true;
+                  return nod.closest[n];
+                }
+  
+              }
+  
+            };
+  
+            function placeNode(arr, nod){
+  
+              arr.unshift(nod); // Adds the node to the first array position [0]
+  
+              // Locates the position within the array that results in the shortest tour
+              var bestPosition=arr.length-1;
+              var dist=getTourLength(arr);
+              var minDist=dist;
+  
+              for(var n=0; n<arr.length; n++){
+  
+                if(n<arr.length-1){
+                  swap(arr, n, n+1);
+                }
+  
+                dist=getTourLength(arr);
+  
+                if(dist<minDist){
+                  minDist=dist;
+                  bestPosition=n+1;
+                }
+  
+              }
+  
+              //  Remove the node from the last position
+              //  Insert the node into the correct position                                                      
+              arr.splice(bestPosition, 0, arr.pop());
+  
+            };
+
+            var arrSource=[];
+            var arrDestination=[];
+
+            arrayCopy(arrNodes, arrSource);
+
+            var nod;
+
+            while(arrDestination.length<app.tourLength){
+
+              //  Randomly add the 1st node
+              if(arrDestination.length==0){
+
+                randomizeArray(arrSource);
+
+                nod=arrSource[0];
+
+                arrDestination.push(nod);
+
+                //  Remove from the source array if greedy method is random
+                if(app.greedy_mode==GREEDY_MODES.RANDOM){
+                  arrSource.splice(0, 1);
+                }
+
+                nod.loaded=true;
+
+                // cNode = nod;
+
+              }
+              else if(arrDestination.length<arrNodes.length){
+
+                switch(method){
+
+                  case GREEDY_MODES.CLOSEST:  nod=getClosestNode(nod);       break;
+                  case GREEDY_MODES.FURTHEST: nod=getFurthestNode(nod);      break;
+                  case GREEDY_MODES.RANDOM:   nod=getRandomNode(arrSource);  break;
+
+                  default:                                                    break;
+
+                }
+
+                if(nod!=null){
+
+                  placeNode(arrDestination, nod); //  Shifts the node to the location 
+                                                  //  that minimizes the tour length
+                                                  //  by trying all possible locations
+                }
+
+              }
+
+              // p.tours.push(arrDestination);
+
+            }
+
+            return arrDestination;
+
+          };
+
+          function greedy(){
+
+            if(p.workingNodes.length==0){
+
+              p.workingNodes=getGreedyTour(p.nodes, app.greedy_mode);
+
+              arrayCopy(p.workingNodes, p.bestNodes);
+              p.workingLength=getTourLength(p.workingNodes);
+              p.minimumLength=p.workingLength;
+
+            }
+            else{
+
+              if(app.running){
+
+                // if(frameCount%2==0){
+
+                  if(app.crossover){
+
+                    calculateIntersections();
+
+                    if(p.intersections.length>0){
+
+                      reverseNodes(p.workingNodes,
+                                   p.intersections[0].id,
+                                   p.intersections[2].id);
+
+                      // renumberNodes(p.workingNodes);
+
+                    }
+
+                  }
+
+                // }
+                // else{
+
+                  if(app.iterate &&
+                     frameCount%10==0){
+
+                    iterate();
+                    
+                  }
+
+                // }
+
+                updateTour();
+
+              }
+
+            }
+
+            drawNodes(p.nodes);
+            drawPath(p.workingNodes, p.length);
+
+            if(p.length<p.workingNodes.length){
+              p.length++;                      
+            }      
+            
+          };
+
+        }
+
         { // Simulated Annealing
           
           function simulatedAnnealing(){
@@ -2724,13 +2670,11 @@ forum.processing.org
 
                       if(p.intersections.length>0){
 
-                        if(frameCount%100==0){
-                          print(p.intersections);
-                        }
-
                         reverseNodes(p.workingNodes,
-                                    p.intersections[0].id,
-                                    p.intersections[2].id);
+                                     p.intersections[0].id,
+                                     p.intersections[2].id);
+
+                        updateTour();
 
                       }
 
@@ -2741,7 +2685,7 @@ forum.processing.org
 
                     }
 
-                    updateTour();
+                    
 
                     renumberNodes(p.workingNodes);
 
@@ -2833,50 +2777,8 @@ forum.processing.org
 
             }
 
-            // if(!completed){
-
-            //   renumberNodes(p.workingNodes);
-
-            //   calculateIntersections();
-
-            //   print(p.intersections);
-
-            // }
-
-            // p.factor=1;
-
-            // renumberNodes(p.workingNodes);
-
-            // if(int(app.elapsedTime)%2==0){
-
-              // calculateIntersections();
-
-              // if(p.intersections.length>0){
-
-              //   if(frameCount%100 == 0){
-              //     print(p.intersections);
-              //   }
-
-              //   reverseNodes(p.workingNodes,
-              //                p.intersections[0].id,
-              //                p.intersections[2].id);
-
-              // }
-
-            // }
-            // else{
-
-            //   if(app.iterate){
-            //     iterate();
-            //   }
-
-            // }
-
-            updateTour();
-
             drawPath(p.workingNodes, p.workingNodes.length);
             drawNodes(p.workingNodes, p.workingNodes.length);
-            drawPath(p.bestNodes, p.bestNodes.length);
 
           };
 
@@ -2884,7 +2786,7 @@ forum.processing.org
 
         { // GUI
 
-          function border(){
+          function drawBorder(){
 
             fill(BACKGROUND);
 
@@ -2941,7 +2843,7 @@ forum.processing.org
                   '\n'   + round(p.minimumLength)      +
                   '\n'   + round(p.historicLength)     +
                   '\n\n' + app.algorithm               +
-                  '\n'   + app.greedyMethod            +
+                  '\n'   + app.greedy_mode            +
                   '\n\n' + id                          +
                   '\n\n' + nf(p.factor, 1, 5)          +
                   '\n\n' + p.intersections.length      +
@@ -2951,8 +2853,8 @@ forum.processing.org
 
             textSize(11);
 
-              text(factorial(app.nodes), 200, p.h-20);
-              // text(factorial(app.nodes).toLocaleString(), 10, p.h-200);
+              text(factorial(app.tourLength), 200, p.h-20);
+              // text(factorial(app.tourLength).toLocaleString(), 10, p.h-200);
 
             //  Center origin
             // translate(this.w/2,this.h/2);
@@ -2964,78 +2866,59 @@ forum.processing.org
         }
 
         function initialCondition(){
+          
+          p.factor=1;
 
-          // var minLength=Infinity;
-          // var length=Infinity;
-          // var minID=-1;
+          var index=getRandomInt(p.workingNodes.length-1);
 
-          // for(var n=0; n<p.workingNodes.length; n++){
+          p.workingNodes=getClosestArray(index);
 
-            // p.workingNodes=getClosestArray(n);
-            p.workingNodes=getClosestArray(getRandomInt(p.workingNodes.length-1));
-
-            // updateSegments();
-
-            // length=getTourLength(p.workingNodes);
-
-            // if(length<minLength){
-            //   minLength=length;
-            //   minID=n;
-            // }
-
-            // print(n + " : " + length);
-            toggleDirty();
-
-          // }
-
-          // print(minID + " : " + minLength);
-
-          // p.workingNodes=getClosestArray(minID);
-          // findClosest(round(random(app.nodes)));
+          // toggleDirty();
 
           updateTour();
 
         };
 
-          this.active = this.hit &&
-                        app.focus==this;
+        function drawTour(){
+
+          if(!p.loaded){
+
+            if(app.algorithm!=ALGORITHMS.ACO){
+
+              if(app.initialize){
+                initialCondition(); 
+                randomizeArray(p.workingNodes);
+              }
+
+            }
+
+          }
+
+          switch (app.algorithm){
+
+            case ALGORITHMS.SIMULATEDANNEALING: simulatedAnnealing(); break;
+            case ALGORITHMS.GROW:               grow();               break;
+            case ALGORITHMS.GREEDY:             greedy();             break;
+            case ALGORITHMS.BRUTEFORCE:         bruteForce();         break;
+            case ALGORITHMS.GENETIC:            genetic();            break;
+            case ALGORITHMS.ACO:                ACO();                break;
+
+            default:                            simulatedAnnealing(); break;
+
+          }
+
+        };
+
+          this.active=this.hit &&
+                      app.focus==this;
           
           push();
 
-            translate(this.x+0.5, this.y+0.5);
+            translate(this.x+0.5,
+                      this.y+0.5);
 
-            border();
-
-            if(!p.loaded){
-
-              if(app.algorithm!=ALGORITHMS.ACO){
-
-                if(app.initialize){
-                  initialCondition(); 
-                  randomizeArray(p.workingNodes);
-                }
-
-              }
-
-              if(app.algorithm==ALGORITHMS.GREEDY){
-                // this.workingNodes=[];
-              }
-
-            }
-
-            switch (app.algorithm){
-
-              case ALGORITHMS.SIMULATEDANNEALING: simulatedAnnealing(); break;
-              case ALGORITHMS.GROW:               grow();               break;
-              case ALGORITHMS.GREEDY:             greedy();             break;
-              case ALGORITHMS.BRUTEFORCE:         bruteForce();         break;
-              case ALGORITHMS.GENETIC:            genetic();            break;
-              case ALGORITHMS.ACO:                ACO();                break;
-
-              default:                            simulatedAnnealing(); break;
-
-            }
-
+            drawBorder();
+            drawTour();
             drawProperties();
 
           pop();
@@ -3978,7 +3861,7 @@ forum.processing.org
 
             noStroke();
 
-            textSize(12);
+            textSize(11);
             textAlign(LEFT,CENTER);
 
               text(this.caption,
@@ -4322,7 +4205,7 @@ forum.processing.org
           { color:      BLACK,
             execute:    setMethod,
             retrieve:   getMethod,
-            algorithm:  GREEDYMETHODS.CLOSEST,
+            algorithm:  GREEDY_MODES.CLOSEST,
             caption:    "Closest" });
 
         app.controls.push(closest);
@@ -4332,7 +4215,7 @@ forum.processing.org
           { color:      BLACK,
             execute:    setMethod,
             retrieve:   getMethod,
-            algorithm:  GREEDYMETHODS.FARTHEST,
+            algorithm:  GREEDY_MODES.FARTHEST,
             caption:    "Farthest" });
 
         app.controls.push(farthest);
@@ -4342,14 +4225,14 @@ forum.processing.org
           { color:      BLACK,
             execute:    setMethod,
             retrieve:   getMethod,
-            algorithm:  GREEDYMETHODS.RANDOM,
+            algorithm:  GREEDY_MODES.RANDOM,
             caption:    "Random" });
 
         app.controls.push(random);
 
     /* Initialize --------------------------------------------------- */
     var initialize=new checkbox('checkbox', rt, 20, 500, 12, 12,
-        { color:    MAROON,
+        { color:    BLACK,
           execute:  toggleInitialize,
           retrieve: getInitialize,
           caption:  "Initialize" });
@@ -4358,7 +4241,7 @@ forum.processing.org
 
     /* Crossover ---------------------------------------------------- */
     var crossover=new checkbox('checkbox', rt, 20, 520, 12, 12,
-        { color:    MAROON_L,
+        { color:    BLACK,
           execute:  toggleCrossover,
           retrieve: getCrossover,
           caption:  "Crossover" });
@@ -4843,6 +4726,50 @@ forum.processing.org
 
 
 
+{
+  /**  Whitelist
+   * 
+*
++stackoverflow.com
++khanacademy.org
++codecogs.com/latex/eqneditor.php
++youtube.com
++mail.google.com
++bradsiemens.com
++processingjs.org
++processing.org
+forum.processing.org
++wikipedia.org
++google.com
++w3schools.com
++touchmathematics.org
++desmos.com
++github.com
++emptyblack.com
++redblobgames.com
++dailymotion.com
++pistolslut.com
++latin-phrases.co.uk/quotes/beginning-end
++code.org
++natureofcode.com
++alssndro.github.io/trianglify-background-generator
++p5js.org
++google.ca
++projecteuler.net
++www.numberempire.com
++oeis.org
++math.stackexchange.com
++jasondavies.com
++developer.mozilla.org
++docs.oracle.com
++www.mathopenref.com
++alpha.editor.p5js.org
++en.wikibooks.org
++upload.wikimedia.org
++viterbipk12.usc.edu
+
+*/
+}
 
 /**
 
