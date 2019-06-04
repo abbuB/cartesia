@@ -381,9 +381,9 @@
 
       this.loadMethod   = LOAD_MODES.RANDOM;
 
-      // this.greedy_mode = GREEDY_MODES.CLOSEST;
+      this.greedy_mode = GREEDY_MODES.CLOSEST;
       // this.greedy_mode = GREEDY_MODES.FURTHEST;
-      this.greedy_mode = GREEDY_MODES.RANDOM;
+      // this.greedy_mode = GREEDY_MODES.RANDOM;
 
       // this.algorithm    = ALGORITHMS.GROW;
       this.algorithm    = ALGORITHMS.GREEDY;
@@ -520,415 +520,6 @@
       }
 
       return total;
-
-    };
-
-  }
-
-  /* Navigation  =========================================================== */
-  {
-
-    function incrementPuzzle(){
-
-      app.puzzle++;
-
-      if (app.puzzle > PUZZLES.length - 1) { app.puzzle = 0; }
-
-      app.puzzle = constrain(app.puzzle, 0, PUZZLES.length - 1);
-
-      reset();
-      // throw(23);
-    };
-    function decrementPuzzle(){
-
-      app.puzzle--;
-
-      if (app.puzzle < 0) { app.puzzle = PUZZLES.length - 1; }
-
-      app.puzzle = constrain(app.puzzle, 0, PUZZLES.length - 1);
-
-      reset();
-
-    };
-
-    function drawDragColumn(){
-
-      fill(BLUE);
-      stroke(GREEN);
-
-      for (var h in app.field.selected) {
-
-        if (app.field.selected[h].dragging) {
-
-          ellipse(app.field.selected[h].x,
-            app.field.selected[h].y,
-            30, 30);
-
-        }
-
-        // print(app.field.selected[h].y);
-        // print('drawDragColumn' +" | " + app.field.selected.length);
-
-      }
-
-    };
-
-    // Dragging ----------
-    function setDragColumn(){
-
-      var cell = app.field.activeCell;
-
-      while (cell.top !== null &&
-        cell.top.layout !== BLANK) {
-
-        cell = cell.top;
-
-      }
-
-      while (cell.bottom !== null &&
-        cell.bottom.layout !== BLANK) {
-
-        app.field.selected.push(cell);
-        cell.dragging = true;
-        cell = cell.bottom;
-
-      }
-
-      app.field.selected.push(cell);
-      cell.dragging = true;
-
-    };
-    function setDragBackward(){
-
-      var cell = app.field.activeCell;
-
-      while (cell.topRight !== null &&
-        cell.topRight.layout !== BLANK) {
-
-        cell = cell.topRight;
-
-      }
-
-      while (cell.bottomLeft !== null &&
-        cell.bottomLeft.layout !== BLANK) {
-
-        app.field.selected.push(cell);
-        cell.dragging = true;
-        cell = cell.bottomLeft;
-
-      }
-
-      app.field.selected.push(cell);
-      cell.dragging = true;
-
-    };
-    function setDragForward(){
-
-      var cell = app.field.activeCell;
-
-      while (cell.topLeft !== null &&
-        cell.topLeft.layout !== BLANK) {
-
-        cell = cell.topLeft;
-
-      }
-
-      while (cell.bottomRight !== null &&
-        cell.bottomRight.layout !== BLANK) {
-
-        app.field.selected.push(cell);
-        cell.dragging = true;
-        cell = cell.bottomRight;
-
-      }
-
-      app.field.selected.push(cell);
-      cell.dragging = true;
-
-    };
-
-    // Move Columns ----------
-    function colUp(){
-
-      var cell = app.field.activeCell;
-
-      while (cell.top !== null &&
-        cell.top.color !== BLANK) {
-
-        cell = cell.top;
-
-      }
-
-      var topColor = cell.color;
-
-      while (cell.bottom !== null &&
-        cell.bottom.color !== BLANK) {
-
-        cell.color = cell.bottom.color;
-        cell = cell.bottom;
-
-      }
-
-      cell.color = topColor;
-
-      app.field.totalMoves++;
-
-    };
-    function colDown(){
-
-      var cell = app.field.activeCell;
-
-      while (cell.bottom !== null &&
-        cell.bottom.color !== BLANK) {
-
-        cell = cell.bottom;
-
-      }
-
-      var bottomcolor = cell.color;
-
-      while (cell.top !== null &&
-        cell.top.color !== BLANK) {
-
-        cell.color = cell.top.color;
-        cell = cell.top;
-
-      }
-
-      cell.color = bottomcolor;
-
-      app.field.totalMoves++;
-
-    };
-
-    function colUpRight(){
-
-      var cell = app.field.activeCell;
-
-      while (cell.topRight !== null &&
-        cell.topRight.color !== BLANK) {
-
-        cell = cell.topRight;
-
-      }
-
-      var topcolor = cell.color;
-
-      while (cell.bottomLeft !== null &&
-        cell.bottomLeft.color !== BLANK) {
-
-        cell.color = cell.bottomLeft.color;
-        cell = cell.bottomLeft;
-
-      }
-
-      cell.color = topcolor;
-
-      app.field.totalMoves++;
-
-    };
-    function colUpLeft(){
-
-      var cell = app.field.activeCell;
-
-      while (cell.topLeft !== null &&
-        cell.topLeft.color !== BLANK) {
-
-        cell = cell.topLeft;
-
-      }
-
-      var topcolor = cell.color;
-
-      while (cell.bottomRight !== null &&
-        cell.bottomRight.color !== BLANK) {
-
-        cell.color = cell.bottomRight.color;
-        cell = cell.bottomRight;
-
-      }
-
-      cell.color = topcolor;
-
-      app.field.totalMoves++;
-
-    };
-
-    function colDownRight(){
-
-      var cell = app.field.activeCell;
-
-      while (cell.bottomRight !== null &&
-        cell.bottomRight.color !== BLANK) {
-
-        cell = cell.bottomRight;
-
-      }
-
-      var bottomcolor = cell.color;
-
-      while (cell.topLeft !== null &&
-        cell.topLeft.color !== BLANK) {
-
-        cell.color = cell.topLeft.color;
-        cell = cell.topLeft;
-
-      }
-
-      cell.color = bottomcolor;
-
-      app.field.totalMoves++;
-
-    };
-    function colDownLeft(){
-
-      var cell = app.field.activeCell;
-
-      while (cell.bottomLeft !== null &&
-        cell.bottomLeft.color !== BLANK) {
-
-        cell = cell.bottomLeft;
-
-      }
-
-      var bottomcolor = cell.color;
-
-      while (cell.topRight !== null &&
-        cell.topRight.color !== BLANK) {
-
-        cell.color = cell.topRight.color;
-        cell = cell.topRight;
-
-      }
-
-      cell.color = bottomcolor;
-
-      app.field.totalMoves++;
-
-    };
-
-
-    // Move Active Cell ----------
-    function up(){
-
-      if (app.field.activeCell.top !== null &&
-        app.field.activeCell.top.layout !== 0) {
-
-        app.field.activeCell = app.field.activeCell.top;
-
-      }
-      else {
-
-        while (app.field.activeCell.bottom !== null &&
-          app.field.activeCell.bottom.layout !== 0) {
-
-          app.field.activeCell = app.field.activeCell.bottom;
-
-        }
-
-      }
-
-    };
-    function down(){
-
-      if (app.field.activeCell.bottom !== null &&
-        app.field.activeCell.bottom.layout !== 0) {
-
-        app.field.activeCell = app.field.activeCell.bottom;
-
-      }
-      else {
-
-        while (app.field.activeCell.top !== null &&
-          app.field.activeCell.top.layout !== 0) {
-
-          app.field.activeCell = app.field.activeCell.top;
-
-        }
-
-      }
-
-    };
-
-    function upRight(){
-
-      if (app.field.activeCell.topRight !== null &&
-        app.field.activeCell.topRight.layout !== 0) {
-
-        app.field.activeCell = app.field.activeCell.topRight;
-
-      }
-      else {
-
-        while (app.field.activeCell.bottomLeft !== null &&
-          app.field.activeCell.bottomLeft.layout !== 0) {
-
-          app.field.activeCell = app.field.activeCell.bottomLeft;
-
-        }
-
-      }
-
-    };
-    function upLeft(){
-
-      if (app.field.activeCell.topLeft !== null &&
-        app.field.activeCell.topLeft.layout !== 0) {
-
-        app.field.activeCell = app.field.activeCell.topLeft;
-
-      }
-      else {
-
-        while (app.field.activeCell.bottomRight !== null &&
-          app.field.activeCell.bottomRight.layout !== 0) {
-
-          app.field.activeCell = app.field.activeCell.bottomRight;
-
-        }
-
-      }
-
-    };
-
-    function downRight(){
-
-      if (app.field.activeCell.bottomRight !== null &&
-        app.field.activeCell.bottomRight.layout !== 0) {
-
-        app.field.activeCell = app.field.activeCell.bottomRight;
-
-      }
-      else {
-
-        while (app.field.activeCell.topLeft !== null &&
-          app.field.activeCell.topLeft.layout !== 0) {
-
-          app.field.activeCell = app.field.activeCell.topLeft;
-
-        }
-
-      }
-
-    };
-    function downLeft(){
-
-      if (app.field.activeCell.bottomLeft !== null &&
-        app.field.activeCell.bottomLeft.layout !== 0) {
-
-        app.field.activeCell = app.field.activeCell.bottomLeft;
-
-      }
-      else {
-
-        while (app.field.activeCell.topRight !== null &&
-          app.field.activeCell.topRight.layout !== 0) {
-
-          app.field.activeCell = app.field.activeCell.topRight;
-
-        }
-
-      }
 
     };
 
@@ -1247,20 +838,22 @@
 
           // if(app.focus!==null){ id=app.focus.id; }
 
-          if (app.field.activeCell !== null) { id = app.field.activeCell.id; }
+          if(app.currentNode !== null){
+            id=app.currentNode.id;
+          }
 
-          text('\n\n' + app.controlCount +
-            '\n' + id +
-            '\n\n\n' + app.remaining +
-            '\n' + app.errors +
-            '\n\n\n' + app.musicOn +
-            '\n' + app.level,
-            col2, top);
+          text(  '\n\n' + app.controlCount +
+                   '\n' + id +
+               '\n\n\n' + app.remaining +
+                   '\n' + app.errors +
+               '\n\n\n' + app.musicOn +
+                   '\n' + app.level,
+               col2, top);
 
         };
 
-        if (app.telemetry && this.offset > -200) { this.offset -= 10; }
-        else if (!app.telemetry && this.offset < 0) { this.offset += 10; }
+        if(app.telemetry && this.offset>-200){ this.offset-=10; }
+        else if(!app.telemetry && this.offset<0){ this.offset+=10; }
 
         var row0 = 5;
         var row1 = 90;
@@ -1789,8 +1382,6 @@
 
         /* ------------------------------------------------- */
 
-        this.activeCell     = null;
-
         this.dirty          = false;      //  Has the field been clicked yet?
 
         app.field           = this;       //  Set a global field reference
@@ -1802,8 +1393,6 @@
         // this.deltaY         = 0;          //  y-coordinate drag offset
 
         // this.deltaDrag      = 0;          //  Distance dragged from start point along the drag direction
-
-        this.cellSize       = 0;          //  Size of each node
 
         // ----------
 
@@ -1829,17 +1418,17 @@
         this.historicLength = Infinity;   //  Best recorded overall
         this.greedyLength   = Infinity;   //  Length of Greedy Path
 
-        this.factor         = 1.1;
+        this.factor         = 1.1;        //  Simulated Annealing factor for accepting longer tours
 
-        this.bfSwitch       = false;            //  Brute Force Switch
+        this.bfSwitch       = false;      //  Brute Force Switch
 
         this.loaded         = false;
 
         this.index          = 0;
 
-        this.length         = 0;
+        this.length         = 0;          //  Current length of greedy array as it's displayed incrementally
 
-        this.reset();
+        this.reset();                     //  Loads the default settings
 
       };
       field.prototype=Object.create(control.prototype);
@@ -1849,16 +1438,15 @@
 
         // p.controls          = [];   //  Clear the controls array
 
-        p.nodes     = [];        
-        p.bestNodes         = [];
+        p.tours             = [];
+
+        p.nodes             = [];
         p.workingNodes      = [];
+        p.bestNodes         = [];
 
         p.sourceNodes       = [];
-        
-        // p.sortedNodes      = [];
-        
+
         p.intersections     = [];
-        p.tours             = [];
 
         if(app.algorithm!=ALGORITHMS.ACO){
           p.segments=[];
@@ -1884,18 +1472,16 @@
 
           for(var n=0; n<app.tourLength; n++){
 
-            x1=data[n][0];
-            y1=data[n][1];
+            // x1=data[n][0];
+            // y1=data[n][1];
 
-            // x1=floor(random(150, p.w-20));
-            // y1=floor(random( 20, p.h-20));
+            x1=floor(random(150, p.w-20));
+            y1=floor(random( 20, p.h-20));
 
             p.nodes.push(new node(n,
                                   this,
-                                  x1,
-                                  y1,
-                                  5,
-                                  5,
+                                  x1, y1,
+                                  5, 5,
                                   { cursor: HAND })
                         );
           }
@@ -1945,13 +1531,9 @@
 
         };
 
-        if(app.algorithm!=ALGORITHMS.ACO){
-          loadClosestNodes();
-        }
+        loadClosestNodes();
 
         this.dirty=false;
-
-        // arraySort(p.sortedNodes);
 
       };
       field.prototype.draw=function(){
@@ -2140,7 +1722,7 @@
 
           function calculateIntersections(){
 
-            p.intersections = [];
+            p.intersections=[];
 
             var node1;
             var node2;
@@ -2164,28 +1746,19 @@
                 if(node1.id!=node3.id &&
                    node1.id!=node4.id &&
                    node2.id!=node3.id &&
-                   node2.id!=node4.id) {
+                   node2.id!=node4.id){
 
-                  if(DoLineSegmentsIntersect(node1, node2, node3, node4)) {
+                  if(DoLineSegmentsIntersect(node1, node2, node3, node4)){
 
-                    if(node1.id>node2.id){
-                      p.intersections.push(node2);
-                      p.intersections.push(node1);
-                    }
-                    else{
-                      p.intersections.push(node1);
-                      p.intersections.push(node2);
-                    }
+                    if(node1.id>node2.id){ p.intersections.push(node2);
+                                           p.intersections.push(node1); }
+                    else                 { p.intersections.push(node1);
+                                           p.intersections.push(node2); }
 
-                    if(node3.id>node4.id){
-                      p.intersections.push(node4);
-                      p.intersections.push(node3);
-                    }
-                    else{
-                      p.intersections.push(node3);
-                      p.intersections.push(node4);
-                    }
-
+                    if(node3.id>node4.id){ p.intersections.push(node4);
+                                           p.intersections.push(node3); }
+                    else                 { p.intersections.push(node3);
+                                           p.intersections.push(node4); }
                   }
 
                 }
@@ -2322,7 +1895,7 @@
           function ACO(){
 
             p.reset();
-
+print("Greedy Mode: " + app.greedy_mode);
             p.workingNodes=getGreedyTour(p.nodes, app.greedy_mode);
 
             updateSegments();
@@ -2986,7 +2559,7 @@
       field.prototype.out=function(){
 
         this.hit=false;
-        this.activeCell=null;
+        
 
         var ctrls=this.controls;
 
@@ -3147,7 +2720,6 @@
       node.prototype.clicked = function (){
 
         if (this.hit) {
-          this.parent.activeCell = this;
           app.focus = this;
           // print(this.closest);  
         }
@@ -3207,11 +2779,11 @@
         if (this.hit &&
           this.layout !== BLANK) {
           // print(this.id);
-          this.parent.activeCell = this;
 
         }
 
       };
+      node.prototype.resized=function(){};
 
     }
 
@@ -3913,6 +3485,7 @@
         this.visible=false;
     
       };
+      checkbox.prototype.resized=   function(){};
 
     }
 
@@ -4033,6 +3606,7 @@
         this.visible=false;
     
       };
+      option.prototype.resized=   function(){};
 
     }
 
