@@ -2,6 +2,11 @@
 
   TO DO:
 
+    - Page Title "Travelling Salesman Problem (TSP)"
+    - Metrics regarding extent of points and average distance between connected points
+    - other interesting metrics
+    - convex hull
+    
     - proximity swap (nodes that should be in a line with adjacent nodes)
 
     - create a circular node pattern for 100 nodes
@@ -68,8 +73,8 @@
 
       var GRAY = [128, 128, 128, 255];
 
-      var CYAN = [49, 204, 167, 255];
-      var PINK = [255, 20, 147, 255];
+      var CYAN = [  0,255,255,255];
+      var PINK = [255, 20,147,255];
 
       var TEAL_0 = [28, 117, 138, 255]; var TEAL_0_LT = [28, 117, 138, 128];
       var TEAL_1 = [41, 171, 202, 255]; var TEAL_1_LT = [41, 171, 202, 128];
@@ -92,7 +97,7 @@
       var BROWN = [155, 145, 135, 255];
 
       var RED = [170, 29, 29, 255]; var ORANGE = [238, 136, 15, 255];
-      var YELLOW = [238, 214, 15, 255]; var GREEN = [158, 182, 58, 255];
+      // var YELLOW = [238, 214, 15, 255]; var GREEN = [158, 182, 58, 255];
       var BLUE = [29, 86, 170, 255]; var PURPLE = [127, 0, 255, 255];
 
       var BLANK = 0;
@@ -103,6 +108,8 @@
       var BLUE0 = 5;
       var PURPLE0 = 6;
       var BLACK0 = 7;
+
+      var YELLOW=[255,255,  0,255];
 
       // const RED           = [255,  0,  0,255]; const REDORANGE    = [255, 81,  0,255];
       // const ORANGE        = [255,127,  0,255]; const YELLOWORANGE = [255,190,  0,255];
@@ -224,19 +231,19 @@
 
     };
 
-    var CONSTANTS = {
-      DEGREES: '°',
-      PI: 'π',
-      TRIANGLE_UP: '▲',
-      TRIANGLE_DOWN: '▼',
-      INFINITY: '∞',
-      THETA: 'θ',
-      RADIANS: 'ᶜ',
-      IDENTICAL: '≡',
-      TRIANGLE_R: '►',
-      TRIANGLE_L: '◄',
-      SIGMA: 'Σ',
-      NOTE: '♫'
+    var CONSTANTS={
+      DEGREES:        '°',
+      PI:             'π',
+      TRIANGLE_UP:    '▲',
+      TRIANGLE_DOWN:  '▼',
+      INFINITY:       '∞',
+      THETA:          'θ',
+      RADIANS:        'ᶜ',
+      IDENTICAL:      '≡',
+      TRIANGLE_R:     '►',
+      TRIANGLE_L:     '◄',
+      SIGMA:          'Σ',
+      NOTE:           '♫'
     }
 
   }
@@ -381,7 +388,7 @@
 
       this.loadMethod   = LOAD_MODES.RANDOM;
 
-      this.greedy_mode = GREEDY_MODES.CLOSEST;
+      this.greedy_mode  = GREEDY_MODES.CLOSEST;
       // this.greedy_mode = GREEDY_MODES.FURTHEST;
       // this.greedy_mode = GREEDY_MODES.RANDOM;
 
@@ -624,66 +631,66 @@
 
       };
       root.prototype = Object.create(control.prototype);
-      root.prototype.draw = function (){
+      root.prototype.draw=function(){
 
-        this.active = this.hit &&
-          app.focus === this;
+        this.active=this.hit &&
+                    app.focus== this;
 
         push();
 
-        translate(this.x, this.y);
+          translate(this.x, this.y);
 
-        if (this.active) {
-          cursor(this.cursor);
-        }
+          if(this.active){
+            cursor(this.cursor);
+          }
 
-        noStroke();
-        fill(this.color);
+          noStroke();
+          fill(this.color);
 
-        if (this.border &&
-          this.active) {
+          if(this.border &&
+             this.active){
 
-          strokeWeight(0.25);
-          stroke(0);
+            strokeWeight(0.25);
+            stroke(0);
 
-        }
+          }
 
-        rect(0, 0, this.w, this.h, 5);
+          rect(0, 0, this.w, this.h, 1);
 
-        forEach(this.controls, 'draw');
+          forEach(this.controls, 'draw');
 
         pop();
 
       };
-      root.prototype.moved = function (x, y) {
+      root.prototype.moved=function(x, y){
         /* Required because root control doesn't have a parent */
 
-        if (this.hitTest(this.x + x, this.y + y)) {
+        if(this.hitTest(this.x+x, this.y+y)){
 
-          this.hit = true;
-          app.focus = this;
+          this.hit=true;
+          app.focus=this;
 
-          for (var c in this.controls) { this.controls[c].moved(this.x + x, this.y + y); }
+          for(var c in this.controls) { this.controls[c].moved(this.x + x, this.y + y); }
 
         }
-        else {
+        else{
 
-          this.hit = false;
+          this.hit=false;
 
-          for (var c in this.controls) { this.controls[c].hit = false; }
+          for(var c in this.controls){ this.controls[c].hit = false; }
 
         }
 
       };
-      root.prototype.resized = function (){
+      root.prototype.resized=function(){
 
-        this.w = windowWidth - 20;
-        this.h = windowHeight - 20;
+        this.w=windowWidth-20;
+        this.h=windowHeight-20;
 
         forEach(this.controls, 'resized');
 
       };
-      root.prototype.dragged = function (){
+      root.prototype.dragged=function(){
 
         forEach(this.controls, 'dragged');
 
@@ -1371,8 +1378,6 @@
 
       // var HEX_SIZE  = 0;
 
-      var geneticLoaded = false;
-
       function field(id, parent, x, y, w, h, props){
 
         control.call(this, id, parent, x, y, w, h);
@@ -1404,8 +1409,6 @@
         this.workingNodes   = [];         //  Path used to experiment
         this.historicNodes  = [];         //  Overall best path
 
-        this.sourceNodes    = [];         //  Nodes to select from
-
         this.intersections  = [];         //  node couples that intersect
 
         this.segments       = [];         //  array of segments
@@ -1422,9 +1425,9 @@
 
         this.bfSwitch       = false;      //  Brute Force Switch
 
-        this.loaded         = false;
+        this.loaded         = false;      //  Generic switch to use for each Method
 
-        this.index          = 0;
+        this.index          = 0;          //  Generic index used to iterate
 
         this.length         = 0;          //  Current length of greedy array as it's displayed incrementally
 
@@ -1438,13 +1441,11 @@
 
         // p.controls          = [];   //  Clear the controls array
 
-        p.tours             = [];
+        p.tours             = [];   //  Array of multiple tours as necessary
 
-        p.nodes             = [];
-        p.workingNodes      = [];
-        p.bestNodes         = [];
-
-        p.sourceNodes       = [];
+        p.nodes             = [];   //  Original nodes as loaded
+        p.workingNodes      = [];   //  Array used to test various tour orders
+        p.bestNodes         = [];   //  Array of current minimum tour length
 
         p.intersections     = [];
 
@@ -1472,11 +1473,11 @@
 
           for(var n=0; n<app.tourLength; n++){
 
-            // x1=data[n][0];
-            // y1=data[n][1];
+            x1=data[n][0];
+            y1=data[n][1];
 
-            x1=floor(random(150, p.w-20));
-            y1=floor(random( 20, p.h-20));
+            // x1=floor(random(150, p.w-20));
+            // y1=floor(random( 20, p.h-20));
 
             p.nodes.push(new node(n,
                                   this,
@@ -1552,10 +1553,10 @@
         };
         function drawPath(nodes, length){
 
-          stroke(127);
-          strokeWeight(1);
+          stroke(CYAN);
+          strokeWeight(1.5);
           noFill();
-          fill(0,10);
+          fill(0,0,0,64);
 
           beginShape();
 
@@ -1566,14 +1567,6 @@
           endShape(CLOSE);
 
         };
-
-        // function toggleDirty(){
-
-        //   for(var n=0; n<p.workingNodes.length; n++) {
-        //     p.workingNodes[n].dirty=!p.workingNodes[n].dirty;
-        //   }
-
-        // };
 
         function findClosestNode(arr, nod){
 
@@ -1619,7 +1612,7 @@
           }
 
           //  Indicate that Find Closest was used initially
-          p.loaded=true;
+          // p.loaded=true;
 
           return closestNodes;
 
@@ -1777,15 +1770,15 @@
           
           function genetic(){
             
-            if(geneticLoaded==false){
+            if(p.loaded==false){
 
               // var index=round(random(app.tourLength-1));
               
               var parent1=getClosestArray(getRandomInt(app.tourLength-1));
               var parent2=getClosestArray(getRandomInt(app.tourLength-1));
 
-              print(parent1);
-              print(parent2);
+              // print(parent1);
+              // print(parent2);
 
               // p.workingNodes=getClosestArray(index);
               // arrayCopy(getClosestArray(index), p.workingNodes);
@@ -1895,7 +1888,7 @@
           function ACO(){
 
             p.reset();
-print("Greedy Mode: " + app.greedy_mode);
+
             p.workingNodes=getGreedyTour(p.nodes, app.greedy_mode);
 
             updateSegments();
@@ -1986,23 +1979,26 @@ print("Greedy Mode: " + app.greedy_mode);
 
           function bruteForce(){
 
-            print("Disabled for safety");
+            // print("Disabled for safety");
 
-            return;
+            // return;
 
-            if(!p.bfSwitch){
-              nodePermutations(p.nodes.length, p.nodes);
-              p.bfSwitch=true;
+            var limit=7;
+
+            if(!p.loaded){
+              nodePermutations(limit, p.nodes);
+              // nodePermutations(p.nodes.length, p.nodes);
+              p.loaded=true;
               renumberNodes(p.bestNodes);
             }
 
-            if(app.elapsedTime<10){
-              swap3Consecutive(p.workingNodes);
-              drawPath(p.workingNodes);
-            }
+            // if(app.elapsedTime<10){
+            //   swap3Consecutive(p.workingNodes);
+            //   drawPath(p.workingNodes);
+            // }
 
             drawNodes(p.bestNodes);
-            drawPath(p.bestNodes);
+            drawPath(p.bestNodes,limit);
 
           };
 
@@ -2145,9 +2141,9 @@ print("Greedy Mode: " + app.greedy_mode);
 
               p.workingNodes=getGreedyTour(p.nodes, app.greedy_mode);
 
-              arrayCopy(p.workingNodes, p.bestNodes);
-              p.workingLength=getTourLength(p.workingNodes);
-              p.minimumLength=p.workingLength;
+              // arrayCopy(p.workingNodes, p.bestNodes);
+              // p.workingLength=getTourLength(p.workingNodes);
+              // p.minimumLength=p.workingLength;
 
             }
             else{
@@ -2166,7 +2162,7 @@ print("Greedy Mode: " + app.greedy_mode);
                                    p.intersections[0].id,
                                    p.intersections[2].id);
 
-                      // renumberNodes(p.workingNodes);
+                      
 
                     }
 
@@ -2176,10 +2172,11 @@ print("Greedy Mode: " + app.greedy_mode);
                 // else{
 
                   if(app.iterate &&
-                     frameCount%10==0){
+                     frameCount%4==0){
 
                     iterate();
-                    
+                    renumberNodes(p.workingNodes);
+
                   }
 
                 // }
@@ -2190,8 +2187,8 @@ print("Greedy Mode: " + app.greedy_mode);
 
             }
 
-            drawNodes(p.nodes);
             drawPath(p.workingNodes, p.length);
+            drawNodes(p.nodes);
 
             if(p.length<p.workingNodes.length){
               p.length++;                      
@@ -2361,14 +2358,14 @@ print("Greedy Mode: " + app.greedy_mode);
 
           function drawBorder(){
 
-            fill(BACKGROUND);
+            fill(p.color);
 
-            if(p.hit){ fill(BACKGROUND); };
+            // if(p.hit){ fill(BACKGROUND); };
 
-            stroke(127,0,0);
+            stroke(64);
             strokeWeight(0.5);
 
-              rect(0, 0, p.w, p.h, 5);
+              rect(150, 0, p.w-150, p.h);
 
           };
 
@@ -2376,19 +2373,17 @@ print("Greedy Mode: " + app.greedy_mode);
 
             textSize(11);
             textAlign(LEFT, TOP);
-            strokeWeight(1);
+            strokeWeight(0);
             stroke(128);
             noStroke();
-            fill(64);
+            fill(164);
 
               text(        'Tours:'            +
                   '\n'   + 'Nodes:'            +
-                  '\n'   + 'Source Nodes:'     +
+                  // '\n'   + 'Source Nodes:'     +
                   '\n\n' + 'Working Length:'   +
                   '\n'   + 'Best Length'       +
                   '\n'   + 'Historic Length:'  +
-                  '\n\n' + 'Algorithm:'        +          
-                  '\n'   + 'Greedy Method:'    +
                   '\n\n' + 'Current Node:'     +
                   '\n\n' + 'Factor:'           +
                   '\n\n' + 'Intersections:'    +
@@ -2396,35 +2391,32 @@ print("Greedy Mode: " + app.greedy_mode);
                   '\n\n' + 'Elapsed Time:'     ,                 
                   10, 10);
 
-            stroke(64);
+            stroke(0);
             noStroke();
-            fill(0);
+            fill(255);
 
             var id=app.currentNode;
-            
-            if(id==null){
-              id='null';
-            }
-            else{
-              id=app.currentNode.id;
-            }
+
+            if(id==null){ id='';                 }
+            else        { id=app.currentNode.id; }
+
+            textAlign(RIGHT, TOP);
 
               text(        p.tours.length              +
                   '\n'   + p.workingNodes.length       +
-                  '\n'   + round(p.sourceNodes.length) +
+                  // '\n'   + round(p.sourceNodes.length) +
                   '\n\n' + round(p.workingLength)      +
                   '\n'   + round(p.minimumLength)      +
                   '\n'   + round(p.historicLength)     +
-                  '\n\n' + app.algorithm               +
-                  '\n'   + app.greedy_mode            +
                   '\n\n' + id                          +
                   '\n\n' + nf(p.factor, 1, 5)          +
                   '\n\n' + p.intersections.length      +
                   '\n'   + p.segments.length           +
                   '\n\n' + nf(app.elapsedTime, 1, 1)   ,
-                  110, 10);
+                  130, 10);
 
             textSize(11);
+            textAlign(LEFT, CENTER);
 
               text(factorial(app.tourLength), 200, p.h-20);
               // text(factorial(app.tourLength).toLocaleString(), 10, p.h-200);
@@ -2445,8 +2437,6 @@ print("Greedy Mode: " + app.greedy_mode);
           var index=getRandomInt(p.workingNodes.length-1);
 
           p.workingNodes=getClosestArray(index);
-
-          // toggleDirty();
 
           updateTour();
 
@@ -2639,24 +2629,24 @@ print("Greedy Mode: " + app.greedy_mode);
       };
       node.prototype.draw = function (){
 
-        this.active = this.hit &&
-                      app.focus==this;
+        this.active=this.hit &&
+                    app.focus==this;
 
-        this.offset = 0;
-        var p = this;
+        this.offset=0;
+        var p=this;
 
-        if (this.hit) {
+        if(this.hit){
 
           cursor(this.cursor);
 
           if(app.left){ this.offset = 1; }
 
-          stroke(128,0,0);
-          strokeWeight(0.5);
+          stroke(YELLOW);
+          strokeWeight(1.25);
           noFill();
 
+          for(var n=0; n<round(sqrt(p.closest.length)); n++){
           // for(var n=0; n<p.closest.length; n++){
-          for (var n=0; n<8; n++) {
             line(p.x,
                  p.y,
                  p.closest[n].x,
@@ -2667,13 +2657,13 @@ print("Greedy Mode: " + app.greedy_mode);
 
         push();
 
-        var value = p.radius;
+        var value=p.radius;
         // print(value);
         fill(0, value);
 
         noStroke();
 
-        if (this.hit) {
+        if(this.hit){
 
           fill(128, 0, 0, 50);
 
@@ -2687,10 +2677,10 @@ print("Greedy Mode: " + app.greedy_mode);
 
         ellipse(p.x, p.y, p.radius, p.radius);
 
-        fill(96);
+        fill(222);
         textSize(9);
-        // if(this.id==0){textSize(20); }
-        text(p.id, p.x + 5, p.y + 5);
+
+          text(p.id, p.x+5, p.y+5);
 
         pop();
 
@@ -3623,11 +3613,11 @@ print("Greedy Mode: " + app.greedy_mode);
     /* LOAD CONTROLS */
 
     /* root control     */
-    var rt=new root('root', 5, 5, windowWidth - 20, windowHeight - 20,
+    var rt=new root('root', 0, 0, windowWidth, windowHeight,
       {
         border: true,
         cursor: CROSS,
-        color: RT
+        color:  BLACK
       });
 
     app.controls.push(rt);
@@ -3636,8 +3626,8 @@ print("Greedy Mode: " + app.greedy_mode);
     // rt.controls.push(new zen(getGUID(), rt, 100, 100, 400, 400, null));
 
     /* Field            */
-    rt.controls.push(new field('field', rt, 5, 5, rt.w - 205, rt.h - 10,
-      { color: 220 }));
+    rt.controls.push(new field('field', rt, 5, 5, rt.w - 205, rt.h - 25,
+      { color: 26 }));
 
     /* Accessories ---------------------------------------------------- */
 
@@ -3666,7 +3656,161 @@ print("Greedy Mode: " + app.greedy_mode);
         execute: toggleRunning
       }));
 
-    /** Music            */
+    /* Bruteforce -------------------------------------------------- */
+    var bruteforce=new option('BRUTE FORCE', rt, 20, 300, 12, 12,
+        { color:      WHITE,
+          execute:    setAlgorithm,
+          retrieve:   getAlgorithm,
+          algorithm:  ALGORITHMS.BRUTEFORCE,
+          caption:    "Brute Force" });
+    
+      app.controls.push(bruteforce);
+
+    /* Genetic -------------------------------------------------- */
+    var genetic=new option('GENETIC', rt, 20, 320, 12, 12,
+        { color:      WHITE,
+          execute:    setAlgorithm,
+          retrieve:   getAlgorithm,
+          algorithm:  ALGORITHMS.GENETIC,
+          caption:    "Genetic" });
+    
+      app.controls.push(genetic);
+
+    /* Simulated Annealing --------------------------------------------------- */
+    var annealing=new option('SIMULATED ANNEALING', rt, 20, 340, 12, 12,
+        { color:      WHITE,
+          execute:    setAlgorithm,
+          retrieve:   getAlgorithm,
+          algorithm:  ALGORITHMS.SIMULATEDANNEALING,
+          caption:    "S. Annealing" });
+    
+      app.controls.push(annealing);
+
+    /* Grow --------------------------------------------------- */
+    var grow=new option('GROW', rt, 20, 360, 12, 12,
+    { color:      WHITE,
+      execute:    setAlgorithm,
+      retrieve:   getAlgorithm,
+      algorithm:  ALGORITHMS.GROW,
+      caption:    "Grow" });
+
+    app.controls.push(grow);
+
+    /* ACO --------------------------------------------------- */
+    var aco=new option('ACO', rt, 20, 380, 12, 12,
+    { color:      WHITE,
+      execute:    setAlgorithm,
+      retrieve:   getAlgorithm,
+      algorithm:  ALGORITHMS.ACO,
+      caption:    "ACO" });
+
+    app.controls.push(aco);
+
+    /* Greedy --------------------------------------------------- */
+    var greedy=new option('GREEDY', rt, 20, 400, 12, 12,
+        { color:      WHITE,
+          execute:    setAlgorithm,
+          retrieve:   getAlgorithm,
+          algorithm:  ALGORITHMS.GREEDY,
+          caption:    "Greedy" });
+    
+      app.controls.push(greedy);
+
+    // ***** Greedy Methods *****
+
+        /* Closest --------------------------------------------------- */
+        var closest=new option('Closest', rt, 30, 420, 12, 12,
+          { color:      WHITE,
+            execute:    setMethod,
+            retrieve:   getMethod,
+            algorithm:  GREEDY_MODES.CLOSEST,
+            caption:    "Closest" });
+
+        app.controls.push(closest);
+
+        /* Farthest --------------------------------------------------- */
+        var farthest=new option('Farthest', rt, 30, 435, 12, 12,
+          { color:      WHITE,
+            execute:    setMethod,
+            retrieve:   getMethod,
+            algorithm:  GREEDY_MODES.FARTHEST,
+            caption:    "Farthest" });
+
+        app.controls.push(farthest);
+
+        /* Random --------------------------------------------------- */
+        var random=new option('Random', rt, 30, 450, 12, 12,
+          { color:      WHITE,
+            execute:    setMethod,
+            retrieve:   getMethod,
+            algorithm:  GREEDY_MODES.RANDOM,
+            caption:    "Random" });
+
+        app.controls.push(random);
+
+    /* Initialize --------------------------------------------------- */
+    var initialize=new checkbox('checkbox', rt, 20, 500, 12, 12,
+        { color:    WHITE,
+          execute:  toggleInitialize,
+          retrieve: getInitialize,
+          caption:  "Initialize" });
+    
+      app.controls.push(initialize);
+
+    /* Crossover ---------------------------------------------------- */
+    var crossover=new checkbox('checkbox', rt, 20, 520, 12, 12,
+        { color:    WHITE,
+          execute:  toggleCrossover,
+          retrieve: getCrossover,
+          caption:  "Crossover" });
+
+    app.controls.push(crossover);
+
+    /* Iterate ------------------------------------------------------ */
+    var iterate=new checkbox('checkbox', rt, 20, 540, 12, 12,
+        { color:    WHITE,
+          execute:  toggleIterate,
+          retrieve: getIterate,
+          caption:  "Iterate" });
+  
+      app.controls.push(iterate);
+
+    /* Telemetry ---------------------------------------------------- */
+    var telem=new telemetry('telemetry', rt, rt.w - 195, 10, 190, rt.h - 10,
+      { color: GRAY});
+
+    app.controls.push(telem);
+
+    /* Transition ---------------------------------------------------- */
+    // var trans=new transition(getGUID(), rt, 1000, 0, width-200, height,
+    // {color:     WHITE,
+    // visible:   true,
+    // type:      round(random(0,4))});
+
+    // app.controls.push(trans);
+
+    /* SplashScreen ------------------------------------------------- */
+    {
+
+      // /* Splash Screen   */
+      // var splashScreen=new splash(getGUID(), rt, width/2-200, height/2-200, 400, 400,
+      // {color:     BLACK,
+      // font:      monoFont,
+      // retrieve:  getInfo,
+      // cursor:    CROSS});
+
+      // /* Close         */
+      // splashScreen.controls.push(new button(getGUID(), splashScreen, 180, 360, 120, 20,
+      // {text:      'Close',
+      // font:      monoFont,
+      // execute:   toggleInfo,
+      // color:     WHITE,
+      // cursor:    HAND}));
+
+      // rt.controls.push(splashScreen);
+
+    }
+
     // rt.controls.push(new music('music', rt, 35, rt.h-35, 50, 50,
     //   {cursor:    HAND,
     //    execute:   setMusic,
@@ -3702,170 +3846,6 @@ print("Greedy Mode: " + app.greedy_mode);
     // color:     getColor(H_BLUE,2)});
 
     // app.controls.push(ps);
-
-    // var ALGORITHMS={
-
-    //   BRUTEFORCE:             2,
-
-    //   NEAREST:                4,
-    //   ITERATE:                5,
-
-    // }
-
-    /* Bruteforce -------------------------------------------------- */
-    var bruteforce=new option('BRUTE FORCE', rt, 20, 300, 12, 12,
-        { color:      BLACK,
-          execute:    setAlgorithm,
-          retrieve:   getAlgorithm,
-          algorithm:  ALGORITHMS.BRUTEFORCE,
-          caption:    "Brute Force" });
-    
-      app.controls.push(bruteforce);
-
-    /* Genetic -------------------------------------------------- */
-    var genetic=new option('GENETIC', rt, 20, 320, 12, 12,
-        { color:      BLACK,
-          execute:    setAlgorithm,
-          retrieve:   getAlgorithm,
-          algorithm:  ALGORITHMS.GENETIC,
-          caption:    "Genetic" });
-    
-      app.controls.push(genetic);
-
-    /* Simulated Annealing --------------------------------------------------- */
-    var annealing=new option('SIMULATED ANNEALING', rt, 20, 340, 12, 12,
-        { color:      BLACK,
-          execute:    setAlgorithm,
-          retrieve:   getAlgorithm,
-          algorithm:  ALGORITHMS.SIMULATEDANNEALING,
-          caption:    "S. Annealing" });
-    
-      app.controls.push(annealing);
-
-    /* Grow --------------------------------------------------- */
-    var grow=new option('GROW', rt, 20, 360, 12, 12,
-    { color:      BLACK,
-      execute:    setAlgorithm,
-      retrieve:   getAlgorithm,
-      algorithm:  ALGORITHMS.GROW,
-      caption:    "Grow" });
-
-    app.controls.push(grow);
-
-    /* ACO --------------------------------------------------- */
-    var aco=new option('ACO', rt, 20, 380, 12, 12,
-    { color:      BLACK,
-      execute:    setAlgorithm,
-      retrieve:   getAlgorithm,
-      algorithm:  ALGORITHMS.ACO,
-      caption:    "ACO" });
-
-    app.controls.push(aco);
-
-    /* Greedy --------------------------------------------------- */
-    var greedy=new option('GREEDY', rt, 20, 400, 12, 12,
-        { color:      BLACK,
-          execute:    setAlgorithm,
-          retrieve:   getAlgorithm,
-          algorithm:  ALGORITHMS.GREEDY,
-          caption:    "Greedy" });
-    
-      app.controls.push(greedy);
-
-    // ***** Greedy Methods *****
-
-        /* Closest --------------------------------------------------- */
-        var closest=new option('Closest', rt, 30, 420, 12, 12,
-          { color:      BLACK,
-            execute:    setMethod,
-            retrieve:   getMethod,
-            algorithm:  GREEDY_MODES.CLOSEST,
-            caption:    "Closest" });
-
-        app.controls.push(closest);
-
-        /* Farthest --------------------------------------------------- */
-        var farthest=new option('Farthest', rt, 30, 435, 12, 12,
-          { color:      BLACK,
-            execute:    setMethod,
-            retrieve:   getMethod,
-            algorithm:  GREEDY_MODES.FARTHEST,
-            caption:    "Farthest" });
-
-        app.controls.push(farthest);
-
-        /* Random --------------------------------------------------- */
-        var random=new option('Random', rt, 30, 450, 12, 12,
-          { color:      BLACK,
-            execute:    setMethod,
-            retrieve:   getMethod,
-            algorithm:  GREEDY_MODES.RANDOM,
-            caption:    "Random" });
-
-        app.controls.push(random);
-
-    /* Initialize --------------------------------------------------- */
-    var initialize=new checkbox('checkbox', rt, 20, 500, 12, 12,
-        { color:    BLACK,
-          execute:  toggleInitialize,
-          retrieve: getInitialize,
-          caption:  "Initialize" });
-    
-      app.controls.push(initialize);
-
-    /* Crossover ---------------------------------------------------- */
-    var crossover=new checkbox('checkbox', rt, 20, 520, 12, 12,
-        { color:    BLACK,
-          execute:  toggleCrossover,
-          retrieve: getCrossover,
-          caption:  "Crossover" });
-
-    app.controls.push(crossover);
-
-    /* Iterate ------------------------------------------------------ */
-    var iterate=new checkbox('checkbox', rt, 20, 540, 12, 12,
-        { color:    BLACK,
-          execute:  toggleIterate,
-          retrieve: getIterate,
-          caption:  "Iterate" });
-  
-      app.controls.push(iterate);
-
-    /* Telemetry ---------------------------------------------------- */
-    var telem=new telemetry('telemetry', rt, rt.w - 195, 10, 190, rt.h - 10,
-      { color: BLACK});
-
-    app.controls.push(telem);
-
-    /* Transition ---------------------------------------------------- */
-    // var trans=new transition(getGUID(), rt, 1000, 0, width-200, height,
-    // {color:     WHITE,
-    // visible:   true,
-    // type:      round(random(0,4))});
-
-    // app.controls.push(trans);
-
-    /* SplashScreen ------------------------------------------------- */
-    {
-
-      // /* Splash Screen   */
-      // var splashScreen=new splash(getGUID(), rt, width/2-200, height/2-200, 400, 400,
-      // {color:     BLACK,
-      // font:      monoFont,
-      // retrieve:  getInfo,
-      // cursor:    CROSS});
-
-      // /* Close         */
-      // splashScreen.controls.push(new button(getGUID(), splashScreen, 180, 360, 120, 20,
-      // {text:      'Close',
-      // font:      monoFont,
-      // execute:   toggleInfo,
-      // color:     WHITE,
-      // cursor:    HAND}));
-
-      // rt.controls.push(splashScreen);
-
-    }
 
   };
 
@@ -3923,7 +3903,7 @@ print("Greedy Mode: " + app.greedy_mode);
 
   function draw(){
 
-    background(128);
+    background(32);
 
     forEach(app.controls, 'draw');
 
