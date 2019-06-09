@@ -2,16 +2,21 @@
 
   TO DO:
 
-    - Page Title "Travelling Salesman Problem (TSP)"
+    - add random tour mode
+
+    - domain and range of points
+
     - Metrics regarding extent of points and average distance between connected points
     - other interesting metrics
     - convex hull
-    
+
     - proximity swap (nodes that should be in a line with adjacent nodes)
 
     - create a circular node pattern for 100 nodes
 
   TO DONE:
+
+    - Page Title "Travelling Salesman Problem (TSP)"
 
     - farthest option button
     - closest option button
@@ -255,27 +260,27 @@
   }
 
   var data=[
-            [454,154],[484,128],[504,132],[552,164],[422,129],
-            [409,119],[408,98],[432,77],[456,82],[491,58],
-            [469,38],[462,33],[338,42],[267,46],[185,53],
-            [210,110],[309,159],[316,198],[382,208],[428,240],
-            [441,240],[516,213],[536,241],[513,249],[463,308],
-            [458,327],[432,324],[433,354],[397,336],[354,327],
-            [362,393],[344,408],[289,379],[255,392],[248,345],
-            [228,325],[275,275],[182,212],[153,207],[163,270],
-            [175,380],[159,387],[169,401],[162,420],[204,392],
-            [229,425],[195,472],[183,553],[193,574],[204,568],
-            [264,509],[262,462],[268,447],[294,503],[303,534],
-            [319,502],[341,481],[351,465],[377,550],[404,504],
-            [422,467],[448,490],[442,503],[466,522],[479,512],
-            [481,541],[480,546],[503,560],[551,538],[664,550],
-            [666,489],[699,463],[704,447],[612,390],[605,416],
-            [607,460],[568,436],[536,440],[528,433],[495,427],
-            [470,382],[545,333],[554,325],[635,317],[653,335],
-            [655,328],[692,293],[635,259],[603,260],[599,233],
-            [625,215],[672,235],[673,198],[698,162],[673,146],
-            [653,128],[656,102],[642,45],[564,85],[578,121]
-          ];
+            [474,154],[504,128],[524,132],[572,164],[442,129],
+            [429,119],[428,98],[452,77],[476,82],[511,58],
+            [489,38],[482,33],[358,42],[287,46],[205,53],
+            [230,110],[329,159],[336,198],[402,208],[448,240],
+            [461,240],[536,213],[556,241],[533,249],[483,308],
+            [478,327],[452,324],[453,354],[417,336],[374,327],
+            [382,393],[364,408],[309,379],[275,392],[268,345],
+            [248,325],[295,275],[202,212],[173,207],[183,270],
+            [195,380],[179,387],[189,401],[182,420],[224,392],
+            [249,425],[215,472],[203,553],[213,574],[224,568],
+            [284,509],[282,462],[288,447],[314,503],[323,534],
+            [339,502],[361,481],[371,465],[397,550],[424,504],
+            [442,467],[468,490],[462,503],[486,522],[499,512],
+            [501,541],[500,546],[523,560],[571,538],[684,550],
+            [686,489],[719,463],[724,447],[632,390],[625,416],
+            [627,460],[588,436],[556,440],[548,433],[515,427],
+            [490,382],[565,333],[574,325],[655,317],[673,335],
+            [675,328],[712,293],[655,259],[623,260],[619,233],
+            [645,215],[692,235],[693,198],[718,162],[693,146],
+            [673,128],[676,102],[662,45],[584,85],[598,121]
+           ];
 
   var cnv;
 
@@ -285,7 +290,7 @@
 
       for(var n=1; n<=arr.length; n++){
 
-        s+=("[" + arr[n-1].x + ","
+        s+=("[" + (arr[n-1].x+20) + ","
                 + arr[n-1].y + "]");
 
         if(n!=arr.length){
@@ -342,44 +347,48 @@
     /* Platform Constants  -------------------- */
     {
 
-      this.dirty = false;             //  Has a reset occurred
+      this.dirty        = false;    //  Has a reset occurred
 
-      this.debug = true;              //  Mode that displays enhanced debugging tools
+      this.debug        = true;     //  Mode that displays enhanced debugging tools
 
-      this.frameRate = 0;             //  Refresh speed
+      this.frameRate    = 0;        //  Refresh speed
 
-      this.running = false;           //  Currently solving the puzzle
-      this.progress = 0;              //  Puzzle is this % solved
+      this.running      = false;    //  Currently solving the puzzle
+      this.progress     = 0;        //  Puzzle is this % solved
 
-      this.mouseX = 0;                //  Current mouseX location
-      this.mouseY = 0;                //  Current mouseY location
+      this.mouseX       = 0;        //  Current mouseX location
+      this.mouseY       = 0;        //  Current mouseY location
 
-      this.left = false;              //  Is the left   mouse button pressed
-      this.right = false;             //  Is the right  mouse button pressed
-      this.center = false;            //  Is the center mouse button pressed
+      this.left         = false;    //  Is the left   mouse button pressed
+      this.right        = false;    //  Is the right  mouse button pressed
+      this.center       = false;    //  Is the center mouse button pressed
+      
+      this.control      = false;    //  Is the CONTROL key pressed
+      this.alt          = false;    //  Is the ALT key pressed
+      this.shift        = false;    //  Is the SHIFT key pressed
 
-      this.dragStartX = 0;
-      this.dragStartY = 0;
+      this.dragStartX   = 0;
+      this.dragStartY   = 0;
 
-      this.dragging = false;          //  Is the mouse cursor moving and the left button pressed?
+      this.dragging     = false;    //  Is the mouse cursor moving and the left button pressed?
 
       this.dragDirection = DRAG_DIRECTIONS.NONE;
 
-      this.focus = null;              //  The control with focus
+      this.focus        = null;     //  The control with focus
 
-      this.controls = [];             //  Collection of controls in the app
+      this.controls     = [];       //  Collection of controls in the app
       this.controlCount = 0;
 
-      this.keys = [];                 //  Array holding the value of all KeyCodes
+      this.keys         = [];       //  Array holding the value of all KeyCodes
 
-      this.fullscreen = false;        //  Is the display set to take up the entire screen ie. No Chrome
+      this.fullscreen   = false;    //  Is the display set to take up the entire screen ie. No Chrome
 
-      this.info = 0;                  //  Is the info frame displayed
-      this.telemetry = false;         //  Is telemetry visible
+      this.info = 0;                //  Is the info frame displayed
+      this.telemetry    = false;    //  Is telemetry visible
 
-      this.startTime = millis();
+      this.startTime    = millis();
 
-      this.elapsedTime = 0;
+      this.elapsedTime  = 0;
 
     }
 
@@ -388,9 +397,9 @@
 
       this.loadMethod   = LOAD_MODES.RANDOM;
 
-      this.greedy_mode  = GREEDY_MODES.CLOSEST;
+      // this.greedy_mode  = GREEDY_MODES.CLOSEST;
       // this.greedy_mode = GREEDY_MODES.FURTHEST;
-      // this.greedy_mode = GREEDY_MODES.RANDOM;
+      this.greedy_mode = GREEDY_MODES.RANDOM;
 
       // this.algorithm    = ALGORITHMS.GROW;
       this.algorithm    = ALGORITHMS.GREEDY;
@@ -722,15 +731,15 @@
 
         function border(){
 
-          noStroke();
+          fill(24);
+          stroke(64);
+          strokeWeight(0.5);
 
-          fill(getColor(p.color, 50));
-
-          if (p.hit) {
+          if(p.hit){
             // fill(getColor(p.color, 70));
           }
 
-          rect(p.offset, 0, p.w, p.h, 5);
+            rect(p.offset, 0, p.w, p.h, 1);
 
         };
         function title(){
@@ -745,9 +754,10 @@
         };
         function environment(){
 
+          noStroke();
           fill(getColor(p.color, 50));
 
-          rect(p.offset + 10, 10, p.w - 20, 385, 3);
+          // rect(p.offset + 10, 10, p.w - 20, 385, 3);
 
           textAlign(LEFT, TOP);
           textSize(10);
@@ -755,58 +765,58 @@
 
           fill(getColor(TEAL_2, 75));
 
-          text('\n' + 'Cursor Coordinates' +
-            '\n\n\n\n' + 'Mouse Buttons' +
-            '\n\n\n\n\n\n\n\n' + 'Keys' +
-            '\n\n\n\n\n' + 'Environment',
-            col0, row0);
+          text('\n'               + 'Cursor Coordinates' +
+               '\n\n\n\n'         + 'Mouse Buttons' +
+               '\n\n\n\n\n\n\n\n' + 'Keys' +
+               '\n\n\n\n\n'       + 'Environment',
+               col0, row0);
 
           fill(getColor(WHITE, 75));
 
-          text('\n\n' + 'x:' +
-            '\n' + 'y:' +
-            '\n\n\n' + 'Left:' +
-            '\n' + 'Right:' +
-            '\n' + 'Center:' +
-            '\n\n' + 'Dragging:' +
-            '\n' + 'Drag Direction:' +
-            '\n\n\n' + 'Control:' +
-            '\n' + 'Alt:' +
-            '\n' + 'Shift:' +
-            '\n\n\n' + 'Canvas Width:' +
-            '\n' + 'Canvas Height:' +
-            '\n\n' + 'Window Width:' +
-            '\n' + 'Window Height:' +
-            '\n\n' + 'Display Width:' +
-            '\n' + 'Display Height:' +
-            '\n\n' + 'Focused:' +
-            '\n\n' + 'Frame Count:' +
-            '\n' + 'Frame Rate:',
-            col1, row0);
+          text('\n\n'  + 'x:' +
+              '\n'     + 'y:' +
+              '\n\n\n' + 'Left:' +
+              '\n'     + 'Right:' +
+              '\n'     + 'Center:' +
+              '\n\n'   + 'Dragging:' +
+              '\n'     + 'Drag Direction:' +
+              '\n\n\n' + 'Control:' +
+              '\n'     + 'Alt:' +
+              '\n'     + 'Shift:' +
+              '\n\n\n' + 'Canvas Width:' +
+              '\n'     + 'Canvas Height:' +
+              '\n\n'   + 'Window Width:' +
+              '\n'     + 'Window Height:' +
+              '\n\n'   + 'Display Width:' +
+              '\n'     + 'Display Height:' +
+              '\n\n'   + 'Focused:' +
+              '\n\n'   + 'Frame Count:' +
+              '\n'     + 'Frame Rate:',
+              col1, row0+5);
 
           fill(getColor(YELLOW, 75));
           textAlign(RIGHT, TOP);
 
-          text('\n\n' + mouseX +
-            '\n' + mouseY +
-            '\n\n\n' + app.left +
-            '\n' + app.right +
-            '\n' + app.center +
-            '\n\n' + app.dragging +
-            '\n' + app.dragDirection +
-            '\n\n\n' + app.keys[KeyCodes.CONTROL] +
-            '\n' + app.keys[KeyCodes.ALT] +
-            '\n' + app.keys[KeyCodes.SHIFT] +
-            '\n\n\n' + width +
-            '\n' + height +
-            '\n\n' + windowWidth +
-            '\n' + windowHeight +
-            '\n\n' + displayWidth +
-            '\n' + displayHeight +
-            '\n\n' + focused +
-            '\n\n' + frameCount +
-            '\n' + nf(app.frameRate, 1, 1),
-            col2, row0);
+          text('\n\n'   + mouseX +
+               '\n'     + mouseY +
+               '\n\n\n' + app.left +
+               '\n'     + app.right +
+               '\n'     + app.center +
+               '\n\n'   + app.dragging +
+               '\n'     + app.dragDirection +
+               '\n\n\n' + app.control +
+               '\n'     + app.alt +
+               '\n'     + app.shift +
+               '\n\n\n' + width +
+               '\n'     + height +
+               '\n\n'   + windowWidth +
+               '\n'     + windowHeight +
+               '\n\n'   + displayWidth +
+               '\n'     + displayHeight +
+               '\n\n'   + focused +
+               '\n\n'   + frameCount +
+               '\n'     + nf(app.frameRate, 1, 1),
+               col2, row0+5);
 
         };
         function appSpecific(){
@@ -815,7 +825,7 @@
 
           fill(getColor(p.color, 50));
 
-          rect(p.offset + 10, top, p.w - 20, p.h - 415, 3);
+          // rect(p.offset + 10, top, p.w - 20, p.h - 415, 3);
 
           textAlign(LEFT, TOP);
           textSize(10);
@@ -823,20 +833,20 @@
 
           fill(getColor(TEAL_2, 75));
 
-          text('\n' + 'Controls' +
-            '\n\n\n\n' + 'Score' +
-            '\n\n\n\n' + 'Misc',
-            col0, top);
+          text('\n'       + 'Controls' +
+               '\n\n\n\n' + 'Score' +
+               '\n\n\n\n' + 'Misc',
+               col0, top);
 
           fill(getColor(WHITE, 75));
 
-          text('\n\n' + 'Count:' +
-            '\n' + 'Active:' +
-            '\n\n\n' + 'Remaining:' +
-            '\n' + 'Mistakes:' +
-            '\n\n\n' + 'Music:' +
-            '\n' + 'Level:',
-            col1, top);
+          text('\n\n'   + 'Count:' +
+               '\n'     + 'Active:' +
+               '\n\n\n' + 'Remaining:' +
+               '\n'     + 'Mistakes:' +
+               '\n\n\n' + 'Music:' +
+               '\n'     + 'Level:',
+               col1, top+5);
 
           fill(getColor(YELLOW, 75));
           textAlign(RIGHT, TOP);
@@ -855,7 +865,7 @@
                    '\n' + app.errors +
                '\n\n\n' + app.musicOn +
                    '\n' + app.level,
-               col2, top);
+               col2, top+5);
 
         };
 
@@ -871,7 +881,7 @@
 
         push();
 
-        translate(this.x, this.y);
+        translate(this.x+0.5, this.y+0.5);
 
         border();
         // title();
@@ -1413,6 +1423,14 @@
 
         this.segments       = [];         //  array of segments
 
+        this.minX           = 0;
+        this.maxX           = 0;
+        this.minY           = 0;
+        this.maxY           = 0;
+
+        this.domain         = 0;
+        this.range          = 0;
+
         // ----------
 
         this.originalLength = Infinity;   //  Length of original path
@@ -1427,7 +1445,7 @@
 
         this.loaded         = false;      //  Generic switch to use for each Method
 
-        this.index          = 0;          //  Generic index used to iterate
+        this.index          = 99;          //  Generic index used to iterate
 
         this.length         = 0;          //  Current length of greedy array as it's displayed incrementally
 
@@ -1466,6 +1484,16 @@
         
         p.length            = 0;
 
+        p.minX                = Infinity;
+        p.maxX                = 0;
+
+        p.domain              = p.maxX-p.minX;
+
+        p.minY                = Infinity;
+        p.maxY                = 0;
+
+        p.range               = p.maxY-p.minY;
+
         function load(){
 
           var x1=0;
@@ -1479,6 +1507,11 @@
             // x1=floor(random(150, p.w-20));
             // y1=floor(random( 20, p.h-20));
 
+            if(x1<p.minX){ p.minX=x1; }
+            if(x1>p.maxX){ p.maxX=x1; }
+            if(y1<p.minY){ p.minY=y1; }
+            if(y1>p.maxY){ p.maxY=y1; }
+
             p.nodes.push(new node(n,
                                   this,
                                   x1, y1,
@@ -1487,11 +1520,12 @@
                         );
           }
 
+          p.domain=p.maxX-p.minX;
+          p.range=p.maxY-p.minY;
+
         };
 
         load();
-
-        arrayCopy(p.nodes, p.workingNodes);
 
         function sortByDistance(arr, nod){
 
@@ -2191,9 +2225,12 @@
             drawNodes(p.nodes);
 
             if(p.length<p.workingNodes.length){
-              p.length++;                      
+              // p.length++;
+              p.length=p.workingNodes.length;
             }      
             
+            p.workingLength=getTourLength(p.workingNodes);
+
           };
 
         }
@@ -2388,8 +2425,15 @@
                   '\n\n' + 'Factor:'           +
                   '\n\n' + 'Intersections:'    +
                   '\n'   + 'Segments:'         +
+                  '\n\n' + 'Average Distance:' +
+                  '\n\n' + 'Min X:'            +
+                  '\n'   + 'Max X:'            +
+                  '\n\n' + 'Domain:'           +
+                  '\n\n' + 'Min Y:'            +
+                  '\n'   + 'Max Y:'            +                  
+                  '\n\n' + 'Range:'            +
                   '\n\n' + 'Elapsed Time:'     ,                 
-                  10, 10);
+                  0, 10);
 
             stroke(0);
             noStroke();
@@ -2400,31 +2444,45 @@
             if(id==null){ id='';                 }
             else        { id=app.currentNode.id; }
 
+            var avgDistance=round(p.workingLength/p.workingNodes.length);
+
             textAlign(RIGHT, TOP);
 
               text(        p.tours.length              +
-                  '\n'   + p.workingNodes.length       +
-                  // '\n'   + round(p.sourceNodes.length) +
-                  '\n\n' + round(p.workingLength)      +
-                  '\n'   + round(p.minimumLength)      +
-                  '\n'   + round(p.historicLength)     +
-                  '\n\n' + id                          +
-                  '\n\n' + nf(p.factor, 1, 5)          +
-                  '\n\n' + p.intersections.length      +
-                  '\n'   + p.segments.length           +
-                  '\n\n' + nf(app.elapsedTime, 1, 1)   ,
-                  130, 10);
+                   '\n'   + p.workingNodes.length       +
+                   // '\n'   + round(p.sourceNodes.length) +
+                   '\n\n' + round(getTourLength(p.workingNodes))      +
+                   '\n'   + round(p.minimumLength)      +
+                   '\n'   + round(p.historicLength)     +
+                   '\n\n' + id                          +
+                   '\n\n' + nf(p.factor, 1, 5)          +
+                   '\n\n' + p.intersections.length      +
+                   '\n'   + p.segments.length           +
+                   '\n\n' + avgDistance                 +
+                   '\n\n' + p.minX                      +
+                   '\n'   + p.maxX                      +
+                   '\n\n' + p.domain                    +
+                   '\n\n' + p.minY                      +
+                   '\n'   + p.maxY                      +                  
+                   '\n\n' + p.range                     +
+                   '\n\n' + nf(app.elapsedTime, 1, 1)   ,
+                   140, 10);
 
             textSize(11);
             textAlign(LEFT, CENTER);
 
-              text(factorial(app.tourLength), 200, p.h-20);
+              // text(factorial(app.tourLength), 200, p.h-20);
               // text(factorial(app.tourLength).toLocaleString(), 10, p.h-200);
 
             //  Center origin
             // translate(this.w/2,this.h/2);
 
             // ellipse(0,0,5,5);
+
+            textSize(24);
+            textAlign(LEFT,BOTTOM);
+
+              text("Travelling Salesman Problem (TSP)", 160,p.h-5);
 
           };
 
@@ -2436,9 +2494,9 @@
 
           var index=getRandomInt(p.workingNodes.length-1);
 
-          p.workingNodes=getClosestArray(index);
-
-          updateTour();
+          arrayCopy(p.workingNodes,getClosestArray(index));
+print(getTourLength(p.workingNodes));
+          // updateTour();
 
         };
 
@@ -2449,8 +2507,8 @@
             if(app.algorithm!=ALGORITHMS.ACO){
 
               if(app.initialize){
-                initialCondition(); 
-                randomizeArray(p.workingNodes);
+                // initialCondition(); 
+                // randomizeArray(p.workingNodes);
               }
 
             }
@@ -2472,19 +2530,26 @@
 
         };
 
-          this.active=this.hit &&
-                      app.focus==this;
-          
+          // this.active=this.hit &&
+                      app.focus==this;                    
+
           push();
 
             translate(this.x+0.5,
                       this.y+0.5);
 
-            drawBorder();
-            drawTour();
-            drawProperties();
+              drawBorder();
+              drawTour();
+              drawProperties();
 
           pop();
+
+          if(p.workingLength<4550){
+            print(p.workingLength);
+          }
+          else{
+            p.reset();
+          }
 
       };
       field.prototype.hitTest=function(x, y){
@@ -2641,16 +2706,20 @@
 
           if(app.left){ this.offset = 1; }
 
-          stroke(YELLOW);
-          strokeWeight(1.25);
-          noFill();
+          if(app.control){
 
-          for(var n=0; n<round(sqrt(p.closest.length)); n++){
-          // for(var n=0; n<p.closest.length; n++){
-            line(p.x,
-                 p.y,
-                 p.closest[n].x,
-                 p.closest[n].y);
+            stroke(YELLOW);
+            strokeWeight(1.25);
+            noFill();
+
+            for(var n=0; n<round(sqrt(p.closest.length)); n++){
+            // for(var n=0; n<p.closest.length; n++){
+              line(p.x,
+                  p.y,
+                  p.closest[n].x,
+                  p.closest[n].y);
+            }
+
           }
 
         }
@@ -2659,23 +2728,26 @@
 
         var value=p.radius;
         // print(value);
-        fill(0, value);
+        fill(192, value);
 
         noStroke();
 
         if(this.hit){
 
-          fill(128, 0, 0, 50);
+          fill(192,128);
 
           ellipse(p.x, p.y, p.w, p.w);
 
         }
 
-        if (app.algorithm != ALGORITHMS.GROW) {
-          p.radius = 10;
+        if(app.algorithm!=ALGORITHMS.GROW){
+          p.radius=10;
         }
 
-        ellipse(p.x, p.y, p.radius, p.radius);
+        ellipse(p.x,
+                p.y,
+                p.radius,
+                p.radius);
 
         fill(222);
         textSize(9);
@@ -3607,8 +3679,8 @@
 
     /*  Initialize the app.keys array and the values of the special keys */
     app.keys[KeyCodes.CONTROL] = false;
-    app.keys[KeyCodes.ALT] = false;
-    app.keys[KeyCodes.SHIFT] = false;
+    app.keys[KeyCodes.ALT]     = false;
+    app.keys[KeyCodes.SHIFT]   = false;
 
     /* LOAD CONTROLS */
 
@@ -3627,12 +3699,12 @@
 
     /* Field            */
     rt.controls.push(new field('field', rt, 5, 5, rt.w - 205, rt.h - 25,
-      { color: 26 }));
+      { color: color(26,26,26,255) }));
 
     /* Accessories ---------------------------------------------------- */
 
     /** Reset Button     */
-    rt.controls.push(new resetButton('reset', rt, 120, 400, 28, 28,
+    rt.controls.push(new resetButton('reset', rt, 120, 500, 28, 28,
       {
         cursor: HAND,
         color: BLACK,
@@ -3640,7 +3712,7 @@
       }));
 
     /** Shuffle Button   */
-    rt.controls.push(new shuffleButton('shuffle', rt, 120, 450, 28, 28,
+    rt.controls.push(new shuffleButton('shuffle', rt, 120, 550, 28, 28,
       {
         cursor: HAND,
         color: BLACK,
@@ -3648,7 +3720,7 @@
       }));
 
     /** Solve Button     */
-    rt.controls.push(new solveButton('solve', rt, 120, 500, 28, 28,
+    rt.controls.push(new solveButton('solve', rt, 120, 600, 28, 28,
       {
         cursor: HAND,
         color: BLACK,
@@ -3657,7 +3729,7 @@
       }));
 
     /* Bruteforce -------------------------------------------------- */
-    var bruteforce=new option('BRUTE FORCE', rt, 20, 300, 12, 12,
+    var bruteforce=new option('BRUTE FORCE', rt, 20, 400, 12, 12,
         { color:      WHITE,
           execute:    setAlgorithm,
           retrieve:   getAlgorithm,
@@ -3667,7 +3739,7 @@
       app.controls.push(bruteforce);
 
     /* Genetic -------------------------------------------------- */
-    var genetic=new option('GENETIC', rt, 20, 320, 12, 12,
+    var genetic=new option('GENETIC', rt, 20, 420, 12, 12,
         { color:      WHITE,
           execute:    setAlgorithm,
           retrieve:   getAlgorithm,
@@ -3677,7 +3749,7 @@
       app.controls.push(genetic);
 
     /* Simulated Annealing --------------------------------------------------- */
-    var annealing=new option('SIMULATED ANNEALING', rt, 20, 340, 12, 12,
+    var annealing=new option('SIMULATED ANNEALING', rt, 20, 440, 12, 12,
         { color:      WHITE,
           execute:    setAlgorithm,
           retrieve:   getAlgorithm,
@@ -3687,7 +3759,7 @@
       app.controls.push(annealing);
 
     /* Grow --------------------------------------------------- */
-    var grow=new option('GROW', rt, 20, 360, 12, 12,
+    var grow=new option('GROW', rt, 20, 460, 12, 12,
     { color:      WHITE,
       execute:    setAlgorithm,
       retrieve:   getAlgorithm,
@@ -3697,7 +3769,7 @@
     app.controls.push(grow);
 
     /* ACO --------------------------------------------------- */
-    var aco=new option('ACO', rt, 20, 380, 12, 12,
+    var aco=new option('ACO', rt, 20, 480, 12, 12,
     { color:      WHITE,
       execute:    setAlgorithm,
       retrieve:   getAlgorithm,
@@ -3707,7 +3779,7 @@
     app.controls.push(aco);
 
     /* Greedy --------------------------------------------------- */
-    var greedy=new option('GREEDY', rt, 20, 400, 12, 12,
+    var greedy=new option('GREEDY', rt, 20, 500, 12, 12,
         { color:      WHITE,
           execute:    setAlgorithm,
           retrieve:   getAlgorithm,
@@ -3719,7 +3791,7 @@
     // ***** Greedy Methods *****
 
         /* Closest --------------------------------------------------- */
-        var closest=new option('Closest', rt, 30, 420, 12, 12,
+        var closest=new option('Closest', rt, 30, 520, 12, 12,
           { color:      WHITE,
             execute:    setMethod,
             retrieve:   getMethod,
@@ -3729,7 +3801,7 @@
         app.controls.push(closest);
 
         /* Farthest --------------------------------------------------- */
-        var farthest=new option('Farthest', rt, 30, 435, 12, 12,
+        var farthest=new option('Farthest', rt, 30, 535, 12, 12,
           { color:      WHITE,
             execute:    setMethod,
             retrieve:   getMethod,
@@ -3739,7 +3811,7 @@
         app.controls.push(farthest);
 
         /* Random --------------------------------------------------- */
-        var random=new option('Random', rt, 30, 450, 12, 12,
+        var random=new option('Random', rt, 30, 550, 12, 12,
           { color:      WHITE,
             execute:    setMethod,
             retrieve:   getMethod,
@@ -3749,7 +3821,7 @@
         app.controls.push(random);
 
     /* Initialize --------------------------------------------------- */
-    var initialize=new checkbox('checkbox', rt, 20, 500, 12, 12,
+    var initialize=new checkbox('checkbox', rt, 20, 600, 12, 12,
         { color:    WHITE,
           execute:  toggleInitialize,
           retrieve: getInitialize,
@@ -3758,7 +3830,7 @@
       app.controls.push(initialize);
 
     /* Crossover ---------------------------------------------------- */
-    var crossover=new checkbox('checkbox', rt, 20, 520, 12, 12,
+    var crossover=new checkbox('checkbox', rt, 20, 620, 12, 12,
         { color:    WHITE,
           execute:  toggleCrossover,
           retrieve: getCrossover,
@@ -3767,7 +3839,7 @@
     app.controls.push(crossover);
 
     /* Iterate ------------------------------------------------------ */
-    var iterate=new checkbox('checkbox', rt, 20, 540, 12, 12,
+    var iterate=new checkbox('checkbox', rt, 20, 640, 12, 12,
         { color:    WHITE,
           execute:  toggleIterate,
           retrieve: getIterate,
@@ -3776,8 +3848,8 @@
       app.controls.push(iterate);
 
     /* Telemetry ---------------------------------------------------- */
-    var telem=new telemetry('telemetry', rt, rt.w - 195, 10, 190, rt.h - 10,
-      { color: GRAY});
+    var telem=new telemetry('telemetry', rt, rt.w - 195, 5, 190, rt.h - 20,
+      { color: color(216,26,26,255)});
 
     app.controls.push(telem);
 
@@ -3858,12 +3930,16 @@
 
     app.elapsedTime=(millis()-app.startTime)/1000;
 
+    app.control = app.keys[KEYCODES.CONTROL];
+    app.alt     = app.keys[KEYCODES.ALT];
+    app.shift   = app.keys[KEYCODES.SHIFT];
+
   };
 
-  var x = 0;
-  var y = 0;
-  var cx = (windowWidth - 200) / 2;
-  var cy = windowHeight / 2;
+  var x  = 0;
+  var y  = 0;
+  var cx = (windowWidth-200)/2;
+  var cy = windowHeight/2;
 
   function handleKeys(){
 
@@ -3886,9 +3962,9 @@
         case keyIsDown(DOWN_ARROW): colDown(); break;
 
         case keyIsDown(LEFT_ARROW) &&
-          keyIsDown(CONTROL): colDownLeft(); break;
+             keyIsDown(CONTROL): colDownLeft(); break;
         case keyIsDown(RIGHT_ARROW) &&
-          keyIsDown(CONTROL): colDownRight(); break;
+             keyIsDown(CONTROL): colDownRight(); break;
 
         case keyIsDown(LEFT_ARROW): colUpLeft(); break;
         case keyIsDown(RIGHT_ARROW): colUpRight(); break;
