@@ -775,51 +775,51 @@
           fill(getColor(WHITE, 75));
 
             text(                    '\n\n'   +
-                'x:'              + '\n'     +
-                'y:'              + '\n\n\n' +
-                'Left:'           + '\n'     +
-                'Right:'          + '\n'     +
-                'Center:'         + '\n\n'   +
-                'Dragging:'       + '\n'     +
-                'Drag Direction:' + '\n\n\n' +
-                'Control:'        + '\n'     +
-                'Alt:'            + '\n'     +
-                'Shift:'          + '\n\n\n' +
-                'Canvas Width:'   + '\n'     +
-                'Canvas Height:'  + '\n\n'   +
-                'Window Width:'   + '\n'     +
-                'Window Height:'  + '\n\n'   +
-                'Display Width:'  + '\n'     +
-                'Display Height:' + '\n\n'   +
-                'Focused:'        + '\n\n'   +
-                'Frame Count:'    + '\n'     +
-                'Frame Rate:',
-                col1, row0+5);
+                 'x:'              + '\n'     +
+                 'y:'              + '\n\n\n' +
+                 'Left:'           + '\n'     +
+                 'Right:'          + '\n'     +
+                 'Center:'         + '\n\n'   +
+                 'Dragging:'       + '\n'     +
+                 'Drag Direction:' + '\n\n\n' +
+                 'Control:'        + '\n'     +
+                 'Alt:'            + '\n'     +
+                 'Shift:'          + '\n\n\n' +
+                 'Canvas Width:'   + '\n'     +
+                 'Canvas Height:'  + '\n\n'   +
+                 'Window Width:'   + '\n'     +
+                 'Window Height:'  + '\n\n'   +
+                 'Display Width:'  + '\n'     +
+                 'Display Height:' + '\n\n'   +
+                 'Focused:'        + '\n\n'   +
+                 'Frame Count:'    + '\n'     +
+                 'Frame Rate:',
+                 col1, row0+5);
 
           fill(getColor(YELLOW, 75));
           textAlign(RIGHT, TOP);
 
             text(                    '\n\n'   +
-                mouseX            + '\n'     +
-                mouseY            + '\n\n\n' +
-                app.left          + '\n'     +
-                app.right         + '\n'     +
-                app.center        + '\n\n'   +
-                app.dragging      + '\n'     +
-                app.dragDirection + '\n\n\n' +
-                app.control       + '\n'     +
-                app.alt           + '\n'     +
-                app.shift         + '\n\n\n' +
-                width             + '\n'     +
-                height            + '\n\n'   +
-                windowWidth       + '\n'     +
-                windowHeight      + '\n\n'   +
-                displayWidth      + '\n'     +
-                displayHeight     + '\n\n'   +
-                focused           + '\n\n'   +
-                frameCount        + '\n'     +
-                nf(app.frameRate, 1, 1),
-                col2, row0+5);
+                 mouseX            + '\n'     +
+                 mouseY            + '\n\n\n' +
+                 app.left          + '\n'     +
+                 app.right         + '\n'     +
+                 app.center        + '\n\n'   +
+                 app.dragging      + '\n'     +
+                 app.dragDirection + '\n\n\n' +
+                 app.control       + '\n'     +
+                 app.alt           + '\n'     +
+                 app.shift         + '\n\n\n' +
+                 width             + '\n'     +
+                 height            + '\n\n'   +
+                 windowWidth       + '\n'     +
+                 windowHeight      + '\n\n'   +
+                 displayWidth      + '\n'     +
+                 displayHeight     + '\n\n'   +
+                 focused           + '\n\n'   +
+                 frameCount        + '\n'     +
+                 nf(app.frameRate, 1, 1),
+                 col2, row0+5);
 
         };
         function appSpecific(){
@@ -836,22 +836,24 @@
 
           fill(getColor(TEAL_2, 75));
 
-          text(             '\n'       +
-               'Controls' + '\n\n\n\n' +
-               'Score'    + '\n\n\n\n' +
-               'Misc',
-               col0, top);
+          var txt=             '\n'       +
+                  'Controls' + '\n\n\n\n' +
+                  'Score'    + '\n\n\n\n' +
+                  'Misc';
+          
+            text(txt,col0, top);
 
           fill(getColor(WHITE, 75));
 
-          text(               '\n\n'   +
-               'Count:'     + '\n'     +
-               'Active:'    + '\n\n\n' +
-               'Remaining:' + '\n'     +
-               'Mistakes:'  + '\n\n\n' +
-               'Music:'     + '\n'     +
-               'Level:',
-               col1, top+5);
+          txt=               '\n\n'   +
+              'Count:'     + '\n'     +
+              'Active:'    + '\n\n\n' +
+              'Remaining:' + '\n'     +
+              'Mistakes:'  + '\n\n\n' +
+              'Music:'     + '\n'     +
+              'Level:';
+                  
+            text(txt,col1, top+5);
 
           fill(getColor(YELLOW, 75));
           textAlign(RIGHT, TOP);
@@ -864,14 +866,15 @@
             id=app.currentNode.id;
           }
 
-          text(                   '\n\n' +
-               app.controlCount + '\n' +
-               id               + '\n\n\n' +
-               app.remaining    + '\n' +
-               app.errors       + '\n\n\n' +
-               app.musicOn      + '\n' +
-               app.level,
-               col2, top+5);
+          txt=                   '\n\n'   +
+              app.controlCount + '\n'     +
+              id               + '\n\n\n' +
+              app.remaining    + '\n'     +
+              app.errors       + '\n\n\n' +
+              app.musicOn      + '\n'     +
+              app.level;
+
+            text(txt, col2, top+5);
 
         };
 
@@ -2199,7 +2202,8 @@
 
           function greedy(){
 
-            if(p.workingNodes.length==0){
+            if(p.workingNodes.length==0 ||
+               frameCount%5==0){
 
               p.workingNodes=getGreedyTour(p.nodes, app.greedy_mode);
 
@@ -2219,8 +2223,6 @@
                       reverseNodes(p.workingNodes,
                                    p.intersections[0].id,
                                    p.intersections[2].id);
-
-                      
 
                     }
 
@@ -2252,8 +2254,6 @@
               // p.length++;
               p.length=p.workingNodes.length;
             }      
-            
-            p.workingLength=getTourLength(p.workingNodes);
 
           };
 
@@ -2415,6 +2415,21 @@
 
         }
 
+        { // Chance
+        
+          function chance(){
+
+            arrayCopy(p.nodes,p.workingNodes);
+
+            randomizeArray(p.workingNodes);
+
+            drawPath(p.workingNodes,p.workingNodes.length);
+            drawNodes(p.workingNodes);
+
+          }
+
+        }
+
         { // GUI
 
           function drawBorder(){
@@ -2439,24 +2454,25 @@
             noStroke();
             fill(164);
 
-              text('Tours:'            + '\n'   +
-                   'Nodes:'            + '\n\n' +
-                   'Working Length:'   + '\n'   +
-                   'Best Length'       + '\n'   +
-                   'Historic Length:'  + '\n\n' +
-                   'Current Node:'     + '\n\n' + 
-                   'Factor:'           + '\n\n' +
-                   'Intersections:'    + '\n'   +
-                   'Segments:'         + '\n\n' +
-                   'Average Distance:' + '\n\n' +
-                   'Min X:'            + '\n'   +
-                   'Max X:'            + '\n\n' +
-                   'Domain:'           + '\n\n' +
-                   'Min Y:'            + '\n'   +
-                   'Max Y:'            + '\n\n' +
-                   'Range:'            + '\n\n' +
-                   'Elapsed Time:'     ,
-                   0, 10);
+            var txt='Tours:'            + '\n'   +
+                    'Nodes:'            + '\n\n' +
+                    'Working Length:'   + '\n'   +
+                    'Best Length'       + '\n'   +
+                    'Historic Length:'  + '\n\n' +
+                    'Current Node:'     + '\n\n' + 
+                    'Factor:'           + '\n\n' +
+                    'Intersections:'    + '\n'   +
+                    'Segments:'         + '\n\n' +
+                    'Average Distance:' + '\n\n' +
+                    'Min X:'            + '\n'   +
+                    'Max X:'            + '\n\n' +
+                    'Domain:'           + '\n\n' +
+                    'Min Y:'            + '\n'   +
+                    'Max Y:'            + '\n\n' +
+                    'Range:'            + '\n\n' +
+                    'Elapsed Time:';
+
+              text(txt, 0, 10);
 
             stroke(0);
             noStroke();
@@ -2469,24 +2485,25 @@
 
             textAlign(RIGHT, TOP);
 
-              text(p.tours.length           + '\n'   +
-                   p.workingNodes.length    + '\n\n' +
-                   p.workingLength          + '\n'   +
-                   p.minimumLength          + '\n'   +
-                   p.historicLength         + '\n\n' +
-                   id                       + '\n\n' +
-                   nf(p.factor, 1, 5)       + '\n\n' +
-                   p.intersections.length   + '\n'   +
-                   p.segments.length        + '\n\n' +
-                   p.avgDistance            + '\n\n' +
-                   p.minX                   + '\n'   +
-                   p.maxX                   + '\n\n' +
-                   p.domain                 + '\n\n' +
-                   p.minY                   + '\n'   +
-                   p.maxY                   + '\n\n' +
-                   p.range                  + '\n\n' +
-                   nf(app.elapsedTime, 1, 1),
-                   140, 10);
+            txt=p.tours.length           + '\n'   +
+                p.workingNodes.length    + '\n\n' +
+                p.workingLength          + '\n'   +
+                p.minimumLength          + '\n'   +
+                p.historicLength         + '\n\n' +
+                id                       + '\n\n' +
+                nf(p.factor, 1, 5)       + '\n\n' +
+                p.intersections.length   + '\n'   +
+                p.segments.length        + '\n\n' +
+                p.avgDistance            + '\n\n' +
+                p.minX                   + '\n'   +
+                p.maxX                   + '\n\n' +
+                p.domain                 + '\n\n' +
+                p.minY                   + '\n'   +
+                p.maxY                   + '\n\n' +
+                p.range                  + '\n\n' +
+                nf(app.elapsedTime, 1, 1);
+
+              text(txt, 140, 10);
 
             textSize(11);
             textAlign(LEFT, CENTER);
@@ -2510,7 +2527,7 @@
           var index=getRandomInt(p.workingNodes.length-1);
 
           arrayCopy(p.workingNodes,getClosestArray(index));
-print(getTourLength(p.workingNodes));
+
           // updateTour();
 
         };
@@ -2538,6 +2555,7 @@ print(getTourLength(p.workingNodes));
             case ALGORITHMS.BRUTEFORCE:         bruteForce();         break;
             case ALGORITHMS.GENETIC:            genetic();            break;
             case ALGORITHMS.ACO:                ACO();                break;
+            case ALGORITHMS.RANDOM:             chance();             break;
 
             default:                            simulatedAnnealing(); break;
 
@@ -2567,37 +2585,34 @@ print(getTourLength(p.workingNodes));
 
         };
 
-          this.active=this.hit &&
-                      app.focus==this;                    
+          push();
 
-            push();
+            translate(this.x+0.5,
+                      this.y+0.5);
 
-              translate(this.x+0.5,
-                        this.y+0.5);
+              drawBorder();
+              drawTour();
+              calculateMetrics();
 
-                drawBorder();
-                drawTour();
-                calculateMetrics();
+              drawProperties();
 
-                drawProperties();
+              drawBestPath(p.bestNodes);
 
-                drawBestPath(p.bestNodes);
+              // for(var n=0; n<1; n++){
 
-                for(var n=0; n<10; n++){
+              //   p.workingNodes=getGreedyTour(p.nodes, app.greedy_mode);
 
-                  p.workingNodes=getGreedyTour(p.nodes, app.greedy_mode);
+              //   calculateMetrics();
 
-                  calculateMetrics();
+              //   if(p.workingLength<p.minimumLength){
 
-                  if(p.workingLength<p.minimumLength){
+              //     arrayCopy(p.workingNodes,p.bestNodes);
 
-                    arrayCopy(p.workingNodes,p.bestNodes);
+              //   }
 
-                  }
+              // }
 
-                }
-
-            pop();
+          pop();
 
       };
       field.prototype.hitTest=function(x, y){
@@ -3529,7 +3544,7 @@ print(getTourLength(p.workingNodes));
                    2);
 
             // Inner Rectangle ~~~~~~~~~~~
-            if(this.value){ fill(128,0,0); }
+            if(this.value){ fill(64); }
             else          { noFill();
                             noStroke();    }
 
@@ -3599,7 +3614,7 @@ print(getTourLength(p.workingNodes));
 
     }
 
-    /** option        -------------------------------------------------- */
+    /** Option        -------------------------------------------------- */
     {
       var option=function(id, parent, x, y, w, h, props){
         
@@ -3645,9 +3660,9 @@ print(getTourLength(p.workingNodes));
             // Inner Rectangle ~~~~~~~~~~~            
             if(this.retrieve()==this.algorithm){
 
-              if(this.value){ fill(128,0,0); }
+              if(this.value){ fill(64);   }
               else          { noFill();
-                              noStroke();    }
+                              noStroke(); }
 
                 ellipse(this.x,   this.y,
                         this.w-5, this.h-5);
@@ -3826,8 +3841,18 @@ print(getTourLength(p.workingNodes));
 
     app.controls.push(aco);
 
+    /* Chance --------------------------------------------------- */
+    var chance=new option('CHANCE', rt, 20, 500, 12, 12,
+        { color:      WHITE,
+          execute:    setAlgorithm,
+          retrieve:   getAlgorithm,
+          algorithm:  ALGORITHMS.RANDOM,
+          caption:    "Chance" });
+    
+      app.controls.push(chance);
+
     /* Greedy --------------------------------------------------- */
-    var greedy=new option('GREEDY', rt, 20, 500, 12, 12,
+    var greedy=new option('GREEDY', rt, 20, 520, 12, 12,
         { color:      WHITE,
           execute:    setAlgorithm,
           retrieve:   getAlgorithm,
@@ -3839,7 +3864,7 @@ print(getTourLength(p.workingNodes));
     // ***** Greedy Methods *****
 
         /* Closest --------------------------------------------------- */
-        var closest=new option('Closest', rt, 30, 520, 12, 12,
+        var closest=new option('Closest', rt, 30, 540, 12, 12,
           { color:      WHITE,
             execute:    setMethod,
             retrieve:   getMethod,
@@ -3849,7 +3874,7 @@ print(getTourLength(p.workingNodes));
         app.controls.push(closest);
 
         /* Farthest --------------------------------------------------- */
-        var farthest=new option('Farthest', rt, 30, 535, 12, 12,
+        var farthest=new option('Farthest', rt, 30, 555, 12, 12,
           { color:      WHITE,
             execute:    setMethod,
             retrieve:   getMethod,
@@ -3859,7 +3884,7 @@ print(getTourLength(p.workingNodes));
         app.controls.push(farthest);
 
         /* Random --------------------------------------------------- */
-        var random=new option('Random', rt, 30, 550, 12, 12,
+        var random=new option('Random', rt, 30, 570, 12, 12,
           { color:      WHITE,
             execute:    setMethod,
             retrieve:   getMethod,
