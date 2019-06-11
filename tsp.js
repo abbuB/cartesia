@@ -2,9 +2,10 @@
 
   TO DO:
 
-    - add random tour mode
+    - slider to change # of nodes. 0-100?
+    - Tidy up elapsed timer
 
-    - domain and range of points
+    - add sound based on frequency off index being swapped
 
     - Metrics regarding extent of points and average distance between connected points
     - other interesting metrics
@@ -15,6 +16,10 @@
     - create a circular node pattern for 100 nodes
 
   TO DONE:
+
+    - add random tour mode
+
+    - domain and range of points
 
     - Page Title "Travelling Salesman Problem (TSP)"
 
@@ -260,51 +265,51 @@
 
   }
 
-  // var data=[
-  //           [474,154],[504,128],[524,132],[572,164],[442,129],
-  //           [429,119],[428,98],[452,77],[476,82],[511,58],
-  //           [489,38],[482,33],[358,42],[287,46],[205,53],
-  //           [230,110],[329,159],[336,198],[402,208],[448,240],
-  //           [461,240],[536,213],[556,241],[533,249],[483,308],
-  //           [478,327],[452,324],[453,354],[417,336],[374,327],
-  //           [382,393],[364,408],[309,379],[275,392],[268,345],
-  //           [248,325],[295,275],[202,212],[173,207],[183,270],
-  //           [195,380],[179,387],[189,401],[182,420],[224,392],
-  //           [249,425],[215,472],[203,553],[213,574],[224,568],
-  //           [284,509],[282,462],[288,447],[314,503],[323,534],
-  //           [339,502],[361,481],[371,465],[397,550],[424,504],
-  //           [442,467],[468,490],[462,503],[486,522],[499,512],
-  //           [501,541],[500,546],[523,560],[571,538],[684,550],
-  //           [686,489],[719,463],[724,447],[632,390],[625,416],
-  //           [627,460],[588,436],[556,440],[548,433],[515,427],
-  //           [490,382],[565,333],[574,325],[655,317],[673,335],
-  //           [675,328],[712,293],[655,259],[623,260],[619,233],
-  //           [645,215],[692,235],[693,198],[718,162],[693,146],
-  //           [673,128],[676,102],[662,45],[584,85],[598,121]
-  //          ];
+  var dataTest=[
+                [474,154],[504,128],[524,132],[572,164],[442,129],
+                [429,119],[428, 98],[452, 77],[476, 82],[511, 58],
+                [489, 38],[482, 33],[358, 42],[287, 46],[205, 53],
+                [230,110],[329,159],[336,198],[402,208],[448,240],
+                [461,240],[536,213],[556,241],[533,249],[483,308],
+                [478,327],[452,324],[453,354],[417,336],[374,327],
+                [382,393],[364,408],[309,379],[275,392],[268,345],
+                [248,325],[295,275],[202,212],[173,207],[183,270],
+                [195,380],[179,387],[189,401],[182,420],[224,392],
+                [249,425],[215,472],[203,553],[213,574],[224,568],
+                [284,509],[282,462],[288,447],[314,503],[323,534],
+                [339,502],[361,481],[371,465],[397,550],[424,504],
+                [442,467],[468,490],[462,503],[486,522],[499,512],
+                [501,541],[500,546],[523,560],[571,538],[684,550],
+                [686,489],[719,463],[724,447],[632,390],[625,416],
+                [627,460],[588,436],[556,440],[548,433],[515,427],
+                [490,382],[565,333],[574,325],[655,317],[673,335],
+                [675,328],[712,293],[655,259],[623,260],[619,233],
+                [645,215],[692,235],[693,198],[718,162],[693,146],
+                [673,128],[676,102],[662, 45],[584, 85],[598,121]
+              ];
 
-  var data=[
-    [670,300],[670,316],[668,331],[666,347],[662,362],
-    [658,377],[652,392],[646,406],[639,420],[631,434],
-    [622,447],[613,459],[602,471],[591,482],[579,493],
-    [567,502],[554,511],[540,519],[526,526],[512,532],
-    [497,538],[482,542],[467,546],[451,548],[436,550],
-    [420,550],[404,550],[389,548],[373,546],[358,542],
-    [343,538],[328,532],[314,526],[300,519],[286,511],
-    [273,502],[261,493],[249,482],[238,471],[227,459],
-    [218,447],[209,434],[201,420],[194,406],[188,392],
-    [182,377],[178,362],[174,347],[172,331],[170,316],
-    [170,300],[170,284],[172,269],[174,253],[178,238],
-    [182,223],[188,208],[194,194],[201,180],[209,166],
-    [218,153],[227,141],[238,129],[249,118],[261,107],
-    [273,98],[286,89],[300,81],[314,74],[328,68],
-    [343,62],[358,58],[373,54],[389,52],[404,50],
-    [420,50],[436,50],[451,52],[467,54],[482,58],
-    [497,62],[512,68],[526,74],[540,81],[554,89],
-    [567,98],[579,107],[591,118],[602,129],[613,141],
-    [622,153],[631,166],[639,180],[646,194],[652,208],
-    [658,223],[662,238],[666,253],[668,269],[670,284]
-   ];
+  var dataCircle=[
+                  [670,300],[670,316],[668,331],[666,347],[662,362],
+                  [658,377],[652,392],[646,406],[639,420],[631,434],
+                  [622,447],[613,459],[602,471],[591,482],[579,493],
+                  [567,502],[554,511],[540,519],[526,526],[512,532],
+                  [497,538],[482,542],[467,546],[451,548],[436,550],
+                  [420,550],[404,550],[389,548],[373,546],[358,542],
+                  [343,538],[328,532],[314,526],[300,519],[286,511],
+                  [273,502],[261,493],[249,482],[238,471],[227,459],
+                  [218,447],[209,434],[201,420],[194,406],[188,392],
+                  [182,377],[178,362],[174,347],[172,331],[170,316],
+                  [170,300],[170,284],[172,269],[174,253],[178,238],
+                  [182,223],[188,208],[194,194],[201,180],[209,166],
+                  [218,153],[227,141],[238,129],[249,118],[261,107],
+                  [273, 98],[286, 89],[300, 81],[314, 74],[328, 68],
+                  [343, 62],[358, 58],[373, 54],[389, 52],[404, 50],
+                  [420, 50],[436, 50],[451, 52],[467, 54],[482, 58],
+                  [497, 62],[512, 68],[526, 74],[540, 81],[554, 89],
+                  [567, 98],[579,107],[591,118],[602,129],[613,141],
+                  [622,153],[631,166],[639,180],[646,194],[652,208],
+                  [658,223],[662,238],[666,253],[668,269],[670,284]
+                ];
 
   var cnv;
 
@@ -458,6 +463,9 @@
       this.initialize   = false;
       this.crossover    = true;
       this.iterate      = true;
+      // this.dataMode     = DATA_MODES.RANDOM;
+      // this.dataMode     = DATA_MODES.TEST;
+      this.dataMode     = DATA_MODES.CIRCLE;
 
       this.tourLength   = 100;                //  Total # of nodes to be connected
 
@@ -536,6 +544,18 @@
           if(app.algorithm==ALGORITHMS.GREEDY){
             app.field.reset();
           }
+
+        }
+
+      };
+
+      function getDataMode()        { return app.dataMode;        };
+      function setDataMode(m)       {
+
+        if(app.dataMode!=m){
+
+          app.dataMode=m;
+          app.field.reset();
 
         }
 
@@ -1473,7 +1493,6 @@
 
         this.bestNodes      = [];         //  Shortest path so far
         this.workingNodes   = [];         //  Path used to experiment
-        this.historicNodes  = [];         //  Overall best path
 
         this.intersections  = [];         //  node couples that intersect
 
@@ -1493,7 +1512,6 @@
         
         this.workingLength  = Infinity;   //  Length of path being tested
         this.minimumLength  = Infinity;   //  Current minimum tour length
-        this.historicLength = Infinity;   //  Best recorded overall
 
         this.greedyLength   = Infinity;   //  Length of Greedy Path
 
@@ -1531,8 +1549,7 @@
 
         p.originalLength    = Infinity;
         p.workingLength     = Infinity;
-        p.minimumLength     = Infinity;        
-        p.historicLength    = Infinity;
+        p.minimumLength     = Infinity;
         p.greedyLength      = Infinity;
 
         p.factor            = 1.1;
@@ -1554,20 +1571,34 @@
 
         function load(){
 
-          var x1=0;
-          var y1=0;
+          var x=0;
+          var y=0;
+
+          var arr=[];
 
           for(var n=0; n<app.tourLength; n++){
 
-            x1=data[n][0];
-            y1=data[n][1];
+            switch(app.dataMode){
 
-            // x1=floor(random(150, p.w-20));
-            // y1=floor(random( 20, p.h-20));
+              case DATA_MODES.RANDOM: x=floor(random(150, p.w-20));
+                                      y=floor(random( 20, p.h-20));
+                                      break;
+
+              case DATA_MODES.TEST:   x=dataTest[n][0];
+                                      y=dataTest[n][1];
+                                      break;
+
+              case DATA_MODES.CIRCLE: x=dataCircle[n][0];
+                                      y=dataCircle[n][1];
+                                      break;
+
+              default:                break;
+
+            }
 
             p.nodes.push(new node(n,
                                   this,
-                                  x1, y1,
+                                  x, y,
                                   5, 5,
                                   { cursor: HAND })
                         );
@@ -1738,10 +1769,7 @@
 
             p.minimumLength=p.workingLength;
 
-            if(p.workingLength<p.historicLength){
-              p.historicLength=p.workingLength;
-              arrayCopy(p.workingNodes, p.bestNodes);
-            }
+            arrayCopy(p.workingNodes,p.bestNodes);
 
           }
 
@@ -2118,7 +2146,7 @@
 
         { // Greedy
 
-          function getGreedyTour(arrNodes, method){
+          function getGreedyTour(arr, method){
 
             {
 
@@ -2199,7 +2227,7 @@
 
             var nod;
 
-            arrayCopy(arrNodes, arrSource);
+            arrayCopy(arr, arrSource);
 
             while(arrDestination.length<app.tourLength){
 
@@ -2220,7 +2248,7 @@
                 nod.loaded=true;
 
               }
-              else if(arrDestination.length<arrNodes.length){
+              else if(arrDestination.length<arr.length){
 
                 switch(method){
 
@@ -2256,6 +2284,8 @@
 
               p.workingNodes=getGreedyTour(p.nodes, app.greedy_mode);
 
+              updateTour();
+              
             }
             else{
 
@@ -2276,13 +2306,19 @@
                     }
 
                     reverseNodes(p.workingNodes,
-                                  p.intersections[n0].id,
-                                  p.intersections[n1].id);
+                                 p.intersections[n0].id,
+                                 p.intersections[n1].id);
                   }
 
                 }
 
-                if(app.iterate){ iterate(); }
+                if(app.iterate){
+                  
+                  iterate();
+
+                  swap2Length(p.workingNodes, getLongest(p.workingNodes));
+
+                }
 
                 updateTour();
 
@@ -2290,12 +2326,9 @@
 
             }
 
-            drawPath(p.workingNodes, p.length);
-            drawNodes(p.nodes);
-
             if(p.length<p.workingNodes.length){
-              p.length++;
-              // p.length=p.workingNodes.length;
+              // p.length++;
+              p.length=p.workingNodes.length;
             }      
 
           };
@@ -2500,8 +2533,7 @@
             var txt='Tours:'            + '\n'   +
                     'Nodes:'            + '\n\n' +
                     'Working Length:'   + '\n'   +
-                    'Best Length'       + '\n'   +
-                    'Historic Length:'  + '\n\n' +
+                    'Best Length'       + '\n\n' +
                     'Factor:'           + '\n\n' +
                     'Intersections:'    + '\n'   +
                     'Segments:'         + '\n\n' +
@@ -2531,8 +2563,7 @@
             txt=p.tours.length          + '\n'   +
                 p.workingNodes.length   + '\n\n' +
                 p.workingLength         + '\n'   +
-                p.minimumLength         + '\n'   +
-                p.historicLength        + '\n\n' +
+                p.minimumLength         + '\n\n' +
                 factor                  + '\n\n' +
                 p.intersections.length  + '\n'   +
                 p.segments.length       + '\n\n' +
@@ -2575,7 +2606,7 @@
 
         };
 
-        function drawTour(){
+        function calculateTour(){
 
           if(!p.loaded){
 
@@ -2600,7 +2631,7 @@
             case ALGORITHMS.ACO:                ACO();                break;
             case ALGORITHMS.RANDOM:             chance();             break;
 
-            default:                            simulatedAnnealing(); break;
+            default:                            greedy();             break;
 
           }
 
@@ -2611,7 +2642,6 @@
           p.avgDistance=round(p.workingLength/p.workingNodes.length);
           p.workingLength=round(getTourLength(p.workingNodes));
           p.minimumLength=round(getTourLength(p.bestNodes));
-          p.historicLength=round(p.workingLength);
           p.bestLength=round(getTourLength(p.bestNodes));
 
           for(var n=0; n<p.nodes.length; n++){
@@ -2634,13 +2664,16 @@
                       this.y+0.5);
 
               drawBorder();
-              drawTour();
+              
+              calculateTour();
 
               calculateMetrics();
 
               drawProperties();
-
-              // drawBestPath(p.bestNodes);
+              
+              drawBestPath(p.bestNodes);
+              drawPath(p.workingNodes, p.length);
+              drawNodes(p.nodes);
 
           pop();
 
@@ -3821,7 +3854,7 @@
       }));
 
     /* Bruteforce -------------------------------------------------- */
-    var bruteforce=new option('BRUTE FORCE', rt, 20, 400, 12, 12,
+    var bruteforce=new option('BRUTE FORCE', rt, 20, 370, 12, 12,
         { color:      WHITE,
           execute:    setAlgorithm,
           retrieve:   getAlgorithm,
@@ -3831,7 +3864,7 @@
       app.controls.push(bruteforce);
 
     /* Genetic -------------------------------------------------- */
-    var genetic=new option('GENETIC', rt, 20, 420, 12, 12,
+    var genetic=new option('GENETIC', rt, 20, 390, 12, 12,
         { color:      WHITE,
           execute:    setAlgorithm,
           retrieve:   getAlgorithm,
@@ -3841,7 +3874,7 @@
       app.controls.push(genetic);
 
     /* Simulated Annealing --------------------------------------------------- */
-    var annealing=new option('SIMULATED ANNEALING', rt, 20, 440, 12, 12,
+    var annealing=new option('SIMULATED ANNEALING', rt, 20, 410, 12, 12,
         { color:      WHITE,
           execute:    setAlgorithm,
           retrieve:   getAlgorithm,
@@ -3851,7 +3884,7 @@
       app.controls.push(annealing);
 
     /* Grow --------------------------------------------------- */
-    var grow=new option('GROW', rt, 20, 460, 12, 12,
+    var grow=new option('GROW', rt, 20, 430, 12, 12,
     { color:      WHITE,
       execute:    setAlgorithm,
       retrieve:   getAlgorithm,
@@ -3861,7 +3894,7 @@
     app.controls.push(grow);
 
     /* ACO --------------------------------------------------- */
-    var aco=new option('ACO', rt, 20, 480, 12, 12,
+    var aco=new option('ACO', rt, 20, 450, 12, 12,
     { color:      WHITE,
       execute:    setAlgorithm,
       retrieve:   getAlgorithm,
@@ -3871,7 +3904,7 @@
     app.controls.push(aco);
 
     /* Chance --------------------------------------------------- */
-    var chance=new option('CHANCE', rt, 20, 500, 12, 12,
+    var chance=new option('CHANCE', rt, 20, 470, 12, 12,
         { color:      WHITE,
           execute:    setAlgorithm,
           retrieve:   getAlgorithm,
@@ -3881,7 +3914,7 @@
       app.controls.push(chance);
 
     /* Greedy --------------------------------------------------- */
-    var greedy=new option('GREEDY', rt, 20, 520, 12, 12,
+    var greedy=new option('GREEDY', rt, 20, 490, 12, 12,
         { color:      WHITE,
           execute:    setAlgorithm,
           retrieve:   getAlgorithm,
@@ -3893,7 +3926,7 @@
     // ***** Greedy Methods *****
 
         /* Closest --------------------------------------------------- */
-        var closest=new option('Closest', rt, 30, 540, 12, 12,
+        var closest=new option('Closest', rt, 30, 510, 12, 12,
           { color:      WHITE,
             execute:    setMethod,
             retrieve:   getMethod,
@@ -3903,7 +3936,7 @@
         app.controls.push(closest);
 
         /* Farthest --------------------------------------------------- */
-        var Farthest=new option('Farthest', rt, 30, 555, 12, 12,
+        var Farthest=new option('Farthest', rt, 30, 525, 12, 12,
           { color:      WHITE,
             execute:    setMethod,
             retrieve:   getMethod,
@@ -3913,7 +3946,7 @@
         app.controls.push(Farthest);
 
         /* Random --------------------------------------------------- */
-        var random=new option('Random', rt, 30, 570, 12, 12,
+        var random=new option('Random', rt, 30, 540, 12, 12,
           { color:      WHITE,
             execute:    setMethod,
             retrieve:   getMethod,
@@ -3923,7 +3956,7 @@
         app.controls.push(random);
 
     /* Initialize --------------------------------------------------- */
-    var initialize=new checkbox('checkbox', rt, 20, 600, 12, 12,
+    var initialize=new checkbox('initialize', rt, 20, 560, 12, 12,
         { color:    WHITE,
           execute:  toggleInitialize,
           retrieve: getInitialize,
@@ -3932,7 +3965,7 @@
       app.controls.push(initialize);
 
     /* Crossover ---------------------------------------------------- */
-    var crossover=new checkbox('checkbox', rt, 20, 620, 12, 12,
+    var crossover=new checkbox('crossover', rt, 20, 580, 12, 12,
         { color:    WHITE,
           execute:  toggleCrossover,
           retrieve: getCrossover,
@@ -3941,13 +3974,43 @@
     app.controls.push(crossover);
 
     /* Iterate ------------------------------------------------------ */
-    var iterate=new checkbox('checkbox', rt, 20, 640, 12, 12,
+    var iterate=new checkbox('iterate', rt, 20, 600, 12, 12,
         { color:    WHITE,
           execute:  toggleIterate,
           retrieve: getIterate,
           caption:  "Iterate" });
   
       app.controls.push(iterate);
+
+    /* Random Data ------------------------------------------------------ */
+    var randomData=new option('RandomDate', rt, 20, 620, 12, 12,
+    { color:      WHITE,
+      execute:    setDataMode,
+      retrieve:   getDataMode,
+      algorithm:  DATA_MODES.RANDOM,
+      caption:    "Random Data" });
+
+    app.controls.push(randomData);
+
+    /* Test Data ------------------------------------------------------ */
+    var testData=new option('TestData', rt, 20, 640, 12, 12,
+    { color:      WHITE,
+      execute:    setDataMode,
+      retrieve:   getDataMode,
+      algorithm:  DATA_MODES.TEST,
+      caption:    "Test Data" });
+
+    app.controls.push(testData);
+
+    /* Circle Data ------------------------------------------------------ */
+    var circleData=new option('CircleData', rt, 20, 660, 12, 12,
+    { color:      WHITE,
+      execute:    setDataMode,
+      retrieve:   getDataMode,
+      algorithm:  DATA_MODES.CIRCLE,
+      caption:    "Circle Data" });
+
+      app.controls.push(circleData);
 
     /* Telemetry ---------------------------------------------------- */
     var telem=new telemetry('telemetry', rt, rt.w - 195, 5, 190, rt.h - 20,
@@ -4097,10 +4160,10 @@
       switch (mouseButton) {
 
         case LEFT:  forEach(app.controls, 'clicked'); break;
-        case RIGHT: forEach(app.controls, 'rclicked'); break;
+        // case RIGHT: forEach(app.controls, 'rclicked'); break;
         // case CENTER:  forEach(app.controls,'cclicked'); break;
 
-        default: break;
+        default:                                      break;
 
       }
 
