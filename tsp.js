@@ -18,7 +18,7 @@
 
     - Page Title "Travelling Salesman Problem (TSP)"
 
-    - farthest option button
+    - Furthest option button
     - closest option button
     - random option button
     
@@ -114,7 +114,8 @@
       var PURPLE0 = 6;
       var BLACK0 = 7;
 
-      var YELLOW=[255,255,  0,255];
+      var YELLOW    = [255,255,  0,255];
+      var YELLOW_H  = [255,255,  0,128];
 
       // const RED           = [255,  0,  0,255]; const REDORANGE    = [255, 81,  0,255];
       // const ORANGE        = [255,127,  0,255]; const YELLOWORANGE = [255,190,  0,255];
@@ -259,32 +260,78 @@
 
   }
 
+  // var data=[
+  //           [474,154],[504,128],[524,132],[572,164],[442,129],
+  //           [429,119],[428,98],[452,77],[476,82],[511,58],
+  //           [489,38],[482,33],[358,42],[287,46],[205,53],
+  //           [230,110],[329,159],[336,198],[402,208],[448,240],
+  //           [461,240],[536,213],[556,241],[533,249],[483,308],
+  //           [478,327],[452,324],[453,354],[417,336],[374,327],
+  //           [382,393],[364,408],[309,379],[275,392],[268,345],
+  //           [248,325],[295,275],[202,212],[173,207],[183,270],
+  //           [195,380],[179,387],[189,401],[182,420],[224,392],
+  //           [249,425],[215,472],[203,553],[213,574],[224,568],
+  //           [284,509],[282,462],[288,447],[314,503],[323,534],
+  //           [339,502],[361,481],[371,465],[397,550],[424,504],
+  //           [442,467],[468,490],[462,503],[486,522],[499,512],
+  //           [501,541],[500,546],[523,560],[571,538],[684,550],
+  //           [686,489],[719,463],[724,447],[632,390],[625,416],
+  //           [627,460],[588,436],[556,440],[548,433],[515,427],
+  //           [490,382],[565,333],[574,325],[655,317],[673,335],
+  //           [675,328],[712,293],[655,259],[623,260],[619,233],
+  //           [645,215],[692,235],[693,198],[718,162],[693,146],
+  //           [673,128],[676,102],[662,45],[584,85],[598,121]
+  //          ];
+
   var data=[
-            [474,154],[504,128],[524,132],[572,164],[442,129],
-            [429,119],[428,98],[452,77],[476,82],[511,58],
-            [489,38],[482,33],[358,42],[287,46],[205,53],
-            [230,110],[329,159],[336,198],[402,208],[448,240],
-            [461,240],[536,213],[556,241],[533,249],[483,308],
-            [478,327],[452,324],[453,354],[417,336],[374,327],
-            [382,393],[364,408],[309,379],[275,392],[268,345],
-            [248,325],[295,275],[202,212],[173,207],[183,270],
-            [195,380],[179,387],[189,401],[182,420],[224,392],
-            [249,425],[215,472],[203,553],[213,574],[224,568],
-            [284,509],[282,462],[288,447],[314,503],[323,534],
-            [339,502],[361,481],[371,465],[397,550],[424,504],
-            [442,467],[468,490],[462,503],[486,522],[499,512],
-            [501,541],[500,546],[523,560],[571,538],[684,550],
-            [686,489],[719,463],[724,447],[632,390],[625,416],
-            [627,460],[588,436],[556,440],[548,433],[515,427],
-            [490,382],[565,333],[574,325],[655,317],[673,335],
-            [675,328],[712,293],[655,259],[623,260],[619,233],
-            [645,215],[692,235],[693,198],[718,162],[693,146],
-            [673,128],[676,102],[662,45],[584,85],[598,121]
-           ];
+    [670,300],[670,316],[668,331],[666,347],[662,362],
+    [658,377],[652,392],[646,406],[639,420],[631,434],
+    [622,447],[613,459],[602,471],[591,482],[579,493],
+    [567,502],[554,511],[540,519],[526,526],[512,532],
+    [497,538],[482,542],[467,546],[451,548],[436,550],
+    [420,550],[404,550],[389,548],[373,546],[358,542],
+    [343,538],[328,532],[314,526],[300,519],[286,511],
+    [273,502],[261,493],[249,482],[238,471],[227,459],
+    [218,447],[209,434],[201,420],[194,406],[188,392],
+    [182,377],[178,362],[174,347],[172,331],[170,316],
+    [170,300],[170,284],[172,269],[174,253],[178,238],
+    [182,223],[188,208],[194,194],[201,180],[209,166],
+    [218,153],[227,141],[238,129],[249,118],[261,107],
+    [273,98],[286,89],[300,81],[314,74],[328,68],
+    [343,62],[358,58],[373,54],[389,52],[404,50],
+    [420,50],[436,50],[451,52],[467,54],[482,58],
+    [497,62],[512,68],[526,74],[540,81],[554,89],
+    [567,98],[579,107],[591,118],[602,129],[613,141],
+    [622,153],[631,166],[639,180],[646,194],[652,208],
+    [658,223],[662,238],[666,253],[668,269],[670,284]
+   ];
 
   var cnv;
 
   function printTour(arr){
+
+    randomizeArray(app.field.workingNodes);
+
+    arrayCopy(app.field.workingNodes,app.field.bestNodes);
+    
+    return;
+
+    var theta=0;
+    var radius=250;
+    var p;
+
+    arr=[];
+
+    for(var n=0; n<100; n++){
+
+      p=new pnt(round(radius*cos(theta))+400, 
+               round(radius*sin(theta))+300);
+
+      arr.push(p);
+
+      theta+=TWO_PI/100;
+
+    }
 
     var s=(" var data=[\n           ");
 
@@ -398,7 +445,7 @@
       this.loadMethod   = LOAD_MODES.RANDOM;
 
       // this.greedy_mode  = GREEDY_MODES.CLOSEST;
-      // this.greedy_mode = GREEDY_MODES.FURTHEST;
+      // this.greedy_mode = GREEDY_MODES.FARTHEST;
       this.greedy_mode = GREEDY_MODES.RANDOM;
 
       // this.algorithm    = ALGORITHMS.GROW;
@@ -2073,82 +2120,86 @@
 
           function getGreedyTour(arrNodes, method){
 
-            function getRandomNode(arr){
+            {
 
-              var newNode=null;
-  
-              randomizeArray(arr);
-  
-              newNode=arr[0];
-  
-              arr.splice(0, 1);
-  
-              return newNode;
-  
-            };
-  
-            function getClosestNode(nod){
-  
-              for(var n=0; n<nod.closest.length; n++){
-  
-                if(nod.closest[n].loaded==false){
-                  nod.closest[n].loaded=true;
-                  return nod.closest[n];
+              function getRandomNode(arr){
+
+                var newNode=null;
+    
+                randomizeArray(arr);
+    
+                newNode=arr[0];
+    
+                arr.splice(0, 1);
+    
+                return newNode;
+    
+              };
+    
+              function getClosestNode(nod){
+
+                for(var n=0; n<nod.closest.length; n++){
+
+                  if(nod.closest[n].loaded==false){
+                    nod.closest[n].loaded=true;
+                    return nod.closest[n];
+                  }
+    
                 }
-  
-              }
-  
-            };
-  
-            function getFurthestNode(nod){
-  
-              for(var n=nod.closest.length-1; n>=0; n--) {
-  
-                if(nod.closest[n].loaded==false){
-                  nod.closest[n].loaded=true;
-                  return nod.closest[n];
+    
+              };
+    
+              function getFarthestNode(nod){
+
+                for(var n=nod.closest.length-1; n>=0; n--) {
+    
+                  if(nod.closest[n].loaded==false){
+                    nod.closest[n].loaded=true;
+                    return nod.closest[n];
+                  }
+    
                 }
-  
-              }
-  
-            };
-  
-            function placeNode(arr, nod){
-  
-              arr.unshift(nod); // Adds the node to the first array position [0]
-  
-              // Locates the position within the array that results in the shortest tour
-              var bestPosition=arr.length-1;
-              var dist=getTourLength(arr);
-              var minDist=dist;
-  
-              for(var n=0; n<arr.length; n++){
-  
-                if(n<arr.length-1){
-                  swap(arr, n, n+1);
+    
+              };
+    
+              function placeNode(arr, nod){
+    
+                arr.unshift(nod); // Adds the node to the first array position [0]
+    
+                // Locates the position within the array that results in the shortest tour
+                var bestPosition=arr.length-1;
+                var dist=getTourLength(arr);
+                var minDist=dist;
+    
+                for(var n=0; n<arr.length; n++){
+    
+                  if(n<arr.length-1){
+                    swap(arr, n, n+1);
+                  }
+    
+                  dist=getTourLength(arr);
+    
+                  if(dist<minDist){
+                    minDist=dist;
+                    bestPosition=n+1;
+                  }
+    
                 }
-  
-                dist=getTourLength(arr);
-  
-                if(dist<minDist){
-                  minDist=dist;
-                  bestPosition=n+1;
-                }
-  
-              }
-  
-              //  Remove the node from the last position
-              //  Insert the node into the correct position                                                      
-              arr.splice(bestPosition, 0, arr.pop());
-  
-            };
+    
+                //  Remove the node from the last position
+                //  Insert the node into the correct position                                                      
+                arr.splice(bestPosition, 0, arr.pop());
+    
+              };
+
+            }
 
             var arrSource=[];
             var arrDestination=[];
 
-            arrayCopy(arrNodes, arrSource);
-
             var nod;
+
+            arrayCopy(arrNodes, arrSource);
 
             while(arrDestination.length<app.tourLength){
 
@@ -2168,18 +2219,16 @@
 
                 nod.loaded=true;
 
-                // cNode = nod;
-
               }
               else if(arrDestination.length<arrNodes.length){
 
                 switch(method){
 
                   case GREEDY_MODES.CLOSEST:  nod=getClosestNode(nod);       break;
-                  case GREEDY_MODES.FURTHEST: nod=getFurthestNode(nod);      break;
+                  case GREEDY_MODES.FARTHEST: nod=getFarthestNode(nod);      break;
                   case GREEDY_MODES.RANDOM:   nod=getRandomNode(arrSource);  break;
 
-                  default:                                                    break;
+                  default:                                                   break;
 
                 }
 
@@ -2202,8 +2251,8 @@
 
           function greedy(){
 
-            if(p.workingNodes.length==0 ||
-               frameCount%5==0){
+            if(p.workingNodes.length==0){// ||
+              //  frameCount%5==0){
 
               p.workingNodes=getGreedyTour(p.nodes, app.greedy_mode);
 
@@ -2212,34 +2261,28 @@
 
               if(app.running){
 
-                // if(frameCount%2==0){
+                if(app.crossover){
 
-                  if(app.crossover){
+                  calculateIntersections();
 
-                    calculateIntersections();
+                  if(p.intersections.length>0){
 
-                    if(p.intersections.length>0){
+                    var n0=0;
+                    var n1=2;
 
-                      reverseNodes(p.workingNodes,
-                                   p.intersections[0].id,
-                                   p.intersections[2].id);
-
+                    if(frameCount%5==0){
+                      n0=1;
+                      n1=3;
                     }
 
+                    reverseNodes(p.workingNodes,
+                                  p.intersections[n0].id,
+                                  p.intersections[n1].id);
                   }
 
-                // }
-                // else{
+                }
 
-                  if(app.iterate &&
-                     frameCount%4==0){
-
-                    iterate();
-                    renumberNodes(p.workingNodes);
-
-                  }
-
-                // }
+                if(app.iterate){ iterate(); }
 
                 updateTour();
 
@@ -2251,8 +2294,8 @@
             drawNodes(p.nodes);
 
             if(p.length<p.workingNodes.length){
-              // p.length++;
-              p.length=p.workingNodes.length;
+              p.length++;
+              // p.length=p.workingNodes.length;
             }      
 
           };
@@ -2452,14 +2495,13 @@
             strokeWeight(0);
             stroke(128);
             noStroke();
-            fill(164);
+            fill(192);
 
             var txt='Tours:'            + '\n'   +
                     'Nodes:'            + '\n\n' +
                     'Working Length:'   + '\n'   +
                     'Best Length'       + '\n'   +
                     'Historic Length:'  + '\n\n' +
-                    'Current Node:'     + '\n\n' + 
                     'Factor:'           + '\n\n' +
                     'Intersections:'    + '\n'   +
                     'Segments:'         + '\n\n' +
@@ -2472,35 +2514,35 @@
                     'Range:'            + '\n\n' +
                     'Elapsed Time:';
 
-              text(txt, 0, 10);
+              text(txt, 10, 10);
 
             stroke(0);
             noStroke();
-            fill(255);
+            fill(YELLOW);
 
             var id=app.currentNode;
+            var factor=nf(p.factor, 1, 5);
 
             if(id==null){ id='';                 }
             else        { id=app.currentNode.id; }
 
             textAlign(RIGHT, TOP);
 
-            txt=p.tours.length           + '\n'   +
-                p.workingNodes.length    + '\n\n' +
-                p.workingLength          + '\n'   +
-                p.minimumLength          + '\n'   +
-                p.historicLength         + '\n\n' +
-                id                       + '\n\n' +
-                nf(p.factor, 1, 5)       + '\n\n' +
-                p.intersections.length   + '\n'   +
-                p.segments.length        + '\n\n' +
-                p.avgDistance            + '\n\n' +
-                p.minX                   + '\n'   +
-                p.maxX                   + '\n\n' +
-                p.domain                 + '\n\n' +
-                p.minY                   + '\n'   +
-                p.maxY                   + '\n\n' +
-                p.range                  + '\n\n' +
+            txt=p.tours.length          + '\n'   +
+                p.workingNodes.length   + '\n\n' +
+                p.workingLength         + '\n'   +
+                p.minimumLength         + '\n'   +
+                p.historicLength        + '\n\n' +
+                factor                  + '\n\n' +
+                p.intersections.length  + '\n'   +
+                p.segments.length       + '\n\n' +
+                p.avgDistance           + '\n\n' +
+                p.minX                  + '\n'   +
+                p.maxX                  + '\n\n' +
+                p.domain                + '\n\n' +
+                p.minY                  + '\n'   +
+                p.maxY                  + '\n\n' +
+                p.range                 + '\n\n' +
                 nf(app.elapsedTime, 1, 1);
 
               text(txt, 140, 10);
@@ -2511,6 +2553,7 @@
               // text(factorial(app.tourLength), 200, p.h-20);
               // text(factorial(app.tourLength).toLocaleString(), 10, p.h-200);
 
+            fill(YELLOW_H);
             textSize(24);
             textAlign(LEFT,BOTTOM);
 
@@ -2592,25 +2635,12 @@
 
               drawBorder();
               drawTour();
+
               calculateMetrics();
 
               drawProperties();
 
-              drawBestPath(p.bestNodes);
-
-              // for(var n=0; n<1; n++){
-
-              //   p.workingNodes=getGreedyTour(p.nodes, app.greedy_mode);
-
-              //   calculateMetrics();
-
-              //   if(p.workingLength<p.minimumLength){
-
-              //     arrayCopy(p.workingNodes,p.bestNodes);
-
-              //   }
-
-              // }
+              // drawBestPath(p.bestNodes);
 
           pop();
 
@@ -2846,7 +2876,7 @@
 
         if (this.hit) {
           app.focus = this;
-          // print(this.closest);  
+          print(this.closest);  
         }
 
         if (this.active) {
@@ -2931,73 +2961,72 @@
       resetButton.prototype.draw = function (){
 
         this.active = this.hit &&
-          app.focus === this;
+                      app.focus === this;
 
         this.offset = 0;
 
-        push();
-
-        translate(this.x, this.y);
-
-        noFill();
-        stroke(192);
-        strokeWeight(1.5);
-
-        if (this.active &&
-          app.left) {
-
-          rotate(radians(45));
-
-        }
-
-        // Arc Shadow
-        stroke(212);
-
-        arc(3, 3, this.w, this.h, radians(60), 2 * PI - radians(22.5));
-
-        // Arc
-        stroke(192);
-
-        if (this.active) {
-
-          stroke(164);
-          cursor(this.cursor);
-
-        }
-
-        arc(0, 0, this.w, this.h, radians(60), 2 * PI - radians(22.5));
+        var CLR=164;
+        var CLRH=192;
+        var CLRB=48;
 
         push();
 
-        translate(4, -5);
-        rotate(PI / 6);
+          translate(this.x, this.y);
 
-        // // Triangle Shadow
-        fill(212);
-        stroke(212);
+          noFill();
+          strokeWeight(1.5);
 
-        triangle(3, 3,
-          13, 3,
-          13, -7);
+          if(this.active &&
+             app.left){
 
-        // Triangle
-        fill(192);
-        stroke(192);
+            rotate(radians(45));
 
-        if (this.active) {
-          fill(164);
-          stroke(164);
-        }
+          }
 
-        triangle(0, 0,
-          10, 0,
-          10, -10);
+          // Arc Shadow
+          stroke(CLRB);
 
-        pop();
+            arc(3, 3, this.w, this.h, radians(60), 2 * PI - radians(22.5));
 
-        // noFill();
-        // stroke(RED);              
-        // ellipse(0,0,this.w,this.h);
+          // Arc
+          stroke(CLR);
+
+          if(this.active){
+
+            stroke(CLRH);
+            cursor(this.cursor);
+
+          }
+
+            arc(0, 0, this.w, this.h, radians(60), 2 * PI - radians(22.5));
+
+          push();
+
+            translate(4, -5);
+            rotate(PI / 6);
+
+            // Triangle Shadow
+            fill(32);
+            stroke(32);
+
+              triangle( 3, 3,
+                       13, 3,
+                       13,-7);
+
+            // Triangle
+            fill(CLR);
+            stroke(CLR);
+
+            if(this.active){
+              fill(CLRH);
+              stroke(CLRH);
+            }
+
+              triangle( 0,  0,
+                       10,  0,
+                       10,-10);
+
+          pop();
 
         pop();
 
@@ -3055,84 +3084,84 @@
       solveButton.prototype.draw = function (){
 
         this.active = this.hit &&
-          app.focus === this;
+                      app.focus === this;
 
         this.offset = 0;
 
+        var CLR=164;
+        var CLRH=212;
+        var CLRB=48;
+
         push();
 
-        translate(this.x, this.y);
+          translate(this.x, this.y);
 
-        noFill();
-        stroke(192);
-        strokeWeight(1.5);
+          noFill();
+          stroke(CLR);
+          strokeWeight(1.5);
 
-        if (this.active) {
+          if(this.active){
 
-          stroke(164);
-          cursor(this.cursor);
-
-          if (app.left) {
-            this.offset = 1;
-          }
-
-        }
-
-        var o = this.offset;
-
-        if (this.retrieve()) {
-
-          // Triangle Shadow
-          fill(212);
-          stroke(212);
-          strokeWeight(5);
-
-          line(-3, -7, -3, 13);
-          line(9, -7, 9, 13);
-
-          // Triangle
-          fill(192);
-          stroke(192);
-
-          if (this.active) {
-            fill(164);
             stroke(164);
+            cursor(this.cursor);
+
+            if(app.left){
+              this.offset=1;
+            }
+
           }
 
-          line(-6, -10, -6, 10);
-          line(6, -10, 6, 10);
+          var o=this.offset;
 
-        }
-        else {
+          if(this.retrieve()){
 
-          // Triangle Shadow
-          fill(212);
-          stroke(212);
+            // Triangle Shadow
+            fill(CLRB);
+            stroke(CLRB);
+            strokeWeight(5);
 
-          triangle(13, 3,
-            -7, -7,
-            -7, 13);
+            line(-3,-7,-3, 13);
+            line( 9,-7, 9, 13);
 
-          // Triangle
-          fill(192);
-          stroke(192);
+            // Triangle
+            fill(CLR);
+            stroke(CLR);
 
-          if (this.active) {
-            fill(164);
-            stroke(164);
+            if(this.active){
+              fill(CLRH);
+              stroke(CLRH);
+            }
+
+            line(o-6, o-10, o-6, o+10);
+            line(o+6, o-10, o+6, o+10);
+
           }
+          else {
 
-          triangle(o + 10, o,
-            o - 10, o - 10,
-            o - 10, o + 10);
+            // Triangle Shadow
+            fill(CLRB);
+            stroke(CLRB);
 
-        }
+            triangle(13, 3,
+                     -7,-7,
+                     -7,13);
+
+            // Triangle
+            fill(CLR);
+            stroke(CLR);
+
+            if(this.active){
+              fill(CLRH);
+              stroke(CLRH);
+            }
+
+            triangle(o+10, o,
+                     o-10, o-10,
+                     o-10, o+10);
+
+          }
 
         pop();
-
-        // noFill();
-        // stroke(RED);              
-        // ellipse(this.x,this.y,this.w,this.h);
 
       };
       solveButton.prototype.clicked = function (){
@@ -3417,59 +3446,59 @@
 
         this.offset = 0;
 
+        var CLR=164;
+        var CLRH=212;
+        var CLRB=48;
+
         push();
 
-        translate(this.x, this.y);
+          translate(this.x, this.y);
 
-        if (this.active) {
+          if(this.active){
 
-          cursor(this.cursor);
+            cursor(this.cursor);
 
-          if (app.left) {
-            this.offset = 1;
+            if(app.left){
+              this.offset=1;
+            }
+
           }
 
-        }
+          var o=this.offset;
 
-        var o = this.offset;
+          // Shadows
+          noFill();
+          stroke(CLRB);
+          strokeWeight(2);
 
-        // Shadows
-        noFill();
-        stroke(212);
-        strokeWeight(2);
+          var s=3;
 
-        var s = o + 3;
+            bezier(-14 + s,-8 + s, -5 + s,-10 + s, 5 + s, 10 + s, 14 + s, 8 + s);
+            bezier(-14 + s, 8 + s, -5 + s, 10 + s, 5 + s,-10 + s, 14 + s,-8 + s);
 
-        bezier(-14 + s, -8 + s, -5 + s, -10 + s, 5 + s, 10 + s, 14 + s, 8 + s);
-        bezier(-14 + s, 8 + s, -5 + s, 10 + s, 5 + s, -10 + s, 14 + s, -8 + s);
+          fill(CLR);
 
-        fill(212);
+            triangle(13 + s, 11 + s, 13 + s, 5 + s, 17 + s, 8 + s);
+            triangle(13 + s,-11 + s, 13 + s,-5 + s, 17 + s,-8 + s);
 
-        triangle(13 + s, 11 + s, 13 + s, 5 + s, 17 + s, 8 + s);
-        triangle(13 + s, -11 + s, 13 + s, -5 + s, 17 + s, -8 + s);
+          // Curves
+          noFill();
+          stroke(CLR);
 
-        // Curves
-        noFill();
-        stroke(192);
+          if(this.active){ stroke(CLRH); }
 
-        if (this.active) { stroke(164); }
+            bezier(-14 + o,-8 + o, -3 + o,-10 + o, 3 + o, 10 + o, 14 + o, 8 + o);
+            bezier(-14 + o, 8 + o, -3 + o, 10 + o, 3 + o,-10 + o, 14 + o,-8 + o);
 
-        bezier(-14 + o, -8 + o, -3 + o, -10 + o, 3 + o, 10 + o, 14 + o, 8 + o);
-        bezier(-14 + o, 8 + o, -3 + o, 10 + o, 3 + o, -10 + o, 14 + o, -8 + o);
+          // Triangles
+          fill(CLR);
 
-        // Triangles
-        fill(192);
+          if(this.active){ fill(CLRH); }
 
-        if (this.active) { fill(164); }
-
-        triangle(13 + o, 11 + o, 13 + o, 5 + o, 17 + o, 8 + o);
-        triangle(13 + o, -11 + o, 13 + o, -5 + o, 17 + o, -8 + o);
+            triangle(13 + o, 11 + o, 13 + o, 5 + o, 17 + o, 8 + o);
+            triangle(13 + o,-11 + o, 13 + o,-5 + o, 17 + o,-8 + o);
 
         pop();
-
-        // noFill();
-        // stroke(RED);
-        // ellipse(this.x,this.y,this.w,this.h);
 
       };
       shuffleButton.prototype.moved = function (x, y) {
@@ -3544,7 +3573,7 @@
                    2);
 
             // Inner Rectangle ~~~~~~~~~~~
-            if(this.value){ fill(64); }
+            if(this.value){ fill(color(0,255,255,128)); }
             else          { noFill();
                             noStroke();    }
 
@@ -3553,8 +3582,8 @@
                    2);
 
             // Caption ~~~~~~~~~~
-            if(this.hit){ fill(getColor(this.color,100)); }
-            else        { fill(getColor(this.color, 75)); }
+            if(this.hit){ fill(255); }
+            else        { fill(160); }
 
             noStroke();
 
@@ -3648,7 +3677,7 @@
                           cursor(HAND);     }
             else        { fill(0,0,128,0);  }
 
-            // Outer Rectangle ~~~~~~~~~~~
+            // Outer Circle ~~~~~~~~~~~
             rectMode(CENTER);
 
             stroke(128);
@@ -3657,10 +3686,10 @@
               ellipse(this.x, this.y,
                       this.w, this.h);
 
-            // Inner Rectangle ~~~~~~~~~~~            
+            // Inner Circle ~~~~~~~~~~~            
             if(this.retrieve()==this.algorithm){
 
-              if(this.value){ fill(64);   }
+              if(this.value){ fill(0,255,255,128);   }
               else          { noFill();
                               noStroke(); }
 
@@ -3670,8 +3699,8 @@
             }
 
             // Caption ~~~~~~~~~~
-            if(this.hit){ fill(getColor(this.color,100)); }
-            else        { fill(getColor(this.color, 75)); }
+            if(this.hit){ fill(255); }
+            else        { fill(160); }
 
             noStroke();
 
@@ -3767,7 +3796,7 @@
     /* Accessories ---------------------------------------------------- */
 
     /** Reset Button     */
-    rt.controls.push(new resetButton('reset', rt, 120, 500, 28, 28,
+    rt.controls.push(new resetButton('reset', rt, 700, rt.h-50, 28, 28,
       {
         cursor: HAND,
         color: BLACK,
@@ -3775,7 +3804,7 @@
       }));
 
     /** Shuffle Button   */
-    rt.controls.push(new shuffleButton('shuffle', rt, 120, 550, 28, 28,
+    rt.controls.push(new shuffleButton('shuffle', rt, 650, rt.h-50, 28, 28,
       {
         cursor: HAND,
         color: BLACK,
@@ -3783,7 +3812,7 @@
       }));
 
     /** Solve Button     */
-    rt.controls.push(new solveButton('solve', rt, 120, 600, 28, 28,
+    rt.controls.push(new solveButton('solve', rt, 600, rt.h-50, 28, 28,
       {
         cursor: HAND,
         color: BLACK,
@@ -3874,14 +3903,14 @@
         app.controls.push(closest);
 
         /* Farthest --------------------------------------------------- */
-        var farthest=new option('Farthest', rt, 30, 555, 12, 12,
+        var Farthest=new option('Farthest', rt, 30, 555, 12, 12,
           { color:      WHITE,
             execute:    setMethod,
             retrieve:   getMethod,
             algorithm:  GREEDY_MODES.FARTHEST,
             caption:    "Farthest" });
 
-        app.controls.push(farthest);
+        app.controls.push(Farthest);
 
         /* Random --------------------------------------------------- */
         var random=new option('Random', rt, 30, 570, 12, 12,
