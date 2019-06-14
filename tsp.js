@@ -401,48 +401,48 @@
     /* Platform Constants  -------------------- */
     {
 
-      this.dirty        = false;    //  Has a reset occurred
+      this.dirty          = false;    //  Has a reset occurred
 
-      this.debug        = true;     //  Mode that displays enhanced debugging tools
+      this.debug          = true;     //  Mode that displays enhanced debugging tools
 
-      this.frameRate    = 0;        //  Refresh speed
+      this.frameRate      = 0;        //  Refresh speed
 
-      this.running      = false;    //  Currently solving the puzzle
-      this.progress     = 0;        //  Puzzle is this % solved
+      this.running        = false;    //  Currently solving the puzzle
+      this.progress       = 0;        //  Puzzle is this % solved
 
-      this.mouseX       = 0;        //  Current mouseX location
-      this.mouseY       = 0;        //  Current mouseY location
+      this.mouseX         = 0;        //  Current mouseX location
+      this.mouseY         = 0;        //  Current mouseY location
 
-      this.left         = false;    //  Is the left   mouse button pressed
-      this.right        = false;    //  Is the right  mouse button pressed
-      this.center       = false;    //  Is the center mouse button pressed
+      this.left           = false;    //  Is the left   mouse button pressed
+      this.right          = false;    //  Is the right  mouse button pressed
+      this.center         = false;    //  Is the center mouse button pressed
       
-      this.control      = false;    //  Is the CONTROL key pressed
-      this.alt          = false;    //  Is the ALT key pressed
-      this.shift        = false;    //  Is the SHIFT key pressed
+      this.control        = false;    //  Is the CONTROL key pressed
+      this.alt            = false;    //  Is the ALT key pressed
+      this.shift          = false;    //  Is the SHIFT key pressed
 
-      this.dragStartX   = 0;
-      this.dragStartY   = 0;
+      this.dragStartX     = 0;
+      this.dragStartY     = 0;
 
-      this.dragging     = false;    //  Is the mouse cursor moving and the left button pressed?
+      this.dragging       = false;    //  Is the mouse cursor moving and the left button pressed?
 
-      this.dragDirection = DRAG_DIRECTIONS.NONE;
+      this.dragDirection  = DRAG_DIRECTIONS.NONE;
 
-      this.focus        = null;     //  The control with focus
+      this.focus          = null;     //  The control with focus
 
-      this.controls     = [];       //  Collection of controls in the app
-      this.controlCount = 0;
+      this.controls       = [];       //  Collection of controls in the app
+      this.controlCount   = 0;
 
-      this.keys         = [];       //  Array holding the value of all KeyCodes
+      this.keys           = [];       //  Array holding the value of all KeyCodes
 
-      this.fullscreen   = false;    //  Is the display set to take up the entire screen ie. No Chrome
+      this.fullscreen     = false;    //  Is the display set to take up the entire screen ie. No Chrome
 
       this.info = 0;                //  Is the info frame displayed
-      this.telemetry    = false;    //  Is telemetry visible
+      this.telemetry      = false;    //  Is telemetry visible
 
-      this.startTime    = millis();
+      this.startTime      = millis();
 
-      this.elapsedTime  = 0;
+      this.elapsedTime    = 0;
 
     }
 
@@ -581,6 +581,21 @@
       function menu(){ };
 
       function getRandomInt(n){ return round(random(n)) };
+
+      function setNodes(n){
+        
+        app.tourLength=constrain(round(n),10,100);
+
+print(app.tourLength);
+
+        app.field.reset();
+
+      };
+      function getNodes(){
+
+        return app.nodes;
+
+      };
 
     }
 
@@ -3029,18 +3044,41 @@
 
           }
 
-          fill(128);
-          stroke(32);
+          fill(16,128);
+          noStroke();
 
             rect(0,
                  0,
                  this.w,
                  this.h);
 
+          fill(128);
+          stroke(32);
+
+            line(0,
+                 this.h/2,
+                 this.w,
+                 this.h/2);
+
           fill(128,0,0);
           noStroke();
 
-              ellipse(this.value,this.h/2,this.h,this.h);
+          this.value=constrain(this.value,0,this.w);
+
+            ellipse(this.value,
+                    this.h/2,
+                    10,
+                    10);
+
+          if(app.debug){
+
+            textSize(16);
+            noStroke();
+            fill(192);
+
+              text(this.value,0,-30);
+
+          }
 
         pop();
 
@@ -3063,42 +3101,34 @@
       slider.prototype.clicked=function(){
         /** Overridden for execute */
 
-        // if (this.active) { this.execute(); }
-
         if(this.hit){
-          this.value=mouseX-this.x;
-          print(this.value);
+
+          this.value=mouseX-this.x-this.parent.x;
+
+          this.execute(100*(this.value/this.w));
+
         }
 
       };      
       slider.prototype.moved=function(x,y){
         /** Overridden for shape */
 
-        // if(this.parent.hit){
-
-        if(this.hitTest(x,y)){
-
-          this.hit=true;
-          app.focus=this;
-
-        }
-        else{
-
-          this.hit=false;
-
-        }
-
-        // }
+        if(this.hitTest(x,y)){  this.hit=true;
+                                app.focus=this; }
+        else                 {  this.hit=false; }
 
       };
       slider.prototype.dragged=function(){
 
         if(this.hit){          
           
-          this.value=mouseX-this.x;
+          if(mouseX>this.x &&
+             mouseX<this.x+this.w){
 
-          if(this.value<this.x       ){ this.value=this.x;        }
-          if(this.value>this.x+this.w){ this.value=this.x+this.w; }
+            this.value=mouseX-this.x;
+            this.execute(100*(this.value/this.w));
+
+          }
 
         }
 
@@ -4117,12 +4147,12 @@
     /* Accessories ---------------------------------------------------- */
 
     /** Slider     */
-    rt.controls.push(new slider('slider', rt, 200, rt.h-100, 300, 10,
+    rt.controls.push(new slider('slider', rt, 200, rt.h-100, 400, 10,
       {
         cursor:   HAND,
         color:    BLACK,
-        retrieve: getRunning,
-        execute:  toggleRunning
+        retrieve: getNodes,
+        execute:  setNodes
       }));
 
     /** Solve Button     */
