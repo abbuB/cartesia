@@ -13,9 +13,11 @@
 
     - proximity swap (nodes that should be in a line with adjacent nodes)
 
-    - create a circular node pattern for 100 nodes
+    
 
   TO DONE:
+
+    - create a circular node pattern for 100 nodes
 
     - add random tour mode
 
@@ -616,28 +618,29 @@
       // app.controlCount++;
 
       /* explicit properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-      this.id = id;           /** Unique identification number --
-                                        Change to GUID for production)          */
-      this.parent = parent;       /** parent control (acts as a container)  */
+      this.id       = id;           /** Unique identification number --
+                                        Change to GUID for production)        */
+      this.parent   = parent;       /** parent control (acts as a container)  */
 
-      this.x = x;            /** left                                  */
-      this.y = y;            /** top                                   */
-      this.w = w;            /** width                                 */
-      this.h = h;            /** height                                */
+      this.x        = x;            /** left                                  */
+      this.y        = y;            /** top                                   */
+      this.w        = w;            /** width                                 */
+      this.h        = h;            /** height                                */
 
       /* inherent properties ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
       this.controls = [];           /** array of child controls               */
 
-      this.on = false;        /** is the control on or off              */
-      this.hit = false;        /** mouse is over the control             */
-      this.cursor = ARROW         /** cursor when mouse is over the control */
-      this.visible = true;         /** is the control currently displayed    */
+      this.on       = false;        /** is the control on or off              */
+      this.hit      = false;        /** mouse is over the control             */
+      this.cursor   = ARROW         /** cursor when mouse is over the control */
+      this.visible  = true;         /** is the control currently displayed    */
 
-      this.active = false;        /** active = hit and focus and visible    */
-      this.offset = 0;            /** offset distance when clicked          */
+      this.active   = false;        /** active = hit and focus and visible    */
+      this.offset   = 0;            /** offset distance when clicked          */
 
-      this.font = 'sans-serif'; /** default font                          */
-      this.timer = 0;            /** Used to count things - frames etc.    */
+      this.font     = 'sans-serif'; /** default font                          */
+      this.timer    = 0;            /** Used to count things - frames etc.    */
+      this.value    = 0;
 
     };
     control.prototype.draw = function (){ };
@@ -2285,7 +2288,7 @@
               p.workingNodes=getGreedyTour(p.nodes, app.greedy_mode);
 
               updateTour();
-              
+
             }
             else{
 
@@ -2315,6 +2318,10 @@
                 if(app.iterate){
                   
                   iterate();
+
+                  swap2Random(p.workingNodes);
+
+                  updateTour();
 
                   swap2Length(p.workingNodes, getLongest(p.workingNodes));
 
@@ -2700,7 +2707,7 @@
           app.focus=this;
 
           for(var n in this.workingNodes){
-            this.workingNodes[n].moved(this.x + x, this.y + y);
+            this.workingNodes[n].moved(this.x+x, this.y+y);
           }
 
         }
@@ -2975,10 +2982,10 @@
 
     }
 
-    /** Reset Button    -------------------------------------------------- */
+    /** Slider    -------------------------------------------------- */
     {
 
-      function resetButton(id, parent, x, y, w, h, props) {
+      function slider(id, parent, x, y, w, h, props) {
 
         control.call(this, id, parent, x, y, w, h);
 
@@ -2986,12 +2993,13 @@
         this.color = props.color;
 
         this.execute = props.execute;
+        this.retrieve = props.retrieve;
 
         app.reset = this;
 
       };
-      resetButton.prototype = Object.create(control.prototype);
-      resetButton.prototype.draw = function (){
+      slider.prototype = Object.create(control.prototype);
+      slider.prototype.draw = function (){
 
         this.active = this.hit &&
                       app.focus === this;
@@ -2999,7 +3007,7 @@
         this.offset = 0;
 
         var CLR=164;
-        var CLRH=192;
+        var CLRH=212;
         var CLRB=48;
 
         push();
@@ -3007,91 +3015,97 @@
           translate(this.x, this.y);
 
           noFill();
-          strokeWeight(1.5);
-
-          if(this.active &&
-             app.left){
-
-            rotate(radians(45));
-
-          }
-
-          // Arc Shadow
-          stroke(CLRB);
-
-            arc(3, 3, this.w, this.h, radians(60), 2 * PI - radians(22.5));
-
-          // Arc
           stroke(CLR);
+          strokeWeight(1.5);
 
           if(this.active){
 
-            stroke(CLRH);
+            stroke(164);
             cursor(this.cursor);
+
+            if(app.left){
+              this.offset=1;
+            }
 
           }
 
-            arc(0, 0, this.w, this.h, radians(60), 2 * PI - radians(22.5));
+          fill(128);
+          stroke(32);
 
-          push();
+            rect(0,
+                 0,
+                 this.w,
+                 this.h);
 
-            translate(4, -5);
-            rotate(PI / 6);
+          fill(128,0,0);
+          noStroke();
 
-            // Triangle Shadow
-            fill(32);
-            stroke(32);
-
-              triangle( 3, 3,
-                       13, 3,
-                       13,-7);
-
-            // Triangle
-            fill(CLR);
-            stroke(CLR);
-
-            if(this.active){
-              fill(CLRH);
-              stroke(CLRH);
-            }
-
-              triangle( 0,  0,
-                       10,  0,
-                       10,-10);
-
-          pop();
+              ellipse(this.value,this.h/2,this.h,this.h);
 
         pop();
 
       };
-      resetButton.prototype.clicked = function (){
-        /** Overridden for execute */
 
-        if (this.active) {
-          this.execute();
+      field.prototype.hitTest=function(x,y){
+
+        var retVal=false;
+
+        if(mouseX>x+this.x &&
+           mouseX<x+this.x+this.w &&
+           mouseY>y+this.y &&
+           mouseX<y+this.y+this.h){
+          retVal=true;
         }
 
-      };
-      resetButton.prototype.moved = function (x, y) {
+        return retVal;
+
+      };      
+      slider.prototype.clicked=function(){
+        /** Overridden for execute */
+
+        // if (this.active) { this.execute(); }
+
+        if(this.hit){
+          this.value=mouseX-this.x;
+          print(this.value);
+        }
+
+      };      
+      slider.prototype.moved=function(x,y){
         /** Overridden for shape */
 
         // if(this.parent.hit){
 
-        if (dist(mouseX, mouseY,
-          this.x + x,
-          this.y + y) <= this.w / 2) {
+        if(this.hitTest(x,y)){
 
-          this.hit = true;
-          app.focus = this;
+          this.hit=true;
+          app.focus=this;
 
         }
-        else {
+        else{
 
-          this.hit = false;
+          this.hit=false;
 
         }
 
         // }
+
+      };
+      slider.prototype.dragged=function(){
+
+        if(this.hit){          
+          
+          this.value=mouseX-this.x;
+
+          if(this.value<this.x       ){ this.value=this.x;        }
+          if(this.value>this.x+this.w){ this.value=this.x+this.w; }
+
+        }
+
+      };
+      slider.prototype.resized=function(){
+
+        this.y=this.parent.y+this.parent.h-100;
 
       };
 
@@ -3223,6 +3237,388 @@
         }
 
         // }
+
+      };
+      solveButton.prototype.resized=function(){
+
+        this.y=this.parent.y+this.parent.h-this.h;
+
+      };
+
+    }
+
+    /** Shuffle Button  -------------------------------------------------- */
+    {
+
+      function shuffleButton(id, parent, x, y, w, h, props) {
+
+        control.call(this, id, parent, x, y, w, h);
+
+        this.cursor = props.cursor;
+        this.color = props.color;
+
+        this.execute = props.execute;
+
+        app.reset = this;
+
+      };
+      shuffleButton.prototype = Object.create(control.prototype);
+      shuffleButton.prototype.draw = function (){
+
+        this.active = this.hit &&
+                      app.focus === this;
+
+        this.offset = 0;
+
+        var CLR=164;
+        var CLRH=212;
+        var CLRB=48;
+
+        push();
+
+          translate(this.x, this.y);
+
+          if(this.active){
+
+            cursor(this.cursor);
+
+            if(app.left){
+              this.offset=1;
+            }
+
+          }
+
+          var o=this.offset;
+
+          // Shadows
+          noFill();
+          stroke(CLRB);
+          strokeWeight(2);
+
+          var s=3;
+
+            bezier(-14 + s,-8 + s, -5 + s,-10 + s, 5 + s, 10 + s, 14 + s, 8 + s);
+            bezier(-14 + s, 8 + s, -5 + s, 10 + s, 5 + s,-10 + s, 14 + s,-8 + s);
+
+          fill(CLR);
+
+            triangle(13 + s, 11 + s, 13 + s, 5 + s, 17 + s, 8 + s);
+            triangle(13 + s,-11 + s, 13 + s,-5 + s, 17 + s,-8 + s);
+
+          // Curves
+          noFill();
+          stroke(CLR);
+
+          if(this.active){ stroke(CLRH); }
+
+            bezier(-14 + o,-8 + o, -3 + o,-10 + o, 3 + o, 10 + o, 14 + o, 8 + o);
+            bezier(-14 + o, 8 + o, -3 + o, 10 + o, 3 + o,-10 + o, 14 + o,-8 + o);
+
+          // Triangles
+          fill(CLR);
+
+          if(this.active){ fill(CLRH); }
+
+            triangle(13 + o, 11 + o, 13 + o, 5 + o, 17 + o, 8 + o);
+            triangle(13 + o,-11 + o, 13 + o,-5 + o, 17 + o,-8 + o);
+
+        pop();
+
+      };
+      shuffleButton.prototype.moved = function (x, y) {
+
+        // if(this.parent.hit){
+
+        if (dist(mouseX, mouseY,
+          this.x + x,
+          this.y + y) <= this.w / 2) {
+
+          this.hit = true;
+          app.focus = this;
+
+        }
+        else {
+
+          this.hit = false;
+
+        }
+
+        // }
+
+      };
+      shuffleButton.prototype.clicked = function (){
+        /** Overridden for execute */
+
+        if (this.active) { this.execute(app.field.workingNodes); }
+
+      };
+      shuffleButton.prototype.resized=function(){
+
+        this.y=this.parent.y+this.parent.h-this.h;
+
+      };
+
+    }
+
+
+    /** Reset Button    -------------------------------------------------- */
+    {
+
+      function resetButton(id, parent, x, y, w, h, props) {
+
+        control.call(this, id, parent, x, y, w, h);
+
+        this.cursor = props.cursor;
+        this.color = props.color;
+
+        this.execute = props.execute;
+
+        app.reset = this;
+
+      };
+      resetButton.prototype = Object.create(control.prototype);
+      resetButton.prototype.draw = function (){
+
+        this.active = this.hit &&
+                      app.focus === this;
+
+        this.offset = 0;
+
+        var CLR=164;
+        var CLRH=192;
+        var CLRB=48;
+
+        push();
+
+          translate(this.x, this.y);
+
+          noFill();
+          strokeWeight(1.5);
+
+          if(this.active &&
+             app.left){
+
+            rotate(radians(45));
+
+          }
+
+          // Arc Shadow
+          stroke(CLRB);
+
+            arc(3, 3, this.w, this.h, radians(60), 2 * PI - radians(22.5));
+
+          // Arc
+          stroke(CLR);
+
+          if(this.active){
+
+            stroke(CLRH);
+            cursor(this.cursor);
+
+          }
+
+            arc(0, 0, this.w, this.h, radians(60), 2 * PI - radians(22.5));
+
+          push();
+
+            translate(4, -5);
+            rotate(PI / 6);
+
+            // Triangle Shadow
+            fill(32);
+            stroke(32);
+
+              triangle( 3, 3,
+                       13, 3,
+                       13,-7);
+
+            // Triangle
+            fill(CLR);
+            stroke(CLR);
+
+            if(this.active){
+              fill(CLRH);
+              stroke(CLRH);
+            }
+
+              triangle( 0,  0,
+                       10,  0,
+                       10,-10);
+
+          pop();
+
+        pop();
+
+      };
+      resetButton.prototype.clicked = function (){
+        /** Overridden for execute */
+
+        if (this.active) {
+          this.execute();
+        }
+
+      };
+      resetButton.prototype.moved = function (x, y) {
+        /** Overridden for shape */
+
+        // if(this.parent.hit){
+
+        if (dist(mouseX, mouseY,
+          this.x + x,
+          this.y + y) <= this.w / 2) {
+
+          this.hit = true;
+          app.focus = this;
+
+        }
+        else {
+
+          this.hit = false;
+
+        }
+
+        // }
+
+      };
+      resetButton.prototype.resized=function(){
+
+        this.y=this.parent.y+this.parent.h-this.h;
+
+      };
+
+    }
+
+    /** Solve Button    -------------------------------------------------- */
+    {
+
+      function solveButton(id, parent, x, y, w, h, props) {
+
+        control.call(this, id, parent, x, y, w, h);
+
+        this.cursor = props.cursor;
+        this.color = props.color;
+
+        this.execute = props.execute;
+        this.retrieve = props.retrieve;
+
+        app.reset = this;
+
+      };
+      solveButton.prototype = Object.create(control.prototype);
+      solveButton.prototype.draw = function (){
+
+        this.active = this.hit &&
+                      app.focus === this;
+
+        this.offset = 0;
+
+        var CLR=164;
+        var CLRH=212;
+        var CLRB=48;
+
+        push();
+
+          translate(this.x, this.y);
+
+          noFill();
+          stroke(CLR);
+          strokeWeight(1.5);
+
+          if(this.active){
+
+            stroke(164);
+            cursor(this.cursor);
+
+            if(app.left){
+              this.offset=1;
+            }
+
+          }
+
+          var o=this.offset;
+
+          if(this.retrieve()){
+
+            // Triangle Shadow
+            fill(CLRB);
+            stroke(CLRB);
+            strokeWeight(5);
+
+            line(-3,-7,-3, 13);
+            line( 9,-7, 9, 13);
+
+            // Triangle
+            fill(CLR);
+            stroke(CLR);
+
+            if(this.active){
+              fill(CLRH);
+              stroke(CLRH);
+            }
+
+            line(o-6, o-10, o-6, o+10);
+            line(o+6, o-10, o+6, o+10);
+
+          }
+          else {
+
+            // Triangle Shadow
+            fill(CLRB);
+            stroke(CLRB);
+
+            triangle(13, 3,
+                     -7,-7,
+                     -7,13);
+
+            // Triangle
+            fill(CLR);
+            stroke(CLR);
+
+            if(this.active){
+              fill(CLRH);
+              stroke(CLRH);
+            }
+
+            triangle(o+10, o,
+                     o-10, o-10,
+                     o-10, o+10);
+
+          }
+
+        pop();
+
+      };
+      solveButton.prototype.clicked = function (){
+        /** Overridden for execute */
+
+        if (this.active) { this.execute(); }
+
+      };
+      solveButton.prototype.moved = function (x, y) {
+        /** Overridden for shape */
+
+        // if(this.parent.hit){
+
+        if (dist(mouseX, mouseY,
+          this.x + x,
+          this.y + y) <= this.w / 2) {
+
+          this.hit = true;
+          app.focus = this;
+
+        }
+        else {
+
+          this.hit = false;
+
+        }
+
+        // }
+
+      };
+      solveButton.prototype.resized=function(){
+
+        this.y=this.parent.y+this.parent.h-this.h;
 
       };
 
@@ -3451,114 +3847,6 @@
           this.execute(!this.retrieve());
 
         }
-
-      };
-
-    }
-
-    /** Shuffle Button  -------------------------------------------------- */
-    {
-
-      function shuffleButton(id, parent, x, y, w, h, props) {
-
-        control.call(this, id, parent, x, y, w, h);
-
-        this.cursor = props.cursor;
-        this.color = props.color;
-
-        this.execute = props.execute;
-
-        app.reset = this;
-
-      };
-      shuffleButton.prototype = Object.create(control.prototype);
-      shuffleButton.prototype.draw = function (){
-
-        this.active = this.hit &&
-                      app.focus === this;
-
-        this.offset = 0;
-
-        var CLR=164;
-        var CLRH=212;
-        var CLRB=48;
-
-        push();
-
-          translate(this.x, this.y);
-
-          if(this.active){
-
-            cursor(this.cursor);
-
-            if(app.left){
-              this.offset=1;
-            }
-
-          }
-
-          var o=this.offset;
-
-          // Shadows
-          noFill();
-          stroke(CLRB);
-          strokeWeight(2);
-
-          var s=3;
-
-            bezier(-14 + s,-8 + s, -5 + s,-10 + s, 5 + s, 10 + s, 14 + s, 8 + s);
-            bezier(-14 + s, 8 + s, -5 + s, 10 + s, 5 + s,-10 + s, 14 + s,-8 + s);
-
-          fill(CLR);
-
-            triangle(13 + s, 11 + s, 13 + s, 5 + s, 17 + s, 8 + s);
-            triangle(13 + s,-11 + s, 13 + s,-5 + s, 17 + s,-8 + s);
-
-          // Curves
-          noFill();
-          stroke(CLR);
-
-          if(this.active){ stroke(CLRH); }
-
-            bezier(-14 + o,-8 + o, -3 + o,-10 + o, 3 + o, 10 + o, 14 + o, 8 + o);
-            bezier(-14 + o, 8 + o, -3 + o, 10 + o, 3 + o,-10 + o, 14 + o,-8 + o);
-
-          // Triangles
-          fill(CLR);
-
-          if(this.active){ fill(CLRH); }
-
-            triangle(13 + o, 11 + o, 13 + o, 5 + o, 17 + o, 8 + o);
-            triangle(13 + o,-11 + o, 13 + o,-5 + o, 17 + o,-8 + o);
-
-        pop();
-
-      };
-      shuffleButton.prototype.moved = function (x, y) {
-
-        // if(this.parent.hit){
-
-        if (dist(mouseX, mouseY,
-          this.x + x,
-          this.y + y) <= this.w / 2) {
-
-          this.hit = true;
-          app.focus = this;
-
-        }
-        else {
-
-          this.hit = false;
-
-        }
-
-        // }
-
-      };
-      shuffleButton.prototype.clicked = function (){
-        /** Overridden for execute */
-
-        if (this.active) { this.execute(app.field.workingNodes); }
 
       };
 
@@ -3828,29 +4116,38 @@
 
     /* Accessories ---------------------------------------------------- */
 
-    /** Reset Button     */
-    rt.controls.push(new resetButton('reset', rt, 700, rt.h-50, 28, 28,
+    /** Slider     */
+    rt.controls.push(new slider('slider', rt, 200, rt.h-100, 300, 10,
       {
-        cursor: HAND,
-        color: BLACK,
-        execute: reset
-      }));
-
-    /** Shuffle Button   */
-    rt.controls.push(new shuffleButton('shuffle', rt, 650, rt.h-50, 28, 28,
-      {
-        cursor: HAND,
-        color: BLACK,
-        execute: printTour
+        cursor:   HAND,
+        color:    BLACK,
+        retrieve: getRunning,
+        execute:  toggleRunning
       }));
 
     /** Solve Button     */
     rt.controls.push(new solveButton('solve', rt, 600, rt.h-50, 28, 28,
       {
-        cursor: HAND,
-        color: BLACK,
+        cursor:   HAND,
+        color:    BLACK,
         retrieve: getRunning,
-        execute: toggleRunning
+        execute:  toggleRunning
+      }));
+
+    /** Shuffle Button   */
+    rt.controls.push(new shuffleButton('shuffle', rt, 650, rt.h-50, 28, 28,
+      {
+        cursor:   HAND,
+        color:    BLACK,
+        execute:  printTour
+      }));
+
+    /** Reset Button     */
+    rt.controls.push(new resetButton('reset', rt, 700, rt.h-50, 28, 28,
+      {
+        cursor:   HAND,
+        color:    BLACK,
+        execute:  reset
       }));
 
     /* Bruteforce -------------------------------------------------- */
@@ -4344,6 +4641,8 @@
       //   default:      break;
 
       // }
+
+      forEach(app.controls,'dragged');
 
     };
     function mouseOut(){
