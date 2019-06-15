@@ -2,6 +2,8 @@
 
   TO DO:
 
+    - hex font
+    
     - slider to change # of nodes. 0-100?
     - Tidy up elapsed timer
 
@@ -332,7 +334,7 @@
     for(var n=0; n<100; n++){
 
       p=new pnt(round(radius*cos(theta))+400, 
-               round(radius*sin(theta))+300);
+                round(radius*sin(theta))+300);
 
       arr.push(p);
 
@@ -361,6 +363,29 @@
     s+="\n          ];";
 
     print(s);
+
+  };
+
+  function getCircleData(n,x,y,r){
+
+    var theta=0;
+    var radius=r;
+    var p;
+
+    arr=[];
+
+    for(var i=0; i<n; i++){
+
+      p=new pnt(x+round(radius*cos(theta)), 
+                y+round(radius*sin(theta)));
+
+      arr.push(p);
+
+      theta+=TWO_PI/n;
+
+    }
+
+    return arr;
 
   };
 
@@ -463,11 +488,11 @@
       // this.algorithm    = ALGORITHMS.GENETIC;
 
       this.initialize   = false;
-      this.crossover    = true;
-      this.iterate      = true;
-      // this.dataMode     = DATA_MODES.RANDOM;
+      this.crossover    = false;
+      this.iterate      = false;
+      this.dataMode     = DATA_MODES.RANDOM;
       // this.dataMode     = DATA_MODES.TEST;
-      this.dataMode     = DATA_MODES.CIRCLE;
+      // this.dataMode     = DATA_MODES.CIRCLE;
 
       this.tourLength   = 100;                //  Total # of nodes to be connected
 
@@ -577,29 +602,36 @@
       };
       function getAlgorithm()     { return app.algorithm;           };
 
-
-      function menu(){ };
-
-      function getRandomInt(n){ return round(random(n)) };
-
-      function setNodes(n){
+      function setNodes(n)        {
         
         app.tourLength=constrain(round(n),10,100);
-
-print(app.tourLength);
-
         app.field.reset();
 
       };
-      function getNodes(){
+      function getNodes()         { return app.tourLength; };
 
-        return app.nodes;
+      function incrementNodes()   {
+        
+        app.tourLength++;
+        app.field.reset();
 
       };
+      function decrementNodes()   {
+        
+        if(app.tourLength>10){
+          
+          app.tourLength--;
+          app.field.reset();
+
+        }
+        
+      };
+
+      function menu(){ };
+
+      function getRandomInt(n)    { return round(random(n)) };
 
     }
-
-
 
     function reset(){
 
@@ -1594,6 +1626,14 @@ print(app.tourLength);
 
           var arr=[];
 
+          if(app.dataMode==DATA_MODES.CIRCLE){
+
+            arr=getCircleData(app.tourLength,
+                              p.x+(p.w)/2+65,
+                              p.y+(p.h)/2,
+                              p.w/2-100);
+          };
+
           for(var n=0; n<app.tourLength; n++){
 
             switch(app.dataMode){
@@ -1606,8 +1646,8 @@ print(app.tourLength);
                                       y=dataTest[n][1];
                                       break;
 
-              case DATA_MODES.CIRCLE: x=dataCircle[n][0];
-                                      y=dataCircle[n][1];
+              case DATA_MODES.CIRCLE: x=arr[n].x;
+                                      y=arr[n].y;
                                       break;
 
               default:                break;
@@ -1835,6 +1875,73 @@ print(app.tourLength);
           if(p.index>p.bestNodes.length-1) { p.index=0; }
 
         };
+
+        function proximityShift(i,arr){
+// print(i);
+          function getDistance(p0,p1,p2){
+
+            return dist(p0.x,p0.y,
+                        p1.x,p1.y) +
+                   dist(p0.x, p0.y,
+                        p2.x,p2.y);
+          };
+
+          var p0=arr[i];
+          var p1=Infinity;
+          var p2=Infinity;
+
+          if     (i==0)           { p1=arr[arr.length-1];
+                                    p2=arr[1];            } // First node in the array
+          else if(i==arr.length-1){ p1=arr[i-1];
+                                    p2=arr[0];            } // Last node in the array
+          else                    { p1=arr[i-1];
+                                    p2=arr[i+1];          }
+
+          var currentDistance=getDistance(p0,p1,p2);
+          var newDistance=Infinity;
+
+          var p3=Infinity;
+          var p4=Infinity;
+
+          for(var n=0; n<arr.length; n++){
+
+            if(abs(n-i)>6){
+
+// print(abs(n-i));
+
+              if(p0.id!=p1.id &&
+                 p0.id!=p2.id){
+
+                p3=arr[n];
+
+                if(n==arr.length-1){ p4=arr[0];   }
+                else               { p4=arr[n+1]; }
+
+                newDistance=getDistance(p0,p3,p4)+dist(p3.x,p3.y,
+                                                      p4.x,p4.y);
+
+                if(p0.id!=p3.id &&
+                   p0.id!=p4.id){
+
+                  if(newDistance<currentDistance){
+
+                    // ***** Determine net distance change by moving the node
+
+print(round(newDistance) + ", " + round(currentDistance));
+print(p0.id + " - " + p3.id + " - " + p4.id);
+
+                    // Move node
+
+                  }
+
+                }
+                
+              }
+            }
+
+          }
+
+        }
 
         { // intersections
 
@@ -2301,8 +2408,8 @@ print(app.tourLength);
               //  frameCount%5==0){
 
               p.workingNodes=getGreedyTour(p.nodes, app.greedy_mode);
-
-              updateTour();
+              renumberNodes(p.workingNodes);
+              // updateTour();
 
             }
             else{
@@ -2311,22 +2418,22 @@ print(app.tourLength);
 
                 if(app.crossover){
 
-                  calculateIntersections();
+                  // calculateIntersections();
 
-                  if(p.intersections.length>0){
+                  // if(p.intersections.length>0){
 
-                    var n0=0;
-                    var n1=2;
+                  //   var n0=0;
+                  //   var n1=2;
 
-                    if(frameCount%5==0){
-                      n0=1;
-                      n1=3;
-                    }
+                  //   if(frameCount%5==0){
+                  //     n0=1;
+                  //     n1=3;
+                  //   }
 
-                    reverseNodes(p.workingNodes,
-                                 p.intersections[n0].id,
-                                 p.intersections[n1].id);
-                  }
+                  //   reverseNodes(p.workingNodes,
+                  //                p.intersections[n0].id,
+                  //                p.intersections[n1].id);
+                  // }
 
                 }
 
@@ -2334,13 +2441,11 @@ print(app.tourLength);
                   
                   iterate();
 
-                  swap2Random(p.workingNodes);
-
-                  updateTour();
-
-                  swap2Length(p.workingNodes, getLongest(p.workingNodes));
-
                 }
+
+                proximityShift(p.index,p.workingNodes);
+p.index++;
+p.index%=(app.tourLength);
 
                 updateTour();
 
@@ -2348,10 +2453,10 @@ print(app.tourLength);
 
             }
 
-            if(p.length<p.workingNodes.length){
+            // if(p.length<p.workingNodes.length){
               // p.length++;
-              p.length=p.workingNodes.length;
-            }      
+              // p.length=p.workingNodes.length;
+            // }      
 
           };
 
@@ -3010,7 +3115,7 @@ print(app.tourLength);
         this.execute = props.execute;
         this.retrieve = props.retrieve;
 
-        app.reset = this;
+        this.value=this.retrieve()*this.w/100;
 
       };
       slider.prototype = Object.create(control.prototype);
@@ -4704,51 +4809,49 @@ print(app.tourLength);
       switch (true) {
 
         /* Navigation                                                       */
-        case keyIsDown(KeyCodes.Q): upLeft(); break;
-        case keyIsDown(KeyCodes.E): upRight(); break;
+        case keyIsDown(KeyCodes.Q):       upLeft(); break;
+        case keyIsDown(KeyCodes.E):       upRight(); break;
 
-        case keyIsDown(KeyCodes.A): downLeft(); break;
-        case keyIsDown(KeyCodes.D): downRight(); break;
+        case keyIsDown(KeyCodes.A):       downLeft(); break;
+        case keyIsDown(KeyCodes.D):       downRight(); break;
 
-        case keyIsDown(KeyCodes.W): up(); break;
-        case keyIsDown(KeyCodes.S): down(); break;
+        case keyIsDown(KeyCodes.W):       up(); break;
+        case keyIsDown(KeyCodes.S):       down(); break;
 
-        case keyIsDown(KeyCodes.P): toggleRunning(); break;
+        case keyIsDown(KeyCodes.P):       toggleRunning(); break;
 
         /* Translate Rows/Columns                                           */
-        case keyIsDown(KeyCodes.UP): colUp();
-          app.field.addMove(DIRECTIONS.UP); break;
-        case keyIsDown(KeyCodes.DOWN): colDown();
-          app.field.addMove(DIRECTIONS.DOWN); break;
+        case keyIsDown(KeyCodes.UP):      colUp();
+                                          app.field.addMove(DIRECTIONS.UP); break;
+        case keyIsDown(KeyCodes.DOWN):    colDown();
+                                          app.field.addMove(DIRECTIONS.DOWN); break;
 
         case keyIsDown(KeyCodes.LEFT) &&
-          keyIsDown(CONTROL): colDownLeft();
-          app.field.addMove(DIRECTIONS.DOWNLEFT); break;
+             keyIsDown(CONTROL):          colDownLeft();
+                                          app.field.addMove(DIRECTIONS.DOWNLEFT); break;
         case keyIsDown(KeyCodes.RIGHT) &&
-          keyIsDown(CONTROL): colDownRight();
-          app.field.addMove(DIRECTIONS.DOWNRIGHT); break;
+             keyIsDown(CONTROL):          colDownRight();
+                                          app.field.addMove(DIRECTIONS.DOWNRIGHT); break;
 
-        case keyIsDown(LEFT_ARROW): colUpLeft();
-          app.field.addMove(DIRECTIONS.UPLEFT); break;
-        case keyIsDown(RIGHT_ARROW): colUpRight();
-          app.field.addMove(DIRECTIONS.UPRIGHT); break;
+        case keyIsDown(LEFT_ARROW):       decrementNodes();                         break;
+        case keyIsDown(RIGHT_ARROW):      incrementNodes();                         break;
 
         /* Puzzles                                                          */
-        case keyIsDown(KeyCodes.PGUP): incrementPuzzle(); break;
-        case keyIsDown(KeyCodes.PGDN): decrementPuzzle(); break;
+        case keyIsDown(KeyCodes.PGUP):    incrementPuzzle(); break;
+        case keyIsDown(KeyCodes.PGDN):    decrementPuzzle(); break;
 
         /*  Function Keys                                                   */
-        case keyIsDown(KEYCODES.F1): toggleInfo(); break;
-        case keyIsDown(KEYCODES.F2): randomize(); break;
+        case keyIsDown(KEYCODES.F1):      toggleInfo(); break;
+        case keyIsDown(KEYCODES.F2):      randomize(); break;
         // case keyIsDown(KEYCODES.F3):    toggleTelemetry();    break;
-        case keyIsDown(KEYCODES.F4): toggleTelemetry(); break;
+        case keyIsDown(KEYCODES.F4):      toggleTelemetry(); break;
         // case app.keys[KEYCODES.CONTROL] &&
         // app.keys[KEYCODES.F5]:         clearLayout();         break;
-        case keyIsDown(KEYCODES.F8): reset(); break;
+        case keyIsDown(KEYCODES.F8):      reset(); break;
 
         /* Edit                                                             */
         case app.keys[KEYCODES.Z] &&
-          app.keys[KEYCODES.CONTROL]: app.field.undo(); break;  // reverse latest move
+             app.keys[KEYCODES.CONTROL]:  app.field.undo(); break;  // reverse latest move
 
         // case app.keys[KEYCODES.SPACE] &&
         // app.keys[KEYCODES.CONTROL]:    decrCellLayout();      break;  // Decrement Layout
