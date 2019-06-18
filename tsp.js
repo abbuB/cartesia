@@ -563,6 +563,9 @@
       function getIterate()       { return app.iterate;             };
       function toggleIterate()    { app.iterate=!app.iterate;       };
 
+      function getProximity()     { return app.proximity;           };
+      function toggleProximity()  { app.proximity=!app.proximity;   };
+
       function getMethod()        { return app.greedy_mode;         };
       function setMethod(m)       {
 
@@ -643,14 +646,16 @@
       app.elapsedTime=0;
       app.running=false;
 
+      console.clear();
+      
     };
 
-    function factorial(n) {
+    function factorial(n){
 
-      var total = 1;
+      var total=1;
 
-      for (var i = 2; i <= n; i++) {
-        total *= i;
+      for (var i=2; i<=n; i++) {
+        total*=i;
       }
 
       return total;
@@ -1878,6 +1883,9 @@
 
           if(p.index>p.bestNodes.length-1) { p.index=0; }
 
+          p.workingNodes.reverse();
+          updateTour();
+
         };
 
         var proximityIndex=0;
@@ -1933,35 +1941,21 @@
 
                   if(newDistance<currentDistance){
 
-                    // print(round(newDistance) + ", " + round(currentDistance));
-// print(p0.id + " - " + p3.id + " - " + p4.id);
+                    var newArray=[];
 
-var newArray=[];
+                    arrayCopy(p.workingNodes, newArray);
 
-arrayCopy(p.workingNodes, newArray);
+                    var moveNode=p.workingNodes[p0.id];
 
-var moveNode=p.workingNodes[p0.id];
+                    newArray.splice(moveNode.id,1);
+                    newArray.splice(p4.id,0,moveNode);
 
-newArray.splice(moveNode.id,1);
-newArray.splice(p4.id,0,moveNode);
+                    if(getTourLength(newArray)<p.workingLength){
+                      print(p0.id + " - " + p3.id + " - " + p4.id);
+                      arrayCopy(newArray, p.workingNodes);
 
-if(getTourLength(newArray)<p.workingLength){
-  print(p0.id + " - " + p3.id + " - " + p4.id);
-  arrayCopy(newArray, p.workingNodes);
-  // renumberNodes(p.workingNodes);
-  // break;
-}
-renumberNodes(p.workingNodes);
+                    }
 
-                    // ***** Determine net distance change by moving the node
-
-                    // var moveNode=p.workingNodes.splice(p0.id, 0);
-
-                    // p.workingNodes.splice(p4.id, 0, moveNode);
-
-                    
-                    // print(newArray);
-// break;
                   }
 
                 }
@@ -2435,58 +2429,60 @@ renumberNodes(p.workingNodes);
 
           function greedy(){
 
+            function crossover(){
+
+              calculateIntersections();
+
+              if(p.intersections.length>0){
+
+                var n0=0;
+                var n1=2;
+
+                if(frameCount%5==0){
+                  n0=1;
+                  n1=3;
+                }
+
+                reverseNodes(p.workingNodes,
+                             p.intersections[n0].id,
+                             p.intersections[n1].id);
+
+                updateTour();
+
+              }
+
+            };
+            function proximity(){
+
+              proximityShift(p.index,p.workingNodes);
+
+              updateTour();
+
+              p.index++;
+              p.index%=(app.tourLength);
+
+            };
+
             if(p.workingNodes.length==0){// ||
               //  frameCount%5==0){
 
               p.workingNodes=getGreedyTour(p.nodes, app.greedy_mode);
+
+              updateTour();
+
               renumberNodes(p.workingNodes);
-              console.clear();
-              // updateTour();
 
             }
             else{
 
               if(app.running){
 
-                if(app.crossover){
-
-                  calculateIntersections();
-
-                  if(p.intersections.length>0){
-
-                    var n0=0;
-                    var n1=2;
-
-                    if(frameCount%5==0){
-                      n0=1;
-                      n1=3;
-                    }
-
-                    reverseNodes(p.workingNodes,
-                                 p.intersections[n0].id,
-                                 p.intersections[n1].id);
-
-                    renumberNodes(p.workingNodes);
-
-                  }
-
-                }
-
-                if(app.iterate){
-
-                  iterate();
-
-                  renumberNodes(p.workingNodes);
-
-                }
-
-                if(app.proximity){
-                  proximityShift(p.index,p.workingNodes);
-                  p.index++;
-                  p.index%=(app.tourLength);
-                }
-
-                updateTour();
+                if     (frameCount%5==0 &&
+                        app.crossover){ crossover(); }
+                else if(frameCount%3==0 &&
+                        app.iterate  ){ iterate();   }
+                else if(frameCount%2==0 &&
+                        app.proximity){ proximity(); }
 
               }
 
@@ -4453,8 +4449,17 @@ renumberNodes(p.workingNodes);
   
       app.controls.push(iterate);
 
+    /* Proximity ---------------------------------------------------- */
+    var proximity=new checkbox('proximity', rt, 20, 620, 12, 12,
+        { color:    WHITE,
+          execute:  toggleProximity,
+          retrieve: getProximity,
+          caption:  "Proximity" });
+  
+      app.controls.push(proximity);
+
     /* Random Data ------------------------------------------------------ */
-    var randomData=new option('RandomDate', rt, 20, 620, 12, 12,
+    var randomData=new option('RandomDate', rt, 20, 640, 12, 12,
     { color:      WHITE,
       execute:    setDataMode,
       retrieve:   getDataMode,
@@ -4464,7 +4469,7 @@ renumberNodes(p.workingNodes);
     app.controls.push(randomData);
 
     /* Test Data ------------------------------------------------------ */
-    var testData=new option('TestData', rt, 20, 640, 12, 12,
+    var testData=new option('TestData', rt, 20, 660, 12, 12,
     { color:      WHITE,
       execute:    setDataMode,
       retrieve:   getDataMode,
@@ -4474,7 +4479,7 @@ renumberNodes(p.workingNodes);
     app.controls.push(testData);
 
     /* Circle Data ------------------------------------------------------ */
-    var circleData=new option('CircleData', rt, 20, 660, 12, 12,
+    var circleData=new option('CircleData', rt, 20, 680, 12, 12,
     { color:      WHITE,
       execute:    setDataMode,
       retrieve:   getDataMode,
