@@ -490,6 +490,8 @@
       this.initialize   = false;
       this.crossover    = false;
       this.iterate      = false;
+      this.proximity    = true;
+      
       this.dataMode     = DATA_MODES.RANDOM;
       // this.dataMode     = DATA_MODES.TEST;
       // this.dataMode     = DATA_MODES.CIRCLE;
@@ -561,7 +563,7 @@
       function getIterate()       { return app.iterate;             };
       function toggleIterate()    { app.iterate=!app.iterate;       };
 
-      function getMethod()        { return app.greedy_mode;        };
+      function getMethod()        { return app.greedy_mode;         };
       function setMethod(m)       {
 
         if(app.greedy_mode!=m){
@@ -576,8 +578,8 @@
 
       };
 
-      function getDataMode()        { return app.dataMode;        };
-      function setDataMode(m)       {
+      function getDataMode()      { return app.dataMode;            };
+      function setDataMode(m)     {
 
         if(app.dataMode!=m){
 
@@ -1571,7 +1573,7 @@
 
         this.loaded         = false;      //  Generic switch to use for each Method
 
-        this.index          = 99;          //  Generic index used to iterate
+        this.index          = 0;          //  Generic index used to iterate
 
         this.length         = 0;          //  Current length of greedy array as it's displayed incrementally
 
@@ -1829,6 +1831,8 @@
 
             arrayCopy(p.workingNodes,p.bestNodes);
 
+            renumberNodes(p.workingNodes);
+
           }
 
         };
@@ -1876,8 +1880,10 @@
 
         };
 
+        var proximityIndex=0;
+
         function proximityShift(i,arr){
-// print(i);
+
           function getDistance(p0,p1,p2){
 
             return dist(p0.x,p0.y,
@@ -1899,44 +1905,69 @@
 
           var currentDistance=getDistance(p0,p1,p2);
           var newDistance=Infinity;
-
           var p3=Infinity;
           var p4=Infinity;
 
           for(var n=0; n<arr.length; n++){
 
-            if(abs(n-i)>6){
+          // var n=proximityIndex;
+
+            if(abs(n-i)>3){
 
 // print(abs(n-i));
 
               if(p0.id!=p1.id &&
-                 p0.id!=p2.id){
+                 p0.id!=p2.id &&
+                 p1.id!=p2.id){
 
                 p3=arr[n];
 
                 if(n==arr.length-1){ p4=arr[0];   }
                 else               { p4=arr[n+1]; }
 
-                newDistance=getDistance(p0,p3,p4)+dist(p3.x,p3.y,
-                                                      p4.x,p4.y);
+                newDistance=getDistance(p0,p3,p4);
 
                 if(p0.id!=p3.id &&
-                   p0.id!=p4.id){
+                   p0.id!=p4.id &&
+                   p3.id!=p4.id){
 
                   if(newDistance<currentDistance){
 
+                    // print(round(newDistance) + ", " + round(currentDistance));
+// print(p0.id + " - " + p3.id + " - " + p4.id);
+
+var newArray=[];
+
+arrayCopy(p.workingNodes, newArray);
+
+var moveNode=p.workingNodes[p0.id];
+
+newArray.splice(moveNode.id,1);
+newArray.splice(p4.id,0,moveNode);
+
+if(getTourLength(newArray)<p.workingLength){
+  print(p0.id + " - " + p3.id + " - " + p4.id);
+  arrayCopy(newArray, p.workingNodes);
+  // renumberNodes(p.workingNodes);
+  // break;
+}
+renumberNodes(p.workingNodes);
+
                     // ***** Determine net distance change by moving the node
 
-print(round(newDistance) + ", " + round(currentDistance));
-print(p0.id + " - " + p3.id + " - " + p4.id);
+                    // var moveNode=p.workingNodes.splice(p0.id, 0);
 
-                    // Move node
+                    // p.workingNodes.splice(p4.id, 0, moveNode);
 
+                    
+                    // print(newArray);
+// break;
                   }
 
                 }
                 
               }
+
             }
 
           }
@@ -2409,6 +2440,7 @@ print(p0.id + " - " + p3.id + " - " + p4.id);
 
               p.workingNodes=getGreedyTour(p.nodes, app.greedy_mode);
               renumberNodes(p.workingNodes);
+              console.clear();
               // updateTour();
 
             }
@@ -2418,34 +2450,41 @@ print(p0.id + " - " + p3.id + " - " + p4.id);
 
                 if(app.crossover){
 
-                  // calculateIntersections();
+                  calculateIntersections();
 
-                  // if(p.intersections.length>0){
+                  if(p.intersections.length>0){
 
-                  //   var n0=0;
-                  //   var n1=2;
+                    var n0=0;
+                    var n1=2;
 
-                  //   if(frameCount%5==0){
-                  //     n0=1;
-                  //     n1=3;
-                  //   }
+                    if(frameCount%5==0){
+                      n0=1;
+                      n1=3;
+                    }
 
-                  //   reverseNodes(p.workingNodes,
-                  //                p.intersections[n0].id,
-                  //                p.intersections[n1].id);
-                  // }
+                    reverseNodes(p.workingNodes,
+                                 p.intersections[n0].id,
+                                 p.intersections[n1].id);
+
+                    renumberNodes(p.workingNodes);
+
+                  }
 
                 }
 
                 if(app.iterate){
-                  
+
                   iterate();
+
+                  renumberNodes(p.workingNodes);
 
                 }
 
-                proximityShift(p.index,p.workingNodes);
-p.index++;
-p.index%=(app.tourLength);
+                if(app.proximity){
+                  proximityShift(p.index,p.workingNodes);
+                  p.index++;
+                  p.index%=(app.tourLength);
+                }
 
                 updateTour();
 
