@@ -488,15 +488,18 @@
       // this.algorithm    = ALGORITHMS.GENETIC;
 
       this.initialize   = false;
+
       this.crossover    = false;
       this.iterate      = false;
-      this.proximity    = true;
-      
+      this.proximity    = false;
+
+      this.drawBestPath = true;
+
       this.dataMode     = DATA_MODES.RANDOM;
       // this.dataMode     = DATA_MODES.TEST;
       // this.dataMode     = DATA_MODES.CIRCLE;
 
-      this.tourLength   = 100;                //  Total # of nodes to be connected
+      this.tourLength   = 200;                //  Total # of nodes to be connected
 
       this.menu;
       this.clock;
@@ -535,38 +538,41 @@
 
       function getColor(clr, alpha) { return color(red(clr), green(clr), blue(clr), alpha / 100 * 255); };
 
-      function getInfo()          { return app.info;                };
-      function toggleInfo()       { app.info = !app.info;           };
+      function getInfo()          { return app.info;                    };
+      function toggleInfo()       { app.info = !app.info;               };
 
-      function getTelemetry()     { return app.telemetry;           };
-      function toggleTelemetry()  { app.telemetry = !app.telemetry; };
+      function getTelemetry()     { return app.telemetry;               };
+      function toggleTelemetry()  { app.telemetry = !app.telemetry;     };
 
-      function toggleCreate()     {                                 };
+      function toggleCreate()     {                                     };
 
-      function getMusic()         { return app.musicOn;             };
-      function setMusic(b)        { return app.musicOn = b;         };
+      function getMusic()         { return app.musicOn;                 };
+      function setMusic(b)        { return app.musicOn = b;             };
 
-      function getScore()         { return app.score;               };
-      function setScore(b)        { return app.score = b;           };
+      function getScore()         { return app.score;                   };
+      function setScore(b)        { return app.score = b;               };
 
-      function clickTest(n)       { print('click: ' + n);           };
+      function clickTest(n)       { print('click: ' + n);               };
 
-      function getRunning()       { return app.running;             };
-      function toggleRunning()    { app.running=!app.running;       };
+      function getRunning()       { return app.running;                 };
+      function toggleRunning()    { app.running=!app.running;           };
 
-      function getInitialize()    { return app.initialize;          };
-      function toggleInitialize() { app.initialize=!app.initialize; };
+      function getInitialize()    { return app.initialize;              };
+      function toggleInitialize() { app.initialize=!app.initialize;     };
 
-      function getCrossover()     { return app.crossover;           };
-      function toggleCrossover()  { app.crossover=!app.crossover;   };
+      function getCrossover()     { return app.crossover;               };
+      function toggleCrossover()  { app.crossover=!app.crossover;       };
 
-      function getIterate()       { return app.iterate;             };
-      function toggleIterate()    { app.iterate=!app.iterate;       };
+      function getIterate()       { return app.iterate;                 };
+      function toggleIterate()    { app.iterate=!app.iterate;           };
 
-      function getProximity()     { return app.proximity;           };
-      function toggleProximity()  { app.proximity=!app.proximity;   };
+      function getProximity()     { return app.proximity;               };
+      function toggleProximity()  { app.proximity=!app.proximity;       };
 
-      function getMethod()        { return app.greedy_mode;         };
+      function getBestPath()      { return app.drawBestPath;            };
+      function toggleBestPath()   { app.drawBestPath=!app.drawBestPath; };
+
+      function getMethod()        { return app.greedy_mode;             };
       function setMethod(m)       {
 
         if(app.greedy_mode!=m){
@@ -581,7 +587,7 @@
 
       };
 
-      function getDataMode()      { return app.dataMode;            };
+      function getDataMode()      { return app.dataMode;                };
       function setDataMode(m)     {
 
         if(app.dataMode!=m){
@@ -605,11 +611,11 @@
         print(a);
 
       };
-      function getAlgorithm()     { return app.algorithm;           };
+      function getAlgorithm()     { return app.algorithm;               };
 
       function setNodes(n)        {
         
-        app.tourLength=constrain(round(n),10,100);
+        app.tourLength=constrain(round(n),10,200);
         app.field.reset();
 
       };
@@ -1579,6 +1585,7 @@
         this.loaded         = false;      //  Generic switch to use for each Method
 
         this.index          = 0;          //  Generic index used to iterate
+        this.proxIndex = 0;          //  Current index used to iterate proximity swaps
 
         this.length         = 0;          //  Current length of greedy array as it's displayed incrementally
 
@@ -1646,7 +1653,7 @@
             switch(app.dataMode){
 
               case DATA_MODES.RANDOM: x=floor(random(150, p.w-20));
-                                      y=floor(random( 20, p.h-20));
+                                      y=floor(random( 20, p.h-100));
                                       break;
 
               case DATA_MODES.TEST:   x=dataTest[n][0];
@@ -1836,17 +1843,14 @@
 
             arrayCopy(p.workingNodes,p.bestNodes);
 
-            renumberNodes(p.workingNodes);
-
           }
 
         };
 
         function iterate(){
-          // p.factor=1;
-          arrayCopy(p.bestNodes, p.workingNodes);
-          // renumberNodes(p.bestNodes);
 
+          arrayCopy(p.bestNodes, p.workingNodes);
+          
           var index1=p.index;
           var index2=index1+1;
           var index3=index2+1;
@@ -1883,12 +1887,7 @@
 
           if(p.index>p.bestNodes.length-1) { p.index=0; }
 
-          p.workingNodes.reverse();
-          updateTour();
-
         };
-
-        var proximityIndex=0;
 
         function proximityShift(i,arr){
 
@@ -1917,8 +1916,6 @@
           var p4=Infinity;
 
           for(var n=0; n<arr.length; n++){
-
-          // var n=proximityIndex;
 
             if(abs(n-i)>3){
 
@@ -2064,8 +2061,8 @@
 
               // var index=round(random(app.tourLength-1));
               
-              var parent1=getClosestArray(getRandomInt(app.tourLength-1));
-              var parent2=getClosestArray(getRandomInt(app.tourLength-1));
+              // var parent1=getClosestArray(getRandomInt(app.tourLength-1));
+              // var parent2=getClosestArray(getRandomInt(app.tourLength-1));
 
               // print(parent1);
               // print(parent2);
@@ -2073,13 +2070,13 @@
               // p.workingNodes=getClosestArray(index);
               // arrayCopy(getClosestArray(index), p.workingNodes);
 
-              geneticLoaded=true;
+              // geneticLoaded=true;
 
             }
 
-            drawPath(p.workingNodes,  p.workingNodes.length);
-            drawNodes(p.workingNodes, p.workingNodes.length);
-
+            // drawPath(p.workingNodes,  p.workingNodes.length);
+            // drawNodes(p.nodes);
+print('genetic');
           };
 
         }
@@ -2454,35 +2451,31 @@
             };
             function proximity(){
 
-              proximityShift(p.index,p.workingNodes);
-
-              updateTour();
-
-              p.index++;
-              p.index%=(app.tourLength);
-
-            };
-
-            if(p.workingNodes.length==0){// ||
-              //  frameCount%5==0){
-
-              p.workingNodes=getGreedyTour(p.nodes, app.greedy_mode);
+              proximityShift(p.proxIndex,p.workingNodes);
 
               updateTour();
 
               renumberNodes(p.workingNodes);
+
+              p.proxIndex++;
+              p.proxIndex%=(app.tourLength);
+
+            };
+
+            if(p.workingNodes.length==0){
+
+              p.workingNodes=getGreedyTour(p.nodes, app.greedy_mode);
+
+              updateTour();
 
             }
             else{
 
               if(app.running){
 
-                if     (frameCount%5==0 &&
-                        app.crossover){ crossover(); }
-                else if(frameCount%3==0 &&
-                        app.iterate  ){ iterate();   }
-                else if(frameCount%2==0 &&
-                        app.proximity){ proximity(); }
+                if(app.crossover){ crossover(); }
+                if(app.iterate  ){ iterate();   }
+                if(app.proximity){ proximity(); }
 
               }
 
@@ -2771,7 +2764,7 @@
         function calculateTour(){
 
           if(!p.loaded){
-
+renumberNodes(p.workingNodes);
             if(app.algorithm!=ALGORITHMS.ACO){
 
               if(app.initialize){
@@ -2833,9 +2826,10 @@
 
               drawProperties();
               
-              drawBestPath(p.bestNodes);
+              if(app.drawBestPath){ drawBestPath(p.bestNodes); }
+
               drawPath(p.workingNodes, p.length);
-              drawNodes(p.nodes);
+              drawNodes(p.workingNodes);
 
           pop();
 
@@ -3003,44 +2997,56 @@
             for(var n=0; n<round(sqrt(p.closest.length)); n++){
             // for(var n=0; n<p.closest.length; n++){
               line(p.x,
-                  p.y,
-                  p.closest[n].x,
-                  p.closest[n].y);
+                   p.y,
+                   p.closest[n].x,
+                   p.closest[n].y);
             }
 
           }
 
         }
 
+        if(app.shift){
+
+          stroke(ORANGE);
+          strokeWeight(3);
+          noFill();
+
+          line(p.x,
+              p.y,
+              p.closest[0].x,
+              p.closest[0].y);
+        }
+
         push();
 
-        var value=p.radius;
-        // print(value);
-        fill(192, value);
+          var value=p.radius;
+          // print(value);
+          fill(192, value);
 
-        noStroke();
+          noStroke();
 
-        if(this.hit){
+          if(this.hit){
 
-          fill(192,128);
+            fill(192,128);
 
-          ellipse(p.x, p.y, p.w, p.w);
+            ellipse(p.x, p.y, p.w, p.w);
 
-        }
+          }
 
-        if(app.algorithm!=ALGORITHMS.GROW){
-          p.radius=10;
-        }
+          if(app.algorithm!=ALGORITHMS.GROW){
+            p.radius=10;
+          }
 
-        ellipse(p.x,
-                p.y,
-                p.radius,
-                p.radius);
+          ellipse(p.x,
+                  p.y,
+                  p.radius,
+                  p.radius);
 
-        fill(222);
-        textSize(9);
+          fill(222);
+          textSize(9);
 
-          text(p.id, p.x+5, p.y+5);
+            text(p.id, p.x+5, p.y+5);
 
         pop();
 
@@ -4487,6 +4493,15 @@
       caption:    "Circle Data" });
 
       app.controls.push(circleData);
+
+    /* Best Path ---------------------------------------------------- */
+    var bestPath=new checkbox('bestPath', rt, 20, 700, 12, 12,
+        { color:    WHITE,
+          execute:  toggleBestPath,
+          retrieve: getBestPath,
+          caption:  "Best Path" });
+  
+      app.controls.push(bestPath);
 
     /* Telemetry ---------------------------------------------------- */
     var telem=new telemetry('telemetry', rt, rt.w - 195, 5, 190, rt.h - 20,
