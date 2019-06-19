@@ -493,9 +493,10 @@
       this.iterate      = false;
       this.proximity    = false;
 
-      this.drawBestPath = true;
-
-      this.dataMode     = DATA_MODES.RANDOM;
+      this.drawBestPath     = true;
+      this.drawWorkingPath  = true;
+      this.drawNodes        = true;
+      this.dataMode         = DATA_MODES.RANDOM;
       // this.dataMode     = DATA_MODES.TEST;
       // this.dataMode     = DATA_MODES.CIRCLE;
 
@@ -571,6 +572,12 @@
 
       function getBestPath()      { return app.drawBestPath;            };
       function toggleBestPath()   { app.drawBestPath=!app.drawBestPath; };
+
+      function getWorkingPath()   { return app.drawWorkingPath;         };
+      function toggleWorkingPath(){ app.drawWorkingPath=!app.drawWorkingPath; };
+      
+      function getDrawNodes()     { return app.drawNodes;               };
+      function toggleNodes()      { app.drawNodes=!app.drawNodes;       };
 
       function getMethod()        { return app.greedy_mode;             };
       function setMethod(m)       {
@@ -1774,11 +1781,13 @@
           var arr=p.bestNodes;
 
           beginShape();
+          // beginContour();
 
             for(var n=0; n<arr.length; n++){
               vertex(arr[n].x, arr[n].y);
             }
 
+          // endContour(CLOSE);
           endShape(CLOSE);
 
         };
@@ -2689,16 +2698,16 @@ print('genetic');
                     'Nodes:'            + '\n\n' +
                     'Working Length:'   + '\n'   +
                     'Best Length'       + '\n\n' +
+                    'Average Distance:' + '\n\n' +
                     'Factor:'           + '\n\n' +
                     'Intersections:'    + '\n'   +
                     'Segments:'         + '\n\n' +
-                    'Average Distance:' + '\n\n' +
-                    'Min X:'            + '\n'   +
-                    'Max X:'            + '\n\n' +
-                    'Domain:'           + '\n\n' +
-                    'Min Y:'            + '\n'   +
-                    'Max Y:'            + '\n\n' +
-                    'Range:'            + '\n\n' +
+                    'Domain:'           + '\n'   +
+                    '  Min X:'          + '\n'   +
+                    '  Max X:'          + '\n\n' +
+                    'Range:'            + '\n'   +
+                    '  Min Y:'          + '\n'   +
+                    '  Max Y:'          + '\n\n' +
                     'Elapsed Time:';
 
               text(txt, 10, 10);
@@ -2719,16 +2728,16 @@ print('genetic');
                 p.workingNodes.length   + '\n\n' +
                 p.workingLength         + '\n'   +
                 p.minimumLength         + '\n\n' +
+                p.avgDistance           + '\n\n' +
                 factor                  + '\n\n' +
                 p.intersections.length  + '\n'   +
-                p.segments.length       + '\n\n' +
-                p.avgDistance           + '\n\n' +
+                p.segments.length       + '\n\n' +                
+                p.domain                + '\n'   +
                 p.minX                  + '\n'   +
                 p.maxX                  + '\n\n' +
-                p.domain                + '\n\n' +
+                p.range                 + '\n'   +
                 p.minY                  + '\n'   +
-                p.maxY                  + '\n\n' +
-                p.range                 + '\n\n' +
+                p.maxY                  + '\n\n' +                
                 nf(app.elapsedTime, 1, 1);
 
               text(txt, 140, 10);
@@ -2765,6 +2774,7 @@ print('genetic');
 
           if(!p.loaded){
 renumberNodes(p.workingNodes);
+
             if(app.algorithm!=ALGORITHMS.ACO){
 
               if(app.initialize){
@@ -2826,10 +2836,9 @@ renumberNodes(p.workingNodes);
 
               drawProperties();
               
-              if(app.drawBestPath){ drawBestPath(p.bestNodes); }
-
-              drawPath(p.workingNodes, p.length);
-              drawNodes(p.workingNodes);
+              if(app.drawBestPath   ){ drawBestPath(p.bestNodes);                      }
+              if(app.drawWorkingPath){drawPath(p.workingNodes, p.workingNodes.length); }
+              if(app.drawNodes      ){drawNodes(p.workingNodes);                       }
 
           pop();
 
@@ -4290,6 +4299,12 @@ renumberNodes(p.workingNodes);
     rt.controls.push(new field('field', rt, 5, 5, rt.w - 205, rt.h - 25,
       { color: color(26,26,26,255) }));
 
+    /* Telemetry ---------------------------------------------------- */
+    var telem=new telemetry('telemetry', rt, rt.w - 195, 5, 190, rt.h - 20,
+      { color: color(216,26,26,255)});
+
+    app.controls.push(telem);
+
     /* Accessories ---------------------------------------------------- */
 
     /** Slider     */
@@ -4327,7 +4342,7 @@ renumberNodes(p.workingNodes);
       }));
 
     /* Bruteforce -------------------------------------------------- */
-    var bruteforce=new option('BRUTE FORCE', rt, 20, 370, 12, 12,
+    var bruteforce=new option('BRUTE FORCE', rt, 20, 330, 12, 12,
         { color:      WHITE,
           execute:    setAlgorithm,
           retrieve:   getAlgorithm,
@@ -4337,7 +4352,7 @@ renumberNodes(p.workingNodes);
       app.controls.push(bruteforce);
 
     /* Genetic -------------------------------------------------- */
-    var genetic=new option('GENETIC', rt, 20, 390, 12, 12,
+    var genetic=new option('GENETIC', rt, 20, 350, 12, 12,
         { color:      WHITE,
           execute:    setAlgorithm,
           retrieve:   getAlgorithm,
@@ -4347,7 +4362,7 @@ renumberNodes(p.workingNodes);
       app.controls.push(genetic);
 
     /* Simulated Annealing --------------------------------------------------- */
-    var annealing=new option('SIMULATED ANNEALING', rt, 20, 410, 12, 12,
+    var annealing=new option('SIMULATED ANNEALING', rt, 20, 370, 12, 12,
         { color:      WHITE,
           execute:    setAlgorithm,
           retrieve:   getAlgorithm,
@@ -4357,7 +4372,7 @@ renumberNodes(p.workingNodes);
       app.controls.push(annealing);
 
     /* Grow --------------------------------------------------- */
-    var grow=new option('GROW', rt, 20, 430, 12, 12,
+    var grow=new option('GROW', rt, 20, 390, 12, 12,
     { color:      WHITE,
       execute:    setAlgorithm,
       retrieve:   getAlgorithm,
@@ -4367,7 +4382,7 @@ renumberNodes(p.workingNodes);
     app.controls.push(grow);
 
     /* ACO --------------------------------------------------- */
-    var aco=new option('ACO', rt, 20, 450, 12, 12,
+    var aco=new option('ACO', rt, 20, 410, 12, 12,
     { color:      WHITE,
       execute:    setAlgorithm,
       retrieve:   getAlgorithm,
@@ -4377,7 +4392,7 @@ renumberNodes(p.workingNodes);
     app.controls.push(aco);
 
     /* Chance --------------------------------------------------- */
-    var chance=new option('CHANCE', rt, 20, 470, 12, 12,
+    var chance=new option('CHANCE', rt, 20, 430, 12, 12,
         { color:      WHITE,
           execute:    setAlgorithm,
           retrieve:   getAlgorithm,
@@ -4387,7 +4402,7 @@ renumberNodes(p.workingNodes);
       app.controls.push(chance);
 
     /* Greedy --------------------------------------------------- */
-    var greedy=new option('GREEDY', rt, 20, 490, 12, 12,
+    var greedy=new option('GREEDY', rt, 20, 450, 12, 12,
         { color:      WHITE,
           execute:    setAlgorithm,
           retrieve:   getAlgorithm,
@@ -4399,7 +4414,7 @@ renumberNodes(p.workingNodes);
     // ***** Greedy Methods *****
 
         /* Closest --------------------------------------------------- */
-        var closest=new option('Closest', rt, 30, 510, 12, 12,
+        var closest=new option('Closest', rt, 30, 470, 12, 12,
           { color:      WHITE,
             execute:    setMethod,
             retrieve:   getMethod,
@@ -4409,7 +4424,7 @@ renumberNodes(p.workingNodes);
         app.controls.push(closest);
 
         /* Farthest --------------------------------------------------- */
-        var Farthest=new option('Farthest', rt, 30, 525, 12, 12,
+        var Farthest=new option('Farthest', rt, 30, 485, 12, 12,
           { color:      WHITE,
             execute:    setMethod,
             retrieve:   getMethod,
@@ -4419,7 +4434,7 @@ renumberNodes(p.workingNodes);
         app.controls.push(Farthest);
 
         /* Random --------------------------------------------------- */
-        var random=new option('Random', rt, 30, 540, 12, 12,
+        var random=new option('Random', rt, 30, 500, 12, 12,
           { color:      WHITE,
             execute:    setMethod,
             retrieve:   getMethod,
@@ -4428,17 +4443,17 @@ renumberNodes(p.workingNodes);
 
         app.controls.push(random);
 
-    /* Initialize --------------------------------------------------- */
-    var initialize=new checkbox('initialize', rt, 20, 560, 12, 12,
-        { color:    WHITE,
-          execute:  toggleInitialize,
-          retrieve: getInitialize,
-          caption:  "Initialize" });
+    // /* Initialize --------------------------------------------------- */
+    // var initialize=new checkbox('initialize', rt, 20, 520, 12, 12,
+    //     { color:    WHITE,
+    //       execute:  toggleInitialize,
+    //       retrieve: getInitialize,
+    //       caption:  "Initialize" });
     
-      app.controls.push(initialize);
+    //   app.controls.push(initialize);
 
     /* Crossover ---------------------------------------------------- */
-    var crossover=new checkbox('crossover', rt, 20, 580, 12, 12,
+    var crossover=new checkbox('crossover', rt, 20, 540, 12, 12,
         { color:    WHITE,
           execute:  toggleCrossover,
           retrieve: getCrossover,
@@ -4447,7 +4462,7 @@ renumberNodes(p.workingNodes);
     app.controls.push(crossover);
 
     /* Iterate ------------------------------------------------------ */
-    var iterate=new checkbox('iterate', rt, 20, 600, 12, 12,
+    var iterate=new checkbox('iterate', rt, 20, 560, 12, 12,
         { color:    WHITE,
           execute:  toggleIterate,
           retrieve: getIterate,
@@ -4456,7 +4471,7 @@ renumberNodes(p.workingNodes);
       app.controls.push(iterate);
 
     /* Proximity ---------------------------------------------------- */
-    var proximity=new checkbox('proximity', rt, 20, 620, 12, 12,
+    var proximity=new checkbox('proximity', rt, 20, 580, 12, 12,
         { color:    WHITE,
           execute:  toggleProximity,
           retrieve: getProximity,
@@ -4465,7 +4480,7 @@ renumberNodes(p.workingNodes);
       app.controls.push(proximity);
 
     /* Random Data ------------------------------------------------------ */
-    var randomData=new option('RandomDate', rt, 20, 640, 12, 12,
+    var randomData=new option('RandomDate', rt, 20, 620, 12, 12,
     { color:      WHITE,
       execute:    setDataMode,
       retrieve:   getDataMode,
@@ -4475,7 +4490,7 @@ renumberNodes(p.workingNodes);
     app.controls.push(randomData);
 
     /* Test Data ------------------------------------------------------ */
-    var testData=new option('TestData', rt, 20, 660, 12, 12,
+    var testData=new option('TestData', rt, 20, 640, 12, 12,
     { color:      WHITE,
       execute:    setDataMode,
       retrieve:   getDataMode,
@@ -4485,7 +4500,7 @@ renumberNodes(p.workingNodes);
     app.controls.push(testData);
 
     /* Circle Data ------------------------------------------------------ */
-    var circleData=new option('CircleData', rt, 20, 680, 12, 12,
+    var circleData=new option('CircleData', rt, 20, 660, 12, 12,
     { color:      WHITE,
       execute:    setDataMode,
       retrieve:   getDataMode,
@@ -4503,11 +4518,7 @@ renumberNodes(p.workingNodes);
   
       app.controls.push(bestPath);
 
-    /* Telemetry ---------------------------------------------------- */
-    var telem=new telemetry('telemetry', rt, rt.w - 195, 5, 190, rt.h - 20,
-      { color: color(216,26,26,255)});
 
-    app.controls.push(telem);
 
     /* Transition ---------------------------------------------------- */
     // var trans=new transition(getGUID(), rt, 1000, 0, width-200, height,
