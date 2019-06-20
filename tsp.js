@@ -2,6 +2,18 @@
 
   TO DO:
 
+    - step controls for data
+      - next/previous
+      - play/pause
+      - first/last
+      ...
+
+    - add/subtract nodes
+
+    - display nodes
+    - display working tour
+    - display best tour
+
     - hex font
     
     - slider to change # of nodes. 0-100?
@@ -487,35 +499,36 @@
       // this.algorithm    = ALGORITHMS.ACO;
       // this.algorithm    = ALGORITHMS.GENETIC;
 
-      this.initialize   = false;
+      this.initialize       = false;
 
-      this.crossover    = false;
-      this.iterate      = false;
-      this.proximity    = false;
+      this.crossover        = false;
+      this.iterate          = false;
+      this.proximity        = false;
 
       this.drawBestPath     = true;
       this.drawWorkingPath  = true;
-      this.drawNodes        = true;
+      this.drawPathNodes    = false;
+
       this.dataMode         = DATA_MODES.RANDOM;
       // this.dataMode     = DATA_MODES.TEST;
       // this.dataMode     = DATA_MODES.CIRCLE;
 
-      this.tourLength   = 200;                //  Total # of nodes to be connected
+      this.tourLength       = 100;                //  Total # of nodes to be connected
 
       this.menu;
       this.clock;
       this.music;
       this.reset;
 
-      this.musicOn      = true;
+      this.musicOn          = true;
 
-      this.finished     = false;
+      this.finished         = false;
 
       // this.animations     = [];
 
-      this.currentNode  = null;
+      this.currentNode      = null;
 
-      this.field        = null;
+      this.field            = null;
 
     }
 
@@ -576,8 +589,8 @@
       function getWorkingPath()   { return app.drawWorkingPath;         };
       function toggleWorkingPath(){ app.drawWorkingPath=!app.drawWorkingPath; };
       
-      function getDrawNodes()     { return app.drawNodes;               };
-      function toggleNodes()      { app.drawNodes=!app.drawNodes;       };
+      function getPathNodes()     { return app.drawPathNodes;                 };
+      function togglePathNodes()  { app.drawPathNodes=!app.drawPathNodes;     };
 
       function getMethod()        { return app.greedy_mode;             };
       function setMethod(m)       {
@@ -1538,6 +1551,10 @@
 
         control.call(this, id, parent, x, y, w, h);
 
+        
+        app.field           = this;       //  Set a global field reference
+
+        
         /* ------------------------------------------------- */
         this.color          = props.color;
 
@@ -1545,15 +1562,7 @@
 
         this.dirty          = false;      //  Has the field been clicked yet?
 
-        app.field           = this;       //  Set a global field reference
-
-        // this.startX         = 0;          //  x-coordinate of drag start
-        // this.startY         = 0;          //  y-coordinate of drag start
-
-        // this.deltaX         = 0;          //  x-coordinate drag offset
-        // this.deltaY         = 0;          //  y-coordinate drag offset
-
-        // this.deltaDrag      = 0;          //  Distance dragged from start point along the drag direction
+        this.running        = false;
 
         // ----------
 
@@ -1597,6 +1606,15 @@
         this.length         = 0;          //  Current length of greedy array as it's displayed incrementally
 
         this.reset();                     //  Loads the default settings
+
+        // this.startX         = 0;          //  x-coordinate of drag start
+        // this.startY         = 0;          //  y-coordinate of drag start
+
+        // this.deltaX         = 0;          //  x-coordinate drag offset
+        // this.deltaY         = 0;          //  y-coordinate drag offset
+
+        // this.deltaDrag      = 0;          //  Distance dragged from start point along the drag direction
+
 
       };
       field.prototype=Object.create(control.prototype);
@@ -2836,13 +2854,18 @@ renumberNodes(p.workingNodes);
 
               drawProperties();
               
-              if(app.drawBestPath   ){ drawBestPath(p.bestNodes);                      }
-              if(app.drawWorkingPath){drawPath(p.workingNodes, p.workingNodes.length); }
-              if(app.drawNodes      ){drawNodes(p.workingNodes);                       }
+              if(app.drawBestPath   ){ drawBestPath(p.bestNodes);                       }
+              if(app.drawWorkingPath){ drawPath(p.workingNodes, p.workingNodes.length); }
+              if(app.drawPathNodes  ){ drawNodes(p.workingNodes);                       }
 
           pop();
 
       };
+      field.prototype.next=function()     { print("Next"); };
+      field.prototype.previous=function() { print("Previous"); };
+      field.prototype.first=function()    { print("First"); };
+      field.prototype.last=function()     { print("Last"); };
+      field.prototype.play=function()     { print("Play"); };
       field.prototype.hitTest=function(x, y){
 
         var retVal=false;
@@ -4270,6 +4293,253 @@ renumberNodes(p.workingNodes);
 
     }
 
+    /** Database Controls    -------------------------------------------------- */
+    {
+
+      function dbControls(id, parent, x, y, w, h, props){
+
+        control.call(this, id, parent, x, y, w, h);
+
+        this.cursor   = props.cursor;
+        this.color    = props.color;
+
+        this.running  = props.running;
+        this.retrieve = props.retrieve;
+
+        this.next     = props.executeNext;
+        this.previous = props.executePrevious;
+        this.first    = props.executeFirst;
+        this.last     = props.executeLast;
+
+        this.firstHit    = false;
+        this.previousHit = false;        
+        this.runHit      = false;
+        this.nextHit     = false;
+        this.lastHit     = false;
+
+        app.reset        = this;
+
+      };
+      dbControls.prototype=Object.create(control.prototype);
+      dbControls.prototype.draw=function(){
+
+        this.active=this.hit &&
+                    app.focus==this;
+
+        this.offset=0;
+
+        var CLR=164;
+        var CLRH=212;
+        var CLRB=48;
+
+        push();
+
+          translate(this.x, this.y);
+
+          noFill();
+          stroke(CLR);
+          strokeWeight(1.5);
+
+          if(this.active){
+
+            stroke(164);
+            cursor(this.cursor);
+
+            if(app.left){
+              this.offset=1;
+            }
+
+          }
+
+          var o=this.offset;
+
+          if(this.retrieve){
+
+            // Triangle Shadow
+            fill(CLRB);
+            stroke(CLRB);
+            strokeWeight(5);
+
+            line(-3,-7,-3, 13);
+            line( 9,-7, 9, 13);
+
+            // Triangle
+            fill(CLR);
+            stroke(CLR);
+
+            if(this.active){
+              fill(CLRH);
+              stroke(CLRH);
+            }
+
+            line(o-6, o-10, o-6, o+10);
+            line(o+6, o-10, o+6, o+10);
+
+          }
+          else {
+
+            // Triangle Shadow
+            fill(CLRB);
+            stroke(CLRB);
+
+            triangle(13, 3,
+                      -7,-7,
+                      -7,13);
+
+            // Triangle
+            fill(CLR);
+            stroke(CLR);
+
+            if(this.active){
+              fill(CLRH);
+              stroke(CLRH);
+            }
+
+            triangle(o+10, o,
+                      o-10, o-10,
+                      o-10, o+10);
+
+          }
+
+          stroke(128,0,0);
+          
+          noFill();
+
+          // if(this.hit        ){ fill(16,128);      }
+          if(this.firstHit    ){ fill(255,  0,  0,128); }
+          if(this.previousHit ){ fill(  0,  0,255,128); }
+          if(this.runHit      ){ fill(255,  0,255,128); }
+          if(this.nextHit     ){ fill(255,255,  0,128); }
+          if(this.lastHit     ){ fill(  0,255,  0,128); }
+
+            rect(0,0,this.w,this.h);
+
+          stroke(128,0,0);
+
+            ellipse(this.h/2,          this.h/2, this.h, this.h);  //  First
+            ellipse(this.h/2+  this.h, this.h/2, this.h, this.h);  //  Previous
+            ellipse(this.h/2+2*this.h, this.h/2, this.h, this.h);  //  Run
+            ellipse(this.h/2+3*this.h, this.h/2, this.h, this.h);  //  Next
+            ellipse(this.h/2+4*this.h, this.h/2, this.h, this.h);  //  Last
+
+        pop();
+
+      };
+      dbControls.prototype.clicked=function(){
+        /** Overridden for execute */
+
+        // if(this.active){
+
+          if     (this.firstHit   ){ this.first();    }
+          else if(this.previousHit){ this.previous(); }          
+          else if(this.runHit     ){ this.running();  }
+          else if(this.nextHit    ){ this.next();     }
+          else if(this.lastHit    ){ this.last();     }
+          
+
+        // }
+
+      };
+      dbControls.prototype.hitTest=function(x,y){
+
+        var p=this;
+
+        function rectHit(x,y){
+          
+          var retVal=false;
+
+          p.hit=mouseX>p.x+x &&
+                mouseX<p.x+x+p.w &&
+                mouseY>p.y+y &&
+                mouseY<p.y+y+p.h;
+
+          retVal=p.hit;
+
+          return retVal;
+
+        };
+
+        function setFirstHit(x,y){
+
+          p.firstHit=(dist(mouseX,
+                           mouseY,
+                           p.x+x+p.h/2,
+                           p.y+y+p.h/2)<p.h/2);
+print("First hit: " + p.firstHit);
+        };
+        function setPreviousHit(x,y){
+
+          p.previousHit=(dist(mouseX,
+                              mouseY,
+                              p.x+x+1.5*p.h,
+                              p.y+y+p.h/2)<p.h/2);
+print("Previous hit: " + p.previousHit);
+
+        };
+
+        function setRunHit(x,y){
+
+          p.runHit=(dist(mouseX,
+                          mouseY,
+                          p.x+x+2.5*p.h,
+                          p.y+y+p.h/2)<p.h/2);
+print("Play hit: " + p.runHit);
+
+        };
+        function setNextHit(x,y){
+
+          p.nextHit=(dist(mouseX,
+                          mouseY,
+                          p.x+x+3.5*p.h,
+                          p.y+y+p.h/2)<p.h/2);
+print("Next hit: " + p.nextHit);
+
+        };
+        function setLastHit(x,y){
+
+          p.lastHit=(dist(mouseX,
+                          mouseY,
+                          p.x+x+4.5*p.h,
+                          p.y+y+p.h/2)<p.h/2);
+print("Last hit: " + p.lastHit);
+
+        };
+
+        if(rectHit(x,y)){ setFirstHit(x,y);
+                          setPreviousHit(x,y);
+                          setRunHit(x,y);
+                          setNextHit(x,y);
+                          setLastHit(x,y);      }
+        else            { p.firstHit=false;
+                          p.previousHit=false;
+                          p.runHit=false;
+                          p.nextHit=false;
+                          p.lastHit=false;      }
+      };
+      dbControls.prototype.moved=function(x,y){
+        /** Overridden for shape */
+
+        // if(this.parent.hit){
+
+        this.hitTest(x,y)
+
+        if(this.hit){
+
+          app.focus=this;
+
+        }
+
+        // }
+
+      };
+      dbControls.prototype.resized=function(){
+
+        this.y=this.parent.y+this.parent.h-this.h;
+
+      };
+
+    }
+
   }
 
   /** Initialize --------------------------------------------------------- */
@@ -4306,6 +4576,20 @@ renumberNodes(p.workingNodes);
     app.controls.push(telem);
 
     /* Accessories ---------------------------------------------------- */
+
+    /** Database Controls     */
+    // ***** NOTE: Width must be 5 times the height
+    rt.controls.push(new dbControls('dbControls', rt, 300, rt.h-75, 200, 40,
+      {
+        cursor:     HAND,
+        color:      BLACK,
+        retrieve:   app.field.running,
+        running:    app.field.play,
+        next:       app.field.next,
+        previous:   app.field.previous,
+        first:      app.field.first,
+        last:       app.field.last
+      }));
 
     /** Slider     */
     rt.controls.push(new slider('slider', rt, 200, rt.h-100, 400, 10,
@@ -4518,7 +4802,23 @@ renumberNodes(p.workingNodes);
   
       app.controls.push(bestPath);
 
+    /* Working Path ---------------------------------------------------- */
+    var workingPath=new checkbox('workingPath', rt, 20, 715, 12, 12,
+        { color:    WHITE,
+          execute:  toggleWorkingPath,
+          retrieve: getWorkingPath,
+          caption:  "Working Path" });
+  
+      app.controls.push(workingPath);
 
+    /* Path Nodes ---------------------------------------------------- */
+    var pathNodes=new checkbox('pathNodes', rt, 20, 730, 12, 12,
+        { color:    WHITE,
+          execute:  togglePathNodes,
+          retrieve: getPathNodes,
+          caption:  "Nodes" });
+
+      app.controls.push(pathNodes);      
 
     /* Transition ---------------------------------------------------- */
     // var trans=new transition(getGUID(), rt, 1000, 0, width-200, height,
