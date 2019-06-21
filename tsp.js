@@ -515,7 +515,7 @@
       // this.dataMode     = DATA_MODES.TEST;
       // this.dataMode     = DATA_MODES.CIRCLE;
 
-      this.tourLength       = 100;                //  Total # of nodes to be connected
+      this.tourLength       = 200;                //  Total # of nodes to be connected
 
       this.menu;
       this.clock;
@@ -4357,8 +4357,6 @@ renumberNodes(p.workingNodes);
 
           }
 
-          var xo=p.offset+p.h/2;//+2*this.h;
-
           function drawRun(){
 
             var x=p.h/2+2*p.h;
@@ -4370,7 +4368,8 @@ renumberNodes(p.workingNodes);
 
               fill(128,32);
               noStroke();
-              ellipse(p.h/2+2*p.h, p.h/2, p.h, p.h);
+
+                ellipse(p.h/2+2*p.h, p.h/2, p.h, p.h);
 
             }
 
@@ -4427,6 +4426,46 @@ renumberNodes(p.workingNodes);
           };
           function drawNext(){
 
+            textSize(24);
+            
+            var ts=24;
+
+            var x=3.5*p.h;
+            var y=p.h/2;
+
+            var o=p.offset;
+
+            if(p.nextHit){
+
+              fill(128,32);
+              noStroke();
+
+                ellipse(x, y, p.h, p.h);
+
+            }
+
+            x=p.h*3.5-ts+7;
+            y=ts/2+15;
+
+            // Triangle Shadow
+            fill(CLRS);
+            stroke(CLRS);
+
+              text(CONSTANTS.TRIANGLE_R, x+3,      y+3);
+              text(CONSTANTS.TRIANGLE_R, x+ts/2+3, y+3);
+
+            // Triangle
+            fill(CLR);
+            stroke(CLR);
+
+            if(p.active){
+              fill(CLRH);
+              stroke(CLRH);
+            }
+
+              text(CONSTANTS.TRIANGLE_R, x+o,      y+o);
+              text(CONSTANTS.TRIANGLE_R, x+ts/2+o, y+o);
+
           };
           function drawLast(){
 
@@ -4438,11 +4477,14 @@ renumberNodes(p.workingNodes);
 
           };
 
-
           drawRun();
+          drawNext();
+          drawLast();
+          drawPrevious();
+          drawFirst();
 
           stroke(128,0,0);
-          
+
           noFill();
 
           // if(this.hit        ){ fill(16,128);      }
@@ -4461,7 +4503,6 @@ renumberNodes(p.workingNodes);
             ellipse(this.h/2,          this.h/2, this.h, this.h);  //  First
             ellipse(this.h/2+  this.h, this.h/2, this.h, this.h);  //  Previous
             
-            ellipse(this.h/2+3*this.h, this.h/2, this.h, this.h);  //  Next
             ellipse(this.h/2+4*this.h, this.h/2, this.h, this.h);  //  Last
 
         pop();
