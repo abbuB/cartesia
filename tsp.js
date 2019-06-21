@@ -151,22 +151,22 @@
     var KeyCodes = {
 
       //  Upper Case
-      A: 65,
-      B: 66,
-      C: 67,
-      D: 68,
-      E: 69,
-      L: 76,
-      N: 78,
-      O: 79,
-      P: 80,
-      Q: 81,
-      R: 82,
-      S: 83,
-      T: 84,
-      W: 87,
-      X: 88,
-      Z: 90,
+      A:   65,
+      B:   66,
+      C:   67,
+      D:   68,
+      E:   69,
+      L:   76,
+      N:   78,
+      O:   79,
+      P:   80,
+      Q:   81,
+      R:   82,
+      S:   83,
+      T:   84,
+      W:   87,
+      X:   88,
+      Z:   90,
 
       // Function Keys
       F1: 112,
@@ -179,7 +179,7 @@
       F7: 118,
       F8: 119,
 
-      F9: 120,
+      F9:  120,
       F10: 121,
       F11: 122,
       F12: 123,
@@ -206,59 +206,60 @@
 
 
       // Special Keys
-      DELETE: 127,
-      BACKSPACE: 8,
-      TAB: 9,
-      ENTER: 10,
-      RETURN: 13,
-      ESC: 27,
-      CODED: 0xffff,
-      SHIFT: 16,
-      CONTROL: 17,
-      ALT: 18,
-      CAPSLK: 20,
-      SPACE: 32,
-      PGUP: 33,
-      PGDN: 34,
-      END: 35,
-      HOME: 36,
-      LEFT: 37,
-      UP: 38,
-      RIGHT: 39,
-      DOWN: 40,
-      PLUS: 43,
-      MINUS: 45,
-      PERIOD: 46,
-      EQUALS: 61,
+      DELETE:    127,
+      BACKSPACE:   8,
+      TAB:         9,
+      ENTER:      10,
+      RETURN:     13,
+      ESC:        27,
+      CODED:  0xffff,
+      SHIFT:      16,
+      CONTROL:    17,
+      ALT:        18,
+      CAPSLK:     20,
+      SPACE:      32,
+      PGUP:       33,
+      PGDN:       34,
+      END:        35,
+      HOME:       36,
+      LEFT:       37,
+      UP:         38,
+      RIGHT:      39,
+      DOWN:       40,
+      PLUS:       43,
+      MINUS:      45,
+      PERIOD:     46,
+      EQUALS:     61,
 
-      NUMLK: 144,
-      META: 157,
-      INSERT: 155
+      NUMLK:     144,
+      META:      157,
+      INSERT:    155
 
     };
 
     var DRAG_DIRECTIONS = {
 
-      NONE: 0,
-      UPDOWN: 1,
+      NONE:     0,
+      UPDOWN:   1,
       BACKWARD: 2,
-      FORWARD: 3
+      FORWARD:  3
 
     };
 
     var DIRECTIONS = {
 
-      NONE: 0,
-      UP: 1,
-      DOWN: 2,
-      UPRIGHT: 3,
-      UPLEFT: 4,
-      DOWNRIGHT: 5,
-      DOWNLEFT: 6
+      NONE:       0,
+      UP:         1,
+      DOWN:       2,
+      UPRIGHT:    3,
+      UPLEFT:     4,
+      DOWNRIGHT:  5,
+      DOWNLEFT:   6
 
     };
 
     var CONSTANTS={
+
       DEGREES:        '°',
       PI:             'π',
       TRIANGLE_UP:    '▲',
@@ -271,6 +272,7 @@
       TRIANGLE_L:     '◄',
       SIGMA:          'Σ',
       NOTE:           '♫'
+
     }
 
   }
@@ -2861,11 +2863,11 @@ renumberNodes(p.workingNodes);
           pop();
 
       };
-      field.prototype.next=function()     { print("Next"); };
-      field.prototype.previous=function() { print("Previous"); };
-      field.prototype.first=function()    { print("First"); };
-      field.prototype.last=function()     { print("Last"); };
-      field.prototype.play=function()     { print("Play"); };
+      field.prototype.next=function()     { print("Next");      };
+      field.prototype.previous=function() { print("Previous");  };
+      field.prototype.first=function()    { print("First");     };
+      field.prototype.last=function()     { print("Last");      };
+      field.prototype.run=function()      { print("Run");       };
       field.prototype.hitTest=function(x, y){
 
         var retVal=false;
@@ -4300,16 +4302,16 @@ renumberNodes(p.workingNodes);
 
         control.call(this, id, parent, x, y, w, h);
 
-        this.cursor   = props.cursor;
-        this.color    = props.color;
+        this.cursor      = props.cursor;
+        this.color       = props.color;
 
-        this.running  = props.running;
-        this.retrieve = props.retrieve;
+        this.run         = props.run;
+        this.retrieve    = props.retrieve;
 
-        this.next     = props.executeNext;
-        this.previous = props.executePrevious;
-        this.first    = props.executeFirst;
-        this.last     = props.executeLast;
+        this.next        = props.next;
+        this.previous    = props.previous;
+        this.first       = props.first;
+        this.last        = props.last;
 
         this.firstHit    = false;
         this.previousHit = false;        
@@ -4323,102 +4325,142 @@ renumberNodes(p.workingNodes);
       dbControls.prototype=Object.create(control.prototype);
       dbControls.prototype.draw=function(){
 
-        this.active=this.hit &&
-                    app.focus==this;
+        var p=this;
 
-        this.offset=0;
+        p.active=p.hit &&
+                 app.focus==p;
+
+        p.offset=0;
 
         var CLR=164;
         var CLRH=212;
-        var CLRB=48;
+        var CLRS=48;
+        
+        var ts=38;  //  TextSize
 
         push();
 
-          translate(this.x, this.y);
+          translate(p.x, p.y);
 
           noFill();
           stroke(CLR);
           strokeWeight(1.5);
 
-          if(this.active){
+          if(p.active){
 
             stroke(164);
-            cursor(this.cursor);
+            cursor(p.cursor);
 
             if(app.left){
-              this.offset=1;
+              p.offset=1;
             }
 
           }
 
-          var o=this.offset;
+          var xo=p.offset+p.h/2;//+2*this.h;
 
-          if(this.retrieve){
+          function drawRun(){
 
-            // Triangle Shadow
-            fill(CLRB);
-            stroke(CLRB);
-            strokeWeight(5);
+            var x=p.h/2+2*p.h;
+            var y=p.h/2;
 
-            line(-3,-7,-3, 13);
-            line( 9,-7, 9, 13);
+            var o=p.offset;
 
-            // Triangle
-            fill(CLR);
-            stroke(CLR);
+            if(p.runHit){
 
-            if(this.active){
-              fill(CLRH);
-              stroke(CLRH);
+              fill(128,32);
+              noStroke();
+              ellipse(p.h/2+2*p.h, p.h/2, p.h, p.h);
+
             }
 
-            line(o-6, o-10, o-6, o+10);
-            line(o+6, o-10, o+6, o+10);
+            if(p.retrieve()){ //  Pause
 
-          }
-          else {
+              strokeWeight(5);
 
-            // Triangle Shadow
-            fill(CLRB);
-            stroke(CLRB);
+              // Lines Shadow
+              fill(CLRS);
+              stroke(CLRS);
 
-            triangle(13, 3,
-                      -7,-7,
-                      -7,13);
+                line(x-3, y-7, x-3, y+12);
+                line(x+9, y-7, x+9, y+12);
+  
+              // Lines
+              fill(CLR);
+              stroke(CLR);
+  
+              if(p.active){
+                fill(CLRH);
+                stroke(CLRH);
+              }
+  
+                line(x-6+o, y+o-10, x-6+o, y+o+10);
+                line(x+6+o, y+o-10, x+6+o, y+o+10);
+  
+            }
+            else{ // Run
+              
+              x=p.h*2.5-ts/2+2;
+              y=ts/2+11;
 
-            // Triangle
-            fill(CLR);
-            stroke(CLR);
+              textSize(38);
 
-            if(this.active){
-              fill(CLRH);
-              stroke(CLRH);
+              // Triangle Shadow
+              fill(CLRS);
+              stroke(CLRS);
+  
+                text(CONSTANTS.TRIANGLE_R, x+3, y+3);
+  
+              // Triangle
+              fill(CLR);
+              stroke(CLR);
+  
+              if(p.active){
+                fill(CLRH);
+                stroke(CLRH);
+              }
+  
+                text(CONSTANTS.TRIANGLE_R, x+o, y+o);
+  
             }
 
-            triangle(o+10, o,
-                      o-10, o-10,
-                      o-10, o+10);
+          };
+          function drawNext(){
 
-          }
+          };
+          function drawLast(){
+
+          };
+          function drawPrevious(){
+
+          };
+          function drawFirst(){
+
+          };
+
+
+          drawRun();
 
           stroke(128,0,0);
           
           noFill();
 
           // if(this.hit        ){ fill(16,128);      }
-          if(this.firstHit    ){ fill(255,  0,  0,128); }
-          if(this.previousHit ){ fill(  0,  0,255,128); }
-          if(this.runHit      ){ fill(255,  0,255,128); }
-          if(this.nextHit     ){ fill(255,255,  0,128); }
-          if(this.lastHit     ){ fill(  0,255,  0,128); }
+          // if(this.firstHit    ){ fill(255,  0,  0,128); }
+          // if(this.previousHit ){ fill(  0,  0,255,128); }
+          // if(this.runHit      ){ fill(255,  0,255,128); }
+          // if(this.nextHit     ){ fill(255,255,  0,128); }
+          // if(this.lastHit     ){ fill(  0,255,  0,128); }
 
-            rect(0,0,this.w,this.h);
+            // rect(0,0,this.w,this.h);
 
+          noFill();
+          strokeWeight(1);
           stroke(128,0,0);
 
             ellipse(this.h/2,          this.h/2, this.h, this.h);  //  First
             ellipse(this.h/2+  this.h, this.h/2, this.h, this.h);  //  Previous
-            ellipse(this.h/2+2*this.h, this.h/2, this.h, this.h);  //  Run
+            
             ellipse(this.h/2+3*this.h, this.h/2, this.h, this.h);  //  Next
             ellipse(this.h/2+4*this.h, this.h/2, this.h, this.h);  //  Last
 
@@ -4432,7 +4474,7 @@ renumberNodes(p.workingNodes);
 
           if     (this.firstHit   ){ this.first();    }
           else if(this.previousHit){ this.previous(); }          
-          else if(this.runHit     ){ this.running();  }
+          else if(this.runHit     ){ this.run();    }
           else if(this.nextHit    ){ this.next();     }
           else if(this.lastHit    ){ this.last();     }
           
@@ -4465,7 +4507,7 @@ renumberNodes(p.workingNodes);
                            mouseY,
                            p.x+x+p.h/2,
                            p.y+y+p.h/2)<p.h/2);
-print("First hit: " + p.firstHit);
+// print("First hit: " + p.firstHit);
         };
         function setPreviousHit(x,y){
 
@@ -4473,7 +4515,7 @@ print("First hit: " + p.firstHit);
                               mouseY,
                               p.x+x+1.5*p.h,
                               p.y+y+p.h/2)<p.h/2);
-print("Previous hit: " + p.previousHit);
+// print("Previous hit: " + p.previousHit);
 
         };
 
@@ -4483,7 +4525,7 @@ print("Previous hit: " + p.previousHit);
                           mouseY,
                           p.x+x+2.5*p.h,
                           p.y+y+p.h/2)<p.h/2);
-print("Play hit: " + p.runHit);
+// print("Play hit: " + p.runHit);
 
         };
         function setNextHit(x,y){
@@ -4492,7 +4534,7 @@ print("Play hit: " + p.runHit);
                           mouseY,
                           p.x+x+3.5*p.h,
                           p.y+y+p.h/2)<p.h/2);
-print("Next hit: " + p.nextHit);
+// print("Next hit: " + p.nextHit);
 
         };
         function setLastHit(x,y){
@@ -4501,7 +4543,7 @@ print("Next hit: " + p.nextHit);
                           mouseY,
                           p.x+x+4.5*p.h,
                           p.y+y+p.h/2)<p.h/2);
-print("Last hit: " + p.lastHit);
+// print("Last hit: " + p.lastHit);
 
         };
 
@@ -4579,26 +4621,26 @@ print("Last hit: " + p.lastHit);
 
     /** Database Controls     */
     // ***** NOTE: Width must be 5 times the height
-    rt.controls.push(new dbControls('dbControls', rt, 300, rt.h-75, 200, 40,
+    rt.controls.push(new dbControls('dbControls', rt, 280, rt.h-100, 200, 40,
       {
         cursor:     HAND,
         color:      BLACK,
-        retrieve:   app.field.running,
-        running:    app.field.play,
+        retrieve:   getRunning,
+        run:        toggleRunning,
         next:       app.field.next,
         previous:   app.field.previous,
         first:      app.field.first,
         last:       app.field.last
       }));
 
-    /** Slider     */
-    rt.controls.push(new slider('slider', rt, 200, rt.h-100, 400, 10,
-      {
-        cursor:   HAND,
-        color:    BLACK,
-        retrieve: getNodes,
-        execute:  setNodes
-      }));
+    // /** Slider     */
+    // rt.controls.push(new slider('slider', rt, 200, rt.h-100, 400, 10,
+    //   {
+    //     cursor:   HAND,
+    //     color:    BLACK,
+    //     retrieve: getNodes,
+    //     execute:  setNodes
+    //   }));
 
     /** Solve Button     */
     rt.controls.push(new solveButton('solve', rt, 600, rt.h-50, 28, 28,
