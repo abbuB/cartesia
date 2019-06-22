@@ -72,264 +72,65 @@
 
     new p5();
 
-    var myFont;
+    const dataTest=[
+                    [474,154],[504,128],[524,132],[572,164],[442,129],
+                    [429,119],[428, 98],[452, 77],[476, 82],[511, 58],
+                    [489, 38],[482, 33],[358, 42],[287, 46],[205, 53],
+                    [230,110],[329,159],[336,198],[402,208],[448,240],
+                    [461,240],[536,213],[556,241],[533,249],[483,308],
+                    [478,327],[452,324],[453,354],[417,336],[374,327],
+                    [382,393],[364,408],[309,379],[275,392],[268,345],
+                    [248,325],[295,275],[202,212],[173,207],[183,270],
+                    [195,380],[179,387],[189,401],[182,420],[224,392],
+                    [249,425],[215,472],[203,553],[213,574],[224,568],
+                    [284,509],[282,462],[288,447],[314,503],[323,534],
+                    [339,502],[361,481],[371,465],[397,550],[424,504],
+                    [442,467],[468,490],[462,503],[486,522],[499,512],
+                    [501,541],[500,546],[523,560],[571,538],[684,550],
+                    [686,489],[719,463],[724,447],[632,390],[625,416],
+                    [627,460],[588,436],[556,440],[548,433],[515,427],
+                    [490,382],[565,333],[574,325],[655,317],[673,335],
+                    [675,328],[712,293],[655,259],[623,260],[619,233],
+                    [645,215],[692,235],[693,198],[718,162],[693,146],
+                    [673,128],[676,102],[662, 45],[584, 85],[598,121]
+                  ];
 
-    // Colours ------------------------------------------------------------------
-    {
-      var RT = [212, 212, 212, 255]; var RT = [212, 212, 212, 255];
-      var BG = [255, 204, 0, 255];
-
-      var MAROON     = [114, 12, 21,255];
-      var MAROON_L   = [140, 15 ,26,255];
-
-      var GRAY242    = [242,242,242,255];
-      var GRAY140    = [140,140,140,255];
-      
-      var BLACK12    = [ 12, 12, 12,255];
-
-      var WHITE242   = [242,242,242,255];
-
-      var BACKGROUND = WHITE242;
-
-      var H_SHADOW = [209, 209, 209, 255];
-
-      var H_BLUE = [20, 156, 216, 255]; var H_BLUE_L = [5, 164, 235, 255];
-      var H_BLACK = [44, 47, 49, 255]; var H_BLACK_L = [62, 62, 62, 255];
-      var H_ORANGE = [255, 159, 0, 255]; var H_ORANGE_L = [255, 175, 41, 255];
-
-      var GRAY = [128, 128, 128, 255];
-
-      var CYAN = [  0,255,255,255];
-      var PINK = [255, 20,147,255];
-
-      var TEAL_0 = [28, 117, 138, 255]; var TEAL_0_LT = [28, 117, 138, 128];
-      var TEAL_1 = [41, 171, 202, 255]; var TEAL_1_LT = [41, 171, 202, 128];
-      var TEAL_2 = [88, 196, 221, 255];
-      var TEAL_2_LT = [88, 196, 221, 128];
-      var TEAL_3 = [156, 220, 235, 255]; var TEAL_3_LT = [156, 220, 235, 128];
-
-      var TRANSPARENT = [-1, -1, -1, 255];
-
-      var WHITE = [255, 255, 255, 255];
-      var BLACK = [0, 0, 0, 255];
-
-      var K_RED = [170, 29, 29, 255];
-      var K_ORANGE = [238, 136, 15, 255];
-      var K_YELLOW = [238, 214, 15, 255];
-      var K_GREEN = [158, 182, 58, 255];
-      var K_BLUE = [29, 86, 170, 255];
-      var K_PURPLE = [127, 0, 255, 255];
-
-      var BROWN = [155, 145, 135, 255];
-
-      var RED = [170, 29, 29, 255]; var ORANGE = [238, 136, 15, 255];
-      // var YELLOW = [238, 214, 15, 255]; var GREEN = [158, 182, 58, 255];
-      var BLUE = [29, 86, 170, 255]; var PURPLE = [127, 0, 255, 255];
-
-      var BLANK = 0;
-      var RED0 = 1;
-      var ORANGE0 = 2;
-      var YELLOW0 = 3;
-      var GREEN0 = 4;
-      var BLUE0 = 5;
-      var PURPLE0 = 6;
-      var BLACK0 = 7;
-
-      var YELLOW    = [255,255,  0,255];
-      var YELLOW_H  = [255,255,  0,128];
-
-      // const RED           = [255,  0,  0,255]; const REDORANGE    = [255, 81,  0,255];
-      // const ORANGE        = [255,127,  0,255]; const YELLOWORANGE = [255,190,  0,255];
-      // const YELLOW        = [255,255,  0,255]; const YELLOWGREEN  = [192,255,  0,255];
-      // const GREEN         = [  0,255,  0,255]; const BLUEGREEN    = [  0,127,127,255];
-      // const BLUE          = [  0,  0,255,255]; const BLUEVIOLET   = [ 92,  0,255,255];
-      // var VIOLET        = [127,  0,255,255]; var REDVIOLET    = [191,  0,127,255];
-    }
-
-    // --------------------------------------------------------------------------
-
-    var KeyCodes = {
-
-      //  Upper Case
-      A:   65,
-      B:   66,
-      C:   67,
-      D:   68,
-      E:   69,
-      L:   76,
-      N:   78,
-      O:   79,
-      P:   80,
-      Q:   81,
-      R:   82,
-      S:   83,
-      T:   84,
-      W:   87,
-      X:   88,
-      Z:   90,
-
-      // Function Keys
-      F1: 112,
-      F2: 113,
-      F3: 114,
-      F4: 115,
-
-      F5: 116,
-      F6: 117,
-      F7: 118,
-      F8: 119,
-
-      F9:  120,
-      F10: 121,
-      F11: 122,
-      F12: 123,
-
-      // Lower Case
-      // a:              97,
-      // b:              98,
-      // c:              99,
-      // d:             100,
-      // e:             101,
-      // l:             108,
-      // n:             110,
-      // o:             111,
-      // q:             113,
-      // r:             114,
-      // s:             115,
-      // t:             116,
-      // w:             119,
-      // x:             120,
-      // y:             121,
-      // z:             122,
-
-      // Function Keys
-
-
-      // Special Keys
-      DELETE:    127,
-      BACKSPACE:   8,
-      TAB:         9,
-      ENTER:      10,
-      RETURN:     13,
-      ESC:        27,
-      CODED:  0xffff,
-      SHIFT:      16,
-      CONTROL:    17,
-      ALT:        18,
-      CAPSLK:     20,
-      SPACE:      32,
-      PGUP:       33,
-      PGDN:       34,
-      END:        35,
-      HOME:       36,
-      LEFT:       37,
-      UP:         38,
-      RIGHT:      39,
-      DOWN:       40,
-      PLUS:       43,
-      MINUS:      45,
-      PERIOD:     46,
-      EQUALS:     61,
-
-      NUMLK:     144,
-      META:      157,
-      INSERT:    155
-
-    };
-
-    var DRAG_DIRECTIONS = {
-
-      NONE:     0,
-      UPDOWN:   1,
-      BACKWARD: 2,
-      FORWARD:  3
-
-    };
-
-    var DIRECTIONS = {
-
-      NONE:       0,
-      UP:         1,
-      DOWN:       2,
-      UPRIGHT:    3,
-      UPLEFT:     4,
-      DOWNRIGHT:  5,
-      DOWNLEFT:   6
-
-    };
-
-    var CONSTANTS={
-
-      DEGREES:        '°',
-      PI:             'π',
-      TRIANGLE_UP:    '▲',
-      TRIANGLE_DOWN:  '▼',
-      INFINITY:       '∞',
-      THETA:          'θ',
-      RADIANS:        'ᶜ',
-      IDENTICAL:      '≡',
-      TRIANGLE_R:     '►',
-      TRIANGLE_L:     '◄',
-      SIGMA:          'Σ',
-      NOTE:           '♫'
-
-    }
+    const dataCircle=[
+                      [670,300],[670,316],[668,331],[666,347],[662,362],
+                      [658,377],[652,392],[646,406],[639,420],[631,434],
+                      [622,447],[613,459],[602,471],[591,482],[579,493],
+                      [567,502],[554,511],[540,519],[526,526],[512,532],
+                      [497,538],[482,542],[467,546],[451,548],[436,550],
+                      [420,550],[404,550],[389,548],[373,546],[358,542],
+                      [343,538],[328,532],[314,526],[300,519],[286,511],
+                      [273,502],[261,493],[249,482],[238,471],[227,459],
+                      [218,447],[209,434],[201,420],[194,406],[188,392],
+                      [182,377],[178,362],[174,347],[172,331],[170,316],
+                      [170,300],[170,284],[172,269],[174,253],[178,238],
+                      [182,223],[188,208],[194,194],[201,180],[209,166],
+                      [218,153],[227,141],[238,129],[249,118],[261,107],
+                      [273, 98],[286, 89],[300, 81],[314, 74],[328, 68],
+                      [343, 62],[358, 58],[373, 54],[389, 52],[404, 50],
+                      [420, 50],[436, 50],[451, 52],[467, 54],[482, 58],
+                      [497, 62],[512, 68],[526, 74],[540, 81],[554, 89],
+                      [567, 98],[579,107],[591,118],[602,129],[613,141],
+                      [622,153],[631,166],[639,180],[646,194],[652,208],
+                      [658,223],[662,238],[666,253],[668,269],[670,284]
+                    ];
 
   }
 
   function preload(){
 
+    "use strict"; 
+
     // myFont = loadFont('http://fonts.googleapis.com/css?family=Walter+Turncoat&.css');
 
   }
 
-  var dataTest=[
-                [474,154],[504,128],[524,132],[572,164],[442,129],
-                [429,119],[428, 98],[452, 77],[476, 82],[511, 58],
-                [489, 38],[482, 33],[358, 42],[287, 46],[205, 53],
-                [230,110],[329,159],[336,198],[402,208],[448,240],
-                [461,240],[536,213],[556,241],[533,249],[483,308],
-                [478,327],[452,324],[453,354],[417,336],[374,327],
-                [382,393],[364,408],[309,379],[275,392],[268,345],
-                [248,325],[295,275],[202,212],[173,207],[183,270],
-                [195,380],[179,387],[189,401],[182,420],[224,392],
-                [249,425],[215,472],[203,553],[213,574],[224,568],
-                [284,509],[282,462],[288,447],[314,503],[323,534],
-                [339,502],[361,481],[371,465],[397,550],[424,504],
-                [442,467],[468,490],[462,503],[486,522],[499,512],
-                [501,541],[500,546],[523,560],[571,538],[684,550],
-                [686,489],[719,463],[724,447],[632,390],[625,416],
-                [627,460],[588,436],[556,440],[548,433],[515,427],
-                [490,382],[565,333],[574,325],[655,317],[673,335],
-                [675,328],[712,293],[655,259],[623,260],[619,233],
-                [645,215],[692,235],[693,198],[718,162],[693,146],
-                [673,128],[676,102],[662, 45],[584, 85],[598,121]
-              ];
 
-  var dataCircle=[
-                  [670,300],[670,316],[668,331],[666,347],[662,362],
-                  [658,377],[652,392],[646,406],[639,420],[631,434],
-                  [622,447],[613,459],[602,471],[591,482],[579,493],
-                  [567,502],[554,511],[540,519],[526,526],[512,532],
-                  [497,538],[482,542],[467,546],[451,548],[436,550],
-                  [420,550],[404,550],[389,548],[373,546],[358,542],
-                  [343,538],[328,532],[314,526],[300,519],[286,511],
-                  [273,502],[261,493],[249,482],[238,471],[227,459],
-                  [218,447],[209,434],[201,420],[194,406],[188,392],
-                  [182,377],[178,362],[174,347],[172,331],[170,316],
-                  [170,300],[170,284],[172,269],[174,253],[178,238],
-                  [182,223],[188,208],[194,194],[201,180],[209,166],
-                  [218,153],[227,141],[238,129],[249,118],[261,107],
-                  [273, 98],[286, 89],[300, 81],[314, 74],[328, 68],
-                  [343, 62],[358, 58],[373, 54],[389, 52],[404, 50],
-                  [420, 50],[436, 50],[451, 52],[467, 54],[482, 58],
-                  [497, 62],[512, 68],[526, 74],[540, 81],[554, 89],
-                  [567, 98],[579,107],[591,118],[602,129],[613,141],
-                  [622,153],[631,166],[639,180],[646,194],[652,208],
-                  [658,223],[662,238],[666,253],[668,269],[670,284]
-                ];
 
-  var cnv;
+  let cnv;
 
   function printTour(arr){
 
@@ -339,13 +140,13 @@
     
     return;
 
-    var theta=0;
-    var radius=250;
-    var p;
+    let theta=0;
+    let radius=250;
+    let p;
 
     arr=[];
 
-    for(var n=0; n<100; n++){
+    for(let n=0; n<100; n++){
 
       p=new pnt(round(radius*cos(theta))+400, 
                 round(radius*sin(theta))+300);
@@ -356,9 +157,9 @@
 
     }
 
-    var s=(" var data=[\n           ");
+    let s=(" let data=[\n           ");
 
-      for(var n=1; n<=arr.length; n++){
+      for(let n=1; n<=arr.length; n++){
 
         s+=("[" + (arr[n-1].x+20) + ","
                 + arr[n-1].y + "]");
@@ -382,13 +183,13 @@
 
   function getCircleData(n,x,y,r){
 
-    var theta=0;
-    var radius=r;
-    var p;
+    let theta=0;
+    let radius=r;
+    let p;
 
     arr=[];
 
-    for(var i=0; i<n; i++){
+    for(let i=0; i<n; i++){
 
       p=new pnt(x+round(radius*cos(theta)), 
                 y+round(radius*sin(theta)));
@@ -465,7 +266,7 @@
 
       this.dragging       = false;    //  Is the mouse cursor moving and the left button pressed?
 
-      this.dragDirection  = DRAG_DIRECTIONS.NONE;
+      // this.dragDirection  = DRAG_DIRECTIONS.NONE;
 
       this.focus          = null;     //  The control with focus
 
@@ -536,7 +337,7 @@
 
   };
 
-  var app = new application();
+  let app = new application();
 
   /* Utility Functions ===================================================== */
   {
@@ -544,7 +345,7 @@
     /** Misc            ---------------------------------------------------- */
     {
 
-      var controlCount = -1;
+      let controlCount = -1;
 
       function getGUID(){ controlCount++; return controlCount; };
 
@@ -680,9 +481,9 @@
 
     function factorial(n){
 
-      var total=1;
+      let total=1;
 
-      for (var i=2; i<=n; i++) {
+      for (let i=2; i<=n; i++) {
         total*=i;
       }
 
@@ -695,7 +496,7 @@
   /** Control - default ------------------------------------------------ */
   {
 
-    var control = function (id, parent, x, y, w, h) {
+    function control(id, parent, x, y, w, h) {
 
       // app.controlCount++;
 
@@ -728,7 +529,7 @@
     control.prototype.draw = function (){ };
     control.prototype.hitTest = function (x, y) {
 
-      var retVal = false;
+      let retVal = false;
 
       if (mouseX >= (this.x + x) &&
         mouseX <= (this.x + x) + this.w &&
@@ -749,7 +550,7 @@
           this.hit = true;
           app.focus = this;
 
-          for (var c in this.controls) { this.controls[c].moved((this.x + x), (this.y + y)); }
+          for (let c in this.controls) { this.controls[c].moved((this.x + x), (this.y + y)); }
 
         }
 
@@ -758,7 +559,7 @@
 
         this.hit = false;
 
-        for (var c in this.controls) { this.controls[c].hit = false; }
+        for (let c in this.controls) { this.controls[c].hit = false; }
 
       }
 
@@ -786,7 +587,7 @@
 
         control.call(this, id, null, x, y, w, h);
 
-        this.color = props.color;
+        this.color  = props.color;
         this.border = props.border;
         this.cursor = props.cursor;
 
@@ -831,14 +632,14 @@
           this.hit=true;
           app.focus=this;
 
-          for(var c in this.controls) { this.controls[c].moved(this.x + x, this.y + y); }
+          for(let c in this.controls) { this.controls[c].moved(this.x + x, this.y + y); }
 
         }
         else{
 
           this.hit=false;
 
-          for(var c in this.controls){ this.controls[c].hit = false; }
+          for(let c in this.controls){ this.controls[c].hit = false; }
 
         }
 
@@ -874,7 +675,7 @@
 
         if (app.debug === false) { return; }
 
-        var p = this;
+        let p = this;
 
         this.active = this.hit &&
           app.focus === this;
@@ -976,7 +777,7 @@
         };
         function appSpecific(){
 
-          var top = 405;
+          let top = 405;
 
           fill(getColor(p.color, 50));
 
@@ -988,7 +789,7 @@
 
           fill(getColor(TEAL_2, 75));
 
-          var txt=             '\n'       +
+          let txt=             '\n'       +
                   'Controls' + '\n\n\n\n' +
                   'Score'    + '\n\n\n\n' +
                   'Misc';
@@ -1010,7 +811,7 @@
           fill(getColor(YELLOW, 75));
           textAlign(RIGHT, TOP);
 
-          var id = -1;
+          let id = -1;
 
           // if(app.focus!==null){ id=app.focus.id; }
 
@@ -1033,12 +834,12 @@
         if     ( app.telemetry && this.offset>-200){ this.offset-=10; }
         else if(!app.telemetry && this.offset<0   ){ this.offset+=10; }
 
-        var row0 = 5;
-        var row1 = 90;
+        let row0 = 5;
+        let row1 = 90;
 
-        var col0 = this.offset + 20;
-        var col1 = this.offset + 25;
-        var col2 = this.offset + 170;
+        let col0 = this.offset + 20;
+        let col1 = this.offset + 25;
+        let col2 = this.offset + 170;
 
         push();
 
@@ -1065,14 +866,14 @@
             this.hit = true;
             app.focus = this;
 
-            // for(var c in this.controls){ this.controls[c].moved(this.x+x+this.offset, this.y+y); }
+            // for(let c in this.controls){ this.controls[c].moved(this.x+x+this.offset, this.y+y); }
 
           }
           else {
 
             this.hit = false;
 
-            // for(var c in this.controls){ this.controls[c].hit=false; }
+            // for(let c in this.controls){ this.controls[c].hit=false; }
 
           }
 
@@ -1091,11 +892,11 @@
     /** Array Functions -------------------------------------------------- */
     {
 
-      var completePercent = 0;
+      let completePercent = 0;
 
       function swap(arr, n, m){
 
-        var tmp=arr[n];
+        let tmp=arr[n];
 
         arr[n]=arr[m];
         arr[m]=tmp;
@@ -1104,8 +905,8 @@
 
       function sortNodesByIndex(arr){
 
-        for(var i=0; i<arr.length; i++){
-          for (var j=0; j<arr.length; j++){
+        for(let i=0; i<arr.length; i++){
+          for (let j=0; j<arr.length; j++){
 
             if(abs(arr[j].id)>abs(arr[i].id)){
               swap(arr, i, j);
@@ -1121,8 +922,8 @@
       function arraySort(arr){
         // Sorts left to right base on x coordinate
 
-        for(var i=0; i<arr.length; i++){
-          for(var j=0; j<arr.length; j++){
+        for(let i=0; i<arr.length; i++){
+          for(let j=0; j<arr.length; j++){
 
             if(arr[j].x>arr[i].x){
               swap(arr, i, j);
@@ -1135,11 +936,11 @@
 
       function calculateConvexHull(arr, ind){
 
-        var m=Infinity;
-        var maxM=-Infinity;
-        var maxIndex=-Infinity;
+        let m=Infinity;
+        let maxM=-Infinity;
+        let maxIndex=-Infinity;
 
-        for(var n=0; n<arr.length; n++){
+        for(let n=0; n<arr.length; n++){
 
           print(arr[n].x + "," + arr[n].y + "     -    " + degrees(atan2(arr[n].y, arr[n].x)));
 
@@ -1153,11 +954,11 @@
       };
       function getLongest(arr){
 
-        var distance=-1;
-        var max=-1;
-        var id=-1;
+        let distance=-1;
+        let max=-1;
+        let id=-1;
 
-        for(var i=0; i<arr.length-1; i++){
+        for(let i=0; i<arr.length-1; i++){
 
           distance=dist(arr[i].x, arr[i].y,
                         arr[i+1].x, arr[i + 1].y);
@@ -1175,19 +976,19 @@
 
       function sortByLength(arr){
 
-        var sorted=[];
+        let sorted=[];
 
         arrayCopy(arr, sorted);
 
-        for(var i=0; i<sorted.length-1; i++){
+        for(let i=0; i<sorted.length-1; i++){
 
           sorted[i].distance=dist(sorted[i].x,     sorted[i].y,
                                   sorted[i + 1].x, sorted[i + 1].y);
 
         }
 
-        for(var i=0; i<sorted.length; i++){
-          for(var j=0; j<sorted.length-1; j++){
+        for(let i=0; i<sorted.length; i++){
+          for(let j=0; j<sorted.length-1; j++){
 
             if(sorted[i].distance>sorted[j].distance){
               swap(sorted, i, j);
@@ -1199,17 +1000,17 @@
         return sorted[0].id;
 
         // print(sorted[0].distance + ", " + sorted[sorted.length-1].distance);
-        // var limit=ceil(pow(arr.length,1/2));  // Limit to the square root of the # of nodes
+        // let limit=ceil(pow(arr.length,1/2));  // Limit to the square root of the # of nodes
 
-        // for(var m=1; m<limit+1; m++){
+        // for(let m=1; m<limit+1; m++){
         //   nod.closest.push(sorted[m]);  
         // }
 
       };
       function sortByX(arr){
 
-        for(var i=0; i<arr.length; i++){
-          for(var j=0; j<arr.length-1; j++){
+        for(let i=0; i<arr.length; i++){
+          for(let j=0; j<arr.length-1; j++){
 
             if(arr[i].x>arr[j].x){
               swap(arr, i, j);
@@ -1221,8 +1022,8 @@
       };
       function sortByY(arr){
 
-        for (var i=0; i<arr.length; i++){
-          for (var j=0; j<arr.length-1; j++){
+        for (let i=0; i<arr.length; i++){
+          for (let j=0; j<arr.length-1; j++){
 
             if(arr[i].y>arr[j].y){
               swap(arr, i, j);
@@ -1234,15 +1035,15 @@
       };
       function sortByLongest(arr){
 
-        for(var i=0; i<arr.length-1; i++){
+        for(let i=0; i<arr.length-1; i++){
 
           arr[i].distance=dist(arr[i].x, arr[i].y,
                               arr[i + 1].x, arr[i + 1].y);
 
         }
 
-        for(var i=0; i<arr.length; i++){
-          for(var j=0; j<arr.length-1; j++){
+        for(let i=0; i<arr.length; i++){
+          for(let j=0; j<arr.length-1; j++){
 
             if(arr[i].distance>arr[j].distance){
               swap(arr, i, j);
@@ -1255,7 +1056,7 @@
 
       function renumberNodes(arr){
 
-        for(var n=0; n<arr.length; n++) {
+        for(let n=0; n<arr.length; n++) {
           arr[n].id = n;
         }
 
@@ -1263,7 +1064,7 @@
 
       function randomizeArray(arr){
 
-        for(var n=0; n<arr.length; n++) {
+        for(let n=0; n<arr.length; n++) {
           swap(arr, n, round(random(arr.length-1)));
         }
 
@@ -1278,9 +1079,9 @@
 
         function contains(arr, i){
 
-          var retVal=false;
+          let retVal=false;
 
-          for(var n=0; n<arr.length; n++){
+          for(let n=0; n<arr.length; n++){
 
             if(arr[n].id=i){
               retVal=true;
@@ -1295,9 +1096,9 @@
 
         function getTourLength(arr){
 
-          var len=0;
+          let len=0;
 
-          for(var n=0; n<arr.length; n++){
+          for(let n=0; n<arr.length; n++){
 
             if(n==arr.length-1){
               len+=dist(arr[0].x,
@@ -1320,13 +1121,13 @@
 
         function resortNodes(arr){
           // print(arr);
-          var tempArray=[];
+          let tempArray=[];
 
           tempArray[p.workingNodes.length];
 
           arrayCopy(p.workingNodes, tempArray);
 
-          for(var n=0; n<arr.length; n++){
+          for(let n=0; n<arr.length; n++){
             tempArray[n]=p.workingNodes[arr[n]];
           }
 
@@ -1336,10 +1137,10 @@
         
         // function reverseNodes(arr){
 
-        //   var newArray=[];
-        //   var id=0;
+        //   let newArray=[];
+        //   let id=0;
 
-        //   for(var n=0; n<arr.length; n++){
+        //   for(let n=0; n<arr.length; n++){
 
         //     newArray.push(arr[arr.length-1-n]);
         //     // newArray[n].id=id;
@@ -1356,7 +1157,7 @@
         function reverseNodes(arr, index1, index2){
 
           if(index1>index2){
-            var temp=index2;
+            let temp=index2;
             index2=index1;
             index1=temp;
           }
@@ -1381,8 +1182,8 @@
         }
         function swap2Length(arr, id){
 
-          var rand1=id;
-          var rand2=id;
+          let rand1=id;
+          let rand2=id;
 
           if(rand2>arr.length-1){
             rand2=0;
@@ -1398,15 +1199,15 @@
         };
         function swap2Closest(arr){
 
-          var tmp;
-          var max=arr[0].closest.length-1;
+          let tmp;
+          let max=arr[0].closest.length-1;
 
-          var rand0=round(random(max));
+          let rand0=round(random(max));
 
-          var nod=arr[rand0];
+          let nod=arr[rand0];
 
-          var rand1=round(random(max));
-          var rand2=round(random(max));
+          let rand1=round(random(max));
+          let rand2=round(random(max));
 
           while(rand2==rand1){
             rand2=round(random(arr[rand0].closest.length-1));
@@ -1421,9 +1222,9 @@
 
         function swap2Random(arr){
 
-          var tmp;
-          var rand1=round(random(arr.length-1));
-          var rand2=round(random(arr.length-1));
+          let tmp;
+          let rand1=round(random(arr.length-1));
+          let rand2=round(random(arr.length-1));
 
           while(rand2==rand1){
             rand2=round(random(arr.length-1));
@@ -1434,9 +1235,9 @@
         };
         function swap2Consecutive(arr){
 
-          var tmp;
-          var rand1=round(random(arr.length-1));
-          var rand2=rand1+1;
+          let tmp;
+          let rand1=round(random(arr.length-1));
+          let rand2=rand1+1;
 
           if(rand2>=arr.length){
             rand2=0;
@@ -1450,10 +1251,10 @@
         };
         function swap3Random(arr){
 
-          var tmp;
-          var rand1=round(random(arr.length-1));
-          var rand2=round(random(arr.length-1));
-          var rand3=round(random(arr.length-1));
+          let tmp;
+          let rand1=round(random(arr.length-1));
+          let rand2=round(random(arr.length-1));
+          let rand3=round(random(arr.length-1));
 
           while(rand2==rand1){
             rand2=round(random(arr.length-1));
@@ -1473,15 +1274,15 @@
         };
         function swap3Consecutive(arr){
 
-          var tmp;
-          var rand1=round(random(arr.length-1));
-          var rand2=rand1+1;
+          let tmp;
+          let rand1=round(random(arr.length-1));
+          let rand2=rand1+1;
 
           if(rand2>=arr.length){
             rand2=0;
           }
 
-          var rand3=rand2+1;
+          let rand3=rand2+1;
 
           if(rand3>=arr.length) {
             rand3=0;
@@ -1496,15 +1297,15 @@
         };
         function swap2Half(arr){
 
-          var tmp;
-          var rand1=round(random(arr.length-1));
-          var rand2=rand1+1;
+          let tmp;
+          let rand1=round(random(arr.length-1));
+          let rand2=rand1+1;
 
           if(rand2>=arr.length){
             rand2=0;
           }
 
-          var rand3=round(random(arr.length-1));
+          let rand3=round(random(arr.length-1));
 
           while(rand3==rand1 || rand3==rand2){
             rand3=round(random(arr.length-1));
@@ -1519,15 +1320,15 @@
         };
         function swap2Segments(arr, n){
 
-          var tmp;
-          var index1=n;
-          var index2=index1+1;
-          var index3=index2+1;
+          let tmp;
+          let index1=n;
+          let index2=index1+1;
+          let index3=index2+1;
 
           if     (index2==arr.length  ){ index2=0; }
           else if(index2==arr.length+1){ index2=1; }
 
-          var index3=index2+1;
+          index3=index2+1;
 
           if      (index3==arr.length  ){ index3=0; }
           else if (index3==arr.length+1){ index3=1; }
@@ -1544,10 +1345,9 @@
       }
 
       var increment = 0;
-      var cNode     = 0;
-      var completed = false;
+      let completed = false;
 
-      // var HEX_SIZE  = 0;
+      // let HEX_SIZE  = 0;
 
       function field(id, parent, x, y, w, h, props){
 
@@ -1622,7 +1422,7 @@
       field.prototype=Object.create(control.prototype);
       field.prototype.reset=function(){
 
-        var p=this;                 //  Set a reference to the field control
+        let p=this;                 //  Set a reference to the field control
 
         // p.controls          = [];   //  Clear the controls array
 
@@ -1662,10 +1462,10 @@
 
         function load(){
 
-          var x=0;
-          var y=0;
+          let x=0;
+          let y=0;
 
-          var arr=[];
+          let arr=[];
 
           if(app.dataMode==DATA_MODES.CIRCLE){
 
@@ -1675,7 +1475,7 @@
                               p.w/2-100);
           };
 
-          for(var n=0; n<app.tourLength; n++){
+          for(let n=0; n<app.tourLength; n++){
 
             switch(app.dataMode){
 
@@ -1709,18 +1509,18 @@
 
         function sortByDistance(arr, nod){
 
-          var sorted=[];
+          let sorted=[];
 
           arrayCopy(arr, sorted);
 
-          for(var i=0; i<sorted.length; i++){
+          for(let i=0; i<sorted.length; i++){
 
             sorted[i].distance=dist(nod.x, nod.y, sorted[i].x, sorted[i].y);
 
           }
 
-          for(var i=0; i<sorted.length; i++){
-            for(var j=0; j<sorted.length-1; j++){
+          for(let i=0; i<sorted.length; i++){
+            for(let j=0; j<sorted.length-1; j++){
 
               if(sorted[i].distance<sorted[j].distance){
                 swap(sorted, i, j);
@@ -1729,10 +1529,10 @@
             }
           }
 
-          // var limit=ceil(pow(arr.length,1/2))+2;  // Limit to the square root of the # of nodes
-          var limit=app.tourLength;
+          // let limit=ceil(pow(arr.length,1/2))+2;  // Limit to the square root of the # of nodes
+          let limit=app.tourLength;
 
-          for(var m=1; m<limit; m++){
+          for(let m=1; m<limit; m++){
             nod.closest.push(sorted[m]);
           }
 
@@ -1740,7 +1540,7 @@
 
         function loadClosestNodes(){
 
-          for(var n=0; n<p.nodes.length; n++){
+          for(let n=0; n<p.nodes.length; n++){
             sortByDistance(p.nodes, p.nodes[n]);
           }
 
@@ -1753,9 +1553,9 @@
         this.dirty=false;
 
       };
-      field.prototype.draw=function(){
+      field.prototype.draw=function()       {
 
-        var p=this;
+        let p=this;
 
         p.active=p.hit &&
                  app.focus==this;
@@ -1776,7 +1576,7 @@
 
           beginShape();
 
-            for(var n=0; n<length; n++){
+            for(let n=0; n<length; n++){
               vertex(nodes[n].x, nodes[n].y);              
             }
 
@@ -1798,12 +1598,12 @@
           noFill();
           fill(0,0,0,64);
           
-          var arr=p.bestNodes;
+          let arr=p.bestNodes;
 
           beginShape();
           // beginContour();
 
-            for(var n=0; n<arr.length; n++){
+            for(let n=0; n<arr.length; n++){
               vertex(arr[n].x, arr[n].y);
             }
 
@@ -1814,11 +1614,11 @@
 
         function findClosestNode(arr, nod){
 
-          var min=Infinity;
-          var distance=Infinity;
-          var index=-1;
+          let min=Infinity;
+          let distance=Infinity;
+          let index=-1;
 
-          for(var n=0; n<arr.length; n++){
+          for(let n=0; n<arr.length; n++){
 
             distance=dist(nod.x, nod.y, arr[n].x, arr[n].y);
 
@@ -1838,10 +1638,10 @@
         };
         function getClosestArray(startNode){
 
-          var closestNodes=[];
+          let closestNodes=[];
 
           // Start with the first node
-          var nod=p.nodes[startNode];
+          let nod=p.nodes[startNode];
 
           while(nod!=null){
 
@@ -1880,10 +1680,10 @@
 
           arrayCopy(p.bestNodes, p.workingNodes);
           
-          var index1=p.index;
-          var index2=index1+1;
-          var index3=index2+1;
-          var index4=index3+1;
+          let index1=p.index;
+          let index2=index1+1;
+          let index3=index2+1;
+          let index4=index3+1;
 
           if     (index2>p.workingNodes.length-1){ index2=0; }
 
@@ -1928,9 +1728,9 @@
                         p2.x,p2.y);
           };
 
-          var p0=arr[i];
-          var p1=Infinity;
-          var p2=Infinity;
+          let p0=arr[i];
+          let p1=Infinity;
+          let p2=Infinity;
 
           if     (i==0)           { p1=arr[arr.length-1];
                                     p2=arr[1];            } // First node in the array
@@ -1939,12 +1739,12 @@
           else                    { p1=arr[i-1];
                                     p2=arr[i+1];          }
 
-          var currentDistance=getDistance(p0,p1,p2);
-          var newDistance=Infinity;
-          var p3=Infinity;
-          var p4=Infinity;
+          let currentDistance=getDistance(p0,p1,p2);
+          let newDistance=Infinity;
+          let p3=Infinity;
+          let p4=Infinity;
 
-          for(var n=0; n<arr.length; n++){
+          for(let n=0; n<arr.length; n++){
 
             if(abs(n-i)>3){
 
@@ -1967,11 +1767,11 @@
 
                   if(newDistance<currentDistance){
 
-                    var newArray=[];
+                    let newArray=[];
 
                     arrayCopy(p.workingNodes, newArray);
 
-                    var moveNode=p.workingNodes[p0.id];
+                    let moveNode=p.workingNodes[p0.id];
 
                     newArray.splice(moveNode.id,1);
                     newArray.splice(p4.id,0,moveNode);
@@ -2005,8 +1805,8 @@
 
           function ComputeDirection(xi, yi, xj, yj, xk, yk) {
 
-            var a=(xk-xi)*(yj-yi);
-            var b=(xj-xi)*(yk-yi);
+            let a=(xk-xi)*(yj-yi);
+            let b=(xj-xi)*(yk-yi);
 
             return a<b ? -1 : a>b ? 1 : 0;
 
@@ -2015,10 +1815,10 @@
           /** Do line segments (x1, y1)--(x2, y2) and (x3, y3)--(x4, y4) intersect? */
           function DoLineSegmentsIntersect(node1, node2, node3, node4) {
 
-            var d1=ComputeDirection(node3.x, node3.y, node4.x, node4.y, node1.x, node1.y);
-            var d2=ComputeDirection(node3.x, node3.y, node4.x, node4.y, node2.x, node2.y);
-            var d3=ComputeDirection(node1.x, node1.y, node2.x, node2.y, node3.x, node3.y);
-            var d4=ComputeDirection(node1.x, node1.y, node2.x, node2.y, node4.x, node4.y);
+            let d1=ComputeDirection(node3.x, node3.y, node4.x, node4.y, node1.x, node1.y);
+            let d2=ComputeDirection(node3.x, node3.y, node4.x, node4.y, node2.x, node2.y);
+            let d3=ComputeDirection(node1.x, node1.y, node2.x, node2.y, node3.x, node3.y);
+            let d4=ComputeDirection(node1.x, node1.y, node2.x, node2.y, node4.x, node4.y);
 
             return (((d1>0 && d2<0) || (d1<0 && d2>0)) &&
                     ((d3>0 && d4<0) || (d3<0 && d4>0))) ||
@@ -2033,19 +1833,19 @@
 
             p.intersections=[];
 
-            var node1;
-            var node2;
-            var node3;
-            var node4;
+            let node1;
+            let node2;
+            let node3;
+            let node4;
 
-            for(var a=0; a<p.workingNodes.length; a++){
+            for(let a=0; a<p.workingNodes.length; a++){
 
               node1=p.workingNodes[a];
 
               if(a==p.workingNodes.length-1){ node2=p.workingNodes[0];   }
               else                          { node2=p.workingNodes[a+1]; }
 
-              for(var b=0; b<p.workingNodes.length; b++){
+              for(let b=0; b<p.workingNodes.length; b++){
 
                 node3=p.workingNodes[b];
 
@@ -2088,10 +1888,10 @@
             
             if(p.loaded==false){
 
-              // var index=round(random(app.tourLength-1));
+              // let index=round(random(app.tourLength-1));
               
-              // var parent1=getClosestArray(getRandomInt(app.tourLength-1));
-              // var parent2=getClosestArray(getRandomInt(app.tourLength-1));
+              // let parent1=getClosestArray(getRandomInt(app.tourLength-1));
+              // let parent2=getClosestArray(getRandomInt(app.tourLength-1));
 
               // print(parent1);
               // print(parent2);
@@ -2114,9 +1914,9 @@ print('genetic');
 
           function segmentExists(p1, p2){
 
-            var retVal=-1;
+            let retVal=-1;
 
-            for(var e=1; e<p.segments.length; e++){
+            for(let e=1; e<p.segments.length; e++){
 
               if((p1.x==p.segments[e].point1.x &&
                   p1.y==p.segments[e].point1.y &&
@@ -2142,9 +1942,9 @@ print('genetic');
           };
           function updateSegments(){
 
-            for (var n=0; n<p.workingNodes.length; n++) {
+            for (let n=0; n<p.workingNodes.length; n++) {
 
-              var exists=-1;
+              let exists=-1;
 
               if(n==app.tourLength-1){
 
@@ -2186,9 +1986,9 @@ print('genetic');
             strokeWeight(3);
             noFill();
 
-            var seg=null;
+            let seg=null;
 
-            for(var n=0; n<p.segments.length; n++){
+            for(let n=0; n<p.segments.length; n++){
 
               seg=p.segments[n];
 
@@ -2215,7 +2015,7 @@ print('genetic');
 
             if(frameCount%5==0){
 
-              for(var n=0; n<p.segments.length; n++){
+              for(let n=0; n<p.segments.length; n++){
 
                 p.segments[n].weight=constrain(p.segments[n].weight-1, 0, 100);
                 
@@ -2239,17 +2039,17 @@ print('genetic');
             //  c is an encoding of the stack state.
             //  c[k] encodes the for-loop counter for
             //  when generate(k+1, A) is called.
-            var c=[];
-            var minTourLength=Infinity;
-            var tourLength=getTourLength(arr);
-            var counter=1;
+            let c=[];
+            let minTourLength=Infinity;
+            let tourLength=getTourLength(arr);
+            let counter=1;
 
-            for(var i=0; i<n; i++){
+            for(let i=0; i<n; i++){
               c[i]=0;
             }
 
             // i acts similarly to the stack pointer
-            var i=0;
+            let i=0;
 
             while(i<n){
 
@@ -2299,7 +2099,7 @@ print('genetic');
 
             // return;
 
-            var limit=7;
+            let limit=7;
 
             if(!p.loaded){
               nodePermutations(limit, p.nodes);
@@ -2328,7 +2128,7 @@ print('genetic');
 
               function getRandomNode(arr){
 
-                var newNode=null;
+                let newNode=null;
     
                 randomizeArray(arr);
     
@@ -2342,7 +2142,7 @@ print('genetic');
     
               function getClosestNode(nod){
 
-                for(var n=0; n<nod.closest.length; n++){
+                for(let n=0; n<nod.closest.length; n++){
 
                   if(nod.closest[n].loaded==false){
                     nod.closest[n].loaded=true;
@@ -2355,7 +2155,7 @@ print('genetic');
     
               function getFarthestNode(nod){
 
-                for(var n=nod.closest.length-1; n>=0; n--) {
+                for(let n=nod.closest.length-1; n>=0; n--) {
     
                   if(nod.closest[n].loaded==false){
                     nod.closest[n].loaded=true;
@@ -2371,11 +2171,11 @@ print('genetic');
                 arr.unshift(nod); // Adds the node to the first array position [0]
     
                 // Locates the position within the array that results in the shortest tour
-                var bestPosition=arr.length-1;
-                var dist=getTourLength(arr);
-                var minDist=dist;
+                let bestPosition=arr.length-1;
+                let dist=getTourLength(arr);
+                let minDist=dist;
     
-                for(var n=0; n<arr.length; n++){
+                for(let n=0; n<arr.length; n++){
     
                   if(n<arr.length-1){
                     swap(arr, n, n+1);
@@ -2398,10 +2198,10 @@ print('genetic');
 
             }
 
-            var arrSource=[];
-            var arrDestination=[];
+            let arrSource=[];
+            let arrDestination=[];
 
-            var nod;
+            let nod;
 
             arrayCopy(arr, arrSource);
 
@@ -2461,8 +2261,8 @@ print('genetic');
 
               if(p.intersections.length>0){
 
-                var n0=0;
-                var n1=2;
+                let n0=0;
+                let n1=2;
 
                 if(frameCount%5==0){
                   n0=1;
@@ -2529,7 +2329,7 @@ print('genetic');
               noStroke();
               textSize(20);
 
-              for(var n=0; n<1; n++){
+              for(let n=0; n<1; n++){
 
                 p.factor-=0.000001;
                 p.factor=constrain(p.factor, 1, 1.2);
@@ -2538,7 +2338,7 @@ print('genetic');
 
                   case p.factor>1.075:
 
-                    var id=getLongest(p.workingNodes);
+                    let id=getLongest(p.workingNodes);
 
                     swap2Length(p.workingNodes, id);
                     swap2Closest(p.workingNodes);
@@ -2626,11 +2426,11 @@ print('genetic');
 
             function canGrow(nod){
 
-              var retVal=true;
+              let retVal=true;
 
-              for(var n=0; n<p.workingNodes.length; n++){
+              for(let n=0; n<p.workingNodes.length; n++){
 
-                var distance=dist(nod.x,
+                let distance=dist(nod.x,
                                   nod.y,
                                   p.workingNodes[n].x,
                                   p.workingNodes[n].y);
@@ -2654,9 +2454,9 @@ print('genetic');
 
             if(app.running){
 
-              var nod=null;
+              let nod=null;
 
-              for(var n=0; n<p.workingNodes.length; n++){
+              for(let n=0; n<p.workingNodes.length; n++){
 
                 nod=p.workingNodes[n];
 
@@ -2714,7 +2514,7 @@ print('genetic');
             noStroke();
             fill(192);
 
-            var txt='Tours:'            + '\n'   +
+            let txt='Tours:'            + '\n'   +
                     'Nodes:'            + '\n\n' +
                     'Working Length:'   + '\n'   +
                     'Best Length'       + '\n\n' +
@@ -2736,8 +2536,8 @@ print('genetic');
             noStroke();
             fill(YELLOW);
 
-            var id=app.currentNode;
-            var factor=nf(p.factor, 1, 5);
+            let id=app.currentNode;
+            let factor=nf(p.factor, 1, 5);
 
             if(id==null){ id='';                 }
             else        { id=app.currentNode.id; }
@@ -2782,7 +2582,7 @@ print('genetic');
           
           p.factor=1;
 
-          var index=getRandomInt(p.workingNodes.length-1);
+          let index=getRandomInt(p.workingNodes.length-1);
 
           arrayCopy(p.workingNodes,getClosestArray(index));
 
@@ -2829,7 +2629,7 @@ renumberNodes(p.workingNodes);
           p.minimumLength=round(getTourLength(p.bestNodes));
           p.bestLength=round(getTourLength(p.bestNodes));
 
-          for(var n=0; n<p.nodes.length; n++){
+          for(let n=0; n<p.nodes.length; n++){
 
             if(p.nodes[n].x<p.minX){ p.minX=p.nodes[n].x; }
             if(p.nodes[n].x>p.maxX){ p.maxX=p.nodes[n].x; }
@@ -2863,14 +2663,14 @@ renumberNodes(p.workingNodes);
           pop();
 
       };
-      field.prototype.next=function()     { print("Next");      };
-      field.prototype.previous=function() { print("Previous");  };
-      field.prototype.first=function()    { print("First");     };
-      field.prototype.last=function()     { print("Last");      };
-      field.prototype.run=function()      { print("Run");       };
+      field.prototype.next=function()       { print("Next");      };
+      field.prototype.previous=function()   { print("Previous");  };
+      field.prototype.first=function()      { print("First");     };
+      field.prototype.last=function()       { print("Last");      };
+      field.prototype.run=function()        { print("Run");       };
       field.prototype.hitTest=function(x, y){
 
-        var retVal=false;
+        let retVal=false;
 
         if(mouseX>x+this.x &&
            mouseX<x+this.x+this.w &&
@@ -2882,14 +2682,14 @@ renumberNodes(p.workingNodes);
         return retVal;
 
       };
-      field.prototype.moved=function(x, y){
+      field.prototype.moved=function(x, y)  {
 
         if(this.hitTest(x, y)){
 
           this.hit=true;
           app.focus=this;
 
-          for(var n in this.workingNodes){
+          for(let n in this.workingNodes){
             this.workingNodes[n].moved(this.x+x, this.y+y);
           }
 
@@ -2898,28 +2698,28 @@ renumberNodes(p.workingNodes);
 
           this.hit=false;
 
-          for(var n in this.workingNodes){
+          for(let n in this.workingNodes){
             this.workingNodes[n].hit=false;
           }
 
         }
 
       };
-      field.prototype.clicked=function(){
+      field.prototype.clicked=function()    {
 
         if(this.hit){
-          for(var n in this.workingNodes){
+          for(let n in this.workingNodes){
             this.workingNodes[n].clicked(this.x+x, this.y+y);
           }
         }
 
       };
-      field.prototype.rclicked=function(){
+      field.prototype.rclicked=function()   {
 
-        var ctrls=this.controls;
+        let ctrls=this.controls;
 
-        for(var r in ctrls){
-          for(var c in ctrls[r]){
+        for(let r in ctrls){
+          for(let c in ctrls[r]){
 
             ctrls[r][c].rclicked();
 
@@ -2927,15 +2727,15 @@ renumberNodes(p.workingNodes);
         }
 
       };
-      field.prototype.out=function(){
+      field.prototype.out=function()        {
 
         this.hit=false;
         
 
-        var ctrls=this.controls;
+        let ctrls=this.controls;
 
-        for(var r in ctrls){
-          for(var c in ctrls[r]){
+        for(let r in ctrls){
+          for(let c in ctrls[r]){
 
             ctrls[r][c].out();
 
@@ -2943,7 +2743,7 @@ renumberNodes(p.workingNodes);
         }
 
       };
-      field.prototype.resized=function(){
+      field.prototype.resized=function()    {
 
         this.x=5;
         this.y=5;
@@ -2997,7 +2797,7 @@ renumberNodes(p.workingNodes);
 
         this.dragging = false;          // Is the node being dragged?
 
-        var p = this;
+        let p = this;
 
         this.reset();
 
@@ -3014,7 +2814,7 @@ renumberNodes(p.workingNodes);
                     app.focus==this;
 
         this.offset=0;
-        var p=this;
+        let p=this;
 
         if(this.hit){
 
@@ -3028,8 +2828,8 @@ renumberNodes(p.workingNodes);
             strokeWeight(1.25);
             noFill();
 
-            for(var n=0; n<round(sqrt(p.closest.length)); n++){
-            // for(var n=0; n<p.closest.length; n++){
+            for(let n=0; n<round(sqrt(p.closest.length)); n++){
+            // for(let n=0; n<p.closest.length; n++){
               line(p.x,
                    p.y,
                    p.closest[n].x,
@@ -3054,7 +2854,7 @@ renumberNodes(p.workingNodes);
 
         push();
 
-          var value=p.radius;
+          let value=p.radius;
           // print(value);
           fill(192, value);
 
@@ -3201,9 +3001,9 @@ renumberNodes(p.workingNodes);
 
         this.offset = 0;
 
-        var CLR=164;
-        var CLRH=212;
-        var CLRB=48;
+        let CLR=164;
+        let CLRH=212;
+        let CLRB=48;
 
         push();
 
@@ -3266,7 +3066,7 @@ renumberNodes(p.workingNodes);
 
       field.prototype.hitTest=function(x,y){
 
-        var retVal=false;
+        let retVal=false;
 
         if(mouseX>x+this.x &&
            mouseX<x+this.x+this.w &&
@@ -3345,9 +3145,9 @@ renumberNodes(p.workingNodes);
 
         this.offset = 0;
 
-        var CLR=164;
-        var CLRH=212;
-        var CLRB=48;
+        let CLR=164;
+        let CLRH=212;
+        let CLRB=48;
 
         push();
 
@@ -3368,7 +3168,7 @@ renumberNodes(p.workingNodes);
 
           }
 
-          var o=this.offset;
+          let o=this.offset;
 
           if(this.retrieve()){
 
@@ -3480,9 +3280,9 @@ renumberNodes(p.workingNodes);
 
         this.offset = 0;
 
-        var CLR=164;
-        var CLRH=212;
-        var CLRB=48;
+        let CLR=164;
+        let CLRH=212;
+        let CLRB=48;
 
         push();
 
@@ -3498,14 +3298,14 @@ renumberNodes(p.workingNodes);
 
           }
 
-          var o=this.offset;
+          let o=this.offset;
 
           // Shadows
           noFill();
           stroke(CLRB);
           strokeWeight(2);
 
-          var s=3;
+          let s=3;
 
             bezier(-14 + s,-8 + s, -5 + s,-10 + s, 5 + s, 10 + s, 14 + s, 8 + s);
             bezier(-14 + s, 8 + s, -5 + s, 10 + s, 5 + s,-10 + s, 14 + s,-8 + s);
@@ -3594,9 +3394,9 @@ renumberNodes(p.workingNodes);
 
         this.offset = 0;
 
-        var CLR=164;
-        var CLRH=192;
-        var CLRB=48;
+        let CLR=164;
+        let CLRH=192;
+        let CLRB=48;
 
         push();
 
@@ -3722,9 +3522,9 @@ renumberNodes(p.workingNodes);
 
         this.offset = 0;
 
-        var CLR=164;
-        var CLRH=212;
-        var CLRB=48;
+        let CLR=164;
+        let CLRH=212;
+        let CLRB=48;
 
         push();
 
@@ -3745,7 +3545,7 @@ renumberNodes(p.workingNodes);
 
           }
 
-          var o=this.offset;
+          let o=this.offset;
 
           if(this.retrieve()){
 
@@ -3852,7 +3652,7 @@ renumberNodes(p.workingNodes);
       menuButton.prototype = Object.create(control.prototype);
       menuButton.prototype.draw = function (){
 
-        var p = this;
+        let p = this;
         this.offset = 0;
 
         this.active = this.hit &&
@@ -3865,7 +3665,7 @@ renumberNodes(p.workingNodes);
 
         function drawHexagon(x, y, sz, offset) {
 
-          var ang = 0;
+          let ang = 0;
 
           beginShape();
 
@@ -3886,7 +3686,7 @@ renumberNodes(p.workingNodes);
         fill(212);
         noStroke();
 
-        for (var ang = 0; ang < 6; ang++) {
+        for (let ang = 0; ang < 6; ang++) {
           drawHexagon(cos(radians(ang * 60 + 30)) * 20 + 4,
             sin(radians(ang * 60 + 30)) * 20 + 4,
             10, 0);
@@ -3898,7 +3698,7 @@ renumberNodes(p.workingNodes);
 
         if (p.active) { fill(180); }
 
-        for (var ang = 0; ang < 6; ang++) {
+        for (let ang = 0; ang < 6; ang++) {
           drawHexagon(cos(radians(ang * 60 + 30)) * 20,
             sin(radians(ang * 60 + 30)) * 20,
             10, p.offset);
@@ -3959,7 +3759,7 @@ renumberNodes(p.workingNodes);
       music.prototype = Object.create(control.prototype);
       music.prototype.draw = function (){
 
-        var p = this;
+        let p = this;
 
         this.active = this.hit &&
           app.focus === this;
@@ -4064,7 +3864,7 @@ renumberNodes(p.workingNodes);
 
     /** Checkbox        -------------------------------------------------- */
     {
-      var checkbox=function(id, parent, x, y, w, h, props){
+      function checkbox(id, parent, x, y, w, h, props){
         
         control.call(this, id, parent, x, y, w, h);
 
@@ -4176,7 +3976,7 @@ renumberNodes(p.workingNodes);
 
     /** Option        -------------------------------------------------- */
     {
-      var option=function(id, parent, x, y, w, h, props){
+      function option(id, parent, x, y, w, h, props){
         
         control.call(this, id, parent, x, y, w, h);
 
@@ -4325,185 +4125,278 @@ renumberNodes(p.workingNodes);
       dbControls.prototype=Object.create(control.prototype);
       dbControls.prototype.draw=function(){
 
-        var p=this;
-
-        p.active=p.hit &&
-                 app.focus==p;
+        let p=this;
 
         p.offset=0;
 
-        var CLR=164;
-        var CLRH=212;
-        var CLRS=48;
-        
-        var ts=38;  //  TextSize
+        let CLR  = 164;
+        let CLRH = 212;
+        let CLRS =  48;
+
+        let ts   =  38;  //  TextSize
 
         push();
 
           translate(p.x, p.y);
 
-          noFill();
-          stroke(CLR);
-          strokeWeight(1.5);
+            function drawRun(){
 
-          if(p.active){
+              if(p.runHit){
 
-            stroke(164);
-            cursor(p.cursor);
+                stroke(164);
+                cursor(p.cursor);
+    
+                p.offset=app.left ? 1 : 0;
+    
+              }
 
-            if(app.left){
-              p.offset=1;
-            }
+              let x=p.h/2+2*p.h;
+              let y=p.h/2;
 
-          }
+              let o=p.offset;
 
-          function drawRun(){
+              if(p.runHit){
 
-            var x=p.h/2+2*p.h;
-            var y=p.h/2;
+                fill(128,32);
+                noStroke();
 
-            var o=p.offset;
+                  ellipse(p.h/2+2*p.h, p.h/2, p.h, p.h);
 
-            if(p.runHit){
+              }
 
-              fill(128,32);
+              if(p.retrieve()){ //  Pause
+
+                strokeWeight(5);
+
+                // Lines Shadow
+                fill(CLRS);
+                stroke(CLRS);
+
+                  line(x-3, y-7, x-3, y+12);
+                  line(x+9, y-7, x+9, y+12);
+    
+                // Lines
+                fill(CLR);
+                stroke(CLR);
+    
+                if(p.active){
+                  fill(CLRH);
+                  stroke(CLRH);
+                }
+    
+                  line(x-6+o, y+o-10, x-6+o, y+o+10);
+                  line(x+6+o, y+o-10, x+6+o, y+o+10);
+    
+              }
+              else{ // Run
+                
+                x=p.h*2.5-ts/2+2;
+                y=ts/2+11;
+
+                noStroke();
+                textSize(38);
+
+                // Triangle Shadow
+                fill(CLRS);
+                stroke(CLRS);
+    
+                  text(CONSTANTS.TRIANGLE_R, x+3, y+3);
+    
+                // Triangle
+                fill(CLR);
+                stroke(CLR);
+    
+                if(p.active){
+                  fill(CLRH);
+                  stroke(CLRH);
+                }
+    
+                  text(CONSTANTS.TRIANGLE_R, x+o, y+o);
+    
+              }
+
+            };
+            function drawNext(){
+
+              let ts=24;
+
+              textSize(ts);
               noStroke();
 
-                ellipse(p.h/2+2*p.h, p.h/2, p.h, p.h);
+              let x=3.5*p.h;
+              let y=p.h/2;
+              let o=0;
 
-            }
+              if(p.nextHit){
 
-            if(p.retrieve()){ //  Pause
+                cursor(p.cursor);
+    
+                o=app.left ? 1 : 0;
+    
+                fill(128,32);
 
-              strokeWeight(5);
-
-              // Lines Shadow
-              fill(CLRS);
-              stroke(CLRS);
-
-                line(x-3, y-7, x-3, y+12);
-                line(x+9, y-7, x+9, y+12);
-  
-              // Lines
-              fill(CLR);
-              stroke(CLR);
-  
-              if(p.active){
-                fill(CLRH);
-                stroke(CLRH);
+                  ellipse(x, y, p.h, p.h);
+                
               }
-  
-                line(x-6+o, y+o-10, x-6+o, y+o+10);
-                line(x+6+o, y+o-10, x+6+o, y+o+10);
-  
-            }
-            else{ // Run
-              
-              x=p.h*2.5-ts/2+2;
-              y=ts/2+11;
 
-              textSize(38);
+              x+=-ts+7;
+              y=ts/2+15;
 
               // Triangle Shadow
               fill(CLRS);
-              stroke(CLRS);
-  
-                text(CONSTANTS.TRIANGLE_R, x+3, y+3);
-  
+
+                text(CONSTANTS.TRIANGLE_R, x+3,      y+3);
+                text(CONSTANTS.TRIANGLE_R, x+ts/2+3, y+3);
+
               // Triangle
               fill(CLR);
-              stroke(CLR);
-  
+
               if(p.active){
                 fill(CLRH);
-                stroke(CLRH);
               }
-  
-                text(CONSTANTS.TRIANGLE_R, x+o, y+o);
-  
-            }
 
-          };
-          function drawNext(){
+                text(CONSTANTS.TRIANGLE_R, x+o,      y+o);
+                text(CONSTANTS.TRIANGLE_R, x+ts/2+o, y+o);
 
-            textSize(24);
-            
-            var ts=24;
+            };
+            function drawLast(){
 
-            var x=3.5*p.h;
-            var y=p.h/2;
+              let ts=24;
 
-            var o=p.offset;
-
-            if(p.nextHit){
-
-              fill(128,32);
+              textSize(ts);
               noStroke();
 
-                ellipse(x, y, p.h, p.h);
+              let x=4.5*p.h;
+              let y=p.h/2;
 
-            }
+              let o=0;
 
-            x=p.h*3.5-ts+7;
-            y=ts/2+15;
+              if(p.lastHit){
 
-            // Triangle Shadow
-            fill(CLRS);
-            stroke(CLRS);
+                cursor(p.cursor);
+    
+                o=app.left ? 1 : 0;
+                
+                fill(128,32);
 
-              text(CONSTANTS.TRIANGLE_R, x+3,      y+3);
+                  ellipse(x, y, p.h, p.h);
+
+              }
+
+              x-=ts;
+              y=ts/2+15;
+
+              // Triangle Shadow
+              fill(CLRS);
+
+              text(CONSTANTS.PIPE,       x+ts+9, y+3);
               text(CONSTANTS.TRIANGLE_R, x+ts/2+3, y+3);
 
-            // Triangle
-            fill(CLR);
-            stroke(CLR);
+              // Triangle
+              fill(CLR);
 
-            if(p.active){
-              fill(CLRH);
-              stroke(CLRH);
-            }
+              if(p.active){
+                fill(CLRH);
+              }
 
-              text(CONSTANTS.TRIANGLE_R, x+o,      y+o);
-              text(CONSTANTS.TRIANGLE_R, x+ts/2+o, y+o);
+                text(CONSTANTS.PIPE,       x+ts+6+o, y+o);
+                text(CONSTANTS.TRIANGLE_R, x+ts/2+o, y+o);
 
-          };
-          function drawLast(){
+            };
+            function drawPrevious(){
 
-          };
-          function drawPrevious(){
+              let ts=24;
 
-          };
-          function drawFirst(){
+              textSize(ts);
+              noStroke();
 
-          };
+              let x=1.5*p.h;
+              let y=p.h/2;
 
-          drawRun();
-          drawNext();
-          drawLast();
-          drawPrevious();
-          drawFirst();
+              let o=0;
 
-          stroke(128,0,0);
+              if(p.previousHit){
 
-          noFill();
+                cursor(p.cursor);
+    
+                o=app.left ? 1 : 0;
+                
+                fill(128,32);
 
-          // if(this.hit        ){ fill(16,128);      }
-          // if(this.firstHit    ){ fill(255,  0,  0,128); }
-          // if(this.previousHit ){ fill(  0,  0,255,128); }
-          // if(this.runHit      ){ fill(255,  0,255,128); }
-          // if(this.nextHit     ){ fill(255,255,  0,128); }
-          // if(this.lastHit     ){ fill(  0,255,  0,128); }
+                  ellipse(x, y, p.h, p.h);
 
-            // rect(0,0,this.w,this.h);
+              }
 
-          noFill();
-          strokeWeight(1);
-          stroke(128,0,0);
+              x=p.h*1.5-ts+7;
+              y=ts/2+15;
 
-            ellipse(this.h/2,          this.h/2, this.h, this.h);  //  First
-            ellipse(this.h/2+  this.h, this.h/2, this.h, this.h);  //  Previous
-            
-            ellipse(this.h/2+4*this.h, this.h/2, this.h, this.h);  //  Last
+              // Triangle Shadow
+              fill(CLRS);
+
+                text(CONSTANTS.TRIANGLE_L, x+3,      y+3);
+                text(CONSTANTS.TRIANGLE_L, x+ts/2+3, y+3);
+
+              // Triangle
+              fill(CLR);
+
+              if(p.active){
+                fill(CLRH);
+              }
+
+                text(CONSTANTS.TRIANGLE_L, x+o,      y+o);
+                text(CONSTANTS.TRIANGLE_L, x+ts/2+o, y+o);
+
+            };
+            function drawFirst(){
+
+              let ts=24;
+
+              textSize(ts);
+              noStroke();
+
+              let x=0.5*p.h;
+              let y=p.h/2;
+
+              let o=0;
+
+              if(p.firstHit){
+
+                cursor(p.cursor);
+    
+                o=app.left ? 1 : 0;
+                
+                fill(128,32);
+
+                  ellipse(x, y, p.h, p.h);
+
+              }
+
+              x=p.h*0.5-ts;
+              y=ts/2+15;
+
+              // Triangle Shadow
+              fill(CLRS);
+
+              text(CONSTANTS.PIPE,       x+ts/2+3, y+3);
+              text(CONSTANTS.TRIANGLE_L, x+ts/2+3, y+3);
+
+              // Triangle
+              fill(CLR);
+
+              if(p.active){
+                fill(CLRH);
+              }
+
+                text(CONSTANTS.PIPE,       x+ts/2+o, y+o);
+                text(CONSTANTS.TRIANGLE_L, x+ts/2+o, y+o);
+
+            };
+
+            drawRun();
+            drawNext();
+            drawLast();
+            drawPrevious();
+            drawFirst();
 
         pop();
 
@@ -4525,16 +4418,18 @@ renumberNodes(p.workingNodes);
       };
       dbControls.prototype.hitTest=function(x,y){
 
-        var p=this;
+        let p=this;
+        let r=p.h/2;  //  radius
+        let d=p.h;    //  diameter
 
         function rectHit(x,y){
           
-          var retVal=false;
+          let retVal=false;
 
           p.hit=mouseX>p.x+x &&
                 mouseX<p.x+x+p.w &&
                 mouseY>p.y+y &&
-                mouseY<p.y+y+p.h;
+                mouseY<p.y+y+d;
 
           retVal=p.hit;
 
@@ -4546,46 +4441,37 @@ renumberNodes(p.workingNodes);
 
           p.firstHit=(dist(mouseX,
                            mouseY,
-                           p.x+x+p.h/2,
-                           p.y+y+p.h/2)<p.h/2);
-// print("First hit: " + p.firstHit);
+                           p.x+x+0.5*d,
+                           p.y+y+r)<r);
         };
         function setPreviousHit(x,y){
 
           p.previousHit=(dist(mouseX,
                               mouseY,
-                              p.x+x+1.5*p.h,
-                              p.y+y+p.h/2)<p.h/2);
-// print("Previous hit: " + p.previousHit);
-
+                              p.x+x+1.5*d,
+                              p.y+y+r)<r);
         };
 
         function setRunHit(x,y){
 
           p.runHit=(dist(mouseX,
-                          mouseY,
-                          p.x+x+2.5*p.h,
-                          p.y+y+p.h/2)<p.h/2);
-// print("Play hit: " + p.runHit);
-
+                         mouseY,
+                         p.x+x+2.5*d,
+                         p.y+y+r)<r);
         };
         function setNextHit(x,y){
 
           p.nextHit=(dist(mouseX,
                           mouseY,
-                          p.x+x+3.5*p.h,
-                          p.y+y+p.h/2)<p.h/2);
-// print("Next hit: " + p.nextHit);
-
+                          p.x+x+3.5*d,
+                          p.y+y+r)<r);
         };
         function setLastHit(x,y){
 
           p.lastHit=(dist(mouseX,
                           mouseY,
-                          p.x+x+4.5*p.h,
-                          p.y+y+p.h/2)<p.h/2);
-// print("Last hit: " + p.lastHit);
-
+                          p.x+x+4.5*d,
+                          p.y+y+r)<r);
         };
 
         if(rectHit(x,y)){ setFirstHit(x,y);
@@ -4629,14 +4515,14 @@ renumberNodes(p.workingNodes);
   function initialize(){
 
     /*  Initialize the app.keys array and the values of the special keys */
-    app.keys[KeyCodes.CONTROL] = false;
-    app.keys[KeyCodes.ALT]     = false;
-    app.keys[KeyCodes.SHIFT]   = false;
+    app.keys[KEYCODES.CONTROL] = false;
+    app.keys[KEYCODES.ALT]     = false;
+    app.keys[KEYCODES.SHIFT]   = false;
 
     /* LOAD CONTROLS */
 
     /* root control     */
-    var rt=new root('root', 0, 0, windowWidth, windowHeight,
+    let rt=new root('root', 0, 0, windowWidth, windowHeight,
       {
         border: true,
         cursor: CROSS,
@@ -4653,7 +4539,7 @@ renumberNodes(p.workingNodes);
       { color: color(26,26,26,255) }));
 
     /* Telemetry ---------------------------------------------------- */
-    var telem=new telemetry('telemetry', rt, rt.w - 195, 5, 190, rt.h - 20,
+    let telem=new telemetry('telemetry', rt, rt.w - 195, 5, 190, rt.h - 20,
       { color: color(216,26,26,255)});
 
     app.controls.push(telem);
@@ -4683,15 +4569,6 @@ renumberNodes(p.workingNodes);
     //     execute:  setNodes
     //   }));
 
-    /** Solve Button     */
-    rt.controls.push(new solveButton('solve', rt, 600, rt.h-50, 28, 28,
-      {
-        cursor:   HAND,
-        color:    BLACK,
-        retrieve: getRunning,
-        execute:  toggleRunning
-      }));
-
     /** Shuffle Button   */
     rt.controls.push(new shuffleButton('shuffle', rt, 650, rt.h-50, 28, 28,
       {
@@ -4709,7 +4586,7 @@ renumberNodes(p.workingNodes);
       }));
 
     /* Bruteforce -------------------------------------------------- */
-    var bruteforce=new option('BRUTE FORCE', rt, 20, 330, 12, 12,
+    let bruteforce=new option('BRUTE FORCE', rt, 20, 330, 12, 12,
         { color:      WHITE,
           execute:    setAlgorithm,
           retrieve:   getAlgorithm,
@@ -4719,7 +4596,7 @@ renumberNodes(p.workingNodes);
       app.controls.push(bruteforce);
 
     /* Genetic -------------------------------------------------- */
-    var genetic=new option('GENETIC', rt, 20, 350, 12, 12,
+    let genetic=new option('GENETIC', rt, 20, 350, 12, 12,
         { color:      WHITE,
           execute:    setAlgorithm,
           retrieve:   getAlgorithm,
@@ -4729,7 +4606,7 @@ renumberNodes(p.workingNodes);
       app.controls.push(genetic);
 
     /* Simulated Annealing --------------------------------------------------- */
-    var annealing=new option('SIMULATED ANNEALING', rt, 20, 370, 12, 12,
+    let annealing=new option('SIMULATED ANNEALING', rt, 20, 370, 12, 12,
         { color:      WHITE,
           execute:    setAlgorithm,
           retrieve:   getAlgorithm,
@@ -4739,7 +4616,7 @@ renumberNodes(p.workingNodes);
       app.controls.push(annealing);
 
     /* Grow --------------------------------------------------- */
-    var grow=new option('GROW', rt, 20, 390, 12, 12,
+    let grow=new option('GROW', rt, 20, 390, 12, 12,
     { color:      WHITE,
       execute:    setAlgorithm,
       retrieve:   getAlgorithm,
@@ -4749,7 +4626,7 @@ renumberNodes(p.workingNodes);
     app.controls.push(grow);
 
     /* ACO --------------------------------------------------- */
-    var aco=new option('ACO', rt, 20, 410, 12, 12,
+    let aco=new option('ACO', rt, 20, 410, 12, 12,
     { color:      WHITE,
       execute:    setAlgorithm,
       retrieve:   getAlgorithm,
@@ -4759,7 +4636,7 @@ renumberNodes(p.workingNodes);
     app.controls.push(aco);
 
     /* Chance --------------------------------------------------- */
-    var chance=new option('CHANCE', rt, 20, 430, 12, 12,
+    let chance=new option('CHANCE', rt, 20, 430, 12, 12,
         { color:      WHITE,
           execute:    setAlgorithm,
           retrieve:   getAlgorithm,
@@ -4769,7 +4646,7 @@ renumberNodes(p.workingNodes);
       app.controls.push(chance);
 
     /* Greedy --------------------------------------------------- */
-    var greedy=new option('GREEDY', rt, 20, 450, 12, 12,
+    let greedy=new option('GREEDY', rt, 20, 450, 12, 12,
         { color:      WHITE,
           execute:    setAlgorithm,
           retrieve:   getAlgorithm,
@@ -4781,7 +4658,7 @@ renumberNodes(p.workingNodes);
     // ***** Greedy Methods *****
 
         /* Closest --------------------------------------------------- */
-        var closest=new option('Closest', rt, 30, 470, 12, 12,
+        let closest=new option('Closest', rt, 30, 470, 12, 12,
           { color:      WHITE,
             execute:    setMethod,
             retrieve:   getMethod,
@@ -4791,7 +4668,7 @@ renumberNodes(p.workingNodes);
         app.controls.push(closest);
 
         /* Farthest --------------------------------------------------- */
-        var Farthest=new option('Farthest', rt, 30, 485, 12, 12,
+        let Farthest=new option('Farthest', rt, 30, 485, 12, 12,
           { color:      WHITE,
             execute:    setMethod,
             retrieve:   getMethod,
@@ -4801,7 +4678,7 @@ renumberNodes(p.workingNodes);
         app.controls.push(Farthest);
 
         /* Random --------------------------------------------------- */
-        var random=new option('Random', rt, 30, 500, 12, 12,
+        let random=new option('Random', rt, 30, 500, 12, 12,
           { color:      WHITE,
             execute:    setMethod,
             retrieve:   getMethod,
@@ -4811,7 +4688,7 @@ renumberNodes(p.workingNodes);
         app.controls.push(random);
 
     // /* Initialize --------------------------------------------------- */
-    // var initialize=new checkbox('initialize', rt, 20, 520, 12, 12,
+    // let initialize=new checkbox('initialize', rt, 20, 520, 12, 12,
     //     { color:    WHITE,
     //       execute:  toggleInitialize,
     //       retrieve: getInitialize,
@@ -4820,7 +4697,7 @@ renumberNodes(p.workingNodes);
     //   app.controls.push(initialize);
 
     /* Crossover ---------------------------------------------------- */
-    var crossover=new checkbox('crossover', rt, 20, 540, 12, 12,
+    let crossover=new checkbox('crossover', rt, 20, 540, 12, 12,
         { color:    WHITE,
           execute:  toggleCrossover,
           retrieve: getCrossover,
@@ -4829,7 +4706,7 @@ renumberNodes(p.workingNodes);
     app.controls.push(crossover);
 
     /* Iterate ------------------------------------------------------ */
-    var iterate=new checkbox('iterate', rt, 20, 560, 12, 12,
+    let iterate=new checkbox('iterate', rt, 20, 560, 12, 12,
         { color:    WHITE,
           execute:  toggleIterate,
           retrieve: getIterate,
@@ -4838,7 +4715,7 @@ renumberNodes(p.workingNodes);
       app.controls.push(iterate);
 
     /* Proximity ---------------------------------------------------- */
-    var proximity=new checkbox('proximity', rt, 20, 580, 12, 12,
+    let proximity=new checkbox('proximity', rt, 20, 580, 12, 12,
         { color:    WHITE,
           execute:  toggleProximity,
           retrieve: getProximity,
@@ -4847,7 +4724,7 @@ renumberNodes(p.workingNodes);
       app.controls.push(proximity);
 
     /* Random Data ------------------------------------------------------ */
-    var randomData=new option('RandomDate', rt, 20, 620, 12, 12,
+    let randomData=new option('RandomDate', rt, 20, 620, 12, 12,
     { color:      WHITE,
       execute:    setDataMode,
       retrieve:   getDataMode,
@@ -4857,7 +4734,7 @@ renumberNodes(p.workingNodes);
     app.controls.push(randomData);
 
     /* Test Data ------------------------------------------------------ */
-    var testData=new option('TestData', rt, 20, 640, 12, 12,
+    let testData=new option('TestData', rt, 20, 640, 12, 12,
     { color:      WHITE,
       execute:    setDataMode,
       retrieve:   getDataMode,
@@ -4867,7 +4744,7 @@ renumberNodes(p.workingNodes);
     app.controls.push(testData);
 
     /* Circle Data ------------------------------------------------------ */
-    var circleData=new option('CircleData', rt, 20, 660, 12, 12,
+    let circleData=new option('CircleData', rt, 20, 660, 12, 12,
     { color:      WHITE,
       execute:    setDataMode,
       retrieve:   getDataMode,
@@ -4877,7 +4754,7 @@ renumberNodes(p.workingNodes);
       app.controls.push(circleData);
 
     /* Best Path ---------------------------------------------------- */
-    var bestPath=new checkbox('bestPath', rt, 20, 700, 12, 12,
+    let bestPath=new checkbox('bestPath', rt, 20, 700, 12, 12,
         { color:    WHITE,
           execute:  toggleBestPath,
           retrieve: getBestPath,
@@ -4886,7 +4763,7 @@ renumberNodes(p.workingNodes);
       app.controls.push(bestPath);
 
     /* Working Path ---------------------------------------------------- */
-    var workingPath=new checkbox('workingPath', rt, 20, 715, 12, 12,
+    let workingPath=new checkbox('workingPath', rt, 20, 715, 12, 12,
         { color:    WHITE,
           execute:  toggleWorkingPath,
           retrieve: getWorkingPath,
@@ -4895,7 +4772,7 @@ renumberNodes(p.workingNodes);
       app.controls.push(workingPath);
 
     /* Path Nodes ---------------------------------------------------- */
-    var pathNodes=new checkbox('pathNodes', rt, 20, 730, 12, 12,
+    let pathNodes=new checkbox('pathNodes', rt, 20, 730, 12, 12,
         { color:    WHITE,
           execute:  togglePathNodes,
           retrieve: getPathNodes,
@@ -4904,7 +4781,7 @@ renumberNodes(p.workingNodes);
       app.controls.push(pathNodes);      
 
     /* Transition ---------------------------------------------------- */
-    // var trans=new transition(getGUID(), rt, 1000, 0, width-200, height,
+    // let trans=new transition(getGUID(), rt, 1000, 0, width-200, height,
     // {color:     WHITE,
     // visible:   true,
     // type:      round(random(0,4))});
@@ -4915,7 +4792,7 @@ renumberNodes(p.workingNodes);
     {
 
       // /* Splash Screen   */
-      // var splashScreen=new splash(getGUID(), rt, width/2-200, height/2-200, 400, 400,
+      // let splashScreen=new splash(getGUID(), rt, width/2-200, height/2-200, 400, 400,
       // {color:     BLACK,
       // font:      monoFont,
       // retrieve:  getInfo,
@@ -4956,14 +4833,14 @@ renumberNodes(p.workingNodes);
     //    execute:   menu}));
 
     /* Puzzle Complete   */
-    // var pc=new puzzleComplete(getGUID(), rt, 1000, 1, width-201, height-2,
+    // let pc=new puzzleComplete(getGUID(), rt, 1000, 1, width-201, height-2,
     // {text:      'Puzzle Complete',
     // color:     H_BLUE});
 
     // app.controls.push(pc);
 
     /* Puzzle Select     */
-    // var ps=new puzzleSelect(getGUID(), rt, 1000, 0, width-200, height,
+    // let ps=new puzzleSelect(getGUID(), rt, 1000, 0, width-200, height,
     // {retrieve:  getScore,
     // color:     getColor(H_BLUE,2)});
 
@@ -4986,10 +4863,10 @@ renumberNodes(p.workingNodes);
 
   };
 
-  var x  = 0;
-  var y  = 0;
-  var cx = (windowWidth-200)/2;
-  var cy = windowHeight/2;
+  let x  = 0;
+  let y  = 0;
+  let cx = (windowWidth-200)/2;
+  let cy = windowHeight/2;
 
   function handleKeys(){
 
@@ -4999,14 +4876,14 @@ renumberNodes(p.workingNodes);
 
         case keyIsDown(KEYCODES.F2): randomize(); break;
 
-        case keyIsDown(KeyCodes.Q): upLeft(); break;
-        case keyIsDown(KeyCodes.E): upRight(); break;
+        case keyIsDown(KEYCODES.Q): upLeft(); break;
+        case keyIsDown(KEYCODES.E): upRight(); break;
 
-        case keyIsDown(KeyCodes.A): downLeft(); break;
-        case keyIsDown(KeyCodes.D): downRight(); break;
+        case keyIsDown(KEYCODES.A): downLeft(); break;
+        case keyIsDown(KEYCODES.D): downRight(); break;
 
-        case keyIsDown(KeyCodes.W): up(); break;
-        case keyIsDown(KeyCodes.S): down(); break;
+        case keyIsDown(KEYCODES.W): up(); break;
+        case keyIsDown(KEYCODES.S): down(); break;
 
         case keyIsDown(UP_ARROW): colUp(); break;
         case keyIsDown(DOWN_ARROW): colDown(); break;
@@ -5054,21 +4931,13 @@ renumberNodes(p.workingNodes);
 
       switch (true) {
 
-        case mouseButton == LEFT:
+        case mouseButton==LEFT:
 
-          if (app.keys[KEYCODES.CONTROL]) {
-            increment--;
-          }
-          else {
-            increment++;
-          }
+          if (app.keys[KEYCODES.CONTROL]){ increment--; }
+          else                           { increment++; };  break;
 
-          break;
-
-        case mouseButton == RIGHT: break;
-
-
-        default: break;
+        case mouseButton==RIGHT:                            break;
+        default:                                            break;
 
       }
 
@@ -5085,7 +4954,7 @@ renumberNodes(p.workingNodes);
       app.mouseX = mouseX;
       app.mouseY = mouseY;
 
-      for (var c in app.controls) { app.controls[c].moved(0, 0); }
+      for (let c in app.controls) { app.controls[c].moved(0, 0); }
 
     };
     function mousePressed(){
@@ -5127,8 +4996,8 @@ renumberNodes(p.workingNodes);
 
           break;
 
-        // case RIGHT:  for(var c in app.controls){ app.controls[c].rClicked(); } break;
-        // case CENTER: for(var c in app.controls){ app.controls[c].cClicked(); } break;
+        // case RIGHT:  for(let c in app.controls){ app.controls[c].rClicked(); } break;
+        // case CENTER: for(let c in app.controls){ app.controls[c].cClicked(); } break;
 
         default: break;
 
@@ -5143,7 +5012,7 @@ renumberNodes(p.workingNodes);
 
       // function calcDragAngle(){
 
-      //   var a = atan2(mouseY-pmouseY, mouseX-pmouseX);
+      //   let a = atan2(mouseY-pmouseY, mouseX-pmouseX);
 
       //   a=a*180/PI;
 
@@ -5255,34 +5124,34 @@ renumberNodes(p.workingNodes);
 
     keyPressed = function (){
 
-      app.keys[keyCode] = true;
+      app.keys[this.keyCode] = true;
 
       // print(keyCode + ' | ' + key + ' | ' + key.toString());
 
       switch (true) {
 
         /* Navigation                                                       */
-        case keyIsDown(KeyCodes.Q):       upLeft(); break;
-        case keyIsDown(KeyCodes.E):       upRight(); break;
+        case keyIsDown(KEYCODES.Q):       upLeft(); break;
+        case keyIsDown(KEYCODES.E):       upRight(); break;
 
-        case keyIsDown(KeyCodes.A):       downLeft(); break;
-        case keyIsDown(KeyCodes.D):       downRight(); break;
+        case keyIsDown(KEYCODES.A):       downLeft(); break;
+        case keyIsDown(KEYCODES.D):       downRight(); break;
 
-        case keyIsDown(KeyCodes.W):       up(); break;
-        case keyIsDown(KeyCodes.S):       down(); break;
+        case keyIsDown(KEYCODES.W):       up(); break;
+        case keyIsDown(KEYCODES.S):       down(); break;
 
-        case keyIsDown(KeyCodes.P):       toggleRunning(); break;
+        case keyIsDown(KEYCODES.P):       toggleRunning(); break;
 
         /* Translate Rows/Columns                                           */
-        case keyIsDown(KeyCodes.UP):      colUp();
+        case keyIsDown(KEYCODES.UP):      colUp();
                                           app.field.addMove(DIRECTIONS.UP); break;
-        case keyIsDown(KeyCodes.DOWN):    colDown();
+        case keyIsDown(KEYCODES.DOWN):    colDown();
                                           app.field.addMove(DIRECTIONS.DOWN); break;
 
-        case keyIsDown(KeyCodes.LEFT) &&
+        case keyIsDown(KEYCODES.LEFT) &&
              keyIsDown(CONTROL):          colDownLeft();
                                           app.field.addMove(DIRECTIONS.DOWNLEFT); break;
-        case keyIsDown(KeyCodes.RIGHT) &&
+        case keyIsDown(KEYCODES.RIGHT) &&
              keyIsDown(CONTROL):          colDownRight();
                                           app.field.addMove(DIRECTIONS.DOWNRIGHT); break;
 
@@ -5290,8 +5159,8 @@ renumberNodes(p.workingNodes);
         case keyIsDown(RIGHT_ARROW):      incrementNodes();                         break;
 
         /* Puzzles                                                          */
-        case keyIsDown(KeyCodes.PGUP):    incrementPuzzle(); break;
-        case keyIsDown(KeyCodes.PGDN):    decrementPuzzle(); break;
+        case keyIsDown(KEYCODES.PGUP):    incrementPuzzle(); break;
+        case keyIsDown(KEYCODES.PGDN):    decrementPuzzle(); break;
 
         /*  Function Keys                                                   */
         case keyIsDown(KEYCODES.F1):      toggleInfo(); break;
@@ -5338,7 +5207,7 @@ renumberNodes(p.workingNodes);
   //   //c is an encoding of the stack state. c[k] encodes the for-loop counter for when generate(k+1, A) is called
   //   c=[];
 
-  //   var i=0;
+  //   let i=0;
 
   //   for(i=0; i<n; i++){
   //     c[i]=0;
@@ -5378,7 +5247,7 @@ renumberNodes(p.workingNodes);
 
   // }
 
-  // var arrTest=[1,2,3,4,5];
+  // let arrTest=[1,2,3,4,5];
 
   // generate(arrTest.length, arrTest);
 
