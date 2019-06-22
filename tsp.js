@@ -2,6 +2,10 @@
 
   TO DO:
 
+    - convex hull
+      - rotate to vertical
+      - eliminate interior points
+
     - step controls for data
       - next/previous
       - play/pause
@@ -128,8 +132,6 @@
 
   }
 
-
-
   let cnv;
 
   function printTour(arr){
@@ -207,7 +209,7 @@
   function setup(){
 
     //  Set a global reference to the canvas
-    cnv = createCanvas(windowWidth - 10, windowHeight - 10);
+    cnv=createCanvas(windowWidth-10, windowHeight-10);
 
     //  Settings
     frameRate(70);
@@ -337,7 +339,7 @@
 
   };
 
-  let app = new application();
+  let app=new application();
 
   /* Utility Functions ===================================================== */
   {
@@ -4408,7 +4410,7 @@ renumberNodes(p.workingNodes);
 
           if     (this.firstHit   ){ this.first();    }
           else if(this.previousHit){ this.previous(); }          
-          else if(this.runHit     ){ this.run();    }
+          else if(this.runHit     ){ this.run();      }
           else if(this.nextHit    ){ this.next();     }
           else if(this.lastHit    ){ this.last();     }
           
