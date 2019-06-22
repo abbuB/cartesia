@@ -11,25 +11,39 @@
 
 */
 
-  function factorial() { 1,
-                         1,
-                         2,
-                         2*3,
-                         2*3*4,
-                         2*3*4*5,
-                         2*3*4*5*6,
-                         2*3*4*5*6*7,
-                         2*3*4*5*6*7*8,
-                         2*3*4*5*6*7*8*9 };
+  // function factorial() { 1,
+  //                        1,
+  //                        2,
+  //                        2*3,
+  //                        2*3*4,
+  //                        2*3*4*5,
+  //                        2*3*4*5*6,
+  //                        2*3*4*5*6*7,
+  //                        2*3*4*5*6*7*8,
+  //                        2*3*4*5*6*7*8*9 };
   
+  // function factorial(n){
+
+  //   var retVal=1;
+
+  //   for(var i=n; i>0; i--){
+  //     retVal*=i;
+  //   }
+
+  //   return retVal;
+
+  // };
+
+{
+
+  var startTime=0;
+  var stopTime=0;
+
   function factorialDigits(n){
     
     return ceil(log10(2*PI*100)/2+100*(log10(100/E)));
     
   }
-  
-  var startTime=0;
-  var stopTime=0;
 
   function sqr(n) { return n*n;      };
   // function sqrt(n){ return Math.sqrt(n);  };
@@ -929,6 +943,8 @@
 
   };
 
+}
+  
 //   var main=function(){
 
     // var solution=0;
