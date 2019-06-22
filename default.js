@@ -1,22 +1,155 @@
   /* Constants ================================================================= */
   {
 
-    var GREEDYMETHODS={
-      RANDOM:                 0,
-      CLOSEST:                1,
-      FARTHEST:               2
+    var myFont;
+
+    // --------------------------------------------------------------------------
+
+
+
+    var DRAG_DIRECTIONS = {
+
+      NONE:     0,
+      UPDOWN:   1,
+      BACKWARD: 2,
+      FORWARD:  3
+
+    };
+
+    var DIRECTIONS = {
+
+      NONE:       0,
+      UP:         1,
+      DOWN:       2,
+      UPRIGHT:    3,
+      UPLEFT:     4,
+      DOWNRIGHT:  5,
+      DOWNLEFT:   6
+
+    };
+
+    var CONSTANTS={
+
+      DEGREES:        '°',
+      PI:             'π',
+      TRIANGLE_UP:    '▲',
+      TRIANGLE_DOWN:  '▼',
+      TRIANGLE_R:     '►',
+      TRIANGLE_L:     '◄',
+      INFINITY:       '∞',
+      THETA:          'θ',
+      RADIANS:        'ᶜ',
+      IDENTICAL:      '≡',
+      SIGMA:          'Σ',
+      PIPE:           '|',
+      NOTE:           '♫'
+
     }
 
-    var ALGORITHMS={
-      SIMULATEDANNEALING:     0,
-      GENETIC:                1,
-      BRUTEFORCE:             2,
-      CRITTERS:               3,
-      NEAREST:                4,
-      ITERATE:                5,
-      GREEDY:                 6,
-      GROW:                   7
+    // Colours ------------------------------------------------------------------
+    {
+      var RT          = [212,212,212,255];// var RT = [212, 212, 212, 255];
+      var BG          = [255,204,  0,255];
+
+      var MAROON      = [114, 12, 21,255];
+      var MAROON_L    = [140, 15 ,26,255];
+
+      var GRAY242     = [242,242,242,255];
+      var GRAY140     = [140,140,140,255];
+
+      var BLACK12     = [ 12, 12, 12,255];
+
+      var WHITE242    = [242,242,242,255];
+
+      var BACKGROUND  = WHITE242;
+
+      var H_SHADOW    = [209,209,209,255];
+
+      var H_BLUE      = [ 20,156,216,255];    var H_BLUE_L    = [  5,164,235,255];
+      var H_BLACK     = [ 44, 47, 49,255];    var H_BLACK_L   = [ 62, 62, 62,255];
+      var H_ORANGE    = [255,159,  0,255];    var H_ORANGE_L  = [255,175, 41,255];
+
+      var GRAY        = [128,128,128,255];
+
+      var CYAN        = [  0,255,255,255];
+      var PINK        = [255, 20,147,255];
+
+      var TEAL_0      = [ 28,117,138,255];    var TEAL_0_LT   = [ 28,117,138,128];
+      var TEAL_1      = [ 41,171,202,255];    var TEAL_1_LT   = [ 41,171,202, 128];
+      var TEAL_2      = [ 88,196,221,255];
+      var TEAL_2_LT   = [ 88,196,221,128];
+      var TEAL_3      = [156,220,235,255];    var TEAL_3_LT   = [156,220,235,128];
+
+      var TRANSPARENT = [-1, -1, -1, 255];
+
+      var WHITE       = [255,255,255,255];
+      var BLACK       = [  0,  0,  0,255];
+
+      var K_RED       = [170, 29, 29,255];
+      var K_ORANGE    = [238,136, 15,255];
+      var K_YELLOW    = [238,214, 15,255];
+      var K_GREEN     = [158,182, 58,255];
+      var K_BLUE      = [ 29, 86,170,255];
+      var K_PURPLE    = [127,  0,255,255];
+
+      var BROWN       = [155,145,135,255];
+
+      var RED         = [170, 29, 29,255];   var ORANGE      = [238,136, 15,255];
+      // var YELLOW = [238, 214, 15, 255]; var GREEN = [158, 182, 58, 255];
+      var BLUE        = [ 29, 86,170,255];   var PURPLE      = [127,  0,255,255];
+
+      var BLANK       = 0;
+      var RED0        = 1;
+      var ORANGE0     = 2;
+      var YELLOW0     = 3;
+      var GREEN0      = 4;
+      var BLUE0       = 5;
+      var PURPLE0     = 6;
+      var BLACK0      = 7;
+
+      var YELLOW      = [255,255,  0,255];
+      var YELLOW_H    = [255,255,  0,128];
+
+      // const RED           = [255,  0,  0,255]; const REDORANGE    = [255, 81,  0,255];
+      // const ORANGE        = [255,127,  0,255]; const YELLOWORANGE = [255,190,  0,255];
+      // const YELLOW        = [255,255,  0,255]; const YELLOWGREEN  = [192,255,  0,255];
+      // const GREEN         = [  0,255,  0,255]; const BLUEGREEN    = [  0,127,127,255];
+      // const BLUE          = [  0,  0,255,255]; const BLUEVIOLET   = [ 92,  0,255,255];
+      // let VIOLET        = [127,  0,255,255]; let REDVIOLET    = [191,  0,127,255];
     }
+
+    var DATA_MODES={
+      RANDOM:                 40,
+      TEST:                   41,
+      CIRCLE:                 42
+    };
+
+    var LOAD_MODES={
+      
+      RANDOM:                 30,
+      CLOSEST:                31,
+      FARTHEST:               32,
+      
+      SORTED_X:               33,
+      SORTED_Y:               34,
+
+    };
+
+    var GREEDY_MODES={
+      RANDOM:                 10,
+      CLOSEST:                11,
+      FARTHEST:               12
+    };
+
+    var ALGORITHMS={
+      SIMULATEDANNEALING:     20,
+      GENETIC:                21,
+      BRUTEFORCE:             22,
+      ACO:                    23,
+      GREEDY:                 24,
+      GROW:                   25,
+      RANDOM:                 26
+    };
 
     var APPMODES={
       INTRO:        0,
@@ -96,6 +229,94 @@
       INSERT:     155
       
     };
+    // var KEYCODES = {
+
+    //   //  Upper Case
+    //   A:   65,
+    //   B:   66,
+    //   C:   67,
+    //   D:   68,
+    //   E:   69,
+    //   L:   76,
+    //   N:   78,
+    //   O:   79,
+    //   P:   80,
+    //   Q:   81,
+    //   R:   82,
+    //   S:   83,
+    //   T:   84,
+    //   W:   87,
+    //   X:   88,
+    //   Z:   90,
+
+    //   // Function Keys
+    //   F1: 112,
+    //   F2: 113,
+    //   F3: 114,
+    //   F4: 115,
+
+    //   F5: 116,
+    //   F6: 117,
+    //   F7: 118,
+    //   F8: 119,
+
+    //   F9:  120,
+    //   F10: 121,
+    //   F11: 122,
+    //   F12: 123,
+
+    //   // Lower Case
+    //   // a:              97,
+    //   // b:              98,
+    //   // c:              99,
+    //   // d:             100,
+    //   // e:             101,
+    //   // l:             108,
+    //   // n:             110,
+    //   // o:             111,
+    //   // q:             113,
+    //   // r:             114,
+    //   // s:             115,
+    //   // t:             116,
+    //   // w:             119,
+    //   // x:             120,
+    //   // y:             121,
+    //   // z:             122,
+
+    //   // Function Keys
+
+
+    //   // Special Keys
+    //   DELETE:    127,
+    //   BACKSPACE:   8,
+    //   TAB:         9,
+    //   ENTER:      10,
+    //   RETURN:     13,
+    //   ESC:        27,
+    //   CODED:  0xffff,
+    //   SHIFT:      16,
+    //   CONTROL:    17,
+    //   ALT:        18,
+    //   CAPSLK:     20,
+    //   SPACE:      32,
+    //   PGUP:       33,
+    //   PGDN:       34,
+    //   END:        35,
+    //   HOME:       36,
+    //   LEFT:       37,
+    //   UP:         38,
+    //   RIGHT:      39,
+    //   DOWN:       40,
+    //   PLUS:       43,
+    //   MINUS:      45,
+    //   PERIOD:     46,
+    //   EQUALS:     61,
+
+    //   NUMLK:     144,
+    //   META:      157,
+    //   INSERT:    155
+
+    // };    
     var CLRS={
 
       K_STEEL_0:     "rgba( 48, 68, 82,255)",
@@ -288,6 +509,17 @@
     };
     pnt.prototype.toString=function(){ return this.x +  ", " + this.y; }
 
+    function segment(p1,p2){
+
+      this.point1=p1;
+      this.point2=p2;
+
+      this.weight=constrain(1,0,100);
+
+    };
+    segment.prototype.toString=function(){ return this.p1.x +  ", " + this.p1.y; }
+
+
   }
   
     /* Utility Functions ========================================================= */
@@ -332,12 +564,12 @@
 
     };
 
-    function dist(p1,p2){
+    // function dist(p1,p2){
 
-      return Math.pow( Math.pow(p1.x - p2.x, 2) +
-                       Math.pow(p1.y - p2.y, 2), 0.5 );
+    //   return Math.pow( Math.pow(p1.x - p2.x, 2) +
+    //                    Math.pow(p1.y - p2.y, 2), 0.5 );
       
-    };
+    // };
     
     function triangleArea(p0,p1,p2){
 
