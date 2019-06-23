@@ -76,6 +76,88 @@
 
     new p5();
 
+    // Colours ------------------------------------------------------------------
+    {
+      var RT          = [212,212,212,255];// var RT = [212, 212, 212, 255];
+      var BG          = [255,204,  0,255];
+
+      var MAROON      = [114, 12, 21,255];
+      var MAROON_L    = [140, 15 ,26,255];
+
+      var GRAY242     = [242,242,242,255];
+      var GRAY140     = [140,140,140,255];
+
+      var BLACK12     = [ 12, 12, 12,255];
+
+      var WHITE242    = [242,242,242,255];
+
+      var BACKGROUND  = WHITE242;
+
+      var H_SHADOW    = [209,209,209,255];
+
+      var H_BLUE      = [ 20,156,216,255];    var H_BLUE_L    = [  5,164,235,255];
+      var H_BLACK     = [ 44, 47, 49,255];    var H_BLACK_L   = [ 62, 62, 62,255];
+      var H_ORANGE    = [255,159,  0,255];    var H_ORANGE_L  = [255,175, 41,255];
+
+      var GRAY        = [128,128,128,255];
+
+      var CYAN        = [  0,255,255,255];
+      var PINK        = [255, 20,147,255];
+
+      var TEAL_0      = [ 28,117,138,255];    var TEAL_0_LT   = [ 28,117,138,128];
+      var TEAL_1      = [ 41,171,202,255];    var TEAL_1_LT   = [ 41,171,202, 128];
+      var TEAL_2      = [ 88,196,221,255];
+      var TEAL_2_LT   = [ 88,196,221,128];
+      var TEAL_3      = [156,220,235,255];    var TEAL_3_LT   = [156,220,235,128];
+
+      var TRANSPARENT = [-1, -1, -1, 255];
+
+      var WHITE       = 'rgb(255,255,255)';
+      var BLACK       = [  0,  0,  0,255];
+
+      var K_RED       = [170, 29, 29,255];
+      var K_ORANGE    = [238,136, 15,255];
+      var K_YELLOW    = [238,214, 15,255];
+      var K_GREEN     = [158,182, 58,255];
+      var K_BLUE      = [ 29, 86,170,255];
+      var K_PURPLE    = [127,  0,255,255];
+
+      var BROWN       = [155,145,135,255];
+
+      var RED         = [170, 29, 29,255];   var ORANGE      = [238,136, 15,255];
+      // var YELLOW = [238, 214, 15, 255]; var GREEN = [158, 182, 58, 255];
+      var BLUE        = [ 29, 86,170,255];   var PURPLE      = [127,  0,255,255];
+
+      var YELLOW      = [255,255,  0,255];
+      var YELLOW_H    = [255,255,  0,128];
+
+      // const RED           = [255,  0,  0,255]; const REDORANGE    = [255, 81,  0,255];
+      // const ORANGE        = [255,127,  0,255]; const YELLOWORANGE = [255,190,  0,255];
+      // const YELLOW        = [255,255,  0,255]; const YELLOWGREEN  = [192,255,  0,255];
+      // const GREEN         = [  0,255,  0,255]; const BLUEGREEN    = [  0,127,127,255];
+      // const BLUE          = [  0,  0,255,255]; const BLUEVIOLET   = [ 92,  0,255,255];
+      // let VIOLET        = [127,  0,255,255]; let REDVIOLET    = [191,  0,127,255];
+    }
+
+    var CONSTANTS={
+
+      DEGREES:        '°',
+      PI:             'π',
+      TRIANGLE_UP:    '▲',
+      TRIANGLE_DOWN:  '▼',
+      TRIANGLE_R:     '►',
+      TRIANGLE_L:     '◄',
+      INFINITY:       '∞',
+      THETA:          'θ',
+      RADIANS:        'ᶜ',
+      IDENTICAL:      '≡',
+      SIGMA:          'Σ',      
+      NOTE:           '♫',
+      PIPE:           '|'
+
+    }
+
+
     const dataTest=[
                     [474,154],[504,128],[524,132],[572,164],[442,129],
                     [429,119],[428, 98],[452, 77],[476, 82],[511, 58],
@@ -298,11 +380,12 @@
       this.greedy_mode = GREEDY_MODES.RANDOM;
 
       // this.algorithm    = ALGORITHMS.GROW;
-      this.algorithm    = ALGORITHMS.GREEDY;
+      // this.algorithm    = ALGORITHMS.GREEDY;
       // this.algorithm    = ALGORITHMS.BRUTEFORCE;
       // this.algorithm    = ALGORITHMS.SIMULATEDANNEALING;
       // this.algorithm    = ALGORITHMS.ACO;
       // this.algorithm    = ALGORITHMS.GENETIC;
+      this.algorithm    = ALGORITHMS.CONVEXHULL;
 
       this.initialize       = false;
 
@@ -310,15 +393,15 @@
       this.iterate          = false;
       this.proximity        = false;
 
-      this.drawBestPath     = true;
+      this.drawBestPath     = false;
       this.drawWorkingPath  = true;
-      this.drawPathNodes    = false;
+      this.drawPathNodes    = true;
 
       this.dataMode         = DATA_MODES.RANDOM;
       // this.dataMode     = DATA_MODES.TEST;
       // this.dataMode     = DATA_MODES.CIRCLE;
 
-      this.tourLength       = 200;                //  Total # of nodes to be connected
+      this.tourLength       = 300;                //  Total # of nodes to be connected
 
       this.menu;
       this.clock;
@@ -1377,6 +1460,8 @@
         this.bestNodes      = [];         //  Shortest path so far
         this.workingNodes   = [];         //  Path used to experiment
 
+        this.hullNodes      = [];         // Candidate Convex Hull nodes
+
         this.intersections  = [];         //  node couples that intersect
 
         this.segments       = [];         //  array of segments
@@ -1610,6 +1695,23 @@
             }
 
           // endContour(CLOSE);
+          endShape(CLOSE);
+
+        };
+        function drawHullPath(){
+
+          stroke(getColor(BLUE,50));
+          strokeWeight(5);
+          noFill();
+          
+          let arr=p.hullNodes;
+
+          beginShape();
+
+            for(let n=0; n<arr.length; n++){
+              vertex(arr[n].x, arr[n].y);
+            }
+
           endShape(CLOSE);
 
         };
@@ -2580,6 +2682,100 @@ print('genetic');
 
         }
 
+        { //  Convex Hull
+
+          function convexHull(){
+
+            var counter=0;
+
+            if(!p.loaded){
+
+              let arr=p.bestNodes;
+
+              let q1=false;
+              let q2=false;
+              let q3=false;
+              let q4=false;
+
+              for(var n=0; n<arr.length; n++){
+                for(var m=0; m<arr.length; m++){
+
+                  if(arr[m].x>arr[n].x &&
+                     arr[m].y<arr[n].y){
+                    q1=true;
+                  }
+
+                  if(arr[m].x<arr[n].x &&
+                     arr[m].y<arr[n].y){
+                    q2=true;
+                  }
+
+                  if(arr[m].x<arr[n].x &&
+                     arr[m].y>arr[n].y){
+                    q3=true;
+                  }
+
+                  if(arr[m].x>arr[n].x &&
+                     arr[m].y>arr[n].y){
+                    q4=true;
+                  }
+
+                  if(q1 &&
+                     q2 &&
+                     q3 &&
+                     q4){
+
+                      arr[n].hull=false;
+
+                    break;
+
+                  }
+
+                  // print(counter);
+                  counter++;
+
+                }
+                
+                q1=false;
+                q2=false;
+                q3=false;
+                q4=false;
+
+              }
+              
+              p.loaded=true;
+
+              // print(arr);
+
+arrayCopy(arr,p.workingNodes);
+
+print(counter);
+
+p.hullNodes=[];
+
+let arrHull=[];
+
+for(let n=0; n<p.workingNodes.length; n++){
+  
+  if(p.workingNodes[n].hull){
+    arrHull.push(p.workingNodes[n]);
+  }
+
+}
+
+sortByX(arrHull);
+arrayCopy(arrHull,p.hullNodes);
+
+
+print(p.hullNodes.length);
+
+            }
+
+
+
+          };
+
+        }
         function initialCondition(){
           
           p.factor=1;
@@ -2594,19 +2790,19 @@ print('genetic');
 
         function calculateTour(){
 
-          if(!p.loaded){
-renumberNodes(p.workingNodes);
+          // if(!p.loaded){
+// renumberNodes(p.workingNodes);
 
-            if(app.algorithm!=ALGORITHMS.ACO){
+            // if(app.algorithm!=ALGORITHMS.ACO){
 
-              if(app.initialize){
+              // if(app.initialize){
                 // initialCondition(); 
                 // randomizeArray(p.workingNodes);
-              }
+              // }
 
-            }
+            // }
 
-          }
+          // }
 
           switch (app.algorithm){
 
@@ -2617,6 +2813,7 @@ renumberNodes(p.workingNodes);
             case ALGORITHMS.GENETIC:            genetic();            break;
             case ALGORITHMS.ACO:                ACO();                break;
             case ALGORITHMS.RANDOM:             chance();             break;
+            case ALGORITHMS.CONVEXHULL:         convexHull();         break;
 
             default:                            greedy();             break;
 
@@ -2661,6 +2858,8 @@ renumberNodes(p.workingNodes);
               if(app.drawBestPath   ){ drawBestPath(p.bestNodes);                       }
               if(app.drawWorkingPath){ drawPath(p.workingNodes, p.workingNodes.length); }
               if(app.drawPathNodes  ){ drawNodes(p.workingNodes);                       }
+
+              drawHullPath();
 
           pop();
 
@@ -2771,35 +2970,37 @@ renumberNodes(p.workingNodes);
 
         control.call(this, id, parent, x, y, w, h);
 
-        this.cursor = props.cursor;
+        this.cursor     = props.cursor;
         // this.execute      = props.execute;
-        this.outerHit = false;
+        this.outerHit   = false;
 
-        this.dirty = false;
-        this.distance = Infinity;     //  Used to determine the distance to the
+        this.dirty      = false;
+        this.distance   = Infinity;     //  Used to determine the distance to the
         //  selected node on load
-        this.loaded = false;
+        this.loaded     = false;
 
         //  Closest Nodes  ---------------
-        this.closest = [];
-        this.distance = Infinity;
+        this.closest    = [];
+        this.distance   = Infinity;
 
-        this.radius = -1;
+        this.radius     = -1;
 
         //  Adjacent nodes ---------------
-        this.previous = null;
-        this.next = null;
+        this.previous   = null;
+        this.next       = null;
 
         // ------------------------------
 
         // this.color        = props.layout;
         this.outerColor = round(random(1, 7));
 
-        this.enabled = true;           //  Text is displayed black or grayed out
+        this.enabled    = true;           //  Text is displayed black or grayed out
 
-        this.dragging = false;          // Is the node being dragged?
+        this.dragging   = false;          // Is the node being dragged?
 
-        let p = this;
+        this.hull       = true;          //  Is the node a possible Convex Hull node?
+
+        let p           = this;
 
         this.reset();
 
@@ -2883,6 +3084,15 @@ renumberNodes(p.workingNodes);
           textSize(9);
 
             text(p.id, p.x+5, p.y+5);
+
+            if(p.hull){
+
+              noStroke();
+              fill(getColor(ORANGE,32));
+
+                ellipse(p.x,p.y,20,20);
+
+            }
 
         pop();
 
@@ -2968,8 +3178,7 @@ renumberNodes(p.workingNodes);
       };
       node.prototype.dragged = function (){
 
-        if (this.hit &&
-          this.layout !== BLANK) {
+        if (this.hit){
           // print(this.id);
 
         }
@@ -4129,13 +4338,11 @@ renumberNodes(p.workingNodes);
 
         let p=this;
 
-        p.offset=0;
-
         let CLR  = 164;
-        let CLRH = 212;
-        let CLRS =  48;
+        let CLRH = 212; // Highlight
+        let CLRS =  48; // Shadow
 
-        let ts   =  38;  //  TextSize
+        let ts   =  38; //  TextSize
 
         push();
 
@@ -4145,7 +4352,7 @@ renumberNodes(p.workingNodes);
 
               if(p.runHit){
 
-                stroke(164);
+                stroke(164);                
                 cursor(p.cursor);
     
                 p.offset=app.left ? 1 : 0;
@@ -4159,7 +4366,7 @@ renumberNodes(p.workingNodes);
 
               if(p.runHit){
 
-                fill(128,32);
+                fill(CLRH,32);
                 noStroke();
 
                   ellipse(p.h/2+2*p.h, p.h/2, p.h, p.h);
@@ -4208,7 +4415,7 @@ renumberNodes(p.workingNodes);
                 fill(CLR);
                 stroke(CLR);
     
-                if(p.active){
+                if(p.runHit){
                   fill(CLRH);
                   stroke(CLRH);
                 }
@@ -4253,7 +4460,7 @@ renumberNodes(p.workingNodes);
               // Triangle
               fill(CLR);
 
-              if(p.active){
+              if(p.nextHit){
                 fill(CLRH);
               }
 
@@ -4291,13 +4498,13 @@ renumberNodes(p.workingNodes);
               // Triangle Shadow
               fill(CLRS);
 
-              text(CONSTANTS.PIPE,       x+ts+9, y+3);
-              text(CONSTANTS.TRIANGLE_R, x+ts/2+3, y+3);
+                text(CONSTANTS.PIPE,       x+ts+9,   y+3);
+                text(CONSTANTS.TRIANGLE_R, x+ts/2+3, y+3);
 
               // Triangle
               fill(CLR);
 
-              if(p.active){
+              if(p.lastHit){
                 fill(CLRH);
               }
 
@@ -4341,7 +4548,7 @@ renumberNodes(p.workingNodes);
               // Triangle
               fill(CLR);
 
-              if(p.active){
+              if(p.previousHit){
                 fill(CLRH);
               }
 
@@ -4385,7 +4592,7 @@ renumberNodes(p.workingNodes);
               // Triangle
               fill(CLR);
 
-              if(p.active){
+              if(p.firstHit){
                 fill(CLRH);
               }
 
@@ -4688,6 +4895,16 @@ renumberNodes(p.workingNodes);
             caption:    "Random" });
 
         app.controls.push(random);
+
+    /* Convex Hull --------------------------------------------------- */
+    let convexHull=new option('convexHull', rt, 20, 520, 12, 12,
+        { color:      WHITE,
+          execute:    setAlgorithm,
+          retrieve:   getAlgorithm,
+          algorithm:  ALGORITHMS.CONVEXHULL,
+          caption:    "Convex Hull" });
+
+      app.controls.push(convexHull);
 
     // /* Initialize --------------------------------------------------- */
     // let initialize=new checkbox('initialize', rt, 20, 520, 12, 12,
