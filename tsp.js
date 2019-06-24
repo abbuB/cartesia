@@ -158,7 +158,7 @@
     }
 
 
-    const dataTest=[
+    var dataTest=[
                     [474,154],[504,128],[524,132],[572,164],[442,129],
                     [429,119],[428, 98],[452, 77],[476, 82],[511, 58],
                     [489, 38],[482, 33],[358, 42],[287, 46],[205, 53],
@@ -181,7 +181,7 @@
                     [673,128],[676,102],[662, 45],[584, 85],[598,121]
                   ];
 
-    const dataCircle=[
+    var dataCircle=[
                       [670,300],[670,316],[668,331],[666,347],[662,362],
                       [658,377],[652,392],[646,406],[639,420],[631,434],
                       [622,447],[613,459],[602,471],[591,482],[579,493],
@@ -373,20 +373,20 @@
     /* TSP Specific       ------------------ */
     {
 
-      this.loadMethod   = LOAD_MODES.RANDOM;
+      this.loadMethod       = LOAD_MODES.RANDOM;
 
       // this.greedy_mode  = GREEDY_MODES.CLOSEST;
       // this.greedy_mode = GREEDY_MODES.FARTHEST;
-      this.greedy_mode = GREEDY_MODES.RANDOM;
+      this.greedy_mode      = GREEDY_MODES.RANDOM;
 
       // this.algorithm    = ALGORITHMS.GROW;
-      // this.algorithm    = ALGORITHMS.GREEDY;
+      this.algorithm    = ALGORITHMS.GREEDY;
       // this.algorithm    = ALGORITHMS.BRUTEFORCE;
       // this.algorithm    = ALGORITHMS.SIMULATEDANNEALING;
       // this.algorithm    = ALGORITHMS.ACO;
-      // this.algorithm    = ALGORITHMS.GENETIC;
-      this.algorithm    = ALGORITHMS.CONVEXHULL;
+      // this.algorithm    = ALGORITHMS.GENETIC;      
 
+      this.convexHull       = true;
       this.initialize       = false;
 
       this.crossover        = false;
@@ -401,7 +401,7 @@
       // this.dataMode     = DATA_MODES.TEST;
       // this.dataMode     = DATA_MODES.CIRCLE;
 
-      this.tourLength       = 300;                //  Total # of nodes to be connected
+      this.tourLength       = 100;                //  Total # of nodes to be connected
 
       this.menu;
       this.clock;
@@ -479,6 +479,9 @@
       
       function getPathNodes()     { return app.drawPathNodes;                 };
       function togglePathNodes()  { app.drawPathNodes=!app.drawPathNodes;     };
+
+      function getConvexHull()    { return app.convexHull;              };
+      function toggleConvexHull() { app.convexHull=!app.convexHull;     };
 
       function getMethod()        { return app.greedy_mode;             };
       function setMethod(m)       {
@@ -748,24 +751,34 @@
     /** Telemetry       -------------------------------------------------- */
     {
 
-      function telemetry(id, parent, x, y, w, h, props) {
+      function telemetry(id, parent, x, y, w, h, props){
 
         control.call(this, id, parent, parent.w - w, y, w, h);
 
         this.color = props.color;
 
       };
-      telemetry.prototype = Object.create(control.prototype);
-      telemetry.prototype.draw = function (){
+      telemetry.prototype=Object.create(control.prototype);
+      telemetry.prototype.draw=function ()    {
 
-        if (app.debug === false) { return; }
+        let p=this;
 
-        let p = this;
+        if(app.debug==false) { return; }
 
-        this.active = this.hit &&
-          app.focus === this;
+        if     ( app.telemetry && p.offset>-200){ p.offset-=10; }
+        else if(!app.telemetry && p.offset<0   ){ p.offset+=10; }
 
-        if (this.active) { cursor(this.cursor); }
+        let row0=5;
+        let row1=90;
+
+        let col0=p.offset+20;
+        let col1=p.offset+25;
+        let col2=p.offset+170;
+
+        p.active=p.hit &&
+                 app.focus===this;
+
+        if(p.active){ cursor(p.cursor); }
 
         function border(){
 
@@ -803,61 +816,64 @@
 
           fill(getColor(TEAL_2, 75));
 
-            text(                       '\n'               +
-                'Cursor Coordinates' + '\n\n\n\n'         +
-                'Mouse Buttons'      + '\n\n\n\n\n\n\n\n' +
-                'Keys'               + '\n\n\n\n\n'       +
-                'Environment',
-                col0, row0);
+          let txt=                       '\n'               +
+                  'Cursor Coordinates' + '\n\n\n\n'         +
+                  'Mouse Buttons'      + '\n\n\n\n\n\n\n\n' +
+                  'Keys'               + '\n\n\n\n\n'       +
+                  'Environment';
+                 
+            text(txt, col0, row0);
 
           fill(getColor(WHITE, 75));
 
-            text(                    '\n\n'   +
-                 'x:'              + '\n'     +
-                 'y:'              + '\n\n\n' +
-                 'Left:'           + '\n'     +
-                 'Right:'          + '\n'     +
-                 'Center:'         + '\n\n'   +
-                 'Dragging:'       + '\n'     +
-                 'Drag Direction:' + '\n\n\n' +
-                 'Control:'        + '\n'     +
-                 'Alt:'            + '\n'     +
-                 'Shift:'          + '\n\n\n' +
-                 'Canvas Width:'   + '\n'     +
-                 'Canvas Height:'  + '\n\n'   +
-                 'Window Width:'   + '\n'     +
-                 'Window Height:'  + '\n\n'   +
-                 'Display Width:'  + '\n'     +
-                 'Display Height:' + '\n\n'   +
-                 'Focused:'        + '\n\n'   +
-                 'Frame Count:'    + '\n'     +
-                 'Frame Rate:',
-                 col1, row0+5);
+          txt=                    '\n\n'   +
+              'x:'              + '\n'     +
+              'y:'              + '\n\n\n' +
+              'Left:'           + '\n'     +
+              'Right:'          + '\n'     +
+              'Center:'         + '\n\n'   +
+              'Dragging:'       + '\n'     +
+              'Drag Direction:' + '\n\n\n' +
+              'Control:'        + '\n'     +
+              'Alt:'            + '\n'     +
+              'Shift:'          + '\n\n\n' +
+              'Canvas Width:'   + '\n'     +
+              'Canvas Height:'  + '\n\n'   +
+              'Window Width:'   + '\n'     +
+              'Window Height:'  + '\n\n'   +
+              'Display Width:'  + '\n'     +
+              'Display Height:' + '\n\n'   +
+              'Focused:'        + '\n\n'   +
+              'Frame Count:'    + '\n'     +
+              'Frame Rate:';
+     
+            text(txt, col1, row0+5);
 
           fill(getColor(YELLOW, 75));
           textAlign(RIGHT, TOP);
 
-            text(                    '\n\n'   +
-                 mouseX            + '\n'     +
-                 mouseY            + '\n\n\n' +
-                 app.left          + '\n'     +
-                 app.right         + '\n'     +
-                 app.center        + '\n\n'   +
-                 app.dragging      + '\n'     +
-                 app.dragDirection + '\n\n\n' +
-                 app.control       + '\n'     +
-                 app.alt           + '\n'     +
-                 app.shift         + '\n\n\n' +
-                 width             + '\n'     +
-                 height            + '\n\n'   +
-                 windowWidth       + '\n'     +
-                 windowHeight      + '\n\n'   +
-                 displayWidth      + '\n'     +
-                 displayHeight     + '\n\n'   +
-                 focused           + '\n\n'   +
-                 frameCount        + '\n'     +
-                 nf(app.frameRate, 1, 1),
-                 col2, row0+5);
+          txt=                      '\n\n'   +
+                mouseX            + '\n'     +
+                mouseY            + '\n\n\n' +
+                app.left          + '\n'     +
+                app.right         + '\n'     +
+                app.center        + '\n\n'   +
+                app.dragging      + '\n'     +
+                app.dragDirection + '\n\n\n' +
+                app.control       + '\n'     +
+                app.alt           + '\n'     +
+                app.shift         + '\n\n\n' +
+                width             + '\n'     +
+                height            + '\n\n'   +
+                windowWidth       + '\n'     +
+                windowHeight      + '\n\n'   +
+                displayWidth      + '\n'     +
+                displayHeight     + '\n\n'   +
+                focused           + '\n\n'   +
+                frameCount        + '\n'     +
+                nf(app.frameRate, 1, 1);
+
+            text(txt,col2, row0+5);
 
         };
         function appSpecific(){
@@ -916,47 +932,37 @@
 
         };
 
-        if     ( app.telemetry && this.offset>-200){ this.offset-=10; }
-        else if(!app.telemetry && this.offset<0   ){ this.offset+=10; }
-
-        let row0 = 5;
-        let row1 = 90;
-
-        let col0 = this.offset + 20;
-        let col1 = this.offset + 25;
-        let col2 = this.offset + 170;
-
         push();
 
-        translate(this.x+0.5, this.y+0.5);
+          translate(p.x+0.5, p.y+0.5);
 
-        border();
-        // title();
-        environment();
-        appSpecific();
+            border();
+            // title();
+            environment();
+            appSpecific();
 
         pop();
 
       };
-      telemetry.prototype.moved = function (x, y) {
+      telemetry.prototype.moved=function(x,y) {
         /* Overridden because of the dynamic x-coordinate offset */
 
         // if(app.telemetry===false &&
         // this.offset===0){ return; }
 
-        if (this.parent.hit) {
+        if(this.parent.hit){
 
-          if (this.hitTest(x + this.offset, y)) {
+          if(this.hitTest(x + this.offset,y)){
 
-            this.hit = true;
-            app.focus = this;
+            this.hit=true;
+            app.focus=this;
 
             // for(let c in this.controls){ this.controls[c].moved(this.x+x+this.offset, this.y+y); }
 
           }
-          else {
+          else{
 
-            this.hit = false;
+            this.hit=false;
 
             // for(let c in this.controls){ this.controls[c].hit=false; }
 
@@ -965,10 +971,10 @@
         }
 
       };
-      telemetry.prototype.resized = function (){
+      telemetry.prototype.resized=function()  {
 
-        this.x = this.parent.w - this.w;
-        this.h = this.parent.h - 10;
+        this.x=this.parent.w-this.w;
+        this.h=this.parent.h-10;
 
       };
 
@@ -1518,6 +1524,7 @@
         p.nodes             = [];   //  Original nodes as loaded
         p.workingNodes      = [];   //  Array used to test various tour orders
         p.bestNodes         = [];   //  Array of current minimum tour length
+        p.hullNodes         = [];
 
         p.intersections     = [];
 
@@ -1566,7 +1573,7 @@
 
             switch(app.dataMode){
 
-              case DATA_MODES.RANDOM: x=floor(random(150, p.w-20));
+              case DATA_MODES.RANDOM: x=floor(random(170, p.w-20));
                                       y=floor(random( 20, p.h-100));
                                       break;
 
@@ -1672,9 +1679,9 @@
         };
         function drawBestPath(){
 
-          // strokeJoin(MITER);
+          strokeJoin(MITER);
           // strokeJoin(BEVEL);
-          strokeJoin(ROUND);
+          // strokeJoin(ROUND);
 
           strokeCap(SQUARE);
           // strokeCap(ROUND);
@@ -1688,18 +1695,17 @@
           let arr=p.bestNodes;
 
           beginShape();
-          // beginContour();
 
             for(let n=0; n<arr.length; n++){
               vertex(arr[n].x, arr[n].y);
             }
 
-          // endContour(CLOSE);
           endShape(CLOSE);
 
         };
         function drawHullPath(){
 
+          strokeJoin(MITER);
           stroke(getColor(BLUE,50));
           strokeWeight(5);
           noFill();
@@ -2686,92 +2692,191 @@ print('genetic');
 
           function convexHull(){
 
-            var counter=0;
+            fill(ORANGE);
+            noStroke();
+
+            let x=(p.minX+p.maxX)/2;
+            let y=(p.minY+p.maxY)/2;
+print(x + "," + y);
+            ellipse(x, y, 20,20);
+                        
+            function loadHull(){
+
+              renumberNodes(p.bestNodes);
+
+              var counter=0;
+
+                let arr=p.bestNodes;
+  
+                let q1=false;
+                let q2=false;
+                let q3=false;
+                let q4=false;
+  
+                for(var n=0; n<arr.length; n++){
+                  for(var m=0; m<arr.length; m++){
+  
+                    if(arr[m].x>arr[n].x &&
+                       arr[m].y<arr[n].y){
+                      q1=true;
+                    }
+  
+                    if(arr[m].x<arr[n].x &&
+                       arr[m].y<arr[n].y){
+                      q2=true;
+                    }
+  
+                    if(arr[m].x<arr[n].x &&
+                       arr[m].y>arr[n].y){
+                      q3=true;
+                    }
+  
+                    if(arr[m].x>arr[n].x &&
+                       arr[m].y>arr[n].y){
+                      q4=true;
+                    }
+  
+                    if(q1 &&
+                       q2 &&
+                       q3 &&
+                       q4){
+  
+                        arr[n].hull=false;
+  
+                      break;
+  
+                    }
+  
+                    // print(counter);
+                    counter++;
+  
+                  }
+                  
+                  q1=false;
+                  q2=false;
+                  q3=false;
+                  q4=false;
+  
+                }
+                
+                
+
+                arrayCopy(arr,p.workingNodes);
+                
+// print(counter);
+
+                // p.nullNodes=[];
+
+                for(let n=0; n<p.workingNodes.length; n++){
+
+                  if(p.workingNodes[n].hull){
+                    p.hullNodes.push(p.workingNodes[n]);
+                  }
+
+                }
+
+// print(p.hullNodes.length);
+
+            };   
+                function dist(p1,p2){
+                  let retVal=pow(pow(p1.x-p2.x, 2) +
+                                 pow(p1.y-p2.y, 2), 0.5);
+// print(retVal);
+      return retVal;
+      
+    };
+
+            function triangleArea(p0,p1,p2){
+
+              let a=dist(p0, p1);
+              let b=dist(p1, p2);
+              let c=dist(p2, p0);
+
+        // print("a: " + a + ', b: ' + b + ', c: ' + c);
+
+              let semi=(a+b+c)/2;
+
+              let area=pow((semi*(semi-a)*(semi-b)*(semi-c)), 0.5);
+        
+              return area;
+        
+            };
+            function hullHit(p0,p1,p2,mX,mY){
+
+              let retVal=false;
+        
+              let p=new pnt(mX,mY);
+        
+              let areaTotal=triangleArea(p,p0,p2);
+        
+              let area0=triangleArea(p0, p1, p);
+              let area1=triangleArea(p1, p2, p);
+              // let area2=triangleArea(p2, p0, p);
+        
+              let totals=area0+area1;
+        print(round(areaTotal) + " - " + round(totals));
+              if(areaTotal>totals){ retVal=true; }
+        
+              return retVal;
+        
+        
+            };                         
+            function parseHull(){
+
+              let x=(p.minX+p.maxX)/2;
+              let y=(p.minY+p.maxY)/2;
+              let arr=p.hullNodes;
+              let centreP=new pnt(x,y);
+              let min=0;
+              let max=arr.length-1;
+
+              for(let n=min; n<=max; n++){
+
+                switch(true){
+                  
+                  case n==max:  if(hullHit(centreP,
+                                           new pnt(arr[n].x, arr[n].y),
+                                           new pnt(arr[1].x, arr[1].y),
+                                           arr[min].x,
+                                           arr[min].y)){
+
+                                  arr[1].hull=false;
+
+                                };  break;
+
+                case n==max-1:  if(hullHit(centreP,
+                                           new pnt(arr[n].x,   arr[n].y),
+                                           new pnt(arr[max].x, arr[max].y),
+                                           arr[min].x,
+                                           arr[min].y)){
+
+                                  arr[1].hull=false;
+
+                                };  break;
+
+                default:        if(hullHit(centreP,
+                                           new pnt(arr[n].x,   arr[n].y),
+                                           new pnt(arr[n+2].x, arr[n+2].y),
+                                           arr[n+1].x,
+                                           arr[n+1].y)){
+
+                                  arr[n+1].hull=false;
+
+                                };  break;
+                }
+
+              }
+
+              p.loaded=true;
+
+            };
 
             if(!p.loaded){
 
-              let arr=p.bestNodes;
-
-              let q1=false;
-              let q2=false;
-              let q3=false;
-              let q4=false;
-
-              for(var n=0; n<arr.length; n++){
-                for(var m=0; m<arr.length; m++){
-
-                  if(arr[m].x>arr[n].x &&
-                     arr[m].y<arr[n].y){
-                    q1=true;
-                  }
-
-                  if(arr[m].x<arr[n].x &&
-                     arr[m].y<arr[n].y){
-                    q2=true;
-                  }
-
-                  if(arr[m].x<arr[n].x &&
-                     arr[m].y>arr[n].y){
-                    q3=true;
-                  }
-
-                  if(arr[m].x>arr[n].x &&
-                     arr[m].y>arr[n].y){
-                    q4=true;
-                  }
-
-                  if(q1 &&
-                     q2 &&
-                     q3 &&
-                     q4){
-
-                      arr[n].hull=false;
-
-                    break;
-
-                  }
-
-                  // print(counter);
-                  counter++;
-
-                }
-                
-                q1=false;
-                q2=false;
-                q3=false;
-                q4=false;
-
-              }
-              
-              p.loaded=true;
-
-              // print(arr);
-
-arrayCopy(arr,p.workingNodes);
-
-print(counter);
-
-p.hullNodes=[];
-
-let arrHull=[];
-
-for(let n=0; n<p.workingNodes.length; n++){
-  
-  if(p.workingNodes[n].hull){
-    arrHull.push(p.workingNodes[n]);
-  }
-
-}
-
-sortByX(arrHull);
-arrayCopy(arrHull,p.hullNodes);
-
-
-print(p.hullNodes.length);
-
+              loadHull();
+              parseHull();
+print("hull");
             }
-
-
 
           };
 
@@ -2855,11 +2960,14 @@ print(p.hullNodes.length);
 
               drawProperties();
               
+              convexHull();
+
+              if(app.convexHull     ){ drawHullPath();                                  }
               if(app.drawBestPath   ){ drawBestPath(p.bestNodes);                       }
               if(app.drawWorkingPath){ drawPath(p.workingNodes, p.workingNodes.length); }
               if(app.drawPathNodes  ){ drawNodes(p.workingNodes);                       }
 
-              drawHullPath();
+
 
           pop();
 
@@ -4897,10 +5005,10 @@ print(p.hullNodes.length);
         app.controls.push(random);
 
     /* Convex Hull --------------------------------------------------- */
-    let convexHull=new option('convexHull', rt, 20, 520, 12, 12,
+    let convexHull=new checkbox('convexHull', rt, 20, 520, 12, 12,
         { color:      WHITE,
-          execute:    setAlgorithm,
-          retrieve:   getAlgorithm,
+          execute:    toggleConvexHull,
+          retrieve:   getConvexHull,
           algorithm:  ALGORITHMS.CONVEXHULL,
           caption:    "Convex Hull" });
 
@@ -5138,7 +5246,7 @@ print(p.hullNodes.length);
 
     function mouseClicked(){
 
-      switch (mouseButton) {
+      switch(mouseButton){
 
         case LEFT:  forEach(app.controls, 'clicked'); break;
         // case RIGHT: forEach(app.controls, 'rclicked'); break;
@@ -5148,7 +5256,7 @@ print(p.hullNodes.length);
 
       }
 
-      switch (true) {
+      switch(true){
 
         case mouseButton==LEFT:
 
@@ -5156,6 +5264,7 @@ print(p.hullNodes.length);
           else                           { increment++; };  break;
 
         case mouseButton==RIGHT:                            break;
+
         default:                                            break;
 
       }
