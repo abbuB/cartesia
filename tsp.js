@@ -402,7 +402,7 @@
       // this.dataMode     = DATA_MODES.TEST;
       // this.dataMode     = DATA_MODES.CIRCLE;
 
-      this.tourLength       = 100;                //  Total # of nodes to be connected
+      this.tourLength       = 300;                //  Total # of nodes to be connected
 
       this.menu;
       this.clock;
@@ -1662,7 +1662,7 @@
           forEach(nodes, 'draw');
 
         };
-        function drawPath(nodes, length){
+        function drawPath(nodes, length=nodes.length){
 
           stroke(128,128);
           strokeWeight(1.5);
@@ -1707,9 +1707,10 @@
         function drawHullPath(){
 
           strokeJoin(MITER);
-          stroke(getColor(BLUE,50));
+          stroke(getColor(WHITE,20));
           strokeWeight(5);
           noFill();
+          fill(getColor(WHITE,5));
           
           let arr=p.hullNodes;
 
@@ -2406,6 +2407,8 @@ print('genetic');
 
               p.workingNodes=getGreedyTour(p.nodes, app.greedy_mode);
 
+              renumberNodes(p.workingNodes);
+
               updateTour();
 
             }
@@ -2420,11 +2423,6 @@ print('genetic');
               }
 
             }
-
-            // if(p.length<p.workingNodes.length){
-              // p.length++;
-              // p.length=p.workingNodes.length;
-            // }      
 
           };
 
@@ -2698,83 +2696,73 @@ print('genetic');
 
             let x=(p.minX+p.maxX)/2;
             let y=(p.minY+p.maxY)/2;
-// print(x + "," + y);
+
             ellipse(x, y, 20,20);
                         
             function loadHull(){
 
-              // renumberNodes(p.bestNodes);
+              let counter=0;
 
-              var counter=0;
+              let arr=p.workingNodes;
 
-                let arr=p.bestNodes;
-  
-                let q1=false;
-                let q2=false;
-                let q3=false;
-                let q4=false;
-  
-                for(var n=0; n<arr.length; n++){
-                  for(var m=0; m<arr.length; m++){
-  
-                    if(arr[m].x>arr[n].x &&
-                       arr[m].y<arr[n].y){
-                      q1=true;
-                    }
-  
-                    if(arr[m].x<arr[n].x &&
-                       arr[m].y<arr[n].y){
-                      q2=true;
-                    }
-  
-                    if(arr[m].x<arr[n].x &&
-                       arr[m].y>arr[n].y){
-                      q3=true;
-                    }
-  
-                    if(arr[m].x>arr[n].x &&
-                       arr[m].y>arr[n].y){
-                      q4=true;
-                    }
-  
-                    if(q1 &&
-                       q2 &&
-                       q3 &&
-                       q4){
-  
-                        arr[n].hull=false;
-  
-                      break;
-  
-                    }
-  
-                    // print(counter);
-                    counter++;
-  
+              let q1=false;
+              let q2=false;
+              let q3=false;
+              let q4=false;
+
+              for(var n=0; n<arr.length; n++){
+                for(var m=0; m<arr.length; m++){
+
+                  if(arr[m].x>arr[n].x &&
+                     arr[m].y<arr[n].y){
+                    q1=true;
                   }
-                  
-                  q1=false;
-                  q2=false;
-                  q3=false;
-                  q4=false;
-  
-                }
 
-                arrayCopy(arr,p.workingNodes);
+                  if(arr[m].x<arr[n].x &&
+                     arr[m].y<arr[n].y){
+                    q2=true;
+                  }
+
+                  if(arr[m].x<arr[n].x &&
+                     arr[m].y>arr[n].y){
+                    q3=true;
+                  }
+
+                  if(arr[m].x>arr[n].x &&
+                     arr[m].y>arr[n].y){
+                    q4=true;
+                  }
+
+                  if(q1 && q2 && q3 && q4){
+
+                    arr[n].hull=false;
+
+                    break;
+
+                  }
+
+                  counter++;
+
+                }
                 
-// print(counter);
+                q1=false;
+                q2=false;
+                q3=false;
+                q4=false;
 
-                // p.nullNodes=[];
+              }
 
-                for(let n=0; n<p.workingNodes.length; n++){
+              print(counter);
 
-                  if(p.workingNodes[n].hull){
-                    p.hullNodes.push(p.workingNodes[n]);
-                  }
+              for(let n=0; n<p.workingNodes.length; n++){
 
+                if(p.workingNodes[n].hull){
+                  p.hullNodes.push(p.workingNodes[n]);
                 }
-                p.loaded=true;
-print(p.hullNodes.length);
+
+              }
+
+              p.loaded=true;
 
             };
 
@@ -2818,6 +2806,14 @@ print(p.hullNodes.length);
         // print(round(areaTotal) + " - " + round(totals));
               if(areaTotal>totals){ retVal=true; }
         
+                noStroke();
+                fill(getColor(WHITE,50));
+
+                textAlign(CENTER,CENTER);
+
+                  text(round(area0),(p.x+p1.x)/2,(p.y+p1.y)/2);
+                  text(round(area1),(p1.x+p2.x)/2,(p1.y+p2.y)/2);
+
               return retVal;
 
             };                         
@@ -2859,14 +2855,22 @@ print(p.hullNodes.length);
                          arr[index1].x, arr[index1].y,
                          arr[index2].x, arr[index2].y);
 
-              fill(getColor(BLUE, 310));
-              stroke(BLUE);
+              // fill(getColor(BLUE, 310));
+              stroke(YELLOW);
+              noFill();
 
-                // triangle(centreP.x,     centreP.y,
-                //          arr[index].x,  arr[index].y,
-                //          arr[index2].x, arr[index2].y);
+                // line(arr[index].x,  arr[index].y,
+                //      arr[index2].x, arr[index2].y);
 
-              // for(let n=min; n<=max; n++){
+                triangle(centreP.x,     centreP.y,
+                         arr[index].x,  arr[index].y,
+                         arr[index2].x, arr[index2].y);
+
+                text(index,  arr[index].x,  arr[index].y);
+                text(index1, arr[index1].x, arr[index1].y);
+                text(index2, arr[index2].x, arr[index2].y);
+
+              for(let n=min; n<=max; n++){
 
                 if(hullHit(centreP,
                            new pnt(arr[index].x,  arr[index].y),
@@ -2874,12 +2878,13 @@ print(p.hullNodes.length);
                            arr[index1].x,         arr[index1].y)){
 
                   arr[index1].hull=false;
+                  arr=arr.splice(index1, 1);
+                  p.hullIndex=0;
+                  break;
 
-                  p.hullNodes.splice(index, 1);
+                }
 
-                };
-
-              // }
+              }
 
             };
 
@@ -2891,39 +2896,13 @@ print(p.hullNodes.length);
 
             }
 
-            parseHull();
+            // parseHull();
 
           };
-
-        }
-        
-        function initialCondition(){
-          
-          p.factor=1;
-
-          let index=getRandomInt(p.workingNodes.length-1);
-
-          arrayCopy(p.workingNodes,getClosestArray(index));
-
-          // updateTour();
 
         };
 
         function calculateTour(){
-
-          // if(!p.loaded){
-// renumberNodes(p.workingNodes);
-
-            // if(app.algorithm!=ALGORITHMS.ACO){
-
-              // if(app.initialize){
-                // initialCondition(); 
-                // randomizeArray(p.workingNodes);
-              // }
-
-            // }
-
-          // }
 
           switch (app.algorithm){
 
@@ -2934,7 +2913,6 @@ print(p.hullNodes.length);
             case ALGORITHMS.GENETIC:            genetic();            break;
             case ALGORITHMS.ACO:                ACO();                break;
             case ALGORITHMS.RANDOM:             chance();             break;
-            case ALGORITHMS.CONVEXHULL:         convexHull();         break;
 
             default:                            greedy();             break;
 
@@ -2944,10 +2922,10 @@ print(p.hullNodes.length);
 
         function calculateMetrics(){
 
-          p.avgDistance=round(p.workingLength/p.workingNodes.length);
-          p.workingLength=round(getTourLength(p.workingNodes));
-          p.minimumLength=round(getTourLength(p.bestNodes));
-          p.bestLength=round(getTourLength(p.bestNodes));
+          p.avgDistance   = round(p.workingLength/p.workingNodes.length);
+          p.workingLength = round(getTourLength(p.workingNodes));
+          p.minimumLength = round(getTourLength(p.bestNodes));
+          p.bestLength    = round(getTourLength(p.bestNodes));
 
           for(let n=0; n<p.nodes.length; n++){
 
@@ -3007,7 +2985,7 @@ print(p.hullNodes.length);
 
       };
       field.prototype.last=function()       {
-
+print(this);
         app.field.hullIndex=app.field.hullNodes.length-1;
 
       };
