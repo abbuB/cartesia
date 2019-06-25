@@ -131,12 +131,13 @@
       var YELLOW      = [255,255,  0,255];
       var YELLOW_H    = [255,255,  0,128];
 
-      // const RED           = [255,  0,  0,255]; const REDORANGE    = [255, 81,  0,255];
-      // const ORANGE        = [255,127,  0,255]; const YELLOWORANGE = [255,190,  0,255];
-      // const YELLOW        = [255,255,  0,255]; const YELLOWGREEN  = [192,255,  0,255];
-      // const GREEN         = [  0,255,  0,255]; const BLUEGREEN    = [  0,127,127,255];
-      // const BLUE          = [  0,  0,255,255]; const BLUEVIOLET   = [ 92,  0,255,255];
-      // let VIOLET        = [127,  0,255,255]; let REDVIOLET    = [191,  0,127,255];
+      var RED           = [255,  0,  0,255]; var REDORANGE    = [255, 81,  0,255];
+      var ORANGE        = [255,127,  0,255]; var YELLOWORANGE = [255,190,  0,255];
+      var YELLOW        = [255,255,  0,255]; var YELLOWGREEN  = [192,255,  0,255];
+      var GREEN         = [  0,255,  0,255]; var BLUEGREEN    = [  0,127,127,255];
+      var BLUE          = [  0,  0,255,255]; var BLUEVIOLET   = [ 92,  0,255,255];
+      var VIOLET        = [127,  0,255,255]; var REDVIOLET    = [191,  0,127,255];
+
     }
 
     var CONSTANTS={
@@ -1444,11 +1445,10 @@
 
         control.call(this, id, parent, x, y, w, h);
 
-        
         app.field           = this;       //  Set a global field reference
 
-        
         /* ------------------------------------------------- */
+
         this.color          = props.color;
 
         /* ------------------------------------------------- */
@@ -1467,6 +1467,7 @@
         this.workingNodes   = [];         //  Path used to experiment
 
         this.hullNodes      = [];         // Candidate Convex Hull nodes
+        this.hullIndex      = 0;
 
         this.intersections  = [];         //  node couples that intersect
 
@@ -2697,12 +2698,12 @@ print('genetic');
 
             let x=(p.minX+p.maxX)/2;
             let y=(p.minY+p.maxY)/2;
-print(x + "," + y);
+// print(x + "," + y);
             ellipse(x, y, 20,20);
                         
             function loadHull(){
 
-              renumberNodes(p.bestNodes);
+              // renumberNodes(p.bestNodes);
 
               var counter=0;
 
@@ -2758,8 +2759,6 @@ print(x + "," + y);
                   q4=false;
   
                 }
-                
-                
 
                 arrayCopy(arr,p.workingNodes);
                 
@@ -2774,17 +2773,19 @@ print(x + "," + y);
                   }
 
                 }
+                p.loaded=true;
+print(p.hullNodes.length);
 
-// print(p.hullNodes.length);
+            };
 
-            };   
-                function dist(p1,p2){
-                  let retVal=pow(pow(p1.x-p2.x, 2) +
-                                 pow(p1.y-p2.y, 2), 0.5);
-// print(retVal);
-      return retVal;
-      
-    };
+            function dist(p1,p2){
+            
+              let retVal=pow(pow(p1.x-p2.x, 2) +
+                          pow(p1.y-p2.y, 2), 0.5);
+              // print(retVal);
+              return retVal;
+
+            };
 
             function triangleArea(p0,p1,p2){
 
@@ -2814,12 +2815,11 @@ print(x + "," + y);
               // let area2=triangleArea(p2, p0, p);
         
               let totals=area0+area1;
-        print(round(areaTotal) + " - " + round(totals));
+        // print(round(areaTotal) + " - " + round(totals));
               if(areaTotal>totals){ retVal=true; }
         
               return retVal;
-        
-        
+
             };                         
             function parseHull(){
 
@@ -2830,57 +2830,73 @@ print(x + "," + y);
               let min=0;
               let max=arr.length-1;
 
-              for(let n=min; n<=max; n++){
+              let index=p.hullIndex;
+              let index1=index+1;
+              let index2=index+2;
 
-                switch(true){
-                  
-                  case n==max:  if(hullHit(centreP,
-                                           new pnt(arr[n].x, arr[n].y),
-                                           new pnt(arr[1].x, arr[1].y),
-                                           arr[min].x,
-                                           arr[min].y)){
-
-                                  arr[1].hull=false;
-
-                                };  break;
-
-                case n==max-1:  if(hullHit(centreP,
-                                           new pnt(arr[n].x,   arr[n].y),
-                                           new pnt(arr[max].x, arr[max].y),
-                                           arr[min].x,
-                                           arr[min].y)){
-
-                                  arr[1].hull=false;
-
-                                };  break;
-
-                default:        if(hullHit(centreP,
-                                           new pnt(arr[n].x,   arr[n].y),
-                                           new pnt(arr[n+2].x, arr[n+2].y),
-                                           arr[n+1].x,
-                                           arr[n+1].y)){
-
-                                  arr[n+1].hull=false;
-
-                                };  break;
-                }
-
+              if(index==max){
+                index1=0;
+                index2=1;
               }
 
-              p.loaded=true;
+              if(index==max-1){
+                index2=0;
+              }
+
+              strokeWeight(1);
+
+              fill(getColor(RED, 10));
+              stroke(RED);
+
+                triangle(centreP.x,     centreP.y,
+                         arr[index].x,  arr[index].y,
+                         arr[index1].x, arr[index1].y);
+
+              fill(getColor(GREEN, 10));
+              stroke(GREEN);
+
+                triangle(centreP.x,     centreP.y,
+                         arr[index1].x, arr[index1].y,
+                         arr[index2].x, arr[index2].y);
+
+              fill(getColor(BLUE, 310));
+              stroke(BLUE);
+
+                // triangle(centreP.x,     centreP.y,
+                //          arr[index].x,  arr[index].y,
+                //          arr[index2].x, arr[index2].y);
+
+              // for(let n=min; n<=max; n++){
+
+                if(hullHit(centreP,
+                           new pnt(arr[index].x,  arr[index].y),
+                           new pnt(arr[index2].x, arr[index2].y),
+                           arr[index1].x,         arr[index1].y)){
+
+                  arr[index1].hull=false;
+
+                  p.hullNodes.splice(index, 1);
+
+                };
+
+              // }
 
             };
 
             if(!p.loaded){
 
               loadHull();
-              parseHull();
-print("hull");
+
+// print("hull");
+
             }
+
+            parseHull();
 
           };
 
         }
+        
         function initialCondition(){
           
           p.factor=1;
@@ -2967,15 +2983,34 @@ print("hull");
               if(app.drawWorkingPath){ drawPath(p.workingNodes, p.workingNodes.length); }
               if(app.drawPathNodes  ){ drawNodes(p.workingNodes);                       }
 
-
-
           pop();
 
       };
-      field.prototype.next=function()       { print("Next");      };
-      field.prototype.previous=function()   { print("Previous");  };
-      field.prototype.first=function()      { print("First");     };
-      field.prototype.last=function()       { print("Last");      };
+      field.prototype.next=function()       {
+
+        app.field.hullIndex++;
+        app.field.hullIndex%=app.field.hullNodes.length;
+
+      };
+      field.prototype.previous=function()   {
+        
+        app.field.hullIndex--;
+
+        if(app.field.hullIndex==-1){
+          app.field.hullIndex=app.field.hullNodes.length-1;
+        }
+
+      };
+      field.prototype.first=function()      {
+
+        app.field.hullIndex=0;
+
+      };
+      field.prototype.last=function()       {
+
+        app.field.hullIndex=app.field.hullNodes.length-1;
+
+      };
       field.prototype.run=function()        { print("Run");       };
       field.prototype.hitTest=function(x, y){
 
