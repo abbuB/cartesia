@@ -217,6 +217,13 @@
 
   let cnv;
 
+  function pnt(x,y){
+    this.x = x;
+    this.y = y;
+  };
+  // pnt.prototype.toString=function(){ return this.x +  ", " + this.y; }
+
+
   function printTour(arr){
 
     randomizeArray(app.field.workingNodes);
@@ -402,7 +409,7 @@
       // this.dataMode     = DATA_MODES.TEST;
       // this.dataMode     = DATA_MODES.CIRCLE;
 
-      this.tourLength       = 300;                //  Total # of nodes to be connected
+      this.tourLength       = 500;                //  Total # of nodes to be connected
 
       this.menu;
       this.clock;
@@ -1708,9 +1715,9 @@
 
           strokeJoin(MITER);
           stroke(getColor(WHITE,20));
-          strokeWeight(5);
+          strokeWeight(3);
           noFill();
-          fill(getColor(WHITE,5));
+          // fill(getColor(WHITE,5));
           
           let arr=p.hullNodes;
 
@@ -2688,6 +2695,10 @@ print('genetic');
         }
 
         { //  Convex Hull
+var area0=0;
+var area1=0;          
+var sumArea=0;
+var largeArea=0;
 
           function convexHull(){
 
@@ -2700,6 +2711,8 @@ print('genetic');
             ellipse(x, y, 20,20);
                         
             function loadHull(){
+
+              p.hullNodes=[];
 
               let counter=0;
 
@@ -2766,22 +2779,11 @@ print('genetic');
 
             };
 
-            function dist(p1,p2){
-            
-              let retVal=pow(pow(p1.x-p2.x, 2) +
-                          pow(p1.y-p2.y, 2), 0.5);
-              // print(retVal);
-              return retVal;
-
-            };
-
             function triangleArea(p0,p1,p2){
 
-              let a=dist(p0, p1);
-              let b=dist(p1, p2);
-              let c=dist(p2, p0);
-
-        // print("a: " + a + ', b: ' + b + ', c: ' + c);
+              let a=dist(p0.x, p0.y, p1.x, p1.y);
+              let b=dist(p1.x, p1.y, p2.x, p2.y);
+              let c=dist(p2.x, p2.y, p0.x, p0.y);
 
               let semi=(a+b+c)/2;
 
@@ -2790,29 +2792,21 @@ print('genetic');
               return area;
         
             };
-            function hullHit(p0,p1,p2,mX,mY){
+            function hullHit(centre,p0,p1,p2){
 
               let retVal=false;
-        
-              let p=new pnt(mX,mY);
-        
-              let areaTotal=triangleArea(p,p0,p2);
-        
-              let area0=triangleArea(p0, p1, p);
-              let area1=triangleArea(p1, p2, p);
-              // let area2=triangleArea(p2, p0, p);
-        
+
+              let bigArea=triangleArea(centre,p0,p2);
+
+              area0=triangleArea(centre, p0, p1);
+              area1=triangleArea(centre, p1, p2);
+
               let totals=area0+area1;
-        // print(round(areaTotal) + " - " + round(totals));
-              if(areaTotal>totals){ retVal=true; }
-        
-                noStroke();
-                fill(getColor(WHITE,50));
 
-                textAlign(CENTER,CENTER);
+              largeArea=bigArea;
+              sumArea=totals;
 
-                  text(round(area0),(p.x+p1.x)/2,(p.y+p1.y)/2);
-                  text(round(area1),(p1.x+p2.x)/2,(p1.y+p2.y)/2);
+              if(largeArea>sumArea){ retVal=true; }
 
               return retVal;
 
@@ -2859,12 +2853,12 @@ print('genetic');
               stroke(YELLOW);
               noFill();
 
-                // line(arr[index].x,  arr[index].y,
-                //      arr[index2].x, arr[index2].y);
-
                 triangle(centreP.x,     centreP.y,
                          arr[index].x,  arr[index].y,
                          arr[index2].x, arr[index2].y);
+
+              noStroke();
+              fill(128);
 
                 text(index,  arr[index].x,  arr[index].y);
                 text(index1, arr[index1].x, arr[index1].y);
@@ -2874,12 +2868,13 @@ print('genetic');
 
                 if(hullHit(centreP,
                            new pnt(arr[index].x,  arr[index].y),
-                           new pnt(arr[index2].x, arr[index2].y),
-                           arr[index1].x,         arr[index1].y)){
+                           new pnt(arr[index1].x, arr[index1].y),
+                           new pnt(arr[index2].x, arr[index2].y)
+                           )){
 
                   arr[index1].hull=false;
-                  arr=arr.splice(index1, 1);
-                  p.hullIndex=0;
+                  // p.hullIndex=0;
+                  loadHull();
                   break;
 
                 }
@@ -2895,9 +2890,11 @@ print('genetic');
 // print("hull");
 
             }
-
-            // parseHull();
-
+if(app.running){
+            parseHull();
+p.hullIndex++;
+p.hullIndex%=p.hullNodes.length;
+}
           };
 
         };
@@ -2961,6 +2958,17 @@ print('genetic');
               if(app.drawWorkingPath){ drawPath(p.workingNodes, p.workingNodes.length); }
               if(app.drawPathNodes  ){ drawNodes(p.workingNodes);                       }
 
+              noStroke();
+              fill(128);
+
+              textSize(12);
+
+                text("Area0:    "   + round(area0),     800,700);
+                text("Area1:    "   + round(area1),     800,715);
+                text("Sum:      "   + round(area0+area1),   800,730);
+                text("Large:    "   + round(largeArea), 800,745);
+                
+frameRate(30);
           pop();
 
       };
@@ -2974,6 +2982,7 @@ print('genetic');
         
         app.field.hullIndex--;
 
+        //  Loop around to the end of the array
         if(app.field.hullIndex==-1){
           app.field.hullIndex=app.field.hullNodes.length-1;
         }
@@ -3997,16 +4006,16 @@ print(this);
 
         function drawHexagon(x, y, sz, offset) {
 
-          let ang = 0;
+          // let ang = 0;
 
-          beginShape();
+          // beginShape();
 
-          for (pt = 0; pt < 6; pt++) {
-            vertex(x + cos(radians(ang + pt * 60)) * sz + offset,
-              y + sin(radians(ang + pt * 60)) * sz + offset);
-          }
+          // for (pt = 0; pt < 6; pt++) {
+          //   vertex(x + cos(radians(ang + pt * 60)) * sz + offset,
+          //     y + sin(radians(ang + pt * 60)) * sz + offset);
+          // }
 
-          endShape(CLOSE);
+          // endShape(CLOSE);
 
         };
 
