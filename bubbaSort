@@ -34,6 +34,13 @@
 
   };
 
+  let bubbaData0;
+  let bubbaData1;
+  let bubbaData2;
+  let bubbaData3;
+  let bubbaData4;
+  let bubbaData5;
+
   class data {
 
     constructor(n=round(random(10,400)), x=0, y=0, w=100, h=100, min=0, max=100, sort=SORT_METHODS.BUBBLE){
@@ -45,16 +52,21 @@
       this.w          = w;
       this.h          = h;
 
+      this.i          = 0;
+      this.j          = 0;
+
       this.values     = [];
 
       this.min        = min;
       this.max        = max;
 
-      this.sortMethod = sort;
+      this.sortMethod = SORT_METHODS.BUBBLE;
 
       this.dataCursor = 0;
 
       this.selected   = false;
+
+      this.running    = true;
 
     }
 
@@ -92,6 +104,63 @@
       return nodeCopy;
 
     }
+    swap(m,n){
+
+      let temp=this.values[n];   
+      this.values[n]=this.values[m];
+      this.values[m]=temp;
+      
+    }
+    bubbaSort(){};
+    bubbleSort(){
+
+      if(this.values[this.j]>this.values[this.j+1]){
+
+        this.swap(this.j, this.j+1);
+        // print(this.i+":"+this.j);
+      }
+
+      this.j++;
+
+      if(this.j>this.n-2){
+        
+        this.j=0;
+        this.i++;
+
+        if(this.i>this.n-2){
+          this.i=0;
+          this.j=0;
+          this.running=false;
+          print("Done");
+          this.values.reverse();
+        }
+
+      }
+
+    }
+    gnomeSort(){};
+    insertionSort(){};
+    mergeSort(){};
+    radixSort(){};
+    selctionSort(){};
+
+    sort(){
+
+      switch(this.sortMethod){
+
+        case SORT_METHODS.BUBBA:      this.bubbaSort();     break;
+        case SORT_METHODS.BUBBLE:     this.bubbleSort();    break;
+        case SORT_METHODS.GNOME:      this.gnomeSort();     break;
+        case SORT_METHODS.INSERTION:  this.insertionSort(); break;
+        case SORT_METHODS.MERGE:      this.mergeSort();     break;
+        case SORT_METHODS.RADIX:      this.radixSort();     break;
+        case SORT_METHODS.SELECTION:  this.selectionSort(); break;
+
+        default:                                            break;
+
+      }
+
+    }
     draw(){
 
       push();
@@ -115,13 +184,13 @@
         
         for(let i=0; i<this.n; i++){
 
-          x=10+i*w;
-          h=this.h/this.max*this.values[i]-20;
+          x=10+i*w+w/2;
+          h=this.values[i]/this.max*(this.h-20);
 
-          stroke(255-h,0,0);
+          stroke(h/this.max*200,0,0);
 
-          line(x+w/2, this.h-10,
-               x+w/2, this.h-h-10);
+          line(x, this.h-10,
+               x, this.h-10-h);
 
         }
 
@@ -143,6 +212,10 @@
           text(this.n,this.w-5,5);
 
       pop();
+
+      // if(this.running){
+        this.sort();
+      // }
 
     }
     load(){
@@ -229,8 +302,6 @@
 
   }
 
-  let bubbaData;
-  
   function refresh(){
 
     values=[];
@@ -238,38 +309,36 @@
     loadValues();
     setLimits();
 
-    bubbaData0 = new data(100, 10, 10,500,250,100,300);
-    bubbaData0.sortMethod=SORT_METHODS.INSERTION;
+    bubbaData0 = new data(12, 10, 10,500,350,0,300);
+    bubbaData0.sortMethod=SORT_METHODS.BUBBLE;
 
-    bubbaData1 = new data(200,520, 10,500,250,100,300);
-    bubbaData1.sortMethod=SORT_METHODS.MERGE;
+    bubbaData1 = new data(25,520, 10,500,350,40,300);
+    bubbaData1.sortMethod=SORT_METHODS.BUBBLE;
 
-    bubbaData2 = new data(300, 10,270,500,250,100,300);
-    bubbaData2.sortMethod=SORT_METHODS.BUBBA;
+    bubbaData2 = new data(30, 10,380,500,350,90,300);
+    bubbaData2.sortMethod=SORT_METHODS.BUBBLE;
 
-    bubbaData3 = new data(400,520,270,500,250,100,300);
-    bubbaData3.sortMethod=SORT_METHODS.RADIX;
+    bubbaData3 = new data(391,520,380,500,350,23,300);
+    bubbaData3.sortMethod=SORT_METHODS.BUBBLE;
 
-    bubbaData4 = new data(50, 10,530,500,250,100,300);
-    bubbaData4.sortMethod=SORT_METHODS.GNOME;
+    // bubbaData4 = new data(50, 10,530,500,250,100,300);
+    // bubbaData4.sortMethod=SORT_METHODS.GNOME;
 
-    bubbaData5 = new data(20,520,530,500,250,100,300);
-    bubbaData5.sortMethod=SORT_METHODS.SELECTION;
+    // bubbaData5 = new data(20,520,530,500,250,100,300);
+    // bubbaData5.sortMethod=SORT_METHODS.SELECTION;
 
     bubbaData0.load();
     bubbaData1.load();
     bubbaData2.load();
     bubbaData3.load();
-    bubbaData4.load();
-    bubbaData5.load();
+    // bubbaData4.load();
+    // bubbaData5.load();
 
   }
   function setup(){
 
     noCursor();
 
-    frameRate(200);
-    
     createCanvas(windowWidth-20, 790);
 
     noStroke();
@@ -360,7 +429,7 @@
     }
 
     // In order to divide the array in half, we need to figure out the middle
-    const middle=Math.floor(arr.length/2);
+    const middle=floor(arr.length/2);
   
     // This is where we will be dividing the array into left and right
     const left = arr.slice(0, middle);
@@ -777,10 +846,12 @@
     bubbaData1.draw();
     bubbaData2.draw();
     bubbaData3.draw();
-    bubbaData4.draw();
-    bubbaData5.draw();
+    // bubbaData4.draw();
+    // bubbaData5.draw();
 
     drawCursor();
+
+    // print(round(frameRate()));
 
   }
   function mouseMoved(){
