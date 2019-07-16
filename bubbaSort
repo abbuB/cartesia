@@ -1,13 +1,13 @@
 {
 
-  let values      = [];
+  // let values    = [];
 
-  let limit     = 600;
+  // let limit     = 600;
   let counter   = 0;
   let score     = 0;
 
-  let min       = Infinity;
-  let max       =-Infinity;
+  // let min       = Infinity;
+  // let max       =-Infinity;
 
   let N         = 1;
   let i         = 1;
@@ -41,6 +41,18 @@
   let bubbaData4;
   let bubbaData5;
 
+  class number {
+
+    constructor(n=0, index=-1){
+      
+      this.value  = n;
+
+      this.index  = index;
+
+    }
+
+  };
+
   class data {
 
     constructor(n=round(random(10,400)), x=0, y=0, w=100, h=100, min=0, max=100, sort=SORT_METHODS.BUBBLE){
@@ -60,7 +72,7 @@
       this.min        = min;
       this.max        = max;
 
-      this.sortMethod = SORT_METHODS.BUBBLE;
+      this.sortMethod = sort;
 
       this.dataCursor = 0;
 
@@ -68,10 +80,50 @@
 
       this.running    = true;
 
-    }
+      this.load();
 
+    }
+    load(){
+
+      let p=this;
+
+      function setLimits(){
+    
+        let value=null;
+        
+        let minIndex=0;
+        let maxIndex=0;
+    
+        let minVal=Infinity;
+        let maxVal=-Infinity;
+
+        //  Find max and min values
+        for(let n=0; n<p.n; n++){
+    
+          value=p.values[n];
+    
+          if(value>maxVal){ maxVal=value; maxIndex=n; }
+          if(value<minVal){ minVal=value; minIndex=n; }
+    
+        }
+    
+        // Place max and min value
+        p.swap(0,                 minIndex);
+        p.swap(p.values.length-1, maxIndex);
+    
+      }
+
+      for(let n=0; n<p.n; n++){
+        p.values.push(random(p.min,p.max));
+      }
+
+      setLimits();
+
+    }
     increment(){
       
+      this.j++;
+
       this.valuesCursor++;
       
       if(this.valuesCursor==this.limit){
@@ -111,134 +163,243 @@
       this.values[m]=temp;
       
     }
-    bubbaSort(){};
-    bubbleSort(){
+    randomizeValues(){
 
-      if(this.values[this.j]>this.values[this.j+1]){
-
-        this.swap(this.j, this.j+1);
-        // print(this.i+":"+this.j);
+      for(let n=0; n<this.values.length; n++) {
+        this.swap(n, round(random(this.values.length-1)));
       }
-
-      this.j++;
-
-      if(this.j>this.n-2){
-        
-        this.j=0;
-        this.i++;
-
-        if(this.i>this.n-2){
-          this.i=0;
-          this.j=0;
-          this.running=false;
-          print("Done");
-          this.values.reverse();
-        }
-
-      }
-
-    }
-    gnomeSort(){};
-    insertionSort(){};
-    mergeSort(){};
-    radixSort(){};
-    selctionSort(){};
+  
+    };
 
     sort(){
 
+      let p=this;
+
+      function bubbaSort(){
+
+        let arr=[];
+
+        arr[0]=[p.values[0]];
+        arr[p.values.length-1]=[p.values[p.values.length-1]];
+
+        for(let n=1; n<p.values.length-1; n++){
+
+          let index=round(norm(p.values[n], p.min, p.max)*p.n);
+
+          if(arr[index]==undefined){
+            arr[index]=[p.values[n]];
+          }
+          else{
+            arr[index].push(p.values[n]);
+          }
+
+        }
+
+        let newArray=[];
+
+        for(let n=0; n<arr.length; n++){
+
+          if(arr[n]!=undefined){
+
+            for(let index=0; index<arr[n].length; index++){
+
+              newArray.push(arr[n][index]);
+
+            }
+
+          }
+        }
+
+        arrayCopy(newArray,p.values);
+
+        running=false;
+
+        function getCount(){
+        
+          let count=0;
+
+          for(let n=0; n<p.values.length-1; n++){
+
+            if(p.values[n]>p.values[n+1]){
+              count++;
+            }
+
+          }
+
+          return count;
+
+        }
+
+        while(getCount()>0){
+
+          print(getCount());
+
+          for(let n=0; n<p.values.length-1; n++){
+
+            if(p.values[n]>p.values[n+1]){
+              p.swap(n,n+1);
+            }
+
+          }
+
+        }
+
+      };      
+      function bubbleSort(){
+
+        if(p.values[p.j]>p.values[p.j+1]){
+  
+          p.swap(p.j, p.j+1);
+          // print(this.i+":"+this.j);
+        }
+  
+        p.j++;
+  
+        if(p.j>p.n-1){
+          
+          p.j=0;
+          p.i++;
+  
+          if(p.i>p.n-1){
+            p.i=0;
+            p.j=0;
+            running=false;
+            p.randomizeValues();
+          }
+
+        }    
+  
+      }
+      function gnomeSort(){};
+      function insertionSort(){
+
+        let vals=p.values;
+
+        if(vals[p.j+1]<vals[p.j]){
+
+          p.swap(p.j+1,p.j);
+
+        }
+
+        if(p.j==0){
+          p.i++;
+          p.j=p.i-1;          
+        }
+        else{
+          p.j--;
+        }
+
+        if(p.i==vals.length){
+          p.i=1;
+          p.j=1;
+          p.randomizeValues();
+        }
+
+      };
+      function mergeSort(){};
+      function radixSort(){};
+      function selectionSort(){};      
+
       switch(this.sortMethod){
 
-        case SORT_METHODS.BUBBA:      this.bubbaSort();     break;
-        case SORT_METHODS.BUBBLE:     this.bubbleSort();    break;
-        case SORT_METHODS.GNOME:      this.gnomeSort();     break;
-        case SORT_METHODS.INSERTION:  this.insertionSort(); break;
-        case SORT_METHODS.MERGE:      this.mergeSort();     break;
-        case SORT_METHODS.RADIX:      this.radixSort();     break;
-        case SORT_METHODS.SELECTION:  this.selectionSort(); break;
+        case SORT_METHODS.BUBBA:      bubbaSort();      break;
+        case SORT_METHODS.BUBBLE:     bubbleSort();     break;
+        case SORT_METHODS.GNOME:      gnomeSort();      break;
+        case SORT_METHODS.INSERTION:  insertionSort();  break;
+        case SORT_METHODS.MERGE:      mergeSort();      break;
+        case SORT_METHODS.RADIX:      radixSort();      break;
+        case SORT_METHODS.SELECTION:  selectionSort();  break;
 
-        default:                                            break;
+        default:                                        break;
 
       }
 
     }
     draw(){
 
-      push();
+      let p=this;
 
-        translate(this.x+0.5,this.y+0.5);
-        
-        //  Border
+      function border(){
+
         strokeWeight(0.5);
-        stroke(0);
-        fill(232);
+        stroke(96);
+        fill(48);
 
-          rect(0,0,this.w,this.h);
+          rect(0,0,p.w,p.h,2);
+          
+      }      
+      function gui(){
 
+        //  Graph
         let x;
         let h;
-        let w=(this.w-20)/this.n;
+        let w=(p.w-20)/p.n;
 
         noFill();
         strokeWeight(w);
         stroke(128,0,0,128);
         
-        for(let i=0; i<this.n; i++){
+          for(let i=0; i<p.n; i++){
 
-          x=10+i*w+w/2;
-          h=this.values[i]/this.max*(this.h-20);
+            x=10+i*w+w/2;
+            h=p.values[i]/p.max*(p.h-20);
 
-          stroke(h/this.max*200,0,0);
+            stroke(lerp(0,164,p.values[i]/p.max),0,0);
 
-          line(x, this.h-10,
-               x, this.h-10-h);
+            line(x, p.h-10,
+                 x, p.h-10-h);
 
-        }
+          }
 
+stroke(128);
+strokeWeight(1);
+
+          let min=p.values[0]/p.max*(p.h-20);
+          let max=p.values[p.values.length-1]/p.max*(p.h-20);
+
+          if(min==NaN){ min = p.h-10; print(min + " : " + max); }
+          if(max==NaN){ max = p.h-p.max-10; }
+
+          line(10,     p.h-min-10,
+               p.w-10, p.h-max-10);
+
+        //  Bottom line
         stroke(128,128);
         strokeWeight(3);
 
-          line(8, this.h-8, this.w-8, this.h-8);
-
+          line(8, p.h-8, p.w-8, p.h-8);
+        
+        //  Details
         textSize(24);
         textAlign(LEFT,TOP);
         noStroke();
-        fill(0,56,0);
+        fill(128,128,0);
 
-          text(this.sortMethod,5,5);
-
+          text(p.sortMethod,5,5);
+  
         textSize(12);
         textAlign(RIGHT,TOP);
 
-          text(this.n,this.w-5,5);
+          text(p.n,p.w-5,5);
+
+      }
+      push();
+
+        translate(p.x+0.5,p.y+0.5);
+        
+          border();
+          gui();
 
       pop();
 
-      // if(this.running){
+      if(running){
         this.sort();
-      // }
-
-    }
-    load(){
-
-      // if(isRandom){
-
-        this.values=[];
-
-        for(let n=0; n<this.n; n++){
-          this.values.push(random(this.min,this.max));
-        }
-
-      // }
-      // else{
-      //   print("Non-random data");
-      // }
+      }
 
     }
 
   }
 
-
-// print(random(100,200));
   function swap(m,n){
 
     let temp=values[n];   
@@ -304,33 +465,23 @@
 
   function refresh(){
 
-    values=[];
+    // values=[];
 
-    loadValues();
-    setLimits();
+    // loadValues();
+    // setLimits();
 
-    bubbaData0 = new data(12, 10, 10,500,350,0,300);
-    bubbaData0.sortMethod=SORT_METHODS.BUBBLE;
+    bubbaData0 = new data(100, 10, 10,500,350, 0,300,SORT_METHODS.BUBBA    );
+    bubbaData1 = new data( 20,520, 10,500,350,40,300,SORT_METHODS.INSERTION);
+    bubbaData2 = new data( 30, 10,380,500,350,90,300,SORT_METHODS.BUBBLE   );
+    bubbaData3 = new data( 50,520,380,500,350,23,300,SORT_METHODS.INSERTION);
 
-    bubbaData1 = new data(25,520, 10,500,350,40,300);
-    bubbaData1.sortMethod=SORT_METHODS.BUBBLE;
+    // bubbaData4 = new data(50, 10,530,500,250,100,300,SORT_METHODS.GNOME);
+    // bubbaData5 = new data(20,520,530,500,250,100,300,SORT_METHODS.RADIX);
 
-    bubbaData2 = new data(30, 10,380,500,350,90,300);
-    bubbaData2.sortMethod=SORT_METHODS.BUBBLE;
-
-    bubbaData3 = new data(391,520,380,500,350,23,300);
-    bubbaData3.sortMethod=SORT_METHODS.BUBBLE;
-
-    // bubbaData4 = new data(50, 10,530,500,250,100,300);
-    // bubbaData4.sortMethod=SORT_METHODS.GNOME;
-
-    // bubbaData5 = new data(20,520,530,500,250,100,300);
-    // bubbaData5.sortMethod=SORT_METHODS.SELECTION;
-
-    bubbaData0.load();
-    bubbaData1.load();
-    bubbaData2.load();
-    bubbaData3.load();
+    // bubbaData0.load();
+    // bubbaData1.load();
+    // bubbaData2.load();
+    // bubbaData3.load();
     // bubbaData4.load();
     // bubbaData5.load();
 
@@ -751,7 +902,7 @@
       translate(0.5,0.5);
 
         noFill();
-        stroke(64);
+        stroke(164);
         strokeWeight(0.5);    
 
           line(       0, mouseY, mouseX-5, mouseY);
@@ -768,7 +919,7 @@
 
   function draw(){
 
-    background(220);
+    background(16);
 
   //   if(running){
 
