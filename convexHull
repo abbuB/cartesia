@@ -1,37 +1,47 @@
   // Does the algorithm get more efficient as the # of nodes increases?
   // You only need to iterate 3-4% of possible cycles with 10,000,000 nodes
 
-  let points    = [];     //  All points
-  let potential = [];     //  Possible hull points
-  let hull      = [];     //  Only hull points
+{
 
-  let centre;             //  Point used to determine convexity
+  let nodes       = [];     //  All nodes
+  let candidates  = [];     //  Possible hull nodes
+  let hull        = [];     //  Only hull nodes
 
-  let domain    = -1;
-  let range     = -1;
+  let centre;               //  Point used to determine convexity
+
+  let topLeft     = -1;
+  let topRight    = -1;
+  let bottomLeft  = -1;
+  let bottomRight = -1;
+
+  let purged      = false;
+
+  let domain      = -1;
+  let range       = -1;
 
   let nod0;
   let nod1;
   let nod2;
 
-  let running   = false;
+  let running         = false;
+  let sorted          = false;
 
-  let buffer    = 20;
+  let buffer          = 20;
+  let candidateCount  = 0;
+  let extent          = -Infinity;
 
-  let extent    = -Infinity;
+  var radius          = Infinity;
+  var diameter        = 10;
 
-  var radius    = Infinity;
-  var diameter  = Infinity;
-
-  const limit   = 13163;  //  3163 squared is approx 10,000,000
-  // const limit   = 1000;
+  // const limit   = 3163;  //  3163 squared is approx 10,000,000
+  const limit     = 143;
 
   class node {
     
     constructor(n=0, x=-1, y=-1){
 
-      this.id       = n;      //  points array index
-      this.pid      = null;   //  potential array list index
+      this.id       = n;      //  nodes array index
+      this.pid      = null;   //  candidate array list index
 
       this.x        = x;
       this.y        = y;
@@ -39,7 +49,7 @@
       this.next     = null;
       this.previous = null;
 
-      this.hull     = true;   //  Points are opt-out for the hull
+      this.hull     = true;   //  nodes are opt-out for the hull
 
       this.selected = false;
 
@@ -64,7 +74,40 @@
 
   }
 
-  function loadPoints() {
+  function setup(){
+
+    // frameRate(100);
+    noCursor();
+
+    "use strict"; 
+
+    createCanvas(windowWidth-50, windowHeight-50);
+
+    strokeJoin(BEVEL);
+
+    if(width>height){ extent=height; }
+    else            { extent=width;  }
+
+    // diameter=extent-2*buffer;
+    radius=diameter/2;
+
+    loadNodes();
+
+    centre=new node("C", width/2, height/2);
+
+    nod0=candidates[0];
+
+  }; 
+
+  function swap(m,n){
+
+    let temp=nodes[n];   
+    nodes[n]=nodes[m];
+    nodes[m]=temp;
+    
+  }
+
+  function loadNodes(){
     
     let x         = -1;
     let y         = -1;
@@ -73,117 +116,98 @@
     let maxX      = 0;
     let minY      = Infinity;
     let maxY      = 0;
-    
+
     let theta     = 0;
-    
-    for (let n=0; n<limit; n++) {
-      
+
+    let topLeftDist=Infinity;
+    let topRightDist=Infinity;
+    let bottomLeftDist=Infinity;
+    let bottomRightDist=Infinity;
+
+    for(let n=0; n<limit; n++){
+
       theta=random(0,360);
       radius=random(0,extent/2-buffer);
-      
+
       // x=cos(theta)*radius+width/2;
       // y=sin(theta)*radius+height/2;
 
       x=round(random(buffer, width-buffer ));
       y=round(random(buffer, height-buffer));
-      
+
       if(x<minX){ minX=x; }
       if(x>maxX){ maxX=x; }
       if(y<minY){ minY=y; }
       if(y>maxY){ maxY=y; }
 
-      points.push(new node(n,x,y));
+      nodes.push(new node(n,x,y));
+
+      let d=dist(0,0,nodes[n].x,nodes[n].y);
+
+      if(d<topLeftDist     ){ topLeft=nodes[n];
+                              topLeftDist=d;      }
+
+      d=dist(width,0,nodes[n].x,nodes[n].y);
+
+      if(d<topRightDist    ){ topRight=nodes[n];
+                              topRightDist=d;     }
+
+      d=dist(width,height,nodes[n].x,nodes[n].y);
+
+      if(d<bottomRightDist){ bottomRight=nodes[n];
+                             bottomRightDist=d;   }
+
+      d=dist(0,height,nodes[n].x,nodes[n].y);
+
+      if(d<bottomLeftDist ){ bottomLeft=nodes[n];
+                             bottomLeftDist=d;    }
+    }
+
+    count=nodes.length;
+
+    // Sort nodes for demo purposes
+    if(sorted){
+
+      for(let n=0; n<limit; n++){
+        for(let m=0; m<limit; m++){
+          
+          if(nodes[n].y>nodes[m].y){
+            swap(n,m);
+          }
+
+        }
+      }
 
     }
 
   }
 
-  // Eliminate Non-Hull points.
-  function loadPotential() {
+  let m=0;
+  let n=0;
+  
+  let q1=false;
+  let q2=false;
+  let q3=false;
+  let q4=false;
+  
+  let counter=0;
 
-    potential=[];
-    
-    let counter=0;
+  function loadLinkedList(){
 
-    let q1=false;
-    let q2=false;
-    let q3=false;
-    let q4=false;
-
-    for(var n=0; n<points.length; n++){
-      for(var m=0; m<points.length; m++){
-
-        if(points[m].x > points[n].x &&
-           points[m].y < points[n].y){
-          q1=true;
-        }
-
-        if(points[m].x < points[n].x &&
-           points[m].y < points[n].y){
-          q2=true;
-        }
-
-        if(points[m].x < points[n].x &&
-           points[m].y > points[n].y){
-          q3=true;
-        }
-
-        if(points[m].x > points[n].x &&
-           points[m].y > points[n].y){
-          q4=true;
-        }
-
-        if(q1 && q2 && q3 && q4){
-
-          points[n].hull=false;
-
-          // Point has been eliminated so exit loop
-          break;
-
-        }
-
-        counter++;
-
-      }
-
-      q1=false;
-      q2=false;
-      q3=false;
-      q4=false;
-
-    }
-
-    //  Create copies in the potential array
-    for(let n=0; n<points.length; n++){
-
-      if(points[n].hull){
-        potential.push(points[n].copy(potential.length-1));
-      }
-
-    }
-
-    // How many comparisons were needed?
-    print("Comparisons:      " + counter + " : " + (limit*limit) + " : " + nf((counter / (limit * limit) * 100), 1, 2) + "%");
-    print("Potential length: " + potential.length);
-
-  }
-
-  function loadLinkedList() {
-
-    let nod=potential[0];
+    let nod=candidates[0];
 
     function setNext(nod) {
 
       let min=Infinity;
       let index=-1;
 
-      for(let n=0; n<potential.length; n++){
+      for(let n=0; n<candidates.length; n++){
 
         if(nod.id!=n &&
-           potential[n].selected==false){
+          candidates[n].selected==false){
 
-          d=dist(potential[n].x,
-                 potential[n].y,
+          d=dist(candidates[n].x,
+            candidates[n].y,
                  nod.x,
                  nod.y);
 
@@ -196,11 +220,11 @@
 
       }
 
-      nod.next=potential[index];
+      nod.next=candidates[index];
 
     }
 
-    for(let n=0; n<potential.length; n++){
+    for(let n=0; n<candidates.length; n++){
 
       nod.pid=n;
       nod.selected=true;
@@ -211,8 +235,8 @@
         nod.next.previous=nod;
       }
       else{
-        nod.next=potential[0];
-        potential[0].previous=nod;
+        nod.next=candidates[0];
+        candidates[0].previous=nod;
       }
 
       nod=nod.next
@@ -220,45 +244,110 @@
     }
 
   }
-  
-  function setup(){
+  function calculateCandidates(){
 
-    "use strict"; 
+    candidateCount=0;
 
-    createCanvas(windowWidth-50, windowHeight-50);
+    for(let n=0; n<nodes.length; n++){
+      if(nodes[n].hull){
+        nodes[n].pid=candidateCount;
+        candidateCount++;
+        candidates.push(nodes[n]);
+      }
+    }
 
-    strokeJoin(BEVEL);
+  }
+  // Eliminate Non-Hull nodes.
+  function loadCandidates(){
 
-    if(width>height){ extent=height; }
-    else            { extent=width;  }
+    if(nodes[m].x > nodes[n].x &&
+       nodes[m].y < nodes[n].y){  q1=true;  } //  Quadrant #1
 
-    diameter=extent-2*buffer;
-    radius=diameter/2;
+    if(nodes[m].x < nodes[n].x &&
+       nodes[m].y < nodes[n].y){  q2=true;  } //  Quadrant #2
 
-    for(var n=0; n<1; n++){ // Loop was used to test loading speed
-      loadPoints();
-      loadPotential();
+    if(nodes[m].x < nodes[n].x &&
+       nodes[m].y > nodes[n].y){  q3=true;  } //  Quadrant #3
+
+    if(nodes[m].x > nodes[n].x &&
+       nodes[m].y > nodes[n].y){  q4=true;  } //  Quadrant #4
+
+    if(q1 && q2 && q3 && q4){
+
+      nodes[n].hull=false;
+
+      q1=false;
+      q2=false;
+      q3=false;
+      q4=false;
+
+      n++;
+
+      if(n>floor(limit/10) &&
+         sorted){ m=floor(n-limit/10); }
+      else      { m=0                  }
+
+      // print(n);
+      counter++;
+      // Point has been eliminated so exit loop
+      
+    }
+    else{
+
+      m++;
+      
+      if(m==nodes.length){        
+        m=0
+        n++;
+      }
+
+    }
+
+    if(n==nodes.length){
+      
+      purged=true;      
+      running=false;
+      
+      calculateCandidates();
       loadLinkedList();
-    }  
+      
+      nod0=candidates[0];
+      nod1=nod0.next;
+      nod2=nod1.next;
 
-    centre=new node("C", width/2, height/2);
+      calculateHull();
+    }
 
-    nod0=potential[0];
+  }
 
-  };  
-
-  function drawPoints() {
+  function drawNodes(){
 
     fill(255);
     noStroke();
+    let r=0;
 
-      for(let p=0; p<points.length; p++){
-        ellipse(points[p].x, points[p].y, 1, 1);
+      for(let p=0; p<nodes.length; p++){
+
+        if(nodes[p].hull){ fill(255,255,0); r=3; }
+        else             { fill(255);       r=1; }
+
+          ellipse(nodes[p].x, nodes[p].y, r, r);
+
+          if(nodes[p].hull && purged){
+
+            fill(255, 255, 255);
+            textSize(16);
+            text(nodes[p].pid,
+                 nodes[p].x+5,
+                 nodes[p].y-5);
+
+          }
+
       }
 
   }
 
-  function drawPotential(){
+  function drawCandidates(){
 
     stroke(128);
     strokeWeight(1);
@@ -266,12 +355,12 @@
 
     beginShape();
 
-      let nod=nod0;
+      let nod=candidates[0];
 
-      for(let n=0; n<potential.length; n++){
+      for(let n=0; n<candidates.length; n++){
 
         if(nod.hull){
-          
+
           vertex(nod.x, nod.y);
           
           nod=nod.next;
@@ -284,26 +373,26 @@
 
     endShape();
 
-    noStroke();
-    textSize(10);
+    // noStroke();
+    // textSize(10);
 
-    for(let p=0; p<potential.length; p++){
+    // for(let p=0; p<candidates.length; p++){
 
-      if(potential[p].hull){ fill(255, 255, 0, 255); }
-      else                 { fill(255, 255, 0,  32); }
+    //   if(candidates[p].hull){ fill(255, 255, 0, 255); }
+    //   else                 { fill(255, 255, 0,  32); }
 
-        ellipse(potential[p].x, potential[p].y, 5, 5);
+    //     ellipse(candidates[p].x, candidates[p].y, 5, 5);
 
-      if(potential[p].hull){
+    //   if(candidates[p].hull){
       
-        fill(255, 255, 255);
+    //     fill(255, 255, 255);
     
-         text(potential[p].pid,
-              potential[p].x+5,
-              potential[p].y-5);    
-      }
+    //      text(candidates[p].pid,
+    //           candidates[p].x+5,
+    //           candidates[p].y-5);
+    //   }
     
-    }
+    // }
 
   }
 
@@ -357,7 +446,7 @@
     }
     function hullHit(centre,p0,p1,p2){
 
-      // If the large triangle is smaller the sum of the other 2, the points are convex
+      // If the large triangle is smaller the sum of the other 2, the nodes are convex
       let largeTriangle  = triangleArea(centre,p0,p2);
       let smallTriangles = triangleArea(centre, p0, p1) + triangleArea(centre, p1, p2);
 
@@ -381,8 +470,6 @@
         nod0.next=nod2;
         nod2.previous=nod0;
 
-        // potential.splice(nod1.pid,1);
-        
         nod0=nod0.previous;
       
       }
@@ -397,38 +484,120 @@
   }
   function drawCentre(){
 
-    fill(0);
-    stroke(0,64,0,128);
-    strokeWeight(3);
+    fill(0,128,0,128);
+    noStroke();
   
       ellipse(centre.x,centre.y,diameter,diameter);
 
   }
   function drawGUI(){
 
-
+    fill(16);
     noStroke();
+
+      rect(10,10,width-10, height-10);
+
     fill(128);
     textSize(36);
     textAlign(CENTER,CENTER);
     
       if(!running){ text("Click to begin", centre.x, centre.y-100); }
-      else        { text(potential.length, centre.x, centre.y-100); }
+      else        { text("Click to pause", centre.x, centre.y-100); }
       
   }
+  function drawCursor(){
+
+    noFill();
+    stroke(212);
+
+    if(running){ strokeWeight(1.5);    }
+    else       { strokeWeight(0.5);    }
+
+      line(       0, mouseY, mouseX-5, mouseY);
+      line(mouseX+5, mouseY,    width, mouseY);
+
+      line(mouseX,        0, mouseX, mouseY-5);
+      line(mouseX, mouseY+5, mouseX, height);
+
+      ellipse(mouseX,mouseY,10,10);
+
+    if(running){
+    
+      textSize(24);
+      fill(212);
+      noStroke();
+
+      textAlign(LEFT,BOTTOM);
+
+        text("1", mouseX+20, mouseY-20);
+
+      textAlign(RIGHT,BOTTOM);
+      
+        text("2", mouseX-20, mouseY-20);
+
+      textAlign(RIGHT,TOP);
+      
+        text("3", mouseX-20, mouseY+20);
+      
+      textAlign(LEFT,TOP);
+      
+        text("4", mouseX+20, mouseY+20);
+    }
+
+  }  
   function draw(){
 
     push();
 
       translate(0.5,0.5);
 
-        background(16);
+        background(0);
 
-        drawPoints();
-        drawPotential();
-        calculateHull();
-        
+        if(!purged && running){
+          
+          for(let n=0; n<floor(limit/10); n++){
+            
+            if(running){
+              loadCandidates();              
+            }
+
+          }
+
+        }
+
+        noStroke();
+        fill(128);
+        textSize(24);
+        textAlign(LEFT,TOP);
+
+          text(count,10,10);
+
         drawGUI();
+
+        if(candidates.length!=0){
+          drawCandidates();
+          calculateHull();
+        }
+
+        drawNodes();
+
+        if(!purged && running){
+
+          mouseX=nodes[n].x;
+          mouseY=nodes[n].y;
+
+          fill(16,50);
+          noStroke();
+
+          if(q1){ rect(nodes[n].x, 0, width-nodes[n].x, nodes[n].y);                 }
+          if(q2){ rect(0, 0, nodes[n].x, nodes[n].y);                                }
+          if(q3){ rect(0, nodes[n].y, nodes[n].x, height-nodes[n].y);                }
+          if(q4){ rect(nodes[n].x, nodes[n].y, width-nodes[n].x, height-nodes[n].y); }
+
+        }
+
+        drawCentre();
+        drawCursor();
 
     pop();
 
@@ -445,3 +614,47 @@
     print("doubleClicked");
   
   }
+
+}
+
+/*  
+  *
++stackoverflow.com
++khanacademy.org
++codecogs.com/latex/eqneditor.php
++youtube.com
++mail.google.com
++bradsiemens.com
++processingjs.org
++processing.org
+forum.processing.org
++wikipedia.org
++google.com
++w3schools.com
++touchmathematics.org
++desmos.com
++github.com
++emptyblack.com
++redblobgames.com
++dailymotion.com
++pistolslut.com
++latin-phrases.co.uk/quotes/beginning-end
++code.org
++natureofcode.com
++alssndro.github.io/trianglify-background-generator
++p5js.org
++google.ca
++projecteuler.net
++www.numberempire.com
++oeis.org
++math.stackexchange.com
++jasondavies.com
++developer.mozilla.org
++docs.oracle.com
++www.mathopenref.com
++alpha.editor.p5js.org
++en.wikibooks.org
++upload.wikimedia.org
++viterbipk12.usc.edu
+
+*/
