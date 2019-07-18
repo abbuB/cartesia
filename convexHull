@@ -1,5 +1,5 @@
   // Does the algorithm get more efficient as the # of nodes increases?
-  // You only need to iterate 3-4% of possible cycles with 10,000,000 nodes
+  // You only need to iterate 3-4% of possible cycles with 10,000,000 possibilities
 
 {
 
@@ -24,27 +24,39 @@
   let nod2;
 
   let running         = false;
-  let sorted          = false;
+  let sorted          = true;
 
   let buffer          = 20;
   let candidateCount  = 0;
   let extent          = -Infinity;
 
-  var radius          = Infinity;
-  var diameter        = 10;
+  let radius          = Infinity;
+  let diameter        = 10;
+
+  // let m=0;
+  // let n=0;
+  
+  let q1=false;
+  let q2=false;
+  let q3=false;
+  let q4=false;
+  
+  // let counter=0;
 
   // const limit   = 3163;  //  3163 squared is approx 10,000,000
-  const limit     = 143;
+  const limit     = 1143;
 
   class node {
     
     constructor(n=0, x=-1, y=-1){
 
       this.id       = n;      //  nodes array index
-      this.pid      = null;   //  candidate array list index
+      this.cid      = null;   //  candidate array list index
 
       this.x        = x;
       this.y        = y;
+
+      this.theta    = -Infinity;
 
       this.next     = null;
       this.previous = null;
@@ -55,20 +67,20 @@
 
     }
 
-    copy(pid){
+    clone(cid){
 
-      var nodeCopy=new node(this.id, this.x, this.y);
+      var nClone=new node(this.id, this.x, this.y);
 
-      nodeCopy.pid      = pid;
+      nClone.cid      = cid;
 
-      nodeCopy.next     = this.next;
-      nodeCopy.previous = this.previous;
+      nClone.next     = this.next;
+      nClone.previous = this.previous;
 
-      nodeCopy.hull     = this.hull;
+      nClone.hull     = this.hull;
 
-      nodeCopy.selected = this.selected;
+      nClone.selected = this.selected;
 
-      return nodeCopy;
+      return nClone;
 
     }
 
@@ -91,11 +103,11 @@
     // diameter=extent-2*buffer;
     radius=diameter/2;
 
+    centre=new node("C", 0, 0);
+
     loadNodes();
 
-    centre=new node("C", width/2, height/2);
-
-    nod0=candidates[0];
+    // nod0=candidates[0];
 
   }; 
 
@@ -117,23 +129,27 @@
     let minY      = Infinity;
     let maxY      = 0;
 
-    let theta     = 0;
+    // let theta     = 0;
 
-    let topLeftDist=Infinity;
-    let topRightDist=Infinity;
-    let bottomLeftDist=Infinity;
-    let bottomRightDist=Infinity;
+    // let topLeftDist=Infinity;
+    // let topRightDist=Infinity;
+    // let bottomLeftDist=Infinity;
+    // let bottomRightDist=Infinity;
+    push();
+
+      translate(width/2,height/2);
+      // scale(1,-1);
 
     for(let n=0; n<limit; n++){
 
-      theta=random(0,360);
-      radius=random(0,extent/2-buffer);
+      // theta=random(0,360);
+      // radius=random(0,extent/2-buffer);
 
       // x=cos(theta)*radius+width/2;
       // y=sin(theta)*radius+height/2;
 
-      x=round(random(buffer, width-buffer ));
-      y=round(random(buffer, height-buffer));
+      x=round(random(buffer-width/2, width/2-buffer ));
+      y=round(random(buffer-height/2, height/2-buffer));
 
       if(x<minX){ minX=x; }
       if(x>maxX){ maxX=x; }
@@ -142,28 +158,42 @@
 
       nodes.push(new node(n,x,y));
 
-      let d=dist(0,0,nodes[n].x,nodes[n].y);
+      // let d=dist(0,0,nodes[n].x,nodes[n].y);
 
-      if(d<topLeftDist     ){ topLeft=nodes[n];
-                              topLeftDist=d;      }
+      // if(d<topLeftDist     ){ topLeft=nodes[n];
+      //                         topLeftDist=d;      }
 
-      d=dist(width,0,nodes[n].x,nodes[n].y);
+      // d=dist(width,0,nodes[n].x,nodes[n].y);
 
-      if(d<topRightDist    ){ topRight=nodes[n];
-                              topRightDist=d;     }
+      // if(d<topRightDist    ){ topRight=nodes[n];
+      //                         topRightDist=d;     }
 
-      d=dist(width,height,nodes[n].x,nodes[n].y);
+      // d=dist(width,height,nodes[n].x,nodes[n].y);
 
-      if(d<bottomRightDist){ bottomRight=nodes[n];
-                             bottomRightDist=d;   }
+      // if(d<bottomRightDist){ bottomRight=nodes[n];
+      //                        bottomRightDist=d;   }
 
-      d=dist(0,height,nodes[n].x,nodes[n].y);
+      // d=dist(0,height,nodes[n].x,nodes[n].y);
 
-      if(d<bottomLeftDist ){ bottomLeft=nodes[n];
-                             bottomLeftDist=d;    }
+      // if(d<bottomLeftDist ){ bottomLeft=nodes[n];
+      //                        bottomLeftDist=d;    }
     }
 
     count=nodes.length;
+
+    let theta=-Infinity;
+
+      for(let n=0; n<limit; n++){
+
+        theta=180/PI*atan2(nodes[n].y,nodes[n].x);
+
+        if(theta<0){ theta+=360; }
+
+        nodes[n].theta=theta;
+
+      }
+
+    pop();
 
     // Sort nodes for demo purposes
     if(sorted){
@@ -171,7 +201,7 @@
       for(let n=0; n<limit; n++){
         for(let m=0; m<limit; m++){
           
-          if(nodes[n].y>nodes[m].y){
+          if(nodes[n].theta>nodes[m].theta){
             swap(n,m);
           }
 
@@ -182,21 +212,11 @@
 
   }
 
-  let m=0;
-  let n=0;
-  
-  let q1=false;
-  let q2=false;
-  let q3=false;
-  let q4=false;
-  
-  let counter=0;
-
   function loadLinkedList(){
 
     let nod=candidates[0];
 
-    function setNext(nod) {
+    function setNext(nod){
 
       let min=Infinity;
       let index=-1;
@@ -204,10 +224,10 @@
       for(let n=0; n<candidates.length; n++){
 
         if(nod.id!=n &&
-          candidates[n].selected==false){
+           candidates[n].selected==false){
 
           d=dist(candidates[n].x,
-            candidates[n].y,
+                 candidates[n].y,
                  nod.x,
                  nod.y);
 
@@ -226,7 +246,7 @@
 
     for(let n=0; n<candidates.length; n++){
 
-      nod.pid=n;
+      // nod.cid=n;
       nod.selected=true;
 
       setNext(nod);
@@ -244,21 +264,69 @@
     }
 
   }
-  function calculateCandidates(){
+  function countCandidates(){
 
     candidateCount=0;
 
-    for(let n=0; n<nodes.length; n++){
+    for(let n=0; n<limit; n++){
+
       if(nodes[n].hull){
-        nodes[n].pid=candidateCount;
+        nodes[n].cid=candidateCount;
         candidateCount++;
-        candidates.push(nodes[n]);
+        candidates.push(nodes[n]);        
       }
+
     }
 
   }
-  // Eliminate Non-Hull nodes.
   function loadCandidates(){
+
+    for(let n=0; n<limit; n++){
+      for(let m=0; m<limit; m++){
+
+        if(nodes[m].x > nodes[n].x &&
+           nodes[m].y < nodes[n].y){  q1=true;  } //  Quadrant #1
+
+        if(nodes[m].x < nodes[n].x &&
+           nodes[m].y < nodes[n].y){  q2=true;  } //  Quadrant #2
+
+        if(nodes[m].x < nodes[n].x &&
+           nodes[m].y > nodes[n].y){  q3=true;  } //  Quadrant #3
+
+        if(nodes[m].x > nodes[n].x &&
+           nodes[m].y > nodes[n].y){  q4=true;  } //  Quadrant #4
+
+        if(q1 && q2 && q3 && q4){
+
+          nodes[n].hull=false;
+
+          q1=false;
+          q2=false;
+          q3=false;
+          q4=false;
+          
+          break;
+          
+        }
+
+      }
+    }
+      
+    purged=true;      
+    running=false;
+    
+    countCandidates();
+    loadLinkedList();
+    
+    nod0=candidates[0];
+    nod1=nod0.next;
+    nod2=nod1.next;
+
+    // calculateHull();
+
+  }
+  // Eliminate Non-Hull nodes.
+  function loadCandidatesSlow(){
 
     if(nodes[m].x > nodes[n].x &&
        nodes[m].y < nodes[n].y){  q1=true;  } //  Quadrant #1
@@ -308,7 +376,7 @@
       purged=true;      
       running=false;
       
-      calculateCandidates();
+      countCandidates();
       loadLinkedList();
       
       nod0=candidates[0];
@@ -316,6 +384,7 @@
       nod2=nod1.next;
 
       calculateHull();
+
     }
 
   }
@@ -326,7 +395,7 @@
     noStroke();
     let r=0;
 
-      for(let p=0; p<nodes.length; p++){
+      for(let p=0; p<limit; p++){
 
         if(nodes[p].hull){ fill(255,255,0); r=3; }
         else             { fill(255);       r=1; }
@@ -336,8 +405,8 @@
           if(nodes[p].hull && purged){
 
             fill(255, 255, 255);
-            textSize(16);
-            text(nodes[p].pid,
+            textSize(10);
+            text(round(nodes[p].theta),
                  nodes[p].x+5,
                  nodes[p].y-5);
 
@@ -350,8 +419,8 @@
   function drawCandidates(){
 
     stroke(128);
-    strokeWeight(1);
-    fill( 64, 64, 64, 64);
+    strokeWeight(11);
+    fill( 164, 64, 64, 64);
 
     beginShape();
 
@@ -373,31 +442,10 @@
 
     endShape();
 
-    // noStroke();
-    // textSize(10);
-
-    // for(let p=0; p<candidates.length; p++){
-
-    //   if(candidates[p].hull){ fill(255, 255, 0, 255); }
-    //   else                 { fill(255, 255, 0,  32); }
-
-    //     ellipse(candidates[p].x, candidates[p].y, 5, 5);
-
-    //   if(candidates[p].hull){
-      
-    //     fill(255, 255, 255);
-    
-    //      text(candidates[p].pid,
-    //           candidates[p].x+5,
-    //           candidates[p].y-5);
-    //   }
-    
-    // }
-
   }
 
   function calculateHull(){
-
+frameRate(10);
     nod1=nod0.next;
     nod2=nod1.next;
 
@@ -444,6 +492,7 @@
       return pow((semi*(semi-a)*(semi-b)*(semi-c)), 0.5);
           
     }
+
     function hullHit(centre,p0,p1,p2){
 
       // If the large triangle is smaller the sum of the other 2, the nodes are convex
@@ -495,7 +544,7 @@
     fill(16);
     noStroke();
 
-      rect(10,10,width-10, height-10);
+      rect(-width/2+10,-height/2+10,width-10, height-10);
 
     fill(128);
     textSize(36);
@@ -510,16 +559,30 @@
     noFill();
     stroke(212);
 
-    if(running){ strokeWeight(1.5);    }
-    else       { strokeWeight(0.5);    }
+    if(running){ strokeWeight(1.5); }
+    else       { strokeWeight(0.5); }
 
-      line(       0, mouseY, mouseX-5, mouseY);
-      line(mouseX+5, mouseY,    width, mouseY);
+      line(-width/2,         mouseY-height/2, mouseX-width/2-5, mouseY-height/2);
+      line(mouseX-width/2+5, mouseY-height/2,          width/2, mouseY-height/2);
 
-      line(mouseX,        0, mouseX, mouseY-5);
-      line(mouseX, mouseY+5, mouseX, height);
+      line(mouseX-width/2,         -height/2, mouseX-width/2, mouseY-height/2-5);
+      line(mouseX-width/2, mouseY-height/2+5, mouseX-width/2, height/2);
 
-      ellipse(mouseX,mouseY,10,10);
+      ellipse(mouseX-width/2,mouseY-height/2,10,10);
+
+      push();
+
+        translate(-width/2,-height/2);
+        // scale(1,-1);
+
+        textSize(12);
+        textAlign(LEFT,BOTTOM);
+        fill(128);
+        noStroke();
+
+          text(round(atan2(mouseY,mouseX)*180/PI),mouseX+10,mouseY-10);
+
+      pop();
 
     if(running){
     
@@ -529,19 +592,19 @@
 
       textAlign(LEFT,BOTTOM);
 
-        text("1", mouseX+20, mouseY-20);
+        text("1", mouseX-width/2+20, mouseY-height/2-20);
 
       textAlign(RIGHT,BOTTOM);
       
-        text("2", mouseX-20, mouseY-20);
+        text("2", mouseX-width/2-20, mouseY-height/2-20);
 
       textAlign(RIGHT,TOP);
       
-        text("3", mouseX-20, mouseY+20);
+        text("3", mouseX-width/2-20, mouseY-height/2+20);
       
       textAlign(LEFT,TOP);
       
-        text("4", mouseX+20, mouseY+20);
+        text("4", mouseX-width/2+20, mouseY-height/2+20);
     }
 
   }  
@@ -549,19 +612,20 @@
 
     push();
 
-      translate(0.5,0.5);
+      translate(width/2+0.5,height/2+0.5);
+      // scale(1,-1);
 
         background(0);
 
-        if(!purged && running){
+        if(!purged){
           
-          for(let n=0; n<floor(limit/10); n++){
+          // for(let n=0; n<floor(limit/10); n++){
             
             if(running){
               loadCandidates();              
             }
 
-          }
+          // }
 
         }
 
@@ -570,34 +634,40 @@
         textSize(24);
         textAlign(LEFT,TOP);
 
-          text(count,10,10);
+          // text(count,10,10);
 
         drawGUI();
 
         if(candidates.length!=0){
-          drawCandidates();
-          calculateHull();
+          // drawCandidates();
+          // calculateHull();
         }
 
         drawNodes();
 
-        if(!purged && running){
+        // if(!purged && running){
 
-          mouseX=nodes[n].x;
-          mouseY=nodes[n].y;
+        //   mouseX=nodes[n].x;
+        //   mouseY=nodes[n].y;
 
-          fill(16,50);
-          noStroke();
+        //   fill(16,50);
+        //   noStroke();
 
-          if(q1){ rect(nodes[n].x, 0, width-nodes[n].x, nodes[n].y);                 }
-          if(q2){ rect(0, 0, nodes[n].x, nodes[n].y);                                }
-          if(q3){ rect(0, nodes[n].y, nodes[n].x, height-nodes[n].y);                }
-          if(q4){ rect(nodes[n].x, nodes[n].y, width-nodes[n].x, height-nodes[n].y); }
+        //   if(q1){ rect(nodes[n].x, 0, width-nodes[n].x, nodes[n].y);                 }
+        //   if(q2){ rect(0, 0, nodes[n].x, nodes[n].y);                                }
+        //   if(q3){ rect(0, nodes[n].y, nodes[n].x, height-nodes[n].y);                }
+        //   if(q4){ rect(nodes[n].x, nodes[n].y, width-nodes[n].x, height-nodes[n].y); }
 
-        }
+        // }
 
-        drawCentre();
+        // drawCentre();
         drawCursor();
+
+        // Origin
+        fill(128,0,0);
+        noStroke();
+
+          ellipse(centre.x,centre.y,10,10);
 
     pop();
 
@@ -606,7 +676,7 @@
   function mouseClicked(){
 
     running=!running;
-
+print(candidates);
   }
 
   function doubleClicked(){
