@@ -24,7 +24,7 @@
   let nod2;
 
   let running         = false;
-  let sorted          = true;
+  let sorted          = false;
 
   let buffer          = 20;
   let candidateCount  = 0;
@@ -44,7 +44,7 @@
   // let counter=0;
 
   // const limit   = 3163;  //  3163 squared is approx 10,000,000
-  const limit     = 1143;
+  let limit     = -1;//round(random(143,3163));
 
   class node {
     
@@ -88,7 +88,11 @@
 
   function setup(){
 
-    // frameRate(100);
+    limit=round(random(143,6163));
+frameRate(100);
+    // if(frameRate()>60){
+      print(this._frameRate);
+    // }
     noCursor();
 
     "use strict"; 
@@ -148,8 +152,8 @@
       // x=cos(theta)*radius+width/2;
       // y=sin(theta)*radius+height/2;
 
-      x=round(random(buffer-width/2, width/2-buffer ));
-      y=round(random(buffer-height/2, height/2-buffer));
+      x=round(random(3*buffer-width/2, width/2-buffer ));
+      y=round(random(buffer-height/2, height/2-3*buffer));
 
       if(x<minX){ minX=x; }
       if(x>maxX){ maxX=x; }
@@ -187,7 +191,7 @@
 
         theta=180/PI*atan2(nodes[n].y,nodes[n].x);
 
-        if(theta<0){ theta+=360; }
+        // if(theta<0){ theta+=360; }
 
         nodes[n].theta=theta;
 
@@ -249,7 +253,8 @@
       // nod.cid=n;
       nod.selected=true;
 
-      setNext(nod);
+      // setNext(nod);
+      nod.next=candidates[n+1];
 
       if(nod.next!=null){
         nod.next.previous=nod;
@@ -267,6 +272,7 @@
   function countCandidates(){
 
     candidateCount=0;
+    candidates=[];
 
     for(let n=0; n<limit; n++){
 
@@ -277,6 +283,8 @@
       }
 
     }
+
+    sortByTheta(candidates);
 
   }
   function loadCandidates(){
@@ -400,31 +408,54 @@
         if(nodes[p].hull){ fill(255,255,0); r=3; }
         else             { fill(255);       r=1; }
 
+        // if(random()<0.01){
           ellipse(nodes[p].x, nodes[p].y, r, r);
+        // }
 
           if(nodes[p].hull && purged){
 
             fill(255, 255, 255);
             textSize(10);
-            text(round(nodes[p].theta),
+            text(nodes[p].id + " : " + round(nodes[p].theta),
                  nodes[p].x+5,
                  nodes[p].y-5);
+
+            // ellipse(nodes[p].x, nodes[p].y, r, r);
 
           }
 
       }
 
   }
+  function sortByTheta(arr){
 
+    for(let n=0; n<arr.length; n++){
+      for(let m=0; m<arr.length; m++){
+        
+        if((arr[n].theta+0)>(arr[m].theta+0)){
+          
+          let temp = arr[n];   
+          arr[n]   = arr[m];
+          arr[m]   = temp;
+
+        }
+
+      }
+    }
+
+    
+  }
   function drawCandidates(){
 
+    // sortByTheta(candidates);
+frameRate(10);
     stroke(128);
-    strokeWeight(11);
-    fill( 164, 64, 64, 64);
+    strokeWeight(1);
+    fill( 64, 64, 64, 64);
+
+    let nod=candidates[0];
 
     beginShape();
-
-      let nod=candidates[0];
 
       for(let n=0; n<candidates.length; n++){
 
@@ -445,18 +476,13 @@
   }
 
   function calculateHull(){
-frameRate(10);
+// frameRate(10);
     nod1=nod0.next;
     nod2=nod1.next;
 
     function drawTriangles(){
       
       noStroke();
-  
-      fill(  0,  0,128,128);
-  
-        ellipse(centre.x, centre.y,
-                20,       20);
 
       fill(128,  0,  0, 96);
 
@@ -520,7 +546,11 @@ frameRate(10);
         nod2.previous=nod0;
 
         nod0=nod0.previous;
-      
+                  
+        // candidates.splice(nod1.id,1);
+        countCandidates();
+        return;
+
       }
       else{
     
@@ -533,7 +563,7 @@ frameRate(10);
   }
   function drawCentre(){
 
-    fill(0,128,0,128);
+    fill(128,0,0,128);
     noStroke();
   
       ellipse(centre.x,centre.y,diameter,diameter);
@@ -639,8 +669,8 @@ frameRate(10);
         drawGUI();
 
         if(candidates.length!=0){
-          // drawCandidates();
-          // calculateHull();
+          drawCandidates();
+          calculateHull();
         }
 
         drawNodes();
@@ -664,10 +694,21 @@ frameRate(10);
         drawCursor();
 
         // Origin
-        fill(128,0,0);
-        noStroke();
+        if(running){
 
-          ellipse(centre.x,centre.y,10,10);
+          drawCentre();
+
+        }
+
+        fill(128);
+        noStroke();
+        textSize(16);
+        textAlign(LEFT,BOTTOM);
+
+        let cl =candidates.length;
+        let nl = nodes.length;
+
+          text(cl + " : " + nl + " : " + cl/nl*100,-width/2+20,height/2-10);
 
     pop();
 
@@ -676,7 +717,11 @@ frameRate(10);
   function mouseClicked(){
 
     running=!running;
-print(candidates);
+
+    if(keyIsDown(CONTROL)){
+      print(candidates);
+    }
+    
   }
 
   function doubleClicked(){
@@ -688,7 +733,8 @@ print(candidates);
 }
 
 /*  
-  *
+
+*
 +stackoverflow.com
 +khanacademy.org
 +codecogs.com/latex/eqneditor.php
