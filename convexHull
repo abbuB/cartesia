@@ -3,16 +3,16 @@
 
   {
 
-    let nodes       = [];     //  All nodes
-    let candidates  = [];     //  Possible hull nodes
-    let hull        = [];     //  Only hull nodes
+    let nodes           = [];     //  All nodes
+    let candidates      = [];     //  Possible hull nodes
+    let hull            = [];     //  Only hull nodes
   
     let centre;               //  Point used to determine convexity
 
-    let purged      = false;
+    let purged          = false;
   
-    let domain      = -1;
-    let range       = -1;
+    let domain          = -1;
+    let range           = -1;
   
     let nod0;
     let nod1;
@@ -31,17 +31,19 @@
     // let m=0;
     // let n=0;
     
-    let q1=false;
-    let q2=false;
-    let q3=false;
-    let q4=false;
+    let q1              = false;
+    let q2              = false;
+    let q3              = false;
+    let q4              = false;
     
-    let octogon=[];
+    let octogon         = [];
+
+    let thetaQuadrant   = -1;
 
     // let counter=0;
   
     // const limit   = 3163;  //  3163 squared is approx 10,000,000
-    let limit     = 2000;
+    let limit           = 300;
   
     class node {
       
@@ -55,8 +57,8 @@
   
         this.theta    = -Infinity;
         
-        this.quadrant = 0;
-        this.distance = 0;
+        this.quadrant = -Infinity;
+        this.distance = -Infinity;
 
         this.next     = null;
         this.previous = null;
@@ -89,9 +91,9 @@
     function setup(){
   
       // limit=round(random(143,6163));
-  frameRate(100);
+  // frameRate(100);
       // if(frameRate()>60){
-        print(this._frameRate);
+        // print(this._frameRate);
       // }
       noCursor();
   
@@ -109,6 +111,8 @@
   
       centre=new node("C", 0, 0);
   
+
+
       loadNodes();
   
       // nod0=candidates[0];
@@ -139,7 +143,10 @@
   
         translate(width/2,height/2);
         // scale(1,-1);
-  
+        
+        thetaQuadrant=180/PI*atan2(height/2,width/2);
+        print(thetaQuadrant);
+
       for(let n=0; n<limit; n++){
   
         // theta=random(0,360);
@@ -158,73 +165,96 @@
   
         nodes.push(new node(n,x,y));
 
-        if(n==0){
-          octogon[0]=nodes[0];
-          octogon[2]=nodes[0];
-          octogon[4]=nodes[0];
-          octogon[6]=nodes[0];
-        }
+        // if(n==0){
+          // octogon[0]=nodes[0];
+          // octogon[2]=nodes[0];
+          // octogon[4]=nodes[0];
+          // octogon[6]=nodes[0];
+        // }
         
         nodes[n].distance=dist(0,0,x,y);
 
-        if(x>0 && y<0){ nodes[n].quadrant=1; }
-        if(x<0 && y<0){ nodes[n].quadrant=2; }
-        if(x<0 && y>0){ nodes[n].quadrant=3; }
-        if(x>0 && y>0){ nodes[n].quadrant=4; }
+        // if(x>0 && y<0){ nodes[n].quadrant=1; }
+        // if(x<0 && y<0){ nodes[n].quadrant=2; }
+        // if(x<0 && y>0){ nodes[n].quadrant=3; }
+        // if(x>0 && y>0){ nodes[n].quadrant=4; }
+        
+        theta=180/PI*atan2(nodes[n].y,nodes[n].x);
 
-        if(nodes[n].quadrant==1){
+        nodes[n].theta=theta;
 
-          if(octogon[0]==undefined ||
-             nodes[n].distance>octogon[0].distance){
+        let tq=thetaQuadrant;
+
+        if     (theta > 0               && theta < tq                ){ nodes[n].quadrant=0; }
+        else if(theta > tq && theta < 90                             ){ nodes[n].quadrant=1; }
+        else if(nodes[n].theta >  90    && nodes[n].theta < ( 180-tq)){ nodes[n].quadrant=2; }
+        else if(nodes[n].theta < 180    && nodes[n].theta > ( 180-tq)){ nodes[n].quadrant=3; }
+        else if(nodes[n].theta >-180    && nodes[n].theta < (-180+tq)){ nodes[n].quadrant=4; }
+        else if(nodes[n].theta >-180+tq && nodes[n].theta < -90      ){ nodes[n].quadrant=5; }
+        else if(nodes[n].theta >-90     && nodes[n].theta < -tq      ){ nodes[n].quadrant=6; }
+        else if(nodes[n].theta <  0     && nodes[n].theta > -tq      ){ nodes[n].quadrant=7; }
+
+        if(nodes[n].quadrant==0){
+          if(octogon[0]==undefined || nodes[n].distance>octogon[0].distance){
             octogon[0]=nodes[n];
           }
+        }
 
+        if(nodes[n].quadrant==1){
+          if(octogon[1]==undefined || nodes[n].distance>octogon[1].distance){
+            octogon[1]=nodes[n];
+          }
         }
 
         if(nodes[n].quadrant==2){
-
-          if(octogon[2]==undefined ||
-             nodes[n].distance>octogon[2].distance){
+          if(octogon[2]==undefined || nodes[n].distance>octogon[2].distance){
             octogon[2]=nodes[n];
           }
-
         }
-        
-        if(nodes[n].quadrant==3){
 
-          if(octogon[4]==undefined ||
-             nodes[n].distance>octogon[4].distance){
+        if(nodes[n].quadrant==3){
+          if(octogon[3]==undefined || nodes[n].distance>octogon[3].distance){
+            octogon[3]=nodes[n];
+          }
+        }
+
+        if(nodes[n].quadrant==4){
+          if(octogon[4]==undefined || nodes[n].distance>octogon[4].distance){
             octogon[4]=nodes[n];
           }
-
         }
-        
-        if(nodes[n].quadrant==4){
 
-          if(octogon[6]==undefined ||
-             nodes[n].distance>octogon[6].distance){
+        if(nodes[n].quadrant==5){
+          if(octogon[5]==undefined || nodes[n].distance>octogon[5].distance){
+            octogon[5]=nodes[n];
+          }
+        }
+
+        if(nodes[n].quadrant==6){
+          if(octogon[6]==undefined || nodes[n].distance>octogon[6].distance){
             octogon[6]=nodes[n];
           }
-          else if(octogon[6]==undefined ||
-                  nodes[n].distance>octogon[6].distance){
-            octogon[6]=nodes[n];
-          }
+        }
 
+        if(nodes[n].quadrant==7){
+          if(octogon[7]==undefined || nodes[n].distance>octogon[7].distance){
+            octogon[7]=nodes[n];
+          }
         }
 
       // if(n>40){
 
-        if(nodes[n].x<octogon[0].x &&
-           nodes[n].x>octogon[2].x &&
-           nodes[n].x>octogon[4].x &&
-           nodes[n].x<octogon[6].x &&
-           nodes[n].y>octogon[0].y &&
-           nodes[n].y>octogon[2].y &&
-           nodes[n].y<octogon[4].y &&
-           nodes[n].y<octogon[6].y){
+        // if(nodes[n].x<octogon[0].x &&
+        //    nodes[n].x>octogon[2].x &&
+        //    nodes[n].x>octogon[4].x &&
+        //    nodes[n].x<octogon[6].x &&
+        //    nodes[n].y>octogon[0].y &&
+        //    nodes[n].y>octogon[2].y &&
+        //    nodes[n].y<octogon[4].y &&
+        //    nodes[n].y<octogon[6].y){
           // nodes[n].hull=false;
           // print(nodes[n].hull);
-        }
+        // }
 
       // }
 
@@ -232,17 +262,17 @@
   
       count=nodes.length;
   
-      let theta=-Infinity;
+      // let theta=-Infinity;
   
-        for(let n=0; n<limit; n++){
+      //   for(let n=0; n<limit; n++){
   
-          theta=180/PI*atan2(nodes[n].y,nodes[n].x);
+      //     theta=180/PI*atan2(nodes[n].y,nodes[n].x);
   
-          // if(theta<0){ theta+=360; }
+      //     // if(theta<0){ theta+=360; }
   
-          nodes[n].theta=theta;
+      //     nodes[n].theta=theta;
   
-        }
+      //   }
   
       pop();
   
@@ -261,14 +291,14 @@
   
       }
   
-      for(let n=0; n<nodes.length; n++){
+//       for(let n=0; n<nodes.length; n++){
 
-        if(nodes[n].hull){
-          candidateCount++;
-        }
+//         if(nodes[n].hull){
+//           candidateCount++;
+//         }
 
-      }
-print(candidateCount);
+//       }
+// print(candidateCount);
 
     }
   
@@ -364,7 +394,7 @@ print(candidateCount);
  
           if(q1 && q2 && q3 && q4){
   
-            // nodes[n].hull=false;
+            nodes[n].hull=false;
   
             q1=false;
             q2=false;
@@ -467,9 +497,15 @@ print(candidateCount);
 
       beginShape();
 
-        for(let n=0; n<octogon.length; n+=2){
+        for(let n=0; n<octogon.length; n++){
           
-          ellipse(octogon[n].x, octogon[n].y, r, r);
+          // r=octogon[n].distance/50;
+
+          ellipse(octogon[n].x, octogon[n].y, 10, 10);
+
+// textSize(16);
+// textAlign(RIGHT,BOTTOM);
+// text(round(octogon[n].theta), octogon[n].x, octogon[n].y-10);
 
           vertex(octogon[n].x, octogon[n].y);
 
@@ -497,7 +533,8 @@ print(candidateCount);
   
           if(nodes[p].hull){ fill(255,255,0); r=3; }
           else             { fill(255);       r=1; }
-  
+          
+          // r=nodes[p].distance/60;
           // if(random()<0.1){
             ellipse(nodes[p].x, nodes[p].y, r, r);
           // }
@@ -516,10 +553,10 @@ print(candidateCount);
 
               if(theta<0){ theta+=360; }
 
-              // text(round(theta) + " : " +
-              //      round(nodes[p].quadrant),
-              //      nodes[p].x+5,
-              //      nodes[p].y-5);
+              text(round(theta) + " : " +
+                   round(nodes[p].quadrant),
+                   nodes[p].x+5,
+                   nodes[p].y-5);
             }
 
         }
@@ -671,8 +708,9 @@ print(candidateCount);
   
       fill(16);
       noStroke();
-  
-        rect(-width/2+10,-height/2+10,width-10, height-10);
+      stroke(128);
+
+        rect(-width/2,-height/2, width-1, height-1);
   
       fill(128);
       textSize(36);
@@ -766,6 +804,28 @@ print(candidateCount);
   
           drawGUI();
   
+          // Slices
+          stroke(128,0,0);
+          strokeWeight(1);
+
+            // line(centre.x, centre.y, width/2, height/2);
+            // line(centre.x, centre.y,-width/2, height/2);
+            
+            // line(centre.x, centre.y, width/2,-height/2);
+            // line(centre.x, centre.y,-width/2,-height/2);
+
+            // line(centre.x, centre.y, 0,-height/2);
+            // line(centre.x, centre.y, 0, height/2);
+
+            // line(centre.x, centre.y,-width/2+buffer, 0);
+            // line(centre.x, centre.y, width/2-buffer, 0);
+
+          stroke(0,255,0,128);
+          
+          for(let n=0; n<octogon.length; n++){
+            line(0,0,octogon[n].x,octogon[n].y);
+          }
+
           if(candidates.length!=0){
             drawCandidates();
             calculateHull();
@@ -811,6 +871,9 @@ print(candidateCount);
 
             text(row1,-width/2+20, height/2-30);
             text(row2,-width/2+20, height/2-10);
+
+            ellipse(width/2,height/2,20,20);
+            ellipse(0,0,20,20);
 
       pop();
   
