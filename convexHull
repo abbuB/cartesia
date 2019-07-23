@@ -27,7 +27,7 @@
     let nod2;
   
     let running         = false;
-    let sorted          = false;
+    let sorted          = true;
   
     let buffer          = 20;
     let candidateCount  = 0;
@@ -119,9 +119,9 @@
   
     function swap(m,n){
   
-      let temp=nodes[n];   
-      nodes[n]=nodes[m];
-      nodes[m]=temp;
+      let temp=n;   
+      n=m;
+      m=temp;
       
     }
     function sortByAngle(arr){
@@ -130,7 +130,7 @@
         for(let m=0; m<limit; m++){
 
           if(arr[n].theta>arr[m].theta){
-            swap(n,m);
+            swap(arr[n],arr[m]);
           }
 
         }
@@ -153,23 +153,49 @@
 
         let tq  = thetaQuadrant;
         let nod = nodes[n];
+        let th = nod.theta;
 
         try{
 
-          if     (theta     >=  0     && theta     < tq       ){ nod.quadrant=0; }
-          else if(theta     >= tq     && theta     < 90       ){ nod.quadrant=1; }
-          else if(nod.theta >=  90    && nod.theta < ( 180-tq)){ nod.quadrant=2; }
-          else if(nod.theta <= 180    && nod.theta > ( 180-tq)){ nod.quadrant=3; }
-          else if(nod.theta >=-180    && nod.theta < (-180+tq)){ nod.quadrant=4; }
-          else if(nod.theta >=-180+tq && nod.theta < -90      ){ nod.quadrant=5; }
-          else if(nod.theta >= -90    && nod.theta < -tq      ){ nod.quadrant=6; }
-          else if(nod.theta <=   0    && nod.theta > -tq      ){ nod.quadrant=7; }
+          if     (th     >=  0 && th < tq       ){ nod.quadrant=0; }
+          else if(th     >= tq && th < 90       ){ nod.quadrant=1; }
+          else if(th >=  90    && th < ( 180-tq)){ nod.quadrant=2; }
+          else if(th <= 180    && th > ( 180-tq)){ nod.quadrant=3; }
+          else if(th >=-180    && th < (-180+tq)){ nod.quadrant=4; }
+          else if(th >=-180+tq && th < -90      ){ nod.quadrant=5; }
+          else if(th >= -90    && th < -tq      ){ nod.quadrant=6; }
+          else if(th <=   0    && th > -tq      ){ nod.quadrant=7; }
 
-          if(nod.distance>octogon[nod.quadrant].distance){ octogon[nod.quadrant]=nod; }
+          if(nod.distance>octogon[nod.quadrant].distance ){ octogon[nod.quadrant]=nod; }
 
         }
         catch(err){
-          print(err + " : " + theta + " : " + n + " : " + q);
+          print(err + " : " + th + " : " + n);
+        }
+
+      }
+      function eliminateNode(n){
+
+        if(nodes[n].x<octogon[0].x &&
+           nodes[n].x<octogon[1].x &&
+           nodes[n].x<octogon[6].x &&
+           nodes[n].x<octogon[7].x &&
+           nodes[n].x>octogon[2].x &&
+           nodes[n].x>octogon[3].x &&
+           nodes[n].x>octogon[4].x &&
+           nodes[n].x>octogon[5].x &&
+
+           nodes[n].y>octogon[4].y &&
+           nodes[n].y>octogon[5].y &&
+           nodes[n].y>octogon[6].y &&
+           nodes[n].y>octogon[7].y &&
+           nodes[n].y<octogon[0].y &&
+           nodes[n].y<octogon[1].y &&
+           nodes[n].y<octogon[2].y &&
+           nodes[n].y<octogon[3].y){
+
+          nodes[n].hull=false;
+
         }
 
       }
@@ -201,34 +227,12 @@
             
             nodes[n].distance=dist(0,0,x,y);
 
-            theta=180/PI*atan2(nodes[n].y,nodes[n].x);
+            // theta=;
 
-            nodes[n].theta=theta;
+            nodes[n].theta=180/PI*atan2(nodes[n].y,nodes[n].x);
 
             setQuadrant(n);
-
-            // Eliminate nodes while loading
-            if(nodes[n].x<octogon[0].x &&
-               nodes[n].x<octogon[1].x &&
-               nodes[n].x<octogon[6].x &&
-               nodes[n].x<octogon[7].x &&
-               nodes[n].x>octogon[2].x &&
-               nodes[n].x>octogon[3].x &&
-               nodes[n].x>octogon[4].x &&
-               nodes[n].x>octogon[5].x &&
- 
-               nodes[n].y>octogon[4].y &&
-               nodes[n].y>octogon[5].y &&
-               nodes[n].y>octogon[6].y &&
-               nodes[n].y>octogon[7].y &&
-               nodes[n].y<octogon[0].y &&
-               nodes[n].y<octogon[1].y &&
-               nodes[n].y<octogon[2].y &&
-               nodes[n].y<octogon[3].y){
-
-              nodes[n].hull=false;
-
-            }
+            eliminateNode(n);
 
         }
 
@@ -239,7 +243,7 @@
 
       pop();
 
-      if(sorted){ sortByAngle(nodes); }
+      // if(sorted){ sortByAngle(nodes); }
 
     }
   
@@ -332,36 +336,63 @@
 
     function loadCandidates(){
 
-      for(let n=0; n<limit; n++){
-        for(let m=0; m<limit; m++){
+      function isInterior(n){
 
-          if(nodes[m].x > nodes[n].x &&
-             nodes[m].y < nodes[n].y){  q1=true;  } //  Quadrant #1
-  
-          if(nodes[m].x < nodes[n].x &&
-             nodes[m].y < nodes[n].y){  q2=true;  } //  Quadrant #2
-  
-          if(nodes[m].x < nodes[n].x &&
-             nodes[m].y > nodes[n].y){  q3=true;  } //  Quadrant #3
-  
-          if(nodes[m].x > nodes[n].x &&
-             nodes[m].y > nodes[n].y){  q4=true;  } //  Quadrant #4
- 
-          if(q1 && q2 && q3 && q4){
-  
-            nodes[n].hull=false;
-  
-            q1=false;
-            q2=false;
-            q3=false;
-            q4=false;
-            // print(m);
-            processCount+=m;
-            break;
+        if(nodes[n].x<octogon[0].x &&
+          nodes[n].x<octogon[1].x &&
+          nodes[n].x<octogon[6].x &&
+          nodes[n].x<octogon[7].x &&
+          nodes[n].x>octogon[2].x &&
+          nodes[n].x>octogon[3].x &&
+          nodes[n].x>octogon[4].x &&
+          nodes[n].x>octogon[5].x &&
 
-          }
-  
+          nodes[n].y>octogon[4].y &&
+          nodes[n].y>octogon[5].y &&
+          nodes[n].y>octogon[6].y &&
+          nodes[n].y>octogon[7].y &&
+          nodes[n].y<octogon[0].y &&
+          nodes[n].y<octogon[1].y &&
+          nodes[n].y<octogon[2].y &&
+          nodes[n].y<octogon[3].y){
+
+          nodes[n].hull=false;
+
         }
+        
+      }
+      for(let n=0; n<limit; n++){
+        isInterior(n);
+
+        // for(let m=0; m<limit; m++){
+
+          // if(nodes[m].x > nodes[n].x &&
+          //    nodes[m].y < nodes[n].y){  q1=true;  } //  Quadrant #1
+  
+          // if(nodes[m].x < nodes[n].x &&
+          //    nodes[m].y < nodes[n].y){  q2=true;  } //  Quadrant #2
+  
+          // if(nodes[m].x < nodes[n].x &&
+          //    nodes[m].y > nodes[n].y){  q3=true;  } //  Quadrant #3
+  
+          // if(nodes[m].x > nodes[n].x &&
+          //    nodes[m].y > nodes[n].y){  q4=true;  } //  Quadrant #4
+ 
+          // if(q1 && q2 && q3 && q4){
+
+          //   nodes[n].hull=false;
+  
+          //   q1=false;
+          //   q2=false;
+          //   q3=false;
+          //   q4=false;
+          //   // print(m);
+          //   processCount+=m;
+          //   break;
+
+          // }
+  
+        // }
       }
 
       purged=true;      
@@ -508,10 +539,10 @@
 
               if(theta<0){ theta+=360; }
 
-              text(round(theta) + " : " +
-                   round(nodes[p].quadrant),
-                   nodes[p].x+5,
-                   nodes[p].y-5);
+              // text(round(theta) + " : " +
+              //      round(nodes[p].quadrant),
+              //      nodes[p].x+5,
+              //      nodes[p].y-5);
             }
 
         }
