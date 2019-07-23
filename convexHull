@@ -49,11 +49,11 @@
     let running         = false;
     let sorted          = true;
     
-    let preprocessing   = PRE_PROCESSING.QUAD;
+    let preprocessing   = PRE_PROCESSING.OCTO;
     let hullMethod      = HULL_METHODS.BUBBA;
 
     let buffer          = 20;
-    let candidateCount  = 0;
+    let candidateCount  = -1;
     let extent          = -Infinity;
   
     let radius          = Infinity;
@@ -68,6 +68,7 @@
     let q4              = false;
     
     let quadrants       = [];
+    let quadrantCount   = 8;  //  Change based on Pre-processing heuristic
 
     let thetaQuadrant   = -1;
 
@@ -161,7 +162,7 @@
 
     }
     
-    function setOctoQuadrant(n){
+    function setQuadrantOcto(n){
 
       let tq  = thetaQuadrant;
       let nod = nodes[n];
@@ -195,7 +196,7 @@
       }
 
     }
-    function setQuadrant(n){
+    function setQuadrantQuad(n){
 
       let th  = nodes[n].theta;
       let nod = nodes[n];
@@ -210,7 +211,7 @@
           case th >  90 && th <= 180: q=2; break;
           case th >=  0 && th <=  90: q=3; break;
 
-          default:        throw('Bad Quadrant');
+          default:         throw('Bad Quadrant');
 
         }
 
@@ -224,74 +225,62 @@
       }
 
     } 
+    function excludeNodeOcto(n){
 
-    function excludeNode(n){
+      if(nodes[n].x<quadrants[0].x && //  x coordinates
+         nodes[n].x<quadrants[1].x &&
+         nodes[n].x<quadrants[6].x &&
+         nodes[n].x<quadrants[7].x &&
+         nodes[n].x>quadrants[2].x &&
+         nodes[n].x>quadrants[3].x &&
+         nodes[n].x>quadrants[4].x &&
+         nodes[n].x>quadrants[5].x &&
+         nodes[n].y>quadrants[4].y && // y coordinates
+         nodes[n].y>quadrants[5].y &&
+         nodes[n].y>quadrants[6].y &&
+         nodes[n].y>quadrants[7].y &&
+         nodes[n].y<quadrants[0].y &&
+         nodes[n].y<quadrants[1].y &&
+         nodes[n].y<quadrants[2].y &&
+         nodes[n].y<quadrants[3].y){
 
-      switch(preprocessing){
+        nodes[n].hull=false;
 
-        case PRE_PROCESSING.OCTO:
+      }
       
-          if(nodes[n].x<quadrants[0].x && //  x coordinates
-             nodes[n].x<quadrants[1].x &&
-             nodes[n].x<quadrants[6].x &&
-             nodes[n].x<quadrants[7].x &&
-             nodes[n].x>quadrants[2].x &&
-             nodes[n].x>quadrants[3].x &&
-             nodes[n].x>quadrants[4].x &&
-             nodes[n].x>quadrants[5].x &&
-             nodes[n].y>quadrants[4].y && // y coordinates
-             nodes[n].y>quadrants[5].y &&
-             nodes[n].y>quadrants[6].y &&
-             nodes[n].y>quadrants[7].y &&
-             nodes[n].y<quadrants[0].y &&
-             nodes[n].y<quadrants[1].y &&
-             nodes[n].y<quadrants[2].y &&
-             nodes[n].y<quadrants[3].y){
+    }
+    function excludeNodeQuad(n){
 
-            nodes[n].hull=false;
+      if(nodes[n].x<quadrants[0].x && //  x coordinates
+         nodes[n].x>quadrants[1].x &&
+         nodes[n].x>quadrants[2].x &&
+         nodes[n].x<quadrants[3].x &&
+         nodes[n].y>quadrants[0].y && //  y coordinates
+         nodes[n].y>quadrants[1].y &&
+         nodes[n].y<quadrants[2].y &&
+         nodes[n].y<quadrants[3].y){
 
-          }
-        
-          break;
+        nodes[n].hull=false;
 
-        case PRE_PROCESSING.QUAD:
-
-            if(nodes[n].x<quadrants[0].x && // x coordinates
-               nodes[n].x>quadrants[1].x &&
-               nodes[n].x>quadrants[2].x &&
-               nodes[n].x<quadrants[3].x &&
-               nodes[n].y>quadrants[0].y && // y coordinates
-               nodes[n].y>quadrants[1].y &&
-               nodes[n].y<quadrants[2].y &&
-               nodes[n].y<quadrants[3].y){
-
-            nodes[n].hull=false;
-
-          }
-
-          break;
-
-        default:  
-      
       }
 
     }
 
-    let setNodeQuadrant;
-    
-    setNodeQuadrant=setQuadrant;
+    let setQuadrant;
+    let excludeNode;
+
+    setQuadrant=setQuadrantOcto;
+    excludeNode=excludeNodeOcto;
 
     function loadNodes(){
       
-      let x     = -1;
-      let y     = -1;
+      let _x     = -1;
+      let _y     = -1;
 
-      let minX  = Infinity;
-      let maxX  = 0;
-      let minY  = Infinity;
-      let maxY  = 0;
-
-      let theta = -1;
+      let _minX  = Infinity;
+      let _maxX  = 0;
+      let _minY  = Infinity;
+      let _maxY  = 0;
 
       push();
   
@@ -302,35 +291,33 @@
 
           // Set all nodes in the quadrants to the centre
           // this avoids having to check for undefined
-          for(let n=0; n<4; n++){
+          for(let n=0; n<quadrantCount; n++){
             quadrants[n]=centre;
           }
 
           for(let n=0; n<limit; n++){
 
-            x=round(random(3*buffer-width/2, width/2-buffer   ));
-            y=round(random(buffer-height/2,  height/2-3*buffer));
+            _x=round(random(3*buffer-width/2, width/2-buffer   ));
+            _y=round(random(buffer-height/2,  height/2-3*buffer));
 
-            if(x<minX){ minX=x; }
-            if(x>maxX){ maxX=x; }
-            if(y<minY){ minY=y; }
-            if(y>maxY){ maxY=y; }
+            if(_x<_minX){ _minX=_x; }
+            if(_x>_maxX){ _maxX=_x; }
+            if(_y<_minY){ _minY=_y; }
+            if(_y>_maxY){ _maxY=_y; }
 
-            nodes.push(new node(n,x,y));
+            nodes.push(new node(n,_x,_y));
             
-            nodes[n].distance=dist(0,0,x,y);
+            nodes[n].distance=dist(0,0,_x,_y);
+            nodes[n].theta=180/PI*atan2(_y,_x);
 
-            nodes[n].theta=180/PI*atan2(nodes[n].y,nodes[n].x);
-
-            setNodeQuadrant(n);
+            setQuadrant(n);
             excludeNode(n);
 
         }
 
-        domain = abs(maxX-minX);
-        range  = abs(minY-maxY);
-
-        // print(domain + " : " + range);
+        //  Set the domain and range of the nodes
+        domain = abs(_maxX-_minX);
+        range  = abs(_minY-_maxY);
 
       pop();
 
@@ -429,23 +416,22 @@
 
       function isInteriorOcto(n){
 
-        if(nodes[n].x<quadrants[0].x &&
-          nodes[n].x<quadrants[1].x &&
-          nodes[n].x<quadrants[6].x &&
-          nodes[n].x<quadrants[7].x &&
-          nodes[n].x>quadrants[2].x &&
-          nodes[n].x>quadrants[3].x &&
-          nodes[n].x>quadrants[4].x &&
-          nodes[n].x>quadrants[5].x &&
-
-          nodes[n].y>quadrants[4].y &&
-          nodes[n].y>quadrants[5].y &&
-          nodes[n].y>quadrants[6].y &&
-          nodes[n].y>quadrants[7].y &&
-          nodes[n].y<quadrants[0].y &&
-          nodes[n].y<quadrants[1].y &&
-          nodes[n].y<quadrants[2].y &&
-          nodes[n].y<quadrants[3].y){
+        if(nodes[n].x<quadrants[0].x && // x coordinates
+           nodes[n].x<quadrants[1].x &&
+           nodes[n].x<quadrants[6].x &&
+           nodes[n].x<quadrants[7].x &&
+           nodes[n].x>quadrants[2].x &&
+           nodes[n].x>quadrants[3].x &&
+           nodes[n].x>quadrants[4].x &&
+           nodes[n].x>quadrants[5].x && // y coordinates 
+           nodes[n].y>quadrants[4].y &&
+           nodes[n].y>quadrants[5].y &&
+           nodes[n].y>quadrants[6].y &&
+           nodes[n].y>quadrants[7].y &&
+           nodes[n].y<quadrants[0].y &&
+           nodes[n].y<quadrants[1].y &&
+           nodes[n].y<quadrants[2].y &&
+           nodes[n].y<quadrants[3].y){
 
           nodes[n].hull=false;
 
@@ -455,13 +441,13 @@
       function isInteriorQuad(n){
 
         if(nodes[n].x<quadrants[0].x && // x coordinates
-          nodes[n].x>quadrants[1].x &&
-          nodes[n].x>quadrants[2].x &&
-          nodes[n].x<quadrants[3].x &&
-          nodes[n].y>quadrants[0].y && // y coordinates
-          nodes[n].y>quadrants[1].y &&
-          nodes[n].y<quadrants[2].y &&
-          nodes[n].y<quadrants[3].y){
+           nodes[n].x>quadrants[1].x &&
+           nodes[n].x>quadrants[2].x &&
+           nodes[n].x<quadrants[3].x &&
+           nodes[n].y>quadrants[0].y && // y coordinates
+           nodes[n].y>quadrants[1].y &&
+           nodes[n].y<quadrants[2].y &&
+           nodes[n].y<quadrants[3].y){
 
           nodes[n].hull=false;
 
