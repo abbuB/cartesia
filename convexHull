@@ -11,6 +11,26 @@
   */
   {
 
+    var PRE_PROCESSING = {
+
+      NONE:       0,
+      OCTO:       1,
+      QUAD:       2
+
+    };
+    var HULL_METHODS = {
+
+      BUBBA:            0,
+      GIFT_WRAP:        1,
+      QUCK_HULL:        2,
+      DIVIDE_CONQUER:   2,
+      MONOTONE_CHAIN:   2,
+      INCREMENTAL:      2,
+      ULTIMATE_PLANAR:  2,
+      CHANS_ALGORITHM:  2
+
+    };
+
     let nodes           = [];     //  All nodes
     let candidates      = [];     //  Possible hull nodes
     let hull            = [];     //  Only hull nodes
@@ -28,7 +48,10 @@
   
     let running         = false;
     let sorted          = true;
-  
+    
+    let preprocessing   = PRE_PROCESSING.QUAD;
+    let hullMethod      = HULL_METHODS.BUBBA;
+
     let buffer          = 20;
     let candidateCount  = 0;
     let extent          = -Infinity;
@@ -44,7 +67,7 @@
     let q3              = false;
     let q4              = false;
     
-    let octogon         = [];
+    let quadrants       = [];
 
     let thetaQuadrant   = -1;
 
@@ -56,24 +79,24 @@
       
       constructor(n=0, x=-1, y=-1){
   
-        this.id       = n;      //  node index
-        this.cid      = null;   //  candidate index
+        this.id       = n;          //  node index
+        this.cid      = null;       //  candidate index
   
-        this.x        = x;
-        this.y        = y;
+        this.x        = x;          //  x coordinate
+        this.y        = y;          //  y coordinate
   
-        this.theta    = -Infinity;
+        this.theta    = -Infinity;  //  Angle to the origin
         
-        this.quadrant = -Infinity;
-        this.distance = -Infinity;
+        this.quadrant = -Infinity;  // cartesian quadrant 
+        this.distance = -Infinity;  //  distance to the origin
 
-        this.next     = null;
-        this.previous = null;
+        this.next     = null;       // linked list next
+        this.previous = null;       // linked list previous
   
-        this.hull     = true;   //  nodes are opt-out for the hull
-  
-        this.selected = false;
-  
+        this.hull     = true;       // nodes are opt-out for the hull
+
+        this.selected = false;  
+
       }
   
       clone(cid){
@@ -137,6 +160,127 @@
       }
 
     }
+    
+    function setOctoQuadrant(n){
+
+      let tq  = thetaQuadrant;
+      let nod = nodes[n];
+      let th  = nod.theta;
+      let q   = -1;
+
+      try{
+
+        switch(true){
+
+          case th >=  0     && th < tq:        q=0; break;
+          case th >= tq     && th < 90:        q=1; break;
+          case th >=  90    && th < ( 180-tq): q=2; break;
+          case th <= 180    && th > ( 180-tq): q=3; break;
+          case th >=-180    && th < (-180+tq): q=4; break;
+          case th >=-180+tq && th < -90:       q=5; break;
+          case th >= -90    && th < -tq:       q=6; break;
+          case th <=   0    && th > -tq:       q=7; break;
+
+          default:                  throw('Bad Quadrant');
+
+        }
+
+        nod.quadrant=q;
+
+        if(nod.distance>quadrants[q].distance ){ quadrants[q]=nod; }
+
+      }
+      catch(err){
+        print(err + " : " + th + " : " + n + " : " + q);
+      }
+
+    }
+    function setQuadrant(n){
+
+      let th  = nodes[n].theta;
+      let nod = nodes[n];
+      let q   = -1;
+
+      try{
+
+        switch(true){
+
+          case th <=  0 && th >  -90: q=0; break;
+          case th <=-90 && th >=-180: q=1; break;
+          case th >  90 && th <= 180: q=2; break;
+          case th >=  0 && th <=  90: q=3; break;
+
+          default:        throw('Bad Quadrant');
+
+        }
+
+        nod.quadrant=q;
+
+        if(nod.distance>quadrants[q].distance ){ quadrants[q]=nod; }
+
+      }
+      catch(err){
+        print(err + " : " + th + " : " + n + " : " + q);
+      }
+
+    } 
+
+    function excludeNode(n){
+
+      switch(preprocessing){
+
+        case PRE_PROCESSING.OCTO:
+      
+          if(nodes[n].x<quadrants[0].x && //  x coordinates
+             nodes[n].x<quadrants[1].x &&
+             nodes[n].x<quadrants[6].x &&
+             nodes[n].x<quadrants[7].x &&
+             nodes[n].x>quadrants[2].x &&
+             nodes[n].x>quadrants[3].x &&
+             nodes[n].x>quadrants[4].x &&
+             nodes[n].x>quadrants[5].x &&
+             nodes[n].y>quadrants[4].y && // y coordinates
+             nodes[n].y>quadrants[5].y &&
+             nodes[n].y>quadrants[6].y &&
+             nodes[n].y>quadrants[7].y &&
+             nodes[n].y<quadrants[0].y &&
+             nodes[n].y<quadrants[1].y &&
+             nodes[n].y<quadrants[2].y &&
+             nodes[n].y<quadrants[3].y){
+
+            nodes[n].hull=false;
+
+          }
+        
+          break;
+
+        case PRE_PROCESSING.QUAD:
+
+            if(nodes[n].x<quadrants[0].x && // x coordinates
+               nodes[n].x>quadrants[1].x &&
+               nodes[n].x>quadrants[2].x &&
+               nodes[n].x<quadrants[3].x &&
+               nodes[n].y>quadrants[0].y && // y coordinates
+               nodes[n].y>quadrants[1].y &&
+               nodes[n].y<quadrants[2].y &&
+               nodes[n].y<quadrants[3].y){
+
+            nodes[n].hull=false;
+
+          }
+
+          break;
+
+        default:  
+      
+      }
+
+    }
+
+    let setNodeQuadrant;
+    
+    setNodeQuadrant=setQuadrant;
+
     function loadNodes(){
       
       let x     = -1;
@@ -149,57 +293,6 @@
 
       let theta = -1;
 
-      function setQuadrant(n){
-
-        let tq  = thetaQuadrant;
-        let nod = nodes[n];
-        let th = nod.theta;
-
-        try{
-
-          if     (th     >=  0 && th < tq       ){ nod.quadrant=0; }
-          else if(th     >= tq && th < 90       ){ nod.quadrant=1; }
-          else if(th >=  90    && th < ( 180-tq)){ nod.quadrant=2; }
-          else if(th <= 180    && th > ( 180-tq)){ nod.quadrant=3; }
-          else if(th >=-180    && th < (-180+tq)){ nod.quadrant=4; }
-          else if(th >=-180+tq && th < -90      ){ nod.quadrant=5; }
-          else if(th >= -90    && th < -tq      ){ nod.quadrant=6; }
-          else if(th <=   0    && th > -tq      ){ nod.quadrant=7; }
-
-          if(nod.distance>octogon[nod.quadrant].distance ){ octogon[nod.quadrant]=nod; }
-
-        }
-        catch(err){
-          print(err + " : " + th + " : " + n);
-        }
-
-      }
-      function eliminateNode(n){
-
-        if(nodes[n].x<octogon[0].x &&
-           nodes[n].x<octogon[1].x &&
-           nodes[n].x<octogon[6].x &&
-           nodes[n].x<octogon[7].x &&
-           nodes[n].x>octogon[2].x &&
-           nodes[n].x>octogon[3].x &&
-           nodes[n].x>octogon[4].x &&
-           nodes[n].x>octogon[5].x &&
-
-           nodes[n].y>octogon[4].y &&
-           nodes[n].y>octogon[5].y &&
-           nodes[n].y>octogon[6].y &&
-           nodes[n].y>octogon[7].y &&
-           nodes[n].y<octogon[0].y &&
-           nodes[n].y<octogon[1].y &&
-           nodes[n].y<octogon[2].y &&
-           nodes[n].y<octogon[3].y){
-
-          nodes[n].hull=false;
-
-        }
-
-      }
-
       push();
   
         translate(width/2,height/2);
@@ -207,10 +300,10 @@
           // Determine theta of the sloped corners
           thetaQuadrant=180/PI*atan2(height/2,width/2);
 
-          // Set all nodes in the octogon to the centre
+          // Set all nodes in the quadrants to the centre
           // this avoids having to check for undefined
-          for(let n=0; n<8; n++){
-            octogon[n]=centre;
+          for(let n=0; n<4; n++){
+            quadrants[n]=centre;
           }
 
           for(let n=0; n<limit; n++){
@@ -227,19 +320,17 @@
             
             nodes[n].distance=dist(0,0,x,y);
 
-            // theta=;
-
             nodes[n].theta=180/PI*atan2(nodes[n].y,nodes[n].x);
 
-            setQuadrant(n);
-            eliminateNode(n);
+            setNodeQuadrant(n);
+            excludeNode(n);
 
         }
 
         domain = abs(maxX-minX);
         range  = abs(minY-maxY);
 
-        print(domain + " : " + range);
+        // print(domain + " : " + range);
 
       pop();
 
@@ -336,33 +427,50 @@
 
     function loadCandidates(){
 
-      function isInterior(n){
+      function isInteriorOcto(n){
 
-        if(nodes[n].x<octogon[0].x &&
-          nodes[n].x<octogon[1].x &&
-          nodes[n].x<octogon[6].x &&
-          nodes[n].x<octogon[7].x &&
-          nodes[n].x>octogon[2].x &&
-          nodes[n].x>octogon[3].x &&
-          nodes[n].x>octogon[4].x &&
-          nodes[n].x>octogon[5].x &&
+        if(nodes[n].x<quadrants[0].x &&
+          nodes[n].x<quadrants[1].x &&
+          nodes[n].x<quadrants[6].x &&
+          nodes[n].x<quadrants[7].x &&
+          nodes[n].x>quadrants[2].x &&
+          nodes[n].x>quadrants[3].x &&
+          nodes[n].x>quadrants[4].x &&
+          nodes[n].x>quadrants[5].x &&
 
-          nodes[n].y>octogon[4].y &&
-          nodes[n].y>octogon[5].y &&
-          nodes[n].y>octogon[6].y &&
-          nodes[n].y>octogon[7].y &&
-          nodes[n].y<octogon[0].y &&
-          nodes[n].y<octogon[1].y &&
-          nodes[n].y<octogon[2].y &&
-          nodes[n].y<octogon[3].y){
+          nodes[n].y>quadrants[4].y &&
+          nodes[n].y>quadrants[5].y &&
+          nodes[n].y>quadrants[6].y &&
+          nodes[n].y>quadrants[7].y &&
+          nodes[n].y<quadrants[0].y &&
+          nodes[n].y<quadrants[1].y &&
+          nodes[n].y<quadrants[2].y &&
+          nodes[n].y<quadrants[3].y){
 
           nodes[n].hull=false;
 
         }
         
       }
+      function isInteriorQuad(n){
+
+        if(nodes[n].x<quadrants[0].x && // x coordinates
+          nodes[n].x>quadrants[1].x &&
+          nodes[n].x>quadrants[2].x &&
+          nodes[n].x<quadrants[3].x &&
+          nodes[n].y>quadrants[0].y && // y coordinates
+          nodes[n].y>quadrants[1].y &&
+          nodes[n].y<quadrants[2].y &&
+          nodes[n].y<quadrants[3].y){
+
+          nodes[n].hull=false;
+
+        }
+
+      }
       for(let n=0; n<limit; n++){
-        isInterior(n);
+        
+        isInteriorQuad(n);
 
         // for(let m=0; m<limit; m++){
 
@@ -483,17 +591,17 @@
 
       beginShape();
 
-        for(let n=0; n<octogon.length; n++){
+        for(let n=0; n<quadrants.length; n++){
           
-          // r=octogon[n].distance/50;
+          // r=quadrants[n].distance/50;
 
-          ellipse(octogon[n].x, octogon[n].y, 10, 10);
+          ellipse(quadrants[n].x, quadrants[n].y, 10, 10);
 
 // textSize(16);
 // textAlign(RIGHT,BOTTOM);
-// text(round(octogon[n].theta), octogon[n].x, octogon[n].y-10);
+// text(round(quadrants[n].theta), quadrants[n].x, quadrants[n].y-10);
 
-          vertex(octogon[n].x, octogon[n].y);
+          vertex(quadrants[n].x, quadrants[n].y);
 
         }
 
@@ -773,9 +881,9 @@
             
             // for(let n=0; n<floor(limit/10); n++){
               
-              if(running){
+              // if(running){
                 loadCandidates();              
-              }
+              // }
   
             // }
   
@@ -808,8 +916,8 @@
 
           stroke(0,255,0,128);
           
-          for(let n=0; n<octogon.length; n++){
-            line(0,0,octogon[n].x,octogon[n].y);
+          for(let n=0; n<quadrants.length; n++){
+            line(0,0,quadrants[n].x,quadrants[n].y);
           }
 
           if(candidates.length!=0){
