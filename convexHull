@@ -49,13 +49,14 @@
     let running         = false;
     let sorted          = true;
     
-    let preprocessing   = PRE_PROCESSING.OCTO;
+    let preprocessing   = PRE_PROCESSING.QUAD;
     let hullMethod      = HULL_METHODS.BUBBA;
 
     let buffer          = 20;
     let candidateCount  = -1;
     let extent          = -Infinity;
-  
+    let hullLength      = 0;
+
     let radius          = Infinity;
     let diameter        = 10;
   
@@ -68,14 +69,16 @@
     let q4              = false;
     
     let quadrants       = [];
-    let quadrantCount   = 8;  //  Change based on Pre-processing heuristic
+    let quadrantCount   = 4;  //  Change based on Pre-processing heuristic
 
     let thetaQuadrant   = -1;
 
     // let counter=0;
 
-    let limit           = 3000; //  3163 squared is approx 10,000,000
-  
+    let limit           = 300; //  3163 squared is approx 10,000,000
+    
+    let processCount    = 0;    //  # of comparisons conducted
+
     class node {
       
       constructor(n=0, x=-1, y=-1){
@@ -148,20 +151,24 @@
       m=temp;
       
     }
-    function sortByAngle(arr){
-
-      for(let n=0; n<limit; n++){
-        for(let m=0; m<limit; m++){
-
+    function sortByTheta(arr){
+  
+      for(let n=0; n<arr.length; n++){
+        for(let m=0; m<arr.length; m++){
+          
           if(arr[n].theta>arr[m].theta){
-            swap(arr[n],arr[m]);
+            
+            let temp = arr[n];   
+            arr[n]   = arr[m];
+            arr[m]   = temp;
+  
           }
-
+  
         }
       }
-
+ 
     }
-    
+
     function setQuadrantOcto(n){
 
       let tq  = thetaQuadrant;
@@ -269,8 +276,8 @@
     let setQuadrant;
     let excludeNode;
 
-    setQuadrant=setQuadrantOcto;
-    excludeNode=excludeNodeOcto;
+    setQuadrant=setQuadrantQuad;
+    excludeNode=excludeNodeQuad;
 
     function loadNodes(){
       
@@ -311,7 +318,7 @@
             nodes[n].theta=180/PI*atan2(_y,_x);
 
             setQuadrant(n);
-            excludeNode(n);
+            if(true){ excludeNode(n); } // Include a flag for exclude on load
 
         }
 
@@ -321,23 +328,10 @@
 
       pop();
 
-      // if(sorted){ sortByAngle(nodes); }
+      if(sorted){ sortByTheta(nodes); }
 
     }
   
-    function setCandidateCount(){
-
-      for(let n=0; n<nodes.length; n++){
-
-        if(nodes[n].hull){
-          candidateCount++;
-        }
-
-      }
-
-      print(candidateCount);
-
-    }
     function loadLinkedList(){
   
       let nod=candidates[0];
@@ -393,70 +387,27 @@
     }
     function addCandidates(){
 
-      let count=0;
       candidates=[];
 
       for(let n=0; n<limit; n++){
 
         if(nodes[n].hull){
-          nodes[n].cid=count;
-          count++;
+          nodes[n].cid=candidates.length;
           candidates.push(nodes[n]);
         }
 
       }
 
-      sortByTheta(candidates);
+      // sortByTheta(candidates);
 
     }
-    
-    let processCount=0;
 
     function loadCandidates(){
 
-      function isInteriorOcto(n){
-
-        if(nodes[n].x<quadrants[0].x && // x coordinates
-           nodes[n].x<quadrants[1].x &&
-           nodes[n].x<quadrants[6].x &&
-           nodes[n].x<quadrants[7].x &&
-           nodes[n].x>quadrants[2].x &&
-           nodes[n].x>quadrants[3].x &&
-           nodes[n].x>quadrants[4].x &&
-           nodes[n].x>quadrants[5].x && // y coordinates 
-           nodes[n].y>quadrants[4].y &&
-           nodes[n].y>quadrants[5].y &&
-           nodes[n].y>quadrants[6].y &&
-           nodes[n].y>quadrants[7].y &&
-           nodes[n].y<quadrants[0].y &&
-           nodes[n].y<quadrants[1].y &&
-           nodes[n].y<quadrants[2].y &&
-           nodes[n].y<quadrants[3].y){
-
-          nodes[n].hull=false;
-
-        }
-        
-      }
-      function isInteriorQuad(n){
-
-        if(nodes[n].x<quadrants[0].x && // x coordinates
-           nodes[n].x>quadrants[1].x &&
-           nodes[n].x>quadrants[2].x &&
-           nodes[n].x<quadrants[3].x &&
-           nodes[n].y>quadrants[0].y && // y coordinates
-           nodes[n].y>quadrants[1].y &&
-           nodes[n].y<quadrants[2].y &&
-           nodes[n].y<quadrants[3].y){
-
-          nodes[n].hull=false;
-
-        }
-
-      }
       for(let n=0; n<limit; n++){
         
-        isInteriorQuad(n);
+        // excludeNodeQuad(n);
+        excludeNodeQuad(n);
 
         // for(let m=0; m<limit; m++){
 
@@ -493,7 +444,7 @@
       running=false;
       
       addCandidates();
-      print(candidates.length);
+
       loadLinkedList();
 
       nod0=candidates[0];
@@ -642,28 +593,9 @@
         }
 
     }
-    function sortByTheta(arr){
-  
-      for(let n=0; n<arr.length; n++){
-        for(let m=0; m<arr.length; m++){
-          
-          if((arr[n].theta+0)>(arr[m].theta+0)){
-            
-            let temp = arr[n];   
-            arr[n]   = arr[m];
-            arr[m]   = temp;
-  
-          }
-  
-        }
-      }
-  
-      
-    }
+
     function drawCandidates(){
-  
-      // sortByTheta(candidates);
-  frameRate(10);
+
       stroke(128);
       strokeWeight(1);
       fill( 64, 64, 64, 64);
@@ -686,7 +618,7 @@
   
         vertex(nod.x,nod.y);
   
-      endShape();
+      endShape(CLOSE);
   
     }
   
@@ -761,8 +693,7 @@
           nod2.previous=nod0;
   
           nod0=nod0.previous;
-                    
-          // candidates.splice(nod1.id,1);
+
           addCandidates();
           return;
   
@@ -776,135 +707,185 @@
       }
     
     }
-    function drawCentre(){
-  
-      fill(128,0,0,128);
-      noStroke();
-    
-        ellipse(centre.x,centre.y,diameter,diameter);
-  
-    }
-    function drawGUI(){
-  
-      fill(16);
-      noStroke();
-      stroke(128);
 
-        rect(-width/2,-height/2, width-1, height-1);
-  
-      fill(128);
-      textSize(36);
-      textAlign(CENTER,CENTER);
-      
-        // if(!running){ text("Click to begin", centre.x, centre.y-100); }
-        // else        { text("Click to pause", centre.x, centre.y-100); }
-        
-    }
-    function drawCursor(){
-  
-      noFill();
-      stroke(212);
-  
-      if(running){ strokeWeight(1.5); }
-      else       { strokeWeight(0.5); }
-  
-        line(-width/2,         mouseY-height/2, mouseX-width/2-5, mouseY-height/2);
-        line(mouseX-width/2+5, mouseY-height/2,          width/2, mouseY-height/2);
-  
-        line(mouseX-width/2,         -height/2, mouseX-width/2, mouseY-height/2-5);
-        line(mouseX-width/2, mouseY-height/2+5, mouseX-width/2, height/2);
-  
-        ellipse(mouseX-width/2,mouseY-height/2,10,10);
-  
-        push();
-  
-          translate(-width/2,-height/2);
-          // scale(1,-1);
-  
-          textSize(12);
-          textAlign(LEFT,BOTTOM);
-          fill(128);
-          noStroke();
-  
-            text(round(atan2(mouseY,mouseX)*180/PI),mouseX+10,mouseY-10);
-  
-        pop();
-  
-      if(running){
-      
-        textSize(24);
-        fill(212);
-        noStroke();
-  
-        textAlign(LEFT,BOTTOM);
-  
-          text("1", mouseX-width/2+20, mouseY-height/2-20);
-  
-        textAlign(RIGHT,BOTTOM);
-        
-          text("2", mouseX-width/2-20, mouseY-height/2-20);
-  
-        textAlign(RIGHT,TOP);
-        
-          text("3", mouseX-width/2-20, mouseY-height/2+20);
-        
-        textAlign(LEFT,TOP);
-        
-          text("4", mouseX-width/2+20, mouseY-height/2+20);
+    function calculateHullLength(){
+
+      hullLength=0;
+
+      if(candidates.length!=0){
+
+        for(let n=0; n<candidates.length-1; n++){
+
+          hullLength+=dist(candidates[n].x,
+                           candidates[n].y,
+                           candidates[n+1].x,
+                           candidates[n+1].y);
+        }
+
+        hullLength+=dist(candidates[0].x,
+                         candidates[0].y,
+                         candidates[candidates.length-1].x,
+                         candidates[candidates.length-1].y);
       }
-  
-    }  
+
+    }
+    
+    { // GUI
+
+      function drawCentre(){
+    
+        fill(128,0,0,128);
+        noStroke();
+      
+          ellipse(centre.x,centre.y,diameter,diameter);
+    
+      }
+      function drawGUI(){
+    
+        fill(16);
+        noStroke();
+        stroke(128);
+
+          rect(-width/2,-height/2, width-1, height-1);
+    
+        fill(128);
+        textSize(36);
+        textAlign(CENTER,CENTER);
+        
+          // if(!running){ text("Click to begin", centre.x, centre.y-100); }
+          // else        { text("Click to pause", centre.x, centre.y-100); }
+          
+      }
+      function drawCursor(){
+    
+        noFill();
+        stroke(212);
+    
+        if(running){ strokeWeight(1.5); }
+        else       { strokeWeight(0.5); }
+    
+          line(-width/2,         mouseY-height/2, mouseX-width/2-5, mouseY-height/2);
+          line(mouseX-width/2+5, mouseY-height/2,          width/2, mouseY-height/2);
+    
+          line(mouseX-width/2,         -height/2, mouseX-width/2, mouseY-height/2-5);
+          line(mouseX-width/2, mouseY-height/2+5, mouseX-width/2, height/2);
+    
+          ellipse(mouseX-width/2,mouseY-height/2,10,10);
+    
+          return;
+
+          push();
+    
+            // translate(-width/2,-height/2);
+            // scale(1,-1);
+    
+            textSize(12);
+            textAlign(LEFT,BOTTOM);
+            fill(128);
+            noStroke();
+    
+              text(round(atan2(mouseY,mouseX)*180/PI),mouseX+10,mouseY-10);
+    
+          pop();
+
+        if(running){
+        
+          textSize(24);
+          fill(212);
+          noStroke();
+    
+          textAlign(LEFT,BOTTOM);
+    
+            text("1", mouseX-width/2+20, mouseY-height/2-20);
+    
+          textAlign(RIGHT,BOTTOM);
+          
+            text("2", mouseX-width/2-20, mouseY-height/2-20);
+    
+          textAlign(RIGHT,TOP);
+          
+            text("3", mouseX-width/2-20, mouseY-height/2+20);
+          
+          textAlign(LEFT,TOP);
+          
+            text("4", mouseX-width/2+20, mouseY-height/2+20);
+        }
+    
+      }  
+      function drawQuadrantsOcto(){
+
+        // Slices
+        stroke(128,0,0,128);
+        strokeWeight(1);
+
+          line(centre.x, centre.y, width/2, height/2);
+          line(centre.x, centre.y,-width/2, height/2);
+          
+          line(centre.x, centre.y, width/2,-height/2);
+          line(centre.x, centre.y,-width/2,-height/2);
+
+          line(centre.x, centre.y, 0,-height/2);
+          line(centre.x, centre.y, 0, height/2);
+
+          line(centre.x, centre.y,-width/2+buffer, 0);
+          line(centre.x, centre.y, width/2-buffer, 0);
+
+        // Draw quadrant lines
+        stroke(0,255,0,128);
+            
+          for(let n=0; n<quadrants.length; n++){
+            line(0,0,quadrants[n].x,quadrants[n].y);
+          }
+
+      }
+      function telemetry(){
+
+        calculateHullLength();
+
+        fill(128);
+        noStroke();
+        textSize(16);
+        textAlign(LEFT,BOTTOM);
+
+        let cl =candidates.length;
+        let nl = nodes.length;
+
+        let row1=processCount + " : " + pow(limit,2) + " : " + nf(processCount/pow(limit,2)*100,1,2) + "%";
+        let row2=cl + " : " + nl + " : " + nf(cl/nl*100,1,2) + "%";
+
+          text(row1,-width/2+20, height/2-30);
+          text(row2,-width/2+20, height/2-10);
+
+        textSize(12);
+
+          text("Hull Length: " + round(hullLength),-width/2+200, height/2-10);
+          
+        // Domain and Range
+        let dr="Domain: " + domain + " - Range:  " + range;
+
+          text(dr,-width/2+400, height/2-10);
+
+      }
+
+    }
+
     function draw(){
   
       push();
   
         translate(width/2+0.5,height/2+0.5);
-        // scale(1,-1);
   
           background(0);
   
           if(!purged){
-            
-            // for(let n=0; n<floor(limit/10); n++){
-              
-              // if(running){
-                loadCandidates();              
-              // }
-  
-            // }
+
+            loadCandidates();              
   
           }
-  
-          noStroke();
-          fill(128);
-          textSize(24);
-          textAlign(LEFT,TOP);
-  
-            // text(count,10,10);
-  
+
           drawGUI();
   
-          // Slices
-          stroke(128,0,0);
-          strokeWeight(1);
-
-            // line(centre.x, centre.y, width/2, height/2);
-            // line(centre.x, centre.y,-width/2, height/2);
-            
-            // line(centre.x, centre.y, width/2,-height/2);
-            // line(centre.x, centre.y,-width/2,-height/2);
-
-            // line(centre.x, centre.y, 0,-height/2);
-            // line(centre.x, centre.y, 0, height/2);
-
-            // line(centre.x, centre.y,-width/2+buffer, 0);
-            // line(centre.x, centre.y, width/2-buffer, 0);
-
-          stroke(0,255,0,128);
-          
-          for(let n=0; n<quadrants.length; n++){
-            line(0,0,quadrants[n].x,quadrants[n].y);
-          }
+          drawQuadrantsOcto();  
 
           if(candidates.length!=0){
             drawCandidates();
@@ -927,8 +908,7 @@
           //   if(q4){ rect(nodes[n].x, nodes[n].y, width-nodes[n].x, height-nodes[n].y); }
   
           // }
-  
-          // drawCentre();
+
           drawCursor();
   
           // Origin
@@ -938,22 +918,7 @@
   
           }
   
-          fill(128);
-          noStroke();
-          textSize(16);
-          textAlign(LEFT,BOTTOM);
-  
-          let cl =candidates.length;
-          let nl = nodes.length;
-
-          let row1=processCount + " : " + pow(limit,2) + " : " + nf(processCount/pow(limit,2)*100,1,2) + "%";
-          let row2=cl + " : " + nl + " : " + nf(cl/nl*100,1,2) + "%";
-
-            text(row1,-width/2+20, height/2-30);
-            text(row2,-width/2+20, height/2-10);
-
-            // ellipse(width/2,height/2,20,20);
-            // ellipse(0,0,20,20);
+          telemetry();
 
       pop();
   
@@ -972,7 +937,7 @@
     function doubleClicked(){
   
       print("doubleClicked");
-    
+    print(dist(0,0,width,0));
     }
   
   }
