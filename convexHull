@@ -47,7 +47,7 @@
     let nod2;
   
     let running         = false;
-    let sorted          = true;
+    let sorted          = false;
     let excludeOnLoad   = false;                 //  Nodes are eliminated while they are loaded
 
     let preprocessing   = PRE_PROCESSING.QUAD;
@@ -70,13 +70,13 @@
     let q4              = false;
     
     let quadrants       = [];
-    let quadrantCount   = 4;  //  Change based on Pre-processing heuristic
+    let quadrantCount   = 8;  //  Change based on Pre-processing heuristic
 
     let thetaQuadrant   = -1;
 
     // let counter=0;
 
-    let limit           = 3000; //  3163 squared is approx 10,000,000
+    let limit           = 500; //  3163 squared is approx 10,000,000
     
     let processCount    = 0;    //  # of comparisons conducted
 
@@ -193,7 +193,30 @@
         }
   
       }
+  
+      function triangleArea(p0,p1,p2){
+    
+        //  Heron's Formula
+        let a=dist(p0.x, p0.y, p1.x, p1.y);
+        let b=dist(p1.x, p1.y, p2.x, p2.y);
+        let c=dist(p2.x, p2.y, p0.x, p0.y);
 
+        let semi=(a+b+c)/2;
+        
+        return pow((semi*(semi-a)*(semi-b)*(semi-c)), 0.5);
+            
+      }
+
+      function hullHit(centre,p0,p1,p2){
+
+        // If the large triangle is smaller the sum of the other 2, the nodes are convex
+        let largeTriangle  = triangleArea(centre,p0,p2);
+        let smallTriangles = triangleArea(centre, p0, p1) + triangleArea(centre, p1, p2);
+
+        return (largeTriangle>smallTriangles);
+
+      }
+      
     }
 
     function setQuadrantOcto(n){
@@ -207,14 +230,14 @@
 
         switch(true){
 
-          case th >=  0     && th < tq:        q=0; break;
-          case th >= tq     && th < 90:        q=1; break;
-          case th >=  90    && th < ( 180-tq): q=2; break;
-          case th <= 180    && th > ( 180-tq): q=3; break;
-          case th >=-180    && th < (-180+tq): q=4; break;
-          case th >=-180+tq && th < -90:       q=5; break;
-          case th >= -90    && th < -tq:       q=6; break;
-          case th <=   0    && th > -tq:       q=7; break;
+          case th >=  0     && th <= tq:      q=0; break;
+          case th >= tq     && th <= 90:      q=1; break;
+          case th >=  90    && th <= 180-tq:  q=2; break;
+          case th >= 180-tq && th <= 180:     q=3; break;
+          case th >= 180    && th <= 180+tq:  q=4; break;
+          case th >= 180+tq && th <= 270:     q=5; break;
+          case th >= 270    && th <= 360-tq:  q=6; break;
+          case th >= 360-tq && th <= 360:     q=7; break;
 
           default:                  throw('Bad Quadrant');
 
@@ -283,6 +306,128 @@
       }
       
     }
+    function excludeNodeOctoTriangle(n){
+
+      let th=nodes[n].theta;
+      let q=nodes[n].quadrant;
+      
+    if(q<7){
+
+      if(th>=quadrants[q].theta &&
+         th<=quadrants[q+1].theta &&
+         hullHit(centre,quadrants[q],nodes[n],quadrants[q+1])){
+
+          // print(q + " : " + quadrants[q].theta + " : " + quadrants[q+1].theta);
+
+         nodes[n].hull=false;
+
+      }
+
+    }
+         return;
+
+      // if(th>=quadrants[0].theta &&
+      //    th<=quadrants[1].theta &&
+      //    hullHit(centre,quadrants[0],nodes[n],quadrants[1])){
+
+      //     nodes[n].hull=false;
+
+      // }
+      // else if(th>=quadrants[1].theta &&
+      //         th<=quadrants[2].theta &&
+      //         hullHit(centre,quadrants[1],nodes[n],quadrants[2])){
+
+      //   nodes[n].hull=false;
+
+      // }
+      // else if(th>=quadrants[2].theta &&
+      //         th<=quadrants[3].theta &&
+      //         hullHit(centre,quadrants[2],nodes[n],quadrants[3])){
+
+      //    nodes[n].hull=false;
+
+      // }
+      // else if(th>=quadrants[3].theta &&
+      //         th<=quadrants[4].theta &&
+      //         hullHit(centre,quadrants[3],nodes[n],quadrants[4])){
+
+      //   nodes[n].hull=false;
+
+      // }      
+      // else if(th>=quadrants[4].theta &&
+      //         th<=quadrants[5].theta &&
+      //         hullHit(centre,quadrants[4],nodes[n],quadrants[5])){
+
+      //   nodes[n].hull=false;
+
+      // }
+      // else if(th>=quadrants[5].theta &&
+      //         th<=quadrants[6].theta &&
+      //         hullHit(centre,quadrants[5],nodes[n],quadrants[6])){
+
+      //   nodes[n].hull=false;
+
+      // }
+      // else if(th>=quadrants[6].theta &&
+      //         th<=quadrants[7].theta &&
+      //         hullHit(centre,quadrants[6],nodes[n],quadrants[7])){
+
+      //   nodes[n].hull=false;
+
+      // }
+      // else if(th>=quadrants[7].theta &&
+      //         hullHit(centre,quadrants[7],nodes[n],quadrants[0])){
+
+      //   nodes[n].hull=false;
+
+      // }
+      // else if(th<=quadrants[0].theta &&
+      //         hullHit(centre,quadrants[0],nodes[n],quadrants[7])){
+
+      //   nodes[n].hull=false;
+
+      // }      
+
+    }
+    function excludeNodeQuadTriangle(n){
+
+      let th=nodes[n].theta;
+
+      if(th<=quadrants[0].theta &&
+         th>=quadrants[1].theta &&
+         hullHit(centre,quadrants[0],nodes[n],quadrants[1])){
+
+          nodes[n].hull=false;
+
+      }
+      else if(th>=quadrants[3].theta &&
+              th<=quadrants[2].theta &&
+              hullHit(centre,quadrants[2],nodes[n],quadrants[3])){
+
+        nodes[n].hull=false;
+
+      }
+      else if(th>=quadrants[0].theta &&
+              th<=quadrants[3].theta &&
+              hullHit(centre,quadrants[0],nodes[n],quadrants[3])){
+
+         nodes[n].hull=false;
+
+      }
+      else if(th<=quadrants[1].theta &&
+              hullHit(centre,quadrants[1],nodes[n],quadrants[2])){
+
+        nodes[n].hull=false;
+
+      }
+      else if(th>=quadrants[2].theta &&
+              hullHit(centre,quadrants[1],nodes[n],quadrants[2])){
+
+        nodes[n].hull=false;
+
+      }
+
+    }
     function excludeNodeQuad(n){
 
       if(nodes[n].x<quadrants[0].x && //  x coordinates
@@ -303,8 +448,8 @@
     let setQuadrant;
     let excludeNode;
 
-    setQuadrant=setQuadrantQuad;
-    excludeNode=excludeNodeQuad;
+    setQuadrant=setQuadrantOcto;
+    excludeNode=excludeNodeOctoTriangle;
 
     function loadNodes(){
       
@@ -343,6 +488,8 @@
             
             nodes[_n].distance = dist(0,0,_x,_y);
             nodes[_n].theta    = 180/PI*atan2(_y,_x);
+            
+            if(nodes[_n].theta<0){ nodes[_n].theta+=360; }
 
             setQuadrant(_n);
 
@@ -356,7 +503,7 @@
           range  = abs(_minY-_maxY);
 
       pop();
-
+print(quadrants);
     }
   
     function loadLinkedList(){
@@ -408,8 +555,6 @@
 
       }
 
-
-      
       setCandidates();
       loadLinkedList();
 
@@ -426,29 +571,6 @@
   // frameRate(10);
       nod1=nod0.next;
       nod2=nod1.next;
-  
-      function triangleArea(p0,p1,p2){
-  
-        //  Heron's Formula
-        let a=dist(p0.x, p0.y, p1.x, p1.y);
-        let b=dist(p1.x, p1.y, p2.x, p2.y);
-        let c=dist(p2.x, p2.y, p0.x, p0.y);
-  
-        let semi=(a+b+c)/2;
-        
-        return pow((semi*(semi-a)*(semi-b)*(semi-c)), 0.5);
-            
-      }
-  
-      function hullHit(centre,p0,p1,p2){
-  
-        // If the large triangle is smaller the sum of the other 2, the nodes are convex
-        let largeTriangle  = triangleArea(centre,p0,p2);
-        let smallTriangles = triangleArea(centre, p0, p1) + triangleArea(centre, p1, p2);
-  
-        return (largeTriangle>smallTriangles);
-  
-      }    
 
       if(running){
         
@@ -576,13 +698,13 @@
           if(candidates[n].x<0){ textAlign(LEFT,BOTTOM);  }
           else                 { textAlign(RIGHT,BOTTOM); }
   
-          let theta=nodes[n].theta;
+          let theta=candidates[n].theta;
   
-          if(theta<0){ theta+=360; }
+          // if(theta<0){ theta+=360; }
   
           fill(255, 255, 255);
           textSize(10);
-  
+
             text(round(theta) + " : " +
                  round(candidates[n].quadrant),
                  candidates[n].x+5,
@@ -603,7 +725,7 @@
             // if(!nodes[n].hull){
                 
               ellipse(nodes[n].x, nodes[n].y, r, r);
-  
+
             // }
   
           }
@@ -793,6 +915,13 @@
 
           drawCursor();
 
+          textSize(16);
+          fill(255,0,0);
+          noStroke();
+
+          for(let n=0; n<quadrants.length; n++){
+            text(n + " : " + round(quadrants[n].theta),quadrants[n].x,quadrants[n].y);
+          }
       pop();
 
     }  
