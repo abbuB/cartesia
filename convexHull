@@ -76,7 +76,7 @@
 
     // let counter=0;
 
-    let limit           = 500; //  3163 squared is approx 10,000,000
+    let limit           = 5000; //  3163 squared is approx 10,000,000
     
     let processCount    = 0;    //  # of comparisons conducted
 
@@ -308,85 +308,14 @@
     }
     function excludeNodeOctoTriangle(n){
 
-      let th=nodes[n].theta;
       let q=nodes[n].quadrant;
-      
-    if(q<7){
+      let p=q+1;
 
-      if(th>=quadrants[q].theta &&
-         th<=quadrants[q+1].theta &&
-         hullHit(centre,quadrants[q],nodes[n],quadrants[q+1])){
+      if(q==7){ p=0; }
 
-          // print(q + " : " + quadrants[q].theta + " : " + quadrants[q+1].theta);
-
-         nodes[n].hull=false;
-
+      if(hullHit(centre,quadrants[q],nodes[n],quadrants[p])){
+        nodes[n].hull=false;
       }
-
-    }
-         return;
-
-      // if(th>=quadrants[0].theta &&
-      //    th<=quadrants[1].theta &&
-      //    hullHit(centre,quadrants[0],nodes[n],quadrants[1])){
-
-      //     nodes[n].hull=false;
-
-      // }
-      // else if(th>=quadrants[1].theta &&
-      //         th<=quadrants[2].theta &&
-      //         hullHit(centre,quadrants[1],nodes[n],quadrants[2])){
-
-      //   nodes[n].hull=false;
-
-      // }
-      // else if(th>=quadrants[2].theta &&
-      //         th<=quadrants[3].theta &&
-      //         hullHit(centre,quadrants[2],nodes[n],quadrants[3])){
-
-      //    nodes[n].hull=false;
-
-      // }
-      // else if(th>=quadrants[3].theta &&
-      //         th<=quadrants[4].theta &&
-      //         hullHit(centre,quadrants[3],nodes[n],quadrants[4])){
-
-      //   nodes[n].hull=false;
-
-      // }      
-      // else if(th>=quadrants[4].theta &&
-      //         th<=quadrants[5].theta &&
-      //         hullHit(centre,quadrants[4],nodes[n],quadrants[5])){
-
-      //   nodes[n].hull=false;
-
-      // }
-      // else if(th>=quadrants[5].theta &&
-      //         th<=quadrants[6].theta &&
-      //         hullHit(centre,quadrants[5],nodes[n],quadrants[6])){
-
-      //   nodes[n].hull=false;
-
-      // }
-      // else if(th>=quadrants[6].theta &&
-      //         th<=quadrants[7].theta &&
-      //         hullHit(centre,quadrants[6],nodes[n],quadrants[7])){
-
-      //   nodes[n].hull=false;
-
-      // }
-      // else if(th>=quadrants[7].theta &&
-      //         hullHit(centre,quadrants[7],nodes[n],quadrants[0])){
-
-      //   nodes[n].hull=false;
-
-      // }
-      // else if(th<=quadrants[0].theta &&
-      //         hullHit(centre,quadrants[0],nodes[n],quadrants[7])){
-
-      //   nodes[n].hull=false;
-
-      // }      
 
     }
     function excludeNodeQuadTriangle(n){
@@ -445,12 +374,32 @@
 
     }
 
-    let setQuadrant;
+    let setQuadrants;
     let excludeNode;
 
-    setQuadrant=setQuadrantOcto;
+    setQuadrants=setQuadrantOcto;
     excludeNode=excludeNodeOctoTriangle;
 
+    function setQuadrant(n){
+
+      let theta=nodes[n].theta;
+      let quadrant=-1;
+
+      for(let q=0; q<quadrants.length-1; q++){
+        
+        if(theta>=quadrants[q].theta &&
+           theta<=quadrants[q+1].theta){
+            quadrant=q;
+            break;
+        }
+
+      }
+
+      if(quadrant==-1){ quadrant=7; }
+
+      nodes[n].quadrant=quadrant;
+
+    }
     function loadNodes(){
       
       let _x     = -1;
@@ -491,7 +440,7 @@
             
             if(nodes[_n].theta<0){ nodes[_n].theta+=360; }
 
-            setQuadrant(_n);
+            setQuadrants(_n);
 
             // Include a flag for exclude on load
             if(excludeOnLoad){ excludeNode(_n); }
@@ -503,7 +452,13 @@
           range  = abs(_minY-_maxY);
 
       pop();
-print(quadrants);
+
+      print(quadrants);
+
+for(let _n=0; _n<nodes.length; _n++){
+  setQuadrant(_n);
+}
+
     }
   
     function loadLinkedList(){
