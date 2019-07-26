@@ -13,9 +13,11 @@
 
     var PRE_PROCESSING = {
 
-      NONE:       0,
-      OCTO:       1,
-      QUAD:       2
+      NONE:             0,
+      OCTO_TRIANGLE:    1,
+      QUAD_TRIANGLE:    2,
+      OCTO_RECTANGLE:   3,
+      QUAD_RECTANGLE:   4
 
     };
     var HULL_METHODS = {
@@ -76,7 +78,7 @@
 
     // let counter=0;
 
-    let limit           = 5000; //  3163 squared is approx 10,000,000
+    let limit           = 500; //  3163 squared is approx 10,000,000
     
     let processCount    = 0;    //  # of comparisons conducted
 
@@ -219,7 +221,7 @@
       
     }
 
-    function setQuadrantOcto(n){
+    function setQuadrantsOctagonal(n){
 
       let tq  = thetaQuadrant;
       let nod = nodes[n];
@@ -243,7 +245,7 @@
 
         }
 
-        nod.quadrant=q;
+        // nod.quadrant=q;
 
         if(nod.distance>quadrants[q].distance ){ quadrants[q]=nod; }
 
@@ -253,7 +255,7 @@
       }
 
     }
-    function setQuadrantQuad(n){
+    function setQuadrantsCartesian(n){
 
       let th  = nodes[n].theta;
       let nod = nodes[n];
@@ -263,10 +265,10 @@
 
         switch(true){
 
-          case th <=  0 && th >  -90: q=0; break;
-          case th <=-90 && th >=-180: q=1; break;
-          case th >  90 && th <= 180: q=2; break;
-          case th >=  0 && th <=  90: q=3; break;
+          case th >=   0 && th <=  90: q=0; break;
+          case th >=  90 && th <= 180: q=1; break;
+          case th >= 180 && th <= 270: q=2; break;
+          case th >= 270 && th <= 360: q=3; break;
 
           default:         throw('Bad Quadrant');
 
@@ -282,7 +284,9 @@
       }
 
     } 
-    function excludeNodeOcto(n){
+
+
+    function excludeNodeOctoRectangle(n){
 
       if(nodes[n].x<quadrants[0].x && //  x coordinates
          nodes[n].x<quadrants[1].x &&
@@ -306,58 +310,58 @@
       }
       
     }
-    function excludeNodeOctoTriangle(n){
+    function excludeNodeTriangle(n){
 
       let q=nodes[n].quadrant;
       let p=q+1;
 
-      if(q==7){ p=0; }
+      if(q==quadrantCount-1){ p=0; }
 
       if(hullHit(centre,quadrants[q],nodes[n],quadrants[p])){
         nodes[n].hull=false;
       }
 
     }
-    function excludeNodeQuadTriangle(n){
+    // function excludeNodeQuadTriangle(n){
 
-      let th=nodes[n].theta;
+    //   let th=nodes[n].theta;
 
-      if(th<=quadrants[0].theta &&
-         th>=quadrants[1].theta &&
-         hullHit(centre,quadrants[0],nodes[n],quadrants[1])){
+    //   if(th<=quadrants[0].theta &&
+    //      th>=quadrants[1].theta &&
+    //     hullHit(centre,quadrants[0],nodes[n],quadrants[1])){
 
-          nodes[n].hull=false;
+    //       nodes[n].hull=false;
 
-      }
-      else if(th>=quadrants[3].theta &&
-              th<=quadrants[2].theta &&
-              hullHit(centre,quadrants[2],nodes[n],quadrants[3])){
+    //   }
+    //   else if(th>=quadrants[3].theta &&
+    //           th<=quadrants[2].theta &&
+    //     hullHit(centre,quadrants[2],nodes[n],quadrants[3])){
 
-        nodes[n].hull=false;
+    //     nodes[n].hull=false;
 
-      }
-      else if(th>=quadrants[0].theta &&
-              th<=quadrants[3].theta &&
-              hullHit(centre,quadrants[0],nodes[n],quadrants[3])){
+    //   }
+    //   else if(th>=quadrants[0].theta &&
+    //           th<=quadrants[3].theta &&
+    //     hullHit(centre,quadrants[0],nodes[n],quadrants[3])){
 
-         nodes[n].hull=false;
+    //      nodes[n].hull=false;
 
-      }
-      else if(th<=quadrants[1].theta &&
-              hullHit(centre,quadrants[1],nodes[n],quadrants[2])){
+    //   }
+    //   else if(th<=quadrants[1].theta &&
+    //     hullHit(centre,quadrants[1],nodes[n],quadrants[2])){
 
-        nodes[n].hull=false;
+    //     nodes[n].hull=false;
 
-      }
-      else if(th>=quadrants[2].theta &&
-              hullHit(centre,quadrants[1],nodes[n],quadrants[2])){
+    //   }
+    //   else if(th>=quadrants[2].theta &&
+    //     hullHit(centre,quadrants[1],nodes[n],quadrants[2])){
 
-        nodes[n].hull=false;
+    //     nodes[n].hull=false;
 
-      }
+    //   }
 
-    }
-    function excludeNodeQuad(n){
+    // }
+    function excludeNodeQuadRectangle(n){
 
       if(nodes[n].x<quadrants[0].x && //  x coordinates
          nodes[n].x>quadrants[1].x &&
@@ -377,10 +381,18 @@
     let setQuadrants;
     let excludeNode;
 
-    setQuadrants=setQuadrantOcto;
-    excludeNode=excludeNodeOctoTriangle;
+    if(quadrantCount==4){
+      setQuadrants=setQuadrantsCartesian;
+      excludeNode=excludeNodeTriangle;
+      // setNodeQuadrant=setNodeQuadRectangle;
+    }
+    else{
+      setQuadrants=setQuadrantsOctagonal;
+      excludeNode=excludeNodeTriangle;
+      // setNodeQuadrant=setNodeQuadOcto;
+    }
 
-    function setQuadrant(n){
+    function setQuadrantOcto(n){
 
       let theta=nodes[n].theta;
       let quadrant=-1;
@@ -395,7 +407,7 @@
 
       }
 
-      if(quadrant==-1){ quadrant=7; }
+      if(quadrant==-1){ quadrant=quadrants.length-1; }
 
       nodes[n].quadrant=quadrant;
 
@@ -453,11 +465,7 @@
 
       pop();
 
-      print(quadrants);
-
-for(let _n=0; _n<nodes.length; _n++){
-  setQuadrant(_n);
-}
+      // print(quadrants);
 
     }
   
@@ -559,20 +567,7 @@ for(let _n=0; _n<nodes.length; _n++){
 
     { // GUI
 
-      function drawAxis(){
 
-        // Slices
-        stroke(128,0,0,255);
-        strokeWeight(1);
-
-          line(centre.x, centre.y, 0,-height/2);
-          line(centre.x, centre.y, 0, height/2);
-
-          line(centre.x, centre.y,-width/2, 0);
-          line(centre.x, centre.y, width/2, 0);
-                  
-
-      }
 
       function drawQuadrantsQuad(){
 
@@ -616,11 +611,42 @@ for(let _n=0; _n<nodes.length; _n++){
           line(centre.x, centre.y,-width/2,-height/2);
 
         // Draw quadrant lines
-        stroke(0,255,0,128);
+        
+            textSize(24);
             
           for(let n=0; n<quadrants.length; n++){
-            line(0,0,quadrants[n].x,quadrants[n].y);
+        
+            stroke(0,255,0,128);
+
+              line(0,0,quadrants[n].x,quadrants[n].y);
+
+            noStroke();
+            fill(0,128,255);
+
+              if(n<quadrants.length-1){
+                text(n,(quadrants[n].x+quadrants[n+1].x)/2,(quadrants[n].y+quadrants[n+1].y)/2);
+              }
+              else{
+                text(n,(quadrants[n].x+quadrants[0].x)/2,(quadrants[n].y+quadrants[0].y)/2);
+              }
+
           }
+
+          fill(0,20);
+          stroke(128);
+          strokeWeight(2);
+    
+          beginShape();
+    
+            for(let n=0; n<quadrants.length; n++){
+    
+              ellipse(quadrants[n].x, quadrants[n].y, 10, 10);
+              
+              vertex(quadrants[n].x, quadrants[n].y);
+    
+            }
+    
+          endShape(CLOSE);
 
       }        
       
@@ -660,11 +686,15 @@ for(let _n=0; _n<nodes.length; _n++){
           fill(255, 255, 255);
           textSize(10);
 
-            text(round(theta) + " : " +
-                 round(candidates[n].quadrant),
+            // text(round(theta) + " : " +
+            //      round(candidates[n].quadrant),
+            //      candidates[n].x+5,
+            //      candidates[n].y-5);
+  
+            text(round(candidates[n].quadrant),
                  candidates[n].x+5,
                  candidates[n].y-5);
-  
+
         }
   
       }
@@ -699,12 +729,33 @@ for(let _n=0; _n<nodes.length; _n++){
             rect(-width/2,-height/2, width-1, height-1);
 
         }
+        function drawAxis(){
+
+          // Slices
+          stroke(128,0,0,255);
+          strokeWeight(0.75);
+  
+            line(centre.x, centre.y, 0,-height/2);
+            line(centre.x, centre.y, 0, height/2);
+  
+            line(centre.x, centre.y,-width/2, 0);
+            line(centre.x, centre.y, width/2, 0);
+                    
+          
+          strokeWeight(0.5);
+
+            line(centre.x, centre.y, width/2, height/2);
+            line(centre.x, centre.y, width/2,-height/2);
+            line(centre.x, centre.y,-width/2, height/2);
+            line(centre.x, centre.y,-width/2,-height/2);
+
+        }        
         function drawOrigin(){
     
           fill(128,0,0,128);
           noStroke();
         
-            ellipse(centre.x,centre.y,diameter,diameter);
+            ellipse(centre.x, centre.y, diameter, diameter);
       
         }
 
@@ -838,10 +889,17 @@ for(let _n=0; _n<nodes.length; _n++){
 
       let drawQuadrants;
 
-      drawQuadrants=drawQuadrantsQuad;
+      drawQuadrants=drawQuadrantsOcto;
 
     }
+    function processCandidates(){
+      
+      if(candidates.length!=0 && running){
+        calculateHull();
+        drawTriangles();
+      }
 
+    }
     function draw(){
       
       if(nodes.length==0){
@@ -853,30 +911,26 @@ for(let _n=0; _n<nodes.length; _n++){
         translate(width/2+0.5,height/2+0.5);
 
           if(!purged){
-
-            loadCandidates();              
-  
+            // loadCandidates();  
           }
 
           drawGUI();
 
-          if(candidates.length!=0){
-            calculateHull();
-            drawTriangles();
-          }
+          processCandidates();
 
           drawNodes();
           drawCandidates();
 
           drawCursor();
 
-          textSize(16);
-          fill(255,0,0);
-          noStroke();
+          // textSize(16);
+          // fill(0,128,255);
+          // noStroke();
 
-          for(let n=0; n<quadrants.length; n++){
-            text(n + " : " + round(quadrants[n].theta),quadrants[n].x,quadrants[n].y);
-          }
+          // for(let n=0; n<quadrants.length; n++){
+          //   text(n + " : " + round(quadrants[n].theta),quadrants[n].x,quadrants[n].y);
+          // }
+
       pop();
 
     }  
