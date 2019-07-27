@@ -8,6 +8,17 @@
       - circular
       ...
 
+    To Do:
+
+      load nodes
+      
+      set sectors
+      
+      set boundary nodes
+
+      exclude nodes
+      process nodes
+
   */
   {
 
@@ -37,7 +48,7 @@
     let candidates      = [];     //  Possible hull nodes
     let hull            = [];     //  Only hull nodes
   
-    let centre;               //  Point used to determine convexity
+    let origin;               //  Point used to determine convexity
 
     let purged          = false;
   
@@ -71,10 +82,12 @@
     let q3              = false;
     let q4              = false;
     
-    let quadrants       = [];
-    let quadrantCount   = 8;  //  Change based on Pre-processing heuristic
+    let sectors         = [];
+    let sectorCount     = 4;  //  Change based on Pre-processing heuristic
 
     let thetaQuadrant   = -1;
+
+    let quadrants       = [];
 
     // let counter=0;
 
@@ -91,11 +104,14 @@
   
         this.x        = x;          //  x coordinate
         this.y        = y;          //  y coordinate
-  
+
         this.theta    = -Infinity;  //  Angle to the origin
-        
-        this.quadrant = -Infinity;  // cartesian quadrant 
-        this.distance = -Infinity;  //  distance to the origin
+
+        this.quadrant = -Infinity;  // cartesian quadrant
+        this.sector   = -Infinity;  // exclusion sector
+        this.distance = -Infinity;  // distance to the origin
+
+        this.polar    = -Infinity + "," + -Infinity;
 
         this.next     = null;       // linked list next
         this.previous = null;       // linked list previous
@@ -122,7 +138,7 @@
         return nClone;
   
       }
-  
+      
     }
   
     function setup(){
@@ -141,7 +157,7 @@
       // diameter=extent-2*buffer;
       radius=diameter/2;
   
-      centre=new node("C", 0, 0);
+      origin=new node("C", 0, 0);
 
     }; 
 
@@ -209,26 +225,56 @@
             
       }
 
-      function hullHit(centre,p0,p1,p2){
+      function hullHit(origin,p0,p1,p2){
 
         // If the large triangle is smaller the sum of the other 2, the nodes are convex
-        let largeTriangle  = triangleArea(centre,p0,p2);
-        let smallTriangles = triangleArea(centre, p0, p1) + triangleArea(centre, p1, p2);
+        let largeTriangle  = triangleArea(origin,p0,p2);
+        let smallTriangles = triangleArea(origin, p0, p1) + triangleArea(origin, p1, p2);
 
         return (largeTriangle>smallTriangles);
 
       }
       
     }
+    function setSectorCartesian(){
 
-    function setQuadrantsOctagonal(n){
 
-      let tq  = thetaQuadrant;
-      let nod = nodes[n];
-      let th  = nod.theta;
-      let q   = -1;
+
+    }
+    function setSectorOctagonal(nod){
+
+      for(let q=0; q<sectors.length-1; q++){
+
+        if(nod.theta>=sectors[q].theta &&
+          nod.theta<=sectors[q+1].theta){
+            nod.sector=q;
+          break;
+        }
+
+      }
+
+      if(nod.sector==-Infinity){
+        nod.sector=sectors.length-1;
+      }
+
+    }
+
+    function setSectors(){
+
+      for(let n=0; n<nodes.length; n++){
+        setSector(nodes[n]);
+      }
+
+    }
+
+    function setQuadrantOctagonal(n){
 
       try{
+
+        let tq  = thetaQuadrant;
+        let nod = nodes[n];
+        let th  = nod.theta;
+        let q   = -1;
 
         switch(true){
 
@@ -245,9 +291,9 @@
 
         }
 
-        // nod.quadrant=q;
+        nod.quadrant=q;
 
-        if(nod.distance>quadrants[q].distance ){ quadrants[q]=nod; }
+        if(nod.distance>sectors[q].distance ){ sectors[q]=nod; }
 
       }
       catch(err){
@@ -255,7 +301,7 @@
       }
 
     }
-    function setQuadrantsCartesian(n){
+    function setQuadrantCartesian(n){
 
       let th  = nodes[n].theta;
       let nod = nodes[n];
@@ -276,7 +322,7 @@
 
         nod.quadrant=q;
 
-        if(nod.distance>quadrants[q].distance ){ quadrants[q]=nod; }
+        if(nod.distance>sectors[q].distance ){ sectors[q]=nod; }
 
       }
       catch(err){
@@ -288,22 +334,22 @@
 
     function excludeNodeOctoRectangle(n){
 
-      if(nodes[n].x<quadrants[0].x && //  x coordinates
-         nodes[n].x<quadrants[1].x &&
-         nodes[n].x<quadrants[6].x &&
-         nodes[n].x<quadrants[7].x &&
-         nodes[n].x>quadrants[2].x &&
-         nodes[n].x>quadrants[3].x &&
-         nodes[n].x>quadrants[4].x &&
-         nodes[n].x>quadrants[5].x &&
-         nodes[n].y>quadrants[4].y && // y coordinates
-         nodes[n].y>quadrants[5].y &&
-         nodes[n].y>quadrants[6].y &&
-         nodes[n].y>quadrants[7].y &&
-         nodes[n].y<quadrants[0].y &&
-         nodes[n].y<quadrants[1].y &&
-         nodes[n].y<quadrants[2].y &&
-         nodes[n].y<quadrants[3].y){
+      if(nodes[n].x<sectors[0].x && //  x coordinates
+         nodes[n].x<sectors[1].x &&
+         nodes[n].x<sectors[6].x &&
+         nodes[n].x<sectors[7].x &&
+         nodes[n].x>sectors[2].x &&
+         nodes[n].x>sectors[3].x &&
+         nodes[n].x>sectors[4].x &&
+         nodes[n].x>sectors[5].x &&
+         nodes[n].y>sectors[4].y && // y coordinates
+         nodes[n].y>sectors[5].y &&
+         nodes[n].y>sectors[6].y &&
+         nodes[n].y>sectors[7].y &&
+         nodes[n].y<sectors[0].y &&
+         nodes[n].y<sectors[1].y &&
+         nodes[n].y<sectors[2].y &&
+         nodes[n].y<sectors[3].y){
 
         nodes[n].hull=false;
 
@@ -312,12 +358,12 @@
     }
     function excludeNodeTriangle(n){
 
-      let q=nodes[n].quadrant;
+      let q=nodes[n].sector;
       let p=q+1;
 
-      if(q==quadrantCount-1){ p=0; }
+      if(q==sectorCount-1){ p=0; }
 
-      if(hullHit(centre,quadrants[q],nodes[n],quadrants[p])){
+      if(hullHit(origin,sectors[q],nodes[n],sectors[p])){
         nodes[n].hull=false;
       }
 
@@ -326,35 +372,35 @@
 
     //   let th=nodes[n].theta;
 
-    //   if(th<=quadrants[0].theta &&
-    //      th>=quadrants[1].theta &&
-    //     hullHit(centre,quadrants[0],nodes[n],quadrants[1])){
+    //   if(th<=sectors[0].theta &&
+    //      th>=sectors[1].theta &&
+    //     hullHit(origin,sectors[0],nodes[n],sectors[1])){
 
     //       nodes[n].hull=false;
 
     //   }
-    //   else if(th>=quadrants[3].theta &&
-    //           th<=quadrants[2].theta &&
-    //     hullHit(centre,quadrants[2],nodes[n],quadrants[3])){
+    //   else if(th>=sectors[3].theta &&
+    //           th<=sectors[2].theta &&
+    //     hullHit(origin,sectors[2],nodes[n],sectors[3])){
 
     //     nodes[n].hull=false;
 
     //   }
-    //   else if(th>=quadrants[0].theta &&
-    //           th<=quadrants[3].theta &&
-    //     hullHit(centre,quadrants[0],nodes[n],quadrants[3])){
+    //   else if(th>=sectors[0].theta &&
+    //           th<=sectors[3].theta &&
+    //     hullHit(origin,sectors[0],nodes[n],sectors[3])){
 
     //      nodes[n].hull=false;
 
     //   }
-    //   else if(th<=quadrants[1].theta &&
-    //     hullHit(centre,quadrants[1],nodes[n],quadrants[2])){
+    //   else if(th<=sectors[1].theta &&
+    //     hullHit(origin,sectors[1],nodes[n],sectors[2])){
 
     //     nodes[n].hull=false;
 
     //   }
-    //   else if(th>=quadrants[2].theta &&
-    //     hullHit(centre,quadrants[1],nodes[n],quadrants[2])){
+    //   else if(th>=sectors[2].theta &&
+    //     hullHit(origin,sectors[1],nodes[n],sectors[2])){
 
     //     nodes[n].hull=false;
 
@@ -363,14 +409,14 @@
     // }
     function excludeNodeQuadRectangle(n){
 
-      if(nodes[n].x<quadrants[0].x && //  x coordinates
-         nodes[n].x>quadrants[1].x &&
-         nodes[n].x>quadrants[2].x &&
-         nodes[n].x<quadrants[3].x &&
-         nodes[n].y>quadrants[0].y && //  y coordinates
-         nodes[n].y>quadrants[1].y &&
-         nodes[n].y<quadrants[2].y &&
-         nodes[n].y<quadrants[3].y){
+      if(nodes[n].x<sectors[0].x && //  x coordinates
+         nodes[n].x>sectors[1].x &&
+         nodes[n].x>sectors[2].x &&
+         nodes[n].x<sectors[3].x &&
+         nodes[n].y>sectors[0].y && //  y coordinates
+         nodes[n].y>sectors[1].y &&
+         nodes[n].y<sectors[2].y &&
+         nodes[n].y<sectors[3].y){
 
         nodes[n].hull=false;
 
@@ -378,18 +424,25 @@
 
     }
 
-    let setQuadrants;
+    let setQuadrant;
+    let setSector;
     let excludeNode;
+    let processNode;
 
-    if(quadrantCount==4){
-      setQuadrants=setQuadrantsCartesian;
+    if(sectorCount==4){
+      setQuadrant=setQuadrantCartesian;
       excludeNode=excludeNodeTriangle;
+      setSector=setSectorCartesian;
       // setNodeQuadrant=setNodeQuadRectangle;
     }
-    else{
-      setQuadrants=setQuadrantsOctagonal;
+    else if(sectorCount==8){
+      setQuadrant=setQuadrantOctagonal;
       excludeNode=excludeNodeTriangle;
+      setSector=setSectorOctagonal;
       // setNodeQuadrant=setNodeQuadOcto;
+    }
+    else{
+      print("Error in quadrant count");
     }
 
     function setQuadrantOcto(n){
@@ -397,17 +450,17 @@
       let theta=nodes[n].theta;
       let quadrant=-1;
 
-      for(let q=0; q<quadrants.length-1; q++){
+      for(let q=0; q<sectors.length-1; q++){
         
-        if(theta>=quadrants[q].theta &&
-           theta<=quadrants[q+1].theta){
+        if(theta>=sectors[q].theta &&
+           theta<=sectors[q+1].theta){
             quadrant=q;
             break;
         }
 
       }
 
-      if(quadrant==-1){ quadrant=quadrants.length-1; }
+      if(quadrant==-1){ quadrant=sectors.length-1; }
 
       nodes[n].quadrant=quadrant;
 
@@ -429,30 +482,31 @@
           // Determine theta of the sloped corners
           thetaQuadrant=180/PI*atan2(height/2,width/2);
 
-          // Set all nodes in the quadrants to the centre
+          // Set all nodes in the sectors to the origin
           // this avoids having to check for undefined
-          for(let n=0; n<quadrantCount; n++){
-            quadrants[n]=centre;
+          for(let n=0; n<sectorCount; n++){
+            sectors[n]=origin;
           }
 
           for(let _n=0; _n<limit; _n++){
 
-            _x=round(random(3*buffer-width/2, width/2-buffer   ));
-            _y=round(random(buffer-height/2,  height/2-3*buffer));
+            _x = round(random(3*buffer-width/2, width/2-buffer   ));
+            _y = round(random(buffer-height/2,  height/2-3*buffer));
 
-            if(_x<_minX){ _minX=_x; }
-            if(_x>_maxX){ _maxX=_x; }
-            if(_y<_minY){ _minY=_y; }
-            if(_y>_maxY){ _maxY=_y; }
+            if(_x < _minX){ _minX = _x; }
+            if(_x > _maxX){ _maxX = _x; }
+            if(_y < _minY){ _minY = _y; }
+            if(_y > _maxY){ _maxY = _y; }
 
             nodes.push(new node(_n,_x,_y));
             
             nodes[_n].distance = dist(0,0,_x,_y);
             nodes[_n].theta    = 180/PI*atan2(_y,_x);
-            
+            nodes[_n].polar    = nodes[_n].distance + "," + nodes[_n].theta;
+
             if(nodes[_n].theta<0){ nodes[_n].theta+=360; }
 
-            setQuadrants(_n);
+            setQuadrant(_n);
 
             // Include a flag for exclude on load
             if(excludeOnLoad){ excludeNode(_n); }
@@ -465,7 +519,8 @@
 
       pop();
 
-      // print(quadrants);
+      setSectors();
+      // print(sectors);
 
     }
   
@@ -493,7 +548,7 @@
       }
   
     }
-    function setCandidates(){
+    function loadCandidates(){
 
       candidates=[];
 
@@ -510,7 +565,7 @@
 
     }
 
-    function loadCandidates(){
+    function setCandidates(){
 
       for(let n=0; n<nodes.length; n++){
 
@@ -518,7 +573,7 @@
 
       }
 
-      setCandidates();
+      loadCandidates();
       loadLinkedList();
 
       nod0=candidates[0];
@@ -537,7 +592,7 @@
 
       if(running){
         
-        if(hullHit(centre,
+        if(hullHit(origin,
                    nod0,
                    nod1,
                    nod2)){
@@ -551,7 +606,7 @@
   
           nod0=nod0.previous;
 
-          setCandidates();
+          loadCandidates();
           return;
   
         }
@@ -569,7 +624,7 @@
 
 
 
-      function drawQuadrantsQuad(){
+      function drawsectorsQuad(){
 
         let r=10;
   
@@ -579,11 +634,11 @@
   
         beginShape();
   
-          for(let n=0; n<quadrants.length; n++){
+          for(let n=0; n<sectors.length; n++){
   
-            ellipse(quadrants[n].x, quadrants[n].y, 10, 10);
+            ellipse(sectors[n].x, sectors[n].y, 10, 10);
             
-            vertex(quadrants[n].x, quadrants[n].y);
+            vertex(sectors[n].x, sectors[n].y);
   
           }
   
@@ -593,41 +648,41 @@
         stroke(0,255,0,128);
         strokeWeight(0.5);
 
-        for(let n=0; n<quadrants.length; n++){
-          line(0,0,quadrants[n].x,quadrants[n].y);
+        for(let n=0; n<sectors.length; n++){
+          line(0,0,sectors[n].x,sectors[n].y);
         }
                   
       }
-      function drawQuadrantsOcto(){
+      function drawsectorsOcto(){
 
         // Slices
         stroke(128,0,0,128);
         strokeWeight(1);
 
-          line(centre.x, centre.y, width/2, height/2);
-          line(centre.x, centre.y,-width/2, height/2);
+          line(origin.x, origin.y, width/2, height/2);
+          line(origin.x, origin.y,-width/2, height/2);
           
-          line(centre.x, centre.y, width/2,-height/2);
-          line(centre.x, centre.y,-width/2,-height/2);
+          line(origin.x, origin.y, width/2,-height/2);
+          line(origin.x, origin.y,-width/2,-height/2);
 
         // Draw quadrant lines
         
             textSize(24);
             
-          for(let n=0; n<quadrants.length; n++){
+          for(let n=0; n<sectors.length; n++){
         
             stroke(0,255,0,128);
 
-              line(0,0,quadrants[n].x,quadrants[n].y);
+              line(0,0,sectors[n].x,sectors[n].y);
 
             noStroke();
             fill(0,128,255);
 
-              if(n<quadrants.length-1){
-                text(n,(quadrants[n].x+quadrants[n+1].x)/2,(quadrants[n].y+quadrants[n+1].y)/2);
+              if(n<sectors.length-1){
+                text(n,(sectors[n].x+sectors[n+1].x)/2,(sectors[n].y+sectors[n+1].y)/2);
               }
               else{
-                text(n,(quadrants[n].x+quadrants[0].x)/2,(quadrants[n].y+quadrants[0].y)/2);
+                text(n,(sectors[n].x+sectors[0].x)/2,(sectors[n].y+sectors[0].y)/2);
               }
 
           }
@@ -638,11 +693,11 @@
     
           beginShape();
     
-            for(let n=0; n<quadrants.length; n++){
+            for(let n=0; n<sectors.length; n++){
     
-              ellipse(quadrants[n].x, quadrants[n].y, 10, 10);
+              ellipse(sectors[n].x, sectors[n].y, 10, 10);
               
-              vertex(quadrants[n].x, quadrants[n].y);
+              vertex(sectors[n].x, sectors[n].y);
     
             }
     
@@ -680,9 +735,7 @@
           else                 { textAlign(RIGHT,BOTTOM); }
   
           let theta=candidates[n].theta;
-  
-          // if(theta<0){ theta+=360; }
-  
+
           fill(255, 255, 255);
           textSize(10);
 
@@ -691,7 +744,7 @@
             //      candidates[n].x+5,
             //      candidates[n].y-5);
   
-            text(round(candidates[n].quadrant),
+            text(candidates[n].quadrant + " : " + candidates[n].sector,
                  candidates[n].x+5,
                  candidates[n].y-5);
 
@@ -735,19 +788,19 @@
           stroke(128,0,0,255);
           strokeWeight(0.75);
   
-            line(centre.x, centre.y, 0,-height/2);
-            line(centre.x, centre.y, 0, height/2);
+            line(origin.x, origin.y, 0,-height/2);
+            line(origin.x, origin.y, 0, height/2);
   
-            line(centre.x, centre.y,-width/2, 0);
-            line(centre.x, centre.y, width/2, 0);
+            line(origin.x, origin.y,-width/2, 0);
+            line(origin.x, origin.y, width/2, 0);
                     
           
           strokeWeight(0.5);
 
-            line(centre.x, centre.y, width/2, height/2);
-            line(centre.x, centre.y, width/2,-height/2);
-            line(centre.x, centre.y,-width/2, height/2);
-            line(centre.x, centre.y,-width/2,-height/2);
+            line(origin.x, origin.y, width/2, height/2);
+            line(origin.x, origin.y, width/2,-height/2);
+            line(origin.x, origin.y,-width/2, height/2);
+            line(origin.x, origin.y,-width/2,-height/2);
 
         }        
         function drawOrigin(){
@@ -755,7 +808,7 @@
           fill(128,0,0,128);
           noStroke();
         
-            ellipse(centre.x, centre.y, diameter, diameter);
+            ellipse(origin.x, origin.y, diameter, diameter);
       
         }
 
@@ -765,12 +818,12 @@
         textSize(36);
         textAlign(CENTER,CENTER);
         
-          // if(!running){ text("Click to begin", centre.x, centre.y-100); }
-          // else        { text("Click to pause", centre.x, centre.y-100); }
+          // if(!running){ text("Click to begin", origin.x, origin.y-100); }
+          // else        { text("Click to pause", origin.x, origin.y-100); }
         
         drawBorder();          
         drawAxis();
-        drawQuadrants();
+        drawsectors();
         drawOrigin();
 
         telemetry();
@@ -867,13 +920,13 @@
   
         fill(128,  0,  0, 96);
   
-          triangle(centre.x, centre.y,
+          triangle(origin.x, origin.y,
                    nod0.x,   nod0.y,
                    nod1.x,   nod1.y);
   
         fill(  0,128,  0, 96);
     
-          triangle(centre.x, centre.y,
+          triangle(origin.x, origin.y,
                    nod1.x,   nod1.y,
                    nod2.x,   nod2.y);
   
@@ -882,14 +935,14 @@
         strokeWeight(0.5);
         stroke(255,255,255,255);
   
-          triangle(centre.x, centre.y,
+          triangle(origin.x, origin.y,
                    nod0.x,   nod0.y,
                    nod2.x,   nod2.y);
       }
 
-      let drawQuadrants;
+      let drawsectors;
 
-      drawQuadrants=drawQuadrantsOcto;
+      drawsectors=drawsectorsOcto;
 
     }
     function processCandidates(){
@@ -911,7 +964,7 @@
         translate(width/2+0.5,height/2+0.5);
 
           if(!purged){
-            // loadCandidates();  
+            setCandidates();  
           }
 
           drawGUI();
@@ -927,8 +980,8 @@
           // fill(0,128,255);
           // noStroke();
 
-          // for(let n=0; n<quadrants.length; n++){
-          //   text(n + " : " + round(quadrants[n].theta),quadrants[n].x,quadrants[n].y);
+          // for(let n=0; n<sectors.length; n++){
+          //   text(n + " : " + round(sectors[n].theta),sectors[n].x,sectors[n].y);
           // }
 
       pop();
