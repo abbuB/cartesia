@@ -174,15 +174,15 @@
           for(let n=0; n<cds.length-1; n++){
 
             hullLength+=dist(cds[n].x,
-                              cds[n].y,
-                              cds[n+1].x,
-                              cds[n+1].y);
+                             cds[n].y,
+                             cds[n+1].x,
+                             cds[n+1].y);
           }
 
           hullLength+=dist(cds[0].x,
-                            cds[0].y,
-                            cds[cds.length-1].x,
-                            cds[cds.length-1].y);
+                           cds[0].y,
+                           cds[cds.length-1].x,
+                           cds[cds.length-1].y);
         }
 
       }
@@ -236,18 +236,13 @@
       }
       
     }
-    function setSectorCartesian(){
+    function setSector(nod){
 
+      for(let s=0; s<sectors.length-1; s++){
 
-
-    }
-    function setSectorOctagonal(nod){
-
-      for(let q=0; q<sectors.length-1; q++){
-
-        if(nod.theta>=sectors[q].theta &&
-          nod.theta<=sectors[q+1].theta){
-            nod.sector=q;
+        if(nod.theta>=sectors[s].theta &&
+           nod.theta<=sectors[s+1].theta){
+            nod.sector=s;
           break;
         }
 
@@ -256,6 +251,7 @@
       if(nod.sector==-Infinity){
         nod.sector=sectors.length-1;
       }
+
 
     }
 
@@ -267,14 +263,13 @@
 
     }
 
-    function setQuadrantOctagonal(n){
+    function setQuadrantOctagonal(nod){
+
+      let tq  = thetaQuadrant;
+      let th  = nod.theta;
+      let q   = -1;
 
       try{
-
-        let tq  = thetaQuadrant;
-        let nod = nodes[n];
-        let th  = nod.theta;
-        let q   = -1;
 
         switch(true){
 
@@ -297,17 +292,16 @@
 
       }
       catch(err){
-        print(err + " : " + th + " : " + n + " : " + q);
+        print(err + " : " + th + " : " + nod.id + " : " + q);
       }
 
     }
-    function setQuadrantCartesian(n){
-
-      let th  = nodes[n].theta;
-      let nod = nodes[n];
-      let q   = -1;
+    function setQuadrantCartesian(nod){
 
       try{
+
+        let th  = nod.theta;
+        let q   = -1;
 
         switch(true){
 
@@ -326,145 +320,82 @@
 
       }
       catch(err){
-        print(err + " : " + th + " : " + n + " : " + q);
+        print(err + " : " + th + " : " + nod.id + " : " + q);
       }
 
     } 
 
+    function excludeNodeQuadRectangle(nod){
 
-    function excludeNodeOctoRectangle(n){
+      if(nod.x<sectors[0].x && //  x coordinates
+         nod.x>sectors[1].x &&
+         nod.x>sectors[2].x &&
+         nod.x<sectors[3].x &&
+         nod.y>sectors[0].y && //  y coordinates
+         nod.y>sectors[1].y &&
+         nod.y<sectors[2].y &&
+         nod.y<sectors[3].y){
 
-      if(nodes[n].x<sectors[0].x && //  x coordinates
-         nodes[n].x<sectors[1].x &&
-         nodes[n].x<sectors[6].x &&
-         nodes[n].x<sectors[7].x &&
-         nodes[n].x>sectors[2].x &&
-         nodes[n].x>sectors[3].x &&
-         nodes[n].x>sectors[4].x &&
-         nodes[n].x>sectors[5].x &&
-         nodes[n].y>sectors[4].y && // y coordinates
-         nodes[n].y>sectors[5].y &&
-         nodes[n].y>sectors[6].y &&
-         nodes[n].y>sectors[7].y &&
-         nodes[n].y<sectors[0].y &&
-         nodes[n].y<sectors[1].y &&
-         nodes[n].y<sectors[2].y &&
-         nodes[n].y<sectors[3].y){
+        nod.hull=false;
 
-        nodes[n].hull=false;
+      }
+
+    }
+    function excludeNodeOctoRectangle(nod){
+
+      if(nod.x<sectors[0].x && //  x coordinates
+         nod.x<sectors[1].x &&
+         nod.x<sectors[6].x &&
+         nod.x<sectors[7].x &&
+         nod.x>sectors[2].x &&
+         nod.x>sectors[3].x &&
+         nod.x>sectors[4].x &&
+         nod.x>sectors[5].x &&
+         nod.y>sectors[4].y && // y coordinates
+         nod.y>sectors[5].y &&
+         nod.y>sectors[6].y &&
+         nod.y>sectors[7].y &&
+         nod.y<sectors[0].y &&
+         nod.y<sectors[1].y &&
+         nod.y<sectors[2].y &&
+         nod.y<sectors[3].y){
+
+        nod.hull=false;
 
       }
       
     }
-    function excludeNodeTriangle(n){
+    function excludeNodeTriangle(nod){
 
-      let q=nodes[n].sector;
+      let q=nod.sector;
       let p=q+1;
 
       if(q==sectorCount-1){ p=0; }
 
-      if(hullHit(origin,sectors[q],nodes[n],sectors[p])){
-        nodes[n].hull=false;
-      }
-
-    }
-    // function excludeNodeQuadTriangle(n){
-
-    //   let th=nodes[n].theta;
-
-    //   if(th<=sectors[0].theta &&
-    //      th>=sectors[1].theta &&
-    //     hullHit(origin,sectors[0],nodes[n],sectors[1])){
-
-    //       nodes[n].hull=false;
-
-    //   }
-    //   else if(th>=sectors[3].theta &&
-    //           th<=sectors[2].theta &&
-    //     hullHit(origin,sectors[2],nodes[n],sectors[3])){
-
-    //     nodes[n].hull=false;
-
-    //   }
-    //   else if(th>=sectors[0].theta &&
-    //           th<=sectors[3].theta &&
-    //     hullHit(origin,sectors[0],nodes[n],sectors[3])){
-
-    //      nodes[n].hull=false;
-
-    //   }
-    //   else if(th<=sectors[1].theta &&
-    //     hullHit(origin,sectors[1],nodes[n],sectors[2])){
-
-    //     nodes[n].hull=false;
-
-    //   }
-    //   else if(th>=sectors[2].theta &&
-    //     hullHit(origin,sectors[1],nodes[n],sectors[2])){
-
-    //     nodes[n].hull=false;
-
-    //   }
-
-    // }
-    function excludeNodeQuadRectangle(n){
-
-      if(nodes[n].x<sectors[0].x && //  x coordinates
-         nodes[n].x>sectors[1].x &&
-         nodes[n].x>sectors[2].x &&
-         nodes[n].x<sectors[3].x &&
-         nodes[n].y>sectors[0].y && //  y coordinates
-         nodes[n].y>sectors[1].y &&
-         nodes[n].y<sectors[2].y &&
-         nodes[n].y<sectors[3].y){
-
-        nodes[n].hull=false;
-
+      if(hullHit(origin,sectors[q],nod,sectors[p])){
+        nod.hull=false;
       }
 
     }
 
     let setQuadrant;
-    let setSector;
     let excludeNode;
     let processNode;
 
     if(sectorCount==4){
       setQuadrant=setQuadrantCartesian;
       excludeNode=excludeNodeTriangle;
-      setSector=setSectorCartesian;
       // setNodeQuadrant=setNodeQuadRectangle;
     }
     else if(sectorCount==8){
       setQuadrant=setQuadrantOctagonal;
       excludeNode=excludeNodeTriangle;
-      setSector=setSectorOctagonal;
       // setNodeQuadrant=setNodeQuadOcto;
     }
     else{
       print("Error in quadrant count");
     }
 
-    function setQuadrantOcto(n){
-
-      let theta=nodes[n].theta;
-      let quadrant=-1;
-
-      for(let q=0; q<sectors.length-1; q++){
-        
-        if(theta>=sectors[q].theta &&
-           theta<=sectors[q+1].theta){
-            quadrant=q;
-            break;
-        }
-
-      }
-
-      if(quadrant==-1){ quadrant=sectors.length-1; }
-
-      nodes[n].quadrant=quadrant;
-
-    }
     function loadNodes(){
       
       let _x     = -1;
@@ -506,10 +437,10 @@
 
             if(nodes[_n].theta<0){ nodes[_n].theta+=360; }
 
-            setQuadrant(_n);
+            setQuadrant(nodes[_n]);
 
             // Include a flag for exclude on load
-            if(excludeOnLoad){ excludeNode(_n); }
+            if(excludeOnLoad){ excludeNode(nodes[_n]); }
 
           }
 
@@ -569,7 +500,7 @@
 
       for(let n=0; n<nodes.length; n++){
 
-        excludeNode(n);
+        excludeNode(nodes[n]);
 
       }
 
