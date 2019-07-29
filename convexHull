@@ -86,7 +86,7 @@
     let q4Count         = 0;
 
     let sectors         = [];
-    let sectorCount     = 4;  //  Change based on Pre-processing heuristic
+    let sectorCount     = 8;  //  Change based on Pre-processing heuristic
 
     let thetaQuadrant   = -1;
 
@@ -94,7 +94,7 @@
 
     // let counter=0;
 
-    let limit           = 500; //  3163 squared is approx 10,000,000
+    let limit           = 100; //  3163 squared is approx 10,000,000
 
     let processCount    = 0;    //  # of comparisons conducted
 
@@ -130,22 +130,22 @@
 
       }
   
-      clone(cid){
+      // clone(cid){
   
-        var nClone=new node(this.id, this.x, this.y);
+      //   var nClone=new node(this.id, this.x, this.y);
   
-        nClone.cid      = cid;
+      //   nClone.cid      = cid;
   
-        nClone.next     = this.next;
-        nClone.previous = this.previous;
+      //   nClone.next     = this.next;
+      //   nClone.previous = this.previous;
   
-        nClone.hull     = this.hull;
+      //   nClone.hull     = this.hull;
   
-        nClone.selected = this.selected;
+      //   nClone.selected = this.selected;
   
-        return nClone;
+      //   return nClone;
   
-      }
+      // }
       
     }
   
@@ -341,14 +341,14 @@
 
     function excludeNodeQuadRectangle(nod){
 
-      if(nod.x<sectors[0].x && //  x coordinates
+      if(nod.x<sectors[0].x &&  //  x coordinates
          nod.x>sectors[1].x &&
          nod.x>sectors[2].x &&
          nod.x<sectors[3].x &&
-         nod.y>sectors[0].y && //  y coordinates
-         nod.y>sectors[1].y &&
-         nod.y<sectors[2].y &&
-         nod.y<sectors[3].y){
+         nod.y<sectors[0].y &&  //  y coordinates
+         nod.y<sectors[1].y &&
+         nod.y>sectors[2].y &&
+         nod.y>sectors[3].y){
 
         nod.hull=false;
 
@@ -357,7 +357,7 @@
     }
     function excludeNodeOctoRectangle(nod){
 
-      if(nod.x<sectors[0].x && //  x coordinates
+      if(nod.x<sectors[0].x &&  //  x coordinates
          nod.x<sectors[1].x &&
          nod.x<sectors[6].x &&
          nod.x<sectors[7].x &&
@@ -365,7 +365,7 @@
          nod.x>sectors[3].x &&
          nod.x>sectors[4].x &&
          nod.x>sectors[5].x &&
-         nod.y>sectors[4].y && // y coordinates
+         nod.y>sectors[4].y &&  // y coordinates
          nod.y>sectors[5].y &&
          nod.y>sectors[6].y &&
          nod.y>sectors[7].y &&
@@ -398,12 +398,12 @@
 
     if(sectorCount==4){
       setQuadrant=setQuadrantCartesian;
-      excludeNode=excludeNodeTriangle;
+      excludeNode=excludeNodeQuadRectangle;
       // setNodeQuadrant=setNodeQuadRectangle;
     }
     else if(sectorCount==8){
       setQuadrant=setQuadrantOctagonal;
-      excludeNode=excludeNodeTriangle;
+      excludeNode=excludeNodeOctoRectangle;
       // setNodeQuadrant=setNodeQuadOcto;
     }
     else{
@@ -494,8 +494,6 @@
     }
     function loadCandidates(){
 
-      candidates=[];
-
       for(let n=0; n<N; n++){
 
         if(nodes[n].hull){
@@ -528,7 +526,7 @@
 
       if(N==limit){
 
-        sortByTheta(candidates);
+        // sortByTheta(candidates);
 
         loadLinkedList();
   
@@ -539,6 +537,7 @@
         N=0;
         
         excluded=true;
+        running=false;
 
       }
 
@@ -556,6 +555,7 @@
                    nod1,
                    nod2)){
   
+          print(nod1.id);
           nod1.hull=false;
           nod1.next=null;
           nod1.previous=null;
@@ -565,7 +565,7 @@
   
           nod0=nod0.previous;
 
-          loadCandidates();
+          // loadCandidates();
           return;
   
         }
@@ -579,13 +579,70 @@
     
     }
 
+    function drawSectorsQuad(){
 
+      let r=10;
 
-      function drawSectorsQuad(){
+      fill(128,10);
+      stroke(128);
+      strokeWeight(2);
 
-        let r=10;
-  
-        fill(128,10);
+      beginShape();
+
+        for(let n=0; n<sectors.length; n++){
+
+          ellipse(sectors[n].x, sectors[n].y, 10, 10);
+          
+          vertex(sectors[n].x, sectors[n].y);
+
+        }
+
+      endShape(CLOSE);
+
+      // Draw quadrant lines
+      stroke(0,255,0,128);
+      strokeWeight(0.5);
+
+      for(let n=0; n<sectors.length; n++){
+        line(0,0,sectors[n].x,sectors[n].y);
+      }
+                
+    }
+    function drawSectorsOcto(){
+
+      // Slices
+      stroke(128,0,0,128);
+      strokeWeight(1);
+
+        line(origin.x, origin.y, width/2, height/2);
+        line(origin.x, origin.y,-width/2, height/2);
+        
+        line(origin.x, origin.y, width/2,-height/2);
+        line(origin.x, origin.y,-width/2,-height/2);
+
+      // Draw quadrant lines
+      
+          textSize(24);
+          
+        for(let n=0; n<sectors.length; n++){
+      
+          stroke(0,255,0,128);
+
+            line(0,0,sectors[n].x,sectors[n].y);
+
+          noStroke();
+          fill(0,128,255);
+
+            if(n<sectors.length-1){
+              text(n,(sectors[n].x+sectors[n+1].x)/2,(sectors[n].y+sectors[n+1].y)/2);
+            }
+            else{
+              text(n,(sectors[n].x+sectors[0].x)/2,(sectors[n].y+sectors[0].y)/2);
+            }
+
+        }
+
+        fill(0,20);
         stroke(128);
         strokeWeight(2);
   
@@ -601,146 +658,72 @@
   
         endShape(CLOSE);
 
-        // Draw quadrant lines
-        stroke(0,255,0,128);
-        strokeWeight(0.5);
-
-        for(let n=0; n<sectors.length; n++){
-          line(0,0,sectors[n].x,sectors[n].y);
-        }
-                  
-      }
-      function drawSectorsOcto(){
-
-        // Slices
-        stroke(128,0,0,128);
-        strokeWeight(1);
-
-          line(origin.x, origin.y, width/2, height/2);
-          line(origin.x, origin.y,-width/2, height/2);
-          
-          line(origin.x, origin.y, width/2,-height/2);
-          line(origin.x, origin.y,-width/2,-height/2);
-
-        // Draw quadrant lines
-        
-            textSize(24);
-            
-          for(let n=0; n<sectors.length; n++){
-        
-            stroke(0,255,0,128);
-
-              line(0,0,sectors[n].x,sectors[n].y);
-
-            noStroke();
-            fill(0,128,255);
-
-              if(n<sectors.length-1){
-                text(n,(sectors[n].x+sectors[n+1].x)/2,(sectors[n].y+sectors[n+1].y)/2);
-              }
-              else{
-                text(n,(sectors[n].x+sectors[0].x)/2,(sectors[n].y+sectors[0].y)/2);
-              }
-
-          }
-
-          fill(0,20);
-          stroke(128);
-          strokeWeight(2);
+    }        
     
-          beginShape();
-    
-            for(let n=0; n<sectors.length; n++){
-    
-              ellipse(sectors[n].x, sectors[n].y, 10, 10);
-              
-              vertex(sectors[n].x, sectors[n].y);
-    
-            }
-    
-          endShape(CLOSE);
+    function drawCandidateHull(){
 
-      }        
-      
-      function drawCandidateHull(){
-  
-        //  Draw line connecting cadidates
-        stroke(128,128);
-        strokeWeight(2);
-        fill(16,50);
-  
-        beginShape();
-  
-          for(let n=0; n<candidates.length; n++){
+      //  Draw line connecting cadidates
+      stroke(128,128);
+      strokeWeight(2);
+      fill(16,50);
+
+      beginShape();
+
+        for(let n=0; n<candidates.length; n++){
+
+          if(candidates[n].hull){
             vertex(candidates[n].x,candidates[n].y);
           }
-  
-        endShape(CLOSE);
-  
-        // Draw candidate nodes
-        let r=3;
-  
-        noStroke();
-  
-        for(let n=0; n<candidates.length; n++){
-  
-          fill(255,255,0);
-  
-          ellipse(candidates[n].x,candidates[n].y,r,r);
-  
-          if(candidates[n].x<0){ textAlign(LEFT,BOTTOM);  }
-          else                 { textAlign(RIGHT,BOTTOM); }
-  
-          let theta=candidates[n].theta;
-
-          fill(255, 255, 255);
-          textSize(10);
-
-            // text(round(theta) + " : " +
-            //      round(candidates[n].quadrant),
-            //      candidates[n].x+5,
-            //      candidates[n].y-5);
-  
-            text(candidates[n].quadrant + " : " + candidates[n].sector,
-                 candidates[n].x+5,
-                 candidates[n].y-5);
 
         }
-  
-      }
-      function drawCandidateNodes(){
-  
-        let r=3;
-  
-        fill(255,255,0);
-        noStroke();
-  
-          for(let n=0; n<candidates.length; n++){
 
-            ellipse(candidates[n].x, candidates[n].y, r, r);
+      endShape(CLOSE);
 
+      // textSize(16);
+      // fill(128);
+      // noStroke();
+
+      // for(let n=0; n<sectors.length; n++){
+      //   text(n,sectors[n].x,sectors[n].y);
+      // }
+
+    }
+    // function drawCandidateNodes(){
+
+    //   let r=3;
+
+    //   fill(255,255,0);
+    //   noStroke();
+
+    //     for(let n=0; n<candidates.length; n++){
+
+    //       ellipse(candidates[n].x, candidates[n].y, r, r);
+
+    //     }
+
+    // }      
+    function drawNodes(){
+
+      let r=1;
+
+      noStroke();
+
+        for(let n=0; n<nodes.length; n++){
+
+          if(nodes[n].hull){
+            fill(255,255,0);
+            r=3;
           }
-  
-      }      
-      function drawNodes(){
-  
-        let r=1;
-  
-        fill(255);
-        noStroke();
-  
-          for(let n=0; n<nodes.length; n++){
-
-            if(nodes[n].hull){
-              fill(255,255,0);
-              r=3;
-            }
-
-            ellipse(nodes[n].x, nodes[n].y, r, r);
-
+          else{
+            fill(255);
+            r=1;
           }
-  
-      }
+
+          ellipse(nodes[n].x, nodes[n].y, r, r);
+
+        }
+
+    }
 
     { // GUI
 
@@ -810,7 +793,7 @@
         textSize(16);
         textAlign(LEFT,BOTTOM);
 
-        let cl =candidates.length;
+        let cl = candidates.length;
         let nl = nodes.length;
 
         let row1=processCount + " : " + pow(limit,2) + " : " + nf(processCount/pow(limit,2)*100,1,2) + "%";
@@ -930,12 +913,13 @@
   
         noFill();
     
-        strokeWeight(0.5);
+        strokeWeight(10.5);
         stroke(255,255,255,255);
   
           triangle(origin.x, origin.y,
                    nod0.x,   nod0.y,
                    nod2.x,   nod2.y);
+print("triangles");
       }
 
       let drawSectors;
@@ -951,7 +935,10 @@
 
     function processCandidates(){
 
+// print(candidates.length);
       calculateHull();
+// print(candidates.length);      
+      drawCandidateHull();
       drawTriangles();
 
     }
@@ -1011,11 +998,13 @@
     }
   
     function doubleClicked(){
-  
+
       print("doubleClicked");
-    print(dist(0,0,width,0));
+
+      print(nodes);
+
     }
-  
+
   }
 
 /*  
