@@ -10,6 +10,13 @@
 
     To Do:
 
+      calculate:
+
+        hull length
+        hull area
+
+    To Done:
+
       load nodes
       
       set sectors
@@ -25,10 +32,8 @@
     var PRE_PROCESSING = {
 
       NONE:             0,
-      OCTO_TRIANGLE:    1,
-      QUAD_TRIANGLE:    2,
-      OCTO_RECTANGLE:   3,
-      QUAD_RECTANGLE:   4
+      QUAD:             1,
+      TRIANGLE:         2
 
     };
     var HULL_METHODS = {
@@ -61,13 +66,14 @@
     let sorted          = false;
     let excludeOnLoad   = false;                 //  Nodes are eliminated while they are loaded
 
-    let preprocessing   = PRE_PROCESSING.QUAD;
+    let preprocessing   = PRE_PROCESSING.TRIANGLE;
     let hullMethod      = HULL_METHODS.BUBBA;
 
     let buffer          = 20;
     let candidateCount  = -1;
     let extent          = -Infinity;
-    let hullLength      = 0;
+    let hullLength      = -Infinity;
+    let hullArea        = -Infinity;
 
     let radius          = Infinity;
     let diameter        = 10;
@@ -94,7 +100,7 @@
 
     // let counter=0;
 
-    let limit           = 100; //  3163 squared is approx 10,000,000
+    let limit           = 300; //  3163 squared is approx 10,000,000
 
     let processCount    = 0;    //  # of comparisons conducted
 
@@ -176,7 +182,27 @@
     }; 
 
     { // Misc
-        
+      
+      function purgeCandidates(){
+
+        let arr=[];
+
+        for(let n=0; n<candidates.length; n++){
+
+          if(candidates[n].hull){
+            arr.push(candidates[n]);
+          }
+
+        }
+
+        candidates=[];
+
+        arrayCopy(arr,candidates);
+
+print(arr);
+print(candidates);
+
+      }
       function calculateHullLength(){
 
         let cds=candidates;
@@ -198,6 +224,11 @@
                            cds[cds.length-1].x,
                            cds[cds.length-1].y);
         }
+
+      }
+      function calculateHullArea(){
+
+        hullArea=100;
 
       }
 
@@ -398,12 +429,14 @@
 
     if(sectorCount==4){
       setQuadrant=setQuadrantCartesian;
-      excludeNode=excludeNodeQuadRectangle;
+      // excludeNode=excludeNodeQuadRectangle;
+      excludeNode=excludeNodeTriangle;
       // setNodeQuadrant=setNodeQuadRectangle;
     }
     else if(sectorCount==8){
       setQuadrant=setQuadrantOctagonal;
-      excludeNode=excludeNodeOctoRectangle;
+      // excludeNode=excludeNodeOctoRectangle;
+      excludeNode=excludeNodeTriangle;
       // setNodeQuadrant=setNodeQuadOcto;
     }
     else{
@@ -462,9 +495,22 @@
 
       pop();
 
-      setSector(nod);
-
       N++;
+
+      if(nodes.length==limit){
+            
+        N=0;
+        loaded=true;
+        running=false;
+
+        // Sectors are dynamic so they are set after loading is complete
+        for(let n=0; n<nodes.length; n++){
+
+          setSector(nodes[n]);
+
+        }
+
+      }
 
     }
   
@@ -534,7 +580,7 @@
         nod1=nod0.next;
         nod2=nod1.next;
 
-        N=0;
+        N=2 * candidates.length;
         
         excluded=true;
         running=false;
@@ -544,7 +590,7 @@
     }
   
     function calculateHull(){
-  // frameRate(10);
+  
       nod1=nod0.next;
       nod2=nod1.next;
 
@@ -554,8 +600,7 @@
                    nod0,
                    nod1,
                    nod2)){
-  
-          print(nod1.id);
+
           nod1.hull=false;
           nod1.next=null;
           nod1.previous=null;
@@ -704,20 +749,19 @@
     // }      
     function drawNodes(){
 
-      let r=1;
+      let r=-Infinity;
 
       noStroke();
 
         for(let n=0; n<nodes.length; n++){
 
-          if(nodes[n].hull){
-            fill(255,255,0);
-            r=3;
-          }
-          else{
-            fill(255);
-            r=1;
-          }
+          if(nodes[n].hull){ fill(255,255,0);
+                             r=5;             }
+          else             { fill(255);
+                             r=1;             }
+
+          if(n==N){ r=10; 
+                    fill( 0,255,0);} // && running
 
           ellipse(nodes[n].x, nodes[n].y, r, r);
 
@@ -840,6 +884,7 @@
           fill(16);
           noStroke();
           stroke(128);
+          strokeWeight(1);
 
             rect(-width/2,-height/2, width-1, height-1);
 
@@ -887,8 +932,12 @@
           // else        { text("Click to pause", origin.x, origin.y-100); }
         
         drawBorder();          
-        drawAxis();
-        drawSectors();
+        
+        if(!processed){
+          drawAxis();
+          drawSectors();
+        }
+
         // drawOrigin();
 
         telemetry();
@@ -896,7 +945,7 @@
       }
 
       function drawTriangles(){
-        
+
         noStroke();
   
         fill(128,  0,  0, 96);
@@ -913,13 +962,13 @@
   
         noFill();
     
-        strokeWeight(10.5);
+        strokeWeight(0.5);
         stroke(255,255,255,255);
   
           triangle(origin.x, origin.y,
                    nod0.x,   nod0.y,
                    nod2.x,   nod2.y);
-print("triangles");
+
       }
 
       let drawSectors;
@@ -935,39 +984,44 @@ print("triangles");
 
     function processCandidates(){
 
-// print(candidates.length);
-      calculateHull();
-// print(candidates.length);      
-      drawCandidateHull();
-      drawTriangles();
+      frameRate(10);
 
-    }
-    function draw(){
+      if(N>0){
       
-      if(running){
+        calculateHull();
+        drawTriangles();
 
-        if(excluded && !processed){ processCandidates(); }
-        if(loaded && !excluded   ){ setCandidates();     }
+        N--;
 
-        if(!loaded){
-
-          if(nodes.length==limit){
-            
-            N=0;
-            loaded=true;
-            running=false;
-
-          }
-          else{ 
-            loadNodes();
-          }
-
+      }
+      else{
+        
+        if(running){
+          purgeCandidates();
+          calculateHullLength();
+          calculateHullArea();
         }
+
+        running=false;
+        processed=true;
+        N=0;
 
       }
 
+    }
+
+    function process(){
+
+      if(excluded && !processed){ processCandidates(); }
+      if(loaded && !excluded   ){ setCandidates();     }
+      if(!loaded               ){ loadNodes();         }
+
+    }
+
+    function draw(){
+
       push();
-  
+
         translate(width/2+0.5, height/2+0.5);
 
           drawGUI();
@@ -976,10 +1030,22 @@ print("triangles");
           drawCandidateHull();
           drawCursor();
 
+          if(running){ process(); }
+
       pop();
 
     }  
-  
+    function keyPressed(){
+      
+      print(keyCode);
+
+      if(keyCode){
+
+        process();
+
+      }
+
+    }
     function mouseClicked(){
 
       running=!running;
