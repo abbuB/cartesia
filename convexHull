@@ -75,6 +75,8 @@
     let hullLength      = -Infinity;
     let hullArea        = -Infinity;
 
+    let leftMost        =-Infinity;
+
     let radius          = Infinity;
     let diameter        = 10;
   
@@ -96,8 +98,7 @@
 
     let thetaQuadrant   = -1;
 
-    let quadrants       = [];
-
+    // let quadrants       = [];
     // let counter=0;
 
     let limit           = 300; //  3163 squared is approx 10,000,000
@@ -163,7 +164,7 @@
   
       "use strict"; 
   
-      createCanvas(windowWidth-50, windowHeight-50);
+      createCanvas(windowWidth-50, windowHeight-50, P2D);
   
       strokeJoin(BEVEL);
   
@@ -228,7 +229,23 @@ print(candidates);
       }
       function calculateHullArea(){
 
-        hullArea=100;
+        hullArea=0;
+
+        if(candidates.length!=0){
+
+          for(let n=0; n<candidates.length-1; n++){
+
+            hullArea+=triangleArea(origin,nodes[n],nodes[n+1]);
+
+          }
+
+          hullArea+=triangleArea(origin,nodes[candidates.length-1],nodes[0]);
+        
+        }
+
+        // print(width        + " : " + height        + " : " + width*height);
+        // print(displayWidth + " : " + displayHeight + " : " + displayWidth*displayHeight);
+        // print(windowWidth  + " : " + windowHeight  + " : " + windowWidth*windowHeight);
 
       }
 
@@ -422,10 +439,94 @@ print(candidates);
       }
 
     }
+    function excludeNodeQuadrants(nod){setQuadrantCartesian
+
+      let q1=false;
+      let q2=false;
+      let q3=false;
+      let q4=false;
+
+      for(let n=0; n<nodes.length; n++){
+
+        if(nodes[n].x>nod.x && nodes[n].y<nod.y){ q1=true; } // Quadrant #1
+        if(nodes[n].x<nod.x && nodes[n].y<nod.y){ q2=true; } // Quadrant #2
+        if(nodes[n].x>nod.x && nodes[n].y>nod.y){ q3=true; } // Quadrant #3
+        if(nodes[n].x<nod.x && nodes[n].y>nod.y){ q4=true; } // Quadrant #4
+
+        if(q1 && q2 && q3 && q4){
+
+          nod.hull=false;
+          
+          q1=false;
+          q2=false;
+          q3=false;
+          q4=false;
+
+          break;
+        }
+
+      }
+
+    }
+    function excludeNodeGiftWrap(){
+
+      let nextIndex=0;
+      let THETA=-Infinity;
+      let theta;
+
+      let v1 = createVector(leftMost.x, leftMost.y);
+      let v2 = createVector(leftMost.x, leftMost.y+1);
+      let v3 = createVector(leftMost.x, leftMost.y+1);
+
+      if(candidates.length>1){
+
+        v2 = createVector(v1.x - candidates[candidates.length-2].x,
+                          v2.y - candidates[candidates.length-2].y);
+
+      }
+
+      for(let n=0; n<nodes.length; n++){
+
+        v3 = createVector(v1.x - nodes[n].x,
+                          v1.y - nodes[n].y);
+
+        theta=v2.angleBetween(v3);
+
+          if(theta>THETA){
+
+            THETA=theta;            
+            nextIndex=n;
+
+          }
+
+      }
+
+      print(N + " : " + 180/PI*THETA);
+
+      if(nodes[nextIndex]==candidates[0]){
+
+        excluded=true;
+        processed=true;
+        running=false;
+
+      }
+      else{
+
+        leftMost=nodes[nextIndex];
+        leftMost.hull=true;
+
+        candidates.push(leftMost);
+
+      }
+
+    }
 
     let setQuadrant;
     let excludeNode;
     let processNode;
+    let loadNodes;
+
+    
 
     if(sectorCount==4){
       setQuadrant=setQuadrantCartesian;
@@ -436,8 +537,9 @@ print(candidates);
     else if(sectorCount==8){
       setQuadrant=setQuadrantOctagonal;
       // excludeNode=excludeNodeOctoRectangle;
-      excludeNode=excludeNodeTriangle;
-      // setNodeQuadrant=setNodeQuadOcto;
+      // excludeNode=excludeNodeTriangle;
+      // excludeNode=excludeNodeQuadrants;
+      excludeNode=excludeNodeGiftWrap;
     }
     else{
       print("Error in quadrant count");
@@ -448,52 +550,123 @@ print(candidates);
     let _minY  = Infinity;
     let _maxY  = 0;
 
-    function loadNodes(){
+    function loadNodesGiftWrap(){
       
       let _x     = -1;
       let _y     = -1;
 
-      push();
-  
-        translate(width/2,height/2);
+      // Determine theta of the sloped corners
+      thetaQuadrant=180/PI*atan2(height/2,width/2);
+
+      let _n=N;
+
+      for(let _n=0; _n<limit; _n++){
+
+        _x = round(random(3*buffer, width-buffer   ));
+        _y = round(random(buffer,  height-3*buffer));
+
+        if(_x < _minX){ _minX = _x; }
+        if(_x > _maxX){ _maxX = _x; }
+        if(_y < _minY){ _minY = _y; }
+        if(_y > _maxY){ _maxY = _y; }
+
+        let nod = new node(_n,_x,_y);
+
+        nodes.push(nod);
+
+        // nod.distance = dist(0,0,_x,_y);
+        // nod.theta    = 180/PI*atan2(_y,_x);
+        nod.polar    = nod.distance + "," + nod.theta;
+
+        // if(nod.theta<0){ nod.theta+=360; }
+
+        // Set Quadrant
+        nod.theta = 180/PI*atan2(nod.y, nod.x);
+        
+        if(nod.theta<0){ nod.theta+=360; }
+
+print(nod.theta);
+
+        if(_n==0){ leftMost=nodes[_n]; }
+        else     {
           
-          // Determine theta of the sloped corners
-          thetaQuadrant=180/PI*atan2(height/2,width/2);
+          if(nodes[_n].x<leftMost.x){ 
+            leftMost=nodes[_n];
+          }
+        
+        }
 
-          let _n=N;
+      }
 
-          // for(let _n=0; _n<limit; _n++){
+      //  Set the domain and range of the nodes
+      domain = abs(_maxX-_minX);
+      range  = abs(_minY-_maxY);
 
-            _x = round(random(3*buffer-width/2, width/2-buffer   ));
-            _y = round(random(buffer-height/2,  height/2-3*buffer));
+      N++;
 
-            if(_x < _minX){ _minX = _x; }
-            if(_x > _maxX){ _maxX = _x; }
-            if(_y < _minY){ _minY = _y; }
-            if(_y > _maxY){ _maxY = _y; }
+      if(nodes.length==limit){
+            
+        N=0;
+        loaded=true;
+        running=false;
 
-            let nod = new node(_n,_x,_y);
+        leftMost.hull=true;
+        candidates.push(leftMost);
+        print("Gift wrap");
 
-            nodes.push(nod);
+      }
 
-            nod.distance = dist(0,0,_x,_y);
-            nod.theta    = 180/PI*atan2(_y,_x);
-            nod.polar    = nod.distance + "," + nod.theta;
+    }
 
-            if(nod.theta<0){ nod.theta+=360; }
+    function loadNodesCartesian(){
+      
+      let _x     = -1;
+      let _y     = -1;
 
-            setQuadrant(nod);
+      // Determine theta of the sloped corners
+      thetaQuadrant=180/PI*atan2(height/2,width/2);
 
-            // Include a flag for exclude on load
-            if(excludeOnLoad){ excludeNode(nod); }
+      let _n=N;
 
-          // }
+      for(let _n=0; _n<limit; _n++){
 
-          //  Set the domain and range of the nodes
-          domain = abs(_maxX-_minX);
-          range  = abs(_minY-_maxY);
+        _x = round(random(3*buffer-width/2, width/2-buffer   ));
+        _y = round(random(buffer-height/2,  height/2-3*buffer));
 
-      pop();
+        if(_x < _minX){ _minX = _x; }
+        if(_x > _maxX){ _maxX = _x; }
+        if(_y < _minY){ _minY = _y; }
+        if(_y > _maxY){ _maxY = _y; }
+
+        let nod = new node(_n,_x,_y);
+
+        nodes.push(nod);
+
+        nod.distance = dist(0,0,_x,_y);
+        nod.theta    = 180/PI*atan2(_y,_x);
+        nod.polar    = nod.distance + "," + nod.theta;
+
+        if(nod.theta<0){ nod.theta+=360; }
+
+        setQuadrant(nod);
+
+        if(_n==0){ leftMost=nodes[_n]; }
+        else     {
+          
+          if(nodes[_n].x<leftMost.x){ 
+            leftMost=nodes[_n];
+          }
+        
+        }
+
+        // Include a flag for exclude on load
+        if(excludeOnLoad){ excludeNode(nod); }
+
+      }
+
+      //  Set the domain and range of the nodes
+      domain = abs(_maxX-_minX);
+      range  = abs(_minY-_maxY);
 
       N++;
 
@@ -510,10 +683,15 @@ print(candidates);
 
         }
 
+        leftMost.hull=true;
+        candidates.push(leftMost);
+
       }
 
     }
-  
+
+    loadNodes=loadNodesCartesian;
+
     function loadLinkedList(){
   
       let nod=candidates[0];
@@ -559,10 +737,12 @@ print(candidates);
 
         excludeNode(nodes[N]);
 
-        if(nodes[N].hull){
-          candidates.push(nodes[N]);
-          candidates[candidates.length-1].cid=candidates.length;
-          sortByTheta(candidates);
+        if(excludeNode!==excludeNodeGiftWrap){
+          if(nodes[N].hull){
+            candidates.push(nodes[N]);
+            candidates[candidates.length-1].cid=candidates.length;
+            sortByTheta(candidates);
+          }
         }
         // loadCandidates();
 
@@ -580,7 +760,7 @@ print(candidates);
         nod1=nod0.next;
         nod2=nod1.next;
 
-        N=2 * candidates.length;
+        N = 2 * candidates.length;
         
         excluded=true;
         running=false;
@@ -716,9 +896,9 @@ print(candidates);
 
         for(let n=0; n<candidates.length; n++){
 
-          if(candidates[n].hull){
+          // if(candidates[n].hull){
             vertex(candidates[n].x,candidates[n].y);
-          }
+          // }
 
         }
 
@@ -762,8 +942,12 @@ print(candidates);
 
           if(n==N){ r=10; 
                     fill( 0,255,0);} // && running
+          
+          if(nodes[n].id==leftMost.id){ r=20; }
 
           ellipse(nodes[n].x, nodes[n].y, r, r);
+
+// text(round(nodes[n].theta),nodes[n].x,nodes[n].y);
 
         }
 
@@ -831,6 +1015,7 @@ print(candidates);
       function telemetry(){
 
         calculateHullLength();
+        calculateHullArea();
 
         fill(128);
         noStroke();
@@ -850,6 +1035,7 @@ print(candidates);
 
         textSize(12);
 
+          text("Hull Area:    " + round(hullArea),-width/2+200, height/2-25);
           text("Hull Length: " + round(hullLength),-width/2+200, height/2-10);
           
         // Domain and Range
@@ -1022,11 +1208,12 @@ print(candidates);
 
       push();
 
+      if(loadNodes!=loadNodesGiftWrap){
         translate(width/2+0.5, height/2+0.5);
+      }
 
           drawGUI();
           drawNodes();
-          // drawCandidateNodes();
           drawCandidateHull();
           drawCursor();
 
@@ -1037,11 +1224,18 @@ print(candidates);
     }  
     function keyPressed(){
       
-      print(keyCode);
+      print(keyCode); 
 
-      if(keyCode){
+      if(keyCode==39){
 
         process();
+
+      }
+      if(keyCode==37){
+
+        N--;
+        candidates[candidates.length-1].hull=false;
+        candidates.pop();
 
       }
 
