@@ -49,6 +49,8 @@
 
     };
 
+    let debug           = false;
+
     let nodes           = [];     //  All nodes
     let candidates      = [];     //  Possible hull nodes
     let hull            = [];     //  Only hull nodes
@@ -76,6 +78,7 @@
     let hullArea        = -Infinity;
 
     let leftMost        =-Infinity;
+    let bottomMost      = undefined;
 
     let radius          = Infinity;
     let diameter        = 10;
@@ -160,8 +163,6 @@
 
       frameRate(100);
 
-      noCursor();
-  
       "use strict"; 
   
       createCanvas(windowWidth-50, windowHeight-50, P2D);
@@ -469,7 +470,7 @@ print(candidates);
 
     }
     function excludeNodeGiftWrap(){
-
+frameRate(5);
       let nextIndex=0;
       let THETA=-Infinity;
       let theta;
@@ -503,11 +504,20 @@ print(candidates);
 
       print(N + " : " + 180/PI*THETA);
 
+      // Is the next node the original leftMost node?
       if(nodes[nextIndex]==candidates[0]){
 
         excluded=true;
         processed=true;
         running=false;
+
+        for(let n in nodes){
+          
+          if(nodes[n].cid==undefined){
+            nodes[n].hull=false;
+          }
+
+        }
 
       }
       else{
@@ -516,33 +526,34 @@ print(candidates);
         leftMost.hull=true;
 
         candidates.push(leftMost);
+        candidates[candidates.length-1].cid=candidates.length-1;
 
       }
 
     }
 
+    let loadNodes;
     let setQuadrant;
     let excludeNode;
     let processNode;
-    let loadNodes;
 
+    switch(sectorCount){
     
-
-    if(sectorCount==4){
-      setQuadrant=setQuadrantCartesian;
-      // excludeNode=excludeNodeQuadRectangle;
-      excludeNode=excludeNodeTriangle;
-      // setNodeQuadrant=setNodeQuadRectangle;
-    }
-    else if(sectorCount==8){
-      setQuadrant=setQuadrantOctagonal;
-      // excludeNode=excludeNodeOctoRectangle;
-      // excludeNode=excludeNodeTriangle;
-      // excludeNode=excludeNodeQuadrants;
-      excludeNode=excludeNodeGiftWrap;
-    }
-    else{
-      print("Error in quadrant count");
+      case 0:   setQuadrant=setQuadrantCartesian;
+                excludeNode=excludeNodeGiftWrap;
+                                                          break;
+      case 4:   setQuadrant=setQuadrantCartesian;
+                // excludeNode=excludeNodeQuadRectangle;
+                excludeNode=excludeNodeTriangle;
+                // setNodeQuadrant=setNodeQuadRectangle;
+                                                          break;
+      case 8:   setQuadrant=setQuadrantOctagonal;
+                // excludeNode=excludeNodeOctoRectangle;
+                // excludeNode=excludeNodeTriangle;
+                excludeNode=excludeNodeQuadrants;         
+                                                          break;
+      default:  print("Error in quadrant count");         break;
+    
     }
 
     let _minX  = Infinity;
@@ -562,8 +573,8 @@ print(candidates);
 
       for(let _n=0; _n<limit; _n++){
 
-        _x = round(random(3*buffer, width-buffer   ));
-        _y = round(random(buffer,  height-3*buffer));
+        _x = round(random(3*buffer-width/2, width/2-buffer   ));
+        _y = round(random(buffer-height/2,  height/2-3*buffer));
 
         if(_x < _minX){ _minX = _x; }
         if(_x > _maxX){ _maxX = _x; }
@@ -574,18 +585,16 @@ print(candidates);
 
         nodes.push(nod);
 
-        // nod.distance = dist(0,0,_x,_y);
-        // nod.theta    = 180/PI*atan2(_y,_x);
+        nod.distance = dist(0,0,_x,_y);
+        nod.theta    = 180/PI*atan2(_y,_x);
         nod.polar    = nod.distance + "," + nod.theta;
 
-        // if(nod.theta<0){ nod.theta+=360; }
+        if(nod.theta<0){ nod.theta+=360; }
 
         // Set Quadrant
         nod.theta = 180/PI*atan2(nod.y, nod.x);
         
         if(nod.theta<0){ nod.theta+=360; }
-
-print(nod.theta);
 
         if(_n==0){ leftMost=nodes[_n]; }
         else     {
@@ -612,6 +621,8 @@ print(nod.theta);
 
         leftMost.hull=true;
         candidates.push(leftMost);
+        candidates[candidates.length-1].cid=candidates.length-1;
+
         print("Gift wrap");
 
       }
@@ -939,11 +950,19 @@ print(nod.theta);
                              r=5;             }
           else             { fill(255);
                              r=1;             }
-
-          if(n==N){ r=10; 
-                    fill( 0,255,0);} // && running
+          if(n==N &&
+             running){
+               
+              r=10; 
+              fill( 0,255,0);
+          }
           
-          if(nodes[n].id==leftMost.id){ r=20; }
+          if(nodes[n].id==leftMost.id){
+            
+            fill(0,128,255);
+            r=10;
+          
+          }
 
           ellipse(nodes[n].x, nodes[n].y, r, r);
 
@@ -957,6 +976,10 @@ print(nod.theta);
 
       function drawCursor(){
     
+        if(debug==false){ return; }
+
+        noCursor();
+
         noFill();
         stroke(192);
     
@@ -1159,11 +1182,14 @@ print(nod.theta);
 
       let drawSectors;
 
-      if(sectorCount==4){
-        drawSectors=drawSectorsQuad;
-      }
-      else if(sectorCount==8){
-        drawSectors=drawSectorsOcto;
+      switch(sectorCount){
+
+        case 0: drawSectors=drawSectorsQuad;  break;
+        case 4: drawSectors=drawSectorsQuad;  break;    
+        case 8: drawSectors=drawSectorsOcto;  break;
+
+        default:                              break;
+
       }
 
     }
@@ -1208,9 +1234,9 @@ print(nod.theta);
 
       push();
 
-      if(loadNodes!=loadNodesGiftWrap){
+      // if(loadNodes!=loadNodesGiftWrap){
         translate(width/2+0.5, height/2+0.5);
-      }
+      // }
 
           drawGUI();
           drawNodes();
