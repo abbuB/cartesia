@@ -66,7 +66,7 @@
   
     
     let sorted          = false;
-    let excludeOnLoad   = false;                 //  Nodes are eliminated while they are loaded
+    let excludeOnLoad   = false;  //  Nodes are eliminated while they are loaded
 
     let preprocessing   = PRE_PROCESSING.TRIANGLE;
     let hullMethod      = HULL_METHODS.BUBBA;
@@ -97,14 +97,14 @@
     let q4Count         = 0;
 
     let sectors         = [];
-    let sectorCount     = 8;  //  Change based on Pre-processing heuristic
+    let sectorCount     = 0;  //  Change based on Pre-processing heuristic
 
     let thetaQuadrant   = -1;
 
     // let quadrants       = [];
     // let counter=0;
 
-    let limit           = 300; //  3163 squared is approx 10,000,000
+    let limit           = 50; //  3163 squared is approx 10,000,000
 
     let processCount    = 0;    //  # of comparisons conducted
 
@@ -112,6 +112,11 @@
     let loaded          = false;
     let excluded        = false;
     let processed       = false;
+
+    let minX  = Infinity;
+    let maxX  = 0;
+    let minY  = Infinity;
+    let maxY  = 0;
 
     class node {
       
@@ -257,7 +262,7 @@ print(candidates);
         m=temp;
         
       }
-      function sortByTheta(arr){
+      function sortByTheta(arr,param){
     
         for(let n=0; n<arr.length; n++){
           for(let m=0; m<arr.length; m++){
@@ -532,6 +537,39 @@ frameRate(5);
 
     }
 
+    let p0=-1;
+    let p1=-2;
+    let p2=-3;
+
+    // frameRate(100);
+
+    function excludeNodeGrahamsScan(){
+
+        p0=nodes[N];
+        p1=nodes[N+1];
+        p2=nodes[N+2];
+
+        let t1=180/PI*atan2(p0.y - p1.y, p0.x - p1.x);
+        let t2=180/PI*atan2(p0.y - p2.y, p0.x - p2.x);
+
+        print(t1 + " : " + t2);
+
+        if(t1 < t2){
+
+          p1.hull=false;
+
+        }
+
+        if(N<limit-2){
+
+          N++;
+          
+          print("increment");
+
+        }
+
+    }
+
     let loadNodes;
     let setQuadrant;
     let excludeNode;
@@ -539,8 +577,9 @@ frameRate(5);
 
     switch(sectorCount){
     
-      case 0:   setQuadrant=setQuadrantCartesian;
-                excludeNode=excludeNodeGiftWrap;
+      case 0:   //setQuadrant=setQuadrantCartesian;
+                // excludeNode=excludeNodeGiftWrap;
+                excludeNode=excludeNodeGrahamsScan;
                                                           break;
       case 4:   setQuadrant=setQuadrantCartesian;
                 // excludeNode=excludeNodeQuadRectangle;
@@ -555,11 +594,6 @@ frameRate(5);
       default:  print("Error in quadrant count");         break;
     
     }
-
-    let _minX  = Infinity;
-    let _maxX  = 0;
-    let _minY  = Infinity;
-    let _maxY  = 0;
 
     function loadNodesGiftWrap(){
       
@@ -701,7 +735,69 @@ frameRate(5);
 
     }
 
-    loadNodes=loadNodesCartesian;
+    function loadNodesGraham(){
+      
+      let x = undefined;
+      let y = undefined;
+      let n = N;
+
+      for(let n=0; n<limit; n++){
+
+        x = random(3*buffer, width -200);
+        y = random(50,       height-100);
+
+        if(x < minX){ minX = x; }
+        if(x > maxX){ maxX = x; }
+        if(y < minY){ minY = y; }
+        if(y > maxY){ maxY = y; }
+
+        // let nod = 
+
+        nodes.push(new node(n,x,y));
+
+        if(n==0){ bottomMost=nodes[n]; }
+        else    {
+          
+          if(nodes[n].y>bottomMost.y){ 
+            bottomMost=nodes[n];
+          }
+        
+        }
+
+      }
+
+      if(nodes.length<limit){
+        N++;
+      }
+      else{
+
+        //  Set the domain and range of the nodes
+        domain  = abs(maxX-minX);
+        range   = abs(minY-maxY);
+
+        N       = 0;
+        loaded  = true;
+        running = false;
+
+        // Sectors are dynamic so they are set after loading is complete
+        for(let n in nodes){
+
+          nodes[n].theta=atan2(bottomMost.y-nodes[n].y,bottomMost.x-nodes[n].x);
+
+        }
+
+        bottomMost.hull=true;
+        candidates.push(bottomMost);
+
+        sortByTheta(nodes);
+        
+        print(candidates[0].id +  " : " + bottomMost.id);
+
+      }
+
+    }
+
+    loadNodes=loadNodesGraham;
 
     function loadLinkedList(){
   
@@ -748,18 +844,20 @@ frameRate(5);
 
         excludeNode(nodes[N]);
 
-        if(excludeNode!==excludeNodeGiftWrap){
-          if(nodes[N].hull){
-            candidates.push(nodes[N]);
-            candidates[candidates.length-1].cid=candidates.length;
-            sortByTheta(candidates);
-          }
-        }
+        return;
+
+        // if(excludeNode!==excludeNodeGiftWrap){
+        //   if(nodes[N].hull){
+        //     candidates.push(nodes[N]);
+        //     candidates[candidates.length-1].cid=candidates.length;
+        //     sortByTheta(candidates);
+        //   }
+        // }
         // loadCandidates();
 
       // }
 
-      N++;
+      // N++;
 
       if(N==limit){
 
@@ -907,9 +1005,9 @@ frameRate(5);
 
         for(let n=0; n<candidates.length; n++){
 
-          // if(candidates[n].hull){
+          if(candidates[n].hull){
             vertex(candidates[n].x,candidates[n].y);
-          // }
+          }
 
         }
 
@@ -943,30 +1041,54 @@ frameRate(5);
       let r=-Infinity;
 
       noStroke();
+      textSize(10);
+      textAlign(LEFT,BOTTOM);
 
         for(let n=0; n<nodes.length; n++){
+
+          noStroke();
 
           if(nodes[n].hull){ fill(255,255,0);
                              r=5;             }
           else             { fill(255);
                              r=1;             }
-          if(n==N &&
-             running){
+          // if(n==N &&
+          //    running){
                
-              r=10; 
-              fill( 0,255,0);
-          }
+          //     r=10; 
+          //     fill( 0,255,0);
+          // }
           
-          if(nodes[n].id==leftMost.id){
+          // if(nodes[n].id==leftMost.id){
             
-            fill(0,128,255);
-            r=10;
+          //   fill(0,128,255);
+          //   r=10;
           
+          // }
+
+          if(nodes[n].id==bottomMost.id){ r=25; }
+          
+            ellipse(nodes[n].x, nodes[n].y, r, r);
+
+          if(nodes[n].id==p0.id     ){ stroke(255,0,0); noFill(); strokeWeight(3); r=15; }
+          else if(nodes[n].id==p1.id){ stroke(0,255,0); noFill(); strokeWeight(3); r=15; }
+          else if(nodes[n].id==p2.id){ stroke(0,0,255); noFill(); strokeWeight(3); r=15; }
+
+            ellipse(nodes[n].x, nodes[n].y, r, r);
+
+          if(nodes[n].hull){
+
+            let theta=nf(180/PI*nodes[n].theta,1,1)
+            // let s=nodes[n].id;// + " : " + theta;
+            // let s=nodes[n].id;
+            let s=theta;
+
+            noStroke();
+            fill(128);
+            
+              text(s,nodes[n].x+5,nodes[n].y+textSize()/2);
+
           }
-
-          ellipse(nodes[n].x, nodes[n].y, r, r);
-
-// text(round(nodes[n].theta),nodes[n].x,nodes[n].y);
 
         }
 
@@ -1038,55 +1160,87 @@ frameRate(5);
       function telemetry(){
 
         calculateHullLength();
-        calculateHullArea();
+        // calculateHullArea();
 
         fill(128);
         noStroke();
-        textSize(16);
+        textSize(12);
         textAlign(LEFT,BOTTOM);
 
         let cl = candidates.length;
         let nl = nodes.length;
 
-        let row1=processCount + " : " + pow(limit,2) + " : " + nf(processCount/pow(limit,2)*100,1,2) + "%";
+        let row1=processCount + " : " +
+                 pow(limit,2) + " : " +
+                 nf(processCount/pow(limit,2)*100,1,2) + "%";
         let row2=cl + " : " + nl + " : " + nf(cl/nl*100,1,2) + "%";
 
-          text(row1,-width/2+20, height/2-30);
-          text(row2,-width/2+20, height/2-10);
-
-          text(N,-width/2+20, height/2-200);
+          text(row1, 20, height-30);
+          text(row2, 20, height-10);
+          text(N,    20, height-100);
 
         textSize(12);
 
-          text("Hull Area:    " + round(hullArea),-width/2+200, height/2-25);
-          text("Hull Length: " + round(hullLength),-width/2+200, height/2-10);
+          text("Hull Area:    " + round(hullArea),   200, height-25);
+          text("Hull Length: "  + round(hullLength), 200, height-10);
           
         // Domain and Range
         let dr="Domain: " + domain + " - Range:  " + range;
 
-          text(dr,-width/2+400, height/2-10);
+          text(dr, 400, height-30);
 
         fill(128);
         noStroke();
         textAlign(RIGHT,BOTTOM);
 
-          text(q1Count  + " | " +
-                q2Count + " | " +
-                q3Count + " | " +
-                q4Count, width/2-20, height/2-20);
+          text(q1Count + " | " +
+               q2Count + " | " +
+               q3Count + " | " +
+               q4Count, width-20, height-20);
 
         textAlign(LEFT,BOTTOM);
 
-          text("Loaded:      " + loaded, width/2-300, height/2-40);
-          text("Excluded:  "   + excluded, width/2-300, height/2-25);
-          text("Processed: "   + processed, width/2-300, height/2-10);
+          text("Loaded:      " + loaded,    width-200, height-40);
+          text("Excluded:  "   + excluded,  width-200, height-25);
+          text("Processed: "   + processed, width-200, height-10);
 
-          text("Running:     " + running, width/2-450, height/2-10);
+          text("Running:     " + running,   width-350, height-10);
 
       }        
-      function drawGUI(){
+      function drawHullText(){
 
-      
+        let s="";
+
+        for(let n=candidates.length-1; n>=0; n--){
+          s=s+candidates[n].id + '\n';
+        }
+
+// print(s);
+
+        noStroke();
+        strokeWeight(0);
+        fill(128);
+        textSize(12);
+        textAlign(LEFT,TOP);
+
+          text(s,width-35,20);
+
+      }
+
+      function drawGUI(){
+        
+        function drawTitle(){
+
+          fill(128);
+          stroke(0);
+          strokeWeight(0.5);
+
+          textAlign(CENTER,TOP);
+          textSize(36);
+
+            text("Graham's Scan",width/2,10);
+
+        }
         function drawBorder(){
 
           //  Border
@@ -1095,7 +1249,7 @@ frameRate(5);
           stroke(128);
           strokeWeight(1);
 
-            rect(-width/2,-height/2, width-1, height-1);
+            rect(0,0, width-1, height-1);
 
         }
         function drawAxis(){
@@ -1143,13 +1297,13 @@ frameRate(5);
         drawBorder();          
         
         if(!processed){
-          drawAxis();
+          if(loadNodes!=loadNodesGraham){ drawAxis(); }
           drawSectors();
         }
 
         // drawOrigin();
+        drawTitle();
 
-        telemetry();
 
       }
 
@@ -1234,9 +1388,12 @@ frameRate(5);
 
       push();
 
-      // if(loadNodes!=loadNodesGiftWrap){
+      if(loadNodes!=loadNodesGraham){
         translate(width/2+0.5, height/2+0.5);
-      // }
+      }
+      else{
+        translate(0.5, 0.5);
+      }
 
           drawGUI();
           drawNodes();
@@ -1247,10 +1404,14 @@ frameRate(5);
 
       pop();
 
+      telemetry();
+
+      drawHullText();
+
     }  
     function keyPressed(){
       
-      print(keyCode); 
+      // print(keyCode); 
 
       if(keyCode==39){
 
