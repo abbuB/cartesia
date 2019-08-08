@@ -104,7 +104,7 @@
     // let quadrants       = [];
     // let counter=0;
 
-    let limit           = 500; //  3163 squared is approx 10,000,000
+    let limit           = 50; //  3163 squared is approx 10,000,000
 
     let processCount    = 0;    //  # of comparisons conducted
 
@@ -578,9 +578,9 @@ frameRate(5);
 
     }
 
-    let p1=0;
-    let p2=1;
-    let p3=2;
+    let p0=0;
+    let p1=1;
+    let p2=2;
 
     function previousHullNode(n){
 
@@ -600,40 +600,41 @@ frameRate(5);
     }
     function excludeNodeGrahamsScan(){
 
+      p0=candidates[candidates.length-3];
+      p1=candidates[candidates.length-2];
+      p2=candidates[candidates.length-1];
+
       let value=(p2.x-p1.x)*(p3.y-p1.y)-(p2.y-p1.y)*(p3.x-p1.x);
+
+print("Value: " + value);
 
       switch(true){
 
-        case value >  0:  p2.hull=true;  N++;       break;
-        case value == 0:                            break;
-        case value <  0:  p2.hull=false;          
-                          N=previousHullNode(N-1);  break;
+        case value >  0:
 
-        default:          print("error");           break;
+                          p2.hull=true;
 
-      }
+                          break;
 
-      let n1=getNextCandidate(N);
-      let n2=getNextCandidate(n1+1);
-      let n3=getNextCandidate(n2+1);
+        case value == 0:
+                          break;
 
-      p1=nodes[n1];
-      p2=nodes[n2];
-      p3=nodes[n3];
+        case value <  0:
 
-      // print(nodes.length + " : " + n1+ " : " + n2 + " : " + n3);
+                          candidates.pop();
 
-      refreshCandidates();
+                          break;
 
-      N=n1;
+        default:          print("error");
 
-      if(p3.id==1){
-
-        print("COMPLETE");
-        running=false;
-        return;
+                          break;
 
       }
+
+      N++; 
+
+      candidates.push(nodes[N]);
+      candidates[candidates.length-1].hull=true;
 
     }
 
@@ -822,7 +823,7 @@ frameRate(5);
 
         nodes.push(new node(n,x,y));
         
-nodes[n].hull=false;
+        nodes[n].hull=false;
 
         if(n==0){ bottomMost=nodes[n]; }
         else    {
@@ -844,7 +845,7 @@ nodes[n].hull=false;
         domain  = abs(maxX-minX);
         range   = abs(minY-maxY);
 
-        N       = 0;
+        N       = 2;
         loaded  = true;
         running = false;
 
@@ -862,15 +863,14 @@ nodes[n].hull=false;
 
         nodes[0].hull=true;
         nodes[1].hull=true;
-        nodes[2].hull=true;
 
         candidates.push(nodes[0]);
         candidates.push(nodes[1]);
         candidates.push(nodes[2]);
-        
-        p1=nodes[0];
-        p2=nodes[1];
-        p3=nodes[2];
+
+        p1=candidates[0];
+        p2=candidates[1];
+        p3=candidates[2];
 
         print(candidates[0].id +  " : " + bottomMost.id + " : " + nodes[0].id);
 
@@ -1086,13 +1086,45 @@ nodes[n].hull=false;
 
         for(let n=0; n<candidates.length; n++){
 
-          if(candidates[n].hull){
-            vertex(candidates[n].x,candidates[n].y);
-          }
+          vertex(candidates[n].x,candidates[n].y);
 
         }
 
       endShape(CLOSE);
+
+
+      
+      noFill();
+      strokeWeight(3);
+      let r=15;
+
+      if(candidates.length>0){
+
+        stroke(0,0,255);
+
+          ellipse(candidates[candidates.length-1].x,
+                  candidates[candidates.length-1].y,
+                  r,r);
+      }
+
+      if(candidates.length>1){
+        
+        stroke(0,255,0);
+
+          ellipse(candidates[candidates.length-2].x,
+                  candidates[candidates.length-2].y,
+                  r,r);
+      }
+
+      if(candidates.length>2){      
+
+        stroke(255,0,0);
+
+          ellipse(candidates[candidates.length-3].x,
+                  candidates[candidates.length-3].y,
+                  r,r);                  
+      }
+
       // endShape();
 
       // textSize(16);
@@ -1152,9 +1184,9 @@ nodes[n].hull=false;
           
             ellipse(nodes[n].x, nodes[n].y, r, r);
 
-          if     (nodes[n].id==p1.id){ stroke(255,0,0); noFill(); strokeWeight(3); r=15; }
-          else if(nodes[n].id==p2.id){ stroke(0,255,0); noFill(); strokeWeight(3); r=15; }
-          else if(nodes[n].id==p3.id){ stroke(0,0,255); noFill(); strokeWeight(3); r=15; }
+          // if     (nodes[n].id==p1.id){ stroke(255,0,0); noFill(); strokeWeight(3); r=15; }
+          // else if(nodes[n].id==p2.id){ stroke(0,255,0); noFill(); strokeWeight(3); r=15; }
+          // else if(nodes[n].id==p3.id){ stroke(0,0,255); noFill(); strokeWeight(3); r=15; }
 
             ellipse(nodes[n].x, nodes[n].y, r, r);
 
