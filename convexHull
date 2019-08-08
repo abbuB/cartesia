@@ -104,7 +104,7 @@
     // let quadrants       = [];
     // let counter=0;
 
-    let limit           = 50; //  3163 squared is approx 10,000,000
+    let limit           = 150; //  3163 squared is approx 10,000,000
 
     let processCount    = 0;    //  # of comparisons conducted
 
@@ -604,37 +604,31 @@ frameRate(5);
       p1=candidates[candidates.length-2];
       p2=candidates[candidates.length-1];
 
-      let value=(p2.x-p1.x)*(p3.y-p1.y)-(p2.y-p1.y)*(p3.x-p1.x);
+      let value=(p1.x-p0.x)*(p2.y-p0.y)-(p1.y-p0.y)*(p2.x-p0.x);
 
-print("Value: " + value);
+// print("Value: " + value);
 
       switch(true){
 
-        case value >  0:
+        case value >  0:  candidates.push(nodes[N]);
+                          candidates[candidates.length-1].hull=true;
+                          
+                          N++;
 
-                          p2.hull=true;
+                          // if(N==nodes.length){ N=0; }
 
                           break;
 
-        case value == 0:
-                          break;
+        case value == 0:  break;
 
-        case value <  0:
-
-                          candidates.pop();
-
+        case value <  0:  p1.hull=false;
+                          candidates.splice(candidates.length-2,1);
                           break;
 
         default:          print("error");
 
                           break;
-
       }
-
-      N++; 
-
-      candidates.push(nodes[N]);
-      candidates[candidates.length-1].hull=true;
 
     }
 
@@ -845,7 +839,7 @@ print("Value: " + value);
         domain  = abs(maxX-minX);
         range   = abs(minY-maxY);
 
-        N       = 2;
+        N       = 3;
         loaded  = true;
         running = false;
 
@@ -863,6 +857,7 @@ print("Value: " + value);
 
         nodes[0].hull=true;
         nodes[1].hull=true;
+        nodes[2].hull=true;
 
         candidates.push(nodes[0]);
         candidates.push(nodes[1]);
