@@ -108,15 +108,10 @@
 
     let processCount    = 0;    //  # of comparisons conducted
 
-    let running         = false;
+    let running         = true;
     let loaded          = false;
     let excluded        = false;
     let processed       = false;
-
-    let minX  = Infinity;
-    let maxX  = 0;
-    let minY  = Infinity;
-    let maxY  = 0;
 
     class node {
       
@@ -164,9 +159,14 @@
       
     }
   
+    let minX=new node(-1, Infinity,-Infinity);
+    let maxX=new node(-1,-Infinity,-Infinity);
+    let minY=new node(-1, Infinity, Infinity);
+    let maxY=new node(-1, Infinity,-Infinity);
+
     function setup(){
 
-      frameRate(100);
+      // frameRate(100);
 
       "use strict"; 
   
@@ -451,7 +451,7 @@ print(candidates);
       }
 
     }
-    function excludeNodeQuadrants(nod){setQuadrantCartesian
+    function excludeNodeQuadrants(nod){
 
       let q1=false;
       let q2=false;
@@ -481,7 +481,7 @@ print(candidates);
 
     }
     function excludeNodeGiftWrap(){
-frameRate(5);
+// frameRate(5);
       let nextIndex=0;
       let THETA=-Infinity;
       let theta;
@@ -554,50 +554,81 @@ frameRate(5);
 
     }
     // frameRate(100);
-    function getNextCandidate(n){
 
-      let retVal=-1;
-      let i=n;
+    {   // Delete???
 
-      while(retVal==-1){
+      function previousHullNode(n){
 
-        if(i==nodes.length){
-          i=0;
+        let retVal=-1;
+
+        for(let i=n; i>-1; i--){
+
+          if(nodes[i].hull==true){
+            retVal=i;
+            break;
+          }
+
         }
 
-        if(nodes[i].hull==true){
-          retVal=i;
-          break;
+        return retVal;
+
+      }    
+      function getNextCandidate(n){
+
+        let retVal=-1;
+        let i=n;
+
+        while(retVal==-1){
+
+          if(i==nodes.length){
+            i=0;
+          }
+
+          if(nodes[i].hull==true){
+            retVal=i;
+            break;
+          }
+
+          i++;
+
         }
 
-        i++;
+        return retVal;
 
       }
+    
+    }
+
+    function findSide(p1, p2, p){
+    // Returns the side of point p with respect to line 
+    // joining points p1 and p2. 
+      
+      let retVal=0;
+
+      let val = (p.y  - p1.y) * (p2.x - p1.x) - 
+                (p2.y - p1.y) * (p.x  - p1.x); 
+      
+      if(val > 0){ retVal=1;  }
+      if(val < 0){ retVal=-1; }
 
       return retVal;
 
+    }
+
+    function lineDist(p1, p2, p){ 
+    // returns a value proportional to the distance 
+    // between the point p and the line joining the 
+    // points p1 and p2 
+
+      return abs ((p.y  - p1.y) * (p2.x - p1.x) - 
+                  (p2.y - p1.y) * (p.x  - p1.x)); 
     }
 
     let p0=0;
     let p1=1;
     let p2=2;
 
-    function previousHullNode(n){
 
-      let retVal=-1;
-
-      for(let i=n; i>-1; i--){
-
-        if(nodes[i].hull==true){
-          retVal=i;
-          break;
-        }
-
-      }
-
-      return retVal;
-
-    }
     function excludeNodeGrahamsScan(){
 
       p0=candidates[candidates.length-3];
@@ -606,29 +637,105 @@ frameRate(5);
 
       let value=(p1.x-p0.x)*(p2.y-p0.y)-(p1.y-p0.y)*(p2.x-p0.x);
 
-// print("Value: " + value);
-
       switch(true){
 
-        case value >  0:  candidates.push(nodes[N]);
+        case value >  0:  
+                          if(N==0){ running=false; return; }
+                          else{
+                          candidates.push(nodes[N]);
                           candidates[candidates.length-1].hull=true;
                           
                           N++;
 
-                          // if(N==nodes.length){ N=0; }
+                          if(N==nodes.length){ N=0; }
 
                           break;
-
+                          }
         case value == 0:  break;
 
         case value <  0:  p1.hull=false;
                           candidates.splice(candidates.length-2,1);
                           break;
 
-        default:          print("error");
+        default:          print("excludeNodeGrahamScan Error");
 
                           break;
       }
+
+    }
+    let printed=false;
+
+    let distance=0;
+    let dIndex=0;
+    let m0=-0;
+    let b0=-0;
+    let m1=-0;
+    let b1=-0;
+
+    function excludeNodeQuickHull(){
+
+      if(N==nodes.length){ 
+        
+        nodes[dIndex].distance=distance;
+
+        running=false; 
+
+        return; 
+      
+      }
+      
+      if(printed==false){
+
+        print(minX.x + " : " + maxX.x);
+        print(minY.y + " : " + maxY.y);
+        print("======================");
+
+        m0=(minX.y-maxX.y)/(minX.x-maxX.x);
+        m1=-1/m0;
+
+        // y=mx+b;
+        b0=minX.y-(m0*minX.x);
+
+        // minX.y=m*minX.x+b
+
+        print("m:  " + m0 + " : b: " + b0);
+        print("y = " + m0 + " x + "  + b0);
+
+        printed=true;
+
+      }
+
+      // if(nodes[N].y<minX.y &&
+        //  nodes[N].y<maxX.y){
+
+        // print(N + " : " + "above");
+
+        b1=nodes[N].y-(m1*nodes[N].x);
+        // x=(m1*nodes[N].x+b1-b0)/m0;
+        let x = (m1*nodes[N].x+b1-b0)/m0;
+        let y = m0*x-b0;
+
+        let d = dist(nodes[N].x, nodes[N].y,
+                     x,          y);
+
+        d=lineDist(minX,maxX,nodes[N]);
+// print(d);
+        // print("y0 = " + m0 + " x + "  + b0);
+        // print("y1 = " + m1 + " x + "  + b1);
+
+        //  Test for max distance
+        if(d>distance){ distance=d; dIndex=N; }
+
+        // print(d);
+
+      // }
+      // else{
+
+        // print(N + " : " + "below")
+
+      // }
+
+      N++;
 
     }
 
@@ -641,7 +748,8 @@ frameRate(5);
     
       case 0:   //setQuadrant=setQuadrantCartesian;
                 // excludeNode=excludeNodeGiftWrap;
-                excludeNode=excludeNodeGrahamsScan;
+                // excludeNode=excludeNodeGrahamsScan;
+                excludeNode=excludeNodeQuickHull;
                                                           break;
       case 4:   setQuadrant=setQuadrantCartesian;
                 // excludeNode=excludeNodeQuadRectangle;
@@ -704,8 +812,8 @@ frameRate(5);
       }
 
       //  Set the domain and range of the nodes
-      domain = abs(_maxX-_minX);
-      range  = abs(_minY-_maxY);
+      domain = _maxX-_minX;
+      range  = _minY-_maxY;
 
       N++;
 
@@ -772,8 +880,8 @@ frameRate(5);
       }
 
       //  Set the domain and range of the nodes
-      domain = abs(_maxX-_minX);
-      range  = abs(_minY-_maxY);
+      domain = _maxX-_minX;
+      range  = _minY-_maxY;
 
       N++;
 
@@ -836,8 +944,8 @@ frameRate(5);
       else{
 
         //  Set the domain and range of the nodes
-        domain  = abs(maxX-minX);
-        range   = abs(minY-maxY);
+        domain  = maxX-minX;
+        range   = minY-maxY;
 
         N       = 3;
         loaded  = true;
@@ -873,7 +981,65 @@ frameRate(5);
 
     }
 
-    loadNodes=loadNodesGraham;
+    function loadNodesQuickHull(){
+      
+      let x = undefined;
+      let y = undefined;
+      let n = N;
+
+      for(let n=0; n<limit; n++){
+
+        x = random(3*buffer, width -200);
+        y = random(50,       height-100);
+
+        nodes.push(new node(n,x,y));
+
+        if(x < minX.x){ minX = nodes[nodes.length-1]; }
+        if(x > maxX.x){ maxX = nodes[nodes.length-1]; }
+        if(y < minY.y){ minY = nodes[nodes.length-1]; }
+        if(y > maxY.y){ maxY = nodes[nodes.length-1]; }
+
+        if(n==0){ bottomMost=nodes[n]; }
+        else    {
+          
+          if(nodes[n].y>bottomMost.y){ 
+            bottomMost=nodes[n];
+          }
+        
+        }
+
+      }
+
+      if(nodes.length<limit){
+        N++;
+      }
+      else{
+
+        //  Set the domain and range of the nodes
+        domain  = maxX.x-minX.x;
+        range   = minY.y-maxY.y;
+
+        // N       = 3;
+        loaded  = true;
+        running = false;
+
+        // Sectors are dynamic so they are set after loading is complete
+        // for(let n in nodes){
+
+        //   nodes[n].theta=atan2(bottomMost.y-nodes[n].y,bottomMost.x-nodes[n].x);
+          
+        // }
+
+        // bottomMost.hull=false;
+        // sortByTheta(nodes);
+        // nodes[nodes.length-1]
+        // reindexArray(nodes);
+
+      }
+
+    }
+
+    loadNodes=loadNodesQuickHull;
 
     function loadLinkedList(){
   
@@ -1183,6 +1349,13 @@ frameRate(5);
           // else if(nodes[n].id==p2.id){ stroke(0,255,0); noFill(); strokeWeight(3); r=15; }
           // else if(nodes[n].id==p3.id){ stroke(0,0,255); noFill(); strokeWeight(3); r=15; }
 
+          if(nodes[n].distance>0 || 
+             nodes[n].id==N){
+
+              stroke(255,0,0); noFill(); strokeWeight(3); r=15;
+
+          }
+
             ellipse(nodes[n].x, nodes[n].y, r, r);
 
           if(nodes[n].hull){
@@ -1294,9 +1467,11 @@ frameRate(5);
           text("Hull Length: "  + round(hullLength), 200, height-10);
           
         // Domain and Range
-        let dr="Domain: " + domain + " - Range:  " + range;
+        let dr="Domain: " + round(abs(domain))
+        let rg="Range:  " + round(abs(range));
 
           text(dr, 400, height-30);
+          text(rg, 400, height-10);
 
         fill(128);
         noStroke();
@@ -1320,7 +1495,7 @@ frameRate(5);
 
         let s="";
 
-        for(let n=candidates.length-1; n>=0; n--){
+        for(let n=0; n<candidates.length; n++){
           s=s+candidates[n].id + '\n';
         }
 
@@ -1459,7 +1634,7 @@ frameRate(5);
 
     function processCandidates(){
 
-      frameRate(10);
+      // frameRate(10);
 
       if(N>0){
       
@@ -1492,12 +1667,26 @@ frameRate(5);
       if(!loaded               ){ loadNodes();         }
 
     }
+    function drawQuickHull(){
 
+      if(minX!=undefined){
+
+        stroke(128,0,0);
+        strokeWeight(3);
+        noFill();
+
+          line(minX.x, minX.y, 
+              maxX.x, maxX.y);
+
+      }
+
+    }
     function draw(){
 
       push();
 
-      if(loadNodes!=loadNodesGraham){
+      if(loadNodes!=loadNodesGraham &&
+         loadNodes!=loadNodesQuickHull){
         translate(width/2+0.5, height/2+0.5);
       }
       else{
@@ -1516,6 +1705,8 @@ frameRate(5);
       telemetry();
 
       drawHullText();
+
+      drawQuickHull();
 
     }  
     
